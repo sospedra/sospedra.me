@@ -8,7 +8,8 @@
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"No test suite yet\""
+    "test": "echo \"No test suite yet\"",
+    "dev": "next"
   },
   "repository": {
     "type": "git",
