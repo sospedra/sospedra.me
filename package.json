@@ -4,7 +4,7 @@
   },
   "name": "sospedra.me",
   "description": "Personal website and some weird experiments :D",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "index.js",
   "devDependencies": {
     "release": "^1.1.3"
