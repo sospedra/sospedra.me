@@ -13,8 +13,8 @@
     "start": "next start",
     "test": "echo \"No test suite yet\"",
     "dev": "next",
-    "release": "release",
-    "postrelease": "next build"
+    "prerelease": "next build",
+    "release": "release"
   },
   "repository": {
     "type": "git",
