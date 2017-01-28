@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom'
 import React from 'react'
-import Home from 'pods/home'
+import App from 'pods/App'
 
 document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(<Home />, document.querySelector('#app'))
+  ReactDOM.render(<App />, document.querySelector('#app'))
 })
