@@ -6,7 +6,9 @@ module.exports = {
         'app.js': /^app/
       }
     },
-    stylesheets: {joinTo: 'app.css'}
+    stylesheets: {
+      joinTo: 'app.css'
+    }
   },
 
   plugins: {
