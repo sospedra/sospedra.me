@@ -2,13 +2,13 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 
-import Home from '../index'
+import Appshell from '../index'
 
-describe('Home wrapper suite', () => {
-  const wrapper = shallow(<Home />)
+describe('Appshell wrapper suite', () => {
+  const wrapper = shallow(<Appshell />)
 
-  it('should have 2 links', () => {
-    expect(wrapper.find('a').length).toBe(2)
+  it('should have a text with the pod name', () => {
+    expect(wrapper.find('p').text()).toBe('Appshell')
   })
 
   it('should match the snapshot', () => {

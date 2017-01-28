@@ -1,27 +1,8 @@
-exports[`Home wrapper suite should match the snapshot 1`] = `
+exports[`Lost wrapper suite should match the snapshot 1`] = `
 <div
   id="content">
-  <h1>
-     
-  </h1>
-  <h2>
-    Welcome!
-  </h2>
-  <ul>
-    <li
-      className="link_13o8hyc">
-      <a
-        href="http://brunch.io">
-        Brunch homepage
-      </a>
-    </li>
-    <li
-      className="link_13o8hyc">
-      <a
-        href="https://facebook.github.io/react/">
-        React.js homepage
-      </a>
-    </li>
-  </ul>
+  <p>
+    Lost
+  </p>
 </div>
 `;

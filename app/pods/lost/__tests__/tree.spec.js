@@ -2,13 +2,13 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 
-import Home from '../index'
+import Lost from '../index'
 
-describe('Home wrapper suite', () => {
-  const wrapper = shallow(<Home />)
+describe('Lost wrapper suite', () => {
+  const wrapper = shallow(<Lost />)
 
-  it('should have 2 links', () => {
-    expect(wrapper.find('a').length).toBe(2)
+  it('should have a text with the pod name', () => {
+    expect(wrapper.find('p').text()).toBe('Lost')
   })
 
   it('should match the snapshot', () => {

@@ -2,7 +2,7 @@ import React from 'react'
 
 export default (props) => (
   <div id='content'>
-    <p>appshell</p>
+    <p>Appshell</p>
     {props.children}
   </div>
 )
