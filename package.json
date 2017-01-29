@@ -10,6 +10,8 @@
   "scripts": {
     "start": "brunch watch --server",
     "prod": "brunch build --production",
+    "server": "node server",
+    "run": "npm run prod && npm run server",
     "test": "jest \\.spec\\.js"
   },
   "dependencies": {
@@ -30,6 +32,7 @@
     "clean-css-brunch": "^2.0.0",
     "css-brunch": "^2.0.0",
     "enzyme": "^2.7.1",
+    "html-pages-brunch": "^2.6.0",
     "javascript-brunch": "^2.0.0",
     "jest": "^18.1.0",
     "jest-serializer-enzyme": "^1.0.0",
