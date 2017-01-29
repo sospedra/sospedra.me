@@ -13,7 +13,9 @@
     "server": "node server",
     "img": "imagemin assets/images/* --out-dir=public/images",
     "run": "npm run prod && npm run server",
-    "test": "jest \\.spec\\.js"
+    "test": "npm run test:style && npm run test:unit",
+    "test:style": "standard | snazzy",
+    "test:unit": "jest \\.spec\\.js"
   },
   "dependencies": {
     "aphrodite": "^1.1.0",
