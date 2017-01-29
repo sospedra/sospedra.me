@@ -1,4 +1,8 @@
 module.exports = {
+  paths: {
+    watched: ['app', 'assets']
+  },
+
   files: {
     javascripts: {
       joinTo: {

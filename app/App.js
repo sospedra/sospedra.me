@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom'
 import React from 'react'
 import {
   BrowserRouter,
@@ -5,12 +6,12 @@ import {
   Miss
 } from 'react-router'
 
-import Appshell from 'pods/appshell'
-import Home from 'pods/home'
-import About from 'pods/about'
-import Lost from 'pods/lost'
+import Appshell from 'appshell'
+import Home from 'home'
+import About from 'about'
+import Lost from 'lost'
 
-export default () => (
+export const App = () => (
   <BrowserRouter>
     <Appshell>
       <Match exactly pattern='/' component={Home} />
@@ -19,3 +20,7 @@ export default () => (
     </Appshell>
   </BrowserRouter>
 )
+
+document.addEventListener('DOMContentLoaded', () => {
+  ReactDOM.render(<App />, document.querySelector('#app'))
+})

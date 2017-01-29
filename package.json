@@ -11,26 +11,26 @@
     "start": "brunch watch --server",
     "prod": "brunch build --production",
     "server": "node server",
+    "img": "imagemin assets/images/* --out-dir=public/images",
     "run": "npm run prod && npm run server",
     "test": "jest \\.spec\\.js"
   },
   "dependencies": {
     "aphrodite": "^1.1.0",
+    "imagemin-cli": "^3.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "react-router": "next",
-    "snazzy": "^6.0.0",
-    "standard": "^8.6.0"
+    "react-router": "next"
   },
   "devDependencies": {
+    "snazzy": "^6.0.0",
+    "standard": "^8.6.0",
     "auto-reload-brunch": "^2.0.0",
     "babel-brunch": "~6.0.0",
     "babel-jest": "^18.0.0",
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-react": "^6.22.0",
     "brunch": "^2.4.0",
-    "clean-css-brunch": "^2.0.0",
-    "css-brunch": "^2.0.0",
     "enzyme": "^2.7.1",
     "html-pages-brunch": "^2.6.0",
     "javascript-brunch": "^2.0.0",

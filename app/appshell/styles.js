@@ -1,6 +1,6 @@
 import { StyleSheet } from 'aphrodite'
 
-import { colors } from 'pods/sospedra.me/styles'
+import { colors } from 'sospedra.me/styles'
 
 export default StyleSheet.create({
   appshell: {
