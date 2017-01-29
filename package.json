@@ -19,14 +19,15 @@
   },
   "dependencies": {
     "aphrodite": "^1.1.0",
+    "compression": "^1.6.2",
+    "express": "^4.14.1",
+    "helmet": "^3.4.0",
     "imagemin-cli": "^3.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-router": "next"
   },
   "devDependencies": {
-    "snazzy": "^6.0.0",
-    "standard": "^8.6.0",
     "auto-reload-brunch": "^2.0.0",
     "babel-brunch": "~6.0.0",
     "babel-jest": "^18.0.0",
@@ -39,6 +40,8 @@
     "jest": "^18.1.0",
     "jest-serializer-enzyme": "^1.0.0",
     "react-addons-test-utils": "^15.4.2",
+    "snazzy": "^6.0.0",
+    "standard": "^8.6.0",
     "uglify-js-brunch": "^2.0.0"
   },
   "jest": {

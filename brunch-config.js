@@ -16,6 +16,7 @@ module.exports = {
     babel: {
       presets: ['es2015', 'react']
     },
+
     htmlPages: {
       compileAssets: true
     }
