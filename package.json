@@ -42,6 +42,9 @@
   "jest": {
     "snapshotSerializers": [
       "<rootDir>/node_modules/jest-serializer-enzyme"
+    ],
+    "modulePaths": [
+      "<rootDir>/app/"
     ]
   }
 }
