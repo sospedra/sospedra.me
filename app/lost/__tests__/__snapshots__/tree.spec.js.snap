@@ -1,8 +1,0 @@
-exports[`Lost wrapper suite should match the snapshot 1`] = `
-<div
-  id="content">
-  <p>
-    Lost
-  </p>
-</div>
-`;

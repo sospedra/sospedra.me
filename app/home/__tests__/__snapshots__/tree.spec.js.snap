@@ -1,8 +1,0 @@
-exports[`Home wrapper suite should match the snapshot 1`] = `
-<div
-  id="content">
-  <p>
-    Home
-  </p>
-</div>
-`;
