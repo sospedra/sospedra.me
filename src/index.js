@@ -1,8 +1,8 @@
 import Inferno from 'inferno'
-import App from './App'
+import Home from './home/Home'
 import './index.css'
 
 Inferno.render(
-  <App />,
+  <Home />,
   document.getElementById('sospedra')
 )
