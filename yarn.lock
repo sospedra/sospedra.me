@@ -3167,11 +3167,20 @@ inferno, inferno@^1.3.0-rc.3:
     inferno-shared "^1.3.0-rc.3"
     inferno-vnode-flags "^1.3.0-rc.1"
 
-inferno-component:
+inferno-component, inferno-component@^1.3.0-rc.3:
   version "1.3.0-rc.3"
   resolved "https://registry.yarnpkg.com/inferno-component/-/inferno-component-1.3.0-rc.3.tgz#808bc996568761150f3845677effcdce1d00a172"
   dependencies:
     inferno "^1.3.0-rc.3"
+    inferno-shared "^1.3.0-rc.3"
+    inferno-vnode-flags "^1.3.0-rc.1"
+
+inferno-create-element@^1.3.0-rc.3:
+  version "1.3.0-rc.3"
+  resolved "https://registry.yarnpkg.com/inferno-create-element/-/inferno-create-element-1.3.0-rc.3.tgz#5ea3778a9831e7881113c34d8e8878756f6f2eed"
+  dependencies:
+    inferno "^1.3.0-rc.3"
+    inferno-component "^1.3.0-rc.3"
     inferno-shared "^1.3.0-rc.3"
     inferno-vnode-flags "^1.3.0-rc.1"
 
@@ -3186,6 +3195,17 @@ inferno-dev-utils@^0.7.0:
     opn "4.0.2"
     sockjs-client "1.1.2"
     strip-ansi "3.0.1"
+
+inferno-router:
+  version "1.3.0-rc.3"
+  resolved "https://registry.yarnpkg.com/inferno-router/-/inferno-router-1.3.0-rc.3.tgz#8acfbc4b52d426a3d08e0ef5f4d81985164aecc0"
+  dependencies:
+    inferno "^1.3.0-rc.3"
+    inferno-component "^1.3.0-rc.3"
+    inferno-create-element "^1.3.0-rc.3"
+    inferno-shared "^1.3.0-rc.3"
+    inferno-vnode-flags "^1.3.0-rc.1"
+    path-to-regexp-es6 "0.0.2"
 
 inferno-scripts:
   version "0.13.2"
@@ -4762,6 +4782,18 @@ path-key@^2.0.0:
 path-parse@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.5.tgz#3c1adf871ea9cd6c9431b6ea2bd74a0ff055c4c1"
+
+path-to-regexp-es6@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/path-to-regexp-es6/-/path-to-regexp-es6-0.0.2.tgz#80cf615ce3220a29af9fe54f8862c730d9b56e0b"
+  dependencies:
+    path-to-regexp "*"
+
+path-to-regexp@*:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-1.7.0.tgz#59fde0f435badacba103a84e9d3bc64e96b9937d"
+  dependencies:
+    isarray "0.0.1"
 
 path-to-regexp@0.1.7:
   version "0.1.7"
