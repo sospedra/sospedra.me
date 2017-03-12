@@ -27,11 +27,25 @@
 }
 
 .title {
+  font-family: lazer84;
+  color: #6df7ea;
+  font-size: 42px;
+  text-shadow: 1.9px 2px 0 #3f2d43;
+}
 
+.title a {
+  color: inherit;
+  text-decoration: none;
 }
 
 .sub-title {
+  color: #ea1195;
+  text-shadow: -1px 1px 0 #ffb9b9;
+}
 
+.kanji {
+  font-size: 32px;
+  text-shadow: -1px 1px 0 #184854;
 }
 
 @keyframes slide-left {
