@@ -1,22 +1,40 @@
-.App {
+.menu {
+  left: 50%;
+  min-width: 320px; /* iPhone 5s screen */
+  position: absolute;
+  top: 38%; /* golden ratio */
   text-align: center;
+  transform: translate(-50%, -38%);
+  width: 50%;
+  z-index: 10;
 }
 
-.App-logo {
-  height: 80px;
+.move-slide {
+  animation-duration: 5s; /* default value */
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  animation-name: slide-left;
 }
 
-.App-header {
-  background-color: #f8f8f8;
-  height: 150px;
-  padding: 20px;
-  color: #3d464d;
+.sprite {
+  background-size: contain;
+  bottom: 0;
+  height: 50%;
+  left: 0;
+  position: absolute;
+  width: 250%;
+  margin: 0;
 }
 
-.App-intro {
-  font-size: large;
+.title {
+
 }
 
-code {
-  color: #e73a37;
+.sub-title {
+
+}
+
+@keyframes slide-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
