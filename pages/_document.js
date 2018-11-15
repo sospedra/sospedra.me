@@ -2,7 +2,7 @@ import Document, { Head, Main, NextScript } from 'next/document'
 
 import { GA_TRACKING_ID } from '../service/analytics'
 
-export default class MyDocument extends Document {
+export default class SospedrameDocument extends Document {
   static getInitialProps ({ renderPage }) {
     return renderPage()
   }

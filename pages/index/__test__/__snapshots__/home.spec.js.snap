@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Home shows titles and sprite 1`] = `
+<div
+  className="jsx-1346193646 root"
+>
+  <main
+    className="jsx-1346193646"
+  >
+    <h1
+      className="jsx-1660294369"
+    >
+      <a
+        className="jsx-1660294369"
+        href="https://twitter.com/sospedra_r"
+        target="_blank"
+      >
+        Rubén Sospedra
+      </a>
+    </h1>
+    <h2
+      className="jsx-2712971757"
+    >
+      ｊａｖａｓｃｒｉｐｔ    ｈａｃｋｅｒ
+      <br
+        className="jsx-2712971757"
+      />
+      ｆｕｌｌｓｔａｃｋ ｅｎｇｉｎｅｅｒ
+    </h2>
+  </main>
+  <figure
+    alt="retrowave-skyline-moving-left-as-background"
+    className="jsx-77113858"
+  />
+</div>
+`;

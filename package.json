@@ -2,22 +2,29 @@
   "name": "sospedra.me",
   "version": "1.0.0",
   "dependencies": {
+    "babel-core": "^7.0.0-bridge",
     "next": "^7.0.2",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
     "react-no-ssr": "^1.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "babel-jest": "^23.6.0",
+    "jest": "^23.6.0",
+    "react-addons-test-utils": "^15.6.2",
+    "react-test-renderer": "^16.6.3",
     "standard": "^12.0.1"
   },
   "scripts": {
-    "dev": "next",
     "build": "next build",
+    "deploy": "now out",
+    "dev": "next",
     "export": "next export",
+    "predeploy": "npm run build && npm run export",
     "start": "next start",
     "test:lint": "standard",
-    "test": "npm run test:lint",
-    "predeploy": "npm run build && npm run export",
-    "deploy": "now out"
+    "test:unit": "jest components/ pages/ service/",
+    "test": "npm run test:lint && npm run test:unit"
   }
 }
