@@ -1,0 +1,19 @@
+{
+  "name": "sospedra.me",
+  "dependencies": {
+    "next": "^7.0.2",
+    "react": "^16.6.1",
+    "react-dom": "^16.6.1",
+    "react-no-ssr": "^1.1.0"
+  },
+  "devDependencies": {
+    "standard": "^12.0.1"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "test:lint": "standard",
+    "test": "npm run test:lint"
+  }
+}
