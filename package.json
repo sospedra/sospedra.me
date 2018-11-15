@@ -1,5 +1,6 @@
 {
   "name": "sospedra.me",
+  "version": "1.0.0",
   "dependencies": {
     "next": "^7.0.2",
     "react": "^16.6.1",
@@ -12,8 +13,11 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
+    "export": "next export",
     "start": "next start",
     "test:lint": "standard",
-    "test": "npm run test:lint"
+    "test": "npm run test:lint",
+    "predeploy": "npm run build && npm run export",
+    "deploy": "now out"
   }
 }

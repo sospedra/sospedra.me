@@ -1,5 +1,8 @@
 import React from 'react'
 import App, { Container } from 'next/app'
+import Router from 'next/router'
+
+import { pageview } from '../service/analytics'
 
 export default class MyApp extends App {
   static async getInitialProps ({ Component, router, ctx }) {
@@ -10,6 +13,10 @@ export default class MyApp extends App {
     }
 
     return { pageProps }
+  }
+
+  componentDidMount () {
+    Router.events.on('routeChangeComplete', pageview)
   }
 
   render () {
