@@ -4,7 +4,7 @@ import Router from 'next/router'
 
 import { pageview } from '../service/analytics'
 
-export default class MyApp extends App {
+export default class SospedrameApp extends App {
   static async getInitialProps ({ Component, router, ctx }) {
     let pageProps = {}
 
