@@ -18,7 +18,7 @@ class Sprite extends React.Component {
             height: calc(50% - 10vw);
             left: 0;
             position: absolute;
-            width: 500%;
+            width: 400%;
             margin: 0;
             background-image: url(static/street-sprite.svg);
             animation: spring-left 5s 2s forwards;
