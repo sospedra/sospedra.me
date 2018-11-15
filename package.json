@@ -24,7 +24,7 @@
     "predeploy": "npm run build && npm run export",
     "start": "next start",
     "test:lint": "standard",
-    "test:unit": "jest components/ pages/ service/",
+    "test:unit": "jest components/ service/",
     "test": "npm run test:lint && npm run test:unit"
   }
 }

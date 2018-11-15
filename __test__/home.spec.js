@@ -2,7 +2,7 @@
 import React from 'react'
 import renderer from 'react-test-renderer'
 
-import Home from '../index.js'
+import Home from './pages/index.js'
 
 describe('Home', () => {
   it('shows titles and sprite', () => {
