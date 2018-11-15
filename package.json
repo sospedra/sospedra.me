@@ -18,10 +18,11 @@
   },
   "scripts": {
     "build": "next build",
-    "deploy": "now out",
+    "copy:now": "cp now.json ./out/now.json",
+    "deploy": "now ./out",
     "dev": "next",
     "export": "next export",
-    "predeploy": "npm run build && npm run export",
+    "predeploy": "npm run build && npm run export && npm run copy:now",
     "start": "next start",
     "test:lint": "standard",
     "test:unit": "jest components/ service/",
