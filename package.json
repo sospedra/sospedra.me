@@ -1,6 +1,6 @@
 {
   "name": "sospedra.me",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "dependencies": {
     "babel-core": "^7.0.0-bridge",
     "next": "^7.0.2",
