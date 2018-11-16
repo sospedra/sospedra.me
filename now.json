@@ -1,8 +1,11 @@
 {
   "alias": ["sospedra.me", "www.sospedra.me"],
-  "region": "BRU",
+  "regions": ["sfo1", "bru"],
   "version": 2,
   "builds": [
     { "src": "next.config.js", "use": "@now/next" }
+  ],
+  "routes": [
+    { "src": "^/static/(.*)", "dest": "/static/$1" }
   ]
 }
