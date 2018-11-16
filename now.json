@@ -1,5 +1,6 @@
 {
   "alias": ["sospedra.me", "www.sospedra.me"],
+  "region": "BRU",
   "version": 2,
   "builds": [
     { "src": "next.config.js", "use": "@now/next" }
