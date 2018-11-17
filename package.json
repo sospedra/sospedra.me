@@ -1,6 +1,6 @@
 {
   "name": "sospedra.me",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "dependencies": {
     "babel-core": "^7.0.0-bridge",
     "next": "^7.0.2",
@@ -17,10 +17,8 @@
     "standard": "^12.0.1"
   },
   "scripts": {
-    "build": "next build",
-    "postbuild": "npm run export",
     "dev": "next",
-    "export": "next export",
+    "now-build": "next build && next export -o dist",
     "start": "next start",
     "test:lint": "standard",
     "test:unit": "jest components/ service/",
