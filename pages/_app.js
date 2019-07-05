@@ -3,7 +3,7 @@ import App, { Container } from 'next/app'
 import Router from 'next/router'
 
 import { pageview } from '../service/analytics'
-import { Provider as TransitionProvider } from '../components/Transition'
+import { TransitionProvider } from '../service/transition'
 
 export default class SospedrameApp extends App {
   static async getInitialProps ({ Component, router, ctx }) {
