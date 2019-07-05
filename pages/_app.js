@@ -3,6 +3,7 @@ import App, { Container } from 'next/app'
 import Router from 'next/router'
 
 import { pageview } from '../service/analytics'
+import { Provider as TransitionProvider } from '../components/Transition'
 
 export default class SospedrameApp extends App {
   static async getInitialProps ({ Component, router, ctx }) {
@@ -20,11 +21,14 @@ export default class SospedrameApp extends App {
   }
 
   render () {
-    const { Component, pageProps } = this.props
+    const { Component, pageProps, router } = this.props
 
     return (
       <Container>
-        <Component {...pageProps} />
+        <TransitionProvider>
+          <Component {...pageProps} key={router.route} />
+        </TransitionProvider>
+
         <style jsx global>{`
           html, body, #__next {
             height: 100%;

@@ -1,12 +1,17 @@
 import React from 'react'
 
-const Sprite = () => (
-  <React.Fragment>
-    <figure
-      alt='retrowave-skyline-moving-left-as-background'
-    />
+const TIME = '5s'
+const DELAY = '2s'
 
-    <style jsx>{`
+const Sprite = (props) => {
+  return (
+    <React.Fragment>
+      <figure
+        alt='retrowave-skyline-moving-left-as-background'
+        {...props}
+      />
+
+      <style jsx>{`
       figure {
         background-size: contain;
         bottom: 0;
@@ -16,7 +21,7 @@ const Sprite = () => (
         width: 400%;
         margin: 0;
         background-image: url(static/street-sprite.svg);
-        animation: spring-left 5s 2s forwards;
+        animation: spring-left ${TIME} ${DELAY} forwards;
         z-index: -1;
       }
 
@@ -25,7 +30,8 @@ const Sprite = () => (
         100% { transform: translate(-50%); }
       }
     `}</style>
-  </React.Fragment>
-)
+    </React.Fragment>
+  )
+}
 
 export default Sprite
