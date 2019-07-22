@@ -1,14 +1,14 @@
 import React from 'react'
 import Head from 'next/head'
 
-const Blog = (props) => (
-  <div>
+const Blog = (props, ref) => (
+  <div ref={ref}>
     <Head>
       <title>Blog &mdash; Rub&eacute;n Sospedra</title>
     </Head>
 
-    <p>A sexy blog</p>
+    <span>A sexy blog</span>
   </div>
 )
 
-export default Blog
+export default React.forwardRef(Blog)

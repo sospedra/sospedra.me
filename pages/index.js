@@ -1,34 +1,44 @@
 import React from 'react'
 import Head from 'next/head'
-import NoSSR from 'react-no-ssr'
 
 import Title from '../components/Title'
 import Claim from '../components/Claim'
 import Sprite from '../components/Sprite'
-import Loading from '../components/Loading'
+import { useTransition, Link } from '../service/transition'
 
-const Home = (props) => {
+const Home = (props, ref) => {
+  const { unmount, hasRequestedUnmount } = useTransition()
+
+  if (hasRequestedUnmount) {
+    window.onanimationend = () => {
+      unmount()
+      window.onanimationend = null
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   return (
-    <div className='root'>
+    <div className='root' ref={ref}>
       <Head>
         <title>Rub&eacute;n Sospedra</title>
       </Head>
 
-      <NoSSR onSSR={<Loading />}>
-        <main>
-          <Title />
-          <Claim />
-        </main>
+      <main>
+        <Title />
+        <Claim />
+        <Link href="/blog">Blog</Link>
+      </main>
 
-        <Sprite />
-      </NoSSR>
+      <Sprite />
 
       <style jsx>{`
       .root {
         display: flex;
-        height: 100%;
+        height: 100vh;
         justify-content: center;
-        width: 100%;
+        width: 100vw;
+        top: 100vh;
+        position: absolute;
       }
 
       main {
@@ -42,4 +52,4 @@ const Home = (props) => {
   )
 }
 
-export default Home
+export default React.forwardRef(Home)

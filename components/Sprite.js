@@ -14,11 +14,11 @@ const Sprite = (props) => {
       <style jsx>{`
       figure {
         background-size: contain;
-        bottom: 0;
-        height: calc(50% - 10vw);
+        bottom: 50%;
+        height: calc(25% - 10vw);
         left: 0;
         position: absolute;
-        width: 400%;
+        width: 200%;
         margin: 0;
         background-image: url(static/street-sprite.svg);
         animation: spring-left ${TIME} ${DELAY} forwards;
