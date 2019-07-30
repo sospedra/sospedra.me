@@ -5,6 +5,7 @@ import NoSSR from 'react-no-ssr'
 
 import { pageview } from '../service/analytics'
 import { TransitionProvider } from '../service/transition'
+import { CameraProvider } from '../service/camera'
 import Loading from '../components/Loading'
 
 export default class SospedrameApp extends App {
@@ -17,28 +18,23 @@ export default class SospedrameApp extends App {
 
     return { pageProps }
   }
-
-  anchorAtBottom = React.createRef(null)
   
   componentDidMount () {
     Router.events.on('routeChangeComplete', pageview)
-    setTimeout(() => {
-      this.anchorAtBottom.current.scrollIntoView({ behavior: "auto" })
-    }, 1000)
   }
 
   render () {
     const { Component, pageProps, router } = this.props
 
     return (
-      <Container onLoad={() => console.log('load')}>
-        <div className="canvas">
+      <Container>
+        <CameraProvider>
           <TransitionProvider>
             <NoSSR onSSR={<Loading />}>
-              <Component {...pageProps} key={router.route} ref={this.anchorAtBottom} />
+              <Component {...pageProps} key={router.route} />
             </NoSSR>
           </TransitionProvider>
-        </div>
+        </CameraProvider>
 
         <style jsx global>{`
           @font-face {
@@ -49,15 +45,6 @@ export default class SospedrameApp extends App {
               url("/static/fonts/lazer84.svg#lazer84") format("svg"); /* iOS 4.1- */
             font-style: normal;
             font-weight: normal;
-          }
-
-          .canvas {
-            background: linear-gradient(to bottom, #430840 0%,#690b63 50%);
-            font-family: "Open Sans", "lucida grande", "Segoe UI", arial, verdana, "lucida sans unicode", tahoma, sans-serif;
-            margin: 0;
-            padding: 0;
-            width: 200vw;
-            height: 200vh;
           }
         `}</style>
       </Container>

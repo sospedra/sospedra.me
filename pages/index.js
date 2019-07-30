@@ -1,24 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Head from 'next/head'
 
 import Title from '../components/Title'
 import Claim from '../components/Claim'
 import Sprite from '../components/Sprite'
 import { useTransition, Link } from '../service/transition'
+import { useCamera } from '../service/camera'
 
-const Home = (props, ref) => {
+const Home = (props) => {
   const { unmount, hasRequestedUnmount } = useTransition()
+  const { setCamera, registerOnFinish } = useCamera();
 
-  if (hasRequestedUnmount) {
-    window.onanimationend = () => {
-      unmount()
-      window.onanimationend = null
+  useEffect(() => {
+    setCamera({ row: 3, column: 0 })
+  }, [setCamera])
+
+  useEffect(() => {
+    if (hasRequestedUnmount) {
+      registerOnFinish(unmount)
+      setCamera({ row: 2, column: 1 })
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  }, [hasRequestedUnmount])
 
   return (
-    <div className='root' ref={ref}>
+    <div className='root'>
       <Head>
         <title>Rub&eacute;n Sospedra</title>
       </Head>
@@ -32,24 +37,24 @@ const Home = (props, ref) => {
       <Sprite />
 
       <style jsx>{`
-      .root {
-        display: flex;
-        height: 100vh;
-        justify-content: center;
-        width: 100vw;
-        top: 100vh;
-        position: absolute;
-      }
+        .root {
+          display: flex;
+          height: 100vh;
+          justify-content: center;
+          width: 100vw;
+          top: 300vh;
+          position: absolute;
+        }
 
-      main {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-      }
+        main {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
     `}</style>
     </div>
   )
 }
 
-export default React.forwardRef(Home)
+export default Home

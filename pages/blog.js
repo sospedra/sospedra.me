@@ -1,14 +1,31 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Head from 'next/head'
 
-const Blog = (props, ref) => (
-  <div ref={ref}>
-    <Head>
-      <title>Blog &mdash; Rub&eacute;n Sospedra</title>
-    </Head>
+import { Link } from '../service/transition'
+import { useCamera } from '../service/camera'
 
-    <span>A sexy blog</span>
-  </div>
-)
+const Blog = (props) => {
+  const { setCamera, registerOnFinish } = useCamera();
 
-export default React.forwardRef(Blog)
+  useEffect(() => {
+    setCamera({ row: 2, column: 1 })
+  }, [setCamera])
+
+  return (
+    <div>
+      <Head>
+        <title>Blog &mdash; Rub&eacute;n Sospedra</title>
+      </Head>
+
+      <h4>A sexy blog</h4>
+      <Link href='/' onClick={(e, t) => t.unmount()}>index</Link>
+      <style jsx>{`
+      h4 {
+        color: white;
+      }
+    `}</style>
+    </div>
+  )
+}
+
+export default Blog

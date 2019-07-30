@@ -8,6 +8,7 @@ export const Link = (props) => {
 
   useEffect(() => {
     if (transition.hasRequestedUnmount && transition.willUnmount) {
+      console.log('gooo')
       Router.push(props.href)
       transition.reset()
     }
