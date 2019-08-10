@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { animated, useSpring, config } from 'react-spring'
+import React, { useRef, useContext } from 'react'
+import { animated, useSpring } from 'react-spring'
 
 import * as events from './events'
 import * as matrix from './matrix'
@@ -9,14 +9,13 @@ const CameraCTX = React.createContext({})
 export const useCamera = () => useContext(CameraCTX)
 
 export const CameraProvider = (props) => {
+  const cameraRef = useRef()
   const [{ top, left }, set] = useSpring(() => ({
-    top: 0,
-    left: 0,
-    // config: config.molasses,
+    from: { top: 0, left: 0 },
+    config: { mass: 10, tension: 180, friction: 180 },
     onRest: events.onFinish,
+    ref: cameraRef,
   }))
-  const scrollTop = top.interpolate((o) => o)
-  const scrollLeft = left.interpolate((o) => o)
   const setCamera = ({ row, column }) => {
     events.start()
     set(matrix.getPosition(row, column))
@@ -25,13 +24,12 @@ export const CameraProvider = (props) => {
   return (
     <CameraCTX.Provider value={{
       setCamera,
-      registerOnFinish: events.registerOnFinish
+      registerOnFinish: events.registerOnFinish,
+      cameraRef,
     }}>
-      <matrix.Canvas />
+      <matrix.Canvas top={top} left={left} />
 
       <animated.div
-        scrollTop={scrollTop}
-        scrollLeft={scrollLeft}
         style={{
           position: "absolute",
           overflow: "hidden",

@@ -1,4 +1,6 @@
-const CANVAS_SIZE = { ROWS: 4, COLUMNS: 2 }
+import { animated, interpolate } from 'react-spring'
+
+const CANVAS_SIZE = { ROWS: 6, COLUMNS: 6 }
 const Vault = {
   anchors: {},
 }
@@ -29,9 +31,27 @@ export const getPosition = (row, column) => {
   }
 }
 
-export const Canvas = () => (
+const canvasStyles = {
+  margin: 0,
+  padding: 0,
+  position: "absolute",
+  top: 0,
+  left: 0,
+  display: "inline-flex",
+  "flex-direction": "column",
+  background: "linear-gradient(to bottom, #430840 0%, #690b63 50%)",
+  "font-family": `"Open Sans", "lucida grande", "Segoe UI", arial, verdana, "lucida sans unicode", tahoma, sans-serif`,
+}
+
+export const Canvas = (props) => (
   <React.Fragment>
-    <div className="canvas">
+    <animated.div style={{
+      ...canvasStyles,
+      transform: interpolate(
+        [props.left, props.top],
+        (left, top) => `translate(-${left}px, -${top}px)`
+      )
+    }}>
       {Array(CANVAS_SIZE.ROWS).fill().map((_, row) => (
         <div className="row" key={row}>
           {Array(CANVAS_SIZE.COLUMNS).fill().map((_, column) => (
@@ -43,21 +63,9 @@ export const Canvas = () => (
           ))}
         </div>
       ))}
-    </div>
+    </animated.div>
 
     <style jsx>{`
-      .canvas {
-        background: linear-gradient(to bottom, #430840 0%,#690b63 50%);
-        font-family: "Open Sans", "lucida grande", "Segoe UI", arial, verdana, "lucida sans unicode", tahoma, sans-serif;
-        margin: 0;
-        padding: 0;
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: inline-flex;
-        flex-direction: column;
-      }
-
       .row {
         display: flex;
       }

@@ -8,7 +8,7 @@ const Blog = (props) => {
   const { setCamera, registerOnFinish } = useCamera();
 
   useEffect(() => {
-    setCamera({ row: 2, column: 1 })
+    setCamera({ row: 0, column: 0 })
   }, [setCamera])
 
   return (
