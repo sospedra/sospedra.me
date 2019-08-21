@@ -9,7 +9,7 @@ type OffsetT = {
 }
 
 const styles = {
-  background: "linear-gradient(333deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%)",
+  background: "linear-gradient(to bottom, #2c052a 0%, #800d79 50%)",
   width: "400vw",
   height: "400vh",
   position: "absolute" as "absolute",
@@ -19,10 +19,10 @@ const styles = {
 
 const getOffsetFromHref = (href: string): OffsetT => {
   switch (href) {
-    case "/about": return { left: "-150vw", top: "-150vh" }
-    case "/initial-props": return { left: "-300vw", top: "-300vh" }
+    case "/about": return { left: "-150vw", top: "-300vh" }
+    case "/initial-props": return { left: "0vw", top: "0vh" }
     case "/":
-    default: return { left: "0vw", top: "0vh" }
+    default: return { left: "0vw", top: "-300vh" }
   }
 }
 

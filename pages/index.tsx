@@ -6,7 +6,7 @@ import Meta from '../components/Meta'
 
 const IndexPage: NextPage = () => {
   const animation = useSpring({
-    from: { transform: "translate(100vw)" },
+    from: { transform: "translate(-100vw)" },
     to: { transform: "translate(0)" }
   })
 
