@@ -1,8 +1,8 @@
 import * as React from 'react'
 import { NextPage } from 'next'
 import Link from 'next/link'
+import Head from 'next/head'
 import { animated, useSpring } from 'react-spring'
-import Meta from '../components/Meta'
 
 const IndexPage: NextPage = () => {
   const animation = useSpring({
@@ -12,7 +12,10 @@ const IndexPage: NextPage = () => {
 
   return (
     <animated.div style={{...animation}}>
-      <Meta title="Home | Next.js + TypeScript Example" />
+      <Head>
+        <title>Rub&eacute;n Sospedra ~ sospedra.me</title>
+      </Head>
+
       <h1>Hello Next.js 👋</h1>
       <p>
         <Link href="/about">
