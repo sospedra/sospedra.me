@@ -26,14 +26,6 @@ const IndexPage: NextPage = () => {
           ｆｕｌｌｓｔａｃｋ ｅｎｇｉｎｅｅｒ
         </h2>
 
-        <ol>
-          <li>
-            <Link href="/about">
-              <a>About</a>
-            </Link>
-          </li>
-        </ol>
-
         <SpriteCity />
       </div>
 
@@ -65,15 +57,6 @@ const IndexPage: NextPage = () => {
           color: #ea1195;
           font-size: calc(1em + 1vw);
           text-shadow: -1px 1px 0 #ffb9b9;
-        }
-
-        ol {
-          list-style: none;
-          padding: 0;
-        }
-
-        ol a {
-          text-decoration: none;
         }
       `}</style>
     </>
