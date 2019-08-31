@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { NextPage } from 'next'
-import Link from 'next/link'
 import Head from 'next/head'
 import SpriteCity from '../components/sprite/city'
 

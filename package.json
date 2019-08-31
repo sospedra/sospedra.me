@@ -1,11 +1,13 @@
 {
-  "name": "with-typescript",
-  "version": "1.0.0",
+  "name": "sospedra.me",
+  "version": "3.0.0",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "type-check": "tsc"
+    "test:static": "tsc",
+    "now-build": "next build && next export -o dist",
+    "test": "npm run test:static"
   },
   "dependencies": {
     "next": "latest",
