@@ -9,14 +9,28 @@ class MyApp extends App {
     const { Component, pageProps } = this.props
 
     return (
-      <TransitionProvider>
-        <Container>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-          <Background />
-        </Container>
-      </TransitionProvider>
+      <>
+        <TransitionProvider>
+          <Container>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+            <Background />
+          </Container>
+        </TransitionProvider>
+
+        <style jsx global>{`
+          @font-face {
+            font-family: "lazer84";
+            src:
+              url("/static/fonts/lazer84.woff") format("woff"), /* chrome, firefox */
+              url("/static/fonts/lazer84.ttf") format("truetype"), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+              url("/static/fonts/lazer84.svg#lazer84") format("svg"); /* iOS 4.1- */
+            font-style: normal;
+            font-weight: normal;
+          }
+        `}</style>
+      </>
     )
   }
 }
