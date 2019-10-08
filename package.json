@@ -10,10 +10,16 @@
     "test": "npm run test:static"
   },
   "dependencies": {
+    "@mdx-js/loader": "^1.5.1",
+    "@next/mdx": "^9.1.1",
+    "@zeit/next-css": "^1.0.1",
     "next": "latest",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "react-spring": "^9.0.0-beta.31"
+    "react-spring": "^9.0.0-beta.31",
+    "rehype-highlight": "^3.0.0",
+    "remark-emoji": "^2.0.2",
+    "remark-images": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^11.13.9",

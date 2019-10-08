@@ -1,5 +1,6 @@
 import React from 'react'
 import App, { Container } from 'next/app'
+import 'highlight.js/styles/github.css'
 import { Provider as TransitionProvider } from '../service/transition'
 import Layout from '../components/Layout'
 import Background from '../components/Background'
