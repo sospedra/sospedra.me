@@ -2,6 +2,7 @@ import * as React from 'react'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import SpriteCity from '../components/sprite/city'
+import Link from '../components/Link';
 
 const IndexPage: NextPage = () => {
   return (
@@ -19,6 +20,8 @@ const IndexPage: NextPage = () => {
             Rub&eacute;n Sospedra
           </a>
         </h1>
+
+        <Link href='/blog'>Go to blog</Link>
 
         <h2>
           ｊａｖａｓｃｒｉｐｔ&nbsp;&nbsp;&nbsp;&nbsp;ｈａｃｋｅｒ<br />
