@@ -1,5 +1,5 @@
-import React from 'react'
-import { config, animated, useSpring } from 'react-spring'
+import React from "react"
+import { config, animated, useSpring } from "react-spring"
 
 const styles = {
   backgroundSize: "contain",
@@ -8,7 +8,7 @@ const styles = {
   left: 0,
   position: "absolute" as "absolute",
   width: "400vw",
-  backgroundImage: "url(static/street-sprite.svg)",
+  backgroundImage: "url(/street-sprite.svg)",
   zIndex: -1,
   margin: 0,
 }
@@ -20,9 +20,7 @@ const SpriteCity: React.FunctionComponent<{}> = () => {
     config: config.molasses,
   })
 
-  return (
-    <animated.figure style={{ ...styles, ...animation }} />
-  )
+  return <animated.figure style={{ ...styles, ...animation }} />
 }
 
 export default SpriteCity
