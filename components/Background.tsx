@@ -1,11 +1,11 @@
-import * as React from 'react'
-import { useSpring, animated, config } from 'react-spring'
-import { useRouter } from 'next/router'
-import { useTransition } from '../service/transition'
+import * as React from "react"
+import { useSpring, animated, config } from "react-spring"
+import { useRouter } from "next/router"
+import { useTransition } from "../service/transition"
 
 type OffsetT = {
-  left: string,
-  top: string,
+  left: string
+  top: string
 }
 
 const styles = {
@@ -19,15 +19,17 @@ const styles = {
 
 const getOffsetFromHref = (href: string): OffsetT => {
   switch (href) {
-    case "/about": return { left: "0vw", top: "0vh" }
+    case "/about":
+      return { left: "0vw", top: "0vh" }
     case "/":
-    default: return { left: "0vw", top: "-300vh" }
+    default:
+      return { left: "0vw", top: "-300vh" }
   }
 }
 
 const Animation: React.FunctionComponent<{
-  setAnimation: Function,
-  animation: Object,
+  setAnimation: Function
+  animation: Object
 }> = (props) => {
   const { pathname } = useRouter()
   const { href } = useTransition()
@@ -36,9 +38,7 @@ const Animation: React.FunctionComponent<{
     props.setAnimation(getOffsetFromHref(href || pathname))
   }, [pathname, href])
 
-  return (
-    <animated.div style={{ ...styles, ...props.animation }} />
-  )
+  return <animated.div style={{ ...styles, ...props.animation }} />
 }
 
 const Background: React.FunctionComponent<{}> = () => {
@@ -47,7 +47,9 @@ const Background: React.FunctionComponent<{}> = () => {
   const [animation, setAnimation] = useSpring(() => ({
     to: getOffsetFromHref(pathname),
     config: config.molasses,
-    onStart: () => setTimeout(unmount, 360),
+    onStart: () => {
+      setTimeout(unmount, 360)
+    },
   }))
 
   return (

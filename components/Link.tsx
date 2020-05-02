@@ -1,15 +1,15 @@
-import React from 'react'
-import { useTransition } from '../service/transition'
+import React from "react"
+import { useTransition } from "../service/transition"
 
 type Props = {
-  children: React.ReactNode,
-  onClick?: (event?: React.SyntheticEvent) => void,
-  href: string,
+  children: React.ReactNode
+  onClick?: (event?: React.SyntheticEvent) => any
+  href: string
 }
 
 const Link: React.FunctionComponent<Props> = ({
   children,
-  onClick,
+  onClick = () => {},
   href,
 }) => {
   const transition = useTransition()
@@ -19,8 +19,10 @@ const Link: React.FunctionComponent<Props> = ({
       href={href}
       onClick={(e) => {
         e.preventDefault()
-        transition.navigate(href)
-        onClick && onClick(e)
+        onClick(e)
+        setTimeout(() => {
+          transition.navigate(href)
+        }, 360)
       }}
     >
       {children}

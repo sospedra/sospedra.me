@@ -1,9 +1,9 @@
-import * as React from 'react'
-import Link from 'next/link'
-import Head from 'next/head'
+import * as React from "react"
+import Head from "next/head"
+import Link from "../components/Link"
 
 const AboutPage: React.FunctionComponent = () => (
-  <React.Fragment>
+  <>
     <Head>
       <title>About ~ sospedra.me</title>
     </Head>
@@ -15,7 +15,7 @@ const AboutPage: React.FunctionComponent = () => (
         <a>Go home</a>
       </Link>
     </p>
-  </React.Fragment>
+  </>
 )
 
 export default AboutPage

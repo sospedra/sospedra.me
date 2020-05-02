@@ -7,7 +7,7 @@ const styles = {
   height: "50vh",
   left: 0,
   position: "absolute" as "absolute",
-  width: "400vw",
+  width: "200vw",
   backgroundImage: "url(/street-sprite.svg)",
   zIndex: -1,
   margin: 0,
@@ -16,8 +16,8 @@ const styles = {
 const SpriteCity: React.FunctionComponent<{}> = () => {
   const animation = useSpring({
     from: { transform: "translate(0vw)" },
-    to: { transform: "translate(-300vw)" },
-    config: config.molasses,
+    to: { transform: "translate(-100vw)" },
+    config: config.slow,
   })
 
   return <animated.figure style={{ ...styles, ...animation }} />
