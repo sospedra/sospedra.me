@@ -1,21 +1,42 @@
 import React from 'react'
 import Head from 'next/head'
 import Link from '../components/Link'
+import { getAllPosts, Post } from '../service/api'
 
-const Papers: React.FC<{}> = () => (
-  <>
-    <Head>
-      <title>About ~ sospedra.me</title>
-    </Head>
+const Papers: React.FC<{
+  allPosts: Post[]
+}> = (props) => {
+  return (
+    <>
+      <Head>
+        <title>Papers ~ sospedra.me</title>
+      </Head>
 
-    <h1>About</h1>
-    <p>This is the about page</p>
-    <p>
-      <Link href='/'>
-        <a>Go home</a>
-      </Link>
-    </p>
-  </>
-)
+      <h1>Papers</h1>
+      <ul>
+        {props.allPosts.map((post) => (
+          <li key={post.slug}>
+            <Link href={`/papers/${post.slug}`}>{post.title}</Link>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
+}
+
+export async function getStaticProps() {
+  const allPosts = getAllPosts([
+    'title',
+    'date',
+    'slug',
+    'author',
+    'coverImage',
+    'excerpt',
+  ])
+
+  return {
+    props: { allPosts },
+  }
+}
 
 export default Papers

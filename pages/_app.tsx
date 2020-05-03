@@ -3,13 +3,14 @@ import App from 'next/app'
 import { Provider as TransitionProvider } from '../service/transition'
 import Layout from '../components/Layout'
 import Background from '../components/Background'
+import '../service/style/global.css'
 
 class MyApp extends App {
   render() {
     const { Component, pageProps } = this.props
 
     return (
-      <>
+      <div id='theme' className='dark'>
         <TransitionProvider>
           <Layout>
             <Component {...pageProps} />
@@ -28,7 +29,7 @@ class MyApp extends App {
             font-weight: normal;
           }
         `}</style>
-      </>
+      </div>
     )
   }
 }

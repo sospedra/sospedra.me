@@ -5,11 +5,12 @@ import Document, {
   NextScript,
   DocumentContext,
 } from 'next/document'
-
 import { GA_TRACKING_ID } from '../service/analytics'
+import { initStyle } from '../service/style'
 
 export default class SospedrameDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
+    initStyle()
     const initialProps = await Document.getInitialProps(ctx)
     return { ...initialProps }
   }
