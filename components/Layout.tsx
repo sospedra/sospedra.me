@@ -2,9 +2,7 @@ import * as React from 'react'
 
 const Layout: React.FunctionComponent<{}> = ({ children }) => (
   <>
-    <div>
-      {children}
-    </div>
+    <div>{children}</div>
     <style jsx>{`
       div {
         position: fixed;

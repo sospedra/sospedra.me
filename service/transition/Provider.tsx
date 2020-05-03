@@ -4,7 +4,7 @@ import { TransitionCTX } from './context'
 import { useStateReducer } from './reducer'
 
 export const Provider: React.FunctionComponent<{
-  children: React.ReactNode,
+  children: React.ReactNode
 }> = ({ children }) => {
   const transition = useStateReducer()
 

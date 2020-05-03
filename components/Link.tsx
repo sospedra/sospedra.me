@@ -1,5 +1,5 @@
-import React from "react"
-import { useTransition } from "../service/transition"
+import React from 'react'
+import { useTransition } from '../service/transition'
 
 type Props = {
   children: React.ReactNode

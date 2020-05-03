@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react"
-import { NextPage } from "next"
-import Head from "next/head"
-import { animated, config, useSpring } from "react-spring"
-import Link from "../components/Link"
-import SpriteCity from "../components/sprite/city"
+import React, { useState, useEffect } from 'react'
+import { NextPage } from 'next'
+import Head from 'next/head'
+import { animated, config, useSpring } from 'react-spring'
+import Link from '../components/Link'
+import SpriteCity from '../components/sprite/city'
 
 const IndexPage: NextPage = () => {
   const [offset, setOffset] = useState(100)
@@ -18,13 +18,13 @@ const IndexPage: NextPage = () => {
 
   return (
     <animated.div style={{ transform }}>
-      <div className="root">
+      <div className='root'>
         <Head>
           <title>Rub&eacute;n Sospedra ~ sospedra.me</title>
         </Head>
 
         <h1>
-          <a href="https://twitter.com/sospedra_r" target="_blank">
+          <a href='https://twitter.com/sospedra_r' target='_blank'>
             Rub&eacute;n Sospedra
           </a>
         </h1>
@@ -37,7 +37,7 @@ const IndexPage: NextPage = () => {
 
         <ul>
           <li>
-            <Link href="/about" onClick={() => setOffset(100)}>
+            <Link href='/about' onClick={() => setOffset(100)}>
               Papers
             </Link>
           </li>

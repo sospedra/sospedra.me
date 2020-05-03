@@ -1,7 +1,7 @@
-import * as React from "react"
-import { useSpring, animated, config } from "react-spring"
-import { useRouter } from "next/router"
-import { useTransition } from "../service/transition"
+import * as React from 'react'
+import { useSpring, animated, config } from 'react-spring'
+import { useRouter } from 'next/router'
+import { useTransition } from '../service/transition'
 
 type OffsetT = {
   left: string
@@ -9,21 +9,21 @@ type OffsetT = {
 }
 
 const styles = {
-  background: "linear-gradient(to bottom, #2c052a 0%, #800d79 60%)",
-  width: "400vw",
-  height: "400vh",
-  position: "absolute" as "absolute",
+  background: 'linear-gradient(to bottom, #2c052a 0%, #800d79 60%)',
+  width: '400vw',
+  height: '400vh',
+  position: 'absolute' as 'absolute',
   top: 0,
   left: 0,
 }
 
 const getOffsetFromHref = (href: string): OffsetT => {
   switch (href) {
-    case "/about":
-      return { left: "0vw", top: "0vh" }
-    case "/":
+    case '/about':
+      return { left: '0vw', top: '0vh' }
+    case '/':
     default:
-      return { left: "0vw", top: "-300vh" }
+      return { left: '0vw', top: '-300vh' }
   }
 }
 
@@ -54,7 +54,7 @@ const Background: React.FunctionComponent<{}> = () => {
 
   return (
     <React.Fragment>
-      <div className="wrapper">
+      <div className='wrapper'>
         <Animation setAnimation={setAnimation} animation={animation} />
       </div>
       <style jsx>{`
