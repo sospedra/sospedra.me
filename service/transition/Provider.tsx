@@ -15,7 +15,7 @@ export const Provider: React.FunctionComponent<{
 
   useEffect(() => {
     if (transition.hasRequestedUnmount && transition.willUnmount) {
-      Router.push(transition.href)
+      Router.push(transition.url, transition.as)
     }
   }, [transition.hasRequestedUnmount, transition.willUnmount])
 

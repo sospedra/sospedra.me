@@ -1,31 +1,25 @@
 import React from 'react'
 import { useTransition } from '../service/transition'
 
-type Props = {
-  children: React.ReactNode
+const Link: React.FC<{
   onClick?: (event?: React.SyntheticEvent) => any
-  href: string
-}
-
-const Link: React.FunctionComponent<Props> = ({
-  children,
-  onClick = () => {},
-  href,
-}) => {
+  url: string
+  as?: string
+}> = (props) => {
   const transition = useTransition()
 
   return (
     <a
-      href={href}
+      href={props.as || props.url}
       onClick={(e) => {
         e.preventDefault()
-        onClick(e)
+        props.onClick && props.onClick(e)
         setTimeout(() => {
-          transition.navigate(href)
+          transition.navigate(props.url, props.as)
         }, 360)
       }}
     >
-      {children}
+      {props.children}
     </a>
   )
 }

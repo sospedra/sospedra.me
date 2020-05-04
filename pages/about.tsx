@@ -11,7 +11,7 @@ const AboutPage: React.FunctionComponent = () => (
     <h1>About</h1>
     <p>This is the about page</p>
     <p>
-      <Link href='/'>
+      <Link url='/'>
         <a>Go home</a>
       </Link>
     </p>

@@ -28,11 +28,11 @@ const Animation: React.FunctionComponent<{
   animation: Object
 }> = (props) => {
   const { pathname } = useRouter()
-  const { href } = useTransition()
+  const { url } = useTransition()
 
   useMemo(() => {
-    props.setAnimation(getOffsetFromHref(href || pathname))
-  }, [pathname, href])
+    props.setAnimation(getOffsetFromHref(url || pathname))
+  }, [pathname, url])
 
   return (
     <animated.div

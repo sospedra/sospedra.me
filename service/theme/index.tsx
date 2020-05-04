@@ -1,4 +1,4 @@
-import React, { useState, createContext } from 'react'
+import React, { useState, createContext, useContext } from 'react'
 
 export type Theme = 'light' | 'dark'
 
@@ -14,6 +14,10 @@ const fromStorage = () => {
   } catch (ex) {}
 
   return theme as Theme
+}
+
+export const useTheme = () => {
+  return useContext(context)
 }
 
 export const ThemeProvider: React.FC<{}> = (props) => {

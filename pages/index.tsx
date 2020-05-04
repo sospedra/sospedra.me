@@ -37,7 +37,7 @@ const IndexPage: NextPage = () => {
 
         <ul>
           <li>
-            <Link href='/papers' onClick={() => setOffset(100)}>
+            <Link url='/papers' onClick={() => setOffset(100)}>
               Papers
             </Link>
           </li>
