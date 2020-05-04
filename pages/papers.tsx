@@ -16,7 +16,7 @@ const Papers: React.FC<{
       <ul>
         {props.allPosts.map((post) => (
           <li key={post.slug}>
-            <Link as={`/papers/${post.slug}`} url='/papers/[slug]'>
+            <Link as={`/papers/${post.slug}`} url='/papers/[slug]' instant>
               {post.title}
             </Link>
           </li>

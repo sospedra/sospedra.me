@@ -1,4 +1,4 @@
-import { useReducer } from 'react'
+import { useReducer, useEffect } from 'react'
 import Router from 'next/router'
 import { TransitionT } from './context'
 
@@ -46,8 +46,12 @@ export const useStateReducer = (): TransitionT => {
   const [state, dispatch] = useReducer(reducer, DEFAULT_STATE)
   const unmount = () => dispatch({ type: ActionTypes.UNMOUNT })
   const reset = () => dispatch({ type: ActionTypes.RESET })
+  const usePrefetch = (url: string) => {
+    useEffect(() => {
+      Router.prefetch(url)
+    }, [])
+  }
   const navigate = (url: string, as?: string) => {
-    Router.prefetch(url)
     dispatch({ type: ActionTypes.NAVIGATE, payload: { url, as } })
   }
 
@@ -56,5 +60,6 @@ export const useStateReducer = (): TransitionT => {
     unmount,
     reset,
     navigate,
+    usePrefetch,
   }
 }
