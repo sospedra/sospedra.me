@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTransition } from '../service/transition'
+import { useTransition } from 'service/transition'
 
 const Link: React.FC<{
   onClick?: (event?: React.SyntheticEvent) => any

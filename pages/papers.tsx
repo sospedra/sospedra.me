@@ -1,7 +1,7 @@
 import React from 'react'
 import Head from 'next/head'
-import Link from '../components/Link'
-import { getAllPosts, Post } from '../service/api'
+import Link from 'components/Link'
+import { getAllPosts, Post } from 'service/api'
 
 const Papers: React.FC<{
   allPosts: Post[]

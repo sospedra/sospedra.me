@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { NextPage } from 'next'
 import Head from 'next/head'
 import { animated, config, useSpring } from 'react-spring'
-import Link from '../components/Link'
-import SpriteCity from '../components/sprite/city'
+import Link from 'components/Link'
+import SpriteCity from 'components/sprite/city'
 
 const IndexPage: NextPage = () => {
   const [offset, setOffset] = useState(100)

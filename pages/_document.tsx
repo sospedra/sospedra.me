@@ -5,7 +5,7 @@ import Document, {
   NextScript,
   DocumentContext,
 } from 'next/document'
-import { GA_TRACKING_ID } from '../service/analytics'
+import { GA_TRACKING_ID } from 'service/analytics'
 
 export default class SospedrameDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {

@@ -1,12 +1,12 @@
 import React from 'react'
+import { GetStaticProps } from 'next'
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
 import Head from 'next/head'
-import { getPostBySlug, getAllPosts, Post } from '../../service/api'
-import markdownToHtml from '../../service/markdown'
+import { getPostBySlug, getAllPosts, Post } from 'service/api'
+import markdownToHtml from 'service/markdown'
+import { Time } from 'components/Time'
 import markdownStyles from './markdown-styles.module.css'
-import { Time } from '../../components/Time'
-import { GetStaticProps } from 'next'
 
 const Paper: React.FC<{
   post: Post

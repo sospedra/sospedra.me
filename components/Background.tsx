@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { pathToRegexp } from 'path-to-regexp'
 import { useSpring, animated, config } from 'react-spring'
 import { useRouter } from 'next/router'
-import { useTransition } from '../service/transition'
+import { useTransition } from 'service/transition'
 
 type OffsetT = {
   left: string

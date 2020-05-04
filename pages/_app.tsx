@@ -1,10 +1,10 @@
 import React from 'react'
 import App from 'next/app'
-import '../service/style/global.css'
-import { Provider as TransitionProvider } from '../service/transition'
-import { ThemeProvider } from '../service/theme'
-import Layout from '../components/Layout'
-import Background from '../components/Background'
+import 'service/style/global.css'
+import { Provider as TransitionProvider } from 'service/transition'
+import { ThemeProvider } from 'service/theme'
+import Layout from 'components/Layout'
+import Background from 'components/Background'
 
 class MyApp extends App {
   render() {

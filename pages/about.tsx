@@ -1,6 +1,6 @@
 import * as React from 'react'
 import Head from 'next/head'
-import Link from '../components/Link'
+import Link from 'components/Link'
 
 const AboutPage: React.FunctionComponent = () => (
   <>
