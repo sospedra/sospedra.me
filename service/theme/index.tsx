@@ -41,6 +41,7 @@ export const ThemeProvider: React.FC<{}> = (props) => {
           --yellow: #f1f9ce;
           --magenta: #800d79;
           --black: #0e141b;
+          --teal: #d7fffc;
         }
 
         .theme.light {
@@ -51,9 +52,10 @@ export const ThemeProvider: React.FC<{}> = (props) => {
           --textTitle: #222;
           --textLink: var(--pink);
           --hr: hsla(0, 0%, 0%, 0.2);
+          --code-text: var(--black);
           --inlineCode-bg: rgba(255, 229, 100, 0.2);
           --inlineCode-text: #1a1a1a;
-          --form-shadow: 0 2px 15px 0 rgba(210, 214, 220, 0.5);
+          --shadow: 0 2px 15px 0 rgba(210, 214, 220, 0.5);
         }
 
         .theme.dark {
@@ -65,10 +67,11 @@ export const ThemeProvider: React.FC<{}> = (props) => {
           --textNormal: rgba(255, 255, 255, 0.88);
           --textTitle: #ffffff;
           --textLink: var(--cyan);
-          --hr: hsla(0, 0%, 100%, 0.2);
+          --hr: hsla(0, 0%, 100%, 0.3);
+          --code-text: #e6e6e6;
           --inlineCode-bg: rgba(115, 124, 153, 0.2);
-          --inlineCode-text: #e6e6e6;
-          --form-shadow: 0 2px 15px 0 rgba(26, 26, 27, 0.637);
+          --inlineCode-text: var(--pink);
+          --shadow: 0 2px 15px 0 rgba(26, 26, 27, 0.637);
         }
       `}</style>
     </context.Provider>

@@ -3,16 +3,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: [
-          'system-ui',
-          '-apple-system',
-          'BlinkMacSystemFont',
-          '"Helvetica Neue"',
-          'Arial',
-          'sans-serif',
-        ],
+        sans: ['wotfard', 'Arial', 'sans-serif'],
         serif: ['Georgia', '"Times New Roman"', 'serif'],
-        mono: ['Monaco', '"Liberation Mono"', '"Courier New"', 'monospace'],
+        mono: ['vcr', 'monospace'],
       },
       colors: {
         cyan: {

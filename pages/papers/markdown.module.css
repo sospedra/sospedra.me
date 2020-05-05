@@ -1,0 +1,172 @@
+.py-05 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
+.markdown {
+  @apply font-sans text-lg leading-7 break-words align-baseline;
+  color: var(--text);
+}
+
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown blockquote {
+  @apply mb-8;
+}
+
+.markdown > * + * {
+  @apply mt-0 mb-4;
+}
+
+.markdown li + li {
+  @apply mt-1;
+}
+
+.markdown li > p + p {
+  @apply mt-6;
+}
+
+.markdown abbr {
+  cursor: help;
+  text-underline-position: under;
+}
+
+.markdown strong {
+  @apply font-semibold;
+}
+
+.markdown strong a {
+  @apply font-bold;
+}
+
+.markdown h2,
+.markdown h3 {
+  @apply mb-4 font-semibold leading-10;
+}
+
+.markdown h2 {
+  @apply mt-12 text-3xl;
+}
+
+.markdown h3 {
+  @apply mt-8 text-2xl;
+}
+
+.markdown blockquote {
+  @apply pl-4 pr-4 text-base border-l-2 border-gray-200;
+}
+
+.markdown code,
+.markdown pre,
+.markdown kbd {
+  font-family: inconsolata, monospace;
+  background-color: #011627;
+}
+
+.markdown code,
+.markdown kbd {
+  color: var(--inlineCode-text);
+}
+
+.markdown code {
+  @apply inline px-1 font-mono rounded py-05;
+  font-family: inconsolata, monospace;
+}
+
+.markdown pre {
+  @apply p-4 border border-gray-800 rounded;
+  font-family: inconsolata, monospace;
+}
+
+.markdown pre code {
+  @apply block p-0 overflow-visible bg-transparent rounded-none;
+  color: var(--code-text);
+}
+
+.markdown ul {
+  @apply pl-8 text-base list-disc;
+  list-style-image: url('/icons/cursor.svg');
+}
+
+.markdown ul ul {
+  list-style: square;
+}
+
+.markdown ol {
+  @apply pl-8 text-base list-decimal;
+}
+
+.markdown kbd {
+  @apply inline-block px-1 font-mono text-xs font-normal align-middle border rounded py-05;
+  box-shadow: var(--shadow);
+}
+
+.markdown table {
+  @apply text-base border-gray-600;
+}
+
+.markdown th {
+  @apply px-3 py-1 border;
+}
+
+.markdown td {
+  @apply px-3 py-1 border;
+}
+
+.markdown .highlight pre {
+  @apply bg-gray-100 !important;
+}
+
+.markdown hr {
+  border-color: var(--hr);
+}
+
+.markdown a {
+  @apply relative z-10 font-semibold;
+  background-color: var(--textLink);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+}
+
+.markdown a:hover {
+  background: linear-gradient(
+    135deg,
+    var(--textLink),
+    white 50%,
+    var(--textLink)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: wipe 1s linear infinite;
+}
+
+.markdown a:after {
+  @apply absolute left-0 w-full;
+  content: '';
+  height: 2px;
+  bottom: -2px;
+  border-radius: 3px;
+}
+
+.markdown a:hover:after {
+  background: linear-gradient(
+    135deg,
+    var(--textLink),
+    white 50%,
+    var(--textLink)
+  );
+  background-size: 200% auto;
+  animation: wipe 1s linear infinite;
+}
+
+@keyframes wipe {
+  to {
+    background-position: 200%;
+  }
+}

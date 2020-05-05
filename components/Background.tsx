@@ -15,7 +15,9 @@ const ptr = (pattern: string, href: string) => {
 
 const getOffsetFromHref = (href: string): OffsetT => {
   switch (true) {
-    case ptr('/papers/:slug?', href):
+    case ptr('/papers', href):
+      return { left: '0vw', top: '-50vh' }
+    case ptr('/papers/:slug', href):
       return { left: '0vw', top: '0vh' }
     case ptr('/', href):
     default:
@@ -38,7 +40,7 @@ const Animation: React.FunctionComponent<{
     <animated.div
       style={{
         background:
-          'linear-gradient(to bottom, var(--bg-start) 0%, var(--bg-end) 60%)',
+          'linear-gradient(to bottom, var(--bg-start) 0%, var(--bg-end) 90%)',
         width: '400vw',
         height: '400vh',
         position: 'absolute',

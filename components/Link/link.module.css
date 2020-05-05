@@ -1,0 +1,47 @@
+.styled {
+  @apply relative z-10 font-serif font-extrabold bg-cyan-100;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+}
+
+.styled:hover {
+  background: linear-gradient(
+    135deg,
+    var(--teal),
+    var(--cyan) 50%,
+    var(--teal)
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: wipe 1s linear infinite;
+}
+
+.styled:after {
+  @apply absolute left-0 w-full;
+  content: '';
+  height: 2px;
+  bottom: -2px;
+  border-radius: 3px;
+}
+
+.styled:hover:after {
+  background: linear-gradient(
+    135deg,
+    var(--teal),
+    var(--cyan) 50%,
+    var(--teal)
+  );
+  background-size: 200% auto;
+  animation: wipe 1s linear infinite;
+}
+
+@keyframes wipe {
+  to {
+    background-position: 200%;
+  }
+}

@@ -8,7 +8,7 @@ const styles = {
   left: 0,
   position: 'absolute' as 'absolute',
   width: '200vw',
-  backgroundImage: 'url(/street-sprite.svg)',
+  backgroundImage: 'url(/sprites/street.svg)',
   zIndex: -1,
   margin: 0,
 }

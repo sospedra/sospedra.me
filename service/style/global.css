@@ -8,7 +8,34 @@
   font-family: 'lazer84';
   font-style: normal;
   font-weight: normal;
+  font-display: swap;
   src: url('/fonts/lazer84.woff') format('woff'),
     url('/fonts/lazer84.ttf') format('truetype'),
     url('/fonts/lazer84.svg#lazer84') format('svg');
+}
+
+@font-face {
+  font-family: vcr;
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src: url('/fonts/vcr.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'wotfard';
+  font-display: swap;
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/wotfard.woff2') format('woff2'),
+    url('/fonts/wotfard.eot') format('embedded-opentype'),
+    url('/fonts/wotfard.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: inconsolata;
+  font-display: swap;
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/inconsolata.ttf') format('truetype');
 }

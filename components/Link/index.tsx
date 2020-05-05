@@ -1,5 +1,6 @@
 import React from 'react'
 import { useTransition } from 'service/transition'
+import css from './link.module.css'
 
 const Link: React.FC<{
   onClick?: (event?: React.SyntheticEvent) => any
@@ -28,6 +29,12 @@ const Link: React.FC<{
       {props.children}
     </a>
   )
+}
+
+export const LinkStyle: React.FC<{
+  className: string
+}> = (props) => {
+  return <a className={`${css.styled} ${props.className}`}>{props.children}</a>
 }
 
 export default Link

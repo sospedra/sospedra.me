@@ -5,41 +5,43 @@ import ErrorPage from 'next/error'
 import Head from 'next/head'
 import { getPostBySlug, getAllPosts, Post } from 'service/api'
 import markdownToHtml from 'service/markdown'
-import { Time } from 'components/Time'
-import markdownStyles from './markdown-styles.module.css'
+import Time from 'components/Time'
+import Icon from 'components/Icon'
+import markdownCSS from './markdown.module.css'
 
 const Paper: React.FC<{
   post: Post
 }> = ({ post }) => {
   const router = useRouter()
+
   if (!router.isFallback && !post?.slug) {
     return <ErrorPage statusCode={404} />
   }
+
+  if (router.isFallback) {
+    return <p>Loading…</p>
+  }
+
   return (
-    <>
-      {router.isFallback ? (
-        <h1>Loading…</h1>
-      ) : (
-        <>
-          <article>
-            <Head>
-              <title>{post.title} ~ Rubén Sospedra</title>
-              <meta property='og:image' content={post.ogImage.url} />
-            </Head>
-            <h1>{post.title}</h1>
+    <div className='w-full max-w-2xl p-4 mx-auto text-gray-200'>
+      <Head>
+        <title>{post.title} ~ Rubén Sospedra</title>
+        <meta property='og:image' content={post.ogImage.url} />
+      </Head>
+      <article className='py-8'>
+        <h1 className='font-mono text-4xl'>CSS Variables for React Devs</h1>
 
-            <img title={post.title} src={post.coverImage} />
+        <p className='mt-2 mb-6 text-sm'>
+          <Time time={post.date} /> ~ <Icon name='pizza' />{' '}
+          <Icon name='pizza' />
+        </p>
 
-            <Time dateString={post.date} />
-
-            <main
-              className={markdownStyles['markdown']}
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
-          </article>
-        </>
-      )}
-    </>
+        <main
+          className={markdownCSS['markdown']}
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
+      </article>
+    </div>
   )
 }
 
