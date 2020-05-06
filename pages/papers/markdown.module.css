@@ -60,7 +60,7 @@
 .markdown code,
 .markdown pre,
 .markdown kbd {
-  font-family: inconsolata, monospace;
+  @apply font-mono;
   background-color: #011627;
 }
 
@@ -71,12 +71,10 @@
 
 .markdown code {
   @apply inline px-1 font-mono rounded py-05;
-  font-family: inconsolata, monospace;
 }
 
 .markdown pre {
-  @apply p-4 border border-gray-800 rounded;
-  font-family: inconsolata, monospace;
+  @apply p-4 font-mono border border-gray-800 rounded;
 }
 
 .markdown pre code {
@@ -123,50 +121,21 @@
 }
 
 .markdown a {
-  @apply relative z-10 font-semibold;
-  background-color: var(--textLink);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
+  @apply text-cyan-200;
 }
 
 .markdown a:hover {
-  background: linear-gradient(
-    135deg,
-    var(--textLink),
-    white 50%,
-    var(--textLink)
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
-  animation: wipe 1s linear infinite;
+  animation: neon 2s linear infinite;
 }
 
-.markdown a:after {
-  @apply absolute left-0 w-full;
-  content: '';
-  height: 2px;
-  bottom: -2px;
-  border-radius: 3px;
-}
-
-.markdown a:hover:after {
-  background: linear-gradient(
-    135deg,
-    var(--textLink),
-    white 50%,
-    var(--textLink)
-  );
-  background-size: 200% auto;
-  animation: wipe 1s linear infinite;
-}
-
-@keyframes wipe {
-  to {
-    background-position: 200%;
+@keyframes neon {
+  0%,
+  100% {
+    @apply text-cyan-200;
+  }
+  50% {
+    text-shadow: 0 0 1vw #00a895, 0 0 2vw #00a895, 0 0 4vw #00a895,
+      0 0 4vw #00a895, 0 0 0.4vw #8bfdfe, 0.5vw 0.5vw 0.1vw #147280;
+    color: #d7fffc;
   }
 }

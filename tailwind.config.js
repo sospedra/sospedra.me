@@ -4,8 +4,8 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ['wotfard', 'Arial', 'sans-serif'],
-        serif: ['Georgia', '"Times New Roman"', 'serif'],
-        mono: ['vcr', 'monospace'],
+        serif: ['vcr', 'monospace'],
+        mono: ['inconsolata', 'monospace'],
       },
       colors: {
         cyan: {

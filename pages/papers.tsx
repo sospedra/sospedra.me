@@ -1,8 +1,15 @@
 import React from 'react'
 import Head from 'next/head'
-import Link, { LinkStyle } from 'components/Link'
+import Link from 'components/Link'
 import Time from 'components/Time'
 import { getAllPosts, Post } from 'service/api'
+import glitchCss from 'service/style/glitch.module.css'
+import neonCss from 'service/style/neon.module.css'
+
+const getTitleCss = () => {
+  const rand = Math.random()
+  return rand < 0.9 ? neonCss.neon : glitchCss.glitch
+}
 
 const Papers: React.FC<{
   allPosts: Post[]
@@ -19,9 +26,12 @@ const Papers: React.FC<{
           {props.allPosts.map((post) => (
             <li key={post.slug}>
               <Link as={`/papers/${post.slug}`} url='/papers/[slug]' instant>
-                <LinkStyle className='pb-1 text-2xl'>
-                  CSS Variables for React Devs
-                </LinkStyle>
+                <h2
+                  data-text={post.title}
+                  className={`font-serif text-2xl ${getTitleCss()}`}
+                >
+                  {post.title}
+                </h2>
               </Link>
               <p className='my-2 text-sm'>
                 <Time time={post.date} /> ~{' '}

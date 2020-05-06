@@ -29,7 +29,7 @@ const Paper: React.FC<{
         <meta property='og:image' content={post.ogImage.url} />
       </Head>
       <article className='py-8'>
-        <h1 className='font-mono text-4xl'>CSS Variables for React Devs</h1>
+        <h1 className='font-serif text-4xl text-cyan-200'>{post.title}</h1>
 
         <p className='mt-2 mb-6 text-sm'>
           <Time time={post.date} /> ~ <Icon name='pizza' />{' '}
@@ -37,7 +37,7 @@ const Paper: React.FC<{
         </p>
 
         <main
-          className={markdownCSS['markdown']}
+          className={`${markdownCSS['markdown']} markdown`}
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
       </article>
