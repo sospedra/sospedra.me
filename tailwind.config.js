@@ -3,8 +3,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['wotfard', 'Arial', 'sans-serif'],
-        serif: ['vcr', 'monospace'],
+        sans: ['wotfard', 'Helvetica', 'sans-serif'],
+        serif: ['vcr', 'serif'],
         mono: ['inconsolata', 'monospace'],
       },
       colors: {

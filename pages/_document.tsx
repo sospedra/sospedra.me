@@ -39,6 +39,27 @@ export default class SospedrameDocument extends Document {
             name='description'
             content='Rubén Sospedra ) javascript hacker'
           />
+          <link
+            rel='preload'
+            as='font'
+            href='/fonts/wotfard.woff2'
+            type='font/woff2'
+            crossOrigin='anonymous'
+          />
+          <link
+            rel='preload'
+            as='font'
+            href='/fonts/vcr.woff2'
+            type='font/woff2'
+            crossOrigin='anonymous'
+          />
+          <link
+            rel='preload'
+            as='font'
+            href='/fonts/inconsolata.woff2'
+            type='font/woff2'
+            crossOrigin='anonymous'
+          />
           <script
             async
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
