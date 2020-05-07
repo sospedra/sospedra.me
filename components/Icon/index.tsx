@@ -7,8 +7,8 @@ const Icon: React.FC<{
   return (
     <img
       role='icon'
-      src={`/icons/${name}.svg`}
-      className={`w-6 h-6 inline-flex ${className}`}
+      src={`/icons/${name}`}
+      className={`min-w-6 h-6 inline-flex ${className}`}
     />
   )
 }

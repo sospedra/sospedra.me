@@ -32,8 +32,8 @@ const Paper: React.FC<{
         <h1 className='font-serif text-4xl text-cyan-200'>{post.title}</h1>
 
         <p className='mt-2 mb-6 text-sm'>
-          <Time time={post.date} /> ~ <Icon name='pizza' />{' '}
-          <Icon name='pizza' />
+          <Time time={post.date} /> ~ <Icon name='pizza.svg' />{' '}
+          <Icon name='pizza.svg' />
         </p>
 
         <main

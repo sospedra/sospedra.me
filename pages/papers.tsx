@@ -5,6 +5,7 @@ import Time from 'components/Time'
 import { getAllPosts, Post } from 'service/api'
 import glitchCss from 'service/style/glitch.module.css'
 import neonCss from 'service/style/neon.module.css'
+import Icon from 'components/Icon'
 
 const getTitleCss = () => {
   const rand = Math.random()
@@ -20,7 +21,7 @@ const Papers: React.FC<{
         <title>Papers ~ sospedra.me</title>
       </Head>
 
-      <main className='w-full max-w-2xl p-4 mx-auto text-white'>
+      <main className='w-full max-w-2xl p-4 mx-auto overflow-y-auto text-white'>
         <h1 className='pb-4 text-3xl'>Papers</h1>
         <ul>
           {props.allPosts.map((post) => (
@@ -34,10 +35,8 @@ const Papers: React.FC<{
                 </h2>
               </Link>
               <p className='my-2 text-sm'>
-                <Time time={post.date} /> ~{' '}
-                <span aria-label='time' role='img'>
-                  ⌛️
-                </span>
+                <Time time={post.date} /> ~ <Icon name='pizza-box.png' />{' '}
+                <Icon name='pizza.svg' />
               </p>
               <p>{post.excerpt}</p>
             </li>

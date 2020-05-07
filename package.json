@@ -18,6 +18,7 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-spring": "^8.0.27",
+    "reading-time": "^1.2.0",
     "rehype-accessible-emojis": "^0.3.2",
     "rehype-shiki": "^0.0.7",
     "rehype-stringify": "^7.0.0",

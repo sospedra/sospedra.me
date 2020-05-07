@@ -1,6 +1,7 @@
 import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
+import readingTime from 'reading-time'
 
 const postsDirectory = join(process.cwd(), '_papers')
 
@@ -11,6 +12,7 @@ export type Post = {
   coverImage: string
   excerpt: string
   content: string
+  time: number
   ogImage: {
     url: string
   }
@@ -34,6 +36,7 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
     }
     if (field === 'content') {
       post[field] = content
+      post.time = readingTime(content).minutes
     }
 
     if (data[field]) {
