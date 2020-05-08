@@ -1,5 +1,6 @@
 import React from 'react'
 import { useTransition } from 'service/transition'
+import Icon from 'components/Icon'
 import css from './link.module.css'
 
 const Link: React.FC<{
@@ -31,10 +32,15 @@ const Link: React.FC<{
   )
 }
 
-export const LinkStyle: React.FC<{
-  className: string
+export const LinkBack: React.FC<{
+  className?: string
 }> = (props) => {
-  return <a className={`${css.styled} ${props.className}`}>{props.children}</a>
+  return (
+    <nav className={`${css.back} ${props.className}`}>
+      <Icon name='back.svg' />
+      <span>{props.children}</span>
+    </nav>
+  )
 }
 
 export default Link

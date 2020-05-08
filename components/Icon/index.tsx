@@ -6,10 +6,10 @@ const Icon: React.FC<{
 }> = ({ name, className = '' }) => {
   return (
     <img
-      alt={name.split('.')[0]}
-      className={`min-w-6 h-6 inline-flex ${className}`}
       role='icon'
       src={`/icons/${name}`}
+      className={`min-w-6 h-6 inline-flex ${className}`}
+      alt={name.split('.')[0]}
     />
   )
 }
