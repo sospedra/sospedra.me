@@ -7,12 +7,12 @@ const postsDirectory = join(process.cwd(), '_papers')
 
 export type Post = {
   title: string
-  date: string
+  timeStamp: string
   slug: string
   coverImage: string
   excerpt: string
   content: string
-  time: number
+  readingMinutes: number
   ogImage: {
     url: string
   }
@@ -36,7 +36,9 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
     }
     if (field === 'content') {
       post[field] = content
-      post.time = readingTime(content).minutes
+    }
+    if (field === 'readingMinutes') {
+      post.readingMinutes = readingTime(content).minutes
     }
 
     if (data[field]) {

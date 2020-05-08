@@ -5,8 +5,7 @@ import ErrorPage from 'next/error'
 import Head from 'next/head'
 import { getPostBySlug, getAllPosts, Post } from 'service/api'
 import markdownToHtml from 'service/markdown'
-import Time from 'components/Time'
-import Icon from 'components/Icon'
+import Meta from 'components/Meta'
 import markdownCSS from './markdown.module.css'
 
 const Paper: React.FC<{
@@ -31,10 +30,11 @@ const Paper: React.FC<{
       <article className='py-8'>
         <h1 className='font-serif text-4xl text-cyan-200'>{post.title}</h1>
 
-        <p className='mt-2 mb-6 text-sm'>
-          <Time time={post.date} /> ~ <Icon name='pizza.svg' />{' '}
-          <Icon name='pizza.svg' />
-        </p>
+        <Meta
+          className='mt-2 mb-6'
+          time={post.timeStamp}
+          minutes={post.readingMinutes}
+        />
 
         <main
           className={`${markdownCSS['markdown']} markdown`}
@@ -47,13 +47,14 @@ const Paper: React.FC<{
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const post = getPostBySlug(params?.slug as string, [
-    'title',
-    'date',
-    'slug',
-    'author',
     'content',
-    'ogImage',
     'coverImage',
+    'excerpt',
+    'ogImage',
+    'readingMinutes',
+    'slug',
+    'timeStamp',
+    'title',
   ])
   const content = await markdownToHtml(post.content || '')
 

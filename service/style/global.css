@@ -2,7 +2,10 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-/*! purgecss end ignore */
+
+html {
+  scroll-behavior: smooth;
+}
 
 @font-face {
   font-family: 'lazer84';
@@ -25,7 +28,7 @@
 }
 
 @font-face {
-  font-family: 'wotfard';
+  font-family: wotfard;
   font-display: swap;
   font-style: normal;
   font-weight: normal;
@@ -43,3 +46,4 @@
   src: url('/fonts/inconsolata.woff2') format('woff2'),
     url('/fonts/inconsolata.woff') format('woff');
 }
+/*! purgecss end ignore */

@@ -1,11 +1,10 @@
 import React from 'react'
 import Head from 'next/head'
 import Link from 'components/Link'
-import Time from 'components/Time'
 import { getAllPosts, Post } from 'service/api'
 import glitchCss from 'service/style/glitch.module.css'
 import neonCss from 'service/style/neon.module.css'
-import Icon from 'components/Icon'
+import Meta from 'components/Meta'
 
 const getTitleCss = () => {
   const rand = Math.random()
@@ -34,10 +33,11 @@ const Papers: React.FC<{
                   {post.title}
                 </h2>
               </Link>
-              <p className='my-2 text-sm'>
-                <Time time={post.date} /> ~ <Icon name='pizza-box.png' />{' '}
-                <Icon name='pizza.svg' />
-              </p>
+              <Meta
+                className='my-2'
+                time={post.timeStamp}
+                minutes={post.readingMinutes}
+              />
               <p>{post.excerpt}</p>
             </li>
           ))}
@@ -49,12 +49,11 @@ const Papers: React.FC<{
 
 export async function getStaticProps() {
   const allPosts = getAllPosts([
-    'title',
-    'date',
-    'slug',
-    'author',
-    'coverImage',
     'excerpt',
+    'readingMinutes',
+    'slug',
+    'timeStamp',
+    'title',
   ])
 
   return {

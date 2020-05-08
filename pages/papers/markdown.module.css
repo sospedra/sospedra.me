@@ -78,8 +78,14 @@
 }
 
 .markdown pre code {
-  @apply block p-0 overflow-visible bg-transparent rounded-none;
+  @apply block p-0 overflow-visible text-sm bg-transparent rounded-none;
   color: var(--code-text);
+}
+
+@screen md {
+  .markdown pre code {
+    @apply text-base;
+  }
 }
 
 .markdown ul {
