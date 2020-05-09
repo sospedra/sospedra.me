@@ -1,0 +1,49 @@
+/*! purgecss start ignore */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+html {
+  scroll-behavior: smooth;
+}
+
+@font-face {
+  font-family: 'lazer84';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  unicode-range: U+000-5FF;
+  src: url('/fonts/lazer84.woff2') format('woff2'),
+    url('/fonts/lazer84.woff') format('woff');
+}
+
+@font-face {
+  font-family: vcr;
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  unicode-range: U+000-5FF;
+  src: url('/fonts/vcr.woff2') format('woff2'),
+    url('/fonts/vcr.woff') format('woff');
+}
+
+@font-face {
+  font-family: wotfard;
+  font-display: swap;
+  font-style: normal;
+  font-weight: normal;
+  unicode-range: U+000-5FF;
+  src: url('/fonts/wotfard.woff2') format('woff2'),
+    url('/fonts/wotfard.woff') format('woff');
+}
+
+@font-face {
+  font-family: inconsolata;
+  font-display: swap;
+  font-style: normal;
+  font-weight: normal;
+  unicode-range: U+000-5FF;
+  src: url('/fonts/inconsolata.woff2') format('woff2'),
+    url('/fonts/inconsolata.woff') format('woff');
+}
+/*! purgecss end ignore */

@@ -1,27 +1,25 @@
-import * as React from 'react'
+import React, { useMemo } from 'react'
+import { pathToRegexp } from 'path-to-regexp'
 import { useSpring, animated, config } from 'react-spring'
 import { useRouter } from 'next/router'
-import { useTransition } from '../service/transition'
+import { useTransition } from 'service/transition'
 
 type OffsetT = {
   left: string
   top: string
 }
 
-const styles = {
-  background: 'linear-gradient(to bottom, #2c052a 0%, #800d79 60%)',
-  width: '400vw',
-  height: '400vh',
-  position: 'absolute' as 'absolute',
-  top: 0,
-  left: 0,
+const ptr = (pattern: string, href: string) => {
+  return pathToRegexp(pattern).exec(href) !== null
 }
 
 const getOffsetFromHref = (href: string): OffsetT => {
-  switch (href) {
-    case '/about':
+  switch (true) {
+    case ptr('/papers', href):
+      return { left: '0vw', top: '-50vh' }
+    case ptr('/papers/:slug', href):
       return { left: '0vw', top: '0vh' }
-    case '/':
+    case ptr('/', href):
     default:
       return { left: '0vw', top: '-300vh' }
   }
@@ -32,13 +30,24 @@ const Animation: React.FunctionComponent<{
   animation: Object
 }> = (props) => {
   const { pathname } = useRouter()
-  const { href } = useTransition()
+  const { url } = useTransition()
 
-  React.useMemo(() => {
-    props.setAnimation(getOffsetFromHref(href || pathname))
-  }, [pathname, href])
+  useMemo(() => {
+    props.setAnimation(getOffsetFromHref(url || pathname))
+  }, [pathname, url])
 
-  return <animated.div style={{ ...styles, ...props.animation }} />
+  return (
+    <animated.div
+      style={{
+        background:
+          'linear-gradient(to bottom, var(--bg-start) 0%, var(--bg-end) 90%)',
+        width: '400vw',
+        height: '400vh',
+        position: 'absolute',
+        ...props.animation,
+      }}
+    />
+  )
 }
 
 const Background: React.FunctionComponent<{}> = () => {
@@ -53,7 +62,7 @@ const Background: React.FunctionComponent<{}> = () => {
   }))
 
   return (
-    <React.Fragment>
+    <>
       <div className='wrapper'>
         <Animation setAnimation={setAnimation} animation={animation} />
       </div>
@@ -66,7 +75,7 @@ const Background: React.FunctionComponent<{}> = () => {
           z-index: -1;
         }
       `}</style>
-    </React.Fragment>
+    </>
   )
 }
 

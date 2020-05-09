@@ -1,0 +1,147 @@
+.py-05 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
+.markdown {
+  @apply font-sans text-lg leading-7 break-words align-baseline;
+  color: var(--text);
+}
+
+.markdown p,
+.markdown ul,
+.markdown ol,
+.markdown blockquote {
+  @apply mb-8;
+}
+
+.markdown > * + * {
+  @apply mt-0 mb-4;
+}
+
+.markdown li + li {
+  @apply mt-1;
+}
+
+.markdown li > p + p {
+  @apply mt-6;
+}
+
+.markdown abbr {
+  cursor: help;
+  text-underline-position: under;
+}
+
+.markdown strong {
+  @apply font-semibold;
+}
+
+.markdown strong a {
+  @apply font-bold;
+}
+
+.markdown h2,
+.markdown h3 {
+  @apply mb-4 font-semibold leading-10;
+}
+
+.markdown h2 {
+  @apply mt-12 text-3xl;
+}
+
+.markdown h3 {
+  @apply mt-8 text-2xl;
+}
+
+.markdown blockquote {
+  @apply pl-4 pr-4 text-base border-l-2 border-gray-200;
+}
+
+.markdown code,
+.markdown pre,
+.markdown kbd {
+  @apply font-mono;
+  background-color: #011627;
+}
+
+.markdown code,
+.markdown kbd {
+  color: var(--inlineCode-text);
+}
+
+.markdown code {
+  @apply inline px-1 font-mono rounded py-05;
+}
+
+.markdown pre {
+  @apply p-4 font-mono border border-gray-800 rounded;
+}
+
+.markdown pre code {
+  @apply block p-0 overflow-visible text-sm bg-transparent rounded-none;
+  color: var(--code-text);
+}
+
+@screen md {
+  .markdown pre code {
+    @apply text-base;
+  }
+}
+
+.markdown ul {
+  @apply pl-8 text-base list-disc;
+  list-style-image: url('/icons/cursor.svg');
+}
+
+.markdown ul ul {
+  list-style: square;
+}
+
+.markdown ol {
+  @apply pl-8 text-base list-decimal;
+}
+
+.markdown kbd {
+  @apply inline-block px-1 font-mono text-xs font-normal align-middle border rounded py-05;
+  box-shadow: var(--shadow);
+}
+
+.markdown table {
+  @apply text-base border-gray-600;
+}
+
+.markdown th {
+  @apply px-3 py-1 border;
+}
+
+.markdown td {
+  @apply px-3 py-1 border;
+}
+
+.markdown .highlight pre {
+  @apply bg-gray-100 !important;
+}
+
+.markdown hr {
+  border-color: var(--hr);
+}
+
+.markdown a {
+  @apply text-cyan-400;
+}
+
+.markdown a:hover {
+  animation: neon 2s linear infinite;
+}
+
+@keyframes neon {
+  0%,
+  100% {
+    @apply text-cyan-400;
+  }
+  50% {
+    text-shadow: 0 0 1vw #00a895, 0 0 2vw #00a895, 0 0 1.4vw #00a895,
+      0 0 2vw #00a895, 0 0 0.4vw #8bfdfe, 0.25vw 0.25vw 0.1vw #147280;
+    color: #d7fffc;
+  }
+}

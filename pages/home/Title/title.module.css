@@ -1,0 +1,39 @@
+.title {
+  @apply relative text-6xl italic text-cyan-400;
+  font-family: lazer84;
+  transform: skewY(-4deg);
+  margin-left: -8rem;
+}
+
+.title span {
+  text-shadow: 2px 0px 3px #00a895, 2px 3px 1rem #00a895, 2px 0px 1rem,
+    20px 0vw 10rem #00a895, 40px 0vw 10rem #00a895;
+}
+
+.title span:last-child {
+  @apply absolute inline-flex;
+  top: 3rem;
+  left: 3rem;
+  animation: flicker 3s linear infinite;
+}
+
+@keyframes flicker {
+  0%,
+  19.999%,
+  22%,
+  62.999%,
+  64%,
+  64.999%,
+  70%,
+  100% {
+    opacity: 0.99;
+  }
+  20%,
+  21.999%,
+  63%,
+  63.999%,
+  65%,
+  69.999% {
+    opacity: 0.4;
+  }
+}

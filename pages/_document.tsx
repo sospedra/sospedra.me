@@ -5,8 +5,7 @@ import Document, {
   NextScript,
   DocumentContext,
 } from 'next/document'
-
-import { GA_TRACKING_ID } from '../service/analytics'
+import { GA_TRACKING_ID } from 'service/analytics'
 
 export default class SospedrameDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -41,8 +40,25 @@ export default class SospedrameDocument extends Document {
             content='Rubén Sospedra ) javascript hacker'
           />
           <link
-            rel='stylesheet'
-            href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css'
+            rel='preload'
+            as='font'
+            href='/fonts/wotfard.woff2'
+            type='font/woff2'
+            crossOrigin='anonymous'
+          />
+          <link
+            rel='preload'
+            as='font'
+            href='/fonts/vcr.woff2'
+            type='font/woff2'
+            crossOrigin='anonymous'
+          />
+          <link
+            rel='preload'
+            as='font'
+            href='/fonts/inconsolata.woff2'
+            type='font/woff2'
+            crossOrigin='anonymous'
           />
           <script
             async

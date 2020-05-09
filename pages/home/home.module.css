@@ -1,0 +1,30 @@
+.main {
+  @apply flex flex-col items-center justify-end flex-1 w-full;
+  padding-bottom: 30vh;
+}
+
+.menu {
+  @apply relative flex flex-col items-center justify-center w-full h-64;
+}
+
+.menu a {
+  @apply relative px-4 -ml-4 text-2xl font-bold transition transition-colors duration-500;
+  background: radial-gradient(rgba(0, 0, 0, 0.2), transparent 80%);
+  color: #ffea00;
+}
+
+.menu a:hover:before {
+  @apply absolute inline-block w-6 h-6 mt-2 -ml-5;
+  content: '';
+  background: url('/icons/cursor.svg') no-repeat;
+  animation: swing 0.4s ease-out alternate infinite;
+}
+
+@keyframes swing {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-0.3rem);
+  }
+}

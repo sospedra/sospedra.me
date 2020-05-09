@@ -4,12 +4,12 @@ import { config, animated, useSpring } from 'react-spring'
 const styles = {
   backgroundSize: 'contain',
   bottom: 0,
-  height: '50vh',
+  height: '44vh',
   left: 0,
   position: 'absolute' as 'absolute',
   width: '200vw',
-  backgroundImage: 'url(/street-sprite.svg)',
-  zIndex: -1,
+  backgroundImage: 'url(/sprites/street.svg)',
+  zIndex: -2,
   margin: 0,
 }
 
