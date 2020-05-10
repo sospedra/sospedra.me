@@ -2,7 +2,8 @@ import React, { useMemo } from 'react'
 import { pathToRegexp } from 'path-to-regexp'
 import { useSpring, animated, config } from 'react-spring'
 import { useRouter } from 'next/router'
-import { useTransition } from 'service/transition'
+import { useTransition } from './context'
+import css from './transition.module.css'
 
 type OffsetT = {
   left: string
@@ -36,18 +37,7 @@ const Animation: React.FunctionComponent<{
     props.setAnimation(getOffsetFromHref(url || pathname))
   }, [pathname, url])
 
-  return (
-    <animated.div
-      style={{
-        background:
-          'linear-gradient(to bottom, var(--bg-start) 0%, var(--bg-end) 90%)',
-        width: '400vw',
-        height: '400vh',
-        position: 'absolute',
-        ...props.animation,
-      }}
-    />
-  )
+  return <animated.div className={css.bg} style={props.animation} />
 }
 
 const Background: React.FunctionComponent<{}> = () => {
@@ -62,20 +52,9 @@ const Background: React.FunctionComponent<{}> = () => {
   }))
 
   return (
-    <>
-      <div className='wrapper'>
-        <Animation setAnimation={setAnimation} animation={animation} />
-      </div>
-      <style jsx>{`
-        .wrapper {
-          width: 100vw;
-          height: 100vh;
-          overflow: hidden;
-          position: absolute;
-          z-index: -1;
-        }
-      `}</style>
-    </>
+    <div className={css.wrapper}>
+      <Animation setAnimation={setAnimation} animation={animation} />
+    </div>
   )
 }
 

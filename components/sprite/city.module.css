@@ -1,0 +1,8 @@
+.city {
+  @apply absolute bottom-0 left-0 m-0 bg-contain;
+  height: 50vh;
+  width: 200vw;
+  background-image: url(/sprites/street.svg);
+  z-index: -2;
+  will-change: transform;
+}

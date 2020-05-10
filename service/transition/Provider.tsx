@@ -2,7 +2,8 @@ import React, { useEffect } from 'react'
 import Router from 'next/router'
 import { TransitionCTX } from './context'
 import { useStateReducer } from './reducer'
-import Background from 'components/Background'
+import Background from './Background'
+import css from './transition.module.css'
 
 export const Provider: React.FunctionComponent<{
   children: React.ReactNode
@@ -22,14 +23,7 @@ export const Provider: React.FunctionComponent<{
 
   return (
     <TransitionCTX.Provider value={transition}>
-      <div
-        className='fixed top-0 left-0 w-screen h-screen overflow-hidden'
-        style={{
-          overscrollBehavior: 'contain',
-        }}
-      >
-        {children}
-      </div>
+      <div className={css.provider}>{children}</div>
       <Background />
     </TransitionCTX.Provider>
   )
