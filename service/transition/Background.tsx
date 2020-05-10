@@ -2,24 +2,30 @@ import React, { useMemo } from 'react'
 import { pathToRegexp } from 'path-to-regexp'
 import { useSpring, animated, config } from 'react-spring'
 import { useRouter } from 'next/router'
-import { useTransition } from 'service/transition'
+import { useTransition } from './context'
+import css from './transition.module.css'
 
 type OffsetT = {
   left: string
   top: string
 }
 
-const ptr = (pattern: string, href: string) => {
-  return pathToRegexp(pattern).exec(href) !== null
+const createPtr = (href: string) => {
+  return (pattern: string) => {
+    return pathToRegexp(pattern).exec(href) !== null
+  }
 }
 
 const getOffsetFromHref = (href: string): OffsetT => {
+  const ptr = createPtr(href)
   switch (true) {
-    case ptr('/papers', href):
+    case ptr('/papers'):
       return { left: '0vw', top: '-50vh' }
-    case ptr('/papers/:slug', href):
+    case ptr('/papers/:slug'):
       return { left: '0vw', top: '0vh' }
-    case ptr('/', href):
+    case ptr('/about'):
+      return { left: '-100vw', top: '-50vh' }
+    case ptr('/'):
     default:
       return { left: '0vw', top: '-300vh' }
   }
@@ -36,18 +42,7 @@ const Animation: React.FunctionComponent<{
     props.setAnimation(getOffsetFromHref(url || pathname))
   }, [pathname, url])
 
-  return (
-    <animated.div
-      style={{
-        background:
-          'linear-gradient(to bottom, var(--bg-start) 0%, var(--bg-end) 90%)',
-        width: '400vw',
-        height: '400vh',
-        position: 'absolute',
-        ...props.animation,
-      }}
-    />
-  )
+  return <animated.div className={css.bg} style={props.animation} />
 }
 
 const Background: React.FunctionComponent<{}> = () => {
@@ -62,20 +57,9 @@ const Background: React.FunctionComponent<{}> = () => {
   }))
 
   return (
-    <>
-      <div className='wrapper'>
-        <Animation setAnimation={setAnimation} animation={animation} />
-      </div>
-      <style jsx>{`
-        .wrapper {
-          width: 100vw;
-          height: 100vh;
-          overflow: hidden;
-          position: absolute;
-          z-index: -1;
-        }
-      `}</style>
-    </>
+    <div className={css.wrapper}>
+      <Animation setAnimation={setAnimation} animation={animation} />
+    </div>
   )
 }
 

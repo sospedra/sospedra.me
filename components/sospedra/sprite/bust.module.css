@@ -1,0 +1,25 @@
+.bust {
+  @apply w-full h-full fill-current;
+  filter: drop-shadow(0 0 0.5rem var(--pink))
+    drop-shadow(0 0 0.2rem rgba(255, 255, 255, 0.2));
+  color: rgb(217, 71, 140, 0.2);
+}
+
+.bust path {
+  stroke-dashoffset: 100%;
+  stroke-dasharray: 100%;
+  stroke: var(--pink);
+  stroke-width: 4rem;
+  stroke-linecap: round;
+  stroke-linejoin: bevel;
+  animation: stroke 12s cubic-bezier(0.2, 0.39, 0.93, 0.77) infinite alternate;
+}
+
+@keyframes stroke {
+  0% {
+    stroke-dashoffset: 100%;
+  }
+  100% {
+    stroke-dashoffset: 0%;
+  }
+}

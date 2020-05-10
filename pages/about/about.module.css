@@ -1,0 +1,40 @@
+.header2 {
+  @apply pb-8 text-2xl;
+  color: var(--pink);
+  text-shadow: -1px 1px 0 #ffb9b9;
+}
+
+.content {
+  padding-bottom: 12rem;
+}
+
+.content p {
+  @apply mb-8 font-sans font-bold leading-7 break-words align-baseline;
+}
+
+@screen sm {
+  .content p {
+    @apply text-lg;
+  }
+}
+
+.sprite {
+  @apply fixed right-0 -mr-48;
+  width: 100vw;
+  height: 100vw;
+  min-width: 26rem;
+  min-height: 26rem;
+  max-width: 32rem;
+  max-height: 32rem;
+  bottom: -4rem;
+  z-index: -1;
+}
+
+@media (min-width: 42rem) {
+  /* matches max-w-2xl */
+  .sprite {
+    right: auto;
+    left: 50%;
+    bottom: 0;
+  }
+}
