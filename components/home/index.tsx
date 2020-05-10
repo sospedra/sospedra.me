@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { NextPage } from 'next'
-import Head from 'next/head'
 import { animated, config, useSpring } from 'react-spring'
 import Link from 'components/sospedra/Link'
-import SpriteCity from 'components/sospedra/sprite/city'
+import Shell from 'components/sospedra/Shell'
+import SpriteCity from 'components/sospedra/Sprite/City'
 import Triangle from './Triangle'
 import Title from './Title'
 import css from './home.module.css'
@@ -20,13 +20,12 @@ const IndexPage: NextPage = () => {
   }, [])
 
   return (
-    <animated.div style={{ transform }}>
-      <div className='flex flex-col items-center justify-center flex-1 w-screen h-screen'>
-        <Head>
-          <title>Rub&eacute;n Sospedra ~ sospedra.me</title>
-        </Head>
-
-        <main className={css.main}>
+    <Shell
+      className='flex flex-col items-center justify-center flex-1 w-screen h-screen'
+      shellClassName='overflow-y-hidden'
+    >
+      <animated.div className='flex flex-1' style={{ transform }}>
+        <div className={css.main}>
           <Title />
 
           <div className={css.menu}>
@@ -37,23 +36,22 @@ const IndexPage: NextPage = () => {
                 </Link>
               </li>
               <li>
-                <Link url='/papers' onClick={() => setOffset(100)}>
+                <Link url='/about' onClick={() => setOffset(100)}>
                   About
                 </Link>
               </li>
               <li>
-                <Link url='/papers' onClick={() => setOffset(100)}>
-                  Contact
-                </Link>
+                <a href='mailto:hello@sospedra.me'>Hire me</a>
               </li>
             </ul>
+
             <Triangle />
           </div>
-        </main>
+        </div>
 
         <SpriteCity />
-      </div>
-    </animated.div>
+      </animated.div>
+    </Shell>
   )
 }
 

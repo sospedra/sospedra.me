@@ -5,4 +5,6 @@
   background-image: url(/sprites/street.svg);
   z-index: -2;
   will-change: transform;
+  background-position: bottom;
+  background-repeat: repeat-x;
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import cn from 'classnames'
 import Head from 'next/head'
 
 const Shell: React.FC<{
@@ -6,9 +7,21 @@ const Shell: React.FC<{
   description?: string
   image?: string
   className?: string
-}> = ({ title, className, description, children, image = '/og.png' }) => {
+  shellClassName?: string
+}> = ({
+  title,
+  className,
+  description,
+  children,
+  shellClassName = '',
+  image = '/og.png',
+}) => {
   return (
-    <div className='w-full h-full overflow-x-hidden overflow-y-auto'>
+    <div
+      className={cn('w-full h-full overflow-x-hidden overflow-y-auto', {
+        [shellClassName]: !!shellClassName,
+      })}
+    >
       <Head>
         <title>{[title, 'Rubén Sospedra'].filter((x) => x).join(' ~ ')}</title>
         <meta property='og:image' content={image} />

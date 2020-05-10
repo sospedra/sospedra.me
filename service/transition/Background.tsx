@@ -10,17 +10,22 @@ type OffsetT = {
   top: string
 }
 
-const ptr = (pattern: string, href: string) => {
-  return pathToRegexp(pattern).exec(href) !== null
+const createPtr = (href: string) => {
+  return (pattern: string) => {
+    return pathToRegexp(pattern).exec(href) !== null
+  }
 }
 
 const getOffsetFromHref = (href: string): OffsetT => {
+  const ptr = createPtr(href)
   switch (true) {
-    case ptr('/papers', href):
+    case ptr('/papers'):
       return { left: '0vw', top: '-50vh' }
-    case ptr('/papers/:slug', href):
+    case ptr('/papers/:slug'):
       return { left: '0vw', top: '0vh' }
-    case ptr('/', href):
+    case ptr('/about'):
+      return { left: '-100vw', top: '-50vh' }
+    case ptr('/'):
     default:
       return { left: '0vw', top: '-300vh' }
   }
