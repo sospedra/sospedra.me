@@ -21,6 +21,8 @@
     "react-spring": "^8.0.27",
     "reading-time": "^1.2.0",
     "rehype-accessible-emojis": "^0.3.2",
+    "rehype-parse": "^6.0.2",
+    "rehype-react": "^5.0.1",
     "rehype-shiki": "^0.0.7",
     "rehype-stringify": "^7.0.0",
     "remark-abbr": "^1.4.0",
