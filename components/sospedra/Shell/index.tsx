@@ -16,6 +16,8 @@ const Shell: React.FC<{
   shellClassName = '',
   image = '/og.png',
 }) => {
+  title = [title, 'Rubén Sospedra'].filter((x) => x).join(' ▼ ')
+
   return (
     <div
       className={cn('w-full h-full overflow-x-hidden overflow-y-auto', {
@@ -23,9 +25,15 @@ const Shell: React.FC<{
       })}
     >
       <Head>
-        <title>{[title, 'Rubén Sospedra'].filter((x) => x).join(' ~ ')}</title>
+        <title>{title}</title>
         <meta property='og:image' content={image} />
-        {description && <meta name='description' content={description} />}
+        <meta property='og:title' content={title} />
+        {description && (
+          <>
+            <meta property='og:description' content={description} />
+            <meta name='description' content={description} />
+          </>
+        )}
       </Head>
       <main className={className}>{children}</main>
     </div>

@@ -18,7 +18,7 @@ const Footer: React.FC<{
   const { asPath } = useRouter()
 
   return (
-    <footer>
+    <footer className='flex items-center'>
       <a
         href={createTwitterSearch(asPath)}
         className={cn('text-cyan-400', {
@@ -29,7 +29,7 @@ const Footer: React.FC<{
       >
         Discuss on Twitter
       </a>
-      <span className='mx-2 font-bold'>~</span>
+      <span className='mx-2 mt-1 text-xs font-bold opacity-75'>▼</span>
       <a
         href={createGithubLink(props.slug)}
         className={cn('text-cyan-400', {

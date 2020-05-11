@@ -1,4 +1,5 @@
 import React from 'react'
+import cn from 'classnames'
 import { parseISO, format } from 'date-fns'
 import Icon from 'components/sospedra/Icon'
 
@@ -23,9 +24,13 @@ const Meta: React.FC<{ time: string; minutes: number; className: string }> = (
   props,
 ) => {
   return (
-    <div className={`flex font-bold ${props.className}`}>
+    <div
+      className={cn('flex items-center font-bold', {
+        [props.className]: !!props.className,
+      })}
+    >
       <Time time={props.time} />
-      <span className='mx-2'>~</span>
+      <span className='mx-2 mt-1 text-xs opacity-75'>▼</span>
       <Reading minutes={props.minutes} />
     </div>
   )

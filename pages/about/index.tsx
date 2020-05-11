@@ -9,7 +9,7 @@ const About: React.FC<{}> = () => {
     <Shell
       title='About'
       className='relative w-full h-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
-      description='javascript hacker ~ fullstack engineer contractor'
+      description='javascript hacker ▼ fullstack engineer contractor'
     >
       <Link url='/'>
         <LinkBack>Home</LinkBack>

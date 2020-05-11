@@ -4,7 +4,7 @@ import 'service/style/global.css'
 import { Provider as TransitionProvider } from 'service/transition'
 import { ThemeProvider } from 'service/theme'
 
-class MyApp extends App {
+class SospedraApp extends App {
   render() {
     const { Component, pageProps } = this.props
 
@@ -18,4 +18,4 @@ class MyApp extends App {
   }
 }
 
-export default MyApp
+export default SospedraApp
