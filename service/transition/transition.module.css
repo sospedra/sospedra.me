@@ -13,5 +13,5 @@
 
 .provider {
   @apply fixed top-0 left-0 w-screen h-screen overflow-hidden;
-  overscroll-behavior: container;
+  overscroll-behavior: contain;
 }

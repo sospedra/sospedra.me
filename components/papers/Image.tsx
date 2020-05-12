@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import cn from 'classnames'
 import { Post } from 'service/api'
 import Head from 'next/head'
@@ -10,10 +10,16 @@ const Image: React.FC<{
   src: string
   title: string
 }> = (props) => {
-  const [didLoad, setDidLoad] = useState(false)
+  const size = props.meta[props.src]
 
   return (
-    <div className='relative' style={props.meta[props.src]}>
+    <span
+      className='relative block'
+      style={{
+        ...size,
+        backgroundColor: require(`_papers/${props.slug}/${props.src}?lqip-colors`)[0],
+      }}
+    >
       <Head>
         <link
           rel='preload'
@@ -22,11 +28,6 @@ const Image: React.FC<{
           type='image/webp'
         />
       </Head>
-      <img
-        src={require(`_papers/${props.slug}/${props.src}?lqip`)}
-        alt={props.alt}
-        className='absolute w-full h-full'
-      />
       <picture>
         <source
           srcSet={require(`_papers/${props.slug}/${props.src}?webp`)}
@@ -37,17 +38,15 @@ const Image: React.FC<{
           type='image/jpeg'
         />
         <img
-          onLoad={() => setDidLoad(true)}
           src={require(`_papers/${props.slug}/${props.src}`)}
           alt={props.alt}
-          title={props.title}
-          className={cn('absolute w-full h-full', {
-            'opacity-0': !didLoad,
-          })}
           loading='lazy'
+          title={props.title}
+          className={cn('w-full h-full')}
+          {...size}
         />
       </picture>
-    </div>
+    </span>
   )
 }
 

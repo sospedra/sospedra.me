@@ -1,16 +1,12 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
-import unified from 'unified'
-import parse from 'rehype-parse'
-import rehype2react from 'rehype-react'
 import { Post } from 'service/api'
 import Footer from 'components/sospedra/Footer'
 import Shell from 'components/sospedra/Shell'
 import Meta from 'components/sospedra/Meta'
 import Link, { LinkBack } from 'components/sospedra/Link'
-import Image from './Image'
-import markdownCSS from './markdown.module.css'
+import Content from './Content'
 
 const Paper: React.FC<{
   post: Post
@@ -51,23 +47,7 @@ const Paper: React.FC<{
           time={post.timeStamp}
           minutes={post.readingMinutes}
         />
-        <div className={`${markdownCSS['markdown']} mb-8`}>
-          {
-            ((unified()
-              .use(parse)
-              .use(rehype2react, {
-                createElement: React.createElement,
-                components: {
-                  img: (props: any) => (
-                    <Image slug={post.slug} meta={post.metadata} {...props} />
-                  ),
-                },
-              })
-              .processSync(post.content) as unknown) as {
-              result: React.ReactNode
-            }).result
-          }
-        </div>
+        <Content post={post} />
       </article>
       <Footer slug={post.slug} />
     </Shell>
