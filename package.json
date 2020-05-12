@@ -67,6 +67,6 @@
   },
   "lint-staged": {
     "*.{ts,tsx,css,md}": "prettier --write",
-    "*.{gif,jpg,jpeg,tiff,png}": "node ./internals/resize"
+    "*.{gif,jpg,jpeg,tiff,png}": "node ./internals/resize && git add ."
   }
 }
