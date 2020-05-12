@@ -10,6 +10,7 @@ const writeFile = promisify(fs.writeFile)
 sharp.cache(false)
 
 const resize = async () => {
+  console.log('run')
   for (const paper of await readdir(root)) {
     for (const file of await readdir(join(root, paper))) {
       if (file.match(/[\/.](gif|jpg|jpeg|tiff|png)$/i)) {
