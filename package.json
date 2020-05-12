@@ -62,11 +62,11 @@
   "license": "ISC",
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && git add ."
     }
   },
   "lint-staged": {
     "*.{ts,tsx,css,md}": "prettier --write",
-    "*.{gif,jpg,jpeg,tiff,png}": "node ./internals/resize && git add ."
+    "*.{gif,jpg,jpeg,tiff,png}": "node ./internals/resize"
   }
 }
