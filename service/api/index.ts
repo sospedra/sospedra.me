@@ -13,6 +13,12 @@ export type Post = {
   excerpt: string
   content: string
   readingMinutes: number
+  metadata: {
+    [key: string]: {
+      width: number
+      height: number
+    }
+  }
   ogImage: {
     url: string
   }
@@ -26,6 +32,10 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
   const realSlug = slug.replace(/\.md$/, '')
   const fullPath = join(postsDirectory, realSlug, 'index.md')
   const fileContents = fs.readFileSync(fullPath, 'utf8')
+  const metadata = fs.readFileSync(
+    join(postsDirectory, realSlug, 'metadata.json'),
+    'utf8',
+  )
   const { data, content } = matter(fileContents)
 
   const post: { [key: string]: any } = {}
@@ -40,7 +50,9 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
     if (field === 'readingMinutes') {
       post.readingMinutes = readingTime(content).minutes
     }
-
+    if (field === 'metadata') {
+      post.metadata = JSON.parse(metadata)
+    }
     if (data[field]) {
       post[field] = data[field]
     }

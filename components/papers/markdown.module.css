@@ -11,7 +11,8 @@
 .markdown p,
 .markdown ul,
 .markdown ol,
-.markdown blockquote {
+.markdown blockquote,
+.markdown pre {
   @apply mb-8;
 }
 
@@ -124,6 +125,13 @@
 
 .markdown hr {
   border-color: var(--hr);
+}
+
+.markdown img {
+  max-width: 42rem;
+  margin: 0 auto;
+  width: 100%;
+  transition: all 0.33s ease-in-out;
 }
 
 .markdown a {

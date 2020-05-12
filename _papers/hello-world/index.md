@@ -139,4 +139,4 @@ Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
 
 ## Images
 
-![head](head.png)
+![head](head.jpeg)

@@ -7,6 +7,7 @@
     "start": "next start",
     "test:static": "tsc",
     "now-build": "next build && next export -o dist",
+    "resizedir": "node ./internals/resize-dir",
     "test": "npm run test:static"
   },
   "dependencies": {
@@ -14,13 +15,11 @@
     "date-fns": "^2.12.0",
     "gray-matter": "^4.0.2",
     "isomorphic-unfetch": "^3.0.0",
-    "lqip-loader": "^2.2.0",
     "next": "9.3.6",
     "next-optimized-images": "^2.6.0",
     "path-to-regexp": "^6.1.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "react-progressive-image": "^0.6.0",
     "react-spring": "^8.0.27",
     "reading-time": "^1.2.0",
     "rehype-accessible-emojis": "^0.3.2",
@@ -37,7 +36,6 @@
     "remark-slug": "^6.0.0",
     "remark-squeeze-paragraphs": "^4.0.0",
     "remark-terms": "^2.1.2",
-    "sharp": "^0.25.2",
     "tailwindcss": "^1.4.4",
     "unified": "^9.0.0"
   },
@@ -47,14 +45,15 @@
     "@types/react": "16.9.34",
     "@types/react-dom": "16.9.7",
     "husky": ">=4",
-    "image-trace-loader": "^1.0.2",
     "imagemin-gifsicle": "^7.0.0",
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-pngquant": "^8.0.0",
     "imagemin-svgo": "^7.1.0",
     "lint-staged": ">=10",
+    "lqip-loader": "^2.2.0",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.0.5",
+    "sharp": "^0.25.2",
     "svg-sprite-loader": "^4.3.0",
     "typescript": "3.8.3",
     "webp-loader": "^0.6.0"
@@ -62,7 +61,7 @@
   "license": "ISC",
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged -v && git add ."
+      "pre-commit": "lint-staged && git add ."
     }
   }
 }
