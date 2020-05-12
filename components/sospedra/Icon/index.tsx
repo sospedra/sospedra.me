@@ -7,7 +7,7 @@ const Icon: React.FC<{
   return (
     <img
       role='icon'
-      src={`/icons/${name}`}
+      src={require(`./icons/${name}?inline`)}
       className={`min-w-6 h-6 inline-flex ${className}`}
       alt={name.split('.')[0]}
     />

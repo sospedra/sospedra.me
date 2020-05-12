@@ -6,7 +6,7 @@ import Footer from 'components/sospedra/Footer'
 import Shell from 'components/sospedra/Shell'
 import Meta from 'components/sospedra/Meta'
 import Link, { LinkBack } from 'components/sospedra/Link'
-import markdownCSS from './markdown.module.css'
+import Content from './Content'
 
 const Paper: React.FC<{
   post: Post
@@ -47,10 +47,7 @@ const Paper: React.FC<{
           time={post.timeStamp}
           minutes={post.readingMinutes}
         />
-        <div
-          className={`${markdownCSS['markdown']} mb-8`}
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        <Content post={post} />
       </article>
       <Footer slug={post.slug} />
     </Shell>

@@ -12,6 +12,14 @@ declare module 'remark-abbr' {
   export default any
 }
 
+declare module 'rehype-react' {
+  export default any
+}
+
+declare module 'rehype-parse' {
+  export default any
+}
+
 declare module 'rehype-accessible-emojis' {
   export default any
 }
