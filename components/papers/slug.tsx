@@ -58,7 +58,7 @@ const Paper: React.FC<{
               .use(rehype2react, {
                 createElement: React.createElement,
                 components: {
-                  img: Image,
+                  img: (props: any) => <Image slug={post.slug} {...props} />,
                 },
               })
               .processSync(post.content) as unknown) as {

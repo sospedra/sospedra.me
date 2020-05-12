@@ -90,7 +90,7 @@
 
 .markdown ul {
   @apply pl-8 text-base list-disc;
-  list-style-image: url('/icons/cursor.svg');
+  list-style-image: url('/images/cursor.svg');
 }
 
 .markdown ul ul {
