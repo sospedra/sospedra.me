@@ -64,9 +64,5 @@
     "hooks": {
       "pre-commit": "lint-staged -v && git add ."
     }
-  },
-  "lint-staged": {
-    "*.{ts,tsx,css,md}": "prettier --write",
-    "*.{gif,jpg,jpeg,tiff,png}": "node ./internals/resize"
   }
 }
