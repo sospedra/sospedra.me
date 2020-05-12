@@ -62,7 +62,7 @@
   "license": "ISC",
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && git add ."
+      "pre-commit": "lint-staged -v && git add ."
     }
   },
   "lint-staged": {
