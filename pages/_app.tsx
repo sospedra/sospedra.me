@@ -3,6 +3,8 @@ import App from 'next/app'
 import 'service/style/global.css'
 import { Provider as TransitionProvider } from 'service/transition'
 import { ThemeProvider } from 'service/theme'
+import { Mousetrap } from 'service/mousetrap'
+import EasterEgg from 'service/easteregg'
 
 class SospedraApp extends App {
   render() {
@@ -11,7 +13,11 @@ class SospedraApp extends App {
     return (
       <ThemeProvider>
         <TransitionProvider>
-          <Component {...pageProps} />
+          <Mousetrap>
+            <EasterEgg>
+              <Component {...pageProps} />
+            </EasterEgg>
+          </Mousetrap>
         </TransitionProvider>
       </ThemeProvider>
     )

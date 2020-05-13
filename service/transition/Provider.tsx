@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import Router from 'next/router'
-import * as mousetrap from 'mousetrap'
 import { TransitionCTX } from './context'
 import { useStateReducer } from './reducer'
 import Background from './Background'
@@ -24,15 +23,6 @@ export const Provider: React.FunctionComponent<{
       Router.push(transition.url, transition.as)
     }
   }, [transition.hasRequestedUnmount, transition.willUnmount])
-
-  useEffect(() => {
-    mousetrap.bind('b', () => {
-      if (Router.pathname !== '/') Router.back()
-    })
-    return () => {
-      mousetrap.unbind('b')
-    }
-  }, [])
 
   return (
     <TransitionCTX.Provider value={transition}>
