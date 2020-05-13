@@ -1,0 +1,59 @@
+.window {
+  @apply flex flex-col text-lg;
+  font-family: monospace;
+  border-width: 2px;
+  border-top-color: white;
+  border-right-color: #393939;
+  border-bottom-color: #393939;
+  border-left-color: white;
+  background-color: #c0c0c0;
+}
+
+.window h3 {
+  @apply flex flex-row justify-between p-1 text-lg text-white;
+  line-height: 1rem;
+  margin: 2px;
+  background: #000181;
+}
+
+.window h3 button {
+  @apply w-4 h-4 text-sm;
+  line-height: 1px;
+  font-family: sans-serif;
+}
+
+.window div {
+  @apply flex flex-col px-1 py-2;
+}
+
+.window button {
+  @apply text-black outline-none cursor-pointer;
+  background: #c0c0c0;
+  border-width: 2px;
+  border-top-color: white;
+  border-right-color: #858585;
+  border-bottom-color: #858585;
+  border-left-color: white;
+  box-shadow: 1px 1px 0 black, -1px -1px 0 black, -1px 1px 0 black,
+    1px -1px 0 black;
+}
+
+.window div button {
+  @apply self-end px-8;
+}
+
+.window div button:hover,
+.window div button:active {
+  outline: 1px solid black;
+  outline-style: dotted;
+  outline-offset: -0.25rem;
+}
+
+.window ul {
+  @apply py-4 pl-8;
+  list-style-type: square;
+}
+
+.window kbd {
+  @apply p-1 font-serif text-xs border border-black;
+}

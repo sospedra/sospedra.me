@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { useMousetrap } from 'service/mousetrap'
-import css from './easteregg.module.css'
+import dynamic from 'next/dynamic'
+
+const Egg = dynamic(() => import('./Egg'))
 
 const EasterEgg: React.FC<{}> = (props) => {
   const [isActive, setIsActive] = useState(false)
@@ -15,7 +17,7 @@ const EasterEgg: React.FC<{}> = (props) => {
 
   return (
     <>
-      {isActive && <div className={css.green} />}
+      {isActive && <Egg />}
       {props.children}
     </>
   )

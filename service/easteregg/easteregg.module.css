@@ -2,7 +2,7 @@
   @apply fixed top-0 bottom-0 z-50 h-screen;
   left: 4rem;
   width: 1px;
-  box-shadow: 0 0 3px lawngreen;
+  box-shadow: 0 0 2px lawngreen;
   background: lawngreen;
   animation: flicker 1s;
   animation-iteration-count: 2;
@@ -26,6 +26,6 @@
   63.999%,
   65%,
   69.999% {
-    opacity: 0;
+    opacity: 0.2;
   }
 }
