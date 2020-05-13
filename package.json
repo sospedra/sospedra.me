@@ -15,6 +15,7 @@
     "date-fns": "^2.12.0",
     "gray-matter": "^4.0.2",
     "isomorphic-unfetch": "^3.0.0",
+    "mousetrap": "^1.6.5",
     "next": "9.3.6",
     "next-optimized-images": "^2.6.0",
     "path-to-regexp": "^6.1.0",
@@ -41,6 +42,7 @@
   },
   "devDependencies": {
     "@types/classnames": "^2.2.10",
+    "@types/mousetrap": "^1.6.3",
     "@types/node": "13.13.4",
     "@types/react": "16.9.34",
     "@types/react-dom": "16.9.7",

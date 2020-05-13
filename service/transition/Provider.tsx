@@ -13,6 +13,9 @@ export const Provider: React.FunctionComponent<{
   useEffect(() => {
     Router.events.on('routeChangeComplete', transition.reset)
     transition.reset()
+    return () => {
+      Router.events.off('routerChangeComplete', transition.reset)
+    }
   }, [])
 
   useEffect(() => {

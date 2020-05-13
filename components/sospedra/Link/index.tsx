@@ -3,34 +3,41 @@ import { useTransition } from 'service/transition'
 import Icon from 'components/sospedra/Icon'
 import css from './link.module.css'
 
-const Link: React.FC<{
-  onClick?: (event?: React.SyntheticEvent) => any
-  instant?: boolean
-  url: string
-  as?: string
-}> = (props) => {
-  const transition = useTransition()
+const Link = React.forwardRef(
+  (
+    props: {
+      onClick?: (event?: React.SyntheticEvent) => any
+      instant?: boolean
+      url: string
+      as?: string
+      children: React.ReactNode
+    },
+    ref?: React.Ref<HTMLAnchorElement>,
+  ) => {
+    const transition = useTransition()
 
-  transition.usePrefetch(props.url)
+    transition.usePrefetch(props.url)
 
-  return (
-    <a
-      href={props.as || props.url}
-      onClick={(e) => {
-        e.preventDefault()
-        props.onClick && props.onClick(e)
-        setTimeout(
-          () => {
-            transition.navigate(props.url, props.as)
-          },
-          props.instant ? 0 : 360,
-        )
-      }}
-    >
-      {props.children}
-    </a>
-  )
-}
+    return (
+      <a
+        ref={ref}
+        href={props.as || props.url}
+        onClick={(e) => {
+          e.preventDefault()
+          props.onClick && props.onClick(e)
+          setTimeout(
+            () => {
+              transition.navigate(props.url, props.as)
+            },
+            props.instant ? 0 : 360,
+          )
+        }}
+      >
+        {props.children}
+      </a>
+    )
+  },
+)
 
 export const LinkBack: React.FC<{
   className?: string

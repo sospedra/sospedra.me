@@ -13,7 +13,7 @@ const SpriteCity: React.FunctionComponent<{}> = () => {
   return (
     <>
       <Head>
-        <link rel='preload' as='image' href='/sprites/street.svg' />
+        <link rel='preload' as='image' href={require('./street.svg')} />
       </Head>
       <animated.figure className={css.city} style={animation} />
     </>
