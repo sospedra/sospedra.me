@@ -5,8 +5,7 @@ import css from './link.module.css'
 
 const Link = React.forwardRef(
   (
-    props: {
-      onClick?: (event?: React.SyntheticEvent) => any
+    props: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
       instant?: boolean
       url: string
       as?: string
@@ -20,6 +19,7 @@ const Link = React.forwardRef(
 
     return (
       <a
+        {...props}
         ref={ref}
         href={props.as || props.url}
         onClick={(e) => {

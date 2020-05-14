@@ -21,8 +21,6 @@
   @apply outline-none;
 }
 
-.menu a:hover:before,
-.menu button:hover:before,
 .menu a:active:before,
 .menu button:active:before,
 .menu a:focus:before,
