@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { useMousetrap } from 'service/mousetrap'
 import dynamic from 'next/dynamic'
+import { useMousetrap } from 'service/mousetrap'
+import { useShake } from 'service/screen'
 
 const Egg = dynamic(() => import('./Egg'))
 
@@ -14,6 +15,10 @@ const EasterEgg: React.FC<{}> = (props) => {
       },
     ],
   ])
+
+  useShake(() => {
+    setIsActive((x) => !x)
+  })
 
   return (
     <>
