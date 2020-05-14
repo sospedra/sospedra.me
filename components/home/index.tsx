@@ -1,23 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { NextPage } from 'next'
 import { animated, config, useSpring } from 'react-spring'
 import Link from 'components/sospedra/Link'
 import Shell from 'components/sospedra/Shell'
 import SpriteCity from 'components/sospedra/Sprite/City'
+import { useNav } from './service/nav'
 import Triangle from './Triangle'
 import Title from './Title'
 import Cheatcodes from './Cheatcodes'
 import css from './home.module.css'
-import { useMousetrap } from 'service/mousetrap'
 
 const IndexPage: NextPage = () => {
   const [offset, setOffset] = useState(100)
-  const [, setCursor] = useState(0)
-  const refs = [
-    useRef<HTMLAnchorElement>(null),
-    useRef<HTMLAnchorElement>(null),
-    useRef<HTMLButtonElement>(null),
-  ] as const
+  const refs = useNav()
   const { transform } = useSpring({
     transform: `translateY(${offset}vh)`,
     config: config.slow,
@@ -26,37 +21,6 @@ const IndexPage: NextPage = () => {
   useEffect(() => {
     setOffset(0)
   }, [])
-
-  useEffect(() => {
-    if (refs[0].current) {
-      refs[0].current.focus()
-    }
-  }, [refs[0].current])
-
-  useMousetrap([
-    [
-      'alt+down',
-      () => {
-        setCursor((c) => {
-          const index = c === refs.length - 1 ? 0 : c + 1
-          const $el = refs[index].current
-          if ($el) $el.focus()
-          return index
-        })
-      },
-    ],
-    [
-      'alt+up',
-      () => {
-        setCursor((c) => {
-          const index = c === 0 ? refs.length - 1 : c - 1
-          const $el = refs[index].current
-          if ($el) $el.focus()
-          return index
-        })
-      },
-    ],
-  ])
 
   return (
     <Shell
@@ -73,18 +37,27 @@ const IndexPage: NextPage = () => {
                 <Link
                   ref={refs[0]}
                   url='/papers'
+                  onMouseEnter={() => refs[0].current?.focus()}
                   onClick={() => setOffset(100)}
                 >
                   Papers
                 </Link>
               </li>
               <li>
-                <Link ref={refs[1]} url='/about' onClick={() => setOffset(100)}>
+                <Link
+                  ref={refs[1]}
+                  url='/about'
+                  onMouseEnter={() => refs[1].current?.focus()}
+                  onClick={() => setOffset(100)}
+                >
                   About
                 </Link>
               </li>
               <li>
-                <Cheatcodes ref={refs[2]} />
+                <Cheatcodes
+                  ref={refs[2]}
+                  onMouseEnter={() => refs[2].current?.focus()}
+                />
               </li>
             </ul>
 

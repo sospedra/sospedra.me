@@ -1,5 +1,6 @@
 import React from 'react'
 import { createPortal } from 'react-dom'
+import { matchScreen } from 'service/screen'
 import css from './cheatcodes.module.css'
 
 type Props = {
@@ -21,31 +22,43 @@ const Modal: React.FC<Props> = (props) => {
           <div className={css.window}>
             <h3>
               <span>Cheatcodes</span>
-              <button>X</button>
+              <button onClick={props.close}>X</button>
             </h3>
             <div>
-              <p>
-                This website fully support keyboard-base navigation. These are
-                the most useful hotkeys:
-              </p>
-              <ul>
-                <li>
-                  <kbd>a</kbd> Go to /about
-                </li>
-                <li>
-                  <kbd>p</kbd> Go to /papers
-                </li>
-                <li>
-                  <kbd>b</kbd> Go back
-                </li>
-                <li>
-                  <kbd>esc</kbd> Close things
-                </li>
-                <li>
-                  <kbd>↑↑↓↓←→←→ba</kbd> wait, wat?
-                </li>
-              </ul>
-              <button>Ok</button>
+              {matchScreen() ? (
+                <p>
+                  Cheatcodes are available only on keyboard controlled devices.
+                </p>
+              ) : (
+                <>
+                  <p>
+                    This website fully support keyboard-base navigation. These
+                    are <b>some useful</b> hotkeys but there are more. Discover
+                    them!
+                  </p>
+                  <ul>
+                    <li>
+                      <kbd>h</kbd> Go to /
+                    </li>
+                    <li>
+                      <kbd>a</kbd> Go to /about
+                    </li>
+                    <li>
+                      <kbd>p</kbd> Go to /papers
+                    </li>
+                    <li>
+                      <kbd>b</kbd> Go back
+                    </li>
+                    <li>
+                      <kbd>esc</kbd> Close things
+                    </li>
+                    <li>
+                      <kbd>↑↑↓↓←→←→ba</kbd> wait, wat?
+                    </li>
+                  </ul>
+                </>
+              )}
+              <button onClick={props.close}>Ok</button>
             </div>
           </div>
         </div>
