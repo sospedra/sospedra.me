@@ -18,6 +18,7 @@ export const useMousetrap = (
 export const Mousetrap: React.FC<{}> = (props) => {
   useMousetrap([
     ['b', () => Router.pathname !== '/' && Router.back()],
+    ['h', () => Router.push('/')],
     ['p', () => Router.push('/papers')],
     ['a', () => Router.push('/about')],
   ])
