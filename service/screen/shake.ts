@@ -16,7 +16,6 @@ export const useShake = (clbk: () => any) => {
     const onMotion = ({ accelerationIncludingGravity }: DeviceMotionEvent) => {
       const { x, y, z } = selectCoords(accelerationIncludingGravity)
       const change = Math.abs(x - vault.x + y - vault.y + z - vault.z)
-
       if (change > sensitivity) {
         clbk()
       }

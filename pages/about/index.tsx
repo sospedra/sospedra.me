@@ -3,6 +3,7 @@ import Shell from 'components/sospedra/Shell'
 import SpriteBust from 'components/sospedra/Sprite/Bust'
 import Link, { LinkBack } from 'components/sospedra/Link'
 import css from './about.module.css'
+import neonCss from 'service/style/neon.module.css'
 
 const About: React.FC<{}> = () => {
   return (
@@ -49,12 +50,36 @@ const About: React.FC<{}> = () => {
           contractor.
         </p>
 
-        <a
-          href='mailto:hello@sospedra/me'
-          className='text-xl font-bold text-cyan-400'
-        >
-          Hire me
-        </a>
+        <h4 className='mb-2 text-xl font-bold'>Want to get in contact?</h4>
+        <ul className='flex flex-row text-xl text-cyan-400'>
+          <li>
+            <a
+              href='https://twitter.com/sospedra_r'
+              target='_blank'
+              className={neonCss.neon}
+              rel='noopener noreferrer'
+            >
+              twitter
+            </a>
+          </li>
+          <li>
+            <span className='px-2 text-sm text-white'>▼</span>
+            <a
+              href='https://github.com/sospedra'
+              target='_blank'
+              className={neonCss.neon}
+              rel='noopener noreferrer'
+            >
+              github
+            </a>
+          </li>
+          <li>
+            <span className='px-2 text-sm text-white'>▼</span>
+            <a href='mailto:hello@sospedra.me' className={neonCss.neon}>
+              email
+            </a>
+          </li>
+        </ul>
       </article>
 
       <div className={css.sprite}>
