@@ -43,7 +43,8 @@
 }
 
 .window div button:hover,
-.window div button:active {
+.window div button:active,
+.window div button:focus {
   outline: 1px solid black;
   outline-style: dotted;
   outline-offset: -0.25rem;

@@ -58,7 +58,9 @@ const Modal: React.FC<Props> = (props) => {
                   </ul>
                 </>
               )}
-              <button onClick={props.close}>Ok</button>
+              <button autoFocus onClick={props.close}>
+                Ok
+              </button>
             </div>
           </div>
         </div>

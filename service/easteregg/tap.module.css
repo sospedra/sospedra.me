@@ -1,0 +1,39 @@
+.tap {
+  @apply fixed inset-0 z-50 w-full outline-none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.count {
+  @apply flex items-center justify-center w-48 h-48 font-serif text-6xl;
+  margin-left: calc(25% - 6rem);
+  transform-origin: center center;
+  animation: rotate 8s linear infinite;
+  text-shadow: 2px 2px 0 var(--pink), -2px -2px 0 var(--cyan);
+}
+
+.count:before {
+  @apply absolute block w-full h-full rounded-full;
+  content: '';
+  z-index: -1;
+  filter: blur(0.23rem);
+  background: radial-gradient(white 23%, transparent);
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+  100% {
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+}
