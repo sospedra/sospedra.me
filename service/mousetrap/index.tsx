@@ -25,3 +25,7 @@ export const Mousetrap: React.FC<{}> = (props) => {
 
   return <>{props.children}</>
 }
+
+export const trigger = (key: string) => {
+  mousetrap.trigger(key)
+}

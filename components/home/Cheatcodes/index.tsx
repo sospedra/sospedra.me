@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useMousetrap } from 'service/mousetrap'
-import { query } from 'service/screen'
 import Loading from './Loading'
 
 const Modal = dynamic(() => import('./Modal'), {
@@ -24,15 +23,6 @@ const Cheatcodes = React.forwardRef(
         <button {...props} ref={ref} onClick={() => setIsActive(true)}>
           Cheatcodes
         </button>
-        <style jsx>{`
-          @media ${query} {
-            button {
-              text-decoration: line-through;
-              text-decoration-style: double;
-              text-decoration-color: var(--pink);
-            }
-          }
-        `}</style>
       </>
     )
   },
