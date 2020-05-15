@@ -8,7 +8,7 @@ const Tap = dynamic(() => import('./Tap'))
 
 const EasterEgg: React.FC<{}> = (props) => {
   const [isActive, setIsActive] = useState(false)
-  const [isTapVisible, setIsTapVisible] = useState(true)
+  const [isTapVisible, setIsTapVisible] = useState(false)
 
   useMousetrap([
     [
