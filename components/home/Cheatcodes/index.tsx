@@ -2,8 +2,12 @@ import React, { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useMousetrap } from 'service/mousetrap'
 import { query } from 'service/screen'
+import Loading from './Loading'
 
-const Modal = dynamic(() => import('./Modal'), { ssr: false })
+const Modal = dynamic(() => import('./Modal'), {
+  ssr: false,
+  loading: Loading,
+})
 
 const Cheatcodes = React.forwardRef(
   (

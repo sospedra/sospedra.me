@@ -1,3 +1,5 @@
+export * from './shake'
+
 export const query = '(hover: none)'
 
 export const matchScreen = () => {

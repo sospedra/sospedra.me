@@ -1,6 +1,6 @@
 .green {
   @apply fixed top-0 bottom-0 z-50 h-screen;
-  left: 4rem;
+  left: 25%;
   width: 1px;
   box-shadow: 0 0 2px lawngreen;
   background: lawngreen;

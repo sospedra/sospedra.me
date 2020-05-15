@@ -37,6 +37,7 @@
     "remark-slug": "^6.0.0",
     "remark-squeeze-paragraphs": "^4.0.0",
     "remark-terms": "^2.1.2",
+    "screenfull": "^5.0.2",
     "tailwindcss": "^1.4.4",
     "unified": "^9.0.0"
   },
