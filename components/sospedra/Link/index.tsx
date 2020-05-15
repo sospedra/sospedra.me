@@ -6,30 +6,31 @@ import css from './link.module.css'
 const Link = React.forwardRef(
   (
     props: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-      instant?: boolean
       url: string
       as?: string
       children: React.ReactNode
+      instant?: boolean
     },
     ref?: React.Ref<HTMLAnchorElement>,
   ) => {
+    const { as, url, onClick, instant, ...nativeProps } = props
     const transition = useTransition()
 
-    transition.usePrefetch(props.url)
+    transition.usePrefetch(url)
 
     return (
       <a
-        {...props}
+        {...nativeProps}
         ref={ref}
-        href={props.as || props.url}
+        href={as || url}
         onClick={(e) => {
           e.preventDefault()
-          props.onClick && props.onClick(e)
+          onClick && onClick(e)
           setTimeout(
             () => {
-              transition.navigate(props.url, props.as)
+              transition.navigate(url, as)
             },
-            props.instant ? 0 : 360,
+            instant ? 0 : 360,
           )
         }}
       >
