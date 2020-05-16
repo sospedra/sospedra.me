@@ -22,7 +22,7 @@ const EasterEgg: React.FC<{}> = (props) => {
 
   useShake(() => {
     trigger('esc')
-    setIsTapVisible((x) => !x)
+    setIsTapVisible(true)
   })
 
   useLog()
