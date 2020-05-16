@@ -1,6 +1,10 @@
 .bg {
   @apply absolute;
-  background: linear-gradient(to bottom, var(--bg-start) 0%, var(--bg-end) 90%);
+  background: radial-gradient(
+    ellipse at bottom,
+    var(--bg-end) 0%,
+    var(--bg-start) 100%
+  );
   width: 400vw;
   height: 400vh;
   will-change: left, top;
