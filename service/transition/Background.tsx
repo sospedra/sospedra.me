@@ -1,19 +1,14 @@
 import React, { useMemo } from 'react'
-import { pathToRegexp } from 'path-to-regexp'
 import { useSpring, animated, config } from 'react-spring'
 import { useRouter } from 'next/router'
 import { useTransition } from './context'
+import { createPtr } from './create-ptr'
+import Stars from './Stars'
 import css from './transition.module.css'
 
 type OffsetT = {
   left: string
   top: string
-}
-
-const createPtr = (href: string) => {
-  return (pattern: string) => {
-    return pathToRegexp(pattern).exec(href) !== null
-  }
 }
 
 const getOffsetFromHref = (href: string): OffsetT => {
@@ -27,7 +22,7 @@ const getOffsetFromHref = (href: string): OffsetT => {
       return { left: '-100vw', top: '-50vh' }
     case ptr('/'):
     default:
-      return { left: '0vw', top: '-300vh' }
+      return { left: '0vw', top: '-250vh' }
   }
 }
 
@@ -59,6 +54,7 @@ const Background: React.FunctionComponent<{}> = () => {
   return (
     <div className={css.wrapper}>
       <Animation setAnimation={setAnimation} animation={animation} />
+      <Stars />
     </div>
   )
 }

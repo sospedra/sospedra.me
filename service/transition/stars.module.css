@@ -1,0 +1,33 @@
+.star {
+  @apply absolute block;
+  opacity: 0;
+  animation: appear-in 2s linear forwards;
+}
+
+.appear {
+  @apply block w-full h-full overflow-hidden bg-white;
+  border-radius: 50%;
+  box-shadow: 0 0 6px white;
+  animation: twinkling 3s ease-in-out alternate-reverse infinite;
+}
+
+@keyframes twinkling {
+  0%,
+  70% {
+    box-shadow: 0 0 3px white;
+    opacity: 0.7;
+  }
+  100% {
+    box-shadow: 0 0 6px white;
+    opacity: 1;
+  }
+}
+
+@keyframes appear-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
