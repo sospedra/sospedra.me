@@ -5,6 +5,7 @@
 
 html {
   scroll-behavior: smooth;
+  touch-action: manipulation;
 }
 
 @font-face {
@@ -12,7 +13,7 @@ html {
   font-style: normal;
   font-weight: normal;
   font-display: swap;
-  unicode-range: U+000-5FF;
+  unicode-range: U+20, U+61, U+62, U+64, U+65, U+6E-70, U+72, U+73, U+75, U+E9;
   src: url('/fonts/lazer84.woff2') format('woff2'),
     url('/fonts/lazer84.woff') format('woff');
 }
