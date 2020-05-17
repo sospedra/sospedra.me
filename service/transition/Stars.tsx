@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 import { isNotNull } from 'service/structs'
@@ -70,7 +70,7 @@ const ShootingStar: React.FC<{}> = () => {
   return (
     <span
       className={css.shooting}
-      style={{ animationDelay: `${ranrang(8, 110)}s` }}
+      style={{ animationDelay: `${ranrang(8, 30)}s` }}
     >
       <span className={cn('start', { [css.star]: true })} />
     </span>
@@ -80,7 +80,11 @@ const ShootingStar: React.FC<{}> = () => {
 const Stars: React.FC<{}> = () => {
   const { pathname } = useRouter()
   const { url } = useTransition()
-  const hidden = useMemo(() => getHidden(url || pathname), [url, pathname])
+  const [hidden, setHidden] = useState(getHidden(url || pathname))
+
+  useEffect(() => {
+    setHidden(getHidden(url || pathname))
+  }, [url, pathname])
 
   return (
     <div
