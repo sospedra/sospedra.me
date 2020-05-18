@@ -13,7 +13,7 @@
 .markdown ol,
 .markdown blockquote,
 .markdown pre {
-  @apply mb-8;
+  @apply mb-8 text-lg;
 }
 
 .markdown > * + * {

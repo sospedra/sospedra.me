@@ -1,5 +1,4 @@
 import React from 'react'
-import cn from 'classnames'
 import { Post } from 'service/api'
 import Head from 'next/head'
 
@@ -10,13 +9,13 @@ const Image: React.FC<{
   src: string
   title: string
 }> = (props) => {
-  const size = props.meta[props.src]
+  const { width, height } = props.meta[props.src]
 
   return (
-    <span
-      className='relative block'
+    <div
+      className='relative block max-w-full'
       style={{
-        ...size,
+        width: width,
         backgroundColor: require(`_papers/${props.slug}/${props.src}?lqip-colors`)[0],
       }}
     >
@@ -28,6 +27,10 @@ const Image: React.FC<{
           type='image/webp'
         />
       </Head>
+      <div
+        className='w-full h-full'
+        style={{ paddingTop: `${(height / width) * 100}%` }}
+      />
       <picture>
         <source
           srcSet={require(`_papers/${props.slug}/${props.src}?webp`)}
@@ -42,11 +45,10 @@ const Image: React.FC<{
           alt={props.alt}
           loading='lazy'
           title={props.title}
-          className={cn('w-full h-full')}
-          {...size}
+          className='absolute inset-0 w-full h-full'
         />
       </picture>
-    </span>
+    </div>
   )
 }
 
