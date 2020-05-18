@@ -16,7 +16,9 @@ const readdir = promisify(fs.readdir)
 
     for (file of await readdir(join(root, paper))) {
       if (file.match(/[\/.](gif|jpg|jpeg|tiff|png)$/i)) {
-        resize(join(root, paper, file))
+        if (file.includes('_papers')) {
+          resize(join(root, paper, file))
+        }
       }
     }
   } catch (ex) {
