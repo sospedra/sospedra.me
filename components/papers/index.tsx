@@ -7,8 +7,10 @@ import neonCss from 'service/style/neon.module.css'
 import Meta from 'components/sospedra/Meta'
 import Shell from 'components/sospedra/Shell'
 
-const DESCRIPTION =
-  "Words are my own. It's dangerous to go unknowing, take some pills 💊"
+const DESCRIPTION = `These papers are concise and to the point content.
+I'm not gonna dive deep on every detail if it's not needed. First, this is the Internet and we can use links.
+And second, I prefer content that I can quick scan. That doesn't mean the papers are short.
+That means they are dense. Words are my own. It's dangerous to go unknowing, take some pills 💊`
 
 const getTitleCss = () => {
   return Math.random() < 0.9 ? neonCss.neon : glitchCss.glitch
