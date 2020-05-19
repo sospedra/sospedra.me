@@ -10,12 +10,14 @@ const exists = promisify(fs.exists)
 sharp.cache(false)
 
 module.exports = (filename) => {
+  if (!filename.includes('_papers')) return
+
   const image = sharp(filename)
 
   return image
     .metadata()
     .then(({ width }) => (width > 640 ? image.resize(640) : image))
-    .then((data) => data.jpeg({ progressive: true }).toBuffer())
+    .then((data) => data.jpeg().toBuffer())
     .then(async (data) => {
       const file = filename.replace(/\.[^.]+$/, '.jpeg')
 

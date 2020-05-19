@@ -3,37 +3,38 @@ import cn from 'classnames'
 import Head from 'next/head'
 
 const Shell: React.FC<{
-  title?: string
+  canonical?: string
+  className?: string
   description?: string
   image?: string
-  className?: string
   shellClassName?: string
+  title?: string
 }> = ({
-  title,
-  className,
-  description,
+  canonical = '',
   children,
+  className,
+  description = '',
+  image = '/sospedra.png',
   shellClassName = '',
-  image = '/og.png',
+  title = '',
 }) => {
-  title = [title, 'Rubén Sospedra'].filter((x) => x).join(' ▼ ')
-
   return (
     <div
+      style={{ overscrollBehavior: 'contain' }}
       className={cn('w-full h-full overflow-x-hidden overflow-y-auto', {
         [shellClassName]: !!shellClassName,
       })}
     >
       <Head>
         <title>{title}</title>
+        <meta name='description' content={description} />
         <meta property='og:image' content={image} />
+        <meta property='og:description' content={description} />
         <meta property='og:title' content={title} />
-        {description && (
-          <>
-            <meta property='og:description' content={description} />
-            <meta name='description' content={description} />
-          </>
-        )}
+        <meta name='twitter:image' content={image} />
+        <meta name='twitter:title' content={title} />
+        <meta name='twitter:description' content={description} />
+        <link rel='canonical' href={`https://sospedra.me${canonical}`} />
       </Head>
       <main className={className}>{children}</main>
     </div>

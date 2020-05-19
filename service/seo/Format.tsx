@@ -8,6 +8,7 @@ const Format: React.FC<{}> = () => {
           __html: `<!-- ah, I see you're a man of culture as well. -->`,
         }}
       />
+
       <meta charSet='utf-8' />
       <meta name='viewport' content='width=device-width, initial-scale=1' />
       <meta name='msapplication-tap-highlight' content='no' />
