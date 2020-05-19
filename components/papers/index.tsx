@@ -1,5 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
+import memoize from 'memoize-one'
 import Link, { LinkBack } from 'components/sospedra/Link'
 import { Post } from 'service/api'
 import glitchCss from 'service/style/glitch.module.css'
@@ -7,14 +8,12 @@ import neonCss from 'service/style/neon.module.css'
 import Meta from 'components/sospedra/Meta'
 import Shell from 'components/sospedra/Shell'
 
-const DESCRIPTION = `These papers are concise and to the point content.
-I'm not gonna dive deep on every detail if it's not needed. First, this is the Internet and we can use links.
-And second, I prefer content that I can quick scan. That doesn't mean the papers are short.
-That means they are dense. Words are my own. It's dangerous to go unknowing, take some pills 💊`
+const DESCRIPTION =
+  "Words are my own. It's dangerous to go unknowing, take some pills 💊"
 
-const getTitleCss = () => {
+const getTitleCss = memoize((_: string) => {
   return Math.random() < 0.9 ? neonCss.neon : glitchCss.glitch
-}
+})
 
 const Papers: React.FC<{
   allPosts: Post[]
@@ -24,7 +23,6 @@ const Papers: React.FC<{
       title='Papers'
       className='w-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
       description={`Personal blog by Rubén Sospedra. ${DESCRIPTION}`}
-      canonical='/papers'
     >
       <Link url='/'>
         <LinkBack>Home</LinkBack>
@@ -40,7 +38,7 @@ const Papers: React.FC<{
               <h2
                 data-text={post.title}
                 className={cn('font-serif text-3xl', {
-                  [getTitleCss()]: true,
+                  [getTitleCss(post.slug)]: true,
                 })}
               >
                 {post.title}

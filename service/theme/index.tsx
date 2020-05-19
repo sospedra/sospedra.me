@@ -38,7 +38,7 @@ export const ThemeProvider: React.FC<{}> = (props) => {
           --violet: #49257c;
           --pink: #d9478c;
           --blue: #46628c;
-          --yellow: #f1f9ce;
+          --yellow: #ffea00;
           --magenta: #800d79;
           --black: #0e141b;
           --teal: #d7fffc;

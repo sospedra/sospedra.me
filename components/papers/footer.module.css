@@ -1,0 +1,10 @@
+.signature {
+  @apply relative mb-8 ml-2 text-6xl;
+  font-family: lazer84;
+}
+
+.signature:after {
+  @apply absolute text-3xl;
+  top: 0.5rem;
+  content: '💊';
+}

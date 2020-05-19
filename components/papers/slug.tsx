@@ -2,10 +2,10 @@ import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import ErrorPage from 'next/error'
 import { Post } from 'service/api'
-import Footer from 'components/sospedra/Footer'
 import Shell from 'components/sospedra/Shell'
 import Meta from 'components/sospedra/Meta'
 import Link, { LinkBack } from 'components/sospedra/Link'
+import Footer from './Footer'
 import Content from './Content'
 
 const Paper: React.FC<{
