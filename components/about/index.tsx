@@ -1,9 +1,9 @@
 import React from 'react'
+import neonCss from 'service/style/neon.module.css'
 import Shell from 'components/sospedra/Shell'
 import SpriteBust from 'components/sospedra/Sprite/Bust'
 import Link, { LinkBack } from 'components/sospedra/Link'
 import css from './about.module.css'
-import neonCss from 'service/style/neon.module.css'
 
 const About: React.FC<{}> = () => {
   return (
@@ -11,6 +11,7 @@ const About: React.FC<{}> = () => {
       title='About'
       className='relative w-full h-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
       description='javascript hacker ▼ fullstack engineer contractor'
+      canonical='/about'
     >
       <Link url='/'>
         <LinkBack>Home</LinkBack>

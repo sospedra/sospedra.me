@@ -4,6 +4,7 @@ import Head from 'next/head'
 
 const Shell: React.FC<{
   title?: string
+  canonical?: string
   description?: string
   image?: string
   className?: string
@@ -11,6 +12,7 @@ const Shell: React.FC<{
 }> = ({
   title,
   className,
+  canonical = '',
   description,
   children,
   shellClassName = '',
@@ -28,6 +30,7 @@ const Shell: React.FC<{
         <title>{title}</title>
         <meta property='og:image' content={image} />
         <meta property='og:title' content={title} />
+        <link rel='canonical' href={`https://sospedra.me${canonical}`} />
         {description && (
           <>
             <meta property='og:description' content={description} />

@@ -35,6 +35,7 @@ const Paper: React.FC<{
       image={post.ogImage.url}
       description={post.excerpt}
       className='w-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
+      canonical={`/papers/${post.slug}`}
     >
       <Link url='/papers'>
         <LinkBack>Papers</LinkBack>
