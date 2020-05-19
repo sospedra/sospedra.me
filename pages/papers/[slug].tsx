@@ -5,26 +5,30 @@ import markdownToHtml from 'service/markdown'
 export { default } from 'components/papers/slug'
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const post = getPostBySlug(params?.slug as string, [
-    'content',
-    'coverImage',
-    'excerpt',
-    'ogImage',
-    'readingMinutes',
-    'metadata',
-    'slug',
-    'timeStamp',
-    'title',
-  ])
-  const content = await markdownToHtml(post.content || '')
+  if (params && params.slug) {
+    const post = getPostBySlug(params?.slug as string, [
+      'content',
+      'coverImage',
+      'excerpt',
+      'ogImage',
+      'readingMinutes',
+      'metadata',
+      'slug',
+      'timeStamp',
+      'title',
+    ])
+    const content = await markdownToHtml(post.content || '')
 
-  return {
-    props: {
-      post: {
-        ...post,
-        content,
+    return {
+      props: {
+        post: {
+          ...post,
+          content,
+        },
       },
-    },
+    }
+  } else {
+    return { props: {} }
   }
 }
 

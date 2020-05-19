@@ -6,7 +6,6 @@ const IMAGE = '/sospedra.png'
 const Social: React.FC<{}> = () => {
   return (
     <>
-      <meta name='image' content={IMAGE} />
       <meta name='author' content='Rubén Sospedra' />
 
       <meta property='og:image' content={IMAGE} />
@@ -18,7 +17,6 @@ const Social: React.FC<{}> = () => {
 
       <meta name='twitter:card' content='summary_large_image' />
       <meta name='twitter:creator' content='@sospedra_r' />
-      <meta name='twitter:image' content={IMAGE} />
       <meta name='twitter:url' content={URL} />
       <meta name='twitter:site' content='@sospedra_r' />
 

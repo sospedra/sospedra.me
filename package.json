@@ -3,11 +3,12 @@
   "version": "3.0.0",
   "scripts": {
     "dev": "next",
-    "build": "next build",
+    "build": "yarn sitemap & next build",
     "start": "next start",
     "test:static": "tsc",
     "now-build": "next build && next export -o dist",
     "resizedir": "node ./internals/resize-dir",
+    "sitemap": "node ./internals/sitemap",
     "test": "npm run test:static"
   },
   "dependencies": {
@@ -15,6 +16,7 @@
     "date-fns": "^2.12.0",
     "gray-matter": "^4.0.2",
     "isomorphic-unfetch": "^3.0.0",
+    "memoize-one": "^5.1.1",
     "mousetrap": "^1.6.5",
     "next": "9.3.6",
     "next-optimized-images": "^2.6.0",

@@ -32,12 +32,87 @@ At this point, I guess you get the idea. But how we put together all the pieces?
 
 1. You need your web to be **statically generated**. There are tones of options: `Jekyll`, `create-react-app`, an old-fashion raw `HTML`. Whatever. The important bit is that to use GitHub pages it must be **static**.
 
-2. You consume your fancy database with the public [GitHub API](https://developer.github.com/v3/). The public part is a no key-required standard CRUD. Your web app will **use this API to get GitHub Issues**.
+2. You consume your fancy database with the public [GitHub API](https://developer.github.com/v3/). The public part is a no key-required standard CRUD. Your web app will **use this API to get GitHub Issues**. You can tweak your query with multiple params: the state, labels, content, assignation, etc.
+
+```js
+// request first 13 RFM open requests that matches "vapor"
+const params = [
+  'repo:sospedra/rfm',
+  'state:open',
+  'label:search',
+  'vapor',
+  'in:title,body'
+]
+const root = 'https://api.github.com/search/issues'
+const path = `${root}?q=${params.join('+')}&per_page=13`
+const response = await fetch(path)
+const payload: {
+  items: Items,
+  total_count: number
+} = await response.json()
+const items = payload.items.map<Request>((item) => {
+  // using the body as JSON with RFM data model
+  body: JSON.parse(item.body),
+  id: item.id,
+  comments: item.comments,
+  createdAt: new Date(item.created_at),
+  title: item.title,
+  updatedAt: new Date(item.updated_at),
+  url: item.html_url,
+})
+```
 
 3. When in need of **server functions use GitHub Actions**. These deliver an outstanding experience. They are so powerful. The basic idea is that a custom trigger will execute a custom function. There's a [marketplace](https://github.com/marketplace) you can explore or [you can build your own](https://help.github.com/en/actions/building-actions). It's free real state!
 
-4. Finally, tweak the limitations. You can either add some auth with the GitHub OAuth. Or play with the Issues metadata, Actions triggers, etc. In RFM the actions are **executed only when the issue has a particular label**. Only moderators can assign labels. That's the way I avoid RFM being a spammy tool.
+```yml
+// rfm/.github/workflows/issue.yml
+name: Create external issues
+on:
+  # run when modify issue label
+  issues:
+    types: [labeled]
+
+jobs:
+  create:
+    # filter only those issues with the label "search"
+    if: "contains(github.event.issue.labels.*.name, 'search')"
+    name: Create issue
+    runs-on: ubuntu-latest
+    steps:
+      # parse the body of the issue
+      - name: vars
+        id: vars
+        uses: gr2m/get-json-paths-action@v1.x
+      # create a new issue in the repo that needs support
+      - name: create-issue
+        # notice that logic operators are available
+        if: steps.vars.outputs.requestIssueFullName == 'NONE'
+        uses: maxkomarychev/oction-create-issue@v0.7.1
+        with:
+          token: ${{ secrets.RFM_BOT }}
+          title: 🚧 Is this repo looking for support?
+          owner: ${{ steps.vars.outputs.owner }}
+          repo: ${{ steps.vars.outputs.name }}
+          body: Heeenlo hoomans!
+```
+
+4. To integrate RFM with GitHub I use the [GitHub Query Parameters](https://help.github.com/en/github/managing-your-work-on-github/about-automation-for-issues-and-pull-requests-with-query-parameters). You know, remember to avoid *Hooman Paws*™️ as much as possible. There's a well-known library that can do the heavy parsing for us: [new-github-issue-url](https://github.com/sindresorhus/new-github-issue-url).
+
+```js
+const createGithubIssue = (request?: SubmitRequest) => {
+  if (!request) return ''
+  return newGithubIssueUrl({
+    body: JSON.stringify(request, null, 4),
+    labels: ['search'],
+    repo: 'rfm',
+    title: request.fullName,
+    user: 'sospedra',
+  })
+}
+```
+
+5. Finally, tweak the limitations. You can either add some auth with the GitHub OAuth. Or play with the Issues metadata, Actions triggers, etc. In RFM the actions are **executed only when the issue has a particular label**. Only moderators can assign labels. That's the way I avoid RFM being a spammy tool.
 
 ## Conclusion
 
-Am I suggesting that y'all should use **GaaS** from now on? Well, absolutely no 🤷🏻‍♂️. But, there are some cases where this can be beneficial. I'm thinking of OSS projects, mostly. In fact, using [GitHub Issues as blog post comments](https://utteranc.es/) it's being a common practice for a long time. This is an evolution of the same concept. The actual point is: **GitHub is damn freaking powerful**. Let's give these people the love they deserve 👏💜
+Am I suggesting that y'all should use **GaaS** from now on? Well, absolutely no 🤷🏻‍♂️. But, there are some cases where this can be beneficial. I'm thinking of OSS projects, mostly. In fact, using [GitHub Issues as blog post comments](https://utteranc.es/) it's being a common practice for a long time. This is an evolution of the same concept. The actual point is: **GitHub become an infra beast** lately. We should keep an eye here and consider pushing the limits as much as possible.

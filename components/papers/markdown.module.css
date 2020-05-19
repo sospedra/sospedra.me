@@ -71,11 +71,11 @@
 }
 
 .markdown code {
-  @apply inline px-1 font-mono rounded py-05;
+  @apply inline px-1 font-mono rounded;
 }
 
 .markdown pre {
-  @apply p-4 font-mono border border-gray-800 rounded;
+  @apply p-2 overflow-x-auto font-mono border border-gray-800 rounded;
 }
 
 .markdown pre code {
@@ -83,14 +83,32 @@
   color: var(--code-text);
 }
 
+@media (hover: hover) {
+  .markdown pre::-webkit-scrollbar-track {
+    @apply rounded-full;
+  }
+
+  .markdown pre::-webkit-scrollbar {
+    @apply h-3;
+  }
+
+  .markdown pre::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background-color: #c6c6c6;
+    border: 4px solid #212121;
+  }
+}
 @screen md {
+  .markdown pre {
+    @apply p-4;
+  }
   .markdown pre code {
     @apply text-base;
   }
 }
 
 .markdown ul {
-  @apply pl-8 text-base list-disc;
+  @apply pl-8 list-disc;
   list-style-image: url('/images/cursor.svg');
 }
 
@@ -99,7 +117,7 @@
 }
 
 .markdown ol {
-  @apply pl-8 text-base list-decimal;
+  @apply pl-8 list-decimal;
 }
 
 .markdown kbd {
@@ -117,10 +135,6 @@
 
 .markdown td {
   @apply px-3 py-1 border;
-}
-
-.markdown .highlight pre {
-  @apply bg-gray-100 !important;
 }
 
 .markdown hr {

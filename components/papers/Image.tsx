@@ -12,7 +12,7 @@ const Image: React.FC<{
   const { width, height } = props.meta[props.src]
 
   return (
-    <div
+    <span
       className='relative block max-w-full'
       style={{
         width: width,
@@ -27,8 +27,8 @@ const Image: React.FC<{
           type='image/webp'
         />
       </Head>
-      <div
-        className='w-full h-full'
+      <span
+        className='block w-full h-full'
         style={{ paddingTop: `${(height / width) * 100}%` }}
       />
       <picture>
@@ -45,10 +45,12 @@ const Image: React.FC<{
           alt={props.alt}
           loading='lazy'
           title={props.title}
-          className='absolute inset-0 w-full h-full'
+          className='absolute inset-0 w-full h-full max-w-full max-h-full'
+          width={width}
+          height={height}
         />
       </picture>
-    </div>
+    </span>
   )
 }
 

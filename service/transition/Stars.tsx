@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 import { isNotNull } from 'service/structs'
@@ -55,13 +55,7 @@ const createStars = () => {
 
 const getHidden = (href: string) => {
   const ptr = createPtr(href)
-  switch (true) {
-    case ptr('/papers'):
-    case ptr('/'):
-      return false
-    default:
-      return true
-  }
+  return !(ptr('/papers') || ptr('/'))
 }
 
 const stars = createStars()
@@ -80,21 +74,12 @@ const ShootingStar: React.FC<{}> = () => {
 const Stars: React.FC<{}> = () => {
   const { pathname } = useRouter()
   const { url } = useTransition()
-  const [hidden, setHidden] = useState(getHidden(url || pathname))
+  const hidden = useMemo(() => getHidden(url || pathname), [url, pathname])
 
-  useEffect(() => {
-    setHidden(getHidden(url || pathname))
-  }, [url, pathname])
+  if (hidden) return null
 
   return (
-    <div
-      className={cn(
-        'absolute inset-0 overflow-hidden transition-opacity duration-1000',
-        {
-          'opacity-0': hidden,
-        },
-      )}
-    >
+    <div className='absolute inset-0 overflow-hidden'>
       <ShootingStar />
       {stars.map(({ y, x, size, delay, id, animation }) => (
         <span
