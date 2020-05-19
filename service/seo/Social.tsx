@@ -3,7 +3,7 @@ import React from 'react'
 const TITLE = 'Rubén Sospedra'
 const DESCRIPTION = 'Rubén Sospedra ▼ javascript hacker'
 const URL = 'https://sospedra.me'
-const IMAGE = '/social.png'
+const IMAGE = '/sospedra.png'
 
 const Social: React.FC<{}> = () => {
   return (
