@@ -1,18 +1,15 @@
-import React, { ComponentProps } from 'react'
+import React from 'react'
 import cn from 'classnames'
 import Head from 'next/head'
-import PageSEO from 'service/seo/Page'
 
-const Shell: React.FC<
-  {
-    canonical?: string
-    className?: string
-    description?: string
-    image?: string
-    shellClassName?: string
-    title?: string
-  } & ComponentProps<typeof PageSEO>
-> = ({
+const Shell: React.FC<{
+  canonical?: string
+  className?: string
+  description?: string
+  image?: string
+  shellClassName?: string
+  title?: string
+}> = ({
   canonical = '',
   children,
   className,

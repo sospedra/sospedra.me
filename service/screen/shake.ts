@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import Router from 'next/router'
 
 const createCoords = () => ({ x: 0, y: 0, z: 0 })
 
@@ -14,15 +15,17 @@ export const useShake = (clbk: () => any) => {
     const sensitivity = 20
 
     const onMotion = ({ accelerationIncludingGravity }: DeviceMotionEvent) => {
-      const { x, y, z } = selectCoords(accelerationIncludingGravity)
-      const change = Math.abs(x - vault.x + y - vault.y + z - vault.z)
-      if (change > sensitivity) {
-        clbk()
-      }
+      if (!Router.pathname.startsWith('/papers/')) {
+        const { x, y, z } = selectCoords(accelerationIncludingGravity)
+        const change = Math.abs(x - vault.x + y - vault.y + z - vault.z)
+        if (change > sensitivity) {
+          clbk()
+        }
 
-      vault.x = x
-      vault.y = y
-      vault.z = z
+        vault.x = x
+        vault.y = y
+        vault.z = z
+      }
     }
 
     window.addEventListener('devicemotion', onMotion)
@@ -30,5 +33,5 @@ export const useShake = (clbk: () => any) => {
     return () => {
       window.removeEventListener('devicemotion', onMotion)
     }
-  }, [])
+  })
 }
