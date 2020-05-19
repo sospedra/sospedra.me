@@ -1,42 +1,43 @@
-import React from 'react'
+import React, { ComponentProps } from 'react'
 import cn from 'classnames'
 import Head from 'next/head'
+import PageSEO from 'service/seo/Page'
 
-const Shell: React.FC<{
-  title?: string
-  canonical?: string
-  description?: string
-  image?: string
-  className?: string
-  shellClassName?: string
-}> = ({
-  title,
-  className,
+const Shell: React.FC<
+  {
+    canonical?: string
+    className?: string
+    description?: string
+    image?: string
+    shellClassName?: string
+    title?: string
+  } & ComponentProps<typeof PageSEO>
+> = ({
   canonical = '',
-  description,
   children,
+  className,
+  description = '',
+  image = '/sospedra.png',
   shellClassName = '',
-  image = '/og.png',
+  title = '',
 }) => {
-  title = [title, 'Rubén Sospedra'].filter((x) => x).join(' ▼ ')
-
   return (
     <div
+      style={{ overscrollBehavior: 'contain' }}
       className={cn('w-full h-full overflow-x-hidden overflow-y-auto', {
         [shellClassName]: !!shellClassName,
       })}
     >
       <Head>
         <title>{title}</title>
+        <meta name='description' content={description} />
         <meta property='og:image' content={image} />
+        <meta property='og:description' content={description} />
         <meta property='og:title' content={title} />
+        <meta name='twitter:image' content={image} />
+        <meta name='twitter:title' content={title} />
+        <meta name='twitter:description' content={description} />
         <link rel='canonical' href={`https://sospedra.me${canonical}`} />
-        {description && (
-          <>
-            <meta property='og:description' content={description} />
-            <meta name='description' content={description} />
-          </>
-        )}
       </Head>
       <main className={className}>{children}</main>
     </div>
