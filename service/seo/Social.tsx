@@ -1,14 +1,12 @@
 import React from 'react'
 
 const URL = 'https://sospedra.me'
-const IMAGE = '/sospedra.png'
 
 const Social: React.FC<{}> = () => {
   return (
     <>
       <meta name='author' content='Rubén Sospedra' />
 
-      <meta property='og:image' content={IMAGE} />
       <meta property='og:profile:firstName' content='Rubén' />
       <meta property='og:profile:lastName' content='Sospedra' />
       <meta property='og:profile:username' content='sospedra' />
