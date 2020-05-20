@@ -8,6 +8,7 @@ const postsDirectory = join(process.cwd(), '_papers')
 export type Post = {
   title: string
   timeStamp: string
+  lastUpdate: string
   slug: string
   coverImage: string
   excerpt: string

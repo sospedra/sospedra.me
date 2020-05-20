@@ -18,6 +18,8 @@ const Shell: React.FC<{
   shellClassName = '',
   title = '',
 }) => {
+  title = [title, 'Rubén Sospedra'].join(' ▼ ')
+
   return (
     <div
       style={{ overscrollBehavior: 'contain' }}
