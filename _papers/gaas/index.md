@@ -2,6 +2,7 @@
 title: 'GaaS: GitHub as a Service'
 excerpt: 'In the past years, GitHub became a technology mastodon. Since the acquisition by Microsoft, the company added a myriad of outstanding features. In fact, GitHub is so powerful nowadays that it can be your all-in-all provider. You can use GitHub as a Service. Don’t believe me? Let’s go through my journey building Request For Maintainers a GitHub-only powered project.'
 timeStamp: '2020-05-18T17:53:20.107Z'
+lastUpdate: '2020-05-20T17:53:20.107Z'
 ogImage:
   url: '/papers/gaas.jpg'
 ---
@@ -25,6 +26,15 @@ If you want to build a web app that runs on GitHub you're gonna need some founda
 - **Server**: most of the heavy lifting will happen in the client. But sometimes you need some special functions to run on the cloud. Did anyone say **serverless**? 💊
 
 - **Auth**: Do you need to put some access restrictions? Well, GitHub has a top-notch [OAuth service](https://developer.github.com/apps/building-oauth-apps/) implemented.
+
+- **Secrets**: Another interesting side-effect is the **env secrets management**. Since GitHub repositories already have a secret values system. We can use that to run out GitHub Actions as serverless functions.
+
+> Let's say you have a **basic ecommerce** of only 3 digital products.
+> Create a **repository**. Put your **product data as issues**. Code and deploy the static **website**.
+> 
+> Add some **basic authentication** and finally run the **payment confirmation as a GitHub Action**.
+> 
+> You can store confirmation tokens in another private repo since  Let's say you have a basic ecommerce. Everythin can run in the client or with 3rd parties but the payment/order confirmation. You can have a GitHub Action with a secret token for that!.
 
 ## How does it work?
 
@@ -53,12 +63,9 @@ const payload: {
 const items = payload.items.map<Request>((item) => {
   // using the body as JSON with RFM data model
   body: JSON.parse(item.body),
-  id: item.id,
-  comments: item.comments,
+  // benefit from the Issue metadata as well
   createdAt: new Date(item.created_at),
   title: item.title,
-  updatedAt: new Date(item.updated_at),
-  url: item.html_url,
 })
 ```
 

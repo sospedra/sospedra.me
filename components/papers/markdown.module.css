@@ -55,7 +55,7 @@
 }
 
 .markdown blockquote {
-  @apply pl-4 pr-4 text-base border-l-2 border-gray-200;
+  @apply pl-4 pr-4 text-base italic border-l-2 border-gray-200;
 }
 
 .markdown code,

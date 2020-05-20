@@ -46,6 +46,7 @@ const Paper: React.FC<{
         <Meta
           className='mt-2 mb-12'
           time={post.timeStamp}
+          update={post.lastUpdate}
           minutes={post.readingMinutes}
         />
         <Content post={post} />

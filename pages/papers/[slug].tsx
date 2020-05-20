@@ -12,6 +12,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       'excerpt',
       'ogImage',
       'readingMinutes',
+      'lastUpdate',
       'metadata',
       'slug',
       'timeStamp',
