@@ -1,10 +1,13 @@
 .header2 {
   @apply absolute top-0 text-xl leading-9 text-right transform -rotate-90;
   color: var(--pink);
-  text-shadow: -1px 1px 0 #ffb9b9;
+  text-shadow: -1px 1px 0 #fabada;
   transform-origin: right top;
   right: 4rem;
   width: 26rem;
+  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic Pro', '游ゴシック',
+    '游ゴシック体', YuGothic, 'Yu Gothic', 'ＭＳ ゴシック', 'MS Gothic',
+    monospace;
 }
 
 .content {

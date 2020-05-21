@@ -4,8 +4,9 @@ import Shell from 'components/sospedra/Shell'
 import SpriteBust from 'components/sospedra/Sprite/Bust'
 import Link, { LinkBack } from 'components/sospedra/Link'
 import css from './about.module.css'
-import Row from './Row'
 import External from './External'
+import Row from './Row'
+import Role from './Role'
 
 const About: React.FC<{}> = () => {
   const teleportRef = useRef<HTMLDivElement>(null)
@@ -39,13 +40,7 @@ const About: React.FC<{}> = () => {
           }
         />
         <Row
-          left={
-            <h2 className={css.header2}>
-              ｊａｖａｓｃｒｉｐｔ ｈａｃｋｅｒ
-              <br />
-              ｆｕｌｌ-ｓｔａｃｋ ｅｎｇｉｎｅｅｒ
-            </h2>
-          }
+          left={<Role />}
           right={
             <section className='mb-8'>
               <p>
