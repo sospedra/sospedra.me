@@ -1,16 +1,27 @@
 .header2 {
-  @apply pb-8 text-2xl;
+  @apply absolute top-0 text-xl leading-9 text-right transform -rotate-90;
   color: var(--pink);
   text-shadow: -1px 1px 0 #ffb9b9;
+  transform-origin: right top;
+  right: 4rem;
+  width: 26rem;
 }
 
 .content {
   @apply pb-48 font-sans text-lg leading-7 break-words align-baseline;
+  text-shadow: 2px 2px 0 var(--black);
 }
 
 .content p {
-  @apply mb-8;
-  text-shadow: 2px 2px 0 var(--black);
+  @apply mb-2;
+}
+
+.content h3 {
+  @apply my-4 text-2xl font-bold;
+}
+
+.content h4 {
+  @apply mb-4 font-bold;
 }
 
 @screen sm {

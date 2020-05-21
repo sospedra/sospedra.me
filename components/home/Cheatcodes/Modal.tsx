@@ -1,6 +1,6 @@
 import React from 'react'
 import { createPortal } from 'react-dom'
-import { matchScreen } from 'service/screen'
+import { matchScreen, queryTouchScreen } from 'service/screen'
 import css from './cheatcodes.module.css'
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 }
 
 const Message: React.FC<{}> = () => {
-  const isTouchScreen = matchScreen()
+  const isTouchScreen = matchScreen(queryTouchScreen)
   const hasMotion = !!window.DeviceMotionEvent
 
   if (isTouchScreen) {
