@@ -19,6 +19,7 @@ const Shell: React.FC<{
   title = '',
 }) => {
   title = [title, 'Rubén Sospedra'].join(' ▼ ')
+  image = image.startsWith('http') ? image : `https://sospedra.me${image}`
 
   return (
     <div

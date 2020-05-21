@@ -5,11 +5,12 @@
 }
 
 .content {
-  padding-bottom: 12rem;
+  @apply pb-48 font-sans text-lg leading-7 break-words align-baseline;
 }
 
 .content p {
-  @apply mb-8 font-sans font-bold leading-7 break-words align-baseline;
+  @apply mb-8;
+  text-shadow: 2px 2px 0 var(--black);
 }
 
 @screen sm {

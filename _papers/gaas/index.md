@@ -34,7 +34,7 @@ If you want to build a web app that runs on GitHub you're gonna need some founda
 > 
 > Add some **basic authentication** and finally run the **payment confirmation as a GitHub Action**.
 > 
-> You can store confirmation tokens in another private repo since  Let's say you have a basic ecommerce. Everythin can run in the client or with 3rd parties but the payment/order confirmation. You can have a GitHub Action with a secret token for that!.
+> You can store confirmation tokens in another private repo since **secrets are well kept in GitHub**.
 
 ## How does it work?
 

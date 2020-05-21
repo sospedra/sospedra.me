@@ -51,7 +51,9 @@ const About: React.FC<{}> = () => {
           contractor.
         </p>
 
-        <h4 className='mb-2 text-xl font-bold'>Want to get in contact?</h4>
+        <h4 className='mt-16 mb-2 text-xl font-bold'>
+          Want to get in contact?
+        </h4>
         <ul className='flex flex-row text-xl text-cyan-400'>
           <li>
             <a
