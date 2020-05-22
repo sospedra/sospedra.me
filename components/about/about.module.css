@@ -11,7 +11,7 @@
 }
 
 .content {
-  @apply pb-48 font-sans text-lg leading-7 break-words align-baseline;
+  @apply flex flex-col mb-64 font-sans text-lg leading-7 break-words align-baseline;
   text-shadow: 2px 2px 0 var(--black);
 }
 
@@ -34,22 +34,17 @@
 }
 
 .sprite {
-  @apply fixed right-0 -mr-48;
-  width: 100vw;
-  height: 100vw;
-  min-width: 26rem;
-  min-height: 26rem;
-  max-width: 32rem;
-  max-height: 32rem;
-  bottom: -4rem;
+  @apply sticky self-end -mr-40;
+  --size: 26rem;
+  margin-bottom: calc(var(--size) * -1);
+  width: var(--size);
+  height: var(--size);
+  top: 50%;
   z-index: -1;
 }
 
-@media (min-width: 42rem) {
-  /* matches max-w-2xl */
+@screen md {
   .sprite {
-    right: auto;
-    left: 50%;
-    bottom: 0;
+    --size: 32rem;
   }
 }

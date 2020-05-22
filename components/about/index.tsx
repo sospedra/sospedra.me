@@ -43,7 +43,7 @@ const About: React.FC<{}> = () => {
           left={<Role />}
           right={
             <section className='mb-8'>
-              <p>
+              <p className='pb-4'>
                 This is Rubén Sospedra, a full-stack engineer from Barcelona.
                 After graduating in Political Science I took a radical shift in
                 my career and started a remote software internship. I have been
@@ -63,7 +63,9 @@ const About: React.FC<{}> = () => {
             </section>
           }
         />
-
+        <div className={css.sprite}>
+          <SpriteBust />
+        </div>
         <Row
           teleport={$teleport}
           left={
@@ -142,7 +144,6 @@ const About: React.FC<{}> = () => {
             </section>
           }
         />
-
         <Row
           teleport={$teleport}
           left={
@@ -212,10 +213,6 @@ const About: React.FC<{}> = () => {
 
         <div ref={teleportRef} />
       </article>
-
-      <div className={css.sprite}>
-        <SpriteBust />
-      </div>
     </Shell>
   )
 }

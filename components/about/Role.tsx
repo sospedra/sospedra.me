@@ -22,7 +22,7 @@ const Role: React.FC<{}> = () => {
     if (i === kanjis.length - 1 && interval) {
       clearInterval(interval)
     }
-  }, 72)
+  }, 100)
 
   return (
     <h2 className={css.header2}>
