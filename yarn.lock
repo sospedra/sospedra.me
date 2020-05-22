@@ -7480,6 +7480,11 @@ purgecss@^2.1.2:
     postcss "7.0.27"
     postcss-selector-parser "^6.0.2"
 
+px-map-events@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/px-map-events/-/px-map-events-1.0.0.tgz#4968f239482a3a68d411f59b98b0a1dc437a451d"
+  integrity sha512-w6HNOQI0JKCuc+03r8SbCalga9hBOdHfi3IYxRdrlMOmjxXx1yVhBpItQfg3mv8qmq1dRigUAb1Js+YnE4jsUA==
+
 q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"

@@ -1,3 +1,5 @@
+import getEventsMap from 'px-map-events'
+
 export * from './shake'
 
 export const queryTouchScreen = '(hover: none)'
@@ -9,4 +11,9 @@ export const matchScreen = (query: string) => {
   } else {
     return false
   }
+}
+
+export const hasMotion = () => {
+  const windowEventsMap = getEventsMap('window' as const)['window']
+  return !!windowEventsMap.includes('devicemotion')
 }

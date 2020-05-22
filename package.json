@@ -21,6 +21,7 @@
     "next": "9.3.6",
     "next-optimized-images": "^2.6.0",
     "path-to-regexp": "^6.1.0",
+    "px-map-events": "^1.0.0",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-spring": "^8.0.27",
