@@ -40,6 +40,7 @@ const About: React.FC<{}> = () => {
           }
         />
         <Row
+          force
           left={<Role />}
           right={
             <section className='mb-8'>

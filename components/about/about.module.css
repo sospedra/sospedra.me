@@ -11,7 +11,7 @@
 }
 
 .content {
-  @apply flex flex-col mb-64 font-sans text-lg leading-7 break-words align-baseline;
+  @apply flex flex-col mb-32 font-sans text-lg leading-7 break-words align-baseline;
   text-shadow: 2px 2px 0 var(--black);
 }
 
@@ -36,10 +36,10 @@
 .sprite {
   @apply sticky self-end -mr-40;
   --size: 26rem;
-  margin-bottom: calc(var(--size) * -1);
-  width: var(--size);
   height: var(--size);
+  margin-bottom: calc(var(--size) * -1);
   top: 50%;
+  width: var(--size);
   z-index: -1;
 }
 
