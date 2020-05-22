@@ -25,7 +25,7 @@ const Social: React.FC<{}> = () => {
             "@context": "http://schema.org",
             "@type": "Person",
             "email": "mailto:hello@sospedra.me",
-            "image": "profile.jpg",
+            "image": "https://sospedra.me/serve/profile.jpg",
             "jobTitle": "Software engineer",
             "name": "Rubén Sospedra",
             "url": "https://www.sospedra.me"

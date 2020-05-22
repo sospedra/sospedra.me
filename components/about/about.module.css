@@ -1,15 +1,30 @@
 .header2 {
-  @apply pb-8 text-2xl;
+  @apply absolute top-0 text-xl leading-9 text-right transform -rotate-90;
   color: var(--pink);
-  text-shadow: -1px 1px 0 #ffb9b9;
+  text-shadow: -1px 1px 0 #fabada;
+  transform-origin: right top;
+  right: 4rem;
+  width: 26rem;
+  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic Pro', '游ゴシック',
+    '游ゴシック体', YuGothic, 'Yu Gothic', 'ＭＳ ゴシック', 'MS Gothic',
+    monospace;
 }
 
 .content {
-  padding-bottom: 12rem;
+  @apply flex flex-col mb-32 font-sans text-lg leading-7 break-words align-baseline;
+  text-shadow: 2px 2px 0 var(--black);
 }
 
 .content p {
-  @apply mb-8 font-sans font-bold leading-7 break-words align-baseline;
+  @apply mb-2;
+}
+
+.content h3 {
+  @apply my-4 text-2xl font-bold;
+}
+
+.content h4 {
+  @apply mb-4 font-bold;
 }
 
 @screen sm {
@@ -19,22 +34,17 @@
 }
 
 .sprite {
-  @apply fixed right-0 -mr-48;
-  width: 100vw;
-  height: 100vw;
-  min-width: 26rem;
-  min-height: 26rem;
-  max-width: 32rem;
-  max-height: 32rem;
-  bottom: -4rem;
+  @apply sticky self-end -mr-40;
+  --size: 26rem;
+  height: var(--size);
+  margin-bottom: calc(var(--size) * -1);
+  top: 50%;
+  width: var(--size);
   z-index: -1;
 }
 
-@media (min-width: 42rem) {
-  /* matches max-w-2xl */
+@screen md {
   .sprite {
-    right: auto;
-    left: 50%;
-    bottom: 0;
+    --size: 32rem;
   }
 }
