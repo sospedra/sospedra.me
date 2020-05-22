@@ -1,5 +1,10 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
+declare module 'px-map-events' {
+  function fn<T>(ref: T): { [key in T]: string[] }
+  export default fn
+}
+
 declare module 'remark-external-links' {
   export default any
 }

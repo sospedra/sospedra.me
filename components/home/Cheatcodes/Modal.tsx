@@ -1,6 +1,6 @@
 import React from 'react'
 import { createPortal } from 'react-dom'
-import { matchScreen, queryTouchScreen } from 'service/screen'
+import { matchScreen, queryTouchScreen, hasMotion } from 'service/screen'
 import css from './cheatcodes.module.css'
 
 type Props = {
@@ -9,29 +9,19 @@ type Props = {
 
 const Message: React.FC<{}> = () => {
   const isTouchScreen = matchScreen(queryTouchScreen)
-  const hasMotion = !!window.DeviceMotionEvent
 
   if (isTouchScreen) {
-    if (hasMotion) {
+    if (hasMotion()) {
       return (
         <p>
-          <kbd
-            style={{
-              letterSpacing: '-0.5rem',
-              paddingLeft: 0,
-              paddingRight: '0.4rem',
-            }}
-          >
-            ⌇⌇⌇
-          </kbd>{' '}
-          Shake the phone!
+          <kbd>⌇⌇⌇</kbd> Shake the phone!
         </p>
       )
     } else {
       return (
         <p>
           Cheatcodes are available only on keyboard controlled devices and
-          devices with acceleration support.
+          devices with motion support.
         </p>
       )
     }
