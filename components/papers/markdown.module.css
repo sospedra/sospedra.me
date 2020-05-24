@@ -47,7 +47,16 @@
 }
 
 .markdown h2 {
-  @apply mt-12 text-3xl;
+  @apply relative mt-12 text-3xl;
+}
+
+.markdown h2 a {
+  @apply absolute w-8 h-8 text-2xl;
+  left: -2rem;
+}
+
+.markdown h2:hover a:before {
+  content: '🔗';
 }
 
 .markdown h3 {
