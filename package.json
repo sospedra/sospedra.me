@@ -18,7 +18,7 @@
     "isomorphic-unfetch": "^3.0.0",
     "memoize-one": "^5.1.1",
     "mousetrap": "^1.6.5",
-    "next": "9.3.6",
+    "next": "^9.4.2",
     "next-optimized-images": "^2.6.0",
     "path-to-regexp": "^6.1.0",
     "px-map-events": "^1.0.0",
