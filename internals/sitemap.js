@@ -19,7 +19,10 @@ const createSitemapLOC = (pages) => [
 ]
 
 ;(async () => {
-  const pages = await readdir(join(process.cwd(), '_papers'))
+  const root = join(process.cwd(), 'pages/papers')
+  const pages = (await readdir(root, { withFileTypes: true }))
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => `papers/${dirent.name}`)
   const sitemap = createSitemapLOC(['', 'papers', 'about', ...pages])
   const file = sitemap.flat(Number.MAX_SAFE_INTEGER).join('')
 
