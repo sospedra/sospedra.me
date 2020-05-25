@@ -1,5 +1,5 @@
 module.exports = {
-  purge: ['./components/**/*.tsx', './pages/**/*.tsx'],
+  purge: ['./components/**/*.tsx', './pages/**/*.tsx', './service/**/*.tsx'],
   theme: {
     extend: {
       fontFamily: {
