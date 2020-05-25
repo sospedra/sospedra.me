@@ -1,16 +1,11 @@
 const sharp = require('sharp')
-const { promisify } = require('util')
-const path = require('path')
-const fs = require('fs')
-
-const writeFile = promisify(fs.writeFile)
-const readFile = promisify(fs.readFile)
-const exists = promisify(fs.exists)
+const { resolve, basename } = require('path')
+const io = require('./io')
 
 sharp.cache(false)
 
 module.exports = (filename) => {
-  if (!filename.includes('_papers')) return
+  if (!filename.includes('pages/papers')) return
 
   const image = sharp(filename)
 
@@ -21,22 +16,17 @@ module.exports = (filename) => {
     .then(async (data) => {
       const file = filename.replace(/\.[^.]+$/, '.jpeg')
 
-      await writeFile(file, data)
+      await io.write(file, data, false)
 
       sharp(file)
         .metadata()
         .then(async ({ width, height }) => {
-          const metafile = path.resolve(file, '../metadata.json')
-          const metaraw = (await exists(metafile))
-            ? await readFile(metafile)
-            : '{}'
-          const meta = JSON.parse(metaraw)
+          const meta = await io.read(resolve(file, '../metadata.json'), '{}')
 
-          writeFile(
-            path.resolve(file, '../metadata.json'),
-            JSON.stringify({
-              ...meta,
-              [path.basename(file)]: { width, height },
+          await io.write(
+            resolve(file, '../metadata.json'),
+            io.assign(meta, 'images', {
+              [basename(file)]: { width, height },
             }),
           )
         })

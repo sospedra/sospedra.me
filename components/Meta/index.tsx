@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 import { parseISO, format } from 'date-fns'
-import Icon from 'components/sospedra/Icon'
+import Icon from 'components/Icon'
 
 export const Time: React.FC<{ time: string }> = (props) => {
   const date = parseISO(props.time)
