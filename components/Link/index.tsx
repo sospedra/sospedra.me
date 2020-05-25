@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTransition } from 'service/transition'
-import Icon from 'components/sospedra/Icon'
+import Icon from 'components/Icon'
 import css from './link.module.css'
 
 const Link = React.forwardRef(

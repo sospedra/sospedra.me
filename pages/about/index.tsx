@@ -1,12 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react'
 import neonCss from 'service/style/neon.module.css'
-import Shell from 'components/sospedra/Shell'
-import SpriteBust from 'components/sospedra/Sprite/Bust'
-import Link, { LinkBack } from 'components/sospedra/Link'
+import Shell from 'components/Shell'
+import SpriteBust from 'components/Sprite/Bust'
+import Link, { LinkBack } from 'components/Link'
+import External from 'components/External'
+import Row from 'components/Row'
+import Role from 'components/Role'
 import css from './about.module.css'
-import External from './External'
-import Row from './Row'
-import Role from './Role'
 
 const About: React.FC<{}> = () => {
   const teleportRef = useRef<HTMLDivElement>(null)
