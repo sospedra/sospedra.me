@@ -30,6 +30,10 @@ module.exports.dir = async function dir(pathname) {
   return (await readdir(dirname)).map((file) => join(dirname, file))
 }
 
+module.exports.abs = function abs(pathname) {
+  return join(process.cwd(), pathname)
+}
+
 module.exports.assign = function assign(data, travel, patch) {
   return {
     ...data,
