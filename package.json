@@ -10,6 +10,7 @@
     "resize": "node ./internals/resize-dir",
     "reading": "node ./internals/reading-dir",
     "sitemap": "node ./internals/sitemap",
+    "rewrite": "node ./internals/create-rewrite",
     "test": "npm run test:static"
   },
   "dependencies": {
@@ -46,6 +47,7 @@
     "@types/node": "13.13.4",
     "@types/react": "16.9.34",
     "@types/react-dom": "16.9.7",
+    "got": "^11.1.4",
     "husky": ">=4",
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-pngquant": "^8.0.0",
