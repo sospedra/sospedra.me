@@ -55,7 +55,7 @@ const createStars = () => {
 
 const getHidden = (href: string) => {
   const ptr = createPtr(href)
-  return !(ptr('/papers') || ptr('/'))
+  return ptr('/papers/:slug') || ptr('/about')
 }
 
 const stars = createStars()

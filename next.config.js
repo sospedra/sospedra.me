@@ -1,5 +1,8 @@
 const optimizedImages = require('next-optimized-images')
-const withMDX = require('@next/mdx')({
+const nextMdx = require('@next/mdx')
+const rewrites = require('./service/router/rewrites.json')
+
+const withMDX = nextMdx({
   extension: /\.mdx?$/,
   options: {
     remarkPlugins: [
@@ -29,6 +32,14 @@ const config = {
       use: 'raw-loader',
     })
     return config
+  },
+  experimental: {
+    async rewrites() {
+      return rewrites.map(({ source, destination }) => ({
+        source,
+        destination,
+      }))
+    },
   },
 }
 
