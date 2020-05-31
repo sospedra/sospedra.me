@@ -1,5 +1,5 @@
 import { NextRouter } from 'next/router'
-import Hashids from 'hashids'
+import Hashids from 'hashids/cjs'
 import rewrites from './rewrites.json'
 
 const tiny = new Hashids('1337', 4, 'abcdefghijklmnopqrstuvwxyz')

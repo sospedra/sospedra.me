@@ -1,5 +1,5 @@
 const got = require('got')
-const Hashids = require('hashids')
+const Hashids = require('hashids/cjs')
 const io = require('./io')
 
 const tiny = new Hashids('1337', 4, 'abcdefghijklmnopqrstuvwxyz')
