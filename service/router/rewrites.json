@@ -1,9 +1,8 @@
 [
   {
-    "destination": "https://open.spotify.com/playlist/26NYRcXPyIVrItOtlJ5ahO?si=bHu-460kQSixzJTBaxeJUg",
+    "destination": "https://open.spotify.com/playlist/26NYRcXPyIVrItOtlJ5ahO",
     "title": "✨ Soul mirror on Spotify",
     "source": "/r/rjpr",
     "listed": true
-  },
-  { "destination": "/rewrites", "source": "/r/:id" }
+  }
 ]
