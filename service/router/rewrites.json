@@ -4,5 +4,6 @@
     "title": "✨ Soul mirror on Spotify",
     "source": "/r/rjpr",
     "listed": true
-  }
+  },
+  { "destination": "/rewrites", "source": "/r/:id" }
 ]
