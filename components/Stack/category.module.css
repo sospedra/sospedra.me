@@ -1,0 +1,20 @@
+.category {
+  @apply relative py-2;
+}
+
+.indicator {
+  @apply absolute left-0 right-0 origin-top text-cyan-400;
+  bottom: -0.5rem;
+  transform: rotate(13deg);
+  font-size: 0.6rem;
+  animation: fade-in 0.5s;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

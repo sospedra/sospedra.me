@@ -1,0 +1,30 @@
+.tech {
+  @apply relative flex-col block w-full;
+  font-family: 'Arial Black', Impact, Arial, sans-serif;
+}
+
+.trail1,
+.trail2,
+.tech h4 {
+  @apply font-bold transition-transform duration-100 pointer-events-none;
+  -webkit-text-stroke: 2px white;
+  -webkit-text-fill-color: white;
+  font-size: calc(3vw + 3.5vh);
+}
+
+.trail1,
+.trail2 {
+  @apply absolute top-0 left-0;
+  will-change: transform;
+  -webkit-text-stroke: 2px transparent;
+}
+
+.trail1 {
+  z-index: -1;
+  -webkit-text-fill-color: #00a895;
+}
+
+.trail2 {
+  z-index: -2;
+  -webkit-text-fill-color: #04d4bf;
+}
