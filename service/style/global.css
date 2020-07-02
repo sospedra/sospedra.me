@@ -3,7 +3,8 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-html {
+html,
+#vbody {
   scroll-behavior: smooth;
   touch-action: manipulation;
 }

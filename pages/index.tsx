@@ -27,6 +27,7 @@ const IndexPage: NextPage = () => {
       className='flex flex-col items-center justify-center flex-1 w-screen h-screen'
       description='Rubén Sospedra ▼ javascript hacker'
       shellClassName='overflow-y-hidden'
+      canonical='/'
     >
       <animated.div className='flex flex-1 w-full' style={{ transform }}>
         <div className={css.main}>

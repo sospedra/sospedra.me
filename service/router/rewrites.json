@@ -5,5 +5,5 @@
     "source": "/r/rjpr",
     "listed": true
   },
-  { "destination": "/rewrites", "source": "/r/:id" }
+  { "destination": "/r", "source": "/r/:id" }
 ]

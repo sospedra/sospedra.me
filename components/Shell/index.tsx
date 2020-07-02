@@ -3,14 +3,14 @@ import cn from 'classnames'
 import Head from 'next/head'
 
 const Shell: React.FC<{
-  canonical?: string
+  canonical: string
   className?: string
   description?: string
   image?: string
   shellClassName?: string
   title?: string
 }> = ({
-  canonical = '',
+  canonical,
   children,
   className,
   description = '',
@@ -23,6 +23,7 @@ const Shell: React.FC<{
 
   return (
     <div
+      id='vbody'
       style={{ overscrollBehavior: 'contain' }}
       className={cn('w-full h-full overflow-x-hidden overflow-y-auto', {
         [shellClassName]: !!shellClassName,

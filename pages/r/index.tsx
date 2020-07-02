@@ -5,12 +5,13 @@ import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
 import css from './rewrites.module.css'
 
-const LinkPage: React.FC<{}> = () => {
+const Rewrites: React.FC<{}> = () => {
   return (
     <Shell
       title='Links'
       className='w-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
-      description='Personal links that I share often.'
+      description='Personal links that I share often'
+      canonical='/r'
     >
       <Link url='/'>
         <LinkBack>Home</LinkBack>
@@ -60,4 +61,4 @@ const LinkPage: React.FC<{}> = () => {
   )
 }
 
-export default LinkPage
+export default Rewrites

@@ -23,6 +23,7 @@ const Papers: React.FC<{
       title='Papers'
       className='w-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
       description={`Personal blog by Rubén Sospedra. ${DESCRIPTION}`}
+      canonical='/papers'
     >
       <Link url='/'>
         <LinkBack>Home</LinkBack>
