@@ -1,0 +1,60 @@
+.featured {
+  @apply grid grid-flow-row-dense grid-cols-3 gap-4 py-12;
+}
+
+@screen md {
+  .featured {
+    @apply grid-cols-5;
+  }
+  .featured button {
+    min-height: 5rem;
+  }
+}
+
+.featured button {
+  @apply w-full h-full text-xl border rounded-lg;
+  min-height: 4rem;
+}
+
+.featured button p {
+  @apply inline-block;
+}
+
+.featured button:hover p {
+  @apply -mb-4 border-b-4 border-current;
+  animation: flicker 3s linear infinite;
+  animation-delay: 0s;
+}
+
+@keyframes flicker {
+  0%,
+  19.999%,
+  22%,
+  62.999%,
+  64%,
+  64.999%,
+  70%,
+  100% {
+    border-style: dashed;
+  }
+  20%,
+  21.999%,
+  63%,
+  63.999%,
+  65%,
+  69.999% {
+    border-style: solid;
+  }
+}
+
+.library {
+  @apply subpixel-antialiased text-black bg-white;
+}
+
+.category {
+  @apply subpixel-antialiased text-black bg-cyan-700 border-cyan-700;
+}
+
+button.tag {
+  @apply font-bold border-2 border-cyan-400 text-cyan-400;
+}

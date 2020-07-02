@@ -7,7 +7,7 @@
 .trail2,
 .tech h4 {
   @apply font-bold transition-transform duration-100 pointer-events-none;
-  -webkit-text-stroke: 2px white;
+  -webkit-text-stroke: 1px white;
   -webkit-text-fill-color: white;
   font-size: calc(3vw + 3.5vh);
 }
@@ -16,7 +16,15 @@
 .trail2 {
   @apply absolute top-0 left-0;
   will-change: transform;
-  -webkit-text-stroke: 2px transparent;
+  -webkit-text-stroke: 1px transparent;
+}
+
+@screen md {
+  .trail1,
+  .trail2,
+  .tech h4 {
+    -webkit-text-stroke-width: 2px;
+  }
 }
 
 .trail1 {

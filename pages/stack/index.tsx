@@ -3,6 +3,7 @@ import { animated } from 'react-spring'
 import { useMomentum } from 'service/momentum'
 import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
+import Featured from 'components/Stack/Featured'
 import StackCategory from 'components/Stack/Category'
 import Tech from 'components/Stack/Tech'
 import css from './stack.module.css'
@@ -42,18 +43,11 @@ const Stack: React.FC<{}> = () => {
       <div>
         <input
           placeholder='Type a name, tech, label, etc.'
-          className='w-full font-serif text-xl font-bold bg-transparent md:text-3xl text-cyan-400 focus:outline-none'
+          className='w-full font-serif text-2xl font-bold bg-transparent md:text-3xl text-cyan-400 focus:outline-none'
         />
       </div>
 
-      <div className={css.trends}>
-        <button>cat 1</button>
-        <button className='col-span-2 row-span-2'>lib 1</button>
-        <button>word 1</button>
-        <button className='col-span-2'>cat 2</button>
-        <button>word 2</button>
-        <button>lib 2</button>
-      </div>
+      <Featured />
 
       <h2 className='font-serif text-3xl'>Explore</h2>
 
