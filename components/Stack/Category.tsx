@@ -1,8 +1,9 @@
 import React from 'react'
 import cn from 'classnames'
+import { useStack } from 'service/stack'
 import css from './category.module.css'
 
-const StackCategory: React.FC<{
+const Category: React.FC<{
   category: string
   quantity: number
   setCategory: (category: string) => void
@@ -11,9 +12,7 @@ const StackCategory: React.FC<{
   return (
     <li className='pr-6'>
       <button
-        className={cn('focus:outline-none', {
-          [css.category]: true,
-        })}
+        className={cn('focus:outline-none', css.category)}
         onClick={() => props.setCategory(props.category)}
       >
         <span
@@ -34,4 +33,31 @@ const StackCategory: React.FC<{
   )
 }
 
-export default StackCategory
+const CategoryList: React.FC<{}> = () => {
+  const { category, categories, stack, setCategory } = useStack()
+
+  return (
+    <div>
+      <h2 className='font-serif text-3xl'>Explore</h2>
+      <ul className='flex flex-row w-full py-4 overflow-x-auto overflow-y-hidden'>
+        <Category
+          current={category}
+          category='all'
+          quantity={stack.length}
+          setCategory={setCategory}
+        />
+        {Object.entries(categories).map(([cate, quantity]) => (
+          <Category
+            key={cate}
+            current={category}
+            category={cate}
+            quantity={quantity}
+            setCategory={setCategory}
+          />
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+export default CategoryList

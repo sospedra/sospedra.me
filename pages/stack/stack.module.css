@@ -1,5 +1,0 @@
-.list {
-  @apply transition-transform duration-100;
-  will-change: transform;
-  text-rendering: optimizeLegibility;
-}

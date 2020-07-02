@@ -52,9 +52,12 @@
 }
 
 .category {
-  @apply subpixel-antialiased text-black bg-cyan-700 border-cyan-700;
+  @apply subpixel-antialiased text-black bg-cyan-400 border-cyan-400;
 }
 
 button.tag {
-  @apply font-bold border-2 border-cyan-400 text-cyan-400;
+  @apply font-bold border-2;
+  filter: drop-shadow(0 0 0.35rem #fabadacc);
+  color: var(--pink);
+  border-color: var(--pink);
 }

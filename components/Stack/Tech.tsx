@@ -6,10 +6,13 @@ import {
   useSpring,
 } from 'react-spring'
 import { createCache } from 'service/cache'
+import { useMomentum } from 'service/momentum'
+import { useStack } from 'service/stack'
 import css from './tech.module.css'
 
 const FACTOR_X = 10
 const FACTOR_Y = 5
+const DELTA_CLAMP = [-300, 300]
 const cache = createCache((element: HTMLAnchorElement) => {
   return element.getBoundingClientRect()
 })
@@ -21,7 +24,7 @@ const createTranspolate = (
   return interpolate(
     [
       delta.interpolate({
-        range: [-300, 300],
+        range: DELTA_CLAMP,
         output: [-outputDelta, outputDelta],
       }),
       x.interpolate({
@@ -49,14 +52,6 @@ const Tech: React.FC<{
   const ref = useRef<HTMLAnchorElement>(null)
   const [{ x, y }, set] = useSpring(() => ({ x: 0, y: 0 }))
   const transpolate = createTranspolate(props.delta, x, y)
-
-  useEffect(() => {
-    const $vbody = document.querySelector('#vbody')
-    if ($vbody) {
-      $vbody.addEventListener('scroll', cache.clear)
-      return () => $vbody.removeEventListener('scroll', cache.clear)
-    }
-  }, [])
 
   useEffect(() => {
     if (ref.current) {
@@ -124,4 +119,36 @@ const Tech: React.FC<{
   )
 }
 
-export default Tech
+const TechList: React.FC<{}> = () => {
+  const delta = useMomentum('#vbody')
+  const { results, category } = useStack()
+
+  useEffect(() => {
+    const $vbody = document.querySelector('#vbody')
+    if ($vbody) {
+      $vbody.addEventListener('scroll', cache.clear)
+      return () => $vbody.removeEventListener('scroll', cache.clear)
+    }
+  }, [])
+
+  useEffect(() => {
+    cache.clear()
+  }, [category])
+
+  return (
+    <animated.ul
+      className={css.list}
+      style={{
+        transform: delta
+          .interpolate({ range: DELTA_CLAMP, output: [-6, 6] })
+          .interpolate((d) => `skewY(${d}deg)`),
+      }}
+    >
+      {results.map((tech) => (
+        <Tech key={tech.url} delta={delta} {...tech} />
+      ))}
+    </animated.ul>
+  )
+}
+
+export default TechList

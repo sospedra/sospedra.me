@@ -1,6 +1,22 @@
+.list {
+  @apply transition-transform duration-100;
+  will-change: transform;
+  text-rendering: optimizeLegibility;
+}
+
 .tech {
   @apply relative flex-col block w-full;
   font-family: 'Arial Black', Impact, Arial, sans-serif;
+  animation: fade-in 0.5s;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .trail1,

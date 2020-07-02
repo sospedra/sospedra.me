@@ -7,7 +7,7 @@ const Featured: React.FC<{}> = () => {
   return (
     <div className={css.featured}>
       <button className={css.category}>
-        <p>React</p>
+        <p>Node.js</p>
       </button>
       <button className={cn('col-span-2 row-span-2', css.library)}>
         <Emoji is='▼' className='block text-4xl' />
