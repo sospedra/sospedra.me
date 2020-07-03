@@ -37,6 +37,7 @@ const flat = (array) => [
       name: '',
       title: '',
       description: '',
+      isGithub: false,
       tags: [],
       categories: [],
     }
@@ -53,6 +54,7 @@ const flat = (array) => [
       )
       const payload = JSON.parse(body)
 
+      metadata.isGithub = true
       metadata.description = payload.description
       metadata.name = payload.name
       metadata.route = payload.html_url

@@ -1,1 +1,181 @@
-[{"route":"https://github.com/facebook/create-react-app","name":"create-react-app","title":"facebook/create-react-app","description":"Set up a modern web app by running one command.","tags":["javascript","build-tools","react","zero-configuration","js","node"],"categories":["react","tool"]},{"route":"https://github.com/vercel/next.js","name":"next.js","title":"vercel/next.js","description":"The React Framework","tags":["javascript","browser","components","nextjs","node","react","server-rendering","static-site-generator","universal","vercel","zeit","js"],"categories":["react","serverless"]},{"route":"https://github.com/nostalgic-css/NES.css","name":"NES.css","title":"nostalgic-css/NES.css","description":"NES-style CSS Framework | ファミコン風CSSフレームワーク","tags":["css","8bit","css-framework","nes","scss"],"categories":["css"]},{"route":"https://github.com/davidkpiano/xstate","name":"xstate","title":"davidkpiano/xstate","description":"State machines and statecharts for the modern web.","tags":["typescript","interpreter","scxml","state","state-machine","state-management","statechart","visualizer","ts"],"categories":["service"]},{"route":"https://github.com/JedWatson/react-select","name":"react-select","title":"JedWatson/react-select","description":"The Select Component for React.js","tags":["javascript","js","node"],"categories":["react","ui"]},{"route":"https://github.com/terkelg/prompts","name":"prompts","title":"terkelg/prompts","description":"❯ Lightweight, beautiful and user-friendly interactive prompts","tags":["javascript","choice","cli","command-line","interface","nodejs","prompt","prompter","prompts","js","node"],"categories":["cli"]},{"route":"https://github.com/JedWatson/classnames","name":"classnames","title":"JedWatson/classnames","description":"A simple javascript utility for conditionally joining classNames together","tags":["javascript","js","node","utility","classnames"],"categories":["ui"]},{"route":"https://github.com/muan/emojilib","name":"emojilib","title":"muan/emojilib","description":":book: Emoji keyword library.","tags":["javascript","emoji","emoji-searcher","js","node"],"categories":["ui"]},{"route":"https://neumorphism.io/","name":"neumorphism.io","title":"Neumorphism/Soft UI CSS shadow generator","description":"CSS code generator that will help with colors, gradients and shadows to adapt this new design trend or discover its posibilities.","tags":["CSS","code","generator","colors","gradients","shadows","design","trend","posibilities"],"categories":["ui","css"]},{"route":"https://css.gg/app","name":"css.gg","title":"App - CSS Icons","description":"App for css.gg icons with custom selection for all pure CSS icons","tags":["icons","App","custom","selection","CSS"],"categories":["ui"]},{"route":"https://undraw.co/illustrations","name":"undraw.co","title":"Illustrations | unDraw","description":"The design project with open-source illustrations for any idea you can imagine and create. Create beautiful websites, products and applications with your color, for free.","tags":["design","project","open-source","illustrations","idea","websites","products","applications","color"],"categories":["ui"]},{"route":"https://icons8.com/animated-icons","name":"icons8.com","title":"Animated Icons - 400 Free Icons","description":"Add user delight to your site with this free pack of 300 animated icons in JSON (Lottie), GIF, and After Effects formats.","tags":["user","delight","icons","animation","Lottie","GIF","Effects","formats"],"categories":["ui"]}]
+[
+  {
+    "route": "https://github.com/facebook/create-react-app",
+    "name": "create-react-app",
+    "title": "facebook/create-react-app",
+    "description": "Set up a modern web app by running one command.",
+    "tags": [
+      "javascript",
+      "build-tools",
+      "react",
+      "zero-configuration",
+      "js",
+      "node"
+    ],
+    "isGithub": true,
+    "categories": ["react", "tool"]
+  },
+  {
+    "route": "https://github.com/vercel/next.js",
+    "name": "next.js",
+    "title": "vercel/next.js",
+    "description": "The React Framework",
+    "tags": [
+      "javascript",
+      "browser",
+      "components",
+      "nextjs",
+      "node",
+      "react",
+      "server-rendering",
+      "static-site-generator",
+      "universal",
+      "vercel",
+      "zeit",
+      "js"
+    ],
+    "isGithub": true,
+    "categories": ["react", "serverless"]
+  },
+  {
+    "route": "https://github.com/nostalgic-css/NES.css",
+    "name": "NES.css",
+    "title": "nostalgic-css/NES.css",
+    "description": "NES-style CSS Framework | ファミコン風CSSフレームワーク",
+    "tags": ["css", "8bit", "css-framework", "nes", "scss"],
+    "isGithub": true,
+    "categories": ["css"]
+  },
+  {
+    "route": "https://github.com/davidkpiano/xstate",
+    "name": "xstate",
+    "title": "davidkpiano/xstate",
+    "description": "State machines and statecharts for the modern web.",
+    "tags": [
+      "typescript",
+      "interpreter",
+      "scxml",
+      "state",
+      "state-machine",
+      "state-management",
+      "statechart",
+      "visualizer",
+      "ts"
+    ],
+    "isGithub": true,
+    "categories": ["service"]
+  },
+  {
+    "route": "https://github.com/JedWatson/react-select",
+    "name": "react-select",
+    "title": "JedWatson/react-select",
+    "description": "The Select Component for React.js",
+    "tags": ["javascript", "js", "node"],
+    "isGithub": true,
+    "categories": ["react", "ui"]
+  },
+  {
+    "route": "https://github.com/terkelg/prompts",
+    "name": "prompts",
+    "title": "terkelg/prompts",
+    "description": "❯ Lightweight, beautiful and user-friendly interactive prompts",
+    "tags": [
+      "javascript",
+      "choice",
+      "cli",
+      "command-line",
+      "interface",
+      "nodejs",
+      "prompt",
+      "prompter",
+      "prompts",
+      "js",
+      "node"
+    ],
+    "isGithub": true,
+    "categories": ["cli"]
+  },
+  {
+    "route": "https://github.com/JedWatson/classnames",
+    "name": "classnames",
+    "title": "JedWatson/classnames",
+    "description": "A simple javascript utility for conditionally joining classNames together",
+    "tags": ["javascript", "js", "node", "utility", "classnames"],
+    "isGithub": true,
+    "categories": ["ui"]
+  },
+  {
+    "route": "https://github.com/muan/emojilib",
+    "name": "emojilib",
+    "title": "muan/emojilib",
+    "description": ":book: Emoji keyword library.",
+    "tags": ["javascript", "emoji", "emoji-searcher", "js", "node"],
+    "isGithub": true,
+    "categories": ["ui"]
+  },
+  {
+    "route": "https://neumorphism.io/",
+    "name": "neumorphism.io",
+    "title": "Neumorphism/Soft UI CSS shadow generator",
+    "description": "CSS code generator that will help with colors, gradients and shadows to adapt this new design trend or discover its posibilities.",
+    "tags": [
+      "CSS",
+      "code",
+      "generator",
+      "colors",
+      "gradients",
+      "shadows",
+      "design",
+      "trend",
+      "posibilities"
+    ],
+    "isGithub": false,
+    "categories": ["ui", "css"]
+  },
+  {
+    "route": "https://css.gg/app",
+    "name": "css.gg",
+    "title": "App - CSS Icons",
+    "description": "App for css.gg icons with custom selection for all pure CSS icons",
+    "tags": ["icons", "App", "custom", "selection", "CSS"],
+    "isGithub": false,
+    "categories": ["ui"]
+  },
+  {
+    "route": "https://undraw.co/illustrations",
+    "name": "undraw.co",
+    "title": "Illustrations | unDraw",
+    "description": "The design project with open-source illustrations for any idea you can imagine and create. Create beautiful websites, products and applications with your color, for free.",
+    "tags": [
+      "design",
+      "project",
+      "open-source",
+      "illustrations",
+      "idea",
+      "websites",
+      "products",
+      "applications",
+      "color"
+    ],
+    "isGithub": false,
+    "categories": ["ui"]
+  },
+  {
+    "route": "https://icons8.com/animated-icons",
+    "name": "icons8.com",
+    "title": "Animated Icons - 400 Free Icons",
+    "description": "Add user delight to your site with this free pack of 300 animated icons in JSON (Lottie), GIF, and After Effects formats.",
+    "tags": [
+      "user",
+      "delight",
+      "icons",
+      "animation",
+      "Lottie",
+      "GIF",
+      "Effects",
+      "formats"
+    ],
+    "isGithub": false,
+    "categories": ["ui"]
+  }
+]

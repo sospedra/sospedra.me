@@ -17,8 +17,6 @@ export const defaultState = {
   filter: (() => {}) as Dispatch<SetStateAction<typeof stack[0][]>>,
 }
 
-// const tags = [...new Set(stack.map((x) => x.tags).flat())]
-
 export type State = typeof defaultState
 
 export default createContext(defaultState)

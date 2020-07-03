@@ -1,10 +1,11 @@
 import React from 'react'
+import Icon from 'components/Icon'
 
 const Loading = () => {
   return (
     <>
       <div className='fixed inset-0 flex items-center justify-center'>
-        <img src={require('./hourglass.svg?svg')} className='w-6' />
+        <Icon name='hourglass.svg' className='w-6' />
       </div>
       <style jsx>{`
         div {
