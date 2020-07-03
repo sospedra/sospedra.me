@@ -4,7 +4,7 @@ const io = require('./io')
 
 const tiny = new Hashids('1337', 4, 'abcdefghijklmnopqrstuvwxyz')
 
-;(async function createRewrite() {
+;(async function rewrite() {
   try {
     const input = process.argv[2]
     const hidden = process.argv[3] === 'false'
