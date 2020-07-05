@@ -1,6 +1,7 @@
 import getEventsMap from 'px-map-events'
 
 export * from './shake'
+export * from './useMeasure'
 
 export const queryTouchScreen = '(hover: none)'
 export const querySmScreen = '(min-width: 640px)'
