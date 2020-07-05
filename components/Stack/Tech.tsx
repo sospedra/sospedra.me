@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react'
+import cn from 'classnames'
 import {
   animated,
   interpolate,
@@ -9,6 +10,7 @@ import { createCache } from 'service/cache'
 import { useMomentum } from 'service/momentum'
 import { useStack } from 'service/stack'
 import css from './tech.module.css'
+import Icon from 'components/Icon'
 
 const FACTOR_X = 10
 const FACTOR_Y = 5
@@ -43,11 +45,11 @@ const createTranspolate = (
 }
 
 const Tech: React.FC<{
-  url: string
+  route: string
   name: string
   delta: OpaqueInterpolation<number>
-  stars: number
   description: string
+  isGithub: boolean
 }> = (props) => {
   const ref = useRef<HTMLAnchorElement>(null)
   const [{ x, y }, set] = useSpring(() => ({ x: 0, y: 0 }))
@@ -84,7 +86,7 @@ const Tech: React.FC<{
     <li>
       <a
         ref={ref}
-        href={props.url}
+        href={props.route}
         target='_blank'
         rel='noopener noreferrer'
         className={css.tech}
@@ -111,7 +113,10 @@ const Tech: React.FC<{
           </animated.span>
         </animated.div>
         <p>
-          <code className='inline pr-2'>★{props.stars}</code>
+          <Icon
+            name={props.isGithub ? 'github.svg' : 'web.svg'}
+            className='inline pr-2'
+          />
           <span>{props.description}</span>
         </p>
       </a>
@@ -121,7 +126,7 @@ const Tech: React.FC<{
 
 const TechList: React.FC<{}> = () => {
   const delta = useMomentum('#vbody')
-  const { results, category } = useStack()
+  const { results } = useStack()
 
   useEffect(() => {
     const $vbody = document.querySelector('#vbody')
@@ -133,11 +138,11 @@ const TechList: React.FC<{}> = () => {
 
   useEffect(() => {
     cache.clear()
-  }, [category])
+  }, [results])
 
   return (
     <animated.ul
-      className={css.list}
+      className={cn('pb-32', css.list)}
       style={{
         transform: delta
           .interpolate({ range: DELTA_CLAMP, output: [-6, 6] })
@@ -145,7 +150,7 @@ const TechList: React.FC<{}> = () => {
       }}
     >
       {results.map((tech) => (
-        <Tech key={tech.url} delta={delta} {...tech} />
+        <Tech key={tech.route} delta={delta} {...tech} />
       ))}
     </animated.ul>
   )

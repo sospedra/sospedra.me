@@ -14,10 +14,11 @@ export const defaultState = {
   results: [] as typeof stack[0][],
   category: 'all',
   setCategory: (() => {}) as Dispatch<SetStateAction<string>>,
-  filter: (() => {}) as Dispatch<SetStateAction<typeof stack[0][]>>,
+  setSearch: (() => {}) as Dispatch<SetStateAction<string>>,
+  search: '',
+  filter: (() => {}) as (clbk: (result: typeof stack[0]) => boolean) => void,
+  reset: () => {},
 }
-
-// const tags = [...new Set(stack.map((x) => x.tags).flat())]
 
 export type State = typeof defaultState
 

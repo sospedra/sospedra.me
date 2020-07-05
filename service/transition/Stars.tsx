@@ -1,15 +1,17 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useRef } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 import { isNotNull } from 'service/structs'
+import { createRange, createRng } from 'service/random'
 import { useTransition } from './context'
 import { createPtr } from './create-ptr'
 import css from './stars.module.css'
 
-const ranrang = (min = 0, max = 100) => Math.random() * (max - min) + min
-const createCoords = () => ({ x: ranrang(), y: ranrang(0, 75) })
+const rrange = createRange()
+const rng = createRng()
+const createCoords = () => ({ x: rrange(100), y: rrange(75) })
 const createSize = () => {
-  const seed = ranrang(0, 20)
+  const seed = rrange(20)
   if (seed < 1) return 8
   if (seed < 3) return 6
   if (seed < 6) return 4
@@ -18,16 +20,15 @@ const createSize = () => {
 
 const createAlive = (y: number) => {
   if (y < 10) return true
-  if (y < 20) return Math.random() < 0.8
-  if (y < 35) return Math.random() < 0.7
-  if (y < 60) return Math.random() < 0.5
-  return Math.random() < 0.2
+  if (y < 20) return rng.quick() < 0.8
+  if (y < 35) return rng.quick() < 0.7
+  if (y < 60) return rng.quick() < 0.5
+  return rng.quick() < 0.2
 }
 
 const createAnimation = () => {
-  const seed = Math.random()
-  if (seed < 0.2) return ''
-  return seed < 0.6 ? css.twinkling : css.blink
+  if (rng.quick() < 0.2) return ''
+  return rng.quick() < 0.6 ? css.twinkling : css.blink
 }
 
 const createStars = () => {
@@ -36,7 +37,7 @@ const createStars = () => {
     .map((_, id) => {
       const { x, y } = createCoords()
       const size = createSize()
-      const delay = Math.round(ranrang(1, 4))
+      const delay = rrange(4, 1)
       const animation = createAnimation()
       const alive = createAlive(y)
       const star = {
@@ -61,10 +62,12 @@ const getHidden = (href: string) => {
 const stars = createStars()
 
 const ShootingStar: React.FC<{}> = () => {
+  const delay = useRef(rrange(30, 8))
+
   return (
     <span
       className={css.shooting}
-      style={{ animationDelay: `${ranrang(8, 30)}s` }}
+      style={{ animationDelay: `${delay.current}s` }}
     >
       <span className={cn('start', { [css.star]: true })} />
     </span>

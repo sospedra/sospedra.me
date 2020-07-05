@@ -34,11 +34,17 @@ const Category: React.FC<{
 }
 
 const CategoryList: React.FC<{}> = () => {
-  const { category, categories, stack, setCategory } = useStack()
+  const { category, categories, stack, setCategory, search } = useStack()
 
   return (
-    <div>
-      <h2 className='font-serif text-3xl'>Explore</h2>
+    <section
+      className={`transition-all duration-300 transform overflow-hidden ${
+        !search
+          ? 'opacity-100 max-h-screen'
+          : 'opacity-0 max-h-0 -translate-y-32'
+      }`}
+    >
+      <h2 className='font-serif text-3xl'>Explore by categories</h2>
       <ul className='flex flex-row w-full py-4 overflow-x-auto overflow-y-hidden'>
         <Category
           current={category}
@@ -56,7 +62,7 @@ const CategoryList: React.FC<{}> = () => {
           />
         ))}
       </ul>
-    </div>
+    </section>
   )
 }
 
