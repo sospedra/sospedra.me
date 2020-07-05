@@ -48,4 +48,11 @@ html,
   src: url('/fonts/inconsolata.woff2') format('woff2'),
     url('/fonts/inconsolata.woff') format('woff');
 }
+
+.max-h-0 {
+  max-height: 0;
+}
+.max-w-0 {
+  max-width: 0;
+}
 /*! purgecss end ignore */

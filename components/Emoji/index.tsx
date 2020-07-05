@@ -3,6 +3,8 @@ import React from 'react'
 const dict = {
   '🔥': 'hot',
   '▼': 'downwards triangle',
+  '⚛': 'atom',
+  '⤵': 'curved arrow down',
 }
 
 const Emoji: React.FC<{ is: keyof typeof dict; className?: string }> = (

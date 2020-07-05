@@ -8,6 +8,8 @@ module.exports = {
         mono: ['inconsolata', 'monospace'],
       },
       colors: {
+        turbo: '#ffea00',
+        cranberry: '#d9478c',
         cyan: {
           100: '#d7fffc',
           200: '#b8fef8',

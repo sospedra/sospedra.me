@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react'
+import cn from 'classnames'
 import {
   animated,
   interpolate,
@@ -125,7 +126,7 @@ const Tech: React.FC<{
 
 const TechList: React.FC<{}> = () => {
   const delta = useMomentum('#vbody')
-  const { results, category } = useStack()
+  const { results } = useStack()
 
   useEffect(() => {
     const $vbody = document.querySelector('#vbody')
@@ -137,11 +138,11 @@ const TechList: React.FC<{}> = () => {
 
   useEffect(() => {
     cache.clear()
-  }, [category])
+  }, [results])
 
   return (
     <animated.ul
-      className={css.list}
+      className={cn('pb-32', css.list)}
       style={{
         transform: delta
           .interpolate({ range: DELTA_CLAMP, output: [-6, 6] })

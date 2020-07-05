@@ -110,7 +110,7 @@ const flat = (array) => [
     )
 
     // save data
-    io.write(filename, [...file, tech])
+    io.write(filename, [tech, ...file])
   } catch (ex) {
     console.log(`\n🚨  ${ex.message}\n`)
   }

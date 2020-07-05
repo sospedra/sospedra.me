@@ -1,63 +1,74 @@
 .featured {
-  @apply grid grid-flow-row-dense grid-cols-3 gap-4 py-12;
+  @apply grid grid-flow-row-dense grid-cols-3 gap-4;
 }
 
 @screen md {
   .featured {
     @apply grid-cols-5;
   }
-  .featured button {
+  .featured button,
+  .featured a {
     min-height: 5rem;
   }
 }
 
-.featured button {
-  @apply w-full h-full text-xl border rounded-lg;
+.featured button,
+.featured a {
+  @apply flex flex-col items-center justify-center w-full h-full p-2 text-lg font-bold text-center border-2 border-current rounded shadow-lg outline-none;
+  filter: drop-shadow(0 0 0.35rem currentColor);
   min-height: 4rem;
 }
 
-.featured button p {
-  @apply inline-block;
-}
-
-.featured button:hover p {
-  @apply -mb-4 border-b-4 border-current;
+.featured button:hover,
+.featured a:hover {
   animation: flicker 3s linear infinite;
   animation-delay: 0s;
 }
 
 @keyframes flicker {
   0%,
-  19.999%,
-  22%,
+  11.999%,
+  13%,
   62.999%,
   64%,
   64.999%,
   70%,
   100% {
-    border-style: dashed;
+    opacity: 0.99;
   }
-  20%,
-  21.999%,
+  12%,
+  12.999%,
   63%,
   63.999%,
   65%,
   69.999% {
-    border-style: solid;
+    opacity: 0.4;
   }
 }
 
 .library {
-  @apply subpixel-antialiased text-black bg-white;
+  @apply text-turbo;
 }
 
 .category {
-  @apply subpixel-antialiased text-black bg-cyan-400 border-cyan-400;
+  @apply text-cyan-400;
 }
 
-button.tag {
-  @apply font-bold border-2;
-  filter: drop-shadow(0 0 0.35rem #fabadacc);
-  color: var(--pink);
-  border-color: var(--pink);
+button.tag,
+a.tag {
+  @apply text-cranberry;
+}
+
+.negative {
+  text-decoration: wavy;
+  text-decoration-line: underline;
+}
+
+.triangle {
+  @apply block text-4xl transition-transform duration-1000 ease-in-out origin-left;
+  transform: rotate(13deg);
+}
+
+.triangle:hover {
+  transform: rotate(-13deg);
 }
