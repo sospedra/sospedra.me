@@ -41,6 +41,7 @@
     "remark-external-links": "^6.0.0",
     "remark-slug": "^6.0.0",
     "remark-squeeze-paragraphs": "^4.0.0",
+    "resize-observer-polyfill": "^1.5.1",
     "screenfull": "^5.0.2",
     "seedrandom": "^3.0.5",
     "tailwindcss": "^1.4.4"
