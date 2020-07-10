@@ -109,6 +109,9 @@ const flat = (array) => [
       },
     )
 
+    // custom transform
+    tech.isGithub = tech.isGithub === ['true']
+
     // save data
     io.write(filename, [tech, ...file])
   } catch (ex) {
