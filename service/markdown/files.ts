@@ -26,6 +26,7 @@ export async function fetchPapers() {
   const slugs = (await readdir(root, { withFileTypes: true }))
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name)
+    .reverse()
   const papers = await Promise.all(
     slugs.map(async (slug) => {
       const meta = await readFile(join(root, slug, 'metadata.json'), 'utf8')
