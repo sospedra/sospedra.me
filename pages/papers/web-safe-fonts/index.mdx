@@ -23,7 +23,7 @@ Adobe licensed to Apple the first 13 mass-market distributed font faces. Times, 
 
 Ok. Enough about the printers. What about the web? Well. We're in 1986. Silicon Valley just started. And the big fight is about operating systems. And a decade later, will be about the web. More specifically about the browser control.
 
-The details of this part are loose. There are no official records but a bunch of declarations from key members of different companies at that time. Long story short. Monotype was about to go bankrupt. This is the company that created most of the fonts we use today. Arial, Baskerville, Gothic, Bodoni, Gill, etc. Some of these fonts were part of the printers aforementioned. So, who came to the rescue? **Non-other than Microsoft**.
+The details of this part are loose. There are no official records but a [bunch of declarations from key members](http://www.xnet.se/xpo/typetalk/) of different companies at that time. Long story short. [Monotype](https://www.monotype.com/) was about to go bankrupt. This is the company that created most of the fonts we use today. Arial, Baskerville, Gothic, Bodoni, Gill, etc. Some of these fonts were part of the printers aforementioned. So, who came to the rescue? **Non-other than Microsoft**.
 
 Monotype became bedfellow with Microsoft. They designed a set of analogous fonts for the Redmon company. These new fonts were copies of the other licensed ones. And this started a legal war with many implicated parts. I don't know all the nuts and bolts but the result is clear. We don't have standard fonts. We have clones.
 
@@ -61,3 +61,63 @@ Anyway, **the CSS rules below are safe to use in any combination of browsers and
   font-family: Courier, 'Courier New', monospace;
 }
 ```
+
+Finally, if you don't need an absolute 100% support. The following list are the most well-supported fonts. [Almost available everywhere](https://web.mit.edu/jmorzins/www/fonts.html).
+
+<style jsx>{`
+  tbody tr:nth-child(1) {
+    font-family: Helvetica, Arial;
+  }
+  tbody tr:nth-child(2) {
+    font-family: 'Arial Black';
+  }
+  tbody tr:nth-child(3) {
+    font-family: 'Courier New';
+  }
+  tbody tr:nth-child(4) {
+    font-family: Georgia;
+  }
+  tbody tr:nth-child(5) {
+    font-family: Monaco, 'Lucida Console';
+  }
+  tbody tr:nth-child(6) {
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode';
+  }
+  tbody tr:nth-child(7) {
+    font-family: Geneva, Tahoma;
+  }
+  tbody tr:nth-child(8) {
+    font-family: Times, 'Times New Roman';
+  }
+  tbody tr:nth-child(9) {
+    font-family: Helvetica, 'Trebuchet MS';
+  }
+  tbody tr:nth-child(10) {
+    font-family: Verdana;
+  }
+  tbody tr:nth-child(11) {
+    font-family: Symbol;
+  }
+  tbody tr:nth-child(12) {
+    font-family: Geneva, 'MS Sans Serif';
+  }
+  tbody tr:nth-child(13) {
+    font-family: 'New York', 'MS Serif';
+  }
+`}</style>
+
+| Mac (and most Unix) | Microsoft           | Family |
+| ------------------- | ------------------- | ------ |
+| Helvetica           | Arial               | sans   |
+| Arial Black         | ~                   | sans   |
+| Courier New         | ~                   | mono   |
+| Georgia             | ~                   | serif  |
+| Monaco              | Lucida Console      | mono   |
+| Lucida Grande       | Lucida Sans Unicode | sans   |
+| Geneva              | Tahoma              | sans   |
+| Times               | Times New Roman     | serif  |
+| Helvetica           | Trebuchet MS        | sans   |
+| Verdana             | ~                   | sans   |
+| Symbol              | ~                   | symbol |
+| Geneva              | MS Sans Serif       | sans   |
+| New York            | MS Serif            | serif  |
