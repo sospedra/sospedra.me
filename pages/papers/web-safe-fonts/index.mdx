@@ -33,21 +33,6 @@ This is the closest we can get to a **common font face set** in the modern world
 
 Anyway, **the CSS rules below are safe to use in any combination of browsers and OS**. Embrace them, we need it.
 
-<style jsx>{`
-  code span:nth-child(-n + 17) {
-    font-family: Times, 'Times New Roman', serif;
-    font-size: 1.125rem;
-  }
-  code span:nth-child(n + 18):nth-child(-n + 32) {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 1rem;
-  }
-  code span:nth-child(n + 33) {
-    font-family: Courier, 'Courier New', monospace;
-    font-size: 1rem;
-  }
-`}</style>
-
 ```css
 .font-serif {
   font-family: Times, 'Times New Roman', serif;
@@ -103,6 +88,9 @@ Finally, if you don't need an absolute 100% support. The following list are the 
   }
   tbody tr:nth-child(13) {
     font-family: 'New York', 'MS Serif';
+  }
+  tbody tr:nth-child(13) {
+    font-family: system;
   }
 `}</style>
 

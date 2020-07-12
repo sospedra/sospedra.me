@@ -10,7 +10,7 @@ const createTwitterSearch = (url: string) => {
 }
 
 const createGithubLink = (slug: string) => {
-  return `https://github.com/sospedra/sospedra.me/blob/master/_papers/${slug}.md`
+  return `https://github.com/sospedra/sospedra.me/blob/master/_papers/${slug}.mdx`
 }
 
 const Footer: React.FC<{
