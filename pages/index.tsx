@@ -56,9 +56,19 @@ const IndexPage: NextPage = () => {
                 </Link>
               </li>
               <li>
-                <Cheatcodes
+                <Link
                   ref={refs[2]}
+                  url='/stack'
                   onMouseEnter={() => refs[2].current?.focus()}
+                  onClick={() => setOffset(100)}
+                >
+                  Stack
+                </Link>
+              </li>
+              <li>
+                <Cheatcodes
+                  ref={refs[3]}
+                  onMouseEnter={() => refs[3].current?.focus()}
                 />
               </li>
             </ul>

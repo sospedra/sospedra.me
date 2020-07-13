@@ -31,8 +31,37 @@
   z-index: -1;
 }
 
+.question {
+  @apply absolute hidden p-1 pl-0 text-sm;
+  cursor: help;
+  top: -0.5rem;
+}
+
 @screen md {
   .sprite {
     --size: 32rem;
   }
+
+  .question {
+    @apply inline;
+  }
+}
+
+.rubik {
+  filter: brightness(1.5);
+}
+.rubik span:nth-child(1) {
+  @apply text-red-600;
+}
+.rubik span:nth-child(2) {
+  @apply text-blue-600;
+}
+.rubik span:nth-child(3) {
+  @apply text-orange-600;
+}
+.rubik span:nth-child(4) {
+  @apply text-green-600;
+}
+.rubik span:nth-child(5) {
+  @apply text-yellow-600;
 }

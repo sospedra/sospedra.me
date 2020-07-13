@@ -5,6 +5,7 @@ const dict = {
   '▼': 'downwards triangle',
   '⚛': 'atom',
   '⤵': 'curved arrow down',
+  '؟': 'question mark',
 }
 
 const Emoji: React.FC<{ is: keyof typeof dict; className?: string }> = (

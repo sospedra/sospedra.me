@@ -5,5 +5,7 @@
     "source": "/r/rjpr",
     "listed": true
   },
-  { "destination": "/r", "source": "/r/:id" }
+  { "destination": "/rewrite", "source": "/r/:id" },
+  { "destination": "/rewrite", "source": "/rewrite/:id" },
+  { "destination": "/serve", "source": "/s" }
 ]

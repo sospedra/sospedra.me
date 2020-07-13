@@ -6,12 +6,13 @@ export const useNav = () => {
   const refs = [
     useRef<HTMLAnchorElement>(null),
     useRef<HTMLAnchorElement>(null),
+    useRef<HTMLAnchorElement>(null),
     useRef<HTMLButtonElement>(null),
   ] as const
 
   useMousetrap([
     [
-      'alt+down',
+      ['alt+down', 'j'],
       () => {
         setCursor((c) => {
           const index = c === refs.length - 1 ? 0 : c + 1
@@ -22,7 +23,7 @@ export const useNav = () => {
       },
     ],
     [
-      'alt+up',
+      ['alt+up', 'k'],
       () => {
         setCursor((c) => {
           const index = c === 0 ? refs.length - 1 : c - 1

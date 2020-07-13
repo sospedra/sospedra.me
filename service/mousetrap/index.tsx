@@ -3,7 +3,10 @@ import mousetrap from 'mousetrap'
 import Router from 'next/router'
 
 export const useMousetrap = (
-  traps: [string, (e: ExtendedKeyboardEvent, combo: string) => any][],
+  traps: [
+    string | string[],
+    (e: ExtendedKeyboardEvent, combo: string) => any,
+  ][],
 ) => {
   useEffect(() => {
     traps.map(([key, clbk]) => {

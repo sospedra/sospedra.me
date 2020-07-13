@@ -20,9 +20,10 @@ export const getStaticFiles = async function* (
   if (!isValidDir(dir)) return
 
   const dirents = await fsp.readdir(dir, { withFileTypes: true })
-  const statics = dirents.filter(
-    (dirent) => filterStatic(dirent.name) || dirent.isDirectory(),
-  )
+  const statics = dirents
+    .filter((dirent) => filterStatic(dirent.name) || dirent.isDirectory())
+    .sort((a, b) => +b.isDirectory() - +a.isDirectory())
+
   for (const dirent of statics) {
     const res = resolve(dir, dirent.name)
     if (dirent.isDirectory()) {

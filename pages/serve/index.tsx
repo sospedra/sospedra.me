@@ -4,34 +4,39 @@ import { getStaticFiles, pathsToTree, TreeNode } from 'service/io'
 import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
 import { TreeParent, TreeChild } from 'components/Serve'
+import { useRouter } from 'next/router'
 
 const description = 'List of all the public-available static assets'
 
 const Serve: NextPage<{
   tree: TreeNode[]
-  paths: string[]
-}> = (props) => (
-  <Shell
-    title='Serve'
-    className='relative w-full h-full max-w-xl px-4 pt-12 pb-20 mx-auto text-white'
-    description={description}
-    canonical='/static'
-  >
-    <Link url='/'>
-      <LinkBack>Home</LinkBack>
-    </Link>
+}> = (props) => {
+  const router = useRouter()
+  const expand = router.query.e?.toString().split('.')
 
-    <h1 className='pt-8 text-4xl'>Serve assets</h1>
-    <p className='pb-10'>{description}</p>
+  return (
+    <Shell
+      title='Serve'
+      className='relative w-full h-full max-w-xl px-4 pt-12 pb-20 mx-auto text-white'
+      description={description}
+      canonical='/static'
+    >
+      <Link url='/'>
+        <LinkBack>Home</LinkBack>
+      </Link>
 
-    <div className='pb-20'>{renderTree(props.tree, props.paths)}</div>
-  </Shell>
-)
+      <h1 className='pt-8 text-4xl'>Serve assets</h1>
+      <p className='pb-10'>{description}</p>
 
-const renderTree = (subtree: TreeNode[], paths: string[]) => {
+      <div className='pb-20'>{renderTree(props.tree, expand)}</div>
+    </Shell>
+  )
+}
+
+const renderTree = (subtree: TreeNode[], expand?: string[]) => {
   return subtree.map((node) => {
     const children = node.children.length
-      ? renderTree(node.children, paths)
+      ? renderTree(node.children, expand)
       : undefined
     const TreeComponent = !!children ? TreeParent : TreeChild
 
@@ -39,11 +44,10 @@ const renderTree = (subtree: TreeNode[], paths: string[]) => {
       <TreeComponent
         name={node.name || '/'}
         key={node.name}
-        defaultOpen={['', 'public'].includes(node.name)}
+        defaultOpen={['', 'public', ...(expand || [])].includes(node.name)}
+        bold={!!expand?.includes(node.name)}
         children={children}
-        route={paths.find((path) => {
-          return path.split('/').pop() === node.name
-        })}
+        route={node.path}
       />
     )
   })
@@ -57,7 +61,7 @@ export async function getStaticProps() {
   const tree = pathsToTree(paths.map((p) => p.split('/')))
 
   return {
-    props: { tree, paths },
+    props: { tree },
   }
 }
 

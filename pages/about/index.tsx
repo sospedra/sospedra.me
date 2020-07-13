@@ -7,6 +7,7 @@ import External from 'components/External'
 import Row from 'components/Row'
 import Role from 'components/Role'
 import css from './about.module.css'
+import Emoji from 'components/Emoji'
 
 const About: React.FC<{}> = () => {
   const teleportRef = useRef<HTMLDivElement>(null)
@@ -86,7 +87,16 @@ const About: React.FC<{}> = () => {
           }
           right={
             <section>
-              <h3>Experience</h3>
+              <h3 className='relative'>
+                Highlighted
+                <span
+                  title='Only the most relevant experience is shown. I worked in multiple companies throughout my career and I have never been stall for more than a couple of months.'
+                  className={css.question}
+                >
+                  ?
+                </span>
+                <span className='ml-2 sm:ml-4'>Experience</span>
+              </h3>
               <h4>
                 Independent contractor
                 <br />
@@ -111,20 +121,29 @@ const About: React.FC<{}> = () => {
 
               <ul>
                 <li>
-                  Public{' '}
-                  <External href='https://github.com/sospedra/talks'>
-                    speaker
-                  </External>
+                  <Link className={neonCss.neon} url='/serve?e=talks'>
+                    Public speaker
+                  </Link>
                 </li>
                 <li>
                   <Link className={neonCss.neon} url='/papers'>
-                    Write
-                  </Link>{' '}
-                  articles
+                    Write articles
+                  </Link>
                 </li>
                 <li>Part-time lecturer</li>
                 <li>
-                  <p>My Rubik’s cube record is 37s</p>
+                  <p>
+                    My{' '}
+                    <span className={css.rubik}>
+                      <span>R</span>
+                      <span>u</span>
+                      <span>b</span>
+                      <span>i</span>
+                      <span>k</span>
+                      {"'s"}
+                    </span>{' '}
+                    record is <span title='2721ms'>27s</span>
+                  </p>
                 </li>
               </ul>
             </section>
@@ -206,6 +225,11 @@ const About: React.FC<{}> = () => {
                   <External href='https://sospedra.me/serve/sospedra.pdf'>
                     pdf version
                   </External>
+                </li>
+                <li>
+                  <Link url='/serve?e=licenses' className={neonCss.neon}>
+                    licenses
+                  </Link>
                 </li>
               </ul>
             </section>

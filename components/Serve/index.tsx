@@ -1,10 +1,12 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useEffect } from 'react'
+import cn from 'classnames'
 import { animated, useSpring } from 'react-spring'
 import { useMeasure, usePrevious } from 'service/screen'
 import Icon from 'components/Icon'
 
 type TreeProps = {
   name: string
+  bold: boolean
   children?: React.ReactNode
   defaultOpen?: boolean
   route?: string
@@ -19,12 +21,18 @@ export const TreeParent: React.FC<TreeProps> = memo(function TreeParent(props) {
     opacity: isOpen ? 1 : 0,
     transform: `translate3d(${isOpen ? 0 : 20}px,0,0)`,
   })
+
+  useEffect(() => {
+    props.defaultOpen && setOpen(props.defaultOpen)
+  }, [props.defaultOpen])
+
   return (
     <div className='relative pt-1 overflow-x-hidden text-white truncate align-middle'>
       <button
-        className={
-          'cursor-pointer align-text-top outline-none focus:outline-none'
-        }
+        className={cn(
+          'cursor-pointer align-text-top outline-none focus:outline-none',
+          [props.bold ? 'font-bold text-cyan-400' : 'font-normal'],
+        )}
         onClick={() => setOpen(!isOpen)}
       >
         <Icon

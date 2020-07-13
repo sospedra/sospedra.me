@@ -1,4 +1,4 @@
-export type TreeNode = { name: string; children: TreeNode[] }
+export type TreeNode = { name: string; path: string; children: TreeNode[] }
 
 export const pathsToTree = (paths: string[][]) => {
   const tree: TreeNode[] = []
@@ -16,10 +16,10 @@ export const pathsToTree = (paths: string[][]) => {
       } else {
         const newPart = {
           name: part,
+          path: path.join('/'),
           children: [],
         }
 
-        currentLevel.sort((a, b) => b.children.length - a.children.length)
         currentLevel.push(newPart)
         currentLevel = newPart.children
       }

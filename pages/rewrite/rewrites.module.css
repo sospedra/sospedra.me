@@ -1,0 +1,29 @@
+.copy {
+  @apply p-2 font-mono font-bold;
+  text-underline-position: under;
+}
+
+.copy:hover {
+  @apply underline;
+}
+
+.copy:focus {
+  @apply underline outline-none;
+  text-decoration-style: dashed;
+}
+
+.rewrites {
+  @apply w-full my-8 table-fixed;
+}
+
+.rewrites td:nth-child(2),
+.rewrites th:nth-child(2) {
+  @apply hidden;
+}
+
+@screen sm {
+  .rewrites td:nth-child(2),
+  .rewrites th:nth-child(2) {
+    @apply block;
+  }
+}
