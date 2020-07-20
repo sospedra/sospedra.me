@@ -7,7 +7,6 @@ import External from 'components/External'
 import Row from 'components/Row'
 import Role from 'components/Role'
 import css from './about.module.css'
-import Emoji from 'components/Emoji'
 
 const About: React.FC<{}> = () => {
   const teleportRef = useRef<HTMLDivElement>(null)

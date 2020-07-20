@@ -12,7 +12,7 @@
     "sitemap": "node ./internals/sitemap",
     "rewrite": "node ./internals/rewrite",
     "stack": "node ./internals/stack",
-    "test": "npm run test:static"
+    "test": "yarn test:static"
   },
   "dependencies": {
     "@mdx-js/loader": "^1.6.4",
