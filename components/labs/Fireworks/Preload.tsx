@@ -11,6 +11,7 @@ const Preload: React.FC<{ max: number }> = React.memo((props) => {
             key={index}
             rel='preload'
             as='image'
+            type='image/webp'
             href={`/papers/fireworks/${(index + 1)
               .toString()
               .padStart(3, '0')}.webp`}
