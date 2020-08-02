@@ -6,10 +6,11 @@ const readFile = promisify(fs.readFile)
 const writeFile = promisify(fs.writeFile)
 const readdir = promisify(fs.readdir)
 const exists = promisify(fs.exists)
+const mkdir = promisify(fs.mkdir)
 
 module.exports = {}
 
-module.exports.read = async function read(filename, empty) {
+module.exports.read = async function ioread(filename, empty) {
   const raw = (await exists(filename))
     ? await readFile(filename, 'utf8')
     : empty
@@ -21,20 +22,28 @@ module.exports.read = async function read(filename, empty) {
   }
 }
 
-module.exports.write = async function write(filename, data, doesStr = true) {
+module.exports.write = async function iowrite(filename, data, doesStr = true) {
   return await writeFile(filename, doesStr ? JSON.stringify(data) : data)
 }
 
-module.exports.dir = async function dir(pathname) {
+module.exports.dir = async function iodir(pathname) {
   const dirname = join(process.cwd(), pathname)
   return (await readdir(dirname)).map((file) => join(dirname, file))
 }
 
-module.exports.abs = function abs(pathname) {
+module.exports.abs = function ioabs(pathname) {
   return join(process.cwd(), pathname)
 }
 
-module.exports.assign = function assign(data, travel, patch) {
+module.exports.exists = async function ioexists(filename) {
+  return await exists(filename)
+}
+
+module.exports.mkdir = async function iomkdir(filename) {
+  return await mkdir(filename)
+}
+
+module.exports.assign = function ioassign(data, travel, patch) {
   return {
     ...data,
     [travel]:
