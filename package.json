@@ -7,6 +7,7 @@
     "start": "next start",
     "test:static": "tsc",
     "now-build": "next build && next export -o dist",
+    "create-paper": "node ./internals/create-paper",
     "resize": "node ./internals/resize-dir",
     "reading": "node ./internals/reading-dir",
     "sitemap": "node ./internals/sitemap",
