@@ -9,7 +9,7 @@ export const Time: React.FC<{ time: string }> = (props) => {
 }
 
 export const Reading: React.FC<{ minutes: number }> = (props) => {
-  const slices = Math.max(Math.round(props.minutes / 5), 1)
+  const slices = Math.max(Math.round(props.minutes / 3), 1)
   const pizza = slices > 5 ? ['pizza-box.png'] : Array(slices).fill('pizza.svg')
   const title =
     slices > 5 ? 'More than 30 minutes long' : `${slices * 5} minutes long`
