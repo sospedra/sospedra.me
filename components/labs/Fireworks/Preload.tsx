@@ -1,10 +1,11 @@
 import React from 'react'
 import Head from 'next/head'
+import { createFrameRoute, frameMax } from './service'
 
-const Preload: React.FC<{ max: number }> = React.memo((props) => {
+const Preload: React.FC<{}> = React.memo(() => {
   return (
     <Head>
-      {Array(props.max)
+      {Array(frameMax)
         .fill(0)
         .map((_, index) => (
           <link
@@ -12,9 +13,7 @@ const Preload: React.FC<{ max: number }> = React.memo((props) => {
             rel='preload'
             as='image'
             type='image/webp'
-            href={`/papers/fireworks/${(index + 1)
-              .toString()
-              .padStart(3, '0')}.webp`}
+            href={createFrameRoute(index + 1)}
           />
         ))}
     </Head>

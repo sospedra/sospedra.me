@@ -14,9 +14,13 @@ export const Markdown: React.FC<{}> = (props) => {
           metadata = meta
           return <Paper {...meta}>{children}</Paper>
         },
-        img: ({ src, alt }) => (
-          <Image src={src} alt={alt} meta={metadata as PaperT} />
-        ),
+        img: ({ src, alt }) => {
+          if (src.includes('.jpeg')) {
+            return <Image src={src} alt={alt} meta={metadata as PaperT} />
+          } else {
+            return <img src={src} alt={alt} />
+          }
+        },
         pre: ({ children }) => {
           return <pre>{children}</pre>
         },

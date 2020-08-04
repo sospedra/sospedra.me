@@ -1,24 +1,92 @@
 import Fireworks from 'components/labs/Fireworks'
 export const meta = require('./metadata.json')
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent euismod ac ipsum nec molestie. Suspendisse ultricies lobortis pellentesque. Curabitur pellentesque imperdiet sapien. Duis efficitur orci nec congue vehicula. Nam iaculis vestibulum dui, nec rhoncus nisl scelerisque eget. Fusce felis leo, finibus ac lacus sed, semper hendrerit mauris. Nam eu nibh urna.
+It's hard to innovate in the web world. There's a combination of well-known patterns and technical limitations that constrain the possibilities. The businesses are afraid of big changes because consolidated UX helps to keep the users engaged. And technical aspects like the form factor, keyboards, mouses, etc. Limit how we interact with digital products.
 
-Donec euismod, erat sed tincidunt ultricies, nulla magna hendrerit leo, a dignissim orci nisl non risus. Nunc non lorem condimentum, elementum ex at, tristique nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In et iaculis augue, vel viverra ligula. Duis consequat cursus ligula, non tincidunt eros faucibus eu. Etiam tincidunt sem vitae massa finibus venenatis sit amet eget sapien. Sed maximus auctor blandit. Etiam ut dui dignissim, dignissim est eu, porttitor felis. Morbi nec urna eget ex tincidunt euismod. Phasellus ultricies felis sed ornare volutpat. Fusce suscipit felis lacus, a congue erat commodo vitae. Mauris molestie ultrices tempor.
+However, sometimes small yet powerful changes happen. Nothing as disruptive as the introduction of the touch screen. But meaningfully nonetheless. For example, the uber-famous [hamburger button](https://en.wikipedia.org/wiki/Hamburger_button). It's not a crazy innovation. Not at all. But it's a great improvement for toggling side menus. Nowadays, it's the _de facto_ solution. All the users over the world understand what this icon means. And even companies like Google included this in their [official design guidelines](https://material.io/components/app-bars-top).
 
-In id sapien nec mi blandit varius sit amet pretium eros. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed quis orci imperdiet, dapibus lectus et, gravida dui. Curabitur viverra lobortis lacus eget consectetur. Ut finibus odio in neque fermentum convallis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ut pretium risus, vel dignissim nunc. Suspendisse id placerat dolor.
+Today, we're talking about another of these little giants changes. **Scroll-based animations**. They're not new; of course not. But now we know how to run **smooth 60 fps** scroll animations. And these look dope.
 
-Integer egestas venenatis orci in faucibus. Nunc nunc massa, ullamcorper ut tristique ac, luctus sed metus. Suspendisse potenti. Donec vel elit ligula. Aenean in magna risus. Ut at pulvinar lacus. In cursus dolor id pulvinar vehicula. Aliquam vel pellentesque nisi. Pellentesque posuere magna in sem auctor, id scelerisque purus congue.
+You probably have seen them in some product landing pages. Such as the new [Airpods Pro](https://www.apple.com/airpods-pro/) from Apple. It's slick, responsive and creates a [stunning visual](https://codepen.io/j-v-w/pen/ZEbGzyv). So, how does this work?
 
-In diam ante, sollicitudin vel porta sed, malesuada a metus. Mauris ut eros sit amet nisl lacinia congue sed nec sem. Integer lacinia vehicula libero, sed dapibus diam suscipit mollis. Nunc viverra elementum ipsum ac luctus. Aliquam a viverra erat, id fringilla ante. Nullam malesuada placerat nisl, vel tristique dui ultricies ac. Maecenas libero turpis, feugiat sed bibendum molestie, consequat eget sem. Phasellus lacinia, lectus et gravida scelerisque, dolor metus porttitor dui, sit amet aliquet ligula enim at nibh. Donec mattis neque sed lectus euismod gravida. Phasellus sit amet aliquet dui, eu aliquet tortor.
+The abstract idea is to animate using a sequence of images in rapid succession. You know, like a flip book!
+
+![Animated flipbook](/papers/flipbook.webp)
+
+To be honest, it's not the most obvious solution. You may think about `<img />`, some `scroll` event hijacking and some `offset` calculations. Wrong! If you that way everything will end up being clunky and messy. Instead, we're gonna follow these **golden rules**:
+
+1. `canvas` over `img`. Long story short, the `canvas` can **render changes way faster** than `img`. The classic image tag is for static views.
+
+2. **Preload** the assets. This is mandatory. Otherwise, on every render it'll download the image. So, it'll look clunky.
+
+3. Do not hijack the `scroll` event. Instead, **fix or stick** the `canvas` on a long-height component.
+
+4. There's one **drawback**! You're gonna be downloading hundreds of images. Consider a good compression and even checking the network first to see if it's worth downloading for your user. To be fair, this technique is similar to a video but lighter. So, it's not that bad.
+
+With the proper instructions applied you can easily get something like this.
 
 <Fireworks />
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent euismod ac ipsum nec molestie. Suspendisse ultricies lobortis pellentesque. Curabitur pellentesque imperdiet sapien. Duis efficitur orci nec congue vehicula. Nam iaculis vestibulum dui, nec rhoncus nisl scelerisque eget. Fusce felis leo, finibus ac lacus sed, semper hendrerit mauris. Nam eu nibh urna.
+Enough talking. Let's see some code. First, we need a basic markup:
 
-Donec euismod, erat sed tincidunt ultricies, nulla magna hendrerit leo, a dignissim orci nisl non risus. Nunc non lorem condimentum, elementum ex at, tristique nunc. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In et iaculis augue, vel viverra ligula. Duis consequat cursus ligula, non tincidunt eros faucibus eu. Etiam tincidunt sem vitae massa finibus venenatis sit amet eget sapien. Sed maximus auctor blandit. Etiam ut dui dignissim, dignissim est eu, porttitor felis. Morbi nec urna eget ex tincidunt euismod. Phasellus ultricies felis sed ornare volutpat. Fusce suscipit felis lacus, a congue erat commodo vitae. Mauris molestie ultrices tempor.
+```html
+<!-- Preload -->
+<head>
+  <!-- Repeat for as many frames as needed -->
+  <link
+    rel="preload"
+    as="image"
+    type="image/webp"
+    href="/asset/frame/001.webp"
+  />
+</head>
 
-In id sapien nec mi blandit varius sit amet pretium eros. Interdum et malesuada fames ac ante ipsum primis in faucibus. Sed quis orci imperdiet, dapibus lectus et, gravida dui. Curabitur viverra lobortis lacus eget consectetur. Ut finibus odio in neque fermentum convallis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ut pretium risus, vel dignissim nunc. Suspendisse id placerat dolor.
+<!-- Markup -->
+<div class="container">
+  <canvas></canvas>
+</div>
+```
 
-Integer egestas venenatis orci in faucibus. Nunc nunc massa, ullamcorper ut tristique ac, luctus sed metus. Suspendisse potenti. Donec vel elit ligula. Aenean in magna risus. Ut at pulvinar lacus. In cursus dolor id pulvinar vehicula. Aliquam vel pellentesque nisi. Pellentesque posuere magna in sem auctor, id scelerisque purus congue.
+And then a bit of JavaScript to handle the render animation.
 
-In diam ante, sollicitudin vel porta sed, malesuada a metus. Mauris ut eros sit amet nisl lacinia congue sed nec sem. Integer lacinia vehicula libero, sed dapibus diam suscipit mollis. Nunc viverra elementum ipsum ac luctus. Aliquam a viverra erat, id fringilla ante. Nullam malesuada placerat nisl, vel tristique dui ultricies ac. Maecenas libero turpis, feugiat sed bibendum molestie, consequat eget sem. Phasellus lacinia, lectus et gravida scelerisque, dolor metus porttitor dui, sit amet aliquet ligula enim at nibh. Donec mattis neque sed lectus euismod gravida. Phasellus sit amet aliquet dui, eu aliquet tortor.
+```js
+const context = canvas.getContext('2d')
+const image = new Image()
+const frameMax = 174
+
+$container.addEventListener('scroll', () => {
+  const scrollTop = $container.scrollTop
+  const maxScrollTop = $container.scrollHeight - window.innerHeight
+  const scrollFraction = scrollTop / maxScrollTop
+  const current = Math.floor(scrollFraction * frameMax)
+  const frame = Math.min(frameMax - 1, current)
+
+  requestAnimationFrame(() => {
+    // Update every frame
+    image.src = createFrameRoute(frame + 1)
+    context.drawImage(image, 0, 0)
+  })
+})
+```
+
+Notice the `requestAnimationFrame` (RAF). This is the key concept on the JavaScript side. It allows the animation to be **smooth even when the website main thread is heavy** on other stuff.
+
+Finally, we need to add some spicy CSS.
+
+```css
+.container {
+  /* The long-height container to  */
+  height: 600vh;
+  position: relative;
+}
+
+canvas {
+  max-height: 100vh;
+  max-width: 100vw;
+  /* Keep the canvas in front of the container while scrolling */
+  position: sticky;
+  top: 0;
+}
+```
+
+We're not gonna focus on the details of how `sticky` works. For such will be another paper. It'll depend on your layout needs, as well. So the best you can do is try yourself!
