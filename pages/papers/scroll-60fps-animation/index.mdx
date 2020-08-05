@@ -1,4 +1,4 @@
-import Fireworks from 'components/labs/Fireworks'
+import Fireworks from 'components/papers/Fireworks'
 export const meta = require('./metadata.json')
 
 It's hard to innovate in the web world. There's a combination of well-known patterns and technical limitations that constrain the possibilities. The businesses are afraid of big changes because consolidated UX helps to keep the users engaged. And technical aspects like the form factor, keyboards, mouses, etc. Limit how we interact with digital products.
@@ -11,7 +11,7 @@ You probably have seen them in some product landing pages. Such as the new [Airp
 
 The abstract idea is to animate using a sequence of images in rapid succession. You know, like a flip book!
 
-![Animated flipbook](/papers/flipbook.webp)
+![Animated flipbook](/papers/flipbook.gif)
 
 To be honest, it's not the most obvious solution. You may think about `<img />`, some `scroll` event hijacking and some `offset` calculations. Wrong! If you that way everything will end up being clunky and messy. Instead, we're gonna follow these **golden rules**:
 
@@ -23,7 +23,7 @@ To be honest, it's not the most obvious solution. You may think about `<img />`,
 
 And a few drawbacks:
 
-1. You're gonna be **fetching hundreds of images**. Consider a good compression and even checking the network first to see if it's worth downloading for your user. To be fair, this technique is similar to a video but lighter. So, it's not that bad.
+1. You're gonna be **fetching hundreds of images**. Consider a good compression and even checking the network first to see if it's worth downloading for your user. To be fair, this technique is how video works; but lighter. For example, the gif above weights almost 5MB and it's highly compressed and low quality. Instead, the whole set of images for the demo weights 8MB but every pic is 2560x1440px in `jpeg` format. So, it's not that bad.
 
 2. The most important bit for this visual to work are the images. You'll need a **high-quality sequence of photos** before implementing.
 
@@ -40,8 +40,8 @@ Enough talking. Let's see some code. First, we need a basic markup:
   <link
     rel="preload"
     as="image"
-    type="image/webp"
-    href="/asset/frame/001.webp"
+    type="image/jpeg"
+    href="/asset/frame/001.jpeg"
   />
 </head>
 

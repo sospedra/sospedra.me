@@ -80,7 +80,7 @@
 }
 
 .markdown code {
-  @apply inline px-1 font-mono rounded;
+  @apply inline px-1 font-mono whitespace-no-wrap rounded;
 }
 
 .markdown pre {
@@ -88,7 +88,7 @@
 }
 
 .markdown pre code {
-  @apply block p-0 overflow-visible text-sm bg-transparent rounded-none;
+  @apply block p-0 overflow-visible text-sm whitespace-pre-wrap bg-transparent rounded-none;
   color: var(--code-text);
 }
 
