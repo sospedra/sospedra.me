@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="756px" height="243px" viewBox="0 0 756 243" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>chassis</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="car">
+            <polygon id="Path" stroke="#46566C" fill="#46566C" points="9.5 170.66 54.096 188.499 218.396 188.499 220.396 197.499 566.816 197.499 584.849 182.471 702.499 200.075 702.499 209.9301 719.499 209.9301 719.499 180.1501 683.731 126.4991 179.501 126.4991 179.501 117.4991 53.691 117.4991 44.691 99.4991 18.5 99.4991 18.5 108.2062 9.5 117.2062 9.5 170.6602"></polygon>
+            <polygon id="Path" fill="#748CA2" points="27 81 36 108 108 126 434.46 126 621 132 680.4 132 716.14 168 729 183 729 139 729 108 720 99 666 99 513 108 207 108 207 99 207 72 36 72"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="40.39 72 288 72 312.93 81 450 81 504 81 549 102.76 516.28 108 191.44 111 54 86"></polygon>
+            <path d="M450,63 L450,90 L459,99 L499.65,99 L516.42,72 L486,54 L468,45 L450,36 L432,27 L405,18 L378,9 L378,27 C384.048863,21.0244313 393.048863,21.0244313 405,27 C412.263785,30.6318926 422.48366,27.9171487 432,36 C434.116373,37.797574 440.116373,40.797574 450,45 L450,63 Z" id="Path" fill="#AFC2CD"></path>
+            <path d="M207,0 L216,0 L216,9 L207,9 L207,0 Z M193.102635,21.4541645 L216,13.5580413 L225,13.5580413 L229.482891,36 L225,49.587232 L206.679772,49.587232 L199.197293,45 L161.205269,45 L193.102635,21.4541645 Z" id="Path-2" fill="#AFC2CD"></path>
+            <polygon id="Path" fill="#748CA2" points="216 0 261 0 261 9 378 9 378 18 234 18 234 63 288 63 288 72 36 72 36 63 126 63 126 54 135 54 135 45 153 45 153 54 144 54 144 63 225 63 225 18 207 18 207 9 216 9"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="261 0 378 0 378 9 261 9"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="189 9 207 9 207 18 189 18"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="378 9 405 9 405 18 378 18"></polygon>
+            <polygon id="Path" fill="#758CA2" points="219 12 220 12 220 13 219 13"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="171 18 189 18 189 27 171 27"></polygon>
+            <polygon id="Path" fill="#748CA2" points="189 18 207 18 207 27 189 27"></polygon>
+            <polygon id="Path" fill="#DEECEC" points="207 18 225 18 225 36 216 36 216 27 207 27"></polygon>
+            <polygon id="Path" fill="#748CA2" points="378 18 405 18 405 27 378 27"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="405 18 432 18 432 27 405 27"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="153 27 171 27 171 36 153 36"></polygon>
+            <polygon id="Path" fill="#748CA2" points="171 27 189 27 189 36 171 36"></polygon>
+            <polygon id="Path" fill="#DEECEC" points="189 27 198 27 198 36 189 36"></polygon>
+            <polygon id="Path" fill="#748CA2" points="405 27 432 27 432 36 405 36"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="432 27 450 27 450 36 432 36"></polygon>
+            <polygon id="Path" fill="#DFECEC" points="218 32 219 32 219 33 218 33"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="135 36 153 36 153 45 135 45"></polygon>
+            <polygon id="Path" fill="#748CA2" points="153 36 171 36 171 45 153 45"></polygon>
+            <polygon id="Path" fill="#B6C4C4" points="171 36 207 36 207 45 225 45 225 63 144 63 144 54 153 54 153 45 171 45"></polygon>
+            <polygon id="Path" fill="#748CA2" points="432 36 450 36 450 45 432 45"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="450 36 468 36 468 45 450 45"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="117 45 135 45 135 54 126 54 126 63 99 63 99 54 117 54"></polygon>
+            <polygon id="Path" fill="#748CA2" points="450 45 468 45 468 54 450 54"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="468 45 486 45 486 54 468 54"></polygon>
+            <polygon id="Path" fill="#B7C4C4" points="163 47 164 47 164 48 163 48"></polygon>
+            <polygon id="Path" fill="#748CA2" points="468 54 486 54 486 63 468 63"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="486 54 504 54 504 63 486 63"></polygon>
+            <polygon id="Path" fill="#A7B7C7" points="450 63 486 63 486 72 450 72"></polygon>
+            <polygon id="Path" fill="#748CA2" points="486 63 504 63 504 72 486 72"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="504 63 522 63 522 72 504 72"></polygon>
+            <polygon id="Path" fill="#748CA2" points="27 72 36 72 36 81 27 81"></polygon>
+            <polygon id="Path" fill="#B1C1D1" points="36 72 216 72 216 81 207 81 207 99 126 99 126 90 81 90 81 81 36 81"></polygon>
+            <polygon id="Path" fill="#A7B7C7" points="216 72 225 72 225 81 216 81"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="225 72 228 72 228 73 229 73 229 72 288 72 288 81 270 81 270 90 243 90 243 81 225 81"></polygon>
+            <polygon id="Path" fill="#B0C1D1" points="228 72 229 72 229 73 228 73"></polygon>
+            <polygon id="Path" fill="#748CA2" points="288 72 450 72 450 81 288 81"></polygon>
+            <polygon id="Path" fill="#46566C" points="450 72 459 72 459 81 450 81"></polygon>
+            <polygon id="Path" fill="#54677A" points="459 72 486 72 486 81 459 81"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="486 72 504 72 504 81 486 81"></polygon>
+            <polygon id="Path" fill="#748CA2" points="504 72 522 72 522 81 504 81"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="522 72 585 72 585 81 531 81 531 90 585 90 585 99 666 99 666 108 720 108 720 117 729 117 729 135 720 135 720 126 702 126 702 117 513 117 513 108 504 108 504 81 522 81"></polygon>
+            <polygon id="Path" stroke="#925159" fill="#87474F" points="18 81 36 81 36 99 27 99 27 90 18 90"></polygon>
+            <polygon id="Path" fill="#54677A" points="36 81 45 81 45 85 44 85 44 86 45 86 45 90 54 90 54 99 36 99"></polygon>
+            <polygon id="Path" fill="#748CA2" points="45 81 81 81 81 90 126 90 126 99 207 99 207 108 486 108 486 135 414 135 414 126 207 126 207 117 189 117 189 108 180 108 180 117 117 117 117 126 54 126 54 117 36 117 36 108 45 108 45 99 54 99 54 90 45 90"></polygon>
+            <polygon id="Path" fill="#A7B7C7" points="207 81 216 81 216 108 207 108"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="216 81 225 81 225 99 270 99 270 90 315 90 315 99 279 99 279 108 216 108"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="225 81 243 81 243 99 225 99"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="270 81 450 81 450 99 486 99 486 90 495 90 495 108 279 108 279 99 315 99 315 90 270 90"></polygon>
+            <polygon id="Path" fill="#748CA2" points="450 81 459 81 459 90 450 90"></polygon>
+            <polygon id="Path" fill="#46566C" points="459 81 495 81 495 90 459 90"></polygon>
+            <polygon id="Path" fill="#A7B7C7" points="495 81 504 81 504 108 495 108"></polygon>
+            <polygon id="Path" fill="#748CA2" points="531 81 585 81 585 90 531 90"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="585 81 666 81 666 90 585 90"></polygon>
+            <polygon id="Path" fill="#55677A" points="44 85 45 85 45 86 44 86"></polygon>
+            <polygon id="Path" stroke="#630E1D" fill="#58101B" points="18 90 27 90 27 99 36 99 36 108 18 108"></polygon>
+            <polygon id="Path" fill="#46566C" points="243 90 270 90 270 99 243 99"></polygon>
+            <polygon id="Path" fill="#B1C0C7" points="450 90 459 90 459 99 450 99"></polygon>
+            <polygon id="Path" fill="#748CA2" points="459 90 486 90 486 99 459 99"></polygon>
+            <polygon id="Path" fill="#748CA2" points="585 90 666 90 666 99 585 99"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="666 90 711 90 711 99 666 99"></polygon>
+            <polygon id="Path" fill="#46566C" points="36 99 45 99 45 108 36 108"></polygon>
+            <polygon id="Path" fill="#748CA2" points="666 99 720 99 720 108 666 108"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="720 99 729 99 729 108 720 108"></polygon>
+            <polygon id="Path" fill="#AEC2CD" points="328 105 329 105 329 106 328 106"></polygon>
+            <polygon id="Path" fill="#46566C" points="9 108 36 108 36 117 54 117 54 126 108 126 108 135 45 135 45 126 18 126 18 117 9 117"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="180 108 189 108 189 117 180 117"></polygon>
+            <polygon id="Path" fill="#6A8298" points="486 108 495 108 495 135 486 135"></polygon>
+            <polygon id="Path" fill="#748CA2" points="495 108 513 108 513 117 702 117 702 126 684 126 684 135 666 135 666 126 603 126 603 135 585 135 585 144 576 144 576 135 495 135"></polygon>
+            <polygon id="Path" fill="#748CA2" points="720 108 729 108 729 117 720 117"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="729 108 747 108 747 117 729 117"></polygon>
+            <polygon id="Path" fill="#54677A" points="9 117 18 117 18 126 45 126 45 135 108 135 108 144 99 144 99 153 90 153 90 171 81 171 81 180 63 180 63 171 36 171 36 162 18 162 18 144 9 144"></polygon>
+            <polygon id="Path" fill="#54677A" points="117 117 135 117 135 126 117 126"></polygon>
+            <polygon id="Path" fill="#46566C" points="135 117 180 117 180 126 198 126 198 144 189 144 189 135 171 135 171 126 135 126"></polygon>
+            <polygon id="Path" fill="#54677A" points="180 117 189 117 189 126 180 126"></polygon>
+            <polygon id="Path" fill="#6A8298" points="189 117 207 117 207 126 189 126"></polygon>
+            <polygon id="Path" fill="#F0FF6A" points="729 117 747 117 747 135 738 135 738 126 729 126"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="747 117 756 117 756 180 747 180"></polygon>
+            <polygon id="Path" fill="#54677A" points="108 126 117 126 117 135 108 135"></polygon>
+            <polygon id="Path" fill="#46566C" points="117 126 135 126 135 135 117 135"></polygon>
+            <polygon id="Path" fill="#000000" points="135 126 171 126 171 135 189 135 189 144 198 144 198 162 207 162 207 198 198 198 198 216 189 216 189 225 171 225 171 234 135 234 135 225 117 225 117 216 108 216 108 198 99 198 99 162 108 162 108 144 117 144 117 135 135 135"></polygon>
+            <polygon id="Path" fill="#3C4C62" points="198 126 207 126 207 144 198 144"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="207 126 216 126 216 135 207 135"></polygon>
+            <polygon id="Path" fill="#46566C" points="216 126 414 126 414 135 486 135 486 162 315 162 315 153 261 153 261 144 225 144 225 135 216 135"></polygon>
+            <polygon id="Path" fill="#54677A" points="603 126 621 126 621 135 603 135"></polygon>
+            <polygon id="Path" fill="#46566C" points="621 126 666 126 666 135 630 135 630 144 612 144 612 153 603 153 603 171 594 171 594 189 585 189 585 198 576 198 576 207 234 207 234 198 243 198 243 189 270 189 270 198 279 198 279 189 297 189 297 198 306 198 306 189 342 189 342 198 504 198 504 189 531 189 531 180 540 180 540 162 495 162 495 135 567 135 567 144 576 144 576 162 567 162 567 180 576 180 576 171 585 171 585 162 594 162 594 144 603 144 603 135 621 135"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="684 126 702 126 702 135 684 135"></polygon>
+            <polygon id="Path" fill="#748CA2" points="702 126 720 126 720 135 747 135 747 153 738 153 738 162 729 162 729 180 738 180 738 198 720 198 720 189 711 189 711 180 702 180 702 153 693 153 693 144 684 144 684 135 702 135"></polygon>
+            <polygon id="Path" fill="#D2FF4C" points="729 126 738 126 738 135 729 135"></polygon>
+            <polygon id="Path" fill="#46566C" points="0 135 9 135 9 144 18 144 18 162 36 162 36 171 63 171 63 180 81 180 81 171 90 171 90 153 99 153 99 144 108 144 108 162 99 162 99 198 18 198 18 189 9 189 9 171 0 171"></polygon>
+            <polygon id="Path" fill="#46566C" points="108 135 117 135 117 144 108 144"></polygon>
+            <polygon id="Path" fill="#46566C" points="207 135 216 135 216 144 207 144"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="216 135 225 135 225 153 216 153"></polygon>
+            <polygon id="Path" fill="#3C4C62" points="486 135 495 135 495 162 486 162"></polygon>
+            <polygon id="Path" fill="#536475" points="567 135 576 135 576 144 567 144"></polygon>
+            <polygon id="Path" fill="#54677A" points="585 135 603 135 603 144 594 144 594 162 585 162 585 171 576 171 576 180 567 180 567 162 576 162 576 144 585 144"></polygon>
+            <polygon id="Path" fill="#000000" points="630 135 666 135 666 144 684 144 684 153 693 153 693 171 702 171 702 207 693 207 693 225 684 225 684 234 666 234 666 243 630 243 630 234 612 234 612 225 603 225 603 207 594 207 594 171 603 171 603 153 612 153 612 144 630 144"></polygon>
+            <polygon id="Path" fill="#46566C" points="666 135 684 135 684 144 666 144"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="702 135 711 135 711 144 702 144"></polygon>
+            <polygon id="Path" fill="#46566C" points="198 144 207 144 207 162 198 162"></polygon>
+            <polygon id="Path" fill="#3C4C62" points="207 144 216 144 216 162 207 162"></polygon>
+            <polygon id="Path" fill="#54677A" points="225 144 261 144 261 153 315 153 315 162 486 162 486 180 243 180 243 189 234 189 234 180 225 180"></polygon>
+            <polygon id="Path" fill="#46566C" points="684 144 693 144 693 153 684 153"></polygon>
+            <polygon id="Path" fill="#AFC2CD" points="711 144 720 144 720 162 711 162"></polygon>
+            <polygon id="Path" fill="#010000" points="633 146 634 146 634 147 633 147"></polygon>
+            <polygon id="Path" fill="#010000" points="132 149 133 149 133 150 132 150"></polygon>
+            <polygon id="Path" fill="#010000" points="660 150 661 150 661 151 660 151"></polygon>
+            <polygon id="Path" fill="#46566C" points="45 153 54 153 54 162 45 162"></polygon>
+            <polygon id="Path" fill="#46566C" points="216 153 225 153 225 162 216 162"></polygon>
+            <polygon id="Path" fill="#46566C" points="693 153 702 153 702 171 693 171"></polygon>
+            <polygon id="Path" fill="#FFB960" points="738 153 747 153 747 180 738 180"></polygon>
+            <polygon id="Path" fill="#46566C" points="207 162 216 162 216 180 225 180 225 189 234 189 234 198 216 198 216 189 207 189"></polygon>
+            <polygon id="Path" fill="#3C4C62" points="216 162 225 162 225 180 216 180"></polygon>
+            <polygon id="Path" fill="#4A5D70" points="486 162 495 162 495 189 486 189"></polygon>
+            <polygon id="Path" fill="#54677A" points="495 162 540 162 540 180 531 180 531 189 522 189 522 180 513 180 513 189 504 189 504 180 495 180"></polygon>
+            <polygon id="Path" stroke="#FFAE56" fill="#FFA54C" points="729 162 738 162 738 180 729 180"></polygon>
+            <polygon id="Path" fill="#55677A" points="86 168 87 168 87 169 86 169"></polygon>
+            <polygon id="Path" fill="#626363" points="614 173 615 173 615 174 614 174"></polygon>
+            <polygon id="Path" fill="#3C4C62" points="225 180 234 180 234 189 225 189"></polygon>
+            <polygon id="Path" fill="#5C7189" points="243 180 252 180 252 189 243 189"></polygon>
+            <polygon id="Path" fill="#748CA2" points="252 180 261 180 261 189 252 189"></polygon>
+            <polygon id="Path" fill="#5C7189" points="261 180 270 180 270 189 261 189"></polygon>
+            <polygon id="Path" fill="#748CA2" points="270 180 288 180 288 189 270 189"></polygon>
+            <polygon id="Path" fill="#5C7189" points="288 180 297 180 297 189 288 189"></polygon>
+            <polygon id="Path" fill="#748CA2" points="297 180 315 180 315 189 297 189"></polygon>
+            <polygon id="Path" fill="#5C7189" points="315 180 324 180 324 189 315 189"></polygon>
+            <polygon id="Path" fill="#748CA2" points="324 180 486 180 486 189 324 189"></polygon>
+            <polygon id="Path" fill="#748CA2" points="495 180 504 180 504 189 495 189"></polygon>
+            <polygon id="Path" fill="#748CA2" points="513 180 522 180 522 189 513 189"></polygon>
+            <polygon id="Path" fill="#54677A" points="549 180 567 180 567 189 549 189"></polygon>
+            <polygon id="Path" fill="#54677A" points="702 180 711 180 711 189 720 189 720 198 738 198 738 207 702 207"></polygon>
+            <polygon id="Path" fill="#54677A" points="738 180 747 180 747 198 738 198"></polygon>
+            <polygon id="Path" fill="#5D7189" points="295 182 296 182 296 183 295 183"></polygon>
+            <polygon id="Path" fill="#3C4C62" points="234 189 243 189 243 198 234 198"></polygon>
+            <polygon id="Path" fill="#5C7189" points="270 189 279 189 279 198 270 198"></polygon>
+            <polygon id="Path" fill="#5C7189" points="297 189 306 189 306 198 297 198"></polygon>
+            <polygon id="Path" fill="#54677A" points="342 189 495 189 495 198 342 198"></polygon>
+            <polygon id="Path" fill="#4A5D70" points="495 189 504 189 504 198 495 198"></polygon>
+            <polygon id="Path" fill="#55677A" points="356 190 357 190 357 191 356 191"></polygon>
+            <polygon id="a" fill="#46566C" points="702 207 720 207 720 216 702 216"></polygon>
+        </g>
+    </g>
+</svg>

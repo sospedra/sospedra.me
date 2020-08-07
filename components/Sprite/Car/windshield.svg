@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="234px" height="54px" viewBox="0 0 234 54" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>Slice 1</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Windshield">
+            <polygon id="Path" fill="#CAD8D8" points="11.0029338 5.7327384 135.082911 0 143.634188 9.30393997 171.071414 18 198 18 198 27 216 27 216 54 64.7042441 44.6557512 0 44.6557512 0 27 0 18 0 3.99891012"></polygon>
+            <polygon id="Path" fill="#DEECEC" points="0 0 135 0 135 9 171 9 171 18 72 18 72 9 0 9"></polygon>
+            <polygon id="Path" fill="#CAD8D8" points="135 0 144 0 144 9 135 9"></polygon>
+            <polygon id="Path" fill="#CFD8D8" points="0 9 9 9 9 18 0 18"></polygon>
+            <polygon id="Path" fill="#D6DEDB" points="0 27 9 27 9 36 0 36"></polygon>
+            <polygon id="Path" fill="#B6C4C4" points="0 36 234 36 234 45 216 45 216 54 54 54 54 45 0 45"></polygon>
+        </g>
+    </g>
+</svg>

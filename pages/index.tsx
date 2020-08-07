@@ -5,6 +5,7 @@ import { useNav } from 'service/nav'
 import Link from 'components/Link'
 import Shell from 'components/Shell'
 import SpriteCity from 'components/Sprite/City'
+import SpriteCar from 'components/Sprite/Car'
 import Triangle from 'components/Triangle'
 import Title from 'components/Title'
 import Cheatcodes from 'components/Cheatcodes'
@@ -77,6 +78,7 @@ const IndexPage: NextPage = () => {
           </div>
         </div>
 
+        <SpriteCar />
         <SpriteCity />
       </animated.div>
     </Shell>
