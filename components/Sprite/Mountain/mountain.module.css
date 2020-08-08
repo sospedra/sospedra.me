@@ -1,0 +1,58 @@
+.parallax {
+  @apply absolute bottom-0 h-full;
+  width: 200vw;
+  bottom: 8vh;
+  transform: scaleX(-1);
+  background-position: bottom;
+  background-repeat: repeat-x;
+}
+
+.peak {
+  @apply parallax;
+  --offset-x: 10vw;
+  --offset-y: 0;
+  background-image: url(./mountain.svg);
+  animation: parallax 20s ease-out forwards;
+}
+
+.clouds {
+  @apply parallax;
+  --offset-x: 50vw;
+  --offset-y: 4vh;
+  opacity: 0.7;
+  bottom: 4vh;
+  background-image: url(./clouds.svg);
+  animation-name: parallax, swing;
+  animation-duration: 30s, 6s;
+  animation-timing-function: ease-in-out, cubic-bezier(0.47, 0, 0.745, 0.715);
+  animation-fill-mode: forwards;
+  animation-iteration-count: 1, infinite;
+  animation-delay: 0s, 33s;
+}
+
+.bridge {
+  @apply absolute bottom-0 w-full;
+  height: 14vh;
+  background-image: url(./bridge.svg);
+  background-repeat: repeat-x;
+}
+
+@keyframes parallax {
+  0% {
+    transform: scaleX(-1) translate(0, 0);
+  }
+  100% {
+    transform: scaleX(-1) translate(var(--offset-x), var(--offset-y));
+  }
+}
+
+@keyframes swing {
+  0%,
+  100% {
+    transform: scaleX(-1) translate(var(--offset-x), var(--offset-y));
+  }
+  50% {
+    transform: scaleX(-1)
+      translate(var(--offset-x), calc(var(--offset-y) + 6px));
+  }
+}
