@@ -1,7 +1,7 @@
 .city {
   @apply absolute bottom-0 left-0 m-0 bg-contain;
   height: 50vh;
-  width: 200vw;
+  width: 800vw;
   background-image: url(./street.svg);
   z-index: -2;
   will-change: transform;

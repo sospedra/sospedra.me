@@ -20,6 +20,8 @@ const getOffsetFromHref = (href: string): OffsetT => {
       return { left: '0vw', top: '0vh' }
     case ptr('/about'):
       return { left: '-100vw', top: '-50vh' }
+    case ptr('/bazaar'):
+      return { left: '-30vw', top: '-300vh' }
     case ptr('/'):
     default:
       return { left: '0vw', top: '-250vh' }

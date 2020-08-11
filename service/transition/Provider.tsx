@@ -3,6 +3,7 @@ import Router from 'next/router'
 import { TransitionCTX } from './context'
 import { useStateReducer } from './reducer'
 import Background from './Background'
+import Offshore from './Offshore'
 import css from './transition.module.css'
 
 export const Provider: React.FunctionComponent<{
@@ -28,6 +29,7 @@ export const Provider: React.FunctionComponent<{
     <TransitionCTX.Provider value={transition}>
       <div className={css.provider}>{children}</div>
       <Background />
+      <Offshore />
     </TransitionCTX.Provider>
   )
 }
