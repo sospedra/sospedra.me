@@ -7,6 +7,7 @@ export type TransitionT = State & {
   usePrefetch: (url: string) => void
   unmount: () => void
   reset: () => void
+  setOffshore: (offshore: State['offshore'], duration?: number) => void
 }
 
 export const TransitionCTX = React.createContext({
@@ -15,6 +16,7 @@ export const TransitionCTX = React.createContext({
   usePrefetch: () => {},
   unmount: () => {},
   reset: () => {},
+  setOffshore: () => {},
 } as TransitionT)
 
 export const useTransition = (): TransitionT => {

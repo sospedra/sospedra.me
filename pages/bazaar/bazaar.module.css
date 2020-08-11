@@ -1,0 +1,31 @@
+.bazaar {
+  @apply relative w-full h-screen overflow-y-auto text-white opacity-0;
+  animation: fade 1s ease-in forwards;
+  animation-delay: 2s;
+}
+
+.car {
+  @apply absolute left-0 z-10 w-screen;
+  bottom: 4vh;
+  transform: translateX(120%);
+  animation: car 1s linear forwards;
+  animation-delay: 3s;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes car {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(100vw);
+  }
+}

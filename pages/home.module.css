@@ -9,7 +9,7 @@
 
 .menu a,
 .menu button {
-  @apply relative px-4 -ml-4 text-2xl font-bold transition transition-colors duration-500;
+  @apply relative px-4 -ml-4 text-2xl font-bold transition-colors duration-500;
   background: radial-gradient(rgba(0, 0, 0, 0.2), transparent 80%);
   color: #ffea00;
 }
@@ -29,6 +29,10 @@
   content: '';
   background: url('/images/cursor.svg') no-repeat;
   animation: swing 0.4s ease-out alternate infinite;
+}
+
+.menu ul {
+  @apply pt-8;
 }
 
 @keyframes swing {

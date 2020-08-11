@@ -1,0 +1,25 @@
+.cloud {
+  @apply fixed bottom-0 right-0 z-10 w-screen h-screen origin-bottom;
+  transform: translate(0vw, 0%) scale(1);
+  animation: cloud 1s linear forwards;
+}
+
+@keyframes cloud {
+  0% {
+    opacity: 0;
+    transform: translate(100vw, 0%) scale(1.5);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(0vw, 0%) scale(2.5);
+  }
+  50% {
+    transform: translate(-100vw, 0%) scale(3);
+  }
+  75% {
+    transform: translate(-150vw, 10%) scale(2.5);
+  }
+  100% {
+    transform: translate(-200vw, 20%) scale(0.5);
+  }
+}
