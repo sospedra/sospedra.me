@@ -1,6 +1,5 @@
 .car {
-  @apply absolute bottom-0;
-  left: 10vw;
+  @apply relative bottom-0;
   width: 30vh;
 }
 

@@ -1,8 +1,12 @@
 import { NextPage } from 'next'
 import { useCallback, UIEvent, useEffect, useState } from 'react'
 import { animated, useSpring } from 'react-spring'
-import SpriteMountain from 'components/Sprite/Mountain'
 import Shell from 'components/Shell'
+import Link, { LinkBack } from 'components/Link'
+import SpriteMountain from 'components/Sprite/Mountain'
+import SpriteCar from 'components/Sprite/Car'
+import Cheatcodes from 'components/Cheatcodes'
+import css from './bazaar.module.css'
 
 const Bazaar: NextPage = () => {
   const [dimension, setDimension] = useState(300)
@@ -27,19 +31,16 @@ const Bazaar: NextPage = () => {
       description='Gallery of my featured projects'
       canonical='/bazaar'
     >
-      <div
-        className='relative w-full h-screen overflow-y-auto text-white '
-        onScrollCapture={onScroll}
-      >
-        <ul className='flex flex-col w-full max-w-4xl px-4 pt-12 pb-20 mx-auto'>
-          {Array(50)
-            .fill(0)
-            .map((_, i) => (
-              <li className='h-40 text-center border border-current' key={i}>
-                {i}
-              </li>
-            ))}
-        </ul>
+      <div className={css.bazaar} onScrollCapture={onScroll}>
+        <div className='flex flex-col w-full max-w-4xl px-4 pt-12 pb-20 mx-auto'>
+          <Link url='/'>
+            <LinkBack>Home</LinkBack>
+          </Link>
+          <h1 className='font-serif text-4xl text-cyan-300'>Bazaar</h1>
+          <p>Under construction</p>
+
+          <Cheatcodes />
+        </div>
       </div>
 
       <animated.aside
@@ -54,6 +55,9 @@ const Bazaar: NextPage = () => {
             .interpolate((s) => `translate3d(0, ${s}%,0)`),
         }}
       >
+        <animated.aside className={css.car}>
+          <SpriteCar />
+        </animated.aside>
         <SpriteMountain />
       </animated.aside>
     </Shell>

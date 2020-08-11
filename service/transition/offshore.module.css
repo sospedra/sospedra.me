@@ -1,7 +1,7 @@
 .cloud {
   @apply fixed bottom-0 right-0 z-10 w-screen h-screen origin-bottom;
   transform: translate(0vw, 0%) scale(1);
-  animation: cloud 1s ease-in-out forwards;
+  animation: cloud 1s linear forwards;
 }
 
 @keyframes cloud {

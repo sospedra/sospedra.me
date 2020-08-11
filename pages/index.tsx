@@ -8,7 +8,6 @@ import SpriteCity from 'components/Sprite/City'
 import SpriteCar from 'components/Sprite/Car'
 import Triangle from 'components/Triangle'
 import Title from 'components/Title'
-import Cheatcodes from 'components/Cheatcodes'
 import css from './home.module.css'
 import { useTransition } from 'service/transition'
 
@@ -48,7 +47,7 @@ const IndexPage: NextPage = () => {
           <Title />
 
           <div className={css.menu}>
-            <ul className=''>
+            <ul>
               <li>
                 <Link
                   ref={refs[0]}
@@ -79,7 +78,7 @@ const IndexPage: NextPage = () => {
                     setOffset([BAZAAR_OFFSET, 0])
                     setTimeout(() => {
                       transition.setOffshore('cloud', BAZAAR_DURATION)
-                    }, BAZAAR_DURATION - 1000)
+                    }, BAZAAR_DURATION - 1200)
                     setTimeout(() => {
                       transition.navigate('/bazaar', '/bazaar')
                     }, BAZAAR_DURATION - 500)
@@ -87,12 +86,6 @@ const IndexPage: NextPage = () => {
                 >
                   Bazaar
                 </a>
-              </li>
-              <li>
-                <Cheatcodes
-                  ref={refs[3]}
-                  onMouseEnter={() => refs[3].current?.focus()}
-                />
               </li>
             </ul>
 
