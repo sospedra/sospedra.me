@@ -4,6 +4,37 @@
   animation-delay: 2s;
 }
 
+.darksky {
+  @apply fixed inset-0 pointer-events-none;
+  z-index: -1;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+.list {
+  @apply text-center;
+}
+
+.list li {
+  @apply relative flex flex-col items-center justify-center;
+  height: 50vh;
+}
+
+.list h3 {
+  @apply relative text-5xl italic text-cyan-400;
+  font-family: lazer84;
+  transform: skewY(-4deg);
+  text-shadow: 2px 0px 3px #00a895, 2px 3px 1rem #00a895, 2px 0px 1rem,
+    20px 0vw 10rem #00a895, 40px 0vw 10rem #00a895;
+}
+
+.list p {
+  @apply pt-8 text-xl;
+}
+
 .car {
   @apply absolute left-0 z-10 w-screen;
   bottom: 4vh;

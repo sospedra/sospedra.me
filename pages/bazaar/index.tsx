@@ -1,21 +1,28 @@
 import { NextPage } from 'next'
-import { useCallback, UIEvent, useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { animated, useSpring } from 'react-spring'
-import Shell from 'components/Shell'
+import { useScroll } from 'service/scroll'
 import Link, { LinkBack } from 'components/Link'
+import Shell from 'components/Shell'
 import SpriteMountain from 'components/Sprite/Mountain'
 import SpriteCar from 'components/Sprite/Car'
 import Cheatcodes from 'components/Cheatcodes'
+import Constellation, { useConstellation } from 'components/Constellation'
 import css from './bazaar.module.css'
 
 const Bazaar: NextPage = () => {
   const [dimension, setDimension] = useState(300)
+  const nextConstellation = useConstellation()
   const [{ scroll }, set] = useSpring(() => ({ scroll: 0 }))
-  const onScroll = useCallback(
-    (event: UIEvent) => {
-      set({
-        scroll: Math.min(event.currentTarget.scrollTop, dimension),
-      })
+  const scrollRef = useScroll<HTMLDivElement>(
+    (event: Event) => {
+      // @ts-ignore
+      const { scrollTop } = event.target
+      if (scrollTop >= 0 && scrollTop <= dimension) {
+        set({
+          scroll: Math.min(scrollTop, dimension),
+        })
+      }
     },
     [dimension],
   )
@@ -31,8 +38,8 @@ const Bazaar: NextPage = () => {
       description='Gallery of my featured projects'
       canonical='/bazaar'
     >
-      <div className={css.bazaar} onScrollCapture={onScroll}>
-        <div className='flex flex-col w-full max-w-4xl px-4 pt-12 pb-20 mx-auto'>
+      <div ref={scrollRef} className={css.bazaar}>
+        <div className='flex flex-col w-full max-w-xl px-4 pt-12 pb-20 mx-auto'>
           <Link url='/'>
             <LinkBack>Home</LinkBack>
           </Link>
@@ -40,8 +47,62 @@ const Bazaar: NextPage = () => {
           <p>Under construction</p>
 
           <Cheatcodes />
+
+          <ul className={css.list}>
+            <li>
+              <h3>the stack</h3>
+              <p>this is the stack that is recommend, hand-picked babys</p>
+              <Constellation name={nextConstellation()} />
+            </li>
+            <li>
+              <h3>cheatcodes</h3>
+              <p>this is the stack that is recommend, hand-picked babys</p>
+              <Constellation name={nextConstellation()} />
+            </li>
+            <li>
+              <h3>which key code</h3>
+              <p>this is the stack that is recommend, hand-picked babys</p>
+              <Constellation name={nextConstellation()} />
+            </li>
+            <li>
+              <h3>spg</h3>
+              <p>this is the stack that is recommend, hand-picked babys</p>
+              <Constellation name={nextConstellation()} />
+            </li>
+            <li>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Curabitur convallis nulla vitae pharetra condimentum. Cras ut
+                est consectetur, blandit augue vel, elementum dolor. Vestibulum
+                est elit, convallis ac diam sed, aliquam pretium ante. Nullam at
+                felis et neque commodo faucibus. Suspendisse mi sem, pulvinar at
+                justo eget, laoreet finibus lacus. Quisque bibendum egestas
+                varius. Duis placerat eget ante eget ultrices. Ut dapibus
+                pharetra venenatis. Suspendisse in sollicitudin dui. Duis
+                hendrerit urna ac ligula mattis ullamcorper. Proin iaculis
+                tellus accumsan elit porttitor, rutrum laoreet lorem sagittis.
+                Sed eget risus eget arcu ornare mattis. Mauris volutpat
+                sollicitudin interdum. Nulla sodales ultrices metus, at posuere
+                metus rutrum et. Etiam vehicula lacus nec tincidunt vehicula.
+                Proin suscipit vestibulum metus sit amet aliquam.
+              </p>
+              <Constellation name={nextConstellation()} />
+            </li>
+          </ul>
         </div>
       </div>
+
+      <animated.aside
+        className={css.darksky}
+        style={{
+          opacity: scroll
+            .interpolate({
+              range: [0, dimension],
+              output: [0.2, 1],
+            })
+            .interpolate((o) => o),
+        }}
+      />
 
       <animated.aside
         className='fixed bottom-0 left-0 w-screen pointer-events-none'
@@ -52,12 +113,12 @@ const Bazaar: NextPage = () => {
               range: [0, dimension],
               output: [0, 100],
             })
-            .interpolate((s) => `translate3d(0, ${s}%,0)`),
+            .interpolate((s) => `translate3d(0, ${s}%, 0)`),
         }}
       >
-        <animated.aside className={css.car}>
+        <div className={css.car}>
           <SpriteCar />
-        </animated.aside>
+        </div>
         <SpriteMountain />
       </animated.aside>
     </Shell>
