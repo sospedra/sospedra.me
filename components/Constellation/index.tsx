@@ -4,8 +4,6 @@ import constellations from './constellations.json'
 const createConstellationIterator = function* () {
   let iterator = 0
   const names = Object.keys(constellations)
-    .filter((name) => name !== 'none')
-    .flatMap((name) => [name, 'none'])
 
   while (true) {
     iterator = iterator === 0 ? names.length - 1 : iterator - 1
@@ -29,12 +27,12 @@ const Constellation: React.FC<{
     r,
   ])
   return (
-    <div className='absolute w-full'>
+    <div className='absolute w-full pointer-events-none' style={{ zIndex: -1 }}>
       <svg
         aria-labelledby='title desc'
         role='img'
         xmlns='http://www.w3.org/2000/svg'
-        width='100%'
+        width='120%'
         version='1'
         viewBox='0 0 500 500'
         pointerEvents='none'

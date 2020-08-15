@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { NextPage } from 'next'
 import { animated, config, useSpring } from 'react-spring'
 import { useNav } from 'service/nav'
+import { useTransition } from 'service/transition'
 import Link from 'components/Link'
 import Shell from 'components/Shell'
 import SpriteCity from 'components/Sprite/City'
@@ -9,7 +10,6 @@ import SpriteCar from 'components/Sprite/Car'
 import Triangle from 'components/Triangle'
 import Title from 'components/Title'
 import css from './home.module.css'
-import { useTransition } from 'service/transition'
 
 const BAZAAR_DURATION = 3500
 const BAZAAR_OFFSET = -600

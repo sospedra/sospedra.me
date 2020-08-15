@@ -1,5 +1,5 @@
 .triangle {
-  @apply absolute h-64;
+  @apply absolute z-50 h-64;
   --frame-width: 0.25rem;
   --border-extra: 0.1rem;
   transform: rotate(68deg);

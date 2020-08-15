@@ -4,7 +4,7 @@
 }
 
 .menu {
-  @apply relative flex flex-col items-center justify-center w-full h-64;
+  @apply relative z-50 flex flex-col items-center justify-center w-full h-64;
 }
 
 .menu a,

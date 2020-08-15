@@ -1,5 +1,5 @@
 .title {
-  @apply relative text-6xl italic text-cyan-400;
+  @apply relative z-50 text-6xl italic text-cyan-400;
   font-family: lazer84;
   transform: skewY(-4deg);
   margin-left: -8rem;

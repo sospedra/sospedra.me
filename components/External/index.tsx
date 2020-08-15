@@ -1,10 +1,10 @@
 import React from 'react'
 import css from 'service/style/neon.module.css'
 
-const External: React.FC<{ href: string }> = (props) => {
+const External: React.FC<{ href: string; className?: string }> = (props) => {
   return (
     <a
-      className={css.neon}
+      className={props.className || css.neon}
       href={props.href}
       rel='noopener noreferrer'
       target='_blank'

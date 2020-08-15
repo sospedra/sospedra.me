@@ -6,7 +6,7 @@ import Link, { LinkBack } from 'components/Link'
 import { TreeParent, TreeChild } from 'components/Serve'
 import { useRouter } from 'next/router'
 
-const description = 'List of all the public-available static assets'
+export const SERVE_DESC = 'List of all the public-available static assets'
 
 const Serve: NextPage<{
   tree: TreeNode[]
@@ -18,7 +18,7 @@ const Serve: NextPage<{
     <Shell
       title='Serve'
       className='relative w-full h-full max-w-xl px-4 pt-12 pb-20 mx-auto text-white'
-      description={description}
+      description={SERVE_DESC}
       canonical='/static'
     >
       <Link url='/'>
@@ -26,7 +26,7 @@ const Serve: NextPage<{
       </Link>
 
       <h1 className='pt-8 text-4xl'>Serve assets</h1>
-      <p className='pb-10'>{description}</p>
+      <p className='pb-10'>{SERVE_DESC}</p>
 
       <div className='pb-20'>{renderTree(props.tree, expand)}</div>
     </Shell>

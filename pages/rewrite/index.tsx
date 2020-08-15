@@ -5,12 +5,14 @@ import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
 import css from './rewrites.module.css'
 
+export const REWRITE_DESC = 'Personal links that I share often'
+
 const Rewrites: React.FC<{}> = () => {
   return (
     <Shell
       title='Links'
       className='w-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
-      description='Personal links that I share often'
+      description={REWRITE_DESC}
       canonical='/r'
     >
       <Link url='/'>
@@ -18,8 +20,8 @@ const Rewrites: React.FC<{}> = () => {
       </Link>
       <h1 className='text-4xl'>Links shortener</h1>
       <h2>
-        A collection of custom links that I share often. Click on the code to
-        copy the shorten link in to your clipboard.
+        {REWRITE_DESC}. Click on the code to copy the shorten link in to your
+        clipboard.
       </h2>
 
       <table className={css.rewrites}>
