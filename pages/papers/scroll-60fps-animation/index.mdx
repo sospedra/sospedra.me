@@ -13,7 +13,7 @@ The abstract idea is to animate using a sequence of images in rapid succession. 
 
 ![Animated flipbook](/papers/flipbook.gif)
 
-To be honest, it's not the most obvious solution. You may think about `<img />`, some `scroll` event hijacking and some `offset` calculations. Wrong! If you that way everything will end up being clunky and messy. Instead, we're gonna follow these **golden rules**:
+To be honest, it's not the most obvious solution. You may think about `<img />`, some `scroll` event hijacking and some `offset` calculations. Wrong! If you do it that way everything will end up being clunky and messy. Instead, we're gonna follow these **golden rules**:
 
 1. `canvas` over `img`. Long story short, the `canvas` can **render changes way faster** than `img`. The classic image tag is for static views.
 
