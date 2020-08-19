@@ -2,18 +2,20 @@
   "name": "sospedra.me",
   "version": "3.0.0",
   "scripts": {
+    "build:feed": "node ./internals/feed",
+    "build:next": "next build",
+    "build:sitemap": "node ./internals/sitemap",
+    "build": "run-p build:*",
+    "cmd:create-paper": "node ./internals/create-paper",
+    "cmd:reading": "node ./internals/reading-dir",
+    "cmd:resize": "node ./internals/resize-dir",
+    "cmd:rewrite": "node ./internals/rewrite",
+    "cmd:stack": "node ./internals/stack",
     "dev": "next",
-    "build": "yarn sitemap & next build",
+    "now-build": "next build && next export -o dist",
     "start": "next start",
     "test:static": "tsc",
-    "now-build": "next build && next export -o dist",
-    "create-paper": "node ./internals/create-paper",
-    "resize": "node ./internals/resize-dir",
-    "reading": "node ./internals/reading-dir",
-    "sitemap": "node ./internals/sitemap",
-    "rewrite": "node ./internals/rewrite",
-    "stack": "node ./internals/stack",
-    "test": "yarn test:static"
+    "test": "run-s test:*"
   },
   "dependencies": {
     "@mdx-js/loader": "^1.6.4",
@@ -45,8 +47,7 @@
     "resize-observer-polyfill": "^1.5.1",
     "screenfull": "^5.0.2",
     "seedrandom": "^3.0.5",
-    "tailwindcss": "^1.4.4",
-    "ts-debounce": "^2.0.1"
+    "tailwindcss": "^1.4.4"
   },
   "devDependencies": {
     "@types/classnames": "^2.2.10",
@@ -57,6 +58,7 @@
     "@types/react-dom": "16.9.7",
     "@types/seedrandom": "^2.4.28",
     "cheerio": "^1.0.0-rc.3",
+    "globby": "^11.0.1",
     "got": "^11.1.4",
     "husky": ">=4",
     "imagemin-mozjpeg": "^8.0.0",
@@ -66,6 +68,7 @@
     "lint-staged": ">=10",
     "lqip-loader": "^2.2.0",
     "nlcst-to-string": "^2.0.4",
+    "npm-run-all": "^4.1.5",
     "postcss-preset-env": "^6.7.0",
     "prettier": "^2.0.5",
     "prompts": "^2.3.2",

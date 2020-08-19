@@ -13,6 +13,12 @@ const Format: React.FC<{}> = () => {
       <meta name='viewport' content='width=device-width, initial-scale=1' />
       <meta name='msapplication-tap-highlight' content='no' />
       <link rel='manifest' href='/manifest.webmanifest' />
+      <link
+        rel='alternate'
+        type='application/rss+xml'
+        title='Rubén Sospedra Papers'
+        href='http://sospedra.me/rss.xml'
+      />
     </>
   )
 }

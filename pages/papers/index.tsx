@@ -8,7 +8,7 @@ import neonCss from 'service/style/neon.module.css'
 import Meta from 'components/Meta'
 import Shell from 'components/Shell'
 
-const DESCRIPTION =
+export const PAPERS_DESC =
   "Words are my own. It's dangerous to go unknowing, take some pills 💊"
 
 const getTitleCss = memoize((_: string) => {
@@ -22,7 +22,7 @@ const Papers: React.FC<{
     <Shell
       title='Papers'
       className='w-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
-      description={`Personal blog by Rubén Sospedra. ${DESCRIPTION}`}
+      description={`Personal blog by Rubén Sospedra. ${PAPERS_DESC}`}
       canonical='/papers'
     >
       <Link url='/'>
@@ -30,7 +30,7 @@ const Papers: React.FC<{
       </Link>
 
       <h1 className='text-4xl'>Papers</h1>
-      <p className='pb-10'>{DESCRIPTION}</p>
+      <p className='pb-10'>{PAPERS_DESC}</p>
 
       <ul>
         {props.papers.map((paper) => (
