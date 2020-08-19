@@ -9,6 +9,7 @@ const createRSS = (metadata) => `<?xml version="1.0" encoding="UTF-8"?>
 <link>https://sospedra.me</link>
 <description><![CDATA[ Words are my own. It's dangerous to go unknowing, take some pills 💊 ]]></description>
 <language>en-us</language>
+<atom:link href="https://sospedra.me/rss.xml" rel="self" type="application/rss+xml" />
 <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
   ${metadata
     .map(
@@ -18,10 +19,7 @@ const createRSS = (metadata) => `<?xml version="1.0" encoding="UTF-8"?>
     <pubDate>${new Date(meta.updatedAt).toUTCString()}</pubDate>
     <link>https://sospedra.me/papers/${meta.slug}</link>
     <guid isPermaLink="false">https://sospedra.me/papers/${meta.slug}</guid>
-    <description>${encodeURIComponent(meta.excerpt)}</description>
-    <content:encoded><div style="width: 100%; margin: 0 auto; max-width: 800px; padding: 40px 40px;"><p>${encodeURIComponent(
-      meta.excerpt,
-    )}</p></div></content:encoded>
+    <description>${meta.excerpt}</description>
     </item>
     `,
     )

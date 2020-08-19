@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "scripts": {
     "build:feed": "node ./internals/feed",
-    "build:next": "next build",
+    "build:next": "next build && next export -o dist",
     "build:sitemap": "node ./internals/sitemap",
     "build": "run-p build:*",
     "cmd:create-paper": "node ./internals/create-paper",
@@ -12,7 +12,7 @@
     "cmd:rewrite": "node ./internals/rewrite",
     "cmd:stack": "node ./internals/stack",
     "dev": "next",
-    "now-build": "next build && next export -o dist",
+    "now-build": "yarn build",
     "start": "next start",
     "test:static": "tsc",
     "test": "run-s test:*"
