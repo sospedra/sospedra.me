@@ -9,10 +9,12 @@ const Shell: React.FC<{
   image?: string
   shellClassName?: string
   title?: string
+  keywords?: string[]
 }> = ({
   canonical,
   children,
   className,
+  keywords,
   description = '',
   image = '/sospedra.png',
   shellClassName = '',
@@ -39,6 +41,7 @@ const Shell: React.FC<{
         <meta name='twitter:image' content={image} />
         <meta name='twitter:title' content={title} />
         <meta name='twitter:description' content={description} />
+        {keywords && <meta name='keywords' content={keywords.join(', ')} />}
         <link rel='canonical' href={`https://sospedra.me${canonical}`} />
       </Head>
       <main className={className}>{children}</main>

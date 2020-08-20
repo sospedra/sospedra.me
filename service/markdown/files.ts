@@ -14,6 +14,7 @@ export type Paper = {
   slug: string
   title: string
   updatedAt: string
+  categories: string[]
   images: {
     [key: string]: {
       width: number

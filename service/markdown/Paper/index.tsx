@@ -22,6 +22,7 @@ const PaperShell: React.FC<Paper> = (props) => {
       description={props.excerpt}
       image={props.og}
       title={props.title}
+      keywords={props.categories}
     >
       <Link url='/papers'>
         <LinkBack>Papers</LinkBack>

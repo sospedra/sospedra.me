@@ -6,7 +6,9 @@ const resize = require('./resize')
   const paper = process.argv[2]
 
   if (!paper) {
-    throw Error(`No 'paper' is provided. Try 'yarn create-paper hello-world'`)
+    throw Error(
+      `No 'paper' is provided. Try 'yarn tool:create-paper {paper_name}'`,
+    )
   }
 
   const dir = io.abs(`pages/papers/${paper}`)
@@ -20,6 +22,7 @@ const resize = require('./resize')
     updatedAt: now,
     images: {},
     minutes: 0,
+    categories: [],
   }
 
   if (!(await io.exists(dir))) {

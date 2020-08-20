@@ -9,7 +9,7 @@ import Meta from 'components/Meta'
 import Shell from 'components/Shell'
 
 export const PAPERS_DESC =
-  "Words are my own. It's dangerous to go unknowing, take some pills 💊"
+  "Highly curated content about JavaScript, web development, TypeScript, the Internet, patterns and, in general, technology. Not your usual blog. Favour valuable content over long and boring SEO-focused posts. Words are my own. It's dangerous to go unknowing, take some pills 💊"
 
 const getTitleCss = memoize((_: string) => {
   return Math.random() < 0.9 ? neonCss.neon : glitchCss.glitch

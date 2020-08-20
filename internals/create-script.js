@@ -6,7 +6,9 @@ module.exports = function createScript(name, clbk) {
       const paper = process.argv[2]
 
       if (!paper) {
-        throw Error(`No 'paper' is provided. Try 'yarn ${name} hello-world'`)
+        throw Error(
+          `No 'paper' is provided. Try 'yarn tool:${name} {paper_name}'`,
+        )
       }
 
       for (file of await io.dir(`/pages/papers/${paper}`)) {

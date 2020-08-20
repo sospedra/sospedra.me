@@ -6,5 +6,15 @@
   "title": "Scroll-based 60 fps animations",
   "updatedAt": "2020-08-01T10:21:29.411Z",
   "images": {},
-  "minutes": 3.185
+  "minutes": 3.185,
+  "categories": [
+    "Scroll animation",
+    "CSS animation",
+    "60 fps",
+    "scroll latency",
+    "optimize css animations",
+    "parallax",
+    "browser smooth scroll",
+    "CSS effects"
+  ]
 }

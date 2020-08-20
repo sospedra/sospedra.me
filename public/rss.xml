@@ -1,38 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 <channel>
-<title><![CDATA[ Rubén Sospedra ]]></title>
-<link>https://sospedra.me</link>
-<description><![CDATA[ Words are my own. It's dangerous to go unknowing, take some pills 💊 ]]></description>
+<title><![CDATA[Rubén Sospedra papers]]></title>
+<link>https://sospedra.me/rss.xml</link>
+<image>
+  <url>https://sospedra.me/sospedra.png</url>
+  <title>Rubén Sospedra papers</title>
+  <link>https://sospedra.me/rss.xml</link>
+</image>
+<description><![CDATA[Highly curated content about JavaScript, web development, TypeScript, the Internet, patterns and, in general, technology. Not your usual blog. Favour valuable content over long and boring SEO-focused posts. Words are my own. It's dangerous to go unknowing, take some pills 💊]]></description>
 <language>en-us</language>
-<lastBuildDate>Wed, 19 Aug 2020 11:14:04 GMT</lastBuildDate>
+<copyright>Copyright 2020 Rubén Sospedra. The contents of this feed are available for non-commercial use only.</copyright>
+<atom:link href="https://sospedra.me/rss.xml" rel="self" type="application/rss+xml" />
+<lastBuildDate>Thu, 20 Aug 2020 08:38:21 GMT</lastBuildDate>
   
-    <item>
-    <title><![CDATA[ GaaS: GitHub as a Service ]]></title>
-    <pubDate>Wed, 20 May 2020 17:53:20 GMT</pubDate>
-    <link>https://sospedra.me/papers/gaas</link>
-    <guid isPermaLink="false">https://sospedra.me/papers/gaas</guid>
-    <description>In%20the%20past%20years%2C%20GitHub%20became%20a%20technology%20mastodon.%20Since%20the%20acquisition%20by%20Microsoft%2C%20the%20company%20added%20a%20myriad%20of%20outstanding%20features.%20In%20fact%2C%20GitHub%20is%20so%20powerful%20nowadays%20that%20it%20can%20be%20your%20all-in-all%20provider.%20You%20can%20use%20GitHub%20as%20a%20Service.%20Don%E2%80%99t%20believe%20me%3F%20Let%E2%80%99s%20go%20through%20my%20journey%20building%20Request%20For%20Maintainers%20a%20GitHub-only%20powered%20project.</description>
-    <content:encoded><div style="width: 100%; margin: 0 auto; max-width: 800px; padding: 40px 40px;"><p>In%20the%20past%20years%2C%20GitHub%20became%20a%20technology%20mastodon.%20Since%20the%20acquisition%20by%20Microsoft%2C%20the%20company%20added%20a%20myriad%20of%20outstanding%20features.%20In%20fact%2C%20GitHub%20is%20so%20powerful%20nowadays%20that%20it%20can%20be%20your%20all-in-all%20provider.%20You%20can%20use%20GitHub%20as%20a%20Service.%20Don%E2%80%99t%20believe%20me%3F%20Let%E2%80%99s%20go%20through%20my%20journey%20building%20Request%20For%20Maintainers%20a%20GitHub-only%20powered%20project.</p></div></content:encoded>
-    </item>
-    
-    <item>
-    <title><![CDATA[ Scroll-based 60 fps animations ]]></title>
-    <pubDate>Sat, 01 Aug 2020 10:21:29 GMT</pubDate>
-    <link>https://sospedra.me/papers/scroll-60fps-animation</link>
-    <guid isPermaLink="false">https://sospedra.me/papers/scroll-60fps-animation</guid>
-    <description>You%20have%20seen%20this%2060%20fps%20scroll-based%20animations.%20Like%20in%20the%20new%20Airpods%20Pro%20from%20Apple.%20It's%20slick%2C%20responsive%20and%20creates%20a%20stunning%20visual.%20It's%20a%20great%20tool%20that%20is%20not%20that%20hard%20to%20implement.%20Wanna%20see%20how%3F</description>
-    <content:encoded><div style="width: 100%; margin: 0 auto; max-width: 800px; padding: 40px 40px;"><p>You%20have%20seen%20this%2060%20fps%20scroll-based%20animations.%20Like%20in%20the%20new%20Airpods%20Pro%20from%20Apple.%20It's%20slick%2C%20responsive%20and%20creates%20a%20stunning%20visual.%20It's%20a%20great%20tool%20that%20is%20not%20that%20hard%20to%20implement.%20Wanna%20see%20how%3F</p></div></content:encoded>
-    </item>
-    
-    <item>
-    <title><![CDATA[ Web-safe fonts ]]></title>
-    <pubDate>Fri, 10 Jul 2020 13:48:35 GMT</pubDate>
-    <link>https://sospedra.me/papers/web-safe-fonts</link>
-    <guid isPermaLink="false">https://sospedra.me/papers/web-safe-fonts</guid>
-    <description>This%20story%20begins%20in%201984.%20Involves%20the%20major%20R%26D%20companies%20in%20Silicon%20Valley.%20Machinery.%20Tech%20revolutions.%20And%20finally%2C%20the%20web.%20It's%20the%20story%20of%20the%20web%20fonts.%20Why%20are%20so%20many%3F%20And%20why%20it's%20so%20difficult%20to%20get%20a%20standard%3F</description>
-    <content:encoded><div style="width: 100%; margin: 0 auto; max-width: 800px; padding: 40px 40px;"><p>This%20story%20begins%20in%201984.%20Involves%20the%20major%20R%26D%20companies%20in%20Silicon%20Valley.%20Machinery.%20Tech%20revolutions.%20And%20finally%2C%20the%20web.%20It's%20the%20story%20of%20the%20web%20fonts.%20Why%20are%20so%20many%3F%20And%20why%20it's%20so%20difficult%20to%20get%20a%20standard%3F</p></div></content:encoded>
-    </item>
-    
+        <item>
+        <title><![CDATA[GaaS: GitHub as a Service]]></title>
+        <pubDate>Wed, 20 May 2020 17:53:20 GMT</pubDate>
+        <link>https://sospedra.me/papers/gaas</link>
+        <guid isPermaLink="false">https://sospedra.me/papers/gaas</guid>
+        <description>
+          <![CDATA[
+            <img src="https://sospedra.me//papers/gaas.jpg" />
+            <p>In the past years, GitHub became a technology mastodon. Since the acquisition by Microsoft, the company added a myriad of outstanding features. In fact, GitHub is so powerful nowadays that it can be your all-in-all provider. You can use GitHub as a Service. Don’t believe me? Let’s go through my journey building Request For Maintainers a GitHub-only powered project.</p>
+          ]]>
+        </description>
+        <category>GitHub</category><category>SaaS</category><category>GitHub tools</category><category>GitHub advanced features</category><category>GitHub Actions</category><category>Continuous Integration</category><category>Continuous Deployment</category>
+        </item>
+      
+        <item>
+        <title><![CDATA[Scroll-based 60 fps animations]]></title>
+        <pubDate>Sat, 01 Aug 2020 10:21:29 GMT</pubDate>
+        <link>https://sospedra.me/papers/scroll-60fps-animation</link>
+        <guid isPermaLink="false">https://sospedra.me/papers/scroll-60fps-animation</guid>
+        <description>
+          <![CDATA[
+            <img src="https://sospedra.me//papers/scroll-60fps-animation.gif" />
+            <p>You have seen this 60 fps scroll-based animations. Like in the new Airpods Pro from Apple. It&#039;s slick, responsive and creates a stunning visual. It&#039;s a great tool that is not that hard to implement. Wanna see how?</p>
+          ]]>
+        </description>
+        <category>Scroll animation</category><category>CSS animation</category><category>60 fps</category><category>scroll latency</category><category>optimize css animations</category><category>parallax</category><category>browser smooth scroll</category><category>CSS effects</category>
+        </item>
+      
+        <item>
+        <title><![CDATA[Web-safe fonts]]></title>
+        <pubDate>Fri, 10 Jul 2020 13:48:35 GMT</pubDate>
+        <link>https://sospedra.me/papers/web-safe-fonts</link>
+        <guid isPermaLink="false">https://sospedra.me/papers/web-safe-fonts</guid>
+        <description>
+          <![CDATA[
+            <img src="https://sospedra.me//papers/web-safe-fonts.jpeg" />
+            <p>This story begins in 1984. Involves the major R&amp;D companies in Silicon Valley. Machinery. Tech revolutions. And finally, the web. It&#039;s the story of the web fonts. Why are so many? And why it&#039;s so difficult to get a standard?</p>
+          ]]>
+        </description>
+        <category>Web safe fonts</category><category>fonts on all computers</category><category>tahoma</category><category>arial</category><category>helvetica</category><category>adobe fonts</category><category>css font stack</category><category>standard fonts</category><category>html font codes</category>
+        </item>
+      
 </channel>
 </rss>
