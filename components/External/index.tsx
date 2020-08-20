@@ -1,6 +1,8 @@
 import React from 'react'
 import css from 'service/style/neon.module.css'
 
+export const TWITTER = 'https://twitter.com/sospedra_r'
+
 const External: React.FC<{ href: string; className?: string }> = (props) => {
   return (
     <a

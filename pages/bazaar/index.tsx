@@ -2,6 +2,7 @@ import { NextPage } from 'next'
 import { STACK_DESC } from 'pages/stack'
 import { SERVE_DESC } from 'pages/serve'
 import { REWRITE_DESC } from 'pages/rewrite'
+import { USES_DESC } from 'pages/uses'
 import Link, { LinkBack } from 'components/Link'
 import Shell from 'components/Shell'
 import SpriteMountain from 'components/Sprite/Mountain'
@@ -31,6 +32,12 @@ const Bazaar: NextPage = () => {
               the stack
             </Link>
             <p>{STACK_DESC}</p>
+          </li>
+          <li>
+            <Link className={css.title} url='/uses'>
+              uses
+            </Link>
+            <p>{USES_DESC}</p>
           </li>
           <li>
             <Link className={css.title} url='/serve'>
