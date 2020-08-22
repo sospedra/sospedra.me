@@ -1,0 +1,30 @@
+.section {
+  @apply relative py-4;
+}
+
+.section h2 {
+  @apply sticky text-2xl font-bold uppercase text-cyan-400;
+  top: 6rem;
+  writing-mode: vertical-rl;
+  transition: 1s transform;
+  margin-left: 1rem;
+  transform: translate3d(-80%, 100%, 0);
+}
+
+.section h2:hover,
+.section h2:active {
+  transform: translate3d(-50%, 100%, 0);
+}
+
+.section h3 {
+  @apply text-lg;
+}
+
+.section ul {
+  @apply pb-12 pl-12;
+  list-style-image: url(/images/cursor.svg);
+}
+
+.section li {
+  @apply pb-4;
+}
