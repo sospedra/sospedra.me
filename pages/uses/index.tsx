@@ -2,6 +2,7 @@ import { NextPage } from 'next'
 import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
 import External, { TWITTER } from 'components/External'
+import cssNeon from 'service/style/neon.module.css'
 import uses from './uses.json'
 import css from './uses.module.css'
 
@@ -34,7 +35,15 @@ const Uses: NextPage<{}> = () => {
           <ul>
             {section.items.map((item) => (
               <li key={item.title}>
-                <External href={item.url}>{item.title}</External>
+                <h3>
+                  {item.url.includes('http') ? (
+                    <External href={item.url}>{item.title}</External>
+                  ) : (
+                    <Link url={item.url} className={cssNeon.neon}>
+                      {item.title}
+                    </Link>
+                  )}
+                </h3>
                 <p>{item.description}</p>
               </li>
             ))}

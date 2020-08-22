@@ -5,7 +5,67 @@
       {
         "title": "13'' MacBook Pro, 3.1ghz dual-core i7, 16GB of RAM, Intel Iris 5100 (2014)",
         "url": "https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i7-3.0-13-mid-2014-retina-display-specs.html",
-        "description": "Prior to this I was using a 2015 5K iMac as my main machine and a 2014 13 MacBook Pro for travel. This machine is more powerful than my iMac and feels just as portable as my 13 did — really love this computer."
+        "description": "There are new MBP? Yes. Do I need a new one? No. Plus, this horrendous butterfly keyboard. Finally, Apple is removing it. Tho, not yet for the 13''. And I don't even consider anything bigger than that."
+      },
+      {
+        "title": "Dell Ultrasharp U2415 24''",
+        "url": "https://www.amazon.com/dp/B00NZTKOQI/",
+        "description": "Outstanding quality-price ratio. Supports vertical orientation which comes in handy when reviewing code."
+      },
+      {
+        "title": "Das Keyboard 4C TKL",
+        "url": "https://www.daskeyboard.com/daskeyboard-4C-tkl/",
+        "description": "German-made mechanical keyboard. 87-keys layout of pure excellence. I use Cherry MX Blue for a noisy typing experience. The best wired mechanical keyboard in the market."
+      },
+      {
+        "title": "Ergonomic vertical mouse",
+        "url": "https://www.amazon.com/dp/B00BIFNTMC",
+        "description": "All these mouses are the same. Don't waste your money in something too expensive. The important accessory for a developer is the keyboard."
+      },
+      {
+        "title": "Razer Kiyo camera",
+        "url": "https://www.razer.com/eu-en/gaming-broadcaster/razer-kiyo",
+        "description": "Meets the minimum specs to record high-quality streaming. Meaning, you get the best out from the cheapest. I had some troubles with the ring light and the power supply from the USB port. Nothing horrible but a bit cumbersome sometimes."
+      },
+      {
+        "title": "HyperX Cloud MIX",
+        "url": "https://www.hyperxgaming.com/us/headsets/cloud-mix-wired-gaming-headset-with-bluetooth",
+        "description": "Before you judge me: there are as many headsets as people nowadays. It's madness. Anyway, the Cloud MIX fits my requires per-fect-ly. I'm not gonna be having different headsets for gaming and working. So, the Cloud MIX it's very good for listening to music. Great bass, has rapid bluetooth, active noise cancellation, etc. And their are superior for gaming. They're really made for that. Worth every single penny."
+      },
+      {
+        "title": "RØDE NT microphone",
+        "url": "http://www.rode.com/microphones/nt-usb",
+        "description": "It's either this one or the Blue Yeti. Both are have USB connection which means that you need to be too music nerdy to set them up. Plug and enjoy an almost-studio quality on your videocalls."
+      },
+      {
+        "title": "Airpods (1st Gen)",
+        "url": "https://www.apple.com/airpods-2nd-generation/",
+        "description": "I bought them in 2020. Second hand. But, honestly I only need a good set and unobtrusive headset for on-the-go calls. There are others with better audio, but not with a better mic."
+      },
+      {
+        "title": "Cyxus Ayanna glasses",
+        "url": "https://www.cyxus.com/collections/men-glasses/products/anti-blue-light-blocking-retro-round-lightweight-computer-glasses-for-men-women-8090-metal-clear-lenses?variant=9091052961839",
+        "description": "I've been using blue-filter glasses since before it even a thing. My first pair were the Gunnar Onyx. Best brand, expensive as hell. Then I discover how the technology behind them works. And now I don't spend more than 30 bucks. You shouldn't neither."
+      },
+      {
+        "title": "Electric sit/stand desk",
+        "url": "https://www.amazon.com/dp/B082DG2LQD",
+        "description": "For a normal-sized table you only need one engine. Any brand works the same. But buy an electric one. I had a manual before and you end up not changing modes."
+      },
+      {
+        "title": "Interstuhl UPis1 100U",
+        "url": "https://www.interstuhl.com/I/es-es/modelle.php?modell=100U",
+        "description": "Hands-down! This will remove all of your lower back pains. It's a stool (you won't have height problems with the desk I mentioned before). But the base is not flatten. You have to stabilize yourself at any time."
+      },
+      {
+        "title": "Eames plastic chair",
+        "url": "https://www.vitra.com/product/eames-plastic-chair",
+        "description": "Best chair ever. Worth it even only for historical reasons. This chair changed the world. Learn more about Eames design."
+      },
+      {
+        "title": "Standing desk mat",
+        "url": "https://www.amazon.com/dp/B00V3TO9EK",
+        "description": "If you're gonna spend a fair amount of time standing your feet will hurt. And your hip and knee joints will stress out. These desk mats are awesome releasing such stress. Any brand will work."
       }
     ]
   },
@@ -13,9 +73,44 @@
     "title": "Editor + Terminal",
     "items": [
       {
-        "title": "13'' MacBook Pro, 3.1ghz dual-core i7, 16GB of RAM, Intel Iris 5100 (2014)",
-        "url": "https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i7-3.0-13-mid-2014-retina-display-specs.html",
-        "description": "Prior to this I was using a 2015 5K iMac as my main machine and a 2014 13 MacBook Pro for travel. This machine is more powerful than my iMac and feels just as portable as my 13 did — really love this computer."
+        "title": "VS Code",
+        "url": "https://code.visualstudio.com/",
+        "description": "I was an Atom fanboy. Mostly because it was plug-and-play software. Unlike Sublime. VS Code is Atom on steroids. Plus, since it's based on TypeScript the support for such language is the best in town."
+      },
+      {
+        "title": "Hyper",
+        "url": "https://hyper.is/",
+        "description": "There are many terminals out there. But this one is TypeScript-based."
+      },
+      {
+        "title": "Fish shell",
+        "url": "https://fishshell.com/",
+        "description": "The terminal is nice. But did you ever try to play with shells? This is the real deal. Fish is out of this world."
+      },
+      {
+        "title": "Tech stack",
+        "url": "/stack",
+        "description": "What I use for coding? My tools of choice? Favorite libraries? I have a special page for that. Enjoy it."
+      },
+      {
+        "title": "SynthWave '84 theme",
+        "url": "https://github.com/robb0wen/synthwave-vscode",
+        "description": "Of course! What do you think? It's the freaking best theme EVER. Period. That's it. It matches my vapor/retro/aesthetic style."
+      },
+      {
+        "title": "Menlo font (Bitstream Vera)",
+        "url": "https://en.wikipedia.org/wiki/Menlo_(typeface)",
+        "description": "Nicely put monospace font that comes with the MacBook. What else? Always favor the standards. If you're an Open-Sourcerer you might wanna try Bitstream Vera. Menlo is based on that one."
+      },
+      {
+        "title": "Brave Browser",
+        "url": "https://brave.com/",
+        "description": "Best UX. But most importantly and subtle. As a developer, this browser is key to understand if you analytics system will break your web. And this will happen. Believe me."
+      },
+      {
+        "title": "dotfiles",
+        "url": "/serve?o=dotfiles",
+        "description": "All my cool configs. Steal everything you want. My alias are legendary."
       }
     ]
   },
@@ -23,9 +118,39 @@
     "title": "Desktop Apps",
     "items": [
       {
-        "title": "13'' MacBook Pro, 3.1ghz dual-core i7, 16GB of RAM, Intel Iris 5100 (2014)",
-        "url": "https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i7-3.0-13-mid-2014-retina-display-specs.html",
-        "description": "Prior to this I was using a 2015 5K iMac as my main machine and a 2014 13 MacBook Pro for travel. This machine is more powerful than my iMac and feels just as portable as my 13 did — really love this computer."
+        "title": "eqMac equalizer",
+        "url": "https://eqmac.app/",
+        "description": "How come Apple does not include this by default? The missing audio setting. Huge kudos to the maintainers. These suit bass drops are extra juicy now."
+      },
+      {
+        "title": "Dropbox Paper",
+        "url": "https://www.dropbox.com/paper",
+        "description": "Notion is great but has 2 flaws. My small brain cannot handle all the different options. Copy and pasting, like, come on, it's the 101 of note-taking. Don't get me wrong. Notion is nice, a solid second place. But Paper is just perfectly balanced."
+      },
+      {
+        "title": "Avast Password",
+        "url": "https://www.avast.com/passwords",
+        "description": "I know it's weird. I don't know anyone else using this. But it has everything I need for free. Multiple devices, cross-platform with nice desktop and app support, notes and cards, top-notch autofill."
+      },
+      {
+        "title": "1clipboard",
+        "url": "http://1clipboard.io/",
+        "description": "I cannot life without this. Are you ok sharing your clipboard with Apple? I'm not. Long-life to the OSS!"
+      },
+      {
+        "title": "Gifski",
+        "url": "https://sindresorhus.com/gifski",
+        "description": "Because stupid GitHub doesn't allow mp4/avi/mov videos in their platform. Neither they can resize a gif for you. It's just... I can't. Thanks Sindre."
+      },
+      {
+        "title": "Kap",
+        "url": "https://sindresorhus.com/kap",
+        "description": "Record anything in your screen. Outstanding UX. Again, how is this not part of macOS? Again, thank you Sindre."
+      },
+      {
+        "title": "Sketch",
+        "url": "https://www.sketch.com/",
+        "description": "Brilliant piece of software. When I discovered Sketch designing felt funny again. All my assets are powered by Sketch."
       }
     ]
   }
