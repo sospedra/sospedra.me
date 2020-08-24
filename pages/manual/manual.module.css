@@ -1,0 +1,55 @@
+.page {
+  @apply relative flex flex-col p-4 pt-12 mb-4 text-white;
+  counter-increment: pages;
+  background: linear-gradient(to right, white 1px, transparent 1px) 0.4rem 100%,
+    linear-gradient(to left, white 1px, transparent 1px) calc(100% - 0.4rem) 0%,
+    linear-gradient(to bottom, white 1px, transparent 1px) 100% 0.4rem,
+    linear-gradient(to top, white 1px, transparent 1px) 0% calc(100% - 0.4rem);
+  background-repeat: no-repeat;
+  background-size: 60px 60px;
+}
+
+.page:first-of-type::before {
+  @apply absolute text-sm;
+  bottom: 1rem;
+  left: 1rem;
+  content: 'RS-19911201-11';
+}
+
+.page:not(:first-of-type)::after {
+  @apply absolute font-bold;
+  bottom: 1rem;
+  right: 1rem;
+  content: counter(pages);
+}
+
+.bust {
+  @apply self-center;
+  max-width: 80%;
+}
+
+.title {
+  @apply font-bold leading-none;
+  font-size: 5rem;
+  overflow-wrap: break-word;
+}
+
+.logo {
+  @apply absolute w-20 h-20;
+  bottom: 1rem;
+  right: 1rem;
+  filter: saturate(0);
+  image-rendering: -webkit-optimize-contrast;
+}
+
+@media (orientation: landscape) {
+  .page {
+    height: 90vh;
+  }
+}
+
+@media (orientation: portrait) {
+  .page {
+    height: 100vh;
+  }
+}

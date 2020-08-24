@@ -13,7 +13,7 @@ const Uses: NextPage<{}> = () => {
   return (
     <Shell
       canonical='/uses'
-      className='relative w-full h-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-white'
+      className='relative w-full max-w-2xl min-h-full px-4 pt-12 pb-20 mx-auto text-white'
       description={USES_DESC}
       title='About'
     >
