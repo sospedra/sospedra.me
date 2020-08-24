@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="527px" height="801px" viewBox="0 0 527 801" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>gameboy</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="gameboy-monochrome" transform="translate(1.000000, 1.000000)">
+            <path d="M65.44,482.46 C65.59,482.23 65.73,481.99 65.88,481.75 C65.73,482 65.59,482.23 65.44,482.46 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M63.82,485.1 L64.33,484.28 L63.82,485.1 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M62.21,487.67 L62.78,486.77 L62.21,487.67 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M67.08,479.77 L67.41,479.23 L67.08,479.77 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M68.75,477 L68.75,476.95 L68.75,477 Z" id="Path" fill="#FFFFFF"></path>
+            <polygon id="Path" fill="#FFFFFF" points="72 471.53 72 471.53 72 471.46"></polygon>
+            <path d="M60.62,490.17 L61.22,489.23 L60.62,490.17 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M53.05,501.49 L53.74,500.49 L53.05,501.49 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M50.18,505.44 L50.92,504.44 L50.18,505.44 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M51.61,503.5 L52.32,502.5 L51.61,503.5 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M48.62,507.5 L49.56,506.28 L48.62,507.5 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M57.52,494.94 L58.17,493.94 L57.52,494.94 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M59.05,492.6 L59.69,491.6 L59.05,492.6 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M56,497.21 L56.67,496.21 L56,497.21 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M54.51,499.4 L55.19,498.4 L54.51,499.4 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M521.57,754.13 C517.57,742.13 502.36,679.51 502.36,669.21 C502.36,658.91 523.87,519.21 523.87,506.5 C523.87,496.04 468.02,375.94 448.1,333.44" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M325.91,643.92 C344.91,665.25 390.25,777.74 390.25,798.29" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M3,754.13 C7,742.13 22.21,679.51 22.21,669.21 C22.21,658.91 0.7,519.21 0.7,506.5 C0.71,496.75 49.29,391.63 72,343" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M199.29,643.25 C180.69,662.75 134.29,777.51 134.29,798.25" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M72,343 L72.14,342.7" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M71.99,37.86 L447.57,37.86" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M102.35,0.25 L102.35,37.86" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M426.78,0.25 L426.78,37.86" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <rect id="Rectangle" fill="#FFFFFF" x="161.55" y="87.34" width="208.82" height="189.52"></rect>
+            <circle id="Oval" fill="#FFFFFF" cx="126.08" cy="154.28" r="5.76"></circle>
+            <rect id="Rectangle" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" x="116.83" y="15.11" width="73.37" height="16.06" rx="8.03"></rect>
+            <rect id="Rectangle" fill="#FFFFFF" transform="translate(214.285192, 534.159181) rotate(-26.050000) translate(-214.285192, -534.159181) " x="191.740192" y="528.354181" width="45.09" height="11.61" rx="5.24"></rect>
+            <rect id="Rectangle" fill="#FFFFFF" transform="translate(279.999789, 534.152285) rotate(-26.050000) translate(-279.999789, -534.152285) " x="257.454789" y="528.347285" width="45.09" height="11.61" rx="5.24"></rect>
+            <circle id="Oval" fill="#FFFFFF" cx="345.48" cy="450.03" r="22.9"></circle>
+            <path d="M131.94,682.16 C139.65,648.41 130.08,541.3 113.6,529.34 C132.74,509.41 163.6,420.11 163.6,384.63 C163.6,361.11 154.03,327.89 146.6,327.89 C133.8,354.47 75.87,474.06 46.9,509.68 C43.37,513.76 41.05,551.81 45.49,592.23" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M392.64,682.16 C384.93,648.41 394.5,541.3 411,529.34 C391.87,509.41 361,420.11 361,384.63 C361,361.11 370.57,327.89 378,327.89 C390.76,354.47 448.69,474.06 477.66,509.68 C480.85,513.37 483.05,544.8 480.17,580.68" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M389.55,640.09 C381.910526,642.382432 373.976006,643.541445 366,643.53 L134.63,643.53" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M72,471.42 L72,12.51 C71.9999977,5.74289229 77.4828945,0.255519664 84.25,0.25 L435.3,0.25 C442.072631,0.249997751 447.56448,5.73737169 447.57,12.51 L447.57,462.71" id="Path" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M166.18,392.41 L163.18,392.41 C160.9,416.83 149.18,456.57 136.41,487.64 C137.129998,488.416788 138.140852,488.85881 139.2,488.86 L166.2,488.86 C167.216624,488.854733 168.189213,488.444439 168.902432,487.719959 C169.615651,486.995479 170.010659,486.016582 170,485 L170,396.23 C170,394.120272 168.289728,392.41 166.18,392.41 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M197.09,423.32 L157.51,423.32 C154.79,434.39 151.32,446.26 147.41,457.95 L197.09,457.95 C199.199728,457.95 200.91,456.239728 200.91,454.13 L200.91,427.13 C200.904487,425.024179 199.195829,423.319993 197.09,423.32 Z" id="Path" fill="#FFFFFF"></path>
+            <path d="M429,429.11 C432.376371,422.506299 432.345435,414.676333 428.91699,408.099517 C425.488544,401.522701 419.087204,397.01358 411.74,396 C417.26,406.78 423.09,418 429,429.11 Z" id="Path" fill="#FFFFFF"></path>
+        </g>
+    </g>
+</svg>

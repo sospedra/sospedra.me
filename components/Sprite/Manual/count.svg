@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1064px" height="665px" viewBox="0 0 1064 665" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>count</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(3.000000, 2.000000)" stroke="#FFFFFF" stroke-width="5">
+            <g id="Bar">
+                <polygon id="Path-3" stroke-linejoin="round" points="0.232260413 277.644395 0.232260413 322.633948 37.8499463 344.786938 37.8499463 298.921226"></polygon>
+                <polyline id="Path-4" stroke-linejoin="bevel" points="0.232260413 277.644395 477.134945 0.861098475 515 23.0676212 37.8499463 298.718629"></polyline>
+                <polyline id="Path-5" stroke-linejoin="round" points="37.8499463 344.786938 515 68.3530303 513.863366 21.3574099"></polyline>
+            </g>
+            <g id="Bar" transform="translate(76.000000, 45.000000)">
+                <polygon id="Path-3" stroke-linejoin="round" points="0.232260413 277.644395 0.232260413 322.633948 37.8499463 344.786938 37.8499463 298.921226"></polygon>
+                <polyline id="Path-4" stroke-linejoin="bevel" points="0.232260413 277.644395 477.134945 0.861098475 515 23.0676212 37.8499463 298.718629"></polyline>
+                <polyline id="Path-5" stroke-linejoin="round" points="37.8499463 344.786938 515 68.3530303 513.863366 21.3574099"></polyline>
+            </g>
+            <g id="Bar" transform="translate(154.000000, 89.000000)">
+                <polygon id="Path-3" stroke-linejoin="round" points="0.232260413 277.644395 0.232260413 322.633948 37.8499463 344.786938 37.8499463 298.921226"></polygon>
+                <polyline id="Path-4" stroke-linejoin="bevel" points="0.232260413 277.644395 477.134945 0.861098475 515 23.0676212 37.8499463 298.718629"></polyline>
+                <polyline id="Path-5" stroke-linejoin="round" points="37.8499463 344.786938 515 68.3530303 513.863366 21.3574099"></polyline>
+            </g>
+            <g id="Bar" transform="translate(230.000000, 134.000000)">
+                <polygon id="Path-3" stroke-linejoin="round" points="0.232260413 277.644395 0.232260413 322.633948 37.8499463 344.786938 37.8499463 298.921226"></polygon>
+                <polyline id="Path-4" stroke-linejoin="bevel" points="0.232260413 277.644395 477.134945 0.861098475 515 23.0676212 37.8499463 298.718629"></polyline>
+                <polyline id="Path-5" stroke-linejoin="round" points="37.8499463 344.786938 515 68.3530303 513.863366 21.3574099"></polyline>
+            </g>
+            <g id="Bar" transform="translate(307.000000, 178.000000)">
+                <polygon id="Path-3" stroke-linejoin="round" points="0.232260413 277.644395 0.232260413 322.633948 37.8499463 344.786938 37.8499463 298.921226"></polygon>
+                <polyline id="Path-4" stroke-linejoin="bevel" points="0.232260413 277.644395 477.134945 0.861098475 515 23.0676212 37.8499463 298.718629"></polyline>
+                <polyline id="Path-5" stroke-linejoin="round" points="37.8499463 344.786938 515 68.3530303 513.863366 21.3574099"></polyline>
+            </g>
+            <g id="Bar" transform="translate(385.000000, 245.000000)" stroke-linejoin="round">
+                <polygon id="Path-3" points="0.232260413 255.644395 0.232260413 300.633948 37.8499463 322.786938 37.8499463 276.921226"></polygon>
+                <path d="M516.28119,0.953256649 L37.8499463,276.718629 L516.28119,0.953256649 Z" id="Path-4"></path>
+                <path d="M37.8499463,322.786938 L554.652949,24.2371515" id="Path-5"></path>
+                <polyline id="Path-6" points="515.440081 0.00561383103 554.481465 23.9881182 554.481465 70.644395 118.418696 323.072742"></polyline>
+            </g>
+            <g id="Bar" transform="translate(465.000000, 315.000000)" stroke-linejoin="round">
+                <polygon id="Path-3" points="0.232260413 232.644395 0.232260413 277.633948 37.8499463 299.786938 37.8499463 253.921226"></polygon>
+                <path d="M474.029849,0.959839588 L37.8499463,253.718629 L474.029849,0.959839588 Z" id="Path-4"></path>
+                <path d="M37.8499463,299.786938 L556.5,0.988118195" id="Path-5"></path>
+                <polyline id="Path-6" points="554.481465 0.988118195 593.397261 24.2901557 118.418696 300.072742"></polyline>
+                <polyline id="Path-7" points="592.912931 24.3367948 592.912931 71.2856327 116.922582 345.382465"></polyline>
+                <polygon id="Path-3" points="79 278 79 322.989553 116.617686 345.142543 116.617686 299.276831"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
