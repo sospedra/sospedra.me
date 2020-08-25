@@ -1,5 +1,5 @@
 .page {
-  @apply relative flex flex-col p-4 pt-12 mb-4 text-white;
+  @apply relative flex flex-col justify-between p-4 mb-4 text-white;
   counter-increment: pages;
 }
 
@@ -13,7 +13,7 @@
 
 .page::before {
   @apply absolute text-sm;
-  bottom: 4rem;
+  bottom: 3rem;
   writing-mode: vertical-lr;
   right: -0.5rem;
   content: 'RS-19911201-11';
@@ -27,7 +27,7 @@
 }
 
 .page:not(:first-of-type)::after {
-  @apply absolute right-0 text-sm font-bold;
+  @apply absolute right-0 font-bold;
   bottom: 1rem;
   content: counter(pages);
 }
@@ -49,6 +49,13 @@
   right: 1rem;
   filter: saturate(0);
   image-rendering: ;
+}
+.home {
+  @apply h-full transition-all duration-500;
+}
+.home:hover,
+.home:active {
+  filter: drop-shadow(0px 0px 0.5rem white);
 }
 
 @media (orientation: landscape) {
