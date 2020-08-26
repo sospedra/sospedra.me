@@ -65,7 +65,7 @@ const Manual: NextPage<{}> = () => {
               </p>
               <p>
                 Serious or fatal emotion injuries can occur from not reading
-                this document in advance. To prevent this situation you must be
+                this document in advance. To prevent this situation you must
                 acknowledge what's on the manual with the included attached pun
                 jokes.
               </p>
@@ -132,12 +132,12 @@ const Manual: NextPage<{}> = () => {
             where's heading. You need a goal, a clear one. And to focus on it.
           </p>
           <p>
-            In the software industry. You need also to find balance between
-            achieving your perfect goal, and being quick. We work in a
-            fast-paced world. Every minute counts, make it valuable.
+            In the software industry. You need also to find a balance between
+            achieving your perfect goal and being quick. We work in a fast-paced
+            world. Every minute counts, make it valuable.
           </p>
           <p>
-            Finally, there's no winning without honor. The rule is simple: if
+            Finally, there's no winning without honour. The rule is simple: if
             it's not right, don't do it.
           </p>
         </Step>
@@ -148,8 +148,8 @@ const Manual: NextPage<{}> = () => {
             you're more righteous if you speak more seriously.
           </p>
           <p>
-            Everything is about the content. The envelope is nice, but focus on
-            the content. Don't waste anyone time. Make sure that you checked
+            Everything is about the content. The envelope is nice but focus on
+            the content. Don't waste anyone's time. Make sure that you checked
             first.
           </p>
           <p>
@@ -165,16 +165,16 @@ const Manual: NextPage<{}> = () => {
           <p>
             I can be too harsh sometimes. Well, not really. I can sound too
             harsh. It's probably a side-effect caused by the async comms. It
-            takes a lot for me to get angry, so don't really worry about it.
+            takes a lot for me to get angry, so don't worry about it.
           </p>
           <p>
-            I don't want to listent to opinions (if I don't ask for them). I'm
+            I don't want to listen to opinions (if I don't ask for them). I'm
             driven by data only. I already have an opinion about almost
             anything. And I don't need another.
           </p>
           <p>
-            I have a dark sense of humor. If I offend you I'm sorry. Reall I am.
-            Please, let me know and I'll adapt my jokes to you.
+            I have a dark sense of humour. If I offend you I'm sorry. Really I
+            am. Please, let me know and I'll adapt my jokes to you.
           </p>
         </Step>
         <Step number={4} title='What gains and loses my trust'>
@@ -184,7 +184,7 @@ const Manual: NextPage<{}> = () => {
           </p>
           <p>
             Now, regarding day-to-day work. Taking ownership of your task is a
-            massive trust boost. I deeply respect people that does that.
+            massive trust boost. I deeply respect people with such mindset.
           </p>
           <p>
             Does that mean that you have to work extra hours? Extra effort?
@@ -197,23 +197,23 @@ const Manual: NextPage<{}> = () => {
       <Page className='h-auto'>
         <Step number={5} title='My strengths'>
           <p>
-            I'm thoughtful. I'm strategic and I like to plan ahead. Having a
-            good amount of data around me to make the right decision.
+            I'm thoughtful. I'm strategic and I like to plan. Having a good
+            amount of data around me to make the right decision.
           </p>
           <p>
-            I'm also stubborn, but in the good way. Since I try to not be
+            I'm also stubborn but in a good way. Since I try to not be
             opinionated, I have a clear focus and a well-defined goal. So, being
             stubborn means a better output.
           </p>
           <p>
-            I understand. Understand others problems and needs. Understand
+            I understand. Understand other problems and needs. Understand
             business operations and the market. Understand the context. This
             life is about adapting.
           </p>
         </Step>
         <Step number={6} title='My grow areas'>
           <p>
-            More efficiency. I don't think I'm unefficient. But sometimes I take
+            More efficiency. I don't think I'm inefficient. But sometimes I take
             too many things in my basket. Thus, everything slows down a little
             each time. One task at a time.
           </p>

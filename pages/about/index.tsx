@@ -53,13 +53,27 @@ const About: React.FC<{}> = () => {
                 {new Date().getUTCFullYear() - 2014} years I have focused on
                 helping companies grow their products.
               </p>
-              <p>
+              <p className='pb-4'>
                 I founded a remote startup, collaborated with big and small
                 companies, built internal tools. Continuously, I contribute to
                 open source, speak at conferences, teach others and write
                 articles. After this exciting journey I consolidated my most
-                basic principle: deliver top-quality software goal-oriented in a
-                balanced time to market.
+                basic principle:{' '}
+                <b className='font-bold'>deliver the best in the fastest way</b>
+                . It's a balance.
+              </p>
+              <p>
+                If you want to know more about me. Let's{' '}
+                <External href='https://twitter.com/sospedra_r'>chat</External>,
+                read my{' '}
+                <Link url='/manual' className={neonCss.neon}>
+                  user-guide manual
+                </Link>
+                , or sneak on{' '}
+                <Link url='/uses' className={neonCss.neon}>
+                  what I use to work
+                </Link>
+                .
               </p>
             </section>
           }
@@ -224,11 +238,6 @@ const About: React.FC<{}> = () => {
                   <External href='https://sospedra.me/serve/sospedra.pdf'>
                     pdf version
                   </External>
-                </li>
-                <li>
-                  <Link url='/serve?e=licenses' className={neonCss.neon}>
-                    licenses
-                  </Link>
                 </li>
               </ul>
             </section>
