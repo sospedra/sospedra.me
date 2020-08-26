@@ -9,8 +9,7 @@
 }
 
 .list li {
-  @apply relative flex flex-col items-center justify-center;
-  height: 40vh;
+  @apply relative flex flex-col items-center justify-center my-24;
 }
 
 .title {
@@ -34,7 +33,8 @@
 }
 
 .offscreen {
-  @apply fixed bottom-0 z-10 w-full pointer-events-none;
+  @apply fixed bottom-0 z-10 w-full transition-transform duration-1000 transform pointer-events-none;
+  will-change: transform;
   height: 50vh;
 }
 
