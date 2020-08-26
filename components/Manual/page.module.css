@@ -1,0 +1,40 @@
+.page {
+  @apply relative flex flex-col justify-between h-screen pr-4 mb-8 text-white;
+  counter-increment: pages;
+}
+
+.page:first-of-type {
+  height: 90vh;
+  background: linear-gradient(to left, white 2px, transparent 2px)
+      calc(100% - 0.4rem) 0%,
+    linear-gradient(to bottom, white 2px, transparent 2px) 100% 0.4rem;
+  background-repeat: no-repeat;
+  background-size: 60px 60px;
+}
+
+.page::before {
+  @apply absolute text-sm;
+  bottom: 3rem;
+  writing-mode: vertical-lr;
+  right: -0.5rem;
+  content: 'RS-19911201-11';
+}
+
+.page:first-of-type::before {
+  @apply left-0;
+  writing-mode: horizontal-tb;
+  bottom: 2rem;
+  right: auto;
+}
+
+.page:not(:first-of-type)::after {
+  @apply absolute right-0 font-bold;
+  bottom: 1rem;
+  content: counter(pages);
+}
+
+@screen sm {
+  .page {
+    @apply p-4;
+  }
+}

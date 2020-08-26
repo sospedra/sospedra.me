@@ -1,39 +1,7 @@
-.page {
-  @apply relative flex flex-col justify-between p-4 mb-4 text-white;
-  counter-increment: pages;
-}
-
-.page:first-of-type {
-  background: linear-gradient(to left, white 2px, transparent 2px)
-      calc(100% - 0.4rem) 0%,
-    linear-gradient(to bottom, white 2px, transparent 2px) 100% 0.4rem;
-  background-repeat: no-repeat;
-  background-size: 60px 60px;
-}
-
-.page::before {
-  @apply absolute text-sm;
-  bottom: 3rem;
-  writing-mode: vertical-lr;
-  right: -0.5rem;
-  content: 'RS-19911201-11';
-}
-
-.page:first-of-type::before {
-  @apply left-0;
-  writing-mode: horizontal-tb;
-  bottom: 2rem;
-  right: auto;
-}
-
-.page:not(:first-of-type)::after {
-  @apply absolute right-0 font-bold;
-  bottom: 1rem;
-  content: counter(pages);
-}
-
 .bust {
   @apply self-center;
+  --pink: white;
+  --color: rgba(255, 255, 255, 0.2);
   max-width: 80%;
 }
 
@@ -48,8 +16,8 @@
   bottom: 1rem;
   right: 1rem;
   filter: saturate(0);
-  image-rendering: ;
 }
+
 .home {
   @apply h-full transition-all duration-500;
 }
@@ -58,14 +26,10 @@
   filter: drop-shadow(0px 0px 0.5rem white);
 }
 
-@media (orientation: landscape) {
-  .page {
-    height: 90vh;
-  }
+.griddy {
+  @apply grid h-full grid-flow-col gap-4;
 }
 
-@media (orientation: portrait) {
-  .page {
-    height: 100vh;
-  }
+.center {
+  @apply flex flex-row items-center justify-between;
 }
