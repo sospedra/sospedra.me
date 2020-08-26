@@ -3,6 +3,7 @@ import { STACK_DESC } from 'pages/stack'
 import { SERVE_DESC } from 'pages/serve'
 import { REWRITE_DESC } from 'pages/rewrite'
 import { USES_DESC } from 'pages/uses'
+import { MANUAL_DESC } from 'pages/manual'
 import Link, { LinkBack } from 'components/Link'
 import Shell from 'components/Shell'
 import SpriteMountain from 'components/Sprite/Mountain'
@@ -32,6 +33,12 @@ const Bazaar: NextPage = () => {
               the stack
             </Link>
             <p>{STACK_DESC}</p>
+          </li>
+          <li>
+            <Link className={css.title} url='/manual'>
+              user guide manual
+            </Link>
+            <p>{MANUAL_DESC}</p>
           </li>
           <li>
             <Link className={css.title} url='/uses'>
