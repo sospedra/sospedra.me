@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="347px" height="361px" viewBox="0 0 347 361" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>triangle</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linejoin="round">
+        <g id="r" transform="translate(193.544967, 180.496467) rotate(11.000000) translate(-193.544967, -180.496467) translate(30.044967, 33.496467)" stroke="#FFFFFF" stroke-width="4">
+            <path d="M76.34861,260.220262 L329.674154,260.220262 L309.000033,295.700962 L17.6028016,295.700962 L144.0306,67.8782534 L163.558684,103.067834 L76.34861,260.220262 Z" id="Path"></path>
+            <path d="M270.712589,225.360611 L144.541227,-2 L183.597475,-2 L329.135657,260.841311 L76.6028016,260.841311 L96.2924401,225.360611 L270.712589,225.360611 Z" id="Path"></path>
+            <path d="M143.412127,68.2574148 L17.2407654,295.618026 L-2.2873196,260.428445 L143.412127,-2.1217466 L269.839925,225.700962 L230.783755,225.700962 L143.412127,68.2574148 Z" id="Path"></path>
+        </g>
+    </g>
+</svg>

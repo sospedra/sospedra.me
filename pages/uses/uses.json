@@ -20,27 +20,27 @@
       {
         "title": "Ergonomic vertical mouse",
         "url": "https://www.amazon.com/dp/B00BIFNTMC",
-        "description": "All these mouses are the same. Don't waste your money in something too expensive. The important accessory for a developer is the keyboard."
+        "description": "All these mouses are the same. Don't waste your money on something too expensive. The important accessory for a developer is the keyboard."
       },
       {
         "title": "Razer Kiyo camera",
         "url": "https://www.razer.com/eu-en/gaming-broadcaster/razer-kiyo",
-        "description": "Meets the minimum specs to record high-quality streaming. Meaning, you get the best out from the cheapest. I had some troubles with the ring light and the power supply from the USB port. Nothing horrible but a bit cumbersome sometimes."
+        "description": "Meets the minimum specs to record high-quality streaming. Meaning, you get the best out from the cheapest. I had some trouble with the ring light and the power supply from the USB port. Nothing horrible but a bit cumbersome sometimes."
       },
       {
         "title": "HyperX Cloud MIX",
         "url": "https://www.hyperxgaming.com/us/headsets/cloud-mix-wired-gaming-headset-with-bluetooth",
-        "description": "Before you judge me: there are as many headsets as people nowadays. It's madness. Anyway, the Cloud MIX fits my requires per-fect-ly. I'm not gonna be having different headsets for gaming and working. So, the Cloud MIX it's very good for listening to music. Great bass, has rapid bluetooth, active noise cancellation, etc. And their are superior for gaming. They're really made for that. Worth every single penny."
+        "description": "Before you judge me: there are as many headsets as people nowadays. It's madness. Anyway, the Cloud MIX fits my requirements per-fect-ly. I'm not gonna be having different headsets for gaming and working. So, the Cloud MIX it's very good for listening to music. Great bass, has rapid Bluetooth, active noise cancellation, etc. And these are superior for gaming. They're really made for that. Worth every single penny."
       },
       {
         "title": "RØDE NT microphone",
         "url": "http://www.rode.com/microphones/nt-usb",
-        "description": "It's either this one or the Blue Yeti. Both are have USB connection which means that you need to be too music nerdy to set them up. Plug and enjoy an almost-studio quality on your videocalls."
+        "description": "It's either this one or the Blue Yeti. Both have USB connection which means that you need to be too music nerdy to set them up. Plug and enjoy an almost-studio quality on your video calls."
       },
       {
         "title": "Airpods (1st Gen)",
         "url": "https://www.apple.com/airpods-2nd-generation/",
-        "description": "I bought them in 2020. Second hand. But, honestly I only need a good set and unobtrusive headset for on-the-go calls. There are others with better audio, but not with a better mic."
+        "description": "I bought them in 2020. Second hand. But honestly, I only need a good set and unobtrusive headset for on-the-go calls. There are others with better audio, but not with a better mic."
       },
       {
         "title": "Cyxus Ayanna glasses",
@@ -50,12 +50,12 @@
       {
         "title": "Electric sit/stand desk",
         "url": "https://www.amazon.com/dp/B082DG2LQD",
-        "description": "For a normal-sized table you only need one engine. Any brand works the same. But buy an electric one. I had a manual before and you end up not changing modes."
+        "description": "For a normal-sized table, you only need one engine. Any brand works the same. But buy an electric one. I had a manual before and you end up not changing modes."
       },
       {
         "title": "Interstuhl UPis1 100U",
         "url": "https://www.interstuhl.com/I/es-es/modelle.php?modell=100U",
-        "description": "Hands-down! This will remove all of your lower back pains. It's a stool (you won't have height problems with the desk I mentioned before). But the base is not flatten. You have to stabilize yourself at any time."
+        "description": "Hands-down! This will remove all of your lower back pains. It's a stool (you won't have height problems with the desk I mentioned before). But the base isn't flattened. You have to stabilize yourself at any time."
       },
       {
         "title": "Eames plastic chair",
@@ -90,7 +90,7 @@
       {
         "title": "Tech stack",
         "url": "/stack",
-        "description": "What I use for coding? My tools of choice? Favorite libraries? I have a special page for that. Enjoy it."
+        "description": "What do I use for coding? My tools of choice? Favourite libraries? I have a special page for that. Enjoy it."
       },
       {
         "title": "SynthWave '84 theme",
@@ -100,12 +100,12 @@
       {
         "title": "Menlo font (Bitstream Vera)",
         "url": "https://en.wikipedia.org/wiki/Menlo_(typeface)",
-        "description": "Nicely put monospace font that comes with the MacBook. What else? Always favor the standards. If you're an Open-Sourcerer you might wanna try Bitstream Vera. Menlo is based on that one."
+        "description": "Nicely put monospace font that comes with the MacBook. What else? Always favour the standards. If you're an Open-Sourcerer you might wanna try Bitstream Vera. Menlo is based on that one."
       },
       {
         "title": "Brave Browser",
         "url": "https://brave.com/",
-        "description": "Best UX. But most importantly and subtle. As a developer, this browser is key to understand if you analytics system will break your web. And this will happen. Believe me."
+        "description": "Best UX. But most importantly and subtle. As a developer, this browser is key to understand if your analytics system will break your web. And this will happen. Believe me."
       },
       {
         "title": "dotfiles",
@@ -145,7 +145,7 @@
       {
         "title": "Kap",
         "url": "https://sindresorhus.com/kap",
-        "description": "Record anything in your screen. Outstanding UX. Again, how is this not part of macOS? Again, thank you Sindre."
+        "description": "Record anything on your screen. Outstanding UX. Again, how is this not part of macOS? Again, thank you Sindre."
       },
       {
         "title": "Sketch",

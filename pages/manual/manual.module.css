@@ -1,0 +1,35 @@
+.bust {
+  @apply self-center;
+  --pink: white;
+  --color: rgba(255, 255, 255, 0.2);
+  max-width: 80%;
+}
+
+.title {
+  @apply font-bold leading-none;
+  font-size: 5rem;
+  overflow-wrap: break-word;
+}
+
+.logo {
+  @apply absolute w-20 h-20;
+  bottom: 1rem;
+  right: 1rem;
+  filter: saturate(0);
+}
+
+.home {
+  @apply h-full transition-all duration-500;
+}
+.home:hover,
+.home:active {
+  filter: drop-shadow(0px 0px 0.5rem white);
+}
+
+.griddy {
+  @apply grid h-full grid-flow-col gap-4;
+}
+
+.center {
+  @apply flex flex-row items-center justify-between;
+}

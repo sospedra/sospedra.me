@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="704px" height="551px" viewBox="0 0 704 551" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>insert</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="insert2" transform="translate(3.000000, 3.000000)" stroke="#FFFFFF" stroke-width="7">
+            <path d="M0.637454471,27.3551726 L0.637454471,248.895045 L510.990353,543.636349 L697.2106,434.606244 L697.2106,378.469407 L604.287758,432.06598 L604.287758,375.899258 L558.944552,402.311026 L558.944552,458.963885 L510.990353,486.87391 C510.990353,526.553522 510.990353,545.474335 510.990353,543.636349" id="Path-2"></path>
+            <polyline id="Path-3" points="0.637454471 27.3551726 44.8657773 0.848487228 697.2106 378.039313"></polyline>
+            <path d="M604.244125,375.161084 L0.637454471,26.4571831" id="Path-4"></path>
+            <polyline id="Path-5" points="511.146379 487.11592 45.528434 217.686329 45.528434 106.882396 558.96921 401.359307"></polyline>
+            <polyline id="Path-6" points="45.528434 218.09828 91.1004403 188.950221 91.1004403 132.965669"></polyline>
+            <path d="M91.1004403,189.215283 L558.96921,459.096586" id="Path-7"></path>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,20 @@
+.step {
+  @apply flex flex-col flex-grow;
+}
+
+.number {
+  @apply pr-4 text-3xl font-bold;
+}
+
+.title {
+  @apply text-xl font-bold;
+}
+
+@media (min-width: 370px) {
+  .step p {
+    @apply pb-4;
+  }
+  .title {
+    @apply pb-4;
+  }
+}

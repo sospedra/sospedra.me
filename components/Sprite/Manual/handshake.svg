@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1133px" height="1069px" viewBox="0 0 1133 1069" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>handshake</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="handshake-monochrome">
+            <rect id="Rectangle" x="0" y="0" width="1133" height="1069"></rect>
+            <g id="Group" transform="translate(52.000000, 242.000000)">
+                <path d="M438.33,556.51 C462.88,572.22 480.57,583.07 485.55,585.03 C573.95,581.17 627.89,531.59 651.95,494.13" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M0.63,0.42 C0.63,0.42 44.84,35.14 77.09,61.51 L344,287.31 C344,287.31 464.93,250.14 475.29,251.31 C486.73,252.61 501.1,260.46 516.81,272.43" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M283.52,454.56 C230.52,419.11 186.2,389.15 179.82,384.63 C163.41,373 34.14,293 0.63,255.37" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M686.46,257.82 C679.8,261.76 640.96,281.19 628.01,279.57 C615.06,277.95 556.79,256.91 539.01,263.38 C521.23,269.85 437.01,307.08 437.01,307.08 C437.01,307.08 360.93,388.01 359.31,389.63 C357.69,391.25 359.22,403.84 361.54,405.85 C363.86,407.86 390,415.75 394.33,413.12 C398.66,410.49 457.13,365.63 467.65,365.63 C478.17,365.63 578.53,437.76 638.31,501.43 C652.1,495.43 779.37,418.77 779.37,418.77 L686.46,257.82 Z" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M283.9,451.93 C283.9,451.93 278.69,481.29 290.21,498.01 C301.73,514.73 391.28,573.81 403.92,575.67 C416.56,577.53 439.59,559.67 442.19,549.67 C444.79,539.67 428.07,502.85 423.24,497.67 C418.41,492.49 349.29,444.13 341.86,443 C334.43,441.87 295.42,444.87 283.9,451.93 Z" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M292.64,501.43 L342.13,463.92" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M331.48,532.87 L380.98,495.36" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M369.37,557.31 L406.98,528.81" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M610.15,539.61 L469.34,425.17" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M557.78,568.75 L468.47,496.17" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M513.13,584.21 L439.64,524.49" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+                <rect id="Rectangle" stroke="#FFFFFF" stroke-width="14" fill="#FFFFFF" transform="translate(157.225871, 310.691722) rotate(40.530000) translate(-157.225871, -310.691722) " x="98.700871" y="246.756722" width="117.05" height="127.87" rx="23.74"></rect>
+                <polygon id="Path" fill="#FFFFFF" points="224.44 283.87 175.29 241.84 224.93 183.77 274.09 225.8"></polygon>
+                <path d="M1028,39.61 L1009.86,50.54 C1009.86,50.54 801.48,176.59 736.16,214.43 L844.9,402.76 L1028,305.6" id="Path" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+            </g>
+        </g>
+    </g>
+</svg>
