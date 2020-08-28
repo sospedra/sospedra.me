@@ -229,7 +229,7 @@
   },
   {
     "route": "https://github.com/sospedra/semantic-password-generator",
-    "name": "semantic-password-generator",
+    "name": "spg",
     "title": "sospedra/semantic-password-generator",
     "description": "Secure passwords that humans can read 🔒💬",
     "isGithub": true,

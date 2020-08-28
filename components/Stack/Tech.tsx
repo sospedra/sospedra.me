@@ -7,28 +7,21 @@ import {
   useSpring,
 } from 'react-spring'
 import { createCache } from 'service/cache'
-import { useMomentum } from 'service/momentum'
 import { useStack } from 'service/stack'
 import css from './tech.module.css'
 import Icon from 'components/Icon'
 
 const FACTOR_X = 10
 const FACTOR_Y = 5
-const DELTA_CLAMP = [-300, 300]
 const cache = createCache((element: HTMLAnchorElement) => {
   return element.getBoundingClientRect()
 })
 const createTranspolate = (
-  delta: OpaqueInterpolation<number>,
   x: OpaqueInterpolation<number>,
   y: OpaqueInterpolation<number>,
-) => (outputDelta: number, outputX = FACTOR_X, outputY = FACTOR_Y) => {
+) => (outputX = FACTOR_X, outputY = FACTOR_Y) => {
   return interpolate(
     [
-      delta.interpolate({
-        range: DELTA_CLAMP,
-        output: [-outputDelta, outputDelta],
-      }),
       x.interpolate({
         range: [-FACTOR_X, FACTOR_X],
         output: [-outputX, outputX],
@@ -38,8 +31,9 @@ const createTranspolate = (
         output: [-outputY, outputY],
       }),
     ],
-    (d, x, y) => {
-      return `translate3d(${d}px, ${d}px, ${d}px) translate(${x}px, ${y}px)`
+    (x, y) => {
+      // return `translate3d(${d}px, ${d}px, ${d}px) translate(${x}px, ${y}px)`
+      return `translate(${x}px, ${y}px)`
     },
   )
 }
@@ -47,13 +41,12 @@ const createTranspolate = (
 const Tech: React.FC<{
   route: string
   name: string
-  delta: OpaqueInterpolation<number>
   description: string
   isGithub: boolean
 }> = (props) => {
   const ref = useRef<HTMLAnchorElement>(null)
   const [{ x, y }, set] = useSpring(() => ({ x: 0, y: 0 }))
-  const transpolate = createTranspolate(props.delta, x, y)
+  const transpolate = createTranspolate(x, y)
 
   useEffect(() => {
     if (ref.current) {
@@ -101,13 +94,13 @@ const Tech: React.FC<{
           <h4>{props.name}</h4>
           <animated.span
             className={css.trail1}
-            style={{ transform: transpolate(15) }}
+            style={{ transform: transpolate() }}
           >
             {props.name}
           </animated.span>
           <animated.span
             className={css.trail2}
-            style={{ transform: transpolate(30, 12, 15) }}
+            style={{ transform: transpolate(12, 15) }}
           >
             {props.name}
           </animated.span>
@@ -125,34 +118,18 @@ const Tech: React.FC<{
 }
 
 const TechList: React.FC<{}> = () => {
-  const delta = useMomentum('#vbody')
   const { results } = useStack()
-
-  useEffect(() => {
-    const $vbody = document.querySelector('#vbody')
-    if ($vbody) {
-      $vbody.addEventListener('scroll', cache.clear)
-      return () => $vbody.removeEventListener('scroll', cache.clear)
-    }
-  }, [])
 
   useEffect(() => {
     cache.clear()
   }, [results])
 
   return (
-    <animated.ul
-      className={cn('pb-32', css.list)}
-      style={{
-        transform: delta
-          .interpolate({ range: DELTA_CLAMP, output: [-6, 6] })
-          .interpolate((d) => `skewY(${d}deg)`),
-      }}
-    >
+    <ul className={cn('pb-32', css.list)}>
       {results.map((tech) => (
-        <Tech key={tech.route} delta={delta} {...tech} />
+        <Tech key={tech.route} {...tech} />
       ))}
-    </animated.ul>
+    </ul>
   )
 }
 

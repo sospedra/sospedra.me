@@ -25,7 +25,7 @@
   @apply font-bold transition-transform duration-100 pointer-events-none;
   -webkit-text-stroke: 1px white;
   -webkit-text-fill-color: white;
-  font-size: calc(3vw + 3.5vh);
+  font-size: calc(2.5vw + 3vh);
 }
 
 .trail1,
