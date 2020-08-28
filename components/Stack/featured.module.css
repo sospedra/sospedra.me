@@ -46,10 +46,7 @@
   }
 }
 
-.library {
-  @apply text-turbo;
-}
-
+.library,
 .category {
   @apply text-cyan-400;
 }

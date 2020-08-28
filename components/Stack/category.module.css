@@ -10,6 +10,24 @@
   animation: fade-in 0.5s;
 }
 
+.list {
+  @apply flex flex-row w-full py-4 overflow-x-auto overflow-y-hidden;
+}
+
+.list:before {
+  @apply absolute bottom-0 right-0 text-sm;
+  content: '↔ scroll';
+}
+
+@screen sm {
+  .list {
+    @apply flex-wrap overflow-auto;
+  }
+  .list:before {
+    content: none;
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

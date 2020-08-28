@@ -3,10 +3,22 @@ import Fuse from 'fuse.js'
 import debounce from 'lodash.debounce'
 import context, { defaultState } from './context'
 
-const { stack } = defaultState
+const { stack, anchor } = defaultState
 const fuse = new Fuse(stack, {
-  keys: ['name', 'title', 'description', 'tags', 'categories'],
+  keys: ['name', 'tags', 'categories'],
 })
+
+const searchFilter = debounce(
+  (search: string, setResults: Function) => {
+    if (!search) {
+      setResults(stack)
+    } else {
+      setResults(fuse.search(search).map(({ item }) => item))
+    }
+  },
+  400,
+  { leading: true },
+)
 
 export const useStack = () => {
   return useContext(context)
@@ -23,6 +35,11 @@ export const StackProvider: React.FC<{}> = (props) => {
     setResults([])
     setCategory('all')
   }
+  const scrollTo = () => {
+    document
+      .querySelector('#vbody')
+      ?.scrollTo(0, anchor.current?.offsetTop || 0)
+  }
 
   useEffect(() => {
     if (category === 'all') {
@@ -37,11 +54,7 @@ export const StackProvider: React.FC<{}> = (props) => {
   }, [category])
 
   useEffect(() => {
-    if (!search) {
-      setResults(stack)
-    } else {
-      setResults(fuse.search(search).map(({ item }) => item))
-    }
+    searchFilter(search, setResults)
   }, [search])
 
   return (
@@ -54,7 +67,8 @@ export const StackProvider: React.FC<{}> = (props) => {
         setCategory,
         reset,
         search,
-        setSearch: debounce(setSearch),
+        setSearch,
+        scrollTo,
       }}
     >
       {props.children}

@@ -6,22 +6,29 @@ import { useStack } from 'service/stack'
 import { createRange } from 'service/random'
 
 const Featured: React.FC<{}> = () => {
-  const { stack, filter, search, setCategory } = useStack()
+  const { stack, filter, search, setCategory, scrollTo } = useStack()
   const newest = stack[0]
   const random = stack[createRange()(stack.length - 1)]
   const promoted = stack.find(({ name }) => name === 'next.js')
 
   return (
     <section
+      style={{ willChange: 'transform' }}
       className={`transition-all duration-300 transform overflow-hidden ${
         !search
           ? 'opacity-100 max-h-screen py-12'
           : 'opacity-0 max-h-0 py-0 -translate-y-32'
       }`}
     >
-      <h2 className='pb-8 font-serif text-3xl'>Featured collections</h2>
+      <h2 className='pb-8 text-3xl font-bold'>Featured collections</h2>
       <div className={css.featured}>
-        <button className={css.category} onClick={() => setCategory('service')}>
+        <button
+          className={css.category}
+          onClick={() => {
+            setCategory('service')
+            scrollTo()
+          }}
+        >
           <p>View Services</p>
         </button>
 
@@ -75,7 +82,10 @@ const Featured: React.FC<{}> = () => {
 
         <button
           className={css.tag}
-          onClick={() => filter(({ isGithub }) => !isGithub)}
+          onClick={() => {
+            filter(({ isGithub }) => !isGithub)
+            scrollTo()
+          }}
         >
           <p>
             <span className={css.negative}>Not</span> on GitHub

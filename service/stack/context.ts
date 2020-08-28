@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, createContext } from 'react'
+import { Dispatch, SetStateAction, createContext, createRef } from 'react'
 import stack from './stack.json'
 
 export const defaultState = {
@@ -18,6 +18,8 @@ export const defaultState = {
   search: '',
   filter: (() => {}) as (clbk: (result: typeof stack[0]) => boolean) => void,
   reset: () => {},
+  scrollTo: () => {},
+  anchor: createRef<HTMLDivElement>(),
 }
 
 export type State = typeof defaultState

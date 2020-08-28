@@ -121,6 +121,14 @@ const TechList: React.FC<{}> = () => {
   const { results } = useStack()
 
   useEffect(() => {
+    const $vbody = document.querySelector('#vbody')
+    if ($vbody) {
+      $vbody.addEventListener('scroll', cache.clear)
+      return () => $vbody.removeEventListener('scroll', cache.clear)
+    }
+  }, [])
+
+  useEffect(() => {
     cache.clear()
   }, [results])
 
