@@ -3,9 +3,6 @@
   font-family: lazer84;
   transform: skewY(-4deg);
   margin-left: -8rem;
-}
-
-.title span {
   text-shadow: 2px 0px 3px #00a895, 2px 3px 1rem #00a895, 2px 0px 1rem,
     20px 0vw 10rem #00a895, 40px 0vw 10rem #00a895;
 }
