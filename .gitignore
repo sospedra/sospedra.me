@@ -3,3 +3,5 @@ node_modules
 .DS_Store
 public/sitemap.xml
 public/rss.xml
+.vercel
+.env.local

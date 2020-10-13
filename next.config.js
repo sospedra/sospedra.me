@@ -41,7 +41,7 @@ const config = {
         permanent: true,
       }))
     },
-  },
+  }
 }
 
 module.exports = withMDX(optimizedImages(config))
