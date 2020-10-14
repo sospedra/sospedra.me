@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "scripts": {
     "build:feed": "node ./internals/feed",
-    "build:next": "next build && next export -o dist",
+    "build:next": "next build",
     "build:sitemap": "node ./internals/sitemap",
     "build": "run-p build:*",
     "cmd:create-paper": "node ./internals/create-paper",
