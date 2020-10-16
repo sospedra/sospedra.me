@@ -1,1 +1,26 @@
-[{"destination":"https://open.spotify.com/playlist/26NYRcXPyIVrItOtlJ5ahO","title":"✨ Soul mirror on Spotify","source":"/r/rjpr","listed":true},{"destination":"/rewrite","source":"/r/:id"},{"destination":"/rewrite","source":"/rewrite/:id"},{"destination":"/serve","source":"/s"},{"destination":"https://gist.githubusercontent.com/sospedra/858f3072976ad71aa32a9910a2b71478/raw/99711eafab76a200b6f140009c164f9d0348ceef/remove-embrace.diff","title":"Undisclosure meta","source":"/r/ryqr","listed":false}]
+[
+  {
+     "destination":"https://open.spotify.com/playlist/26NYRcXPyIVrItOtlJ5ahO",
+     "title":"✨ Soul mirror on Spotify",
+     "source":"/r/rjpr",
+     "listed":true
+  },
+  {
+     "destination":"https://gist.githubusercontent.com/sospedra/858f3072976ad71aa32a9910a2b71478/raw/99711eafab76a200b6f140009c164f9d0348ceef/remove-embrace.diff",
+     "title":"Undisclosure meta",
+     "source":"/r/ryqr",
+     "listed":false
+  },
+  {
+     "destination":"/rewrite",
+     "source":"/r/:id"
+  },
+  {
+     "destination":"/rewrite",
+     "source":"/rewrite/:id"
+  },
+  {
+     "destination":"/serve",
+     "source":"/s"
+  }
+]
