@@ -15,7 +15,8 @@ const tiny = new Hashids('1337', 4, 'abcdefghijklmnopqrstuvwxyz')
 
     const destination = input.startsWith('http') ? input : `https://${input}`
     const response = await got(destination)
-    const title = response.body.match(/<title>(.*?)<\/title>/i)[1]
+    const maybeTitle = response.body.match(/<title>(.*?)<\/title>/i)
+    const title = maybeTitle && maybeTitle.length ? maybeTitle[1] : 'Undisclosure meta'
     const filename = io.abs('service/router/rewrites.json')
     const file = await io.read(filename)
 
