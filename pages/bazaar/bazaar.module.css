@@ -38,6 +38,10 @@
   height: 50vh;
 }
 
+.hidden {
+  --transform-translate-y: 100% !important;
+}
+
 @keyframes fade {
   from {
     opacity: 0;

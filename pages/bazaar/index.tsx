@@ -12,14 +12,12 @@ import Shell from 'components/Shell'
 import SpriteMountain from 'components/Sprite/Mountain'
 import SpriteCar from 'components/Sprite/Car'
 import Cheatcodes from 'components/Cheatcodes'
-import Constellation, { useConstellation } from 'components/Constellation'
 import External from 'components/External'
 import css from './bazaar.module.css'
 
 const BAZAAR_DESC = 'Gallery of my featured projects'
 
 const Bazaar: NextPage = () => {
-  const nextConstellation = useConstellation()
   const [isHidden, setIsHidden] = useState(false)
   const [intent, setIntent] = useState(false)
   const scrollRef = useScroll((e) => {
@@ -66,7 +64,6 @@ const Bazaar: NextPage = () => {
                 serve assets
               </Link>
               <p>{SERVE_DESC}</p>
-              <Constellation name={nextConstellation()} />
             </li>
             <li>
               <Link className={css.title} url='/rewrite'>
@@ -77,7 +74,6 @@ const Bazaar: NextPage = () => {
             <li>
               <Cheatcodes className={css.title} />
               <p>wait wat?</p>
-              <Constellation name={nextConstellation()} />
             </li>
             <li>
               <External href='https://rfm.sospedra.me' className={css.title}>
@@ -96,7 +92,6 @@ const Bazaar: NextPage = () => {
                 reinput
               </External>
               <p>A React Native TextInput with material style 😎</p>
-              <Constellation name={nextConstellation()} />
             </li>
             <li>
               <External href='https://spg.sospedra.me' className={css.title}>
@@ -120,14 +115,13 @@ const Bazaar: NextPage = () => {
                 which key code
               </External>
               <p>Which keys map to what keyboard code?</p>
-              <Constellation name={nextConstellation()} />
             </li>
           </ul>
         </div>
       </div>
       <aside
         className={cn(css.offscreen, {
-          ['translate-y-full']: isHidden,
+          [css.hidden]: isHidden,
         })}
       >
         <div className={css.car}>

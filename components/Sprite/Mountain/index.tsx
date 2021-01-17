@@ -14,9 +14,9 @@ const SpriteMountain: React.FC<{}> = () => {
   return (
     <>
       <Head>
-        <link rel='preload' as='image' href={require('./mountain.svg')} />
-        <link rel='preload' as='image' href={require('./clouds.svg')} />
-        <link rel='preload' as='image' href={require('./bridge.svg')} />
+        <link rel='preload' as='image' href={'/images/mountain.svg'} />
+        <link rel='preload' as='image' href={'/images/clouds.svg'} />
+        <link rel='preload' as='image' href={'/images/bridge.svg'} />
       </Head>
 
       <div role='img'>
