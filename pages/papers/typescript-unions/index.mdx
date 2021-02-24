@@ -1,0 +1,92 @@
+export const meta = require('./metadata.json')
+
+Not a single day passes without finding a multi-type TypeScript entity that messes your code. Successful API responses can adopt multiple shapes. Collections may contain many types within it. Parsed user inputs can collapse to different scalars. It's excepected. That's why TypeScript support Unions.
+
+```ts
+const idk = string | number | Potato
+```
+
+Being able to define any entity with precision is great. But that's only half of the solution. Once we have a Union type in our hands we may want to conditionally act on it. Depending on what type matches the value at each moment. That's a fancy way to define a bunch of if-else. And, indeed, in most of the cases TypeScript is smart enough to infer the right type.
+
+```ts
+if (typeof idk === 'string') {
+  // idk: String
+} else {
+  // idk: number | Potato
+}
+```
+
+This process is call Discrimination. It's the other half of the solution. With simple entities such as the one below it's pretty straightforward. However, discriminating objects can be tough.
+The good thing is that TypeScript is smart enough to identify when there's a discrimination problem. More often than not I stumble upon it:
+
+```ts
+ERROR
+```
+
+### Identifier keys
+
+The recommended way to do it is by having a constant string-type field in the object. For TypeScript will infer the type using that field as an anchor. The same way it does with primitive types.
+
+```ts
+type VaporCoin = { type: 'vapor' }
+type NeonCoin = { type: 'neon' }
+
+const act = (coin: VaporCoin | NeonCoin) => {
+  switch (coin.type) {
+    case 'vapor': {
+      // coin: VaporCoin
+    }
+    case 'neon': {
+      // coin: NeonCoin
+    }
+  }
+}
+```
+
+### Morphism check
+
+But, sometimes it's not possible to rely upon one specific field. Maybe it's not even up to us to decide the object shapes - working with a third-party API. In such cases, we can infer the type by running a morphism check. Meaning, looking for discrimination in their shape.
+
+```ts
+type VaporCoin = { vapor: string }
+type NeonCoin = { neon: string }
+
+const act = (coin: VaporCoin | NeonCoin) => {
+  if ('vapor' in coin) {
+    // coin: VaporCoin
+  } else {
+    // coin: NeonCoin
+  }
+}
+```
+
+### TBD functions
+
+Finally, when everything failed. We can use a to-be-defined function. If the objects don't have an identifier field. If they are morphally equal. We can check their inner differences with a function. And let this TBD function to imperatively define the type.
+
+```ts
+type VaporCoin = { key: string }
+type NeonCoin = { key: string }
+
+const isVapor = (tbd: any): tbd is VaporCoin => {
+  return tbd.key === 'vapor'
+}
+
+const act = (coin: VaporCoin | NeonCoin) => {
+  if (isVapor(coin)) {
+    // coin: VaporCoin
+  } else {
+    // coin: NeonCoin
+  }
+}
+```
+
+### Conclusion
+
+Unions and Intersections are part of the TypeScript's backbone. These are powerful and we must embrace their usage as much as possible. Once we start working with them we must learn how to discriminate different types. For that I recommend that everyone follows this step through:
+
+1. By default, let TypeScript's inference do its magic.
+2. Any normal if-else will suffice for simple types.
+3. When discriminating objects use identifier fields.
+4. If that's not possible, use morphism checks.
+5. As a last resource, use TBD functions.
