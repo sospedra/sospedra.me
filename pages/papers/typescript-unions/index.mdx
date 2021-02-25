@@ -6,7 +6,7 @@ Not a single day passes without finding a multi-type TypeScript entity that mess
 const idk = string | number | Potato
 ```
 
-Being able to define any entity with precision is great. But that's only half of the solution. Once we have a Union type in our hands we may want to conditionally act on it. Depending on what type matches the value at each moment. That's a fancy way to define a bunch of if-else. And, indeed, in most of the cases TypeScript is smart enough to infer the right type.
+Being able to define any entity with precision is great. But that's only half of the solution. Once we have a [Union](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html) type in our hands we may want to conditionally act on it. Depending on what type matches the value at each moment. That's a fancy way to define a bunch of if-else. And, indeed, in most of the cases TypeScript is smart enough to infer the right type.
 
 ```ts
 if (typeof idk === 'string') {
@@ -16,7 +16,7 @@ if (typeof idk === 'string') {
 }
 ```
 
-This process is call Discrimination. It's the other half of the solution. With simple entities such as the one below it's pretty straightforward. However, discriminating objects can be tough.
+This process is call [Discrimination](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#discriminating-unions). It's the other half of the solution. With simple entities such as the one below it's pretty straightforward. However, discriminating objects can be tough.
 The good thing is that TypeScript is smart enough to identify when there's a discrimination problem. More often than not I stumble upon it:
 
 ```ts
@@ -25,7 +25,7 @@ ERROR
 
 ### Identifier keys
 
-The recommended way to do it is by having a constant string-type field in the object. For TypeScript will infer the type using that field as an anchor. The same way it does with primitive types.
+The [recommended way](https://github.com/Microsoft/TypeScript/pull/9163) to do it is by having a **constant string-type field in the object**. For TypeScript will infer the type using that field as an anchor. The same way it does with primitive types.
 
 ```ts
 type VaporCoin = { type: 'vapor' }
@@ -43,9 +43,9 @@ const act = (coin: VaporCoin | NeonCoin) => {
 }
 ```
 
-### Morphism check
+### Morphic check
 
-But, sometimes it's not possible to rely upon one specific field. Maybe it's not even up to us to decide the object shapes - working with a third-party API. In such cases, we can infer the type by running a morphism check. Meaning, looking for discrimination in their shape.
+But, sometimes it's not possible to rely upon one specific field. Maybe it's not even up to us to decide the object shapes - working with a third-party API. In such cases, we can **infer the type by running a morphic check**. Meaning, looking for differences in their shape.
 
 ```ts
 type VaporCoin = { vapor: string }
@@ -62,7 +62,7 @@ const act = (coin: VaporCoin | NeonCoin) => {
 
 ### TBD functions
 
-Finally, when everything failed. We can use a to-be-defined function. If the objects don't have an identifier field. If they are morphally equal. We can check their inner differences with a function. And let this TBD function to imperatively define the type.
+Finally, when everything else failed. We can **use a to-be-defined function**. If the objects don't have an identifier field. If they are morphally equal. We can check their inner differences with a function. And let this TBD function to imperatively coerce the type.
 
 ```ts
 type VaporCoin = { key: string }
@@ -83,10 +83,11 @@ const act = (coin: VaporCoin | NeonCoin) => {
 
 ### Conclusion
 
-Unions and Intersections are part of the TypeScript's backbone. These are powerful and we must embrace their usage as much as possible. Once we start working with them we must learn how to discriminate different types. For that I recommend that everyone follows this step through:
+Unions and Intersections are part of the TypeScript's backbone. These are powerful and we must embrace their usage as much as possible. Once we start working with them we must learn how to discriminate different types. For that I recommend that everyone **follows this step-through**:
 
-1. By default, let TypeScript's inference do its magic.
-2. Any normal if-else will suffice for simple types.
-3. When discriminating objects use identifier fields.
-4. If that's not possible, use morphism checks.
-5. As a last resource, use TBD functions.
+1. By default, **let TypeScript's inference do its magic**.
+2. Any normal **if-else** will suffice **for simple types**.
+3. When discriminating objects use **identifier fields**.
+4. If that's not possible, use **morphic checks**.
+5. As a last resource, use **TBD functions**.
+
