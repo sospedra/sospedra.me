@@ -68,7 +68,7 @@ Finally, when everything else failed. We can **use a to-be-defined function**. I
 type VaporCoin = { key: string }
 type NeonCoin = { key: string }
 
-const isVapor = (tbd: any): tbd is VaporCoin => {
+const isVapor = (tbd: unknown): tbd is VaporCoin => {
   return tbd.key === 'vapor'
 }
 
