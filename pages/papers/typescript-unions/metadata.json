@@ -1,1 +1,25 @@
-{"createdAt":"2021-02-24T11:31:48.441Z","excerpt":"Not a single day passes without finding a multi-type TypeScript entity that messes your code. Successful API responses can adopt multiple shapes. Collections may contain many types within it. Parsed user inputs can collapse to different scalars. It's excepected. That's why TypeScript support Unions.","og":"/papers/typescript-unions.png","slug":"typescript-unions","title":"On TypeScript discriminated unions","updatedAt":"2021-02-24T11:31:48.441Z","images":{},"minutes":2.845,"categories":["typescript","unions","discriminated unions","conditional type","multiple types","discern types","typescript switch","discriminated with enum","generic types","typescript map"]}
+{
+  "createdAt": "2021-02-24T11:31:48.441Z",
+  "excerpt": "Not a single day passes without finding a multi-type TypeScript entity that messes your code. Successful API responses can adopt multiple shapes. Collections may contain many types within it. Parsed user inputs can collapse to different scalars. It's excepected. That's why TypeScript support Unions.",
+  "og": "/papers/typescript-unions.png",
+  "slug": "typescript-unions",
+  "title": "On TypeScript discriminated unions",
+  "updatedAt": "2021-02-24T11:31:48.441Z",
+  "images": {},
+  "minutes": 2.845,
+  "categories": [
+    "typescript",
+    "unions",
+    "property does not exist",
+    "property does not exist on type any typescript",
+    "property does not exist on type 'window & typeof globalthis'",
+    "discriminated unions",
+    "conditional type",
+    "multiple types",
+    "discern types",
+    "typescript switch",
+    "discriminated with enum",
+    "generic types",
+    "typescript map"
+  ]
+}
