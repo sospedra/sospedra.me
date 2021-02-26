@@ -1,12 +1,12 @@
 export const meta = require('./metadata.json')
 
-Not a single day passes without finding a multi-type TypeScript entity that messes your code. Successful API responses can adopt multiple shapes. Collections may contain many types within it. Parsed user inputs can collapse to different scalars. It's expected. That's why TypeScript support Unions.
+Not a single day passes without finding a multi-type TypeScript entity that messes your code. Successful API responses can adopt multiple shapes. Collections may contain many types within them. Parsed user inputs can collapse to different scalars. It's expected. That's why TypeScript supports Unions.
 
 ```ts
 const idk = string | number | Potato
 ```
 
-Being able to define any entity with precision is great. But that's only half of the solution. Once we have a [Union](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html) type in our hands we may want to conditionally act on it. Depending on what type matches the value at each moment. That's a fancy way to define a bunch of if-else. And, indeed, in most of the cases TypeScript is smart enough to infer the right type.
+Being able to define any entity with precision is great. But that's only half of the solution. Once we have a [Union](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html) type in our hands we may want to conditionally act on it. Depending on what type matches the value at each moment. That's a fancy way to define a bunch of if-else. And, indeed, in most cases TypeScript is smart enough to infer the right type.
 
 ```ts
 if (typeof idk === 'string') {
@@ -16,7 +16,7 @@ if (typeof idk === 'string') {
 }
 ```
 
-This process is call [Discrimination](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#discriminating-unions). It's the other half of the solution. With simple entities such as the one below it's pretty straightforward. However, discriminating objects can be tough.
+This process is call [Discrimination](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#discriminating-unions). It's the other half of the solution. With simple entities such as the one below it's pretty straightforward. However, discriminating against objects can be tough.
 The good thing is that TypeScript is smart enough to identify when there's a discrimination problem. More often than not I stumble upon it:
 
 ```ts
@@ -83,11 +83,10 @@ const act = (coin: VaporCoin | NeonCoin) => {
 
 ### Conclusion
 
-Unions and Intersections are part of the TypeScript's backbone. These are powerful and we must embrace their usage as much as possible. Once we start working with them we must learn how to discriminate different types. For that I recommend that everyone **follows this step-through**:
+Unions and Intersections are part of TypeScript's backbone. These are powerful and we must embrace their usage as much as possible. Once we start working with them we must learn how to discriminate different types. For that I recommend that everyone **follows this step-through**:
 
 1. By default, **let TypeScript's inference do its magic**.
 2. Any normal **if-else** will suffice **for simple types**.
 3. When discriminating objects use **identifier fields**.
 4. If that's not possible, use **morphic checks**.
 5. As a last resource, use **TBD functions**.
-
