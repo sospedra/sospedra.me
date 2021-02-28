@@ -18,3 +18,12 @@
     @apply pb-4;
   }
 }
+
+@screen md {
+  .step {
+    @apply text-lg;
+  }
+  .title {
+    @apply text-2xl;
+  }
+}
