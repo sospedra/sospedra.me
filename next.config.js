@@ -7,7 +7,10 @@ const withMDX = nextMdx({
   options: {
     remarkPlugins: [
       require('remark-abbr'),
-      require('remark-autolink-headings'),
+      require('remark-slug'),
+      [require('remark-autolink-headings'), {
+        behavior: 'wrap',
+      }],
       require('remark-breaks'),
       require('remark-external-links'),
       require('remark-slug'),

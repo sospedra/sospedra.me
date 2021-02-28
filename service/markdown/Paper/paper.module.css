@@ -92,30 +92,6 @@
   color: var(--code-text);
 }
 
-@media (hover: hover) {
-  .markdown pre::-webkit-scrollbar-track {
-    @apply rounded-full;
-  }
-
-  .markdown pre::-webkit-scrollbar {
-    @apply h-3;
-  }
-
-  .markdown pre::-webkit-scrollbar-thumb {
-    @apply rounded-full;
-    background-color: #c6c6c6;
-    border: 4px solid #212121;
-  }
-}
-@screen md {
-  .markdown pre {
-    @apply p-4;
-  }
-  .markdown pre code {
-    @apply text-base;
-  }
-}
-
 .markdown ul {
   @apply pl-8 list-disc;
   list-style-image: url('/images/cursor.svg');
@@ -163,6 +139,81 @@
 
 .markdown a:hover {
   animation: neon 2s linear infinite;
+}
+
+/* Link headers */
+.markdown h1[id],
+.markdown h2[id],
+.markdown h3[id],
+.markdown h4[id] {
+  @apply relative;
+}
+
+.markdown h1[id] a[href^='#'],
+.markdown h2[id] a[href^='#'],
+.markdown h3[id] a[href^='#'],
+.markdown h4[id] a[href^='#'] {
+  @apply text-white;
+  animation: none;
+}
+
+.markdown h1[id]:hover,
+.markdown h1[id]:active,
+.markdown h2[id]:hover,
+.markdown h2[id]:active,
+.markdown h3[id]:hover,
+.markdown h3[id]:active,
+.markdown h4[id]:hover,
+.markdown h4[id]:active {
+  @apply underline;
+}
+
+@media (hover: hover) {
+  .markdown pre::-webkit-scrollbar-track {
+    @apply rounded-full;
+  }
+
+  .markdown pre::-webkit-scrollbar {
+    @apply h-3;
+  }
+
+  .markdown pre::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background-color: #c6c6c6;
+    border: 4px solid #212121;
+  }
+}
+
+@screen md {
+  .markdown pre {
+    @apply p-4;
+  }
+
+  .markdown pre code {
+    @apply text-base;
+  }
+
+  .markdown h1[id]:hover::before,
+  .markdown h2[id]:hover::before,
+  .markdown h3[id]:hover::before,
+  .markdown h4[id]:hover::before {
+    @apply absolute text-sm;
+    content: '🔗';
+    left: -1.5rem;
+    top: 0;
+    bottom: 0;
+  }
+
+  .markdown h1[id]:hover,
+  .markdown h1[id]:active,
+  .markdown h2[id]:hover,
+  .markdown h2[id]:active,
+  .markdown h3[id]:hover,
+  .markdown h3[id]:active,
+  .markdown h4[id]:hover,
+  .markdown h4[id]:active {
+    @apply no-underline;
+  }
 }
 
 @keyframes neon {
