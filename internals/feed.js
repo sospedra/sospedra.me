@@ -31,7 +31,7 @@ const createRSS = (metadata) => `<?xml version="1.0" encoding="UTF-8"?>
       const excerpt = esc(meta.excerpt)
       const pubdate = new Date(meta.updatedAt).toUTCString()
       const categories = meta.categories.map(
-        (category) => `<category>${category}</category>`,
+        (category) => `<category>${esc(category)}</category>`,
       )
 
       return `
