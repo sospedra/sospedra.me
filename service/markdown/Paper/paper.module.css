@@ -50,15 +50,6 @@
   @apply relative mt-12 text-3xl;
 }
 
-.markdown h2 a {
-  @apply absolute w-8 h-8 text-2xl;
-  left: -2rem;
-}
-
-.markdown h2:hover a:before {
-  content: '🔗';
-}
-
 .markdown h3 {
   @apply mt-8 text-2xl;
 }
@@ -200,7 +191,7 @@
     @apply absolute text-sm;
     content: '🔗';
     left: -1.5rem;
-    top: 0;
+    top: 2px;
     bottom: 0;
   }
 
