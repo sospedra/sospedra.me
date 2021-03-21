@@ -60,9 +60,9 @@ const act = (coin: VaporCoin | NeonCoin) => {
 }
 ```
 
-### TBD functions
+### Type predicates
 
-Finally, when everything else failed. We can **use a to-be-defined function**. If the objects don't have an identifier field. If they are morphally equal. We can check their inner differences with a function. And let this TBD function to imperatively coerce the type.
+Finally, when everything else failed. We can **use a to-be-defined function** or type guards or [type predicates](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates). If the objects don't have an identifier field. If they are morphally equal. We can check their inner differences with a function. And let this TBD function to imperatively coerce the type.
 
 ```ts
 type VaporCoin = { key: string }
