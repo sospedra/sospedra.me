@@ -4,17 +4,18 @@ According to [Google](https://www.thinkwithgoogle.com/intl/en-ca/marketing-strat
 
 ## The lifecycle
 
-Any website follows a serie of steps involving at least one client, one server and a myriad of infrastructure proxies. A word of advice - in order to keep it focused - in this post I'm not gonna discuss the basics of the Internet, HTTP requests, etc. [In short](https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work):
+Any website follows a series of steps involving at least one client, one server and a myriad of infrastructure proxies. A word of advice - in order to keep it focused - in this post I'm not gonna discuss the basics of the Internet, HTTP requests, etc. [In short](https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work):
 
-1. The client (i.e. a browser) **request access** to a website.
+1. The client (i.e. a browser) **requests access** to a website.
 2. After going through different pieces of *infra*, the request **reaches a server**.
 3. ✨ The server then processes the request and **returns one single HTML file**. No JavaScript or CSS whatsoever.
 4. The **client then receives** the payload an starts unpacking.
-5. **Parse the HTML**.
+5. **Parses the HTML**.
 6. Fetch **other assets** linked in the HTML file, such as JavaScript files, CSS stylesheets, images, etc.
-7. Parse and **evaluate JavaScript**.
+/* Does a Fetch o Fetches */
+7. Parses and **evaluates JavaScript**.
 8. The **website is ready** to be used.
-9. Maybe, **keep loading** more resources.
+9. Maybe, **keeps loading** more resources.
 
 [![browser lifecycle resume](browser-lifecycle.jpeg)](https://scotch.io/@Venkatraman/browser-life-cycle)
 
@@ -31,17 +32,17 @@ There's no straight answer. The definition of ready depends on the requirements.
     - **Download** the files.
     - Parse, **evaluate** and execute it. More bites more time.
     - Allocate **memory**. Fairly quick but worth to mention.
-7. The browser fully loaded HTML, and the **DOM tree is built**. External resources like pictures `<img>` and stylesheets **MAY** not yet have loaded.
+7. The browser has fully loaded HTML, and the **DOM tree is built**. External resources like pictures `<img>` and stylesheets **MAY** not yet have loaded.
 8. First contentful **paint** happens.
 9. Everything is **loaded**!
 10. The page is **interactive**. Effectively [being completely ready](https://web.dev/interactive/).
-11. Other **subsequent deferred request** might finish and be executed later on.
+11. Other **subsequent deferred requests** might finish and be executed later on.
 
-This is just the theory. How can we use this events in our benefit? Well, any browser expose a series of states that we can hook of. These are most useful:
-
+This is just the theory. How can we use these events in our benefit? Well, all browsers expose a series of states that we can hook of. These are the most useful:
+/* hook of? Quizás hook to quedaría mejor, qué quieres decir? */
 ### Vanilla
 
-**When:** Right at the end  of step 6. When the JavaScript is initially executed.
+**When:** Right at the end of step 6. When the JavaScript is initially executed.
 
 **Usage:** Any JavaScript code that doesn't have a DOM relationship.
 
@@ -55,11 +56,12 @@ This is just the theory. How can we use this events in our benefit? Well, any br
 <p>pi, also known as "exactly 3.14" for engineers</p>
 ```
 
-_**✨ Bonus round:** It's not the same loading the `script` at the `head`. Or at the end of the `body`, or with attributes `defer` or `async`. Checkout this Codepen._
+_**✨ Bonus round:** It's not the same loading the `script` at the `head`. Or at the end of the `body`, or with attributes like `defer` or `async`. Checkout this Codepen._
+/* There is no codepen link bro!*/
 
 ### DOM Content Loaded
 
-**When:** At step 7. It's the main browser event since marks the readiness for any kind of JavaScript to start working.
+**When:** At step 7. It's the main browser event since it marks the readiness for any kind of JavaScript to start working.
 
 **Usage:** It's the earliest-safest hook. [Everything that needs to be ready is ready](https://developer.mozilla.org/en-US/docs/Web/API/Window/DOMContentLoaded_event). Widely popular because of jQuery (yeah, right? jQuery, I know). 9 out of 10 times you need to hook into something is this one.
 
@@ -69,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function() {
 })
 ```
 
-_**✨ Bonus round**: Does your employer forces you to drink sparkle water and support IE8? Here's the alternative magic:_
+_**✨ Bonus round**: Does your employer force you to drink sparkling water and support IE8? Here's the alternative magic:_
 
 ```jsx
 // alternative to DOMContentLoaded
