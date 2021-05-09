@@ -36,14 +36,12 @@ const config = {
     })
     return config
   },
-  experimental: {
-    async redirects() {
-      return rewrites.map(({ source, destination }) => ({
-        source,
-        destination,
-        permanent: true,
-      }))
-    },
+  async redirects() {
+    return rewrites.map(({ source, destination }) => ({
+      source,
+      destination,
+      permanent: true,
+    }))
   }
 }
 
