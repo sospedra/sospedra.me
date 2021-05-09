@@ -15,7 +15,7 @@ export const sendMessage = ({
 }) => {
   return got(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
     searchParams: {
-      chat_id: CHAT_ID,
+      chat_id: chatID,
       text,
     },
   })
