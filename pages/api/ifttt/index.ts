@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { emitOnTelegram } from 'service/telegram'
+import { igToTw } from './igToTw'
 
 export default async function ifttt(req: NextApiRequest, res: NextApiResponse) {
   try {
     switch (req.method) {
       case 'POST': {
-        await emitOnTelegram(JSON.stringify(req.body))
+        await igToTw(req.body)
         return res.end()
       }
 

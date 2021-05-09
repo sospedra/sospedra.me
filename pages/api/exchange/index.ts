@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { subDays, format } from 'date-fns'
 import got from 'got'
-import { emitOnTelegram } from 'service/telegram'
+import { sendMessage } from 'service/telegram'
 
 const RATE_THRESHOLD = 0.85
 
@@ -25,12 +25,13 @@ export default async function exchange(
   ])
 
   if (today >= RATE_THRESHOLD) {
-    await emitOnTelegram(`
+    const text = `
     💰 EUR/USD hits ${today.toFixed(4)} today!
 ${
   today > yesterday ? '🐃 It is increasing' : '🐻 It is going down'
 }. Yesterday rate was ${yesterday.toFixed(4)}.
-  `)
+  `
+    await sendMessage({ text })
   }
 
   res.send(200)
