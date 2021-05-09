@@ -13,7 +13,6 @@ export default async function ifttt(req: NextApiRequest, res: NextApiResponse) {
         return res.status(405).send('Method not allowed')
     }
   } catch (ex) {
-    console.log(ex)
     return res.status(500).send(ex)
   }
 }
