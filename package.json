@@ -30,7 +30,7 @@
     "lodash.debounce": "^4.0.8",
     "memoize-one": "^5.1.1",
     "mousetrap": "^1.6.5",
-    "next": "^10.0.5",
+    "next": "^11.1.0",
     "next-optimized-images": "^2.6.0",
     "path-to-regexp": "^6.2.0",
     "px-map-events": "^1.0.0",
