@@ -235,7 +235,7 @@ const About: React.FC<{}> = () => {
                   </External>
                 </li>
                 <li>
-                  <External href='https://sospedra.me/serve/sospedra.pdf'>
+                  <External href='https://sospedra.me/serve/cv.pdf'>
                     pdf version
                   </External>
                 </li>
