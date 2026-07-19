@@ -2,14 +2,14 @@
   "compilerOptions": {
     "baseUrl": "./",
     "allowJs": true,
-    "alwaysStrict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": ["dom", "es2019"],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
@@ -17,8 +17,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "esnext"
+    "target": "ES2017",
+    "plugins": [{ "name": "next" }]
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts", "**/*.tsx", "next.config.js"]
+  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
 }
