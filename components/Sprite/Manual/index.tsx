@@ -1,31 +1,44 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import Head from 'next/head'
+import count from './count.svg'
+import demons from './demons.svg'
+import gameboy from './gameboy.svg'
+import handshake from './handshake.svg'
+import home from './home.svg'
+import insert from './insert.svg'
+import lost from './lost.svg'
+import mobius from './mobius.svg'
+import support from './support.svg'
+import triangle from './triangle.svg'
 
 const sprites = {
-  count: require('./count.svg'),
-  demons: require('./demons.svg'),
-  gameboy: require('./gameboy.svg'),
-  handshake: require('./handshake.svg'),
-  home: require('./home.svg'),
-  insert: require('./insert.svg'),
-  lost: require('./lost.svg'),
-  mobius: require('./mobius.svg'),
-  support: require('./support.svg'),
-  triangle: require('./triangle.svg'),
+  count,
+  demons,
+  gameboy,
+  handshake,
+  home,
+  insert,
+  lost,
+  mobius,
+  support,
+  triangle,
 }
 
 const SpriteManual: React.FC<{
   name: keyof typeof sprites
   className?: string
 }> = (props) => {
-  const { current: sprite } = useRef(sprites[props.name])
+  const sprite = sprites[props.name]
 
   return (
     <>
       <Head>
-        <link rel='preload' as='image' href={sprite} />
+        <link rel='preload' as='image' href={sprite.src} />
       </Head>
-      <img src={sprite} className={`h-full p-4 ${props.className || ''}`} />
+      <img
+        src={sprite.src}
+        className={`h-full p-4 ${props.className || ''}`}
+      />
     </>
   )
 }

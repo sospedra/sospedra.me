@@ -1,7 +1,7 @@
 import React from 'react'
 import cn from 'classnames'
 import { parseISO, format } from 'date-fns'
-import Icon from 'components/Icon'
+import Icon, { IconName } from 'components/Icon'
 
 export const Time: React.FC<{ time: string }> = (props) => {
   const date = parseISO(props.time)
@@ -10,7 +10,8 @@ export const Time: React.FC<{ time: string }> = (props) => {
 
 export const Reading: React.FC<{ minutes: number }> = (props) => {
   const slices = Math.max(Math.round(props.minutes / 3), 1)
-  const pizza = slices > 5 ? ['pizza-box.png'] : Array(slices).fill('pizza.svg')
+  const pizza: IconName[] =
+    slices > 5 ? ['pizza-box.png'] : Array(slices).fill('pizza.svg')
   const title =
     slices > 5 ? 'More than 30 minutes long' : `${slices * 5} minutes long`
   return (

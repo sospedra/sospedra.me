@@ -1,24 +1,28 @@
 import React from 'react'
 import Head from 'next/head'
+import chassis from './chassis.svg'
+import windshield from './windshield.svg'
+import rim from './rim.svg'
+import reflect from './reflect.svg'
 import css from './car.module.css'
 
 const SpriteCar: React.FC<{}> = () => {
   return (
     <>
       <Head>
-        <link rel='preload' as='image' href={require('./chassis.svg')} />
-        <link rel='preload' as='image' href={require('./windshield.svg')} />
-        <link rel='preload' as='image' href={require('./rim.svg')} />
-        <link rel='preload' as='image' href={require('./reflect.svg')} />
+        <link rel='preload' as='image' href={chassis.src} />
+        <link rel='preload' as='image' href={windshield.src} />
+        <link rel='preload' as='image' href={rim.src} />
+        <link rel='preload' as='image' href={reflect.src} />
       </Head>
 
       <div role='img' className={css.car}>
-        <img className={'opacity-0'} src={require('./chassis.svg')} />
-        <img className={css.windshield} src={require('./windshield.svg')} />
-        <img className={css.reflect} src={require('./reflect.svg')} />
-        <img className={css.chassis} src={require('./chassis.svg')} />
-        <img className={css['rim-rear']} src={require('./rim.svg')} />
-        <img className={css['rim-front']} src={require('./rim.svg')} />
+        <img className={'opacity-0'} src={chassis.src} />
+        <img className={css.windshield} src={windshield.src} />
+        <img className={css.reflect} src={reflect.src} />
+        <img className={css.chassis} src={chassis.src} />
+        <img className={css['rim-rear']} src={rim.src} />
+        <img className={css['rim-front']} src={rim.src} />
       </div>
     </>
   )
