@@ -16,7 +16,7 @@
 
 .title {
   @apply text-5xl italic text-cyan-400;
-  font-family: lazer84;
+  font-family: var(--font-lazer84);
   transform: skewY(-4deg);
   text-shadow:
     2px 0px 3px #00a895,

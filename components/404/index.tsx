@@ -1,5 +1,6 @@
+'use client'
+
 import React, { useState } from 'react'
-import Head from 'next/head'
 import { useTransition } from 'service/transition'
 import Link from 'components/Link'
 import css from './404.module.css'
@@ -10,9 +11,6 @@ const Component404: React.FC = () => {
 
   return (
     <div className={css.notfound}>
-      <Head>
-        <meta name='robots' content='noindex' />
-      </Head>
       <link
         as='video'
         href='/video/desk.webm'

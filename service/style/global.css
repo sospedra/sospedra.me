@@ -21,9 +21,13 @@
   --color-magenta-700: #840e7d;
   --color-magenta-800: #480443;
   --color-magenta-900: #050005;
-  --font-sans: wotfard, Helvetica, sans-serif;
-  --font-serif: vcr, serif;
-  --font-mono: inconsolata, monospace;
+}
+
+/* inline: the tokens reference runtime variables set by next/font */
+@theme inline {
+  --font-sans: var(--font-wotfard), Helvetica, sans-serif;
+  --font-serif: var(--font-vcr), serif;
+  --font-mono: var(--font-inconsolata), monospace;
 }
 
 /* tailwind v1 compat: borders defaulted to gray, buttons to pointer */
@@ -46,46 +50,6 @@ html,
 #vbody {
   scroll-behavior: smooth;
   touch-action: manipulation;
-}
-
-@font-face {
-  font-family: 'lazer84';
-  font-style: normal;
-  font-weight: normal;
-  font-display: swap;
-  unicode-range: U+20, U+61, U+62, U+64, U+65, U+6E-70, U+72, U+73, U+75, U+E9;
-  src: url('/fonts/lazer84.woff2') format('woff2'),
-    url('/fonts/lazer84.woff') format('woff');
-}
-
-@font-face {
-  font-family: vcr;
-  font-style: normal;
-  font-weight: normal;
-  font-display: swap;
-  unicode-range: U+000-5FF;
-  src: url('/fonts/vcr.woff2') format('woff2'),
-    url('/fonts/vcr.woff') format('woff');
-}
-
-@font-face {
-  font-family: wotfard;
-  font-display: swap;
-  font-style: normal;
-  font-weight: normal;
-  unicode-range: U+000-5FF;
-  src: url('/fonts/wotfard.woff2') format('woff2'),
-    url('/fonts/wotfard.woff') format('woff');
-}
-
-@font-face {
-  font-family: inconsolata;
-  font-display: swap;
-  font-style: normal;
-  font-weight: normal;
-  unicode-range: U+000-5FF;
-  src: url('/fonts/inconsolata.woff2') format('woff2'),
-    url('/fonts/inconsolata.woff') format('woff');
 }
 
 .theme {

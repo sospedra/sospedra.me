@@ -2,11 +2,15 @@
 
 .title {
   @apply relative z-50 text-6xl italic text-cyan-400;
-  font-family: lazer84;
+  font-family: var(--font-lazer84);
   transform: skewY(-4deg);
   margin-left: -8rem;
-  text-shadow: 2px 0px 3px #00a895, 2px 3px 1rem #00a895, 2px 0px 1rem,
-    20px 0vw 10rem #00a895, 40px 0vw 10rem #00a895;
+  text-shadow:
+    2px 0px 3px #00a895,
+    2px 3px 1rem #00a895,
+    2px 0px 1rem,
+    20px 0vw 10rem #00a895,
+    40px 0vw 10rem #00a895;
 }
 
 .title span:last-child {

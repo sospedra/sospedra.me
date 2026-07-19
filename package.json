@@ -6,10 +6,7 @@
     "node": "22.x"
   },
   "scripts": {
-    "build:feed": "node ./internals/feed",
-    "build:next": "next build",
-    "build:sitemap": "node ./internals/sitemap",
-    "build": "run-s build:*",
+    "build": "next build",
     "cmd:create-paper": "node ./internals/create-paper",
     "cmd:reading": "node ./internals/reading-dir",
     "cmd:resize": "node ./internals/resize-dir",
@@ -64,7 +61,6 @@
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.2.10",
     "eslint-config-prettier": "^10.1.8",
-    "globby": "^11.0.1",
     "husky": "^9.1.7",
     "language-map": "^1.4.0",
     "lint-staged": "^17.1.0",

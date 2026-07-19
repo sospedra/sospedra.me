@@ -1,7 +1,39 @@
 import type { Metadata, Viewport } from 'next'
+import localFont from 'next/font/local'
 import { Analytics } from '@vercel/analytics/next'
 import Providers from './providers'
 import 'service/style/global.css'
+
+const wotfard = localFont({
+  src: '../public/fonts/wotfard.woff2',
+  display: 'swap',
+  variable: '--font-wotfard',
+})
+
+const vcr = localFont({
+  src: '../public/fonts/vcr.woff2',
+  display: 'swap',
+  variable: '--font-vcr',
+})
+
+const inconsolata = localFont({
+  src: '../public/fonts/inconsolata.woff2',
+  display: 'swap',
+  variable: '--font-inconsolata',
+})
+
+const lazer84 = localFont({
+  src: '../public/fonts/lazer84.woff2',
+  display: 'swap',
+  variable: '--font-lazer84',
+})
+
+const fontVariables = [
+  wotfard.variable,
+  vcr.variable,
+  inconsolata.variable,
+  lazer84.variable,
+].join(' ')
 
 const PERSON_JSON_LD = {
   '@context': 'http://schema.org',
@@ -74,7 +106,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
-    <html lang='en' data-scroll-behavior='smooth'>
+    <html lang='en' data-scroll-behavior='smooth' className={fontVariables}>
       <body>
         <Providers>{props.children}</Providers>
         <Analytics />

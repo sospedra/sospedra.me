@@ -2,7 +2,7 @@
 
 .signature {
   @apply relative mb-8 ml-2 text-6xl;
-  font-family: lazer84;
+  font-family: var(--font-lazer84);
 }
 
 .signature:after {
