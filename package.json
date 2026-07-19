@@ -1,6 +1,10 @@
 {
   "name": "sospedra.me",
-  "version": "3.0.0",
+  "version": "4.0.0",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "build:feed": "node ./internals/feed",
     "build:next": "next build",
@@ -12,7 +16,6 @@
     "cmd:rewrite": "node ./internals/rewrite",
     "cmd:stack": "node ./internals/stack",
     "dev": "next",
-    "now-build": "yarn build",
     "start": "next start",
     "test:static": "tsc",
     "test": "run-s test:*"
