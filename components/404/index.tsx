@@ -12,25 +12,25 @@ const Component404: React.FC = () => {
     <div className={css.notfound}>
       <Head>
         <meta name='robots' content='noindex' />
-        <link
-          as='video'
-          href='/video/desk.webm'
-          rel='preload'
-          type='image/webm'
-        />
-        <link
-          as='video'
-          href='/video/pedro.webm'
-          rel='preload'
-          type='image/webm'
-        />
-        <link
-          as='video'
-          href='/video/kermit.webm'
-          rel='preload'
-          type='image/webm'
-        />
       </Head>
+      <link
+        as='video'
+        href='/video/desk.webm'
+        rel='preload'
+        type='video/webm'
+      />
+      <link
+        as='video'
+        href='/video/pedro.webm'
+        rel='preload'
+        type='video/webm'
+      />
+      <link
+        as='video'
+        href='/video/kermit.webm'
+        rel='preload'
+        type='video/webm'
+      />
       <div
         className={`${css.message} ${vid !== 'desk' && css.shake}`}
         style={{

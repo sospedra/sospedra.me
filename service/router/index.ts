@@ -1,12 +1,7 @@
-import { NextRouter } from 'next/router'
 import Hashids from 'hashids'
 import rewrites from './rewrites.json'
 
 const tiny = new Hashids('1337', 4, 'abcdefghijklmnopqrstuvwxyz')
-
-export const isRouterReady = (router: NextRouter) => {
-  return router.asPath !== router.route
-}
 
 export const publicRewrites = rewrites.filter(({ listed }) => listed)
 

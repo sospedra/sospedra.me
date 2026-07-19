@@ -1,33 +1,33 @@
 import React from 'react'
 import { useTransition } from 'service/transition'
+import { usePrefetch } from 'service/transition/use-prefetch'
 import Icon from 'components/Icon'
 import css from './link.module.css'
 
 const Link = React.forwardRef(function Link(
   props: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
     url: string
-    as?: string
     children: React.ReactNode
     instant?: boolean
   },
   ref?: React.Ref<HTMLAnchorElement>,
 ) {
-  const { as, url, onClick, instant, ...nativeProps } = props
+  const { url, onClick, instant, ...nativeProps } = props
   const transition = useTransition()
 
-  transition.usePrefetch(url)
+  usePrefetch(url)
 
   return (
     <a
       {...nativeProps}
       ref={ref}
-      href={as || url}
+      href={url}
       onClick={(e) => {
         e.preventDefault()
-        onClick && onClick(e)
+        onClick?.(e)
         setTimeout(
           () => {
-            transition.navigate(url, as)
+            transition.navigate(url)
           },
           instant ? 0 : 360,
         )

@@ -1,5 +1,4 @@
 import React from 'react'
-import Head from 'next/head'
 import { config, animated, useSpring } from '@react-spring/web'
 import css from './city.module.css'
 
@@ -12,9 +11,7 @@ const SpriteCity: React.FunctionComponent = () => {
 
   return (
     <>
-      <Head>
-        <link rel='preload' as='image' href={'/images/street.svg'} />
-      </Head>
+      <link rel='preload' as='image' href={'/images/street.svg'} />
       <animated.figure className={css.city} style={animation} />
     </>
   )

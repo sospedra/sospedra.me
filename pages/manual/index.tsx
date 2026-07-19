@@ -9,7 +9,6 @@ import Piece from 'components/Manual/Piece'
 import Pictogram from 'components/Manual/Pictogram'
 import Step from 'components/Manual/Step'
 import css from './manual.module.css'
-import Head from 'next/head'
 
 export const MANUAL_DESC =
   'How to work with Rubén Sospedra. A manual of instructions. What I value, how I look at problems, what are my blind spots, and how to build trust with me.'
@@ -22,9 +21,8 @@ const Manual: NextPage = () => {
       description={MANUAL_DESC}
       title='Manual of instructions'
     >
-      <Head>
-        <link rel='preload' as='image' href='/sospedra.png' />
-      </Head>
+      {/* react 19 hoists resource links, next/head dies with the app router */}
+      <link rel='preload' as='image' href='/sospedra.png' />
 
       <Page className='justify-start p-4 pt-12'>
         <h1 className={css.title} aria-label='Sospedra'>

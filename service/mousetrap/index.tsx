@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import mousetrap from 'mousetrap'
-import Router from 'next/router'
+import { useRouter } from 'next/navigation'
 
 type Trap = [string | string[], (e: KeyboardEvent, combo: string) => void]
 
@@ -18,11 +18,18 @@ export const useMousetrap = (traps: Trap[]) => {
 }
 
 export const Mousetrap: React.FC<{ children: React.ReactNode }> = (props) => {
+  const router = useRouter()
+
   useMousetrap([
-    ['b', () => Router.pathname !== '/' && Router.back()],
-    ['h', () => Router.push('/')],
-    ['p', () => Router.push('/papers')],
-    ['a', () => Router.push('/about')],
+    [
+      'b',
+      () => {
+        if (window.location.pathname !== '/') router.back()
+      },
+    ],
+    ['h', () => router.push('/')],
+    ['p', () => router.push('/papers')],
+    ['a', () => router.push('/about')],
   ])
 
   return <>{props.children}</>

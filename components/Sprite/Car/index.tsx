@@ -1,5 +1,4 @@
 import React from 'react'
-import Head from 'next/head'
 import chassis from './chassis.svg'
 import windshield from './windshield.svg'
 import rim from './rim.svg'
@@ -9,12 +8,10 @@ import css from './car.module.css'
 const SpriteCar: React.FC = () => {
   return (
     <>
-      <Head>
-        <link rel='preload' as='image' href={chassis.src} />
-        <link rel='preload' as='image' href={windshield.src} />
-        <link rel='preload' as='image' href={rim.src} />
-        <link rel='preload' as='image' href={reflect.src} />
-      </Head>
+      <link rel='preload' as='image' href={chassis.src} />
+      <link rel='preload' as='image' href={windshield.src} />
+      <link rel='preload' as='image' href={rim.src} />
+      <link rel='preload' as='image' href={reflect.src} />
 
       <div role='img' className={css.car}>
         <img className={'opacity-0'} src={chassis.src} />

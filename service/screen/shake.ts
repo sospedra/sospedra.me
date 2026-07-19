@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import Router from 'next/router'
 
 const createCoords = () => ({ x: 0, y: 0, z: 0 })
 
@@ -15,7 +14,7 @@ export const useShake = (clbk: () => void) => {
     const sensitivity = 20
 
     const onMotion = ({ accelerationIncludingGravity }: DeviceMotionEvent) => {
-      if (!Router.pathname.startsWith('/papers/')) {
+      if (!window.location.pathname.startsWith('/papers/')) {
         const { x, y, z } = selectCoords(accelerationIncludingGravity)
         const change = Math.abs(x - vault.x + y - vault.y + z - vault.z)
         if (change > sensitivity) {

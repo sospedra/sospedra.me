@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import { isNotNull } from 'service/structs'
 import { createRange, createRng } from 'service/random'
 import { useTransition } from './context'
@@ -75,7 +75,7 @@ const ShootingStar: React.FC = () => {
 }
 
 const Stars: React.FC = () => {
-  const { pathname } = useRouter()
+  const pathname = usePathname() || '/'
   const { url } = useTransition()
   const hidden = useMemo(() => getHidden(url || pathname), [url, pathname])
 

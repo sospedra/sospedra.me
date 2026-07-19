@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Router from 'next/router'
+import { usePathname, useRouter } from 'next/navigation'
 import { TransitionCTX } from './context'
 import { useStateReducer } from './reducer'
 import Background from './Background'
@@ -10,19 +10,17 @@ export const Provider: React.FunctionComponent<{
   children: React.ReactNode
 }> = ({ children }) => {
   const transition = useStateReducer()
+  const pathname = usePathname()
+  const router = useRouter()
 
+  // pathname commit replaces the old Router.events routeChangeComplete
   useEffect(() => {
-    Router.events.on('routeChangeComplete', transition.reset)
     transition.reset()
-    return () => {
-      Router.events.off('routeChangeComplete', transition.reset)
-    }
-  }, [])
+  }, [pathname])
 
   useEffect(() => {
-    if (transition.hasRequestedUnmount && transition.willUnmount) {
-      Router.push(transition.url, transition.as)
-    }
+    if (!transition.hasRequestedUnmount || !transition.willUnmount) return
+    router.push(transition.url)
   }, [transition.hasRequestedUnmount, transition.willUnmount])
 
   return (

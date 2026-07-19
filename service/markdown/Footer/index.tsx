@@ -1,6 +1,5 @@
 import React from 'react'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
 import neonCss from 'service/style/neon.module.css'
 import css from './footer.module.css'
 
@@ -16,8 +15,6 @@ const createGithubLink = (slug: string) => {
 const Footer: React.FC<{
   slug: string
 }> = (props) => {
-  const { asPath } = useRouter()
-
   return (
     <>
       <p className={css.signature} title='僕と戦う'>
@@ -25,7 +22,7 @@ const Footer: React.FC<{
       </p>
       <footer className='flex items-center'>
         <a
-          href={createTwitterSearch(asPath)}
+          href={createTwitterSearch(`/papers/${props.slug}`)}
           className={cn('text-cyan-400', {
             [neonCss.neon]: true,
           })}

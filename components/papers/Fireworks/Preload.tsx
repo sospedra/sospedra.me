@@ -1,10 +1,9 @@
 import React from 'react'
-import Head from 'next/head'
 import { createFrameRoute, frameMax } from './service'
 
 const Preload: React.FC = React.memo(function Preload() {
   return (
-    <Head>
+    <>
       {Array(frameMax)
         .fill(0)
         .map((_, index) => (
@@ -16,7 +15,7 @@ const Preload: React.FC = React.memo(function Preload() {
             href={createFrameRoute(index + 1)}
           />
         ))}
-    </Head>
+    </>
   )
 })
 

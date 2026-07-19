@@ -3,6 +3,7 @@ import { NextPage } from 'next'
 import { animated, config, useSpring } from '@react-spring/web'
 import { useNav } from 'service/nav'
 import { useTransition } from 'service/transition'
+import { usePrefetch } from 'service/transition/use-prefetch'
 import Link from 'components/Link'
 import Shell from 'components/Shell'
 import SpriteCity from 'components/Sprite/City'
@@ -35,7 +36,7 @@ const IndexPage: NextPage = () => {
     config: config.slow,
   })
 
-  transition.usePrefetch('/bazaar')
+  usePrefetch('/bazaar')
 
   return (
     <Shell
@@ -84,7 +85,7 @@ const IndexPage: NextPage = () => {
                       transition.setOffshore('cloud', BAZAAR_DURATION)
                     }, BAZAAR_DURATION - 1200)
                     setTimeout(() => {
-                      transition.navigate('/bazaar', '/bazaar')
+                      transition.navigate('/bazaar')
                     }, BAZAAR_DURATION - 500)
                   }}
                 >

@@ -1,5 +1,4 @@
-import { useReducer, useEffect } from 'react'
-import Router from 'next/router'
+import { useReducer } from 'react'
 import { TransitionT } from './context'
 
 export enum ActionTypes {
@@ -14,7 +13,6 @@ export type State = {
   offshoreDuration?: number
   hasRequestedUnmount: boolean
   willUnmount: boolean
-  as?: string
   url: string
 }
 
@@ -26,7 +24,7 @@ export const DEFAULT_STATE: State = {
 }
 
 type Action =
-  | { type: ActionTypes.NAVIGATE; payload: { url: string; as?: string } }
+  | { type: ActionTypes.NAVIGATE; payload: { url: string } }
   | { type: ActionTypes.UNMOUNT }
   | { type: ActionTypes.RESET }
   | {
@@ -41,7 +39,6 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         hasRequestedUnmount: true,
         url: action.payload.url,
-        as: action.payload.as,
       }
     case ActionTypes.UNMOUNT:
       return { ...state, willUnmount: true }
@@ -64,13 +61,13 @@ export const useStateReducer = (): TransitionT => {
   const reset = () => dispatch({ type: ActionTypes.RESET })
   const setOffshore = (offshore: State['offshore'], duration?: number) =>
     dispatch({ type: ActionTypes.OFFSHORE, payload: { offshore, duration } })
-  const navigate = (url: string, as?: string) => {
-    dispatch({ type: ActionTypes.NAVIGATE, payload: { url, as } })
-  }
-  const usePrefetch = (url: string) => {
-    useEffect(() => {
-      Router.prefetch(url)
-    }, [])
+  const navigate = (url: string) => {
+    // same-route guard: the pathname never changes, so reset instead
+    if (url === window.location.pathname) {
+      dispatch({ type: ActionTypes.RESET })
+      return
+    }
+    dispatch({ type: ActionTypes.NAVIGATE, payload: { url } })
   }
 
   return {
@@ -78,7 +75,6 @@ export const useStateReducer = (): TransitionT => {
     unmount,
     reset,
     navigate,
-    usePrefetch,
     setOffshore,
   }
 }

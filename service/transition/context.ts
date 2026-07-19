@@ -3,8 +3,7 @@ import { State } from './reducer'
 import { DEFAULT_STATE } from './reducer'
 
 export type TransitionT = State & {
-  navigate: (url: string, as?: string) => void
-  usePrefetch: (url: string) => void
+  navigate: (url: string) => void
   unmount: () => void
   reset: () => void
   setOffshore: (offshore: State['offshore'], duration?: number) => void
@@ -13,7 +12,6 @@ export type TransitionT = State & {
 export const TransitionCTX = React.createContext({
   ...DEFAULT_STATE,
   navigate: () => {},
-  usePrefetch: () => {},
   unmount: () => {},
   reset: () => {},
   setOffshore: () => {},
