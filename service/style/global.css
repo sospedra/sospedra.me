@@ -1,7 +1,46 @@
-/*! purgecss start ignore */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import 'tailwindcss';
+
+@theme {
+  --color-turbo: #ffea00;
+  --color-cranberry: #d9478c;
+  --color-cyan-100: #d7fffc;
+  --color-cyan-200: #b8fef8;
+  --color-cyan-300: #99fdf4;
+  --color-cyan-400: #60f8eb;
+  --color-cyan-500: #34f0e0;
+  --color-cyan-600: #16e5d1;
+  --color-cyan-700: #04d4bf;
+  --color-cyan-800: #00bfab;
+  --color-cyan-900: #00a895;
+  --color-magenta-100: #ffe3fe;
+  --color-magenta-200: #fcc3fa;
+  --color-magenta-300: #f8a4f5;
+  --color-magenta-400: #eb6be6;
+  --color-magenta-500: #d53fce;
+  --color-magenta-600: #b420ac;
+  --color-magenta-700: #840e7d;
+  --color-magenta-800: #480443;
+  --color-magenta-900: #050005;
+  --font-sans: wotfard, Helvetica, sans-serif;
+  --font-serif: vcr, serif;
+  --font-mono: inconsolata, monospace;
+}
+
+/* tailwind v1 compat: borders defaulted to gray, buttons to pointer */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: #e2e8f0;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 html,
 #vbody {
@@ -49,10 +88,43 @@ html,
     url('/fonts/inconsolata.woff') format('woff');
 }
 
-.max-h-0 {
-  max-height: 0;
+.theme {
+  --cyan: #6df7ea;
+  --violet: #49257c;
+  --pink: #d9478c;
+  --blue: #46628c;
+  --yellow: #ffea00;
+  --magenta: #800d79;
+  --black: #0e141b;
+  --teal: #d7fffc;
 }
-.max-w-0 {
-  max-width: 0;
+
+.theme.light {
+  --bg-start: white;
+  --bg-yellow: var(--yellow);
+  --header: var(--cyan);
+  --textNormal: #222;
+  --textTitle: #222;
+  --textLink: var(--pink);
+  --hr: hsla(0, 0%, 0%, 0.2);
+  --code-text: var(--black);
+  --inlineCode-bg: rgba(255, 229, 100, 0.2);
+  --inlineCode-text: #1a1a1a;
+  --shadow: 0 2px 15px 0 rgba(210, 214, 220, 0.5);
 }
-/*! purgecss end ignore */
+
+.theme.dark {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --bg-start: var(--black);
+  --bg-end: var(--magenta);
+  --header: #ffffff;
+  --textNormal: rgba(255, 255, 255, 0.88);
+  --textTitle: #ffffff;
+  --textLink: var(--cyan);
+  --hr: hsla(0, 0%, 100%, 0.3);
+  --code-text: #e6e6e6;
+  --inlineCode-bg: rgba(115, 124, 153, 0.2);
+  --inlineCode-text: var(--pink);
+  --shadow: 0 2px 15px 0 rgba(26, 26, 27, 0.637);
+}

@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .green {
   @apply fixed top-0 bottom-0 z-50 h-screen;
   left: 25%;

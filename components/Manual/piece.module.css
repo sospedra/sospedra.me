@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .piece {
   @apply absolute;
   bottom: 1rem;

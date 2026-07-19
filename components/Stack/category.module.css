@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .category {
   @apply relative py-2;
 }

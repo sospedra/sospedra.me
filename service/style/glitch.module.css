@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .glitch {
   @apply relative inline-block text-cyan-400;
 }

@@ -1,5 +1,7 @@
+@reference '../../service/style/global.css';
+
 .tap {
-  @apply fixed inset-0 z-50 w-full outline-none;
+  @apply fixed inset-0 z-50 w-full outline-hidden;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 

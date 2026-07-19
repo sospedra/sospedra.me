@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .triangle {
   @apply absolute z-50 h-64;
   --frame-width: 0.25rem;

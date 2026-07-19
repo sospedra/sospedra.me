@@ -1,4 +1,3 @@
-import React from 'react'
 import App from 'next/app'
 import 'service/style/global.css'
 import { Provider as TransitionProvider } from 'service/transition'

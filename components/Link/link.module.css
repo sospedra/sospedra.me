@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .back {
   @apply inline-flex;
   color: #ffea00;

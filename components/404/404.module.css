@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .notfound {
   --size: calc(20vh + 20vw);
 }

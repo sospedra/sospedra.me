@@ -30,7 +30,7 @@ export const TreeParent: React.FC<TreeProps> = memo(function TreeParent(props) {
     <div className='relative pt-1 overflow-x-hidden text-white truncate align-middle'>
       <button
         className={cn(
-          'cursor-pointer align-text-top outline-none focus:outline-none',
+          'cursor-pointer align-text-top outline-hidden focus:outline-hidden',
           [props.bold ? 'font-bold text-cyan-400' : 'font-normal'],
         )}
         onClick={() => setOpen(!isOpen)}
@@ -43,7 +43,7 @@ export const TreeParent: React.FC<TreeProps> = memo(function TreeParent(props) {
       </button>
 
       <animated.div
-        className='pl-4 ml-2 overflow-hidden border-l-2 border-white border-opacity-25 border-dashed'
+        className='pl-4 ml-2 overflow-hidden border-l-2 border-white/25 border-dashed'
         style={{
           willChange: 'transform, opacity, height',
           opacity,

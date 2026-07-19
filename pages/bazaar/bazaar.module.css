@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .bazaar {
   @apply flex flex-col w-full max-w-xl px-4 pt-12 pb-20 mx-auto text-white opacity-0;
   animation: fade 1s ease-in forwards;
@@ -39,7 +41,8 @@
 }
 
 .hidden {
-  --transform-translate-y: 100% !important;
+  /* overrides the translate-y set by .offscreen's transform utilities */
+  transform: translateY(100%) !important;
 }
 
 @keyframes fade {

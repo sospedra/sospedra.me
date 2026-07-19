@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .content {
   @apply flex flex-col mb-32 font-sans text-lg leading-7 break-words align-baseline;
   text-shadow: 2px 2px 0 var(--black);

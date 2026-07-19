@@ -1,4 +1,3 @@
-import React from 'react'
 import { NextPage } from 'next'
 import { getStaticFiles, pathsToTree, TreeNode } from 'service/io'
 import Shell from 'components/Shell'

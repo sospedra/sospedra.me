@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { igToTw } from './igToTw'
+import { igToTw } from 'service/ifttt/ig-to-tw'
 
 export default async function ifttt(req: NextApiRequest, res: NextApiResponse) {
   try {

@@ -14,7 +14,7 @@ const Search: React.FC<{}> = () => {
       <input
         onChange={(e) => setSearch(e.currentTarget.value)}
         placeholder='Type a name, tech, label, etc.'
-        className='w-full font-serif text-2xl bg-transparent border-b border-dashed placeholder-cyan-900 md:text-3xl text-cyan-400 focus:outline-none'
+        className='w-full font-serif text-2xl bg-transparent border-b border-dashed placeholder:text-cyan-900 md:text-3xl text-cyan-400 focus:outline-hidden'
       />
     </section>
   )

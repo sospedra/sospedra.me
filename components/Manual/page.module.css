@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .page {
   @apply relative flex flex-col justify-between h-screen pr-4 mb-8 text-white;
   counter-increment: pages;

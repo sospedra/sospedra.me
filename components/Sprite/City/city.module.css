@@ -1,3 +1,5 @@
+@reference '../../../service/style/global.css';
+
 .city {
   @apply absolute bottom-0 left-0 m-0 bg-contain;
   height: 50vh;

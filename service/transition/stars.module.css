@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .appear {
   @apply absolute block;
   opacity: 0;

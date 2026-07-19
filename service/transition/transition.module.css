@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .bg {
   @apply absolute;
   background: radial-gradient(

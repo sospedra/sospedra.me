@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .copy {
   @apply p-2 font-mono font-bold;
   text-underline-position: under;
@@ -8,7 +10,7 @@
 }
 
 .copy:focus {
-  @apply underline outline-none;
+  @apply underline outline-hidden;
   text-decoration-style: dashed;
 }
 

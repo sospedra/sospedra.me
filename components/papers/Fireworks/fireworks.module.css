@@ -1,3 +1,5 @@
+@reference '../../../service/style/global.css';
+
 .anchor {
   @apply relative;
   height: 600vh;

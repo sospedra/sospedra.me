@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .bust {
   @apply self-center;
   --pink: white;

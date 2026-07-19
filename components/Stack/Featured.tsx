@@ -41,7 +41,7 @@ const Featured: React.FC<{}> = () => {
           <Emoji is='▼' className={css.triangle} />
           <p className='text-2xl'>
             Discover{' '}
-            <code className='font-mono md:whitespace-no-wrap'>
+            <code className='font-mono md:whitespace-nowrap'>
               {newest.name}
             </code>
           </p>

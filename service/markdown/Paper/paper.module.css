@@ -1,7 +1,4 @@
-.py-05 {
-  padding-top: 0.125rem;
-  padding-bottom: 0.125rem;
-}
+@reference '../../../service/style/global.css';
 
 .markdown {
   @apply font-sans text-lg leading-7 break-words align-baseline;
@@ -71,7 +68,7 @@
 }
 
 .markdown code {
-  @apply inline px-1 font-mono whitespace-no-wrap rounded;
+  @apply inline px-1 font-mono whitespace-nowrap rounded;
 }
 
 .markdown pre {
@@ -97,7 +94,9 @@
 }
 
 .markdown kbd {
-  @apply inline-block px-1 font-mono text-xs font-normal align-middle border rounded py-05;
+  @apply inline-block px-1 font-mono text-xs font-normal align-middle border rounded;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
   box-shadow: var(--shadow);
 }
 
@@ -210,7 +209,8 @@
 @keyframes neon {
   0%,
   100% {
-    @apply text-cyan-400;
+    /* text-cyan-400: @apply is illegal inside @keyframes in tailwind 4 */
+    color: #60f8eb;
   }
   50% {
     text-shadow: 0 0 1vw #00a895, 0 0 2vw #00a895, 0 0 1.4vw #00a895,

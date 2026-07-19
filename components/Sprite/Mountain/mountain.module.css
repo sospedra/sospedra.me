@@ -1,3 +1,5 @@
+@reference '../../../service/style/global.css';
+
 .parallax {
   @apply absolute bottom-0 h-full;
   width: 200vw;
@@ -8,7 +10,7 @@
 }
 
 .peak {
-  @apply parallax;
+  composes: parallax;
   --offset-x: 10vw;
   --offset-y: 0;
   filter: contrast(1.5) brightness(0.7) blur(0.5px);
@@ -17,7 +19,7 @@
 }
 
 .clouds {
-  @apply parallax;
+  composes: parallax;
   --offset-x: 50vw;
   --offset-y: 2vh;
   opacity: 0.7;
@@ -40,7 +42,7 @@
 }
 
 .cloud {
-  @apply parallax;
+  composes: parallax;
   filter: brightness(0.8) contrast(1.2);
   bottom: 0;
   width: 300vw;

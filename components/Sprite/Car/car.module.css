@@ -1,3 +1,5 @@
+@reference '../../../service/style/global.css';
+
 .car {
   @apply relative bottom-0;
   width: 30vh;
@@ -21,13 +23,13 @@
 }
 
 .rim-rear {
-  @apply rim;
+  composes: rim;
   left: 15.5%;
   bottom: 11%;
 }
 
 .rim-front {
-  @apply rim;
+  composes: rim;
   left: 81%;
   bottom: 8%;
 }

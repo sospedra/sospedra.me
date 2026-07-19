@@ -1,3 +1,5 @@
+@reference '../service/style/global.css';
+
 .main {
   @apply flex flex-col items-center justify-end flex-1 w-full;
   padding-bottom: 30vh;
@@ -18,7 +20,7 @@
 .menu button:active,
 .menu a:focus,
 .menu button:focus {
-  @apply outline-none;
+  @apply outline-hidden;
 }
 
 .menu a:active:before,

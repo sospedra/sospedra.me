@@ -12,7 +12,7 @@ const Category: React.FC<{
   return (
     <li className='pr-6'>
       <button
-        className={cn('focus:outline-none', css.category)}
+        className={cn('focus:outline-hidden', css.category)}
         onClick={() => props.setCategory(props.category)}
       >
         <span

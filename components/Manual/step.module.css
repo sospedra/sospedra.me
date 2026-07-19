@@ -1,5 +1,7 @@
+@reference '../../service/style/global.css';
+
 .step {
-  @apply flex flex-col flex-grow;
+  @apply flex flex-col grow;
 }
 
 .number {

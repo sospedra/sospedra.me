@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .neon {
   @apply text-cyan-400;
 }
@@ -9,7 +11,8 @@
 @keyframes neon {
   0%,
   100% {
-    @apply text-cyan-400;
+    /* text-cyan-400: @apply is illegal inside @keyframes in tailwind 4 */
+    color: #60f8eb;
   }
   50% {
     text-shadow: 0 0 1vw #00a895, 0 0 2vw #00a895, 0 0 1.4vw #00a895,

@@ -1,3 +1,5 @@
+@reference '../../service/style/global.css';
+
 .cloud {
   @apply fixed bottom-0 right-0 z-10 w-screen h-screen origin-bottom;
   transform: translate(0vw, 0%) scale(1);
