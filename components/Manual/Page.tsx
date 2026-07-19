@@ -2,7 +2,10 @@ import React from 'react'
 import cn from 'classnames'
 import css from './page.module.css'
 
-const Page: React.FC<{ className?: string }> = (props) => {
+const Page: React.FC<{
+  className?: string
+  children: React.ReactNode
+}> = (props) => {
   return (
     <section className={cn(css.page, props.className)}>
       {props.children}

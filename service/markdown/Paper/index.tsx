@@ -6,7 +6,9 @@ import css from './paper.module.css'
 import Footer from '../Footer'
 import { Paper } from '../files'
 
-const PaperShell: React.FC<Paper> = (props) => {
+const PaperShell: React.FC<Paper & { children: React.ReactNode }> = (
+  props,
+) => {
   useEffect(() => {
     window.scroll({
       top: 0,

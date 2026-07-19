@@ -38,7 +38,8 @@ const selectOffshore = (offshore: string, offshoreDuration?: number) => {
 
 const Offshore: React.FC<{}> = () => {
   const { offshore, offshoreDuration } = useTransition()
-  const [OffshoreElement, setOffshoreElement] = useState<JSX.Element | null>(
+  const [OffshoreElement, setOffshoreElement] =
+    useState<React.JSX.Element | null>(
     selectOffshore(offshore, offshoreDuration),
   )
 

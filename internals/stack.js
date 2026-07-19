@@ -1,4 +1,3 @@
-const got = require('got')
 const prompts = require('prompts')
 const langmap = require('language-map')
 const cheerio = require('cheerio')
@@ -44,7 +43,7 @@ const flat = (array) => [
 
     // fetch metadata
     if (url.hostname === 'github.com') {
-      const { body } = await got(
+      const response = await fetch(
         `https://api.github.com/repos${url.pathname}`,
         {
           headers: {
@@ -52,7 +51,7 @@ const flat = (array) => [
           },
         },
       )
-      const payload = JSON.parse(body)
+      const payload = await response.json()
 
       metadata.isGithub = true
       metadata.description = payload.description
@@ -66,8 +65,8 @@ const flat = (array) => [
         langmap[payload.language].aceMode,
       ])
     } else {
-      const { body } = await got(destination)
-      const $ = cheerio.load(body)
+      const response = await fetch(destination)
+      const $ = cheerio.load(await response.text())
 
       metadata.route = destination
       metadata.name = url.hostname

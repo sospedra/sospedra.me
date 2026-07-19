@@ -2,23 +2,22 @@ import { useEffect } from 'react'
 import mousetrap from 'mousetrap'
 import Router from 'next/router'
 
-export const useMousetrap = (
-  traps: [
-    string | string[],
-    (e: ExtendedKeyboardEvent, combo: string) => any,
-  ][],
-) => {
+type Trap = [string | string[], (e: KeyboardEvent, combo: string) => void]
+
+export const useMousetrap = (traps: Trap[]) => {
   useEffect(() => {
-    traps.map(([key, clbk]) => {
+    for (const [key, clbk] of traps) {
       mousetrap.bind(key, clbk)
-      return () => {
+    }
+    return () => {
+      for (const [key] of traps) {
         mousetrap.unbind(key)
       }
-    })
+    }
   }, [])
 }
 
-export const Mousetrap: React.FC<{}> = (props) => {
+export const Mousetrap: React.FC<{ children: React.ReactNode }> = (props) => {
   useMousetrap([
     ['b', () => Router.pathname !== '/' && Router.back()],
     ['h', () => Router.push('/')],

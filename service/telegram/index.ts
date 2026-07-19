@@ -1,10 +1,21 @@
-import got from 'got'
-
 const TELEGRAM_TOKEN = process.env.SOSPEDRA_BOT
 const CHAT_ID = '-259122205'
 const PROSOQUE_ID = '@prosoque'
 
 type ChatID = typeof CHAT_ID | typeof PROSOQUE_ID
+
+const callTelegram = async (
+  method: 'sendMessage' | 'sendPhoto',
+  params: Record<string, string>,
+) => {
+  const url = new URL(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`)
+  url.search = new URLSearchParams(params).toString()
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`telegram ${method} failed: ${response.status}`)
+  }
+  return response
+}
 
 export const sendMessage = ({
   text,
@@ -13,12 +24,7 @@ export const sendMessage = ({
   text: string
   chatID?: ChatID
 }) => {
-  return got(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-    searchParams: {
-      chat_id: chatID,
-      text,
-    },
-  })
+  return callTelegram('sendMessage', { chat_id: chatID, text })
 }
 
 export const sendPhoto = ({
@@ -30,11 +36,5 @@ export const sendPhoto = ({
   photo: string
   chatID?: ChatID
 }) => {
-  return got(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`, {
-    searchParams: {
-      chat_id: chatID,
-      caption,
-      photo,
-    },
-  })
+  return callTelegram('sendPhoto', { chat_id: chatID, caption, photo })
 }

@@ -1,7 +1,11 @@
 import React from 'react'
 import css from './step.module.css'
 
-const Step: React.FC<{ title: string; number: number }> = (props) => {
+const Step: React.FC<{
+  title: string
+  number: number
+  children: React.ReactNode
+}> = (props) => {
   const slug = `chapter-${props.number}`
   return (
     <div className={css.step}>

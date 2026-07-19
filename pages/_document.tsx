@@ -1,5 +1,4 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { Analytics } from 'service/analytics'
 import Format from 'service/seo/Format'
 import Icons from 'service/seo/Icons'
 import Preload from 'service/seo/Preload'
@@ -14,7 +13,6 @@ export default class SospedraDocument extends Document {
           <Preload />
           <Icons />
           <Social />
-          <Analytics />
         </Head>
 
         <body>

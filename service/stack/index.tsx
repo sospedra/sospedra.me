@@ -24,7 +24,9 @@ export const useStack = () => {
   return useContext(context)
 }
 
-export const StackProvider: React.FC<{}> = (props) => {
+export const StackProvider: React.FC<{ children: React.ReactNode }> = (
+  props,
+) => {
   const [results, setResults] = useState(stack)
   const [category, setCategory] = useState('all')
   const [search, setSearch] = useState('')

@@ -1,7 +1,8 @@
 import seedrandom from 'seedrandom'
 
-export const createRng = (now = new Date()) => {
-  return seedrandom((now.getTime() / 1000000).toFixed())
+// constant seed: server HTML and client hydration must draw identical values
+export const createRng = (seed = 'sospedra.me') => {
+  return seedrandom(seed)
 }
 
 export const createRange = (rng = createRng()) => {

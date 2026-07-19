@@ -42,6 +42,7 @@ const Link = React.forwardRef(
 
 export const LinkBack: React.FC<{
   className?: string
+  children: React.ReactNode
 }> = (props) => {
   return (
     <nav className={`${css.back} ${props.className}`}>

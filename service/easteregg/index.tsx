@@ -7,7 +7,7 @@ import { useLog } from './log'
 const Egg = dynamic(() => import('./Egg'))
 const Tap = dynamic(() => import('./Tap'))
 
-const EasterEgg: React.FC<{}> = (props) => {
+const EasterEgg: React.FC<{ children: React.ReactNode }> = (props) => {
   const [isActive, setIsActive] = useState(false)
   const [isTapVisible, setIsTapVisible] = useState(false)
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo } from 'react'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
 import { isNotNull } from 'service/structs'
@@ -60,14 +60,14 @@ const getHidden = (href: string) => {
 }
 
 const stars = createStars()
+// own rng instance: the shared one advances per prerendered page and breaks hydration
+const shootingDelay = createRange(createRng('shooting-star'))(30, 8)
 
 const ShootingStar: React.FC<{}> = () => {
-  const delay = useRef(rrange(30, 8))
-
   return (
     <span
       className={css.shooting}
-      style={{ animationDelay: `${delay.current}s` }}
+      style={{ animationDelay: `${shootingDelay}s` }}
     >
       <span className={cn('start', { [css.star]: true })} />
     </span>

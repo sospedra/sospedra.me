@@ -4,11 +4,6 @@ const Preload: React.FC<{}> = () => {
   return (
     <>
       <link
-        rel='preconnect dns-prefetch'
-        href='https://www.google-analytics.com'
-      />
-
-      <link
         rel='preload'
         as='font'
         href='/fonts/wotfard.woff2'

@@ -1,6 +1,5 @@
 import React from 'react'
 import cn from 'classnames'
-import memoize from 'memoize-one'
 import Link, { LinkBack } from 'components/Link'
 import { fetchPapers, Paper } from 'service/markdown/files'
 import glitchCss from 'service/style/glitch.module.css'
@@ -11,9 +10,11 @@ import Shell from 'components/Shell'
 export const PAPERS_DESC =
   "Highly curated content about JavaScript, web development, TypeScript, the Internet, patterns and, in general, technology. Not your usual blog. Favour valuable content over long and boring SEO-focused posts. Words are my own. It's dangerous to go unknowing, take some pills 💊"
 
-const getTitleCss = memoize((_: string) => {
-  return Math.random() < 0.9 ? neonCss.neon : glitchCss.glitch
-})
+// deterministic per slug: Math.random() diverged between SSG html and hydration
+const getTitleCss = (slug: string) => {
+  const hash = [...slug].reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  return hash % 10 === 0 ? glitchCss.glitch : neonCss.neon
+}
 
 const Papers: React.FC<{
   papers: Paper[]

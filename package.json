@@ -31,7 +31,6 @@
     "fuse.js": "^6.4.0",
     "hashids": "^2.2.1",
     "lodash.debounce": "^4.0.8",
-    "memoize-one": "^5.1.1",
     "mousetrap": "^1.6.5",
     "next": "^16.2.10",
     "path-to-regexp": "^6.2.0",

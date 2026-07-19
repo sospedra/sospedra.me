@@ -6,7 +6,7 @@ import Image from '../Image'
 
 let metadata: PaperT | object = {}
 
-export const Markdown: React.FC<{}> = (props) => {
+export const Markdown: React.FC<{ children: React.ReactNode }> = (props) => {
   return (
     <MDXProvider<{ meta: PaperT }>
       components={{

@@ -10,6 +10,7 @@ const Shell: React.FC<{
   shellClassName?: string
   title?: string
   keywords?: string[]
+  children: React.ReactNode
 }> = ({
   canonical,
   children,

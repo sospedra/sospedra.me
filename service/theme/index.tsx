@@ -20,7 +20,9 @@ export const useTheme = () => {
   return useContext(context)
 }
 
-export const ThemeProvider: React.FC<{}> = (props) => {
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = (
+  props,
+) => {
   const [theme, setThemeMemory] = useState<Theme>(fromStorage())
   const setTheme = (theme: Theme) => {
     setThemeMemory(theme)
