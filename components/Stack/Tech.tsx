@@ -1,11 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import cn from 'classnames'
-import {
-  animated,
-  interpolate,
-  OpaqueInterpolation,
-  useSpring,
-} from 'react-spring'
+import { animated, to, SpringValue, useSpring } from '@react-spring/web'
 import { createCache } from 'service/cache'
 import { useStack } from 'service/stack'
 import css from './tech.module.css'
@@ -16,23 +11,22 @@ const FACTOR_Y = 5
 const cache = createCache((element: HTMLAnchorElement) => {
   return element.getBoundingClientRect()
 })
-const createTranspolate = (
-  x: OpaqueInterpolation<number>,
-  y: OpaqueInterpolation<number>,
-) => (outputX = FACTOR_X, outputY = FACTOR_Y) => {
-  return interpolate(
+const createTranspolate = (x: SpringValue<number>, y: SpringValue<number>) => (
+  outputX = FACTOR_X,
+  outputY = FACTOR_Y,
+) => {
+  return to(
     [
-      x.interpolate({
+      x.to({
         range: [-FACTOR_X, FACTOR_X],
         output: [-outputX, outputX],
       }),
-      y.interpolate({
+      y.to({
         range: [-FACTOR_Y, FACTOR_Y],
         output: [-outputY, outputY],
       }),
     ],
     (x, y) => {
-      // return `translate3d(${d}px, ${d}px, ${d}px) translate(${x}px, ${y}px)`
       return `translate(${x}px, ${y}px)`
     },
   )
@@ -45,7 +39,7 @@ const Tech: React.FC<{
   isGithub: boolean
 }> = (props) => {
   const ref = useRef<HTMLAnchorElement>(null)
-  const [{ x, y }, set] = useSpring(() => ({ x: 0, y: 0 }))
+  const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }))
   const transpolate = createTranspolate(x, y)
 
   useEffect(() => {
@@ -56,21 +50,21 @@ const Tech: React.FC<{
         const { left, top, width, height } = cache.get(current)
         const x = (clientX - left) / width
         const y = (clientY - top) / height
-        set({
+        api.start({
           x: (x - 0.5) * 2 * FACTOR_X,
           y: (y - 0.5) * 2 * FACTOR_Y,
         })
       }
 
       const onout = () => {
-        set({ x: 0, y: 0 })
+        api.start({ x: 0, y: 0 })
       }
 
       current.addEventListener('mousemove', onmove)
       current.addEventListener('mouseout', onout)
       return () => {
         current?.removeEventListener('mousemove', onmove)
-        current?.removeEventListener('mousemout', onout)
+        current?.removeEventListener('mouseout', onout)
       }
     }
   }, [ref.current])
@@ -87,8 +81,8 @@ const Tech: React.FC<{
         <animated.div
           style={{
             transform: x
-              .interpolate({ range: [-FACTOR_X, FACTOR_X], output: [1, -1] })
-              .interpolate((d) => `skewY(${d}deg)`),
+              .to({ range: [-FACTOR_X, FACTOR_X], output: [1, -1] })
+              .to((d) => `skewY(${d}deg)`),
           }}
         >
           <h4>{props.name}</h4>

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { useSpring, animated, config } from 'react-spring'
+import { useSpring, animated, config } from '@react-spring/web'
 import { useRouter } from 'next/router'
 import { useTransition } from './context'
 import { createPtr } from './create-ptr'
@@ -29,14 +29,15 @@ const getOffsetFromHref = (href: string): OffsetT => {
 }
 
 const Animation: React.FunctionComponent<{
-  setAnimation: Function
-  animation: Object
+  start: (offset: OffsetT) => unknown
+  animation: object
 }> = (props) => {
   const { pathname } = useRouter()
   const { url } = useTransition()
 
+  // useMemo, not useEffect: the pan must start on render, before paint
   useMemo(() => {
-    props.setAnimation(getOffsetFromHref(url || pathname))
+    props.start(getOffsetFromHref(url || pathname))
   }, [pathname, url])
 
   return <animated.div className={css.bg} style={props.animation} />
@@ -45,7 +46,7 @@ const Animation: React.FunctionComponent<{
 const Background: React.FunctionComponent<{}> = () => {
   const { pathname } = useRouter()
   const { unmount } = useTransition()
-  const [animation, setAnimation] = useSpring(() => ({
+  const [animation, api] = useSpring(() => ({
     to: getOffsetFromHref(pathname),
     config: config.molasses,
     onStart: () => {
@@ -55,7 +56,7 @@ const Background: React.FunctionComponent<{}> = () => {
 
   return (
     <div className={css.wrapper}>
-      <Animation setAnimation={setAnimation} animation={animation} />
+      <Animation start={(offset) => api.start(offset)} animation={animation} />
       <Stars />
     </div>
   )

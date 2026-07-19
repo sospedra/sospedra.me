@@ -1,6 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
-import { config, animated, useSpring } from 'react-spring'
+import { config, animated, useSpring } from '@react-spring/web'
 import css from './city.module.css'
 
 const SpriteCity: React.FunctionComponent<{}> = () => {

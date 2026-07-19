@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from 'react'
 import cn from 'classnames'
-import { animated, useSpring } from 'react-spring'
+import { animated, useSpring } from '@react-spring/web'
 import { useMeasure, usePrevious } from 'service/screen'
 import Icon from 'components/Icon'
 

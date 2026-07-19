@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { NextPage } from 'next'
-import { animated, config, useSpring } from 'react-spring'
+import { animated, config, useSpring } from '@react-spring/web'
 import { useNav } from 'service/nav'
 import { useTransition } from 'service/transition'
 import Link from 'components/Link'
