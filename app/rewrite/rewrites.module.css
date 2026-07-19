@@ -23,7 +23,7 @@
   @apply hidden;
 }
 
-@screen sm {
+@media (min-width: 640px) {
   .rewrites td:nth-child(2),
   .rewrites th:nth-child(2) {
     @apply block;

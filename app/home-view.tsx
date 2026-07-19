@@ -1,5 +1,6 @@
+'use client'
+
 import { useState } from 'react'
-import { NextPage } from 'next'
 import { animated, config, useSpring } from '@react-spring/web'
 import { useNav } from 'service/nav'
 import { useTransition } from 'service/transition'
@@ -10,7 +11,7 @@ import SpriteCity from 'components/Sprite/City'
 import SpriteCar from 'components/Sprite/Car'
 import Triangle from 'components/Triangle'
 import Title from 'components/Title'
-import css from './home.module.css'
+import css from 'app/home.module.css'
 
 const BAZAAR_DURATION = 3500
 const BAZAAR_OFFSET = -600
@@ -19,7 +20,7 @@ const focusOnHover = (ref: React.RefObject<HTMLAnchorElement | null>) => {
   return () => ref.current?.focus()
 }
 
-const IndexPage: NextPage = () => {
+export default function HomeView() {
   const [[offsetX, offsetY], setOffset] = useState([0, 0])
   const refs = useNav()
   const transition = useTransition()
@@ -41,7 +42,6 @@ const IndexPage: NextPage = () => {
   return (
     <Shell
       className='flex flex-col items-center justify-center flex-1 w-screen h-screen'
-      description='Rubén Sospedra ▼ javascript hacker'
       shellClassName='overflow-y-hidden'
       canonical='/'
     >
@@ -73,7 +73,7 @@ const IndexPage: NextPage = () => {
               </li>
               <li>
                 {/* custom 3.5s drive-away sequence owns this navigation */}
-                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                {}
                 <a
                   ref={refs[2]}
                   href='/bazaar'
@@ -112,5 +112,3 @@ const IndexPage: NextPage = () => {
     </Shell>
   )
 }
-
-export default IndexPage

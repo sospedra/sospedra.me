@@ -1,4 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react'
+'use client'
+
+import { useRef, useState, useEffect } from 'react'
 import neonCss from 'service/style/neon.module.css'
 import Shell from 'components/Shell'
 import SpriteBust from 'components/Sprite/Bust'
@@ -8,7 +10,7 @@ import Row from 'components/Row'
 import Role from 'components/Role'
 import css from './about.module.css'
 
-const About: React.FC = () => {
+export default function AboutView() {
   const teleportRef = useRef<HTMLDivElement>(null)
   const [$teleport, setTeleport] = useState<HTMLDivElement>()
 
@@ -18,9 +20,7 @@ const About: React.FC = () => {
 
   return (
     <Shell
-      title='About'
       className='relative w-full h-full max-w-4xl px-4 pt-12 pb-20 mx-auto text-white'
-      description='javascript hacker ▼ fullstack engineer contractor'
       canonical='/about'
     >
       <Row
@@ -249,5 +249,3 @@ const About: React.FC = () => {
     </Shell>
   )
 }
-
-export default About

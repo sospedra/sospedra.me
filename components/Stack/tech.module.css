@@ -37,7 +37,7 @@
   -webkit-text-stroke: 1px transparent;
 }
 
-@screen md {
+@media (min-width: 768px) {
   .trail1,
   .trail2,
   .tech h4 {

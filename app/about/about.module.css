@@ -17,7 +17,7 @@
   @apply mb-4 font-bold;
 }
 
-@screen sm {
+@media (min-width: 640px) {
   .content p {
     @apply text-lg;
   }
@@ -39,7 +39,7 @@
   top: -0.5rem;
 }
 
-@screen md {
+@media (min-width: 768px) {
   .sprite {
     --size: 32rem;
   }

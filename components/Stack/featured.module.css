@@ -4,7 +4,7 @@
   @apply grid grid-flow-row-dense grid-cols-3 gap-4;
 }
 
-@screen md {
+@media (min-width: 768px) {
   .featured {
     @apply grid-cols-5;
   }

@@ -32,7 +32,7 @@
   text-orientation: mixed;
 }
 
-@screen md {
+@media (min-width: 768px) {
   .nav {
     @apply text-2xl;
   }
