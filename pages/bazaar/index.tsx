@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { NextPage } from 'next'
 import cn from 'classnames'
 import { STACK_DESC } from 'pages/stack'
@@ -19,16 +19,9 @@ const BAZAAR_DESC = 'Gallery of my featured projects'
 
 const Bazaar: NextPage = () => {
   const [isHidden, setIsHidden] = useState(false)
-  const [intent, setIntent] = useState(false)
   const scrollRef = useScroll((e) => {
-    return e.target.scrollTop > 300 ? setIntent(true) : setIntent(false)
+    setIsHidden(e.target.scrollTop > 300)
   })
-
-  useEffect(() => {
-    if (intent !== isHidden) {
-      setIsHidden(intent)
-    }
-  }, [intent, isHidden])
 
   return (
     <Shell title='Bazaar' description={BAZAAR_DESC} canonical='/bazaar'>

@@ -63,7 +63,7 @@ const stars = createStars()
 // own rng instance: the shared one advances per prerendered page and breaks hydration
 const shootingDelay = createRange(createRng('shooting-star'))(30, 8)
 
-const ShootingStar: React.FC<{}> = () => {
+const ShootingStar: React.FC = () => {
   return (
     <span
       className={css.shooting}
@@ -74,7 +74,7 @@ const ShootingStar: React.FC<{}> = () => {
   )
 }
 
-const Stars: React.FC<{}> = () => {
+const Stars: React.FC = () => {
   const { pathname } = useRouter()
   const { url } = useTransition()
   const hidden = useMemo(() => getHidden(url || pathname), [url, pathname])

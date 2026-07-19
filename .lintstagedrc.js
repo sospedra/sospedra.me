@@ -2,13 +2,18 @@ const resize = require('./internals/resize')
 const reading = require('./internals/reading')
 
 module.exports = {
-  '*.{ts,tsx,css}': (filenames) => `prettier --write ${filenames.join(' ')}`,
-  '*.{mdx}': (filenames) => {
-    filenames.forEach((filename) => reading(filename))
+  '*.{ts,tsx}': ['eslint --fix', 'prettier --write'],
+  '*.css': 'prettier --write',
+  '*.mdx': (filenames) => {
+    for (const filename of filenames) {
+      reading(filename)
+    }
     return []
   },
   '*.{gif,jpg,jpeg,tiff,png}': (filenames) => {
-    filenames.forEach((filename) => resize(filename))
+    for (const filename of filenames) {
+      resize(filename)
+    }
     return []
   },
 }

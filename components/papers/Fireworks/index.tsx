@@ -10,7 +10,7 @@ import {
   createScrollListener,
 } from './service'
 
-const Fireworks: React.FC<{}> = () => {
+const Fireworks: React.FC = () => {
   const canvas = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {

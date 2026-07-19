@@ -25,17 +25,23 @@ export const DEFAULT_STATE: State = {
   url: '',
 }
 
-const reducer: (
-  state: State,
-  action: { type: keyof typeof ActionTypes; payload?: { [key: string]: any } },
-) => State = (state, action) => {
+type Action =
+  | { type: ActionTypes.NAVIGATE; payload: { url: string; as?: string } }
+  | { type: ActionTypes.UNMOUNT }
+  | { type: ActionTypes.RESET }
+  | {
+      type: ActionTypes.OFFSHORE
+      payload: { offshore: State['offshore']; duration?: number }
+    }
+
+const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case ActionTypes.NAVIGATE:
       return {
         ...state,
         hasRequestedUnmount: true,
-        url: action.payload?.url,
-        as: action.payload?.as,
+        url: action.payload.url,
+        as: action.payload.as,
       }
     case ActionTypes.UNMOUNT:
       return { ...state, willUnmount: true }
@@ -44,8 +50,8 @@ const reducer: (
     case ActionTypes.OFFSHORE:
       return {
         ...state,
-        offshore: action.payload?.offshore,
-        offshoreDuration: action.payload?.duration,
+        offshore: action.payload.offshore,
+        offshoreDuration: action.payload.duration,
       }
     default:
       return state

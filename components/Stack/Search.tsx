@@ -2,7 +2,7 @@ import React from 'react'
 import Emoji from 'components/Emoji'
 import { useStack } from 'service/stack'
 
-const Search: React.FC<{}> = () => {
+const Search: React.FC = () => {
   const { setSearch } = useStack()
 
   return (

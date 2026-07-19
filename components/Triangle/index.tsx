@@ -2,7 +2,7 @@ import React from 'react'
 import cn from 'classnames'
 import css from './triangle.module.css'
 
-const Triangle: React.FC<{}> = () => {
+const Triangle: React.FC = () => {
   return (
     <>
       <div className={css.triangle} />

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Preload: React.FC<{}> = () => {
+const Preload: React.FC = () => {
   return (
     <>
       <link

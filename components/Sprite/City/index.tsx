@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { config, animated, useSpring } from '@react-spring/web'
 import css from './city.module.css'
 
-const SpriteCity: React.FunctionComponent<{}> = () => {
+const SpriteCity: React.FunctionComponent = () => {
   const animation = useSpring({
     from: { transform: 'translate(0vw)' },
     to: { transform: 'translate(-100vw)' },

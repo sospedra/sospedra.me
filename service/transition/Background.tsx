@@ -43,7 +43,7 @@ const Animation: React.FunctionComponent<{
   return <animated.div className={css.bg} style={props.animation} />
 }
 
-const Background: React.FunctionComponent<{}> = () => {
+const Background: React.FunctionComponent = () => {
   const { pathname } = useRouter()
   const { unmount } = useTransition()
   const [animation, api] = useSpring(() => ({

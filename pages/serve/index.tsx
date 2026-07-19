@@ -45,9 +45,10 @@ const renderTree = (subtree: TreeNode[], expand?: string[]) => {
         key={node.name}
         defaultOpen={['', 'public', ...(expand || [])].includes(node.name)}
         bold={!!expand?.includes(node.name)}
-        children={children}
         route={node.path}
-      />
+      >
+        {children}
+      </TreeComponent>
     )
   })
 }

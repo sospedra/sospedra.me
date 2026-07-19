@@ -7,7 +7,7 @@ import css from './rewrites.module.css'
 
 export const REWRITE_DESC = 'Personal links that I share often'
 
-const Rewrites: React.FC<{}> = () => {
+const Rewrites: React.FC = () => {
   return (
     <Shell
       title='Links'

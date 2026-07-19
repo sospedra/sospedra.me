@@ -1,7 +1,7 @@
 import React from 'react'
 import css from './bust.module.css'
 
-const SpriteBust: React.FC<{}> = () => {
+const SpriteBust: React.FC = () => {
   return (
     <svg
       aria-labelledby='title desc'

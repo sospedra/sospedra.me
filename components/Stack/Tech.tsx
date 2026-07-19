@@ -11,26 +11,25 @@ const FACTOR_Y = 5
 const cache = createCache((element: HTMLAnchorElement) => {
   return element.getBoundingClientRect()
 })
-const createTranspolate = (x: SpringValue<number>, y: SpringValue<number>) => (
-  outputX = FACTOR_X,
-  outputY = FACTOR_Y,
-) => {
-  return to(
-    [
-      x.to({
-        range: [-FACTOR_X, FACTOR_X],
-        output: [-outputX, outputX],
-      }),
-      y.to({
-        range: [-FACTOR_Y, FACTOR_Y],
-        output: [-outputY, outputY],
-      }),
-    ],
-    (x, y) => {
-      return `translate(${x}px, ${y}px)`
-    },
-  )
-}
+const createTranspolate =
+  (x: SpringValue<number>, y: SpringValue<number>) =>
+  (outputX = FACTOR_X, outputY = FACTOR_Y) => {
+    return to(
+      [
+        x.to({
+          range: [-FACTOR_X, FACTOR_X],
+          output: [-outputX, outputX],
+        }),
+        y.to({
+          range: [-FACTOR_Y, FACTOR_Y],
+          output: [-outputY, outputY],
+        }),
+      ],
+      (x, y) => {
+        return `translate(${x}px, ${y}px)`
+      },
+    )
+  }
 
 const Tech: React.FC<{
   route: string
@@ -67,7 +66,7 @@ const Tech: React.FC<{
         current?.removeEventListener('mouseout', onout)
       }
     }
-  }, [ref.current])
+  }, [])
 
   return (
     <li>
@@ -111,7 +110,7 @@ const Tech: React.FC<{
   )
 }
 
-const TechList: React.FC<{}> = () => {
+const TechList: React.FC = () => {
   const { results } = useStack()
 
   useEffect(() => {

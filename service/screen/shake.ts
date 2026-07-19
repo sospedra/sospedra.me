@@ -8,7 +8,7 @@ const selectCoords = (acceleration: DeviceMotionEventAcceleration | null) => {
   return !x || !y || !z ? createCoords() : { x, y, z }
 }
 
-export const useShake = (clbk: () => any) => {
+export const useShake = (clbk: () => void) => {
   const vault = createCoords()
 
   useEffect(() => {

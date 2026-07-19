@@ -9,7 +9,7 @@ import css from './uses.module.css'
 export const USES_DESC =
   'The specifics of the piece of software and hardware I use every day. Highly opinionated.'
 
-const Uses: NextPage<{}> = () => {
+const Uses: NextPage = () => {
   return (
     <Shell
       canonical='/uses'

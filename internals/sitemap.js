@@ -34,7 +34,8 @@ const createSitemap = (routes) => `<?xml version="1.0" encoding="UTF-8"?>
     ),
   ]
   const sitemap = createSitemap(routes)
-  const file = prettier.format(sitemap, { parser: 'html' })
+  // prettier 3 made format async
+  const file = await prettier.format(sitemap, { parser: 'html' })
 
   await fs.writeFile(join(process.cwd(), 'public/sitemap.xml'), file)
 })()

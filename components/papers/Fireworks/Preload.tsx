@@ -2,7 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import { createFrameRoute, frameMax } from './service'
 
-const Preload: React.FC<{}> = React.memo(() => {
+const Preload: React.FC = React.memo(function Preload() {
   return (
     <Head>
       {Array(frameMax)

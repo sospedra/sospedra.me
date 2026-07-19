@@ -14,7 +14,7 @@ import Head from 'next/head'
 export const MANUAL_DESC =
   'How to work with Rubén Sospedra. A manual of instructions. What I value, how I look at problems, what are my blind spots, and how to build trust with me.'
 
-const Manual: NextPage<{}> = () => {
+const Manual: NextPage = () => {
   return (
     <Shell
       canonical='/manual'

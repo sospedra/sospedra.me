@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import css from './role.module.css'
 import { useInterval } from 'service/easteregg/interval'
 
@@ -14,15 +14,17 @@ const Glitch: React.FC<{ char: string; i: number }> = (props) => {
   )
 }
 
-const Role: React.FC<{}> = () => {
+const Role: React.FC = () => {
   const [i, setIteration] = useState(0)
   const interval = useInterval(() => {
     setIteration((iteration) => iteration + 1)
+  }, 100)
 
+  useEffect(() => {
     if (i === kanjis.length - 1 && interval) {
       clearInterval(interval)
     }
-  }, 100)
+  }, [i, interval])
 
   return (
     <h2 className={css.header2}>

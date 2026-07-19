@@ -2,7 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import css from './mountain.module.css'
 
-export const SpriteCloud: React.FC<{}> = () => {
+export const SpriteCloud: React.FC = () => {
   return (
     <div role='img'>
       <div className={css.cloud} />
@@ -10,7 +10,7 @@ export const SpriteCloud: React.FC<{}> = () => {
   )
 }
 
-const SpriteMountain: React.FC<{}> = () => {
+const SpriteMountain: React.FC = () => {
   return (
     <>
       <Head>

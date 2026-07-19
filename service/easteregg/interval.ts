@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
-export const useInterval = (callback: Function, delay: number) => {
-  const memo = useRef<Function | undefined>(undefined)
+export const useInterval = (callback: () => void, delay: number) => {
+  const memo = useRef<(() => void) | undefined>(undefined)
   const [interval, saveInterval] = useState<ReturnType<typeof setInterval>>()
 
   useEffect(() => {

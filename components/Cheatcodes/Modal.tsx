@@ -7,7 +7,7 @@ type Props = {
   close: () => void
 }
 
-const Message: React.FC<{}> = () => {
+const Message: React.FC = () => {
   const isTouchScreen = matchScreen(queryTouchScreen)
 
   if (isTouchScreen) {

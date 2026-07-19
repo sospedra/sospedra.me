@@ -33,15 +33,9 @@ const Category: React.FC<{
   )
 }
 
-const CategoryList: React.FC<{}> = () => {
-  const {
-    category,
-    categories,
-    stack,
-    setCategory,
-    search,
-    anchor,
-  } = useStack()
+const CategoryList: React.FC = () => {
+  const { category, categories, stack, setCategory, search, anchor } =
+    useStack()
 
   return (
     <section

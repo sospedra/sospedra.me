@@ -6,7 +6,7 @@ import rim from './rim.svg'
 import reflect from './reflect.svg'
 import css from './car.module.css'
 
-const SpriteCar: React.FC<{}> = () => {
+const SpriteCar: React.FC = () => {
   return (
     <>
       <Head>

@@ -50,11 +50,9 @@ export const TreeParent: React.FC<TreeProps> = memo(function TreeParent(props) {
           height: isOpen && previous === isOpen ? 'auto' : height,
         }}
       >
-        <animated.div
-          style={{ transform }}
-          ref={ref}
-          children={props.children}
-        />
+        <animated.div style={{ transform }} ref={ref}>
+          {props.children}
+        </animated.div>
       </animated.div>
     </div>
   )

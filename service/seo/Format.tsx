@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Format: React.FC<{}> = () => {
+const Format: React.FC = () => {
   return (
     <>
       <script

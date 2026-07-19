@@ -5,7 +5,7 @@ import css from './featured.module.css'
 import { useStack } from 'service/stack'
 import { createRange } from 'service/random'
 
-const Featured: React.FC<{}> = () => {
+const Featured: React.FC = () => {
   const { stack, filter, search, setCategory, scrollTo } = useStack()
   const newest = stack[0]
   const random = stack[createRange()(stack.length - 1)]

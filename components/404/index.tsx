@@ -4,7 +4,7 @@ import { useTransition } from 'service/transition'
 import Link from 'components/Link'
 import css from './404.module.css'
 
-const Component404: React.FC<{}> = () => {
+const Component404: React.FC = () => {
   const [vid, setVid] = useState('desk')
   const { navigate } = useTransition()
 

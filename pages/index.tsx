@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { NextPage } from 'next'
 import { animated, config, useSpring } from '@react-spring/web'
 import { useNav } from 'service/nav'
@@ -14,11 +14,17 @@ import css from './home.module.css'
 const BAZAAR_DURATION = 3500
 const BAZAAR_OFFSET = -600
 
+const focusOnHover = (ref: React.RefObject<HTMLAnchorElement | null>) => {
+  return () => ref.current?.focus()
+}
+
 const IndexPage: NextPage = () => {
-  const [[offsetX, offsetY], setOffset] = useState([0, 100])
+  const [[offsetX, offsetY], setOffset] = useState([0, 0])
   const refs = useNav()
   const transition = useTransition()
   const { transform } = useSpring({
+    // from replaces the old mount effect: the menu slides up on entrance
+    from: { transform: 'translate(0vw, 100vh)' },
     transform: `translate(${offsetX}vw, ${offsetY}vh)`,
     config:
       offsetX === BAZAAR_OFFSET ? { duration: BAZAAR_DURATION } : config.slow,
@@ -30,10 +36,6 @@ const IndexPage: NextPage = () => {
   })
 
   transition.usePrefetch('/bazaar')
-
-  useEffect(() => {
-    setOffset([0, 0])
-  }, [])
 
   return (
     <Shell
@@ -52,7 +54,7 @@ const IndexPage: NextPage = () => {
                 <Link
                   ref={refs[0]}
                   url='/papers'
-                  onMouseEnter={() => refs[0].current?.focus()}
+                  onMouseEnter={focusOnHover(refs[0])}
                   onClick={() => setOffset([0, 100])}
                 >
                   Papers
@@ -62,17 +64,19 @@ const IndexPage: NextPage = () => {
                 <Link
                   ref={refs[1]}
                   url='/about'
-                  onMouseEnter={() => refs[1].current?.focus()}
+                  onMouseEnter={focusOnHover(refs[1])}
                   onClick={() => setOffset([0, 100])}
                 >
                   About
                 </Link>
               </li>
               <li>
+                {/* custom 3.5s drive-away sequence owns this navigation */}
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
                 <a
                   ref={refs[2]}
                   href='/bazaar'
-                  onMouseEnter={() => refs[2].current?.focus()}
+                  onMouseEnter={focusOnHover(refs[2])}
                   onClick={(e) => {
                     e.preventDefault()
                     setOffset([BAZAAR_OFFSET, 0])

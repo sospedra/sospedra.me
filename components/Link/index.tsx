@@ -3,42 +3,40 @@ import { useTransition } from 'service/transition'
 import Icon from 'components/Icon'
 import css from './link.module.css'
 
-const Link = React.forwardRef(
-  (
-    props: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-      url: string
-      as?: string
-      children: React.ReactNode
-      instant?: boolean
-    },
-    ref?: React.Ref<HTMLAnchorElement>,
-  ) => {
-    const { as, url, onClick, instant, ...nativeProps } = props
-    const transition = useTransition()
-
-    transition.usePrefetch(url)
-
-    return (
-      <a
-        {...nativeProps}
-        ref={ref}
-        href={as || url}
-        onClick={(e) => {
-          e.preventDefault()
-          onClick && onClick(e)
-          setTimeout(
-            () => {
-              transition.navigate(url, as)
-            },
-            instant ? 0 : 360,
-          )
-        }}
-      >
-        {props.children}
-      </a>
-    )
+const Link = React.forwardRef(function Link(
+  props: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+    url: string
+    as?: string
+    children: React.ReactNode
+    instant?: boolean
   },
-)
+  ref?: React.Ref<HTMLAnchorElement>,
+) {
+  const { as, url, onClick, instant, ...nativeProps } = props
+  const transition = useTransition()
+
+  transition.usePrefetch(url)
+
+  return (
+    <a
+      {...nativeProps}
+      ref={ref}
+      href={as || url}
+      onClick={(e) => {
+        e.preventDefault()
+        onClick && onClick(e)
+        setTimeout(
+          () => {
+            transition.navigate(url, as)
+          },
+          instant ? 0 : 360,
+        )
+      }}
+    >
+      {props.children}
+    </a>
+  )
+})
 
 export const LinkBack: React.FC<{
   className?: string

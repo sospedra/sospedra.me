@@ -8,7 +8,7 @@ import Row from 'components/Row'
 import Role from 'components/Role'
 import css from './about.module.css'
 
-const About: React.FC<{}> = () => {
+const About: React.FC = () => {
   const teleportRef = useRef<HTMLDivElement>(null)
   const [$teleport, setTeleport] = useState<HTMLDivElement>()
 

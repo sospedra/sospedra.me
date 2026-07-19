@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, createContext, createRef } from 'react'
+import { createContext, createRef } from 'react'
 import stack from './stack.json'
 
 export const defaultState = {
@@ -11,12 +11,12 @@ export const defaultState = {
     })
     return patch
   }, {}),
-  results: [] as typeof stack[0][],
+  results: [] as (typeof stack)[0][],
   category: 'all',
-  setCategory: (() => {}) as Dispatch<SetStateAction<string>>,
-  setSearch: (() => {}) as Dispatch<SetStateAction<string>>,
+  setCategory: (() => {}) as (category: string) => void,
+  setSearch: (() => {}) as (search: string) => void,
   search: '',
-  filter: (() => {}) as (clbk: (result: typeof stack[0]) => boolean) => void,
+  filter: (() => {}) as (clbk: (result: (typeof stack)[0]) => boolean) => void,
   reset: () => {},
   scrollTo: () => {},
   anchor: createRef<HTMLDivElement>(),

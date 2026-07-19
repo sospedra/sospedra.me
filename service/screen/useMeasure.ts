@@ -1,9 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
 
-export function usePrevious(value: any) {
-  const ref = useRef<typeof value>(undefined)
-  useEffect(() => void (ref.current = value), [value])
-  return ref.current
+export function usePrevious<T>(value: T) {
+  const [prev, setPrev] = useState<T | undefined>(undefined)
+  const [curr, setCurr] = useState(value)
+
+  // render-phase adjust, the react-blessed derived-state pattern
+  if (value !== curr) {
+    setPrev(curr)
+    setCurr(value)
+  }
+
+  return prev
 }
 
 export function useMeasure() {

@@ -1,7 +1,7 @@
 import React from 'react'
 import css from './title.module.css'
 
-const Title: React.FC<{}> = () => {
+const Title: React.FC = () => {
   return (
     <h1 className={css.title}>
       <span>rubén</span>

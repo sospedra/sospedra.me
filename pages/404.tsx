@@ -2,7 +2,7 @@ import { NextPage } from 'next'
 import Shell from 'components/Shell'
 import Component404 from 'components/404'
 
-const Sospedra404: NextPage<{}> = () => {
+const Sospedra404: NextPage = () => {
   return (
     <Shell
       title='404'

@@ -2,7 +2,7 @@ import React from 'react'
 
 const URL = 'https://sospedra.me'
 
-const Social: React.FC<{}> = () => {
+const Social: React.FC = () => {
   return (
     <>
       <meta name='author' content='Rubén Sospedra' />

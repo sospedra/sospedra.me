@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Icons: React.FC<{}> = () => {
+const Icons: React.FC = () => {
   return (
     <>
       <link rel='icon' href='/favicon.ico' />
