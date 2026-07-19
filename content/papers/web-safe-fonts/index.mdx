@@ -1,5 +1,3 @@
-export const meta = require('./metadata.json')
-
 This story begins in 1984. Involves the major R&D companies in Silicon Valley. Machinery. Tech revolutions. And finally, the web.
 **It's the story of the web fonts**. Why are so many? And why it's so difficult to get a standard? And at the end a snippet with the best we can do today.
 
@@ -49,47 +47,49 @@ Anyway, **the CSS rules below are safe to use in any combination of browsers and
 
 Finally, if you don't need an absolute 100% support. The following list are the most well-supported fonts. [Almost available everywhere](https://web.mit.edu/jmorzins/www/fonts.html).
 
-<style jsx>{`
-  tbody tr:nth-child(1) {
+<div className='websafe-table'>
+
+<style>{`
+  .websafe-table tbody tr:nth-child(1) {
     font-family: Helvetica, Arial;
   }
-  tbody tr:nth-child(2) {
+  .websafe-table tbody tr:nth-child(2) {
     font-family: 'Arial Black';
   }
-  tbody tr:nth-child(3) {
+  .websafe-table tbody tr:nth-child(3) {
     font-family: 'Courier New';
   }
-  tbody tr:nth-child(4) {
+  .websafe-table tbody tr:nth-child(4) {
     font-family: Georgia;
   }
-  tbody tr:nth-child(5) {
+  .websafe-table tbody tr:nth-child(5) {
     font-family: Monaco, 'Lucida Console';
   }
-  tbody tr:nth-child(6) {
+  .websafe-table tbody tr:nth-child(6) {
     font-family: 'Lucida Grande', 'Lucida Sans Unicode';
   }
-  tbody tr:nth-child(7) {
+  .websafe-table tbody tr:nth-child(7) {
     font-family: Geneva, Tahoma;
   }
-  tbody tr:nth-child(8) {
+  .websafe-table tbody tr:nth-child(8) {
     font-family: Times, 'Times New Roman';
   }
-  tbody tr:nth-child(9) {
+  .websafe-table tbody tr:nth-child(9) {
     font-family: Helvetica, 'Trebuchet MS';
   }
-  tbody tr:nth-child(10) {
+  .websafe-table tbody tr:nth-child(10) {
     font-family: Verdana;
   }
-  tbody tr:nth-child(11) {
+  .websafe-table tbody tr:nth-child(11) {
     font-family: Symbol;
   }
-  tbody tr:nth-child(12) {
+  .websafe-table tbody tr:nth-child(12) {
     font-family: Geneva, 'MS Sans Serif';
   }
-  tbody tr:nth-child(13) {
+  .websafe-table tbody tr:nth-child(13) {
     font-family: 'New York', 'MS Serif';
   }
-  tbody tr:nth-child(13) {
+  .websafe-table tbody tr:nth-child(13) {
     font-family: system;
   }
 `}</style>
@@ -109,3 +109,5 @@ Finally, if you don't need an absolute 100% support. The following list are the 
 | Symbol              | ~                   | symbol |
 | Geneva              | MS Sans Serif       | sans   |
 | New York            | MS Serif            | serif  |
+
+</div>

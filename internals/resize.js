@@ -1,34 +1,38 @@
 const sharp = require('sharp')
-const { resolve, basename } = require('path')
+const { resolve, dirname, basename } = require('path')
 const io = require('./io')
 
 sharp.cache(false)
 
-module.exports = (filename) => {
-  if (!filename.includes('pages/papers')) return
+module.exports = async (filename) => {
+  if (!filename.includes('content/papers')) return
 
   const image = sharp(filename)
+  const { width } = await image.metadata()
+  const resized = width > 640 ? image.resize(640) : image
+  const data = await resized.jpeg().toBuffer()
 
-  return image
-    .metadata()
-    .then(({ width }) => (width > 640 ? image.resize(640) : image))
-    .then((data) => data.jpeg().toBuffer())
-    .then(async (data) => {
-      const file = filename.replace(/\.[^.]+$/, '.jpeg')
+  // sources and metadata live in content, served files in public
+  const output = filename
+    .replace('content/papers', 'public/papers')
+    .replace(/\.[^.]+$/, '.jpeg')
 
-      await io.write(file, data, false)
+  if (!(await io.exists(dirname(output)))) {
+    await io.mkdir(dirname(output))
+  }
+  await io.write(output, data, false)
 
-      sharp(file)
-        .metadata()
-        .then(async ({ width, height }) => {
-          const meta = await io.read(resolve(file, '../metadata.json'), '{}')
+  const dimensions = await sharp(output).metadata()
+  const metafile = resolve(filename, '../metadata.json')
+  const meta = await io.read(metafile, '{}')
 
-          await io.write(
-            resolve(file, '../metadata.json'),
-            io.assign(meta, 'images', {
-              [basename(file)]: { width, height },
-            }),
-          )
-        })
-    })
+  return io.write(
+    metafile,
+    io.assign(meta, 'images', {
+      [basename(output)]: {
+        width: dimensions.width,
+        height: dimensions.height,
+      },
+    }),
+  )
 }

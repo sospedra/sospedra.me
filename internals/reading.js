@@ -3,7 +3,7 @@ const { resolve } = require('path')
 const io = require('./io')
 
 module.exports = async (filename) => {
-  if (!filename.includes('pages/papers')) return
+  if (!filename.includes('content/papers')) return
 
   const metafile = resolve(filename, '../metadata.json')
   const [content, meta] = await Promise.all([

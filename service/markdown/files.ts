@@ -4,7 +4,7 @@ import { promisify } from 'util'
 
 const readFile = promisify(fs.readFile)
 const readdir = promisify(fs.readdir)
-const root = join(process.cwd(), 'pages/papers')
+const root = join(process.cwd(), 'content/papers')
 
 export type Paper = {
   createdAt: string
@@ -21,6 +21,11 @@ export type Paper = {
       height: number
     }
   }
+}
+
+export async function fetchPaper(slug: string) {
+  const meta = await readFile(join(root, slug, 'metadata.json'), 'utf8')
+  return JSON.parse(meta) as Paper
 }
 
 export async function fetchPapers() {

@@ -11,7 +11,7 @@ const resize = require('./resize')
     )
   }
 
-  const dir = io.abs(`pages/papers/${paper}`)
+  const dir = io.abs(`content/papers/${paper}`)
   const now = new Date().toISOString()
   const meta = {
     createdAt: now,
@@ -26,19 +26,13 @@ const resize = require('./resize')
   }
 
   if (!(await io.exists(dir))) {
-    await Promise.all([
-      io.mkdir(dir),
-      io.write(
-        `${dir}/index.mdx`,
-        `export const meta = require('./metadata.json')`,
-        false,
-      ),
-    ])
+    await io.mkdir(dir)
+    await io.write(`${dir}/index.mdx`, '', false)
   }
 
   await io.write(`${dir}/metadata.json`, meta)
 
-  for (file of await io.dir(`/pages/papers/${paper}`)) {
+  for (file of await io.dir(`/content/papers/${paper}`)) {
     if (file.match(/[\/.](gif|jpg|jpeg|tiff|png)$/i)) {
       await resize(file)
     }

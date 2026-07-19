@@ -55,7 +55,7 @@ const createRSS = (metadata) => `<?xml version="1.0" encoding="UTF-8"?>
 </rss>`
 
 ;(async function feed() {
-  const pages = await globby(['pages/papers/**/metadata.json'])
+  const pages = await globby(['content/papers/**/metadata.json'])
   const metadata = await Promise.all(
     pages.map(async (p) => JSON.parse(await fs.readFile(p, 'utf-8'))),
   )

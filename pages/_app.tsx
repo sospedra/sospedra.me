@@ -4,7 +4,6 @@ import 'service/style/global.css'
 import { Provider as TransitionProvider } from 'service/transition'
 import { ThemeProvider } from 'service/theme'
 import { Mousetrap } from 'service/mousetrap'
-import { Markdown } from 'service/markdown/Provider'
 import EasterEgg from 'service/easteregg'
 
 class SospedraApp extends App {
@@ -16,9 +15,7 @@ class SospedraApp extends App {
         <TransitionProvider>
           <Mousetrap>
             <EasterEgg>
-              <Markdown>
-                <Component {...pageProps} />
-              </Markdown>
+              <Component {...pageProps} />
             </EasterEgg>
           </Mousetrap>
         </TransitionProvider>
