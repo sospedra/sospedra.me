@@ -45,13 +45,9 @@ const Animation: React.FunctionComponent<{
 
 const Background: React.FunctionComponent = () => {
   const pathname = usePathname() || '/'
-  const { unmount } = useTransition()
   const [animation, api] = useSpring(() => ({
     to: getOffsetFromHref(pathname),
     config: config.molasses,
-    onStart: () => {
-      setTimeout(unmount, 360)
-    },
   }))
 
   return (

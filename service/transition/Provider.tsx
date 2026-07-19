@@ -6,6 +6,8 @@ import Background from './Background'
 import Offshore from './Offshore'
 import css from './transition.module.css'
 
+const UNMOUNT_DELAY_MS = 360
+
 export const Provider: React.FunctionComponent<{
   children: React.ReactNode
 }> = ({ children }) => {
@@ -17,6 +19,14 @@ export const Provider: React.FunctionComponent<{
   useEffect(() => {
     transition.reset()
   }, [pathname])
+
+  // timer, not spring onStart: v10 fires onStart only from idle,
+  // so retargeting a running background pan would never unmount
+  useEffect(() => {
+    if (!transition.hasRequestedUnmount) return
+    const timer = setTimeout(transition.unmount, UNMOUNT_DELAY_MS)
+    return () => clearTimeout(timer)
+  }, [transition.hasRequestedUnmount])
 
   useEffect(() => {
     if (!transition.hasRequestedUnmount || !transition.willUnmount) return

@@ -1,6 +1,22 @@
-import React from 'react'
+import React, { useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { matchScreen, querySmScreen } from 'service/screen'
+
+const subscribeToScreen = (onChange: () => void) => {
+  const query = window.matchMedia(querySmScreen)
+  query.addEventListener('change', onChange)
+  return () => query.removeEventListener('change', onChange)
+}
+
+// external store, not a render-time window check:
+// server html and hydration render must match under react 19
+const useIsSmScreen = () => {
+  return !useSyncExternalStore(
+    subscribeToScreen,
+    () => matchScreen(querySmScreen),
+    () => false,
+  )
+}
 
 const Row: React.FC<{
   left?: React.ReactNode
@@ -8,7 +24,7 @@ const Row: React.FC<{
   teleport?: HTMLDivElement
   force?: boolean
 }> = (props) => {
-  const isSmScreen = !matchScreen(querySmScreen)
+  const isSmScreen = useIsSmScreen()
   let leftForSm = null
 
   if (props.force) {
