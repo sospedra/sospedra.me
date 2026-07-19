@@ -1,5 +1,6 @@
+'use client'
+
 import { useState } from 'react'
-import { NextPage } from 'next'
 import cn from 'classnames'
 import {
   BAZAAR_DESC,
@@ -18,14 +19,14 @@ import Cheatcodes from 'components/Cheatcodes'
 import External from 'components/External'
 import css from './bazaar.module.css'
 
-const Bazaar: NextPage = () => {
+export default function BazaarView() {
   const [isHidden, setIsHidden] = useState(false)
   const scrollRef = useScroll((e) => {
     setIsHidden(e.target.scrollTop > 300)
   })
 
   return (
-    <Shell title='Bazaar' description={BAZAAR_DESC} canonical='/bazaar'>
+    <Shell canonical='/bazaar'>
       <div className='w-full h-screen overflow-auto' ref={scrollRef}>
         <div className={css.bazaar}>
           <Link url='/'>
@@ -126,5 +127,3 @@ const Bazaar: NextPage = () => {
     </Shell>
   )
 }
-
-export default Bazaar

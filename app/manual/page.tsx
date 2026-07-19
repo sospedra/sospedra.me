@@ -1,4 +1,4 @@
-import { NextPage } from 'next'
+import type { Metadata } from 'next'
 import cn from 'classnames'
 import Shell from 'components/Shell'
 import Link from 'components/Link'
@@ -8,16 +8,20 @@ import Page from 'components/Manual/Page'
 import Piece from 'components/Manual/Piece'
 import Pictogram from 'components/Manual/Pictogram'
 import Step from 'components/Manual/Step'
-import css from './manual.module.css'
 import { MANUAL_DESC } from 'service/descriptions'
+import css from './manual.module.css'
 
-const Manual: NextPage = () => {
+export const metadata: Metadata = {
+  title: 'Manual of instructions',
+  description: MANUAL_DESC,
+  alternates: { canonical: '/manual' },
+}
+
+export default function ManualPage() {
   return (
     <Shell
       canonical='/manual'
       className='relative w-full max-w-2xl min-h-full px-4 pt-12 mx-auto mb-12'
-      description={MANUAL_DESC}
-      title='Manual of instructions'
     >
       {/* react 19 hoists resource links, next/head dies with the app router */}
       <link rel='preload' as='image' href='/sospedra.png' />
@@ -227,5 +231,3 @@ const Manual: NextPage = () => {
     </Shell>
   )
 }
-
-export default Manual

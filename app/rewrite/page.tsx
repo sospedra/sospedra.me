@@ -1,18 +1,23 @@
-import React from 'react'
+import type { Metadata } from 'next'
 import { publicRewrites } from 'service/router'
+import { REWRITE_DESC } from 'service/descriptions'
 import neonCss from 'service/style/neon.module.css'
 import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
+import CopyButton from './copy-button'
 import css from './rewrites.module.css'
-import { REWRITE_DESC } from 'service/descriptions'
 
-const Rewrites: React.FC = () => {
+export const metadata: Metadata = {
+  title: 'Links',
+  description: REWRITE_DESC,
+  alternates: { canonical: '/r' },
+}
+
+export default function RewritesPage() {
   return (
     <Shell
-      title='Links'
-      className='w-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
-      description={REWRITE_DESC}
       canonical='/r'
+      className='w-full max-w-2xl px-4 pt-12 pb-20 mx-auto text-gray-200'
     >
       <Link url='/'>
         <LinkBack>Home</LinkBack>
@@ -35,16 +40,7 @@ const Rewrites: React.FC = () => {
           {publicRewrites.map((rewrite) => (
             <tr key={rewrite.source}>
               <td title={`https://sospedra.me${rewrite.source}`}>
-                <button
-                  className={css.copy}
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      `https://sospedra.me${rewrite.source}`,
-                    )
-                  }}
-                >
-                  {rewrite.source}
-                </button>
+                <CopyButton className={css.copy} source={rewrite.source} />
               </td>
               <td className='p-2 truncate' title={rewrite.title}>
                 {rewrite.title}
@@ -61,5 +57,3 @@ const Rewrites: React.FC = () => {
     </Shell>
   )
 }
-
-export default Rewrites
