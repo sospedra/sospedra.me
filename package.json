@@ -29,6 +29,7 @@
     "@next/mdx": "^16.2.10",
     "@react-spring/web": "^10.1.2",
     "@shikijs/rehype": "^4.3.1",
+    "@vercel/analytics": "^2.0.1",
     "classnames": "^2.3.1",
     "date-fns": "^2.21.3",
     "fuse.js": "^6.4.0",
@@ -79,6 +80,8 @@
   },
   "license": "ISC",
   "pnpm": {
-    "onlyBuiltDependencies": ["sharp"]
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

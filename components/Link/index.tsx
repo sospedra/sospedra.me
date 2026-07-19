@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { useTransition } from 'service/transition'
 import { usePrefetch } from 'service/transition/use-prefetch'

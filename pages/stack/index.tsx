@@ -6,8 +6,7 @@ import Featured from 'components/Stack/Featured'
 import CategoryList from 'components/Stack/Category'
 import TechList from 'components/Stack/Tech'
 import Search from 'components/Stack/Search'
-
-export const STACK_DESC = `A curated list of the best high-quality up-to-date technologies of ${new Date().getUTCFullYear()}`
+import { STACK_DESC } from 'service/descriptions'
 
 const Stack: React.FC = () => {
   return (

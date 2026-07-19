@@ -4,8 +4,7 @@ import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
 import { TreeParent, TreeChild } from 'components/Serve'
 import { useRouter } from 'next/router'
-
-export const SERVE_DESC = 'List of all the public-available static assets'
+import { SERVE_DESC } from 'service/descriptions'
 
 const Serve: NextPage<{
   tree: TreeNode[]

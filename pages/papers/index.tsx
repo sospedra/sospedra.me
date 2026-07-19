@@ -6,9 +6,7 @@ import glitchCss from 'service/style/glitch.module.css'
 import neonCss from 'service/style/neon.module.css'
 import Meta from 'components/Meta'
 import Shell from 'components/Shell'
-
-export const PAPERS_DESC =
-  "Highly curated content about JavaScript, web development, TypeScript, the Internet, patterns and, in general, technology. Not your usual blog. Favour valuable content over long and boring SEO-focused posts. Words are my own. It's dangerous to go unknowing, take some pills 💊"
+import { PAPERS_DESC } from 'service/descriptions'
 
 // deterministic per slug: Math.random() diverged between SSG html and hydration
 const getTitleCss = (slug: string) => {

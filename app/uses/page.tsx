@@ -1,21 +1,23 @@
-import { NextPage } from 'next'
+import type { Metadata } from 'next'
 import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
 import External, { TWITTER } from 'components/External'
+import { USES_DESC } from 'service/descriptions'
 import cssNeon from 'service/style/neon.module.css'
 import uses from './uses.json'
 import css from './uses.module.css'
 
-export const USES_DESC =
-  'The specifics of the piece of software and hardware I use every day. Highly opinionated.'
+export const metadata: Metadata = {
+  title: 'Uses',
+  description: USES_DESC,
+  alternates: { canonical: '/uses' },
+}
 
-const Uses: NextPage = () => {
+export default function UsesPage() {
   return (
     <Shell
       canonical='/uses'
       className='relative w-full max-w-2xl min-h-full px-4 pt-12 pb-20 mx-auto text-white'
-      description={USES_DESC}
-      title='About'
     >
       <Link url='/'>
         <LinkBack>Home</LinkBack>
@@ -53,5 +55,3 @@ const Uses: NextPage = () => {
     </Shell>
   )
 }
-
-export default Uses

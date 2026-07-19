@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { NextPage } from 'next'
 import cn from 'classnames'
-import { STACK_DESC } from 'pages/stack'
-import { SERVE_DESC } from 'pages/serve'
-import { REWRITE_DESC } from 'pages/rewrite'
-import { USES_DESC } from 'pages/uses'
-import { MANUAL_DESC } from 'pages/manual'
+import {
+  BAZAAR_DESC,
+  MANUAL_DESC,
+  REWRITE_DESC,
+  SERVE_DESC,
+  STACK_DESC,
+  USES_DESC,
+} from 'service/descriptions'
 import { useScroll } from 'service/scroll'
 import Link, { LinkBack } from 'components/Link'
 import Shell from 'components/Shell'
@@ -14,8 +17,6 @@ import SpriteCar from 'components/Sprite/Car'
 import Cheatcodes from 'components/Cheatcodes'
 import External from 'components/External'
 import css from './bazaar.module.css'
-
-const BAZAAR_DESC = 'Gallery of my featured projects'
 
 const Bazaar: NextPage = () => {
   const [isHidden, setIsHidden] = useState(false)

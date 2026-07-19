@@ -4,8 +4,7 @@ import neonCss from 'service/style/neon.module.css'
 import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
 import css from './rewrites.module.css'
-
-export const REWRITE_DESC = 'Personal links that I share often'
+import { REWRITE_DESC } from 'service/descriptions'
 
 const Rewrites: React.FC = () => {
   return (
