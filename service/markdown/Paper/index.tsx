@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect } from 'react'
 import Shell from 'components/Shell'
 import Meta from 'components/Meta'
@@ -6,9 +8,7 @@ import css from './paper.module.css'
 import Footer from '../Footer'
 import { Paper } from '../files'
 
-const PaperShell: React.FC<Paper & { children: React.ReactNode }> = (
-  props,
-) => {
+const PaperShell: React.FC<Paper & { children: React.ReactNode }> = (props) => {
   useEffect(() => {
     window.scroll({
       top: 0,
