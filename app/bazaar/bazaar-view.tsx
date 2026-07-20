@@ -3,7 +3,8 @@
 import cn from 'clsx'
 import Cheatcodes from 'components/Cheatcodes'
 import External from 'components/External'
-import Link, { LinkBack } from 'components/Link'
+import Link from 'components/Link'
+import RouteHeader from 'components/RouteHeader'
 import Shell from 'components/Shell'
 import SpriteCar from 'components/Sprite/Car'
 import SpriteMountain from 'components/Sprite/Mountain'
@@ -26,13 +27,14 @@ export default function BazaarView() {
 
   return (
     <Shell canonical='/bazaar'>
-      <div className='w-full h-screen overflow-auto' ref={scrollRef}>
+      <div className={css.scroll} ref={scrollRef}>
         <div className={css.bazaar}>
-          <Link url='/'>
-            <LinkBack>Home</LinkBack>
-          </Link>
-          <h1 className='font-serif text-4xl text-cyan-300'>Bazaar</h1>
-          <p>{BAZAAR_DESC}</p>
+          <RouteHeader
+            title='Bazaar'
+            sector='04'
+            status='Open channel'
+            description={BAZAAR_DESC}
+          />
 
           <ul className={css.list}>
             <li>

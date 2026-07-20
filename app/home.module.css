@@ -2,7 +2,16 @@
 
 .main {
   @apply flex flex-col items-center justify-end flex-1 w-full;
-  padding-bottom: 30vh;
+  padding-bottom: clamp(10rem, 30vh, 20rem);
+}
+
+.status {
+  position: relative;
+  z-index: 50;
+  margin: 4.5rem 0 -1rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font: 700 clamp(0.58rem, 1.8vw, 0.72rem) / 1.2 var(--font-mono);
+  letter-spacing: 0.12em;
 }
 
 .menu {
@@ -12,21 +21,24 @@
 .menu a,
 .menu button {
   @apply relative px-4 -ml-4 text-2xl font-bold transition-colors duration-500;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   background: radial-gradient(rgba(0, 0, 0, 0.2), transparent 80%);
-  color: #ffea00;
+  color: var(--color-signal-yellow, #ffea00);
 }
 
 .menu a:active,
 .menu button:active,
-.menu a:focus,
-.menu button:focus {
-  @apply outline-hidden;
+.menu a:focus-visible,
+.menu button:focus-visible {
+  color: var(--color-text-strong, white);
 }
 
 .menu a:active:before,
 .menu button:active:before,
-.menu a:focus:before,
-.menu button:focus:before {
+.menu a:focus-visible:before,
+.menu button:focus-visible:before {
   @apply absolute inline-block w-6 h-6 mt-2 -ml-5;
   content: "";
   background: url("/images/cursor.svg") no-repeat;
@@ -43,5 +55,15 @@
   }
   100% {
     transform: translateX(-0.3rem);
+  }
+}
+
+@media (max-height: 700px) {
+  .main {
+    padding-bottom: 7rem;
+  }
+
+  .status {
+    margin-top: 3.5rem;
   }
 }

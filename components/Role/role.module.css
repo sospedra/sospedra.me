@@ -1,13 +1,39 @@
-@reference "../../service/style/global.css";
-
 .header2 {
-  @apply absolute top-0 text-xl leading-9 text-right transform -rotate-90;
-  color: var(--pink);
-  text-shadow: -1px 1px 0 #fabada;
-  transform-origin: right top;
-  right: 4rem;
-  width: 26rem;
+  position: sticky;
+  z-index: 2;
+  top: 1rem;
+  justify-self: end;
+  height: 24rem;
+  margin: 0 0 -23rem;
+  color: var(--color-signal-pink, #d9478c);
   font-family:
     "Hiragino Sans", "Hiragino Kaku Gothic Pro", "游ゴシック", "游ゴシック体",
     YuGothic, "Yu Gothic", "ＭＳ ゴシック", "MS Gothic", monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+  text-shadow: -1px 1px 0 rgb(250 186 218 / 35%);
+  writing-mode: vertical-rl;
+}
+
+@media (max-width: 767px) {
+  .header2 {
+    top: 0;
+    justify-self: stretch;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0.65rem 0.75rem;
+    border-block: 1px solid var(--color-line, rgb(109 247 234 / 22%));
+    background: rgb(14 20 27 / 92%);
+    font-size: 0.72rem;
+    line-height: 1.5;
+    text-align: center;
+    writing-mode: horizontal-tb;
+  }
+
+  .header2 br {
+    display: none;
+  }
 }

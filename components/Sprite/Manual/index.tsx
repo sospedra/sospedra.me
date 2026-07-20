@@ -30,14 +30,15 @@ const SpriteManual: React.FC<{
   const sprite = sprites[props.name]
 
   return (
-    <>
-      <link rel='preload' as='image' href={sprite.src} />
-      <img
-        alt={props.name}
-        src={sprite.src}
-        className={`h-full p-4 ${props.className || ''}`}
-      />
-    </>
+    <img
+      alt={props.name}
+      src={sprite.src}
+      width={sprite.width}
+      height={sprite.height}
+      loading='lazy'
+      decoding='async'
+      className={`h-full p-4 ${props.className || ''}`}
+    />
   )
 }
 

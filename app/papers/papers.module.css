@@ -1,0 +1,43 @@
+.frame {
+  width: 100%;
+  max-width: var(--measure-reading, 42rem);
+  min-height: 100%;
+  margin-inline: auto;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem 6rem;
+  color: var(--color-text, rgb(255 255 255 / 90%));
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  position: relative;
+  padding: 1.5rem 0 2rem;
+  border-top: 1px solid var(--color-line, rgb(109 247 234 / 22%));
+}
+
+.list li::before {
+  position: absolute;
+  top: -0.38rem;
+  right: 0;
+  padding-left: 0.5rem;
+  background: var(--color-bg-void, #0e141b);
+  color: var(--color-signal-cyan, #6df7ea);
+  content: "▼";
+  font-size: 0.65rem;
+}
+
+.paperTitle {
+  color: var(--color-text, white);
+  font-family: var(--font-display, var(--font-serif));
+  font-size: clamp(1.75rem, 6vw, 2.25rem);
+  line-height: 1.05;
+}
+
+.list p {
+  color: var(--color-text-muted, rgb(255 255 255 / 72%));
+  line-height: var(--line-body, 1.65);
+}

@@ -1,5 +1,6 @@
 import External, { TWITTER } from 'components/External'
-import Link, { LinkBack } from 'components/Link'
+import Link from 'components/Link'
+import RouteHeader from 'components/RouteHeader'
 import Shell from 'components/Shell'
 import type { Metadata, Route } from 'next'
 import { USES_DESC } from 'service/descriptions'
@@ -15,21 +16,19 @@ export const metadata: Metadata = {
 
 export default function UsesPage() {
   return (
-    <Shell
-      canonical='/uses'
-      className='relative w-full max-w-2xl min-h-full px-4 pt-12 pb-20 mx-auto text-white'
-    >
-      <Link url='/'>
-        <LinkBack>Home</LinkBack>
-      </Link>
-      <h1 className='pt-4 font-serif text-4xl text-cyan-400'>Uses</h1>
-      <p className='-mb-16'>
-        I tend to dive into discussions about the tools used for different parts
-        of my work, so inspired by{' '}
-        <External href='https://uses.tech'>uses.tech</External>, I've put
-        together this "uses" page that covers every part of my setup. If you
-        don't agree, <External href={TWITTER}>fight me</External>.
-      </p>
+    <Shell canonical='/uses' className={css.frame}>
+      <RouteHeader
+        title='Uses'
+        sector='04.2'
+        status='Inventory ready'
+        description={
+          <p>
+            The tools used for different parts of my work, inspired by{' '}
+            <External href='https://uses.tech'>uses.tech</External>. If you
+            don't agree, <External href={TWITTER}>fight me</External>.
+          </p>
+        }
+      />
 
       {uses.map((section) => (
         <section className={css.section} key={section.title}>

@@ -15,23 +15,60 @@ const Link = React.forwardRef(function Link(
   },
   ref?: React.Ref<HTMLAnchorElement>,
 ) {
-  const { url, onClick, instant, ...nativeProps } = props
+  const {
+    children,
+    download,
+    instant,
+    onClick,
+    onFocus,
+    onMouseEnter,
+    onTouchStart,
+    target,
+    url,
+    ...nativeProps
+  } = props
   const transition = useTransition()
-
-  usePrefetch(url)
+  const prefetch = usePrefetch(url)
 
   return (
     <a
       {...nativeProps}
       ref={ref}
       href={url}
+      target={target}
+      download={download}
+      onFocus={(event) => {
+        onFocus?.(event)
+        prefetch()
+      }}
+      onMouseEnter={(event) => {
+        onMouseEnter?.(event)
+        prefetch()
+      }}
+      onTouchStart={(event) => {
+        onTouchStart?.(event)
+        prefetch()
+      }}
       onClick={(e) => {
-        e.preventDefault()
+        const shouldUseNativeNavigation =
+          e.button !== 0 ||
+          e.metaKey ||
+          e.ctrlKey ||
+          e.shiftKey ||
+          e.altKey ||
+          target === '_blank' ||
+          (download !== undefined && download !== false)
+
+        if (shouldUseNativeNavigation) return
+
         onClick?.(e)
+        if (e.defaultPrevented) return
+
+        e.preventDefault()
         transition.navigateLater(url, instant ? 0 : 360)
       }}
     >
-      {props.children}
+      {children}
     </a>
   )
 })
@@ -41,10 +78,10 @@ export const LinkBack: React.FC<{
   children: React.ReactNode
 }> = (props) => {
   return (
-    <nav className={`${css.back} ${props.className}`}>
+    <span className={[css.back, props.className].filter(Boolean).join(' ')}>
       <Icon name='back.svg' />
       <span>{props.children}</span>
-    </nav>
+    </span>
   )
 }
 

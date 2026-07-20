@@ -2,11 +2,13 @@
 
 .back {
   @apply inline-flex;
-  color: #ffea00;
+  min-height: 44px;
+  align-items: center;
+  color: var(--color-signal-yellow);
 }
 
 .back:hover {
-  border-bottom: 1px dashed #ffea00;
+  border-bottom: 1px dashed var(--color-signal-yellow);
 }
 
 .back img {
@@ -15,5 +17,5 @@
 
 .back span {
   @apply pl-1;
-  text-shadow: 2px 2px 0 var(--black);
+  text-shadow: 2px 2px 0 var(--color-bg-void);
 }

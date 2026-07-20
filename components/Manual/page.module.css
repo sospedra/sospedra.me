@@ -1,12 +1,13 @@
 @reference "../../service/style/global.css";
 
 .page {
-  @apply relative flex flex-col justify-between h-screen pr-4 mb-8 text-white;
+  @apply relative flex flex-col justify-between pr-4 mb-8 text-white;
+  min-height: 100dvh;
   counter-increment: pages;
 }
 
 .page:first-of-type {
-  height: 90vh;
+  min-height: 90dvh;
   background:
     linear-gradient(to left, white 2px, transparent 2px) calc(100% - 0.4rem) 0%,
     linear-gradient(to bottom, white 2px, transparent 2px) 100% 0.4rem;
@@ -33,6 +34,11 @@
   @apply absolute right-0 font-bold;
   bottom: 1rem;
   content: counter(pages);
+}
+
+.page:not(:first-of-type) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100dvh;
 }
 
 @media (min-width: 640px) {

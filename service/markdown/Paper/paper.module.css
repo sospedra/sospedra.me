@@ -1,8 +1,42 @@
 @reference "../../../service/style/global.css";
 
+.frame {
+  width: 100%;
+  max-width: var(--measure-reading, 42rem);
+  min-height: 100%;
+  margin-inline: auto;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem 6rem;
+  color: var(--color-text, rgb(255 255 255 / 90%));
+}
+
+.scanhead {
+  position: fixed;
+  z-index: 80;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-signal-cyan, #6df7ea),
+    var(--color-signal-yellow, #ffea00)
+  );
+  box-shadow: 0 0 0.5rem var(--color-signal-cyan, #6df7ea);
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: reading-signal linear;
+  animation-timeline: scroll(root block);
+}
+
+@keyframes reading-signal {
+  to {
+    transform: scaleX(1);
+  }
+}
+
 .markdown {
   @apply font-sans text-lg leading-7 break-words align-baseline;
-  color: var(--text);
+  color: var(--color-text, var(--textNormal));
 }
 
 .markdown p,
@@ -63,7 +97,7 @@
 .markdown pre,
 .markdown kbd {
   @apply font-mono;
-  background-color: #011627;
+  background-color: var(--color-surface-code, #011627);
 }
 
 .markdown code,
@@ -133,6 +167,10 @@
 
 .markdown a:hover {
   animation: neon 2s linear infinite;
+}
+
+.markdown a:focus-visible {
+  animation: none;
 }
 
 /* Link headers */
@@ -226,4 +264,22 @@
       0.25vw 0.25vw 0.1vw #147280;
     color: #d7fffc;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scanhead {
+    box-shadow: none;
+  }
+
+  .markdown a:hover {
+    animation: none;
+  }
+}
+
+:global(.fx-quiet) .scanhead {
+  box-shadow: none;
+}
+
+:global(.fx-quiet) .markdown a:hover {
+  animation: none;
 }

@@ -1,17 +1,17 @@
-import Link, { LinkBack } from 'components/Link'
+import RouteHeader from 'components/RouteHeader'
 import Shell from 'components/Shell'
 import type { Metadata } from 'next'
 import { cacheLife } from 'next/cache'
-import { Suspense } from 'react'
 import { SERVE_DESC } from 'service/descriptions'
 import { pathsToTree } from 'service/io'
 import staticFiles from 'service/io/static-files.json'
+import css from '../../components/Serve/serve.module.css'
 import ServeTree from './serve-tree'
 
 export const metadata: Metadata = {
   title: 'Serve',
   description: SERVE_DESC,
-  alternates: { canonical: '/static' },
+  alternates: { canonical: '/serve' },
 }
 
 export default async function ServePage() {
@@ -21,23 +21,23 @@ export default async function ServePage() {
   const tree = pathsToTree(staticFiles.map((p) => p.split('/')))
 
   return (
-    <Shell
-      canonical='/static'
-      className='relative w-full h-full max-w-xl px-4 pt-12 pb-20 mx-auto text-white'
-    >
-      <Link url='/'>
-        <LinkBack>Home</LinkBack>
-      </Link>
+    <Shell canonical='/serve' className={css.page}>
+      <RouteHeader
+        title='Serve assets'
+        sector='04.3'
+        status='Directory mounted'
+        description={`${SERVE_DESC}.`}
+      />
 
-      <h1 className='pt-8 text-4xl'>Serve assets</h1>
-      <p className='pb-10'>{SERVE_DESC}</p>
-
-      <div className='pb-20'>
-        {/* suspense keeps the page static while the tree reads ?e= on the client */}
-        <Suspense>
+      <section className={css.terminal} aria-labelledby='asset-index-title'>
+        <div className={css.terminalBar}>
+          <strong id='asset-index-title'>Public / Index</strong>
+          <span>{staticFiles.length} assets / read-only</span>
+        </div>
+        <div className={css.tree}>
           <ServeTree tree={tree} />
-        </Suspense>
-      </div>
+        </div>
+      </section>
     </Shell>
   )
 }

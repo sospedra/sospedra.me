@@ -3,21 +3,32 @@
 .bg {
   @apply absolute;
   background: radial-gradient(
-    ellipse at bottom,
-    var(--bg-end) 0%,
-    var(--bg-start) 100%
+    ellipse at right bottom,
+    var(--color-bg-plasma, var(--bg-end, var(--magenta))) 0%,
+    var(--color-bg-void, var(--bg-start, var(--black))) 100%
   );
-  width: 400vw;
-  height: 400vh;
-  will-change: left, top;
+  contain: strict;
+  height: 220dvh;
+  transform-origin: left top;
+  width: 200vw;
+}
+
+.moving {
+  will-change: transform;
 }
 
 .wrapper {
-  @apply absolute w-screen h-screen overflow-hidden;
+  @apply absolute inset-0 overflow-hidden;
+  contain: strict;
+  height: 100dvh;
+  pointer-events: none;
+  width: 100%;
   z-index: -1;
 }
 
 .provider {
-  @apply fixed top-0 left-0 w-screen h-screen overflow-hidden;
+  @apply fixed inset-0 overflow-hidden;
+  height: 100dvh;
   overscroll-behavior: contain;
+  width: 100%;
 }

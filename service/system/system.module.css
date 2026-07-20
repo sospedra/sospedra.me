@@ -1,0 +1,25 @@
+.packet {
+  position: fixed;
+  z-index: 120;
+  left: 50%;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  max-width: min(32rem, calc(100vw - 2rem));
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--color-signal-cyan, #6df7ea);
+  background: var(--color-bg-void, #0e141b);
+  box-shadow: 4px 4px 0 rgb(0 0 0 / 45%);
+  color: var(--color-signal-cyan, #6df7ea);
+  font: 700 var(--text-xs, 0.75rem) / 1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 0.75rem);
+  transition:
+    opacity var(--motion-micro, 160ms) ease,
+    transform var(--motion-micro, 160ms) ease;
+}
+
+.packet[data-visible="true"] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}

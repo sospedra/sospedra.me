@@ -1,22 +1,23 @@
 @reference "../../service/style/global.css";
 
 .title {
-  @apply relative z-50 text-6xl italic text-cyan-400;
+  @apply relative z-50 italic text-cyan-400;
   font-family: var(--font-lazer84);
+  font-size: clamp(3.1rem, 14vw, 5.25rem);
   transform: skewY(-4deg);
-  margin-left: -8rem;
+  margin-left: clamp(-5rem, -12vw, -2.5rem);
   text-shadow:
-    2px 0px 3px #00a895,
-    2px 3px 1rem #00a895,
+    2px 0px 3px var(--color-signal-cyan-deep, #00a895),
+    2px 3px 1rem var(--color-signal-cyan-deep, #00a895),
     2px 0px 1rem,
-    20px 0vw 10rem #00a895,
-    40px 0vw 10rem #00a895;
+    20px 0vw 10rem var(--color-signal-cyan-deep, #00a895),
+    40px 0vw 10rem var(--color-signal-cyan-deep, #00a895);
 }
 
 .title span:last-child {
   @apply absolute inline-flex;
-  top: 3rem;
-  left: 3rem;
+  top: 0.8em;
+  left: 0.8em;
   animation: flicker 3s linear infinite;
 }
 

@@ -1,32 +1,75 @@
 @reference "../../service/style/global.css";
 
+.frame {
+  position: relative;
+  width: 100%;
+  max-width: var(--measure-reading, 42rem);
+  min-height: 100%;
+  margin-inline: auto;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem 7rem;
+  color: var(--color-text, white);
+}
+
 .section {
-  @apply relative py-4;
+  position: relative;
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  padding-block: 1rem;
+  border-top: 1px solid var(--color-line, rgb(109 247 234 / 22%));
 }
 
 .section h2 {
-  @apply sticky text-2xl font-bold uppercase text-cyan-400;
-  top: 6rem;
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+  margin: 0;
+  color: var(--color-signal-cyan, #6df7ea);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   writing-mode: vertical-rl;
-  transition: 1s transform;
-  margin-left: 1rem;
-  transform: translate3d(-80%, 100%, 0);
-}
-
-.section h2:hover,
-.section h2:active {
-  transform: translate3d(-50%, 100%, 0);
 }
 
 .section h3 {
-  @apply text-lg;
+  color: var(--color-text, white);
+  font-size: 1.05rem;
 }
 
 .section ul {
-  @apply pb-12 pl-12;
+  margin: 0;
+  padding: 0 0 2rem 1.25rem;
   list-style-image: url(/images/cursor.svg);
 }
 
 .section li {
-  @apply pb-4;
+  padding: 0 0 1.25rem 0.25rem;
+}
+
+.section p {
+  color: var(--color-text-muted, rgb(255 255 255 / 72%));
+  line-height: var(--line-body, 1.65);
+}
+
+@media (max-width: 639px) {
+  .section {
+    display: block;
+    padding-top: 0;
+  }
+
+  .section h2 {
+    z-index: 4;
+    top: 0;
+    width: calc(100% + 2rem);
+    margin: 0 -1rem 1.25rem;
+    padding: 0.7rem 1rem;
+    border-block: 1px solid var(--color-line, rgb(109 247 234 / 22%));
+    background: rgb(14 20 27 / 94%);
+    writing-mode: horizontal-tb;
+  }
+
+  .section ul {
+    padding-left: 1.5rem;
+  }
 }

@@ -1,58 +1,96 @@
-import { animated, config, useSpring } from '@react-spring/web'
+import { animated, useReducedMotion, useSpring } from '@react-spring/web'
+import cn from 'clsx'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTransition } from './context'
 import { createPtr } from './create-ptr'
 import Stars from './Stars'
 import css from './transition.module.css'
 
 type OffsetT = {
-  left: string
-  top: string
+  transform: string
 }
 
 const getOffsetFromHref = (href: string): OffsetT => {
   const ptr = createPtr(href)
   switch (true) {
     case ptr('/papers'):
-      return { left: '0vw', top: '-50vh' }
+      return { transform: 'translate3d(0vw, -20vh, 0)' }
     case ptr('/papers/:slug'):
-      return { left: '0vw', top: '0vh' }
+      return { transform: 'translate3d(0vw, 0vh, 0)' }
     case ptr('/about'):
-      return { left: '-100vw', top: '-50vh' }
+      return { transform: 'translate3d(-50vw, -20vh, 0)' }
     case ptr('/bazaar'):
-      return { left: '-30vw', top: '-300vh' }
+      return { transform: 'translate3d(-30vw, -120vh, 0)' }
     default:
-      return { left: '0vw', top: '-250vh' }
+      return { transform: 'translate3d(0vw, -100vh, 0)' }
   }
 }
 
-const Animation: React.FunctionComponent<{
-  start: (offset: OffsetT) => unknown
-  animation: object
-}> = ({ start, animation }) => {
-  const pathname = usePathname() || '/'
-  const { url } = useTransition()
+const useFxQuiet = () => {
+  const [isQuiet, setIsQuiet] = useState(false)
 
   useEffect(() => {
-    start(getOffsetFromHref(url || pathname))
-  }, [start, pathname, url])
+    const root = document.documentElement
+    const sync = () => setIsQuiet(root.classList.contains('fx-quiet'))
+    const observer = new MutationObserver(sync)
 
-  return <animated.div className={css.bg} style={animation} />
+    sync()
+    observer.observe(root, { attributeFilter: ['class'], attributes: true })
+    return () => observer.disconnect()
+  }, [])
+
+  return isQuiet
+}
+
+const Animation: React.FunctionComponent<{
+  start: (offset: OffsetT, immediate: boolean, onRest: () => void) => unknown
+  animation: object
+  isQuiet: boolean
+}> = ({ start, animation, isQuiet }) => {
+  const pathname = usePathname() || '/'
+  const { url } = useTransition()
+  const movement = useRef(0)
+  const [isMoving, setIsMoving] = useState(false)
+
+  useEffect(() => {
+    const id = ++movement.current
+    setIsMoving(!isQuiet)
+    start(getOffsetFromHref(url || pathname), isQuiet, () => {
+      if (id === movement.current) setIsMoving(false)
+    })
+  }, [isQuiet, pathname, start, url])
+
+  return (
+    <animated.div
+      aria-hidden='true'
+      className={cn(css.bg, isMoving && css.moving)}
+      style={animation}
+    />
+  )
 }
 
 const Background: React.FunctionComponent = () => {
   const pathname = usePathname() || '/'
+  const prefersReducedMotion = useReducedMotion()
+  const fxQuiet = useFxQuiet()
+  const isQuiet = Boolean(prefersReducedMotion || fxQuiet)
   const [animation, api] = useSpring(() => ({
     to: getOffsetFromHref(pathname),
-    config: config.molasses,
+    config: { duration: 480 },
   }))
 
   return (
     <div className={css.wrapper}>
       {/* arrow keeps api's this-binding, the compiler keeps its identity stable */}
-      <Animation start={(offset) => api.start(offset)} animation={animation} />
+      <Animation
+        start={(offset, immediate, onRest) =>
+          api.start({ ...offset, immediate, onRest })
+        }
+        animation={animation}
+        isQuiet={isQuiet}
+      />
       <Stars />
     </div>
   )

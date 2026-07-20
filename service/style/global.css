@@ -1,5 +1,70 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: dark;
+
+  /* Midnight I/O: semantic colors */
+  --color-bg-void: #0e141b;
+  --color-bg-plasma: #800d79;
+  --color-surface: #141e28;
+  --color-surface-raised: #1a2632;
+  --color-surface-code: #011627;
+  --color-line: rgb(109 247 234 / 28%);
+  --color-text: rgb(255 255 255 / 88%);
+  --color-text-strong: #ffffff;
+  --color-text-muted: rgb(255 255 255 / 64%);
+  --color-signal-cyan: #6df7ea;
+  --color-signal-cyan-deep: #00a895;
+  --color-signal-pink: #d9478c;
+  --color-signal-yellow: #ffea00;
+  --color-focus: var(--color-signal-yellow);
+
+  /* Type roles */
+  --font-body: var(--font-wotfard), Helvetica, sans-serif;
+  --font-display: var(--font-vcr), monospace;
+  --font-code: var(--font-inconsolata), monospace;
+  --font-signage: var(--font-lazer84), cursive;
+
+  /* Layout, depth and motion */
+  --measure-reading: 42rem;
+  --measure-wide: 56rem;
+  --measure-profile: 64rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 2rem;
+  --line-tight: 1.1;
+  --line-body: 1.65;
+  --space-page-inline: clamp(1rem, 4vw, 2rem);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --shadow-neon: 0 0 0.75rem rgb(109 247 234 / 28%);
+  --shadow-panel: 0 1rem 3rem rgb(0 0 0 / 38%);
+  --shadow-focus: 0 0 0.9rem rgb(255 234 0 / 32%);
+  --motion-micro: 160ms;
+  --motion-route: 480ms;
+  --motion-signature: 1200ms;
+  --ease-signal: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: var(--ease-signal);
+
+  /* Legacy aliases. New work should use the semantic names above. */
+  --cyan: var(--color-signal-cyan);
+  --pink: var(--color-signal-pink);
+  --yellow: var(--color-signal-yellow);
+  --magenta: var(--color-bg-plasma);
+  --black: var(--color-bg-void);
+  --text: var(--color-text);
+}
+
 @theme {
   --color-turbo: #ffea00;
   --color-cranberry: #d9478c;
@@ -25,9 +90,9 @@
 
 /* inline: the tokens reference runtime variables set by next/font */
 @theme inline {
-  --font-sans: var(--font-wotfard), Helvetica, sans-serif;
-  --font-serif: var(--font-vcr), serif;
-  --font-mono: var(--font-inconsolata), monospace;
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-display);
+  --font-mono: var(--font-code);
 }
 
 /* tailwind v1 compat: borders defaulted to gray, buttons to pointer */
@@ -38,6 +103,7 @@
   ::backdrop,
   ::file-selector-button {
     border-color: #e2e8f0;
+    box-sizing: border-box;
   }
 
   button:not(:disabled),
@@ -46,10 +112,92 @@
   }
 }
 
+html {
+  min-height: 100%;
+  background: var(--color-bg-void);
+}
+
+body {
+  min-width: 20rem;
+  min-height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-bg-void);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
 html,
 #vbody {
   scroll-behavior: smooth;
   touch-action: manipulation;
+}
+
+#vbody {
+  min-height: 100dvh;
+}
+
+::selection {
+  background: var(--color-signal-cyan);
+  color: var(--color-bg-void);
+}
+
+html[data-scroll-behavior][data-scroll-behavior]
+  :where(
+    a,
+    button,
+    input,
+    textarea,
+    select,
+    summary,
+    [tabindex]
+  ):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  box-shadow: var(--shadow-focus);
+}
+
+html[data-scroll-behavior][data-scroll-behavior] .site-main:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 10000;
+  top: calc(var(--safe-area-top) + 0.75rem);
+  left: calc(var(--safe-area-left) + 0.75rem);
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--color-focus);
+  background: var(--color-bg-void);
+  color: var(--color-focus);
+  font-family: var(--font-code);
+  font-size: 0.875rem;
+  line-height: 1;
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--safe-area-top) - 1rem));
+  transition: transform var(--motion-micro) var(--ease-signal);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* Opt-in helper for navigation and action targets; prose links stay compact. */
+.target-primary,
+[data-target="primary"] {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+}
+
+.safe-area-inline {
+  padding-right: max(var(--space-page-inline), var(--safe-area-right));
+  padding-left: max(var(--space-page-inline), var(--safe-area-left));
 }
 
 .theme {
@@ -61,9 +209,19 @@ html,
   --magenta: #800d79;
   --black: #0e141b;
   --teal: #d7fffc;
+  min-height: 100%;
 }
 
 .theme.light {
+  color-scheme: light;
+  --color-bg-void: #ffffff;
+  --color-bg-plasma: #f6ecf5;
+  --color-surface: #f5f7f9;
+  --color-surface-raised: #ffffff;
+  --color-line: rgb(14 20 27 / 24%);
+  --color-text: #222222;
+  --color-text-strong: #111111;
+  --color-text-muted: rgb(34 34 34 / 68%);
   --bg-start: white;
   --bg-yellow: var(--yellow);
   --header: var(--cyan);
@@ -78,6 +236,7 @@ html,
 }
 
 .theme.dark {
+  color-scheme: dark;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   --bg-start: var(--black);
@@ -91,4 +250,53 @@ html,
   --inlineCode-bg: rgba(115, 124, 153, 0.2);
   --inlineCode-text: var(--pink);
   --shadow: 0 2px 15px 0 rgba(26, 26, 27, 0.637);
+}
+
+.theme.theme-maintenance {
+  --color-bg-void: #07130f;
+  --color-bg-plasma: #184333;
+  --color-surface: #0c1d16;
+  --color-surface-raised: #10281d;
+  --color-line: rgb(140 255 180 / 32%);
+  --color-text: rgb(230 255 240 / 90%);
+  --color-text-strong: #f4fff8;
+  --color-text-muted: rgb(203 242 217 / 68%);
+  --color-signal-cyan: #8cffb4;
+  --color-signal-pink: #ff91c7;
+  --color-signal-yellow: #eaff75;
+  --cyan: var(--color-signal-cyan);
+  --pink: var(--color-signal-pink);
+  --yellow: var(--color-signal-yellow);
+  --magenta: var(--color-bg-plasma);
+  --black: var(--color-bg-void);
+  --teal: #dfffea;
+  --bg-start: var(--color-bg-void);
+  --bg-end: var(--color-bg-plasma);
+  --header: var(--color-text-strong);
+  --textNormal: var(--color-text);
+  --textTitle: var(--color-text-strong);
+  --textLink: var(--color-signal-cyan);
+}
+
+html.fx-quiet.fx-quiet *,
+html.fx-quiet.fx-quiet *::before,
+html.fx-quiet.fx-quiet *::after {
+  scroll-behavior: auto;
+  animation: none;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  #vbody {
+    scroll-behavior: auto;
+  }
+
+  html[data-scroll-behavior][data-scroll-behavior] *,
+  html[data-scroll-behavior][data-scroll-behavior] *::before,
+  html[data-scroll-behavior][data-scroll-behavior] *::after {
+    scroll-behavior: auto;
+    animation: none;
+    transition: none;
+  }
 }

@@ -11,7 +11,7 @@ export default function NotFound() {
   return (
     <Shell
       canonical='/404'
-      className='relative w-full h-screen overflow-hidden text-white'
+      className='relative w-full min-h-dvh overflow-hidden text-white'
     >
       <Component404 />
     </Shell>

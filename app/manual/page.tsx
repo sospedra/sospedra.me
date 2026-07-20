@@ -1,9 +1,10 @@
 import cn from 'clsx'
-import Link from 'components/Link'
+import Link, { LinkBack } from 'components/Link'
 import Page from 'components/Manual/Page'
 import Pictogram from 'components/Manual/Pictogram'
 import Piece from 'components/Manual/Piece'
 import Step from 'components/Manual/Step'
+import VerificationStamp from 'components/Manual/VerificationStamp'
 import Shell from 'components/Shell'
 import SpriteBust from 'components/Sprite/Bust'
 import SpriteManual from 'components/Sprite/Manual'
@@ -19,10 +20,14 @@ export const metadata: Metadata = {
 
 export default function ManualPage() {
   return (
-    <Shell
-      canonical='/manual'
-      className='relative w-full max-w-2xl min-h-full px-4 pt-12 mx-auto mb-12'
-    >
+    <Shell canonical='/manual' className={css.frame}>
+      <nav className={css.manualNav} aria-label='Manual controls'>
+        <Link url='/'>
+          <LinkBack>Home</LinkBack>
+        </Link>
+        <p>SECTOR 04.1 / RS-19911201-11 / READ PROTOCOL</p>
+      </nav>
+
       {/* react 19 hoists resource links, next/head dies with the app router */}
       <link rel='preload' as='image' href='/sospedra.png' />
 
@@ -228,6 +233,7 @@ export default function ManualPage() {
           </p>
         </Step>
       </Page>
+      <VerificationStamp />
     </Shell>
   )
 }

@@ -1,4 +1,5 @@
 import type React from 'react'
+import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { hasMotion, matchScreen, queryTouchScreen } from 'service/screen'
 import css from './cheatcodes.module.css'
@@ -58,35 +59,65 @@ const Message: React.FC = () => {
 }
 
 const Modal: React.FC<Props> = (props) => {
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    closeRef.current?.focus()
+    return () => previouslyFocused?.focus()
+  }, [])
+
+  const trapFocus = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab') return
+    const controls = dialogRef.current?.querySelectorAll<HTMLElement>(
+      'button, a[href], [tabindex]:not([tabindex="-1"])',
+    )
+    if (!controls?.length) return
+    const first = controls[0]
+    const last = controls[controls.length - 1]
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault()
+      last?.focus()
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault()
+      first?.focus()
+    }
+  }
+
   return (
-    <aside className='absolute inset-0 z-30'>
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop dismiss, esc is bound via hotkeys */}
-      {/* biome-ignore lint/a11y/useKeyWithClickEvents: backdrop dismiss, esc is bound via hotkeys */}
-      <div
-        className='flex items-center justify-center w-full h-full cursor-pointer'
-        style={{ background: 'rgba(0, 0, 0, 0.33)' }}
-        onClick={() => props.close()}
-      >
-        {/* biome-ignore lint/a11y/noStaticElementInteractions: stops backdrop dismissal inside the window */}
-        {/* biome-ignore lint/a11y/useKeyWithClickEvents: stops backdrop dismissal inside the window */}
+    <aside className={css.overlay}>
+      <button
+        type='button'
+        className={css.backdrop}
+        aria-label='Close cheatcodes'
+        onClick={props.close}
+      />
+      <div className={css.container}>
         <div
-          className='w-full h-auto max-w-sm p-4 cursor-default'
-          onClick={(e) => e.stopPropagation()}
+          ref={dialogRef}
+          className={css.window}
+          role='dialog'
+          aria-modal='true'
+          aria-labelledby='cheatcodes-title'
+          onKeyDown={trapFocus}
         >
-          <div className={css.window}>
-            <h3>
-              <span>Cheatcodes</span>
-              <button type='button' onClick={props.close}>
-                X
-              </button>
-            </h3>
-            <div>
-              <Message />
-              {/* biome-ignore lint/a11y/noAutofocus: the modal exists to receive keys */}
-              <button type='button' autoFocus onClick={props.close}>
-                Ok
-              </button>
-            </div>
+          <h3>
+            <span id='cheatcodes-title'>Cheatcodes</span>
+            <button
+              ref={closeRef}
+              type='button'
+              onClick={props.close}
+              aria-label='Close cheatcodes'
+            >
+              X
+            </button>
+          </h3>
+          <div>
+            <Message />
+            <button type='button' onClick={props.close}>
+              Ok
+            </button>
           </div>
         </div>
       </div>

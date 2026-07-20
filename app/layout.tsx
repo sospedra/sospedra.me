@@ -13,18 +13,21 @@ const wotfard = localFont({
 const vcr = localFont({
   src: '../public/fonts/vcr.woff2',
   display: 'swap',
+  preload: false,
   variable: '--font-vcr',
 })
 
 const inconsolata = localFont({
   src: '../public/fonts/inconsolata.woff2',
   display: 'swap',
+  preload: false,
   variable: '--font-inconsolata',
 })
 
 const lazer84 = localFont({
   src: '../public/fonts/lazer84.woff2',
   display: 'swap',
+  preload: false,
   variable: '--font-lazer84',
 })
 
@@ -101,7 +104,9 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
+  colorScheme: 'dark',
   themeColor: '#800d79',
+  viewportFit: 'cover',
 }
 
 export default function RootLayout(props: { children: React.ReactNode }) {

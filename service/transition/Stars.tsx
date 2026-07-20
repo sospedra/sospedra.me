@@ -81,7 +81,7 @@ const Stars: React.FC = () => {
   if (hidden) return null
 
   return (
-    <div className='absolute inset-0 overflow-hidden'>
+    <div aria-hidden='true' className={cn(css.field, url && css.signalLock)}>
       <ShootingStar />
       {stars.map(({ y, x, size, delay, id, animation }) => (
         <span

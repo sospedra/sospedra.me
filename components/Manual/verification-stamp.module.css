@@ -1,0 +1,33 @@
+.stamp {
+  align-self: flex-end;
+  display: grid;
+  width: min(18rem, 80vw);
+  gap: 0.25rem;
+  margin: 3rem 0 6rem;
+  padding: 1rem;
+  border: 3px double currentColor;
+  color: white;
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  opacity: 0.25;
+  text-align: center;
+  transform: rotate(-2deg) scale(0.96);
+  transition:
+    opacity var(--motion-route, 480ms) ease,
+    transform var(--motion-route, 480ms) var(--ease-out, ease-out);
+}
+
+.stamp[data-verified="true"] {
+  opacity: 0.84;
+  transform: rotate(-2deg) scale(1);
+}
+
+.stamp span,
+.stamp small {
+  font-size: 0.68rem;
+}
+
+.stamp strong {
+  font-size: 1.6rem;
+  line-height: 1;
+}

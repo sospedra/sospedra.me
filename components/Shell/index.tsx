@@ -1,10 +1,7 @@
-'use client'
-
 import cn from 'clsx'
-import Head from 'next/head'
 import type React from 'react'
 
-const Shell: React.FC<{
+type ShellProps = {
   canonical: string
   className?: string
   description?: string
@@ -13,43 +10,31 @@ const Shell: React.FC<{
   title?: string
   keywords?: string[]
   children: React.ReactNode
-}> = ({
-  canonical,
-  children,
-  className,
-  keywords,
-  description = '',
-  image = '/sospedra.png',
-  shellClassName = '',
-  title = '',
-}) => {
-  title = [title, 'Rubén Sospedra'].join(' ▼ ')
-  image = image.startsWith('http') ? image : `https://sospedra.me${image}`
+}
 
+const Shell = ({ children, className, shellClassName = '' }: ShellProps) => {
   return (
-    <div
-      id='vbody'
-      style={{ overscrollBehavior: 'contain' }}
-      className={cn(
-        'w-full h-full overflow-x-hidden overflow-y-auto',
-        shellClassName,
-      )}
-    >
-      <Head>
-        <title>{title}</title>
-        <meta name='description' content={description} />
-        <meta name='image' content={image} />
-        <meta property='og:image' content={image} />
-        <meta property='og:description' content={description} />
-        <meta property='og:title' content={title} />
-        <meta name='twitter:image' content={image} />
-        <meta name='twitter:title' content={title} />
-        <meta name='twitter:description' content={description} />
-        {keywords && <meta name='keywords' content={keywords.join(', ')} />}
-        <link rel='canonical' href={`https://sospedra.me${canonical}`} />
-      </Head>
-      <main className={className}>{children}</main>
-    </div>
+    <>
+      <a className='skip-link' href='#main-content'>
+        Skip to content ▼
+      </a>
+      <div
+        id='vbody'
+        style={{ overscrollBehavior: 'contain' }}
+        className={cn(
+          'w-full h-full overflow-x-hidden overflow-y-auto',
+          shellClassName,
+        )}
+      >
+        <main
+          id='main-content'
+          tabIndex={-1}
+          className={cn('site-main', className)}
+        >
+          {children}
+        </main>
+      </div>
+    </>
   )
 }
 

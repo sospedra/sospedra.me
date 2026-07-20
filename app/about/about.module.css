@@ -1,69 +1,200 @@
-@reference "../../service/style/global.css";
-
-.content {
-  @apply flex flex-col mb-32 font-sans text-lg leading-7 break-words align-baseline;
-  text-shadow: 2px 2px 0 var(--black);
+.frame {
+  width: 100%;
+  max-width: var(--measure-profile, 64rem);
+  min-height: 100%;
+  margin-inline: auto;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem 7rem;
+  color: var(--color-text, white);
 }
 
-.content p {
-  @apply mb-2;
+.layout {
+  display: grid;
+  grid-template-columns: minmax(13rem, 0.8fr) minmax(0, 2fr);
+  gap: clamp(2rem, 7vw, 5rem);
+  align-items: start;
 }
 
-.content h3 {
-  @apply my-4 text-2xl font-bold;
+.rail {
+  position: relative;
+  display: grid;
+  gap: 2rem;
+  min-width: 0;
+  color: var(--color-text-muted, rgb(255 255 255 / 72%));
 }
 
-.content h4 {
-  @apply mb-4 font-bold;
+.rail > section {
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--color-line, rgb(109 247 234 / 22%));
 }
 
-@media (min-width: 640px) {
-  .content p {
-    @apply text-lg;
-  }
+.rail h2 {
+  margin: 0 0 0.75rem;
+  color: var(--color-signal-cyan, #6df7ea);
+  font: 700 0.72rem / 1.3 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rail p,
+.rail li {
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.rail ul {
+  margin: 0;
+  padding-left: 1.1rem;
 }
 
 .sprite {
-  @apply sticky self-end -mr-40;
-  --size: 26rem;
-  height: var(--size);
-  margin-bottom: calc(var(--size) * -1);
-  top: 50%;
-  width: var(--size);
+  position: sticky;
+  top: 4rem;
+  width: min(22rem, 36vw);
+  height: 24rem;
+  margin: -4rem -8rem -5rem -2rem;
+  opacity: 0.48;
+  pointer-events: none;
   z-index: -1;
 }
 
-.question {
-  @apply absolute hidden p-1 pl-0 text-sm;
-  cursor: help;
-  top: -0.5rem;
+.content {
+  min-width: 0;
+  font-size: clamp(1.05rem, 1.6vw, 1.15rem);
+  line-height: var(--line-body, 1.68);
 }
 
-@media (min-width: 768px) {
-  .sprite {
-    --size: 32rem;
-  }
+.content p {
+  margin: 0 0 1.35rem;
+}
 
-  .question {
-    @apply inline;
-  }
+.intro {
+  padding-bottom: 3rem;
+}
+
+.intro > p:first-child {
+  color: var(--color-text, white);
+  font-size: clamp(1.25rem, 2.4vw, 1.55rem);
+  line-height: 1.45;
+}
+
+.experience > header {
+  padding-bottom: 1.25rem;
+}
+
+.experience > header p {
+  margin: 0 0 0.35rem;
+  color: var(--color-signal-pink, #d9478c);
+  font: 700 0.72rem / 1.3 var(--font-mono);
+  letter-spacing: 0.1em;
+}
+
+.experience h2 {
+  margin: 0;
+  font:
+    400 clamp(1.8rem, 4vw, 2.35rem) / 1 var(--font-display, var(--font-serif));
+}
+
+.experience abbr {
+  color: var(--color-signal-yellow, #ffea00);
+  cursor: help;
+  text-decoration: none;
+}
+
+.experience > section {
+  position: relative;
+  padding: 1.5rem 0 1.25rem;
+  border-top: 1px solid var(--color-line, rgb(109 247 234 / 22%));
+}
+
+.experience h3 {
+  margin: 0;
+  color: var(--color-text, white);
+  font-size: 1.25rem;
+}
+
+.experience .period,
+.experience .company {
+  color: var(--color-text-muted, rgb(255 255 255 / 62%));
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.experience .period {
+  float: right;
+  margin-top: 0.25rem;
+}
+
+.experience .company {
+  margin: 0.2rem 0 0.85rem;
+}
+
+.rubikTrigger {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: 0.15rem 0;
+  color: inherit;
+  text-align: left;
 }
 
 .rubik {
-  filter: brightness(1.5);
+  filter: brightness(1.35);
 }
+
 .rubik span:nth-child(1) {
-  @apply text-red-600;
+  color: #e85454;
 }
 .rubik span:nth-child(2) {
-  @apply text-blue-600;
+  color: #5791ff;
 }
 .rubik span:nth-child(3) {
-  @apply text-orange-600;
+  color: #f09a45;
 }
 .rubik span:nth-child(4) {
-  @apply text-green-600;
+  color: #5fcd78;
 }
 .rubik span:nth-child(5) {
-  @apply text-yellow-600;
+  color: #ffea00;
+}
+
+@media (max-width: 767px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  .rail > :first-child,
+  .sprite {
+    grid-column: 1 / -1;
+  }
+
+  .sprite {
+    position: absolute;
+    top: 0;
+    right: -7rem;
+    width: 20rem;
+    height: 22rem;
+    margin: 0;
+    opacity: 0.22;
+  }
+
+  .content {
+    grid-row: 1;
+  }
+
+  .experience .period {
+    float: none;
+    margin-bottom: 0.4rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .rail {
+    grid-template-columns: 1fr;
+  }
 }

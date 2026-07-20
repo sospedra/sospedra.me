@@ -1,9 +1,15 @@
 @reference "../../service/style/global.css";
 
+.scroll {
+  width: 100%;
+  height: 100dvh;
+  overflow: auto;
+}
+
 .bazaar {
-  @apply flex flex-col w-full max-w-xl px-4 pt-12 pb-20 mx-auto text-white opacity-0;
-  animation: fade 1s ease-in forwards;
-  animation-delay: 1s;
+  @apply flex flex-col w-full max-w-xl px-4 pb-20 mx-auto text-white;
+  padding-top: max(1rem, env(safe-area-inset-top));
+  animation: fade var(--motion-route, 480ms) var(--ease-signal, ease-out) both;
 }
 
 .list {
@@ -11,37 +17,48 @@
 }
 
 .list li {
-  @apply relative flex flex-col items-center justify-center my-24;
+  @apply relative flex flex-col items-center justify-center;
+  min-height: 11rem;
+  margin-block: clamp(4.5rem, 15vh, 8rem);
 }
 
 .title {
-  @apply text-5xl italic text-cyan-400;
+  @apply italic text-cyan-400;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
   font-family: var(--font-lazer84);
+  font-size: clamp(2.65rem, 12vw, 4.5rem);
+  line-height: 1.05;
   transform: skewY(-4deg);
   text-shadow:
-    2px 0px 3px #00a895,
-    2px 3px 1rem #00a895,
+    2px 0px 3px var(--color-signal-cyan-deep, #00a895),
+    2px 3px 1rem var(--color-signal-cyan-deep, #00a895),
     2px 0px 1rem,
-    20px 0vw 10rem #00a895,
-    40px 0vw 10rem #00a895;
+    20px 0vw 10rem var(--color-signal-cyan-deep, #00a895),
+    40px 0vw 10rem var(--color-signal-cyan-deep, #00a895);
 }
 
 .list p {
-  @apply pt-8 text-xl;
+  @apply pt-8;
+  max-width: 34rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 76%));
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  line-height: var(--line-body, 1.65);
 }
 
 .car {
   @apply absolute left-0 z-10 w-screen;
   bottom: 4vh;
   transform: translateX(120%);
-  animation: car 1s linear forwards;
-  animation-delay: 3s;
+  animation: car 900ms linear forwards;
+  animation-delay: 650ms;
 }
 
 .offscreen {
   @apply fixed bottom-0 z-10 w-full transition-transform duration-1000 transform pointer-events-none;
-  will-change: transform;
   height: 50vh;
+  contain: layout paint;
 }
 
 .hidden {
@@ -51,10 +68,12 @@
 
 @keyframes fade {
   from {
-    opacity: 0;
+    opacity: 0.88;
+    transform: translate3d(0, 8px, 0);
   }
   to {
     opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -64,5 +83,16 @@
   }
   to {
     transform: translateX(100vw);
+  }
+}
+
+@media (max-width: 639px) {
+  .offscreen {
+    height: 38vh;
+    opacity: 0.74;
+  }
+
+  .list li {
+    margin-block: 4rem;
   }
 }

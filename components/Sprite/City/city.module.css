@@ -2,11 +2,34 @@
 
 .city {
   @apply absolute bottom-0 left-0 m-0 bg-contain;
-  height: 50vh;
-  width: 800vw;
-  background-image: url(/images/street.svg);
-  z-index: -2;
-  will-change: transform;
-  background-position: bottom;
+  animation: city-arrival 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  background-position: bottom left;
   background-repeat: repeat-x;
+  background-size: auto 100%;
+  contain: layout paint style;
+  height: 50vh;
+  background-image: url(/images/street.svg);
+  pointer-events: none;
+  transform: translate3d(-100vw, 0, 0);
+  width: 220vw;
+  z-index: -2;
+}
+
+@keyframes city-arrival {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100vw, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .city {
+    animation: none;
+  }
+}
+
+:global(.fx-quiet) .city {
+  animation: none;
 }
