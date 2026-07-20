@@ -19,7 +19,7 @@ const Cloud: React.FC<{ duration?: number }> = (props) => {
     return () => {
       node.removeEventListener('animationend', clean)
     }
-  }, [])
+  }, [setOffshore])
 
   return (
     <aside ref={cloud} className={css.cloud} style={style}>

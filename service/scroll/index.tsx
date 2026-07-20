@@ -8,16 +8,16 @@ export const useScroll = <
   deps: readonly unknown[] = [],
 ) => {
   const ref = useRef<R>(null)
-  const fn = (e: Event) => requestAnimationFrame(() => clbk(e as EventTarget))
 
   useEffect(() => {
-    if (ref.current) {
-      ref.current.addEventListener('scroll', fn)
-      return () => {
-        ref.current?.removeEventListener('scroll', fn)
-      }
+    const node = ref.current
+    if (!node) return
+    const fn = (e: Event) => requestAnimationFrame(() => clbk(e as EventTarget))
+    node.addEventListener('scroll', fn)
+    return () => {
+      node.removeEventListener('scroll', fn)
     }
-  }, [...deps, ref])
+  }, [...deps, clbk])
 
   return ref
 }

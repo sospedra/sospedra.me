@@ -17,22 +17,21 @@ const Fireworks: React.FC = () => {
   const canvas = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    if (canvas.current) {
-      const context = createCanvasContext(canvas.current)
-      const aspect = createAspectRatio()
-      const image = createVirtualImage()
-      const draw = createDraw(context, image, aspect)
+    if (!canvas.current) return
+    const context = createCanvasContext(canvas.current)
+    const aspect = createAspectRatio()
+    const image = createVirtualImage()
+    const draw = createDraw(context, image, aspect)
 
-      draw()
+    draw()
 
-      createScrollListener((frame) => {
-        requestAnimationFrame(() => {
-          image.src = createFrameRoute(frame + 1)
-          draw()
-        })
+    createScrollListener((frame) => {
+      requestAnimationFrame(() => {
+        image.src = createFrameRoute(frame + 1)
+        draw()
       })
-    }
-  }, [canvas])
+    })
+  }, [])
 
   return (
     <div className={css.anchor}>

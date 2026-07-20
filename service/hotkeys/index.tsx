@@ -12,7 +12,7 @@ export const useHotkeys = (traps: Trap[]) => {
       return combos.map((combo) => [combo, handler] as const)
     })
     return tinykeys(window, Object.fromEntries(bindings))
-  }, [])
+  }, [traps])
 }
 
 export const Hotkeys: React.FC<{ children: React.ReactNode }> = (props) => {
