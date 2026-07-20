@@ -1,22 +1,21 @@
-import React from 'react'
+import { range } from 'es-toolkit'
+import type React from 'react'
 import { createFrameRoute, frameMax } from './service'
 
-const Preload: React.FC = React.memo(function Preload() {
+const Preload: React.FC = () => {
   return (
     <>
-      {Array(frameMax)
-        .fill(0)
-        .map((_, index) => (
-          <link
-            key={index}
-            rel='preload'
-            as='image'
-            type='image/jpeg'
-            href={createFrameRoute(index + 1)}
-          />
-        ))}
+      {range(1, frameMax + 1).map((frame) => (
+        <link
+          key={createFrameRoute(frame)}
+          rel='preload'
+          as='image'
+          type='image/jpeg'
+          href={createFrameRoute(frame)}
+        />
+      ))}
     </>
   )
-})
+}
 
 export default Preload

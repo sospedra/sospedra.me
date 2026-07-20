@@ -1,8 +1,9 @@
-import React, { memo, useState, useEffect } from 'react'
-import cn from 'classnames'
 import { animated, useSpring } from '@react-spring/web'
-import { useMeasure, usePrevious } from 'service/screen'
+import cn from 'clsx'
 import Icon from 'components/Icon'
+import type React from 'react'
+import { useState } from 'react'
+import { useMeasure, usePrevious } from 'service/screen'
 
 type TreeProps = {
   name: string
@@ -12,8 +13,9 @@ type TreeProps = {
   route?: string
 }
 
-export const TreeParent: React.FC<TreeProps> = memo(function TreeParent(props) {
+export const TreeParent: React.FC<TreeProps> = function TreeParent(props) {
   const [isOpen, setOpen] = useState(props.defaultOpen || false)
+  const [prevDefault, setPrevDefault] = useState(props.defaultOpen)
   const previous = usePrevious(isOpen)
   const { ref, height: viewHeight } = useMeasure()
   const { height, opacity, transform } = useSpring({
@@ -22,16 +24,19 @@ export const TreeParent: React.FC<TreeProps> = memo(function TreeParent(props) {
     transform: `translate3d(${isOpen ? 0 : 20}px,0,0)`,
   })
 
-  useEffect(() => {
-    props.defaultOpen && setOpen(props.defaultOpen)
-  }, [props.defaultOpen])
+  // render-phase adjust: a defaultOpen flip (new ?e= query) forces the node open
+  if (props.defaultOpen !== prevDefault) {
+    setPrevDefault(props.defaultOpen)
+    if (props.defaultOpen) setOpen(true)
+  }
 
   return (
     <div className='relative pt-1 overflow-x-hidden text-white truncate align-middle'>
       <button
+        type='button'
         className={cn(
           'cursor-pointer align-text-top outline-hidden focus:outline-hidden',
-          [props.bold ? 'font-bold text-cyan-400' : 'font-normal'],
+          props.bold ? 'font-bold text-cyan-400' : 'font-normal',
         )}
         onClick={() => setOpen(!isOpen)}
       >
@@ -56,12 +61,16 @@ export const TreeParent: React.FC<TreeProps> = memo(function TreeParent(props) {
       </animated.div>
     </div>
   )
-})
+}
 
-export const TreeChild: React.FC<TreeProps> = memo(function TreeChild(props) {
+export const TreeChild: React.FC<TreeProps> = function TreeChild(props) {
   return (
     <div className='relative pt-1 overflow-x-hidden text-white truncate align-middle'>
-      <a target='_blank' href={props.route?.replace('/public', '')}>
+      <a
+        target='_blank'
+        href={props.route?.replace('/public', '')}
+        rel='noopener'
+      >
         <Icon
           className='w-4 h-4 mr-3 align-text-top opacity-25'
           name='close.svg'
@@ -71,4 +80,4 @@ export const TreeChild: React.FC<TreeProps> = memo(function TreeChild(props) {
       </a>
     </div>
   )
-})
+}

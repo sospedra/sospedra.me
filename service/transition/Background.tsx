@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react'
-import { useSpring, animated, config } from '@react-spring/web'
+import { animated, config, useSpring } from '@react-spring/web'
 import { usePathname } from 'next/navigation'
+import type React from 'react'
+import { useEffect } from 'react'
 import { useTransition } from './context'
 import { createPtr } from './create-ptr'
 import Stars from './Stars'
@@ -22,7 +23,6 @@ const getOffsetFromHref = (href: string): OffsetT => {
       return { left: '-100vw', top: '-50vh' }
     case ptr('/bazaar'):
       return { left: '-30vw', top: '-300vh' }
-    case ptr('/'):
     default:
       return { left: '0vw', top: '-250vh' }
   }
@@ -31,16 +31,15 @@ const getOffsetFromHref = (href: string): OffsetT => {
 const Animation: React.FunctionComponent<{
   start: (offset: OffsetT) => unknown
   animation: object
-}> = (props) => {
+}> = ({ start, animation }) => {
   const pathname = usePathname() || '/'
   const { url } = useTransition()
 
-  // useMemo, not useEffect: the pan must start on render, before paint
-  useMemo(() => {
-    props.start(getOffsetFromHref(url || pathname))
-  }, [pathname, url])
+  useEffect(() => {
+    start(getOffsetFromHref(url || pathname))
+  }, [start, pathname, url])
 
-  return <animated.div className={css.bg} style={props.animation} />
+  return <animated.div className={css.bg} style={animation} />
 }
 
 const Background: React.FunctionComponent = () => {
@@ -52,6 +51,7 @@ const Background: React.FunctionComponent = () => {
 
   return (
     <div className={css.wrapper}>
+      {/* arrow keeps api's this-binding, the compiler keeps its identity stable */}
       <Animation start={(offset) => api.start(offset)} animation={animation} />
       <Stars />
     </div>
