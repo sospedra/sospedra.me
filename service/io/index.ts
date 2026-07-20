@@ -1,35 +1,20 @@
-import { promises as fsp } from 'node:fs'
-import { resolve } from 'node:path'
+import { readdirSync } from 'node:fs'
+import { join } from 'node:path'
 
 export * from './paths-to-tree'
 
 const filterStatic = (name: string) => {
-  return name.match(/^.*\.(?!tsx$|ts$|js$|lock|css$)[^.]+$/i)
+  return /^.*\.(?!tsx$|ts$|js$|lock|css$)[^.]+$/i.test(name)
 }
 
-const isValidDir = (dir: string) => {
-  if (dir === '.') return true
-  return ['components', 'pages', 'public', 'service'].some((path) => {
-    return dir.includes(path)
-  })
-}
-
-export const getStaticFiles = async function* (
-  dir: string,
-): AsyncGenerator<string> {
-  if (!isValidDir(dir)) return
-
-  const dirents = await fsp.readdir(dir, { withFileTypes: true })
-  const statics = dirents
+// build-time only: next.config.ts snapshots the result into static-files.json
+export const listStaticFiles = (dir: string): string[] => {
+  const dirents = readdirSync(dir, { withFileTypes: true })
     .filter((dirent) => filterStatic(dirent.name) || dirent.isDirectory())
-    .sort((a, b) => +b.isDirectory() - +a.isDirectory())
+    .toSorted((a, b) => +b.isDirectory() - +a.isDirectory())
 
-  for (const dirent of statics) {
-    const res = resolve(dir, dirent.name)
-    if (dirent.isDirectory()) {
-      yield* getStaticFiles(res)
-    } else {
-      yield res.split(process.cwd()).pop() || ''
-    }
-  }
+  return dirents.flatMap((dirent) => {
+    const path = join(dir, dirent.name)
+    return dirent.isDirectory() ? listStaticFiles(path) : `/${path}`
+  })
 }

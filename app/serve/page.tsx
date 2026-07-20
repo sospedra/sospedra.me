@@ -4,7 +4,8 @@ import type { Metadata } from 'next'
 import { cacheLife } from 'next/cache'
 import { Suspense } from 'react'
 import { SERVE_DESC } from 'service/descriptions'
-import { getStaticFiles, pathsToTree } from 'service/io'
+import { pathsToTree } from 'service/io'
+import staticFiles from 'service/io/static-files.json'
 import ServeTree from './serve-tree'
 
 export const metadata: Metadata = {
@@ -17,11 +18,7 @@ export default async function ServePage() {
   'use cache'
   cacheLife('max')
 
-  const paths = []
-  for await (const file of getStaticFiles('public')) {
-    paths.push(file)
-  }
-  const tree = pathsToTree(paths.map((p) => p.split('/')))
+  const tree = pathsToTree(staticFiles.map((p) => p.split('/')))
 
   return (
     <Shell
