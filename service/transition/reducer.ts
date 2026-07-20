@@ -70,12 +70,22 @@ export const useStateReducer = (): TransitionT => {
     }
     dispatch({ type: ActionTypes.NAVIGATE, payload: { url } })
   }
+  const navigateLater = (url: Route, delay: number) => {
+    const origin = window.location.pathname
+    setTimeout(() => {
+      // a back/forward landed elsewhere meanwhile: drop the stale intent,
+      // pushing now would truncate the history the user just walked
+      if (window.location.pathname !== origin) return
+      navigate(url)
+    }, delay)
+  }
 
   return {
     ...state,
     unmount,
     reset,
     navigate,
+    navigateLater,
     setOffshore,
   }
 }

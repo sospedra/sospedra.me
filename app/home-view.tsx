@@ -8,7 +8,7 @@ import SpriteCar from 'components/Sprite/Car'
 import SpriteCity from 'components/Sprite/City'
 import Title from 'components/Title'
 import Triangle from 'components/Triangle'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNav } from 'service/nav'
 import { useTransition } from 'service/transition'
 import { usePrefetch } from 'service/transition/use-prefetch'
@@ -21,6 +21,21 @@ const focusOnHover = (ref: React.RefObject<HTMLAnchorElement | null>) => {
 }
 
 export default function HomeView() {
+  const [epoch, setEpoch] = useState(0)
+  const revived = useRef(false)
+
+  // cacheComponents revives this page from a hidden Activity with the exit
+  // offsets intact: effects re-run on reveal while refs survive, so a second
+  // run means revival and the stage remounts to replay the entrance
+  useEffect(() => {
+    if (revived.current) setEpoch((e) => e + 1)
+    revived.current = true
+  }, [])
+
+  return <HomeStage key={epoch} />
+}
+
+function HomeStage() {
   const [[offsetX, offsetY], setOffset] = useState([0, 0])
   const refs = useNav()
   const transition = useTransition()
@@ -81,12 +96,13 @@ export default function HomeView() {
                   onClick={(e) => {
                     e.preventDefault()
                     setOffset([BAZAAR_OFFSET, 0])
+                    const origin = window.location.pathname
                     setTimeout(() => {
+                      // skip the cloud if a back/forward already left home
+                      if (window.location.pathname !== origin) return
                       transition.setOffshore('cloud', BAZAAR_DURATION)
                     }, BAZAAR_DURATION - 1200)
-                    setTimeout(() => {
-                      transition.navigate('/bazaar')
-                    }, BAZAAR_DURATION - 500)
+                    transition.navigateLater('/bazaar', BAZAAR_DURATION - 500)
                   }}
                 >
                   Bazaar

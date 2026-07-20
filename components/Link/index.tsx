@@ -28,12 +28,7 @@ const Link = React.forwardRef(function Link(
       onClick={(e) => {
         e.preventDefault()
         onClick?.(e)
-        setTimeout(
-          () => {
-            transition.navigate(url)
-          },
-          instant ? 0 : 360,
-        )
+        transition.navigateLater(url, instant ? 0 : 360)
       }}
     >
       {props.children}

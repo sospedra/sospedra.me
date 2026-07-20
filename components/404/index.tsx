@@ -8,7 +8,7 @@ import css from './404.module.css'
 
 const Component404: React.FC = () => {
   const [vid, setVid] = useState('desk')
-  const { navigate } = useTransition()
+  const { navigateLater } = useTransition()
 
   return (
     <div className={css.notfound}>
@@ -49,7 +49,7 @@ const Component404: React.FC = () => {
           if (vid === 'static') return
           if (vid === 'pedro') {
             setVid('static')
-            setTimeout(() => navigate('/'), 1000)
+            navigateLater('/', 1000)
             return
           }
           setVid(vid === 'desk' ? 'kermit' : 'pedro')
