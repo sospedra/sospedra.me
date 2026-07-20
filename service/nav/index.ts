@@ -3,12 +3,13 @@ import { useMousetrap } from 'service/mousetrap'
 
 export const useNav = () => {
   const [, setCursor] = useState(0)
-  const refs = [
-    useRef<HTMLAnchorElement>(null),
-    useRef<HTMLAnchorElement>(null),
-    useRef<HTMLAnchorElement>(null),
-    useRef<HTMLButtonElement>(null),
-  ] as const
+  // statement-level hook calls: the react compiler skips hooks
+  // hidden inside array literals and corrupts the hook order
+  const first = useRef<HTMLAnchorElement>(null)
+  const second = useRef<HTMLAnchorElement>(null)
+  const third = useRef<HTMLAnchorElement>(null)
+  const fourth = useRef<HTMLButtonElement>(null)
+  const refs = [first, second, third, fourth] as const
 
   useMousetrap([
     [

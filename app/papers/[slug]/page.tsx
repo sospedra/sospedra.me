@@ -12,7 +12,7 @@ export async function generateStaticParams() {
 
 // dynamicParams=false is banned under cacheComponents, guard instead
 const fetchPaperOr404 = async (slug: string) => {
-  const meta = await fetchPaper(slug).catch(() => null)
+  const meta = await fetchPaper(slug)
   if (!meta) notFound()
   return meta
 }

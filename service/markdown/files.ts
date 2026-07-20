@@ -28,7 +28,10 @@ export type Paper = {
 
 export async function fetchPaper(slug: string) {
   cacheLife('max')
-  const meta = await readFile(join(root, slug, 'metadata.json'), 'utf8')
+  const metafile = join(root, slug, 'metadata.json')
+  // a miss must resolve null: rejections inside 'use cache' abort the render
+  if (!fs.existsSync(metafile)) return null
+  const meta = await readFile(metafile, 'utf8')
   return JSON.parse(meta) as Paper
 }
 
