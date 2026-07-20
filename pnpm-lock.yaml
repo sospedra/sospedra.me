@@ -14,9 +14,6 @@ importers:
       '@mdx-js/loader':
         specifier: 3.1.1
         version: 3.1.1
-      '@mdx-js/react':
-        specifier: 3.1.1
-        version: 3.1.1(@types/react@19.2.17)(react@19.2.7)
       '@next/mdx':
         specifier: 16.2.10
         version: 16.2.10(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1(@types/react@19.2.17)(react@19.2.7))
@@ -1935,6 +1932,7 @@ snapshots:
       '@types/mdx': 2.0.14
       '@types/react': 19.2.17
       react: 19.2.7
+    optional: true
 
   '@next/env@16.2.10': {}
 

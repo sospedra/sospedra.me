@@ -1,7 +1,7 @@
 {
   "name": "sospedra.me",
   "version": "4.0.0",
-  "packageManager": "pnpm@11.15.1",
+  "packageManager": "pnpm@11.13.0",
   "engines": {
     "node": "24.x"
   },
@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@mdx-js/loader": "3.1.1",
-    "@mdx-js/react": "3.1.1",
     "@next/mdx": "16.2.10",
     "@react-spring/web": "10.1.2",
     "@shikijs/rehype": "4.3.1",
