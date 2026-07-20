@@ -1,7 +1,7 @@
-const resize = require('./internals/resize')
-const reading = require('./internals/reading')
+import resize from './internals/resize.mjs'
+import reading from './internals/reading.mjs'
 
-module.exports = {
+export default {
   '*.{ts,tsx}': ['eslint --fix', 'prettier --write'],
   '*.css': 'prettier --write',
   '*.mdx': (filenames) => {

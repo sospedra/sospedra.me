@@ -1,10 +1,11 @@
-const sharp = require('sharp')
-const { resolve, dirname, basename } = require('path')
-const io = require('./io')
+import { mkdir, writeFile } from 'node:fs/promises'
+import { basename, dirname, resolve } from 'node:path'
+import sharp from 'sharp'
+import { patch, readJson, writeJson } from './io.mjs'
 
 sharp.cache(false)
 
-module.exports = async (filename) => {
+export default async function resize(filename) {
   if (!filename.includes('content/papers')) return
 
   const image = sharp(filename)
@@ -17,18 +18,16 @@ module.exports = async (filename) => {
     .replace('content/papers', 'public/papers')
     .replace(/\.[^.]+$/, '.jpeg')
 
-  if (!(await io.exists(dirname(output)))) {
-    await io.mkdir(dirname(output))
-  }
-  await io.write(output, data, false)
+  await mkdir(dirname(output), { recursive: true })
+  await writeFile(output, data)
 
   const dimensions = await sharp(output).metadata()
   const metafile = resolve(filename, '../metadata.json')
-  const meta = await io.read(metafile, '{}')
+  const meta = await readJson(metafile, {})
 
-  return io.write(
+  return writeJson(
     metafile,
-    io.assign(meta, 'images', {
+    patch(meta, 'images', {
       [basename(output)]: {
         width: dimensions.width,
         height: dimensions.height,
