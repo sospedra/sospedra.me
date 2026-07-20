@@ -1,8 +1,8 @@
 import * as cheerio from 'cheerio'
-import Hashids from 'hashids'
+import Sqids from 'sqids'
 import { abs, readJson, writeJson } from './io.mjs'
 
-const tiny = new Hashids('1337', 4, 'abcdefghijklmnopqrstuvwxyz')
+const tiny = new Sqids({ alphabet: 'abcdefghijklmnopqrstuvwxyz', minLength: 4 })
 
 try {
   const input = process.argv[2]
@@ -24,12 +24,18 @@ try {
     throw Error('This destination is already on rewrites')
   }
 
+  const source = `/r/${tiny.encode([file.length])}`
+  // sources persist forever: a sqids code must not shadow an old hashids one
+  if (file.find((rewrite) => rewrite.source === source)) {
+    throw Error(`The code ${source} is already taken`)
+  }
+
   await writeJson(filename, [
     ...file,
     {
       destination: response.url,
       title,
-      source: `/r/${tiny.encode(file.length)}`,
+      source,
       listed: !hidden,
     },
   ])

@@ -88,11 +88,6 @@
         "description": "The terminal is nice. But did you ever try to play with shells? This is the real deal. Fish is out of this world."
       },
       {
-        "title": "Tech stack",
-        "url": "/stack",
-        "description": "What do I use for coding? My tools of choice? Favourite libraries? I have a special page for that. Enjoy it."
-      },
-      {
         "title": "SynthWave '84 theme",
         "url": "https://github.com/robb0wen/synthwave-vscode",
         "description": "Of course! What do you think? It's the freaking best theme EVER. Period. That's it. It matches my vapor/retro/aesthetic style."

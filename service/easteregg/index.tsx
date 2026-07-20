@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { useMousetrap, trigger } from 'service/mousetrap'
+import type React from 'react'
+import { useState } from 'react'
+import { trigger, useHotkeys } from 'service/hotkeys'
 import { useShake } from 'service/screen'
 import { useLog } from './log'
 
@@ -11,9 +12,9 @@ const EasterEgg: React.FC<{ children: React.ReactNode }> = (props) => {
   const [isActive, setIsActive] = useState(false)
   const [isTapVisible, setIsTapVisible] = useState(false)
 
-  useMousetrap([
+  useHotkeys([
     [
-      'up up down down left right left right b a',
+      'ArrowUp ArrowUp ArrowDown ArrowDown ArrowLeft ArrowRight ArrowLeft ArrowRight b a',
       () => {
         setIsActive((x) => !x)
       },
@@ -21,7 +22,7 @@ const EasterEgg: React.FC<{ children: React.ReactNode }> = (props) => {
   ])
 
   useShake(() => {
-    trigger('esc')
+    trigger('Escape')
     setIsTapVisible(true)
   })
 

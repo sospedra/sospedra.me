@@ -10,7 +10,5 @@ export const REWRITE_DESC = 'Personal links that I share often'
 
 export const SERVE_DESC = 'List of all the public-available static assets'
 
-export const STACK_DESC = `A curated list of the best high-quality up-to-date technologies of ${new Date().getUTCFullYear()}`
-
 export const USES_DESC =
   'The specifics of the piece of software and hardware I use every day. Highly opinionated.'

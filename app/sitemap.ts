@@ -9,7 +9,6 @@ const STATIC_ROUTES = [
   '/papers',
   '/rewrite',
   '/serve',
-  '/stack',
   '/uses',
 ]
 

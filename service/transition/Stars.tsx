@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react'
-import cn from 'classnames'
+import cn from 'clsx'
+import { isNotNil, range } from 'es-toolkit'
 import { usePathname } from 'next/navigation'
-import { isNotNull } from 'service/structs'
+import type React from 'react'
 import { createRange, createRng } from 'service/random'
 import { useTransition } from './context'
 import { createPtr } from './create-ptr'
@@ -20,21 +20,20 @@ const createSize = () => {
 
 const createAlive = (y: number) => {
   if (y < 10) return true
-  if (y < 20) return rng.quick() < 0.8
-  if (y < 35) return rng.quick() < 0.7
-  if (y < 60) return rng.quick() < 0.5
-  return rng.quick() < 0.2
+  if (y < 20) return rng() < 0.8
+  if (y < 35) return rng() < 0.7
+  if (y < 60) return rng() < 0.5
+  return rng() < 0.2
 }
 
 const createAnimation = () => {
-  if (rng.quick() < 0.2) return ''
-  return rng.quick() < 0.6 ? css.twinkling : css.blink
+  if (rng() < 0.2) return ''
+  return rng() < 0.6 ? css.twinkling : css.blink
 }
 
 const createStars = () => {
-  return Array(40)
-    .fill(0)
-    .map((_, id) => {
+  return range(40)
+    .map((id) => {
       const { x, y } = createCoords()
       const size = createSize()
       const delay = rrange(4, 1)
@@ -51,7 +50,7 @@ const createStars = () => {
 
       return alive ? star : null
     })
-    .filter(isNotNull)
+    .filter(isNotNil)
 }
 
 const getHidden = (href: string) => {
@@ -69,7 +68,7 @@ const ShootingStar: React.FC = () => {
       className={css.shooting}
       style={{ animationDelay: `${shootingDelay}s` }}
     >
-      <span className={cn('start', { [css.star]: true })} />
+      <span className={cn('start', css.star)} />
     </span>
   )
 }
@@ -77,7 +76,7 @@ const ShootingStar: React.FC = () => {
 const Stars: React.FC = () => {
   const pathname = usePathname() || '/'
   const { url } = useTransition()
-  const hidden = useMemo(() => getHidden(url || pathname), [url, pathname])
+  const hidden = getHidden(url || pathname)
 
   if (hidden) return null
 

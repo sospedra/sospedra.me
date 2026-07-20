@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
 import dynamic from 'next/dynamic'
-import { useMousetrap } from 'service/mousetrap'
+import React, { useState } from 'react'
+import { useHotkeys } from 'service/hotkeys'
 import Loading from './Loading'
 
 const Modal = dynamic(() => import('./Modal'), {
@@ -14,7 +14,7 @@ const Cheatcodes = React.forwardRef(function Cheatcodes(
 ) {
   const [isActive, setIsActive] = useState(false)
 
-  useMousetrap([['esc', () => setIsActive(false)]])
+  useHotkeys([['Escape', () => setIsActive(false)]])
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { useMousetrap } from 'service/mousetrap'
+import { useHotkeys } from 'service/hotkeys'
 
 export const useNav = () => {
   const [, setCursor] = useState(0)
@@ -11,9 +11,9 @@ export const useNav = () => {
   const fourth = useRef<HTMLButtonElement>(null)
   const refs = [first, second, third, fourth] as const
 
-  useMousetrap([
+  useHotkeys([
     [
-      ['alt+down', 'j'],
+      ['Alt+ArrowDown', 'j'],
       () => {
         setCursor((c) => {
           const index = c === refs.length - 1 ? 0 : c + 1
@@ -24,7 +24,7 @@ export const useNav = () => {
       },
     ],
     [
-      ['alt+up', 'k'],
+      ['Alt+ArrowUp', 'k'],
       () => {
         setCursor((c) => {
           const index = c === 0 ? refs.length - 1 : c - 1

@@ -13,7 +13,6 @@ import {
   MANUAL_DESC,
   REWRITE_DESC,
   SERVE_DESC,
-  STACK_DESC,
   USES_DESC,
 } from 'service/descriptions'
 import { useScroll } from 'service/scroll'
@@ -36,12 +35,6 @@ export default function BazaarView() {
           <p>{BAZAAR_DESC}</p>
 
           <ul className={css.list}>
-            <li>
-              <Link className={css.title} url='/stack'>
-                the stack
-              </Link>
-              <p>{STACK_DESC}</p>
-            </li>
             <li>
               <Link className={css.title} url='/manual'>
                 user guide manual

@@ -39,12 +39,15 @@ const config: NextConfig = {
     '/sitemap.xml': ['./content/papers/**'],
     '/serve': ['./public/**'],
   },
-  redirects: async () =>
-    rewrites.map(({ source, destination }) => ({
+  redirects: async () => [
+    // the stack screen is gone but inbound links survive
+    { source: '/stack', destination: '/bazaar', permanent: true },
+    ...rewrites.map(({ source, destination }) => ({
       source,
       destination,
       permanent: true,
     })),
+  ],
 }
 
 export default withMDX(config)
