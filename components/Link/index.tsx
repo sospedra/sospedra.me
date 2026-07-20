@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import type { Route } from 'next'
 import { useTransition } from 'service/transition'
 import { usePrefetch } from 'service/transition/use-prefetch'
 import Icon from 'components/Icon'
@@ -8,7 +9,7 @@ import css from './link.module.css'
 
 const Link = React.forwardRef(function Link(
   props: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-    url: string
+    url: Route
     children: React.ReactNode
     instant?: boolean
   },

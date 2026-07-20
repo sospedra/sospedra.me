@@ -1,21 +1,27 @@
 import type { Metadata } from 'next'
 import type { MDXComponents } from 'mdx/types'
+import { notFound } from 'next/navigation'
 import { fetchPaper, fetchPapers, Paper } from 'service/markdown/files'
 import PaperShell from 'service/markdown/Paper'
 import PaperImage from 'service/markdown/Image'
-
-export const dynamicParams = false
 
 export async function generateStaticParams() {
   const papers = await fetchPapers()
   return papers.map(({ slug }) => ({ slug }))
 }
 
+// dynamicParams=false is banned under cacheComponents, guard instead
+const fetchPaperOr404 = async (slug: string) => {
+  const meta = await fetchPaper(slug).catch(() => null)
+  if (!meta) notFound()
+  return meta
+}
+
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await props.params
-  const meta = await fetchPaper(slug)
+  const meta = await fetchPaperOr404(slug)
 
   return {
     title: meta.title,
@@ -41,7 +47,7 @@ export default async function PaperPage(props: {
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await props.params
-  const meta = await fetchPaper(slug)
+  const meta = await fetchPaperOr404(slug)
   const { default: Post } = await import(`content/papers/${slug}/index.mdx`)
 
   return (

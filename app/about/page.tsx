@@ -7,6 +7,13 @@ export const metadata: Metadata = {
   alternates: { canonical: '/about' },
 }
 
-export default function AboutPage() {
-  return <AboutView />
+// cached: the career age bakes at build, new Date() is banned at prerender
+const getYearsSince = async (start: number) => {
+  'use cache'
+  return new Date().getUTCFullYear() - start
+}
+
+export default async function AboutPage() {
+  const years = await getYearsSince(2014)
+  return <AboutView years={years} />
 }

@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import type { Route } from 'next'
 import { usePathname, useRouter } from 'next/navigation'
 import { TransitionCTX } from './context'
 import { useStateReducer } from './reducer'
@@ -30,7 +31,8 @@ export const Provider: React.FunctionComponent<{
 
   useEffect(() => {
     if (!transition.hasRequestedUnmount || !transition.willUnmount) return
-    router.push(transition.url)
+    // state keeps a plain string, navigate() only accepts typed routes
+    router.push(transition.url as Route)
   }, [transition.hasRequestedUnmount, transition.willUnmount])
 
   return (

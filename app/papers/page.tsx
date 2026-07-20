@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Route } from 'next'
 import cn from 'classnames'
 import Link, { LinkBack } from 'components/Link'
 import Meta from 'components/Meta'
@@ -38,7 +38,7 @@ export default async function PapersPage() {
       <ul>
         {papers.map((paper) => (
           <li key={paper.slug} className='pt-2 pb-12'>
-            <Link url={`/papers/${paper.slug}`}>
+            <Link url={`/papers/${paper.slug}` as Route}>
               <h2
                 data-text={paper.title}
                 className={cn('font-serif text-3xl', {

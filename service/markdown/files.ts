@@ -1,6 +1,9 @@
+'use cache'
+
 import fs from 'fs'
 import { join } from 'path'
 import { promisify } from 'util'
+import { cacheLife } from 'next/cache'
 
 const readFile = promisify(fs.readFile)
 const readdir = promisify(fs.readdir)
@@ -24,11 +27,13 @@ export type Paper = {
 }
 
 export async function fetchPaper(slug: string) {
+  cacheLife('max')
   const meta = await readFile(join(root, slug, 'metadata.json'), 'utf8')
   return JSON.parse(meta) as Paper
 }
 
 export async function fetchPapers() {
+  cacheLife('max')
   const slugs = (await readdir(root, { withFileTypes: true }))
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name)

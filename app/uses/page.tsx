@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Route } from 'next'
 import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
 import External, { TWITTER } from 'components/External'
@@ -41,7 +41,7 @@ export default function UsesPage() {
                   {item.url.includes('http') ? (
                     <External href={item.url}>{item.title}</External>
                   ) : (
-                    <Link url={item.url} className={cssNeon.neon}>
+                    <Link url={item.url as Route} className={cssNeon.neon}>
                       {item.title}
                     </Link>
                   )}

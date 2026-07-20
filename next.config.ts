@@ -19,7 +19,26 @@ const withMDX = createMDX({
 })
 
 const config: NextConfig = {
+  cacheComponents: true,
+  reactCompiler: true,
+  typedRoutes: true,
   pageExtensions: ['ts', 'tsx'],
+  logging: {
+    browserToTerminal: true,
+  },
+  experimental: {
+    inlineCss: true,
+    webVitalsAttribution: ['CLS', 'LCP', 'INP'],
+  },
+  // cache revalidation re-runs fs reads at runtime, and the tracer
+  // cannot follow dynamic process.cwd() paths into the function bundle
+  outputFileTracingIncludes: {
+    '/papers': ['./content/papers/**'],
+    '/papers/[slug]': ['./content/papers/**'],
+    '/rss.xml': ['./content/papers/**'],
+    '/sitemap.xml': ['./content/papers/**'],
+    '/serve': ['./public/**'],
+  },
   redirects: async () =>
     rewrites.map(({ source, destination }) => ({
       source,

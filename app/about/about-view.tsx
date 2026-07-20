@@ -10,7 +10,7 @@ import Row from 'components/Row'
 import Role from 'components/Role'
 import css from './about.module.css'
 
-export default function AboutView() {
+export default function AboutView(props: { years: number }) {
   const teleportRef = useRef<HTMLDivElement>(null)
   const [$teleport, setTeleport] = useState<HTMLDivElement>()
 
@@ -49,9 +49,8 @@ export default function AboutView() {
                 After graduating in Political Science I took a radical shift in
                 my career and started a remote software internship. I have been
                 interested in computers and automation since I was a kid and I'm
-                a lifelong learner. For the past{' '}
-                {new Date().getUTCFullYear() - 2014} years I have focused on
-                helping companies grow their products.
+                a lifelong learner. For the past {props.years} years I have
+                focused on helping companies grow their products.
               </p>
               <p className='pb-4'>
                 I founded a remote startup, collaborated with big and small

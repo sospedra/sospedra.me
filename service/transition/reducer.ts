@@ -1,4 +1,5 @@
 import { useReducer } from 'react'
+import type { Route } from 'next'
 import { TransitionT } from './context'
 
 export enum ActionTypes {
@@ -61,7 +62,7 @@ export const useStateReducer = (): TransitionT => {
   const reset = () => dispatch({ type: ActionTypes.RESET })
   const setOffshore = (offshore: State['offshore'], duration?: number) =>
     dispatch({ type: ActionTypes.OFFSHORE, payload: { offshore, duration } })
-  const navigate = (url: string) => {
+  const navigate = (url: Route) => {
     // same-route guard: the pathname never changes, so reset instead
     if (url === window.location.pathname) {
       dispatch({ type: ActionTypes.RESET })

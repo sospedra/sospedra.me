@@ -1,9 +1,10 @@
 import React, { useContext } from 'react'
+import type { Route } from 'next'
 import { State } from './reducer'
 import { DEFAULT_STATE } from './reducer'
 
 export type TransitionT = State & {
-  navigate: (url: string) => void
+  navigate: (url: Route) => void
   unmount: () => void
   reset: () => void
   setOffshore: (offshore: State['offshore'], duration?: number) => void

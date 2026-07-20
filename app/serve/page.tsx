@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
+import { cacheLife } from 'next/cache'
 import { getStaticFiles, pathsToTree } from 'service/io'
 import { SERVE_DESC } from 'service/descriptions'
 import Shell from 'components/Shell'
@@ -13,6 +14,9 @@ export const metadata: Metadata = {
 }
 
 export default async function ServePage() {
+  'use cache'
+  cacheLife('max')
+
   const paths = []
   for await (const file of getStaticFiles('public')) {
     paths.push(file)

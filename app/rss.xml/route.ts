@@ -1,7 +1,5 @@
+import { cacheLife } from 'next/cache'
 import { fetchPapers, Paper } from 'service/markdown/files'
-
-// prerendered at build, like the old internals/feed script
-export const dynamic = 'force-static'
 
 const esc = (unsafe: string) =>
   unsafe
@@ -55,10 +53,16 @@ const createRSS = (papers: Paper[]) => `<?xml version="1.0" encoding="UTF-8"?>
 </channel>
 </rss>`
 
-export async function GET() {
+// cached, so the feed and its build dates prerender into the shell
+const buildFeed = async () => {
+  'use cache'
+  cacheLife('max')
   const papers = await fetchPapers()
+  return createRSS(papers)
+}
 
-  return new Response(createRSS(papers), {
+export async function GET() {
+  return new Response(await buildFeed(), {
     headers: { 'Content-Type': 'application/rss+xml' },
   })
 }

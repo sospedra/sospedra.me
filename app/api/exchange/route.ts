@@ -1,8 +1,6 @@
+import { connection } from 'next/server'
 import { subDays, format } from 'date-fns'
 import { sendMessage } from 'service/telegram'
-
-// the fetch must run per request, never at build
-export const dynamic = 'force-dynamic'
 
 const RATE_THRESHOLD = 0.85
 
@@ -19,6 +17,9 @@ const fetchRate = async (date: Date) => {
 }
 
 export async function GET() {
+  // the fetch must run per request, never at build
+  await connection()
+
   try {
     const now = new Date()
     const [today, yesterday] = await Promise.all([
