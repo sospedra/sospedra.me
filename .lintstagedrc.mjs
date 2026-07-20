@@ -1,9 +1,8 @@
-import resize from './internals/resize.mjs'
 import reading from './internals/reading.mjs'
+import resize from './internals/resize.mjs'
 
 export default {
-  '*.{ts,tsx}': ['eslint --fix', 'prettier --write'],
-  '*.css': 'prettier --write',
+  '*.{ts,tsx,css,json}': 'biome check --write --no-errors-on-unmatched',
   '*.mdx': (filenames) => {
     for (const filename of filenames) {
       reading(filename)

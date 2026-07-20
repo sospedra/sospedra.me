@@ -1,6 +1,6 @@
+import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
-import { Analytics } from '@vercel/analytics/next'
 import Providers from './providers'
 import 'service/style/global.css'
 
@@ -112,6 +112,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <Analytics />
         <script
           type='application/ld+json'
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static person json-ld
           dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSON_LD) }}
         />
       </body>

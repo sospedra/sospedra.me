@@ -1,20 +1,13 @@
+import { escape as escapeHtml } from 'es-toolkit'
 import { cacheLife } from 'next/cache'
-import { fetchPapers, Paper } from 'service/markdown/files'
-
-const esc = (unsafe: string) =>
-  unsafe
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;')
+import { fetchPapers, type Paper } from 'service/markdown/files'
 
 const createItem = (meta: Paper) => {
-  const title = esc(meta.title)
-  const excerpt = esc(meta.excerpt)
+  const title = escapeHtml(meta.title)
+  const excerpt = escapeHtml(meta.excerpt)
   const pubdate = new Date(meta.updatedAt).toUTCString()
   const categories = meta.categories.map(
-    (category) => `<category>${esc(category)}</category>`,
+    (category) => `<category>${escapeHtml(category)}</category>`,
   )
 
   return `

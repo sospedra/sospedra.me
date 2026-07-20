@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .header2 {
   @apply absolute top-0 text-xl leading-9 text-right transform -rotate-90;
@@ -7,7 +7,7 @@
   transform-origin: right top;
   right: 4rem;
   width: 26rem;
-  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic Pro', '游ゴシック',
-    '游ゴシック体', YuGothic, 'Yu Gothic', 'ＭＳ ゴシック', 'MS Gothic',
-    monospace;
+  font-family:
+    "Hiragino Sans", "Hiragino Kaku Gothic Pro", "游ゴシック", "游ゴシック体",
+    YuGothic, "Yu Gothic", "ＭＳ ゴシック", "MS Gothic", monospace;
 }

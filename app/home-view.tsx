@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from 'react'
 import { animated, config, useSpring } from '@react-spring/web'
+import css from 'app/home.module.css'
+import Link from 'components/Link'
+import Shell from 'components/Shell'
+import SpriteCar from 'components/Sprite/Car'
+import SpriteCity from 'components/Sprite/City'
+import Title from 'components/Title'
+import Triangle from 'components/Triangle'
+import { useState } from 'react'
 import { useNav } from 'service/nav'
 import { useTransition } from 'service/transition'
 import { usePrefetch } from 'service/transition/use-prefetch'
-import Link from 'components/Link'
-import Shell from 'components/Shell'
-import SpriteCity from 'components/Sprite/City'
-import SpriteCar from 'components/Sprite/Car'
-import Triangle from 'components/Triangle'
-import Title from 'components/Title'
-import css from 'app/home.module.css'
 
 const BAZAAR_DURATION = 3500
 const BAZAAR_OFFSET = -600

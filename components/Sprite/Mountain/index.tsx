@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import css from './mountain.module.css'
 
 export const SpriteCloud: React.FC = () => {

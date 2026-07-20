@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
-import cn from 'classnames'
+import cn from 'clsx'
 import Head from 'next/head'
+import type React from 'react'
 
 const Shell: React.FC<{
   canonical: string
@@ -30,9 +30,10 @@ const Shell: React.FC<{
     <div
       id='vbody'
       style={{ overscrollBehavior: 'contain' }}
-      className={cn('w-full h-full overflow-x-hidden overflow-y-auto', {
-        [shellClassName]: !!shellClassName,
-      })}
+      className={cn(
+        'w-full h-full overflow-x-hidden overflow-y-auto',
+        shellClassName,
+      )}
     >
       <Head>
         <title>{title}</title>

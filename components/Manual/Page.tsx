@@ -1,5 +1,5 @@
-import React from 'react'
-import cn from 'classnames'
+import cn from 'clsx'
+import type React from 'react'
 import css from './page.module.css'
 
 const Page: React.FC<{

@@ -9,7 +9,7 @@ export const useInterval = (callback: () => void, delay: number) => {
   }, [callback])
 
   useEffect(() => {
-    const tick = () => memo.current && memo.current()
+    const tick = () => memo.current?.()
     const interval = setInterval(tick, delay)
     saveInterval(interval)
 

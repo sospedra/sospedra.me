@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 
 // static dark: the old localStorage initializer broke react 19 hydration
 // and no ui ever wired setTheme

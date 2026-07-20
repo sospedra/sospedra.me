@@ -1,10 +1,10 @@
 'use client'
 
-import { StackProvider } from 'service/stack'
-import Featured from 'components/Stack/Featured'
 import CategoryList from 'components/Stack/Category'
-import TechList from 'components/Stack/Tech'
+import Featured from 'components/Stack/Featured'
 import Search from 'components/Stack/Search'
+import TechList from 'components/Stack/Tech'
+import { StackProvider } from 'service/stack'
 
 export default function StackView() {
   return (

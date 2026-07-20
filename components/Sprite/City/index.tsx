@@ -1,5 +1,5 @@
-import React from 'react'
-import { config, animated, useSpring } from '@react-spring/web'
+import { animated, config, useSpring } from '@react-spring/web'
+import type React from 'react'
 import css from './city.module.css'
 
 const SpriteCity: React.FunctionComponent = () => {

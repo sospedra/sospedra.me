@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
 import type { Route } from 'next'
 import { usePathname, useRouter } from 'next/navigation'
-import { TransitionCTX } from './context'
-import { useStateReducer } from './reducer'
+import type React from 'react'
+import { useEffect } from 'react'
 import Background from './Background'
+import { TransitionCTX } from './context'
 import Offshore from './Offshore'
+import { useStateReducer } from './reducer'
 import css from './transition.module.css'
 
 const UNMOUNT_DELAY_MS = 360

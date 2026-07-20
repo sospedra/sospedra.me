@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useEffect } from 'react'
-import Shell from 'components/Shell'
-import Meta from 'components/Meta'
 import Link, { LinkBack } from 'components/Link'
-import css from './paper.module.css'
+import Meta from 'components/Meta'
+import Shell from 'components/Shell'
+import type React from 'react'
+import { useEffect } from 'react'
 import Footer from '../Footer'
-import { Paper } from '../files'
+import type { Paper } from '../files'
+import css from './paper.module.css'
 
 const PaperShell: React.FC<Paper & { children: React.ReactNode }> = (props) => {
   useEffect(() => {
@@ -39,7 +40,7 @@ const PaperShell: React.FC<Paper & { children: React.ReactNode }> = (props) => {
           minutes={props.minutes}
         />
 
-        <div className={`${css['markdown']} mb-8`}>{props.children}</div>
+        <div className={`${css.markdown} mb-8`}>{props.children}</div>
       </article>
       <Footer slug={props.slug} />
     </Shell>

@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .cloud {
   @apply fixed bottom-0 right-0 z-10 w-screen h-screen origin-bottom;

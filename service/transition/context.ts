@@ -1,7 +1,6 @@
-import React, { useContext } from 'react'
 import type { Route } from 'next'
-import { State } from './reducer'
-import { DEFAULT_STATE } from './reducer'
+import React, { useContext } from 'react'
+import { DEFAULT_STATE, type State } from './reducer'
 
 export type TransitionT = State & {
   navigate: (url: Route) => void

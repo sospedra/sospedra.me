@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .tap {
   @apply fixed inset-0 z-50 w-full outline-hidden;
@@ -10,12 +10,14 @@
   margin-left: calc(25% - 6rem);
   transform-origin: center center;
   animation: rotate 8s linear infinite;
-  text-shadow: 2px 2px 0 var(--pink), -2px -2px 0 var(--cyan);
+  text-shadow:
+    2px 2px 0 var(--pink),
+    -2px -2px 0 var(--cyan);
 }
 
 .count:before {
   @apply absolute block w-full h-full rounded-full;
-  content: '';
+  content: "";
   z-index: -1;
   filter: blur(0.23rem);
   background: radial-gradient(white 23%, transparent);

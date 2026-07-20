@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import count from './count.svg'
 import demons from './demons.svg'
 import gameboy from './gameboy.svg'
@@ -32,7 +32,11 @@ const SpriteManual: React.FC<{
   return (
     <>
       <link rel='preload' as='image' href={sprite.src} />
-      <img src={sprite.src} className={`h-full p-4 ${props.className || ''}`} />
+      <img
+        alt={props.name}
+        src={sprite.src}
+        className={`h-full p-4 ${props.className || ''}`}
+      />
     </>
   )
 }

@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .page {
   @apply relative flex flex-col justify-between h-screen pr-4 mb-8 text-white;
@@ -19,7 +19,7 @@
   bottom: 3rem;
   writing-mode: vertical-lr;
   right: -0.5rem;
-  content: 'RS-19911201-11';
+  content: "RS-19911201-11";
 }
 
 .page:first-of-type::before {

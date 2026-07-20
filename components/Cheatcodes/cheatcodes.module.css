@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .window {
   @apply flex flex-col text-lg;
@@ -18,16 +18,6 @@
   background: #000181;
 }
 
-.window h3 button {
-  @apply w-4 h-4 text-sm;
-  line-height: 1px;
-  font-family: sans-serif;
-}
-
-.window div {
-  @apply flex flex-col px-1 py-2;
-}
-
 .window button {
   @apply text-black outline-hidden cursor-pointer;
   background: #c0c0c0;
@@ -36,8 +26,21 @@
   border-right-color: #858585;
   border-bottom-color: #858585;
   border-left-color: white;
-  box-shadow: 1px 1px 0 black, -1px -1px 0 black, -1px 1px 0 black,
+  box-shadow:
+    1px 1px 0 black,
+    -1px -1px 0 black,
+    -1px 1px 0 black,
     1px -1px 0 black;
+}
+
+.window h3 button {
+  @apply w-4 h-4 text-sm;
+  line-height: 1px;
+  font-family: sans-serif;
+}
+
+.window div {
+  @apply flex flex-col px-1 py-2;
 }
 
 .window div button {

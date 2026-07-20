@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import css from 'service/style/neon.module.css'
 
 export const TWITTER = 'https://twitter.com/sospedra_r'

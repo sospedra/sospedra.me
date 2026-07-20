@@ -1,5 +1,3 @@
-import getEventsMap from 'px-map-events'
-
 export * from './shake'
 export * from './useMeasure'
 
@@ -12,6 +10,5 @@ export const matchScreen = (query: string) => {
 }
 
 export const hasMotion = () => {
-  const windowEventsMap = getEventsMap('window' as const)['window']
-  return !!windowEventsMap.includes('devicemotion')
+  return typeof window !== 'undefined' && 'ondevicemotion' in window
 }

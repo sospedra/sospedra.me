@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .appear {
   @apply absolute block;
@@ -32,7 +32,7 @@
     white,
     rgba(0, 0, 255, 0)
   );
-  content: '';
+  content: "";
   filter: drop-shadow(0 0 6px white);
 }
 
@@ -104,7 +104,7 @@
 
 .shooting:after {
   @apply absolute block w-24;
-  content: '';
+  content: "";
   height: 2px;
   right: 0.5rem;
   background: linear-gradient(-45deg, white, rgba(0, 0, 255, 0));

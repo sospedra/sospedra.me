@@ -1,9 +1,9 @@
 import { existsSync } from 'node:fs'
 import { mkdir, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { writeJson } from './io.mjs'
 import reading from './reading.mjs'
 import resize from './resize.mjs'
-import { writeJson } from './io.mjs'
 
 try {
   const paper = process.argv[2]

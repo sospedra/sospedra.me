@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react'
 import { SpriteCloud } from 'components/Sprite/Mountain'
+import type React from 'react'
+import { useEffect, useRef } from 'react'
 import { useTransition } from './context'
 import css from './offshore.module.css'
 

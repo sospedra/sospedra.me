@@ -1,13 +1,13 @@
-import type { Metadata } from 'next'
-import cn from 'classnames'
-import Shell from 'components/Shell'
+import cn from 'clsx'
 import Link from 'components/Link'
+import Page from 'components/Manual/Page'
+import Pictogram from 'components/Manual/Pictogram'
+import Piece from 'components/Manual/Piece'
+import Step from 'components/Manual/Step'
+import Shell from 'components/Shell'
 import SpriteBust from 'components/Sprite/Bust'
 import SpriteManual from 'components/Sprite/Manual'
-import Page from 'components/Manual/Page'
-import Piece from 'components/Manual/Piece'
-import Pictogram from 'components/Manual/Pictogram'
-import Step from 'components/Manual/Step'
+import type { Metadata } from 'next'
 import { MANUAL_DESC } from 'service/descriptions'
 import css from './manual.module.css'
 
@@ -35,7 +35,7 @@ export default function ManualPage() {
         <div className={css.bust}>
           <SpriteBust />
         </div>
-        <img src='/sospedra.png' className={css.logo} />
+        <img alt='sospedra' src='/sospedra.png' className={css.logo} />
       </Page>
 
       <Page>

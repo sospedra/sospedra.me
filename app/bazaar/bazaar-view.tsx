@@ -1,7 +1,13 @@
 'use client'
 
+import cn from 'clsx'
+import Cheatcodes from 'components/Cheatcodes'
+import External from 'components/External'
+import Link, { LinkBack } from 'components/Link'
+import Shell from 'components/Shell'
+import SpriteCar from 'components/Sprite/Car'
+import SpriteMountain from 'components/Sprite/Mountain'
 import { useState } from 'react'
-import cn from 'classnames'
 import {
   BAZAAR_DESC,
   MANUAL_DESC,
@@ -11,12 +17,6 @@ import {
   USES_DESC,
 } from 'service/descriptions'
 import { useScroll } from 'service/scroll'
-import Link, { LinkBack } from 'components/Link'
-import Shell from 'components/Shell'
-import SpriteMountain from 'components/Sprite/Mountain'
-import SpriteCar from 'components/Sprite/Car'
-import Cheatcodes from 'components/Cheatcodes'
-import External from 'components/External'
 import css from './bazaar.module.css'
 
 export default function BazaarView() {

@@ -1,6 +1,6 @@
-import { useContext, useState } from 'react'
+import { debounce } from 'es-toolkit'
 import Fuse from 'fuse.js'
-import debounce from 'lodash.debounce'
+import { useContext, useState } from 'react'
 import context, { defaultState } from './context'
 
 const { stack, anchor } = defaultState
@@ -17,7 +17,7 @@ const searchFilter = debounce(
     }
   },
   400,
-  { leading: true },
+  { edges: ['leading', 'trailing'] },
 )
 
 const filterByCategory = (category: string) => {

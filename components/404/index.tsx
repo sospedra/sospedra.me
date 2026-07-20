@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useTransition } from 'service/transition'
 import Link from 'components/Link'
+import type React from 'react'
+import { useState } from 'react'
+import { useTransition } from 'service/transition'
 import css from './404.module.css'
 
 const Component404: React.FC = () => {
@@ -42,6 +43,7 @@ const Component404: React.FC = () => {
         <p className='text-center'>404</p>
       </div>
       <button
+        type='button'
         className={vid === 'static' ? 'cursor-wait' : 'cursor-pointer'}
         onClick={() => {
           if (vid === 'static') return
@@ -53,6 +55,7 @@ const Component404: React.FC = () => {
           setVid(vid === 'desk' ? 'kermit' : 'pedro')
         }}
       >
+        {/* biome-ignore lint/a11y/useMediaCaption: wordless meme loops */}
         <video
           controls={false}
           autoPlay

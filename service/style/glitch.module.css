@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .glitch {
   @apply relative inline-block text-cyan-400;
@@ -218,8 +218,6 @@
 }
 
 @keyframes underline-animation {
-  0 % {
-  }
   100% {
     text-decoration: underline;
     text-decoration-style: dashed;

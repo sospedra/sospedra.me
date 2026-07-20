@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import css from './step.module.css'
 
 const Step: React.FC<{

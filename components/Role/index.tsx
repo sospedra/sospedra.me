@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import css from './role.module.css'
+import type React from 'react'
+import { useEffect, useState } from 'react'
 import { useInterval } from 'service/easteregg/interval'
+import css from './role.module.css'
 
 const kanjis = 'ルーベンソスペドラ僕と戦うルーベンソスペドラ僕と戦う'
 

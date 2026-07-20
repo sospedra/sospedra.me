@@ -1,4 +1,5 @@
-import React, { useSyncExternalStore } from 'react'
+import type React from 'react'
+import { useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { matchScreen, querySmScreen } from 'service/screen'
 

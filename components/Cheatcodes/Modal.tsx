@@ -1,6 +1,6 @@
-import React from 'react'
+import type React from 'react'
 import { createPortal } from 'react-dom'
-import { matchScreen, queryTouchScreen, hasMotion } from 'service/screen'
+import { hasMotion, matchScreen, queryTouchScreen } from 'service/screen'
 import css from './cheatcodes.module.css'
 
 type Props = {
@@ -60,11 +60,15 @@ const Message: React.FC = () => {
 const Modal: React.FC<Props> = (props) => {
   return (
     <aside className='absolute inset-0 z-30'>
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop dismiss, esc is bound via hotkeys */}
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: backdrop dismiss, esc is bound via hotkeys */}
       <div
         className='flex items-center justify-center w-full h-full cursor-pointer'
         style={{ background: 'rgba(0, 0, 0, 0.33)' }}
         onClick={() => props.close()}
       >
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: stops backdrop dismissal inside the window */}
+        {/* biome-ignore lint/a11y/useKeyWithClickEvents: stops backdrop dismissal inside the window */}
         <div
           className='w-full h-auto max-w-sm p-4 cursor-default'
           onClick={(e) => e.stopPropagation()}
@@ -72,11 +76,14 @@ const Modal: React.FC<Props> = (props) => {
           <div className={css.window}>
             <h3>
               <span>Cheatcodes</span>
-              <button onClick={props.close}>X</button>
+              <button type='button' onClick={props.close}>
+                X
+              </button>
             </h3>
             <div>
               <Message />
-              <button autoFocus onClick={props.close}>
+              {/* biome-ignore lint/a11y/noAutofocus: the modal exists to receive keys */}
+              <button type='button' autoFocus onClick={props.close}>
                 Ok
               </button>
             </div>

@@ -1,4 +1,4 @@
-@reference '../../../service/style/global.css';
+@reference "../../../service/style/global.css";
 
 .parallax {
   @apply absolute bottom-0 h-full;

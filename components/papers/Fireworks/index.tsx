@@ -1,15 +1,16 @@
 'use client'
 
-import React, { useRef, useEffect } from 'react'
+import type React from 'react'
+import { useEffect, useRef } from 'react'
 import css from './fireworks.module.css'
 import Preload from './Preload'
 import {
-  createFrameRoute,
   createAspectRatio,
-  createVirtualImage,
   createCanvasContext,
   createDraw,
+  createFrameRoute,
   createScrollListener,
+  createVirtualImage,
 } from './service'
 
 const Fireworks: React.FC = () => {

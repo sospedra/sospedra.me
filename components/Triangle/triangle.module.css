@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .triangle {
   @apply absolute z-50 h-64;
@@ -11,20 +11,21 @@
   z-index: -1;
   border: calc(var(--frame-width) + var(--border-extra)) solid transparent;
   border-bottom-color: var(--cyan);
-  background: linear-gradient(
-        to bottom left,
-        transparent 49.5%,
-        var(--cyan) 50% calc(50% + var(--frame-width)),
-        transparent calc(50% + var(--frame-width) + 1px)
-      )
-      right,
+  background:
     linear-gradient(
-        to bottom right,
-        transparent 49.5%,
-        var(--cyan) 50% calc(50% + var(--frame-width)),
-        transparent calc(50% + var(--frame-width) + 1px)
-      )
-      left;
+      to bottom left,
+      transparent 49.5%,
+      var(--cyan) 50% calc(50% + var(--frame-width)),
+      transparent calc(50% + var(--frame-width) + 1px)
+    )
+    right,
+    linear-gradient(
+      to bottom right,
+      transparent 49.5%,
+      var(--cyan) 50% calc(50% + var(--frame-width)),
+      transparent calc(50% + var(--frame-width) + 1px)
+    )
+    left;
   background-size: 50% 100%;
   background-origin: border-box;
   background-repeat: no-repeat;

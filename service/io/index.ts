@@ -1,5 +1,5 @@
-import { promises as fsp } from 'fs'
-import { resolve } from 'path'
+import { promises as fsp } from 'node:fs'
+import { resolve } from 'node:path'
 
 export * from './paths-to-tree'
 

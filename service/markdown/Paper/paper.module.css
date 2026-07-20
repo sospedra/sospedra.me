@@ -1,4 +1,4 @@
-@reference '../../../service/style/global.css';
+@reference "../../../service/style/global.css";
 
 .markdown {
   @apply font-sans text-lg leading-7 break-words align-baseline;
@@ -32,6 +32,10 @@
 
 .markdown strong {
   @apply font-semibold;
+}
+
+.markdown a {
+  @apply text-cyan-400;
 }
 
 .markdown strong a {
@@ -82,7 +86,7 @@
 
 .markdown ul {
   @apply pl-8 list-disc;
-  list-style-image: url('/images/cursor.svg');
+  list-style-image: url("/images/cursor.svg");
 }
 
 .markdown ul ul {
@@ -139,10 +143,10 @@
   @apply relative;
 }
 
-.markdown h1[id] a[href^='#'],
-.markdown h2[id] a[href^='#'],
-.markdown h3[id] a[href^='#'],
-.markdown h4[id] a[href^='#'] {
+.markdown h1[id] a[href^="#"],
+.markdown h2[id] a[href^="#"],
+.markdown h3[id] a[href^="#"],
+.markdown h4[id] a[href^="#"] {
   @apply text-white;
   animation: none;
 }
@@ -188,7 +192,7 @@
   .markdown h3[id]:hover::before,
   .markdown h4[id]:hover::before {
     @apply absolute text-sm;
-    content: '🔗';
+    content: "🔗";
     left: -1.5rem;
     top: 2px;
     bottom: 0;

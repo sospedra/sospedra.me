@@ -1,8 +1,8 @@
 'use cache'
 
-import fs from 'fs'
-import { join } from 'path'
-import { promisify } from 'util'
+import fs from 'node:fs'
+import { join } from 'node:path'
+import { promisify } from 'node:util'
 import { cacheLife } from 'next/cache'
 
 const readFile = promisify(fs.readFile)

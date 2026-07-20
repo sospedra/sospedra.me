@@ -1,5 +1,5 @@
-import React from 'react'
-import cn from 'classnames'
+import cn from 'clsx'
+import type React from 'react'
 
 const Pictogram: React.FC<{
   left: React.ReactNode
@@ -14,7 +14,7 @@ const Pictogram: React.FC<{
     >
       <div
         className={cn('flex items-center justify-center flex-1 h-full', {
-          ['hidden sm:block']: willHide,
+          'hidden sm:block': willHide,
         })}
       >
         {left}

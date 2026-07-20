@@ -1,5 +1,5 @@
-import Hashids from 'hashids'
 import * as cheerio from 'cheerio'
+import Hashids from 'hashids'
 import { abs, readJson, writeJson } from './io.mjs'
 
 const tiny = new Hashids('1337', 4, 'abcdefghijklmnopqrstuvwxyz')
@@ -8,7 +8,9 @@ try {
   const input = process.argv[2]
   const hidden = process.argv[3] === 'false'
   if (!input) {
-    throw Error(`No 'destination' is provided. Try 'pnpm cmd:rewrite google.com'`)
+    throw Error(
+      `No 'destination' is provided. Try 'pnpm cmd:rewrite google.com'`,
+    )
   }
 
   const destination = input.startsWith('http') ? input : `https://${input}`

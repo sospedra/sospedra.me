@@ -1,6 +1,6 @@
-import React from 'react'
 import NextImage from 'next/image'
-import { Paper } from '../files'
+import type React from 'react'
+import type { Paper } from '../files'
 
 const Image: React.FC<{
   alt: string

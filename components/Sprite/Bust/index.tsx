@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import css from './bust.module.css'
 
 const SpriteBust: React.FC = () => {

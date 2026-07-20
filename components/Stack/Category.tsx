@@ -1,5 +1,5 @@
-import React from 'react'
-import cn from 'classnames'
+import cn from 'clsx'
+import type React from 'react'
 import { useStack } from 'service/stack'
 import css from './category.module.css'
 
@@ -12,6 +12,7 @@ const Category: React.FC<{
   return (
     <li className='pr-6'>
       <button
+        type='button'
         className={cn('focus:outline-hidden', css.category)}
         onClick={() => props.setCategory(props.category)}
       >

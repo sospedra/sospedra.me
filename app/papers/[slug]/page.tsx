@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
 import type { MDXComponents } from 'mdx/types'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { fetchPaper, fetchPapers, Paper } from 'service/markdown/files'
-import PaperShell from 'service/markdown/Paper'
+import { fetchPaper, fetchPapers, type Paper } from 'service/markdown/files'
 import PaperImage from 'service/markdown/Image'
+import PaperShell from 'service/markdown/Paper'
 
 export async function generateStaticParams() {
   const papers = await fetchPapers()

@@ -1,12 +1,12 @@
-import React from 'react'
+import type React from 'react'
 import back from './icons/back.svg'
 import close from './icons/close.svg'
 import cursor from './icons/cursor.svg'
 import github from './icons/github.svg'
 import hourglass from './icons/hourglass.svg'
 import minus from './icons/minus.svg'
-import pizzaBox from './icons/pizza-box.png'
 import pizza from './icons/pizza.svg'
+import pizzaBox from './icons/pizza-box.png'
 import plus from './icons/plus.svg'
 import web from './icons/web.svg'
 
@@ -31,7 +31,6 @@ const Icon: React.FC<{
 }> = ({ name, className = '' }) => {
   return (
     <img
-      role='icon'
       src={ICONS[name].src}
       className={`min-w-6 h-6 inline-flex ${className}`}
       alt={name.split('.')[0]}

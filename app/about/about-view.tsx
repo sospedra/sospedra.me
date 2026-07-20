@@ -1,13 +1,13 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
-import neonCss from 'service/style/neon.module.css'
+import External from 'components/External'
+import Link, { LinkBack } from 'components/Link'
+import Role from 'components/Role'
+import Row from 'components/Row'
 import Shell from 'components/Shell'
 import SpriteBust from 'components/Sprite/Bust'
-import Link, { LinkBack } from 'components/Link'
-import External from 'components/External'
-import Row from 'components/Row'
-import Role from 'components/Role'
+import { useEffect, useRef, useState } from 'react'
+import neonCss from 'service/style/neon.module.css'
 import css from './about.module.css'
 
 export default function AboutView(props: { years: number }) {

@@ -1,10 +1,11 @@
-import type { Metadata, Route } from 'next'
-import cn from 'classnames'
+import cn from 'clsx'
 import Link, { LinkBack } from 'components/Link'
 import Meta from 'components/Meta'
 import Shell from 'components/Shell'
-import { fetchPapers } from 'service/markdown/files'
+import { sum } from 'es-toolkit'
+import type { Metadata, Route } from 'next'
 import { PAPERS_DESC } from 'service/descriptions'
+import { fetchPapers } from 'service/markdown/files'
 import glitchCss from 'service/style/glitch.module.css'
 import neonCss from 'service/style/neon.module.css'
 
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 
 // deterministic per slug: Math.random() diverged between SSG html and hydration
 const getTitleCss = (slug: string) => {
-  const hash = [...slug].reduce((sum, char) => sum + char.charCodeAt(0), 0)
+  const hash = sum([...slug].map((char) => char.charCodeAt(0)))
   return hash % 10 === 0 ? glitchCss.glitch : neonCss.neon
 }
 
@@ -41,9 +42,7 @@ export default async function PapersPage() {
             <Link url={`/papers/${paper.slug}` as Route}>
               <h2
                 data-text={paper.title}
-                className={cn('font-serif text-3xl', {
-                  [getTitleCss(paper.slug)]: true,
-                })}
+                className={cn('font-serif text-3xl', getTitleCss(paper.slug))}
               >
                 {paper.title}
               </h2>

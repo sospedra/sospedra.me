@@ -1,3 +1,5 @@
+import { clamp } from 'es-toolkit'
+
 const size = { width: 2560, height: 1440 }
 export const frameMax = 174
 
@@ -48,7 +50,7 @@ export const createScrollListener = (clbk: (frame: number) => void) => {
     const scrollTop = $vbody.scrollTop
     const maxScrollTop = $vbody.scrollHeight - window.innerHeight
     const scrollFraction = scrollTop / maxScrollTop
-    const frame = Math.min(frameMax, Math.floor(scrollFraction * frameMax))
+    const frame = clamp(Math.floor(scrollFraction * frameMax), 0, frameMax)
 
     clbk(frame)
   })

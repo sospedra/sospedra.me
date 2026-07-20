@@ -1,6 +1,6 @@
-import type { Metadata } from 'next'
-import Shell from 'components/Shell'
 import Component404 from 'components/404'
+import Shell from 'components/Shell'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: '404',

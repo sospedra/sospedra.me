@@ -1,14 +1,22 @@
-import React from 'react'
-import cn from 'classnames'
-import { parseISO, format } from 'date-fns'
-import Icon, { IconName } from 'components/Icon'
+import cn from 'clsx'
+import Icon, { type IconName } from 'components/Icon'
+import type React from 'react'
 
-export const Time: React.FC<{ time: string }> = (props) => {
-  const date = parseISO(props.time)
-  return <time dateTime={props.time}>{format(date, 'LLLL	d, yyyy')}</time>
+// fixed UTC: server html and client hydration must render the same date
+const dateFormat = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+
+const Time: React.FC<{ time: string }> = (props) => {
+  return (
+    <time dateTime={props.time}>{dateFormat.format(new Date(props.time))}</time>
+  )
 }
 
-export const Reading: React.FC<{ minutes: number }> = (props) => {
+const Reading: React.FC<{ minutes: number }> = (props) => {
   const slices = Math.max(Math.round(props.minutes / 3), 1)
   const pizza: IconName[] =
     slices > 5 ? ['pizza-box.png'] : Array(slices).fill('pizza.svg')
@@ -17,6 +25,7 @@ export const Reading: React.FC<{ minutes: number }> = (props) => {
   return (
     <div className='inline-flex flex-wrap' title={title}>
       {pizza.map((name, idx) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: identical static slices
         <Icon name={name} key={idx} />
       ))}
     </div>
@@ -36,11 +45,7 @@ const Meta: React.FC<{
           Last update on <Time time={props.update} />
         </p>
       )}
-      <div
-        className={cn('flex items-center font-bold', {
-          [props.className]: !!props.className,
-        })}
-      >
+      <div className={cn('flex items-center font-bold', props.className)}>
         <Time time={props.time} />
         <span className='mx-2 mt-1 text-xs opacity-75'>▼</span>
         <Reading minutes={props.minutes} />

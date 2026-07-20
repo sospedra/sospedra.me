@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .list {
   @apply transition-transform duration-100;
@@ -8,7 +8,7 @@
 
 .tech {
   @apply relative flex-col block w-full;
-  font-family: 'Arial Black', Impact, Arial, sans-serif;
+  font-family: "Arial Black", Impact, Arial, sans-serif;
   animation: fade-in 0.5s;
 }
 

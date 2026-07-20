@@ -1,4 +1,4 @@
-@reference '../../../service/style/global.css';
+@reference "../../../service/style/global.css";
 
 .signature {
   @apply relative mb-8 ml-2 text-6xl;
@@ -8,5 +8,5 @@
 .signature:after {
   @apply absolute text-3xl;
   top: 0.5rem;
-  content: '💊';
+  content: "💊";
 }

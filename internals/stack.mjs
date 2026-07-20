@@ -1,25 +1,26 @@
-import prompts from 'prompts'
-import langmap from 'language-map/languages.json' with { type: 'json' }
 import * as cheerio from 'cheerio'
+import { uniq } from 'es-toolkit'
+import langmap from 'language-map/languages.json' with { type: 'json' }
+import { toString as nlcstToString } from 'nlcst-to-string'
+import prompts from 'prompts'
 import { retext } from 'retext'
-import retextPos from 'retext-pos'
 import retextKeywords from 'retext-keywords'
-import { toString } from 'nlcst-to-string'
+import retextPos from 'retext-pos'
 import { abs, readJson, writeJson } from './io.mjs'
 
-const flat = (array) => [
-  ...new Set(
+const flat = (array) => {
+  return uniq(
     array
       .flat()
       .filter(Boolean)
       .map((x) => x.toLowerCase()),
-  ),
-]
+  )
+}
 
 const extractKeywords = async (text) => {
   const file = await retext().use(retextPos).use(retextKeywords).process(text)
   return (file.data.keywords || []).map((keyword) =>
-    toString(keyword.matches[0].node),
+    nlcstToString(keyword.matches[0].node),
   )
 }
 
@@ -67,7 +68,9 @@ const fetchWebMetadata = async (destination, url) => {
 try {
   const input = process.argv[2]
   if (!input) {
-    throw Error(`No 'url' is provided. Try 'pnpm cmd:stack github.com/sospedra/rfm'`)
+    throw Error(
+      `No 'url' is provided. Try 'pnpm cmd:stack github.com/sospedra/rfm'`,
+    )
   }
 
   const destination = input.startsWith('http') ? input : `https://${input}`

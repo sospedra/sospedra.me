@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
-import { Suspense } from 'react'
-import { cacheLife } from 'next/cache'
-import { getStaticFiles, pathsToTree } from 'service/io'
-import { SERVE_DESC } from 'service/descriptions'
-import Shell from 'components/Shell'
 import Link, { LinkBack } from 'components/Link'
+import Shell from 'components/Shell'
+import type { Metadata } from 'next'
+import { cacheLife } from 'next/cache'
+import { Suspense } from 'react'
+import { SERVE_DESC } from 'service/descriptions'
+import { getStaticFiles, pathsToTree } from 'service/io'
 import ServeTree from './serve-tree'
 
 export const metadata: Metadata = {

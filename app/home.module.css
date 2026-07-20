@@ -1,4 +1,4 @@
-@reference '../service/style/global.css';
+@reference "../service/style/global.css";
 
 .main {
   @apply flex flex-col items-center justify-end flex-1 w-full;
@@ -28,8 +28,8 @@
 .menu a:focus:before,
 .menu button:focus:before {
   @apply absolute inline-block w-6 h-6 mt-2 -ml-5;
-  content: '';
-  background: url('/images/cursor.svg') no-repeat;
+  content: "";
+  background: url("/images/cursor.svg") no-repeat;
   animation: swing 0.4s ease-out alternate infinite;
 }
 

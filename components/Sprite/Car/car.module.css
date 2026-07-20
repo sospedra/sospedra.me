@@ -1,4 +1,4 @@
-@reference '../../../service/style/global.css';
+@reference "../../../service/style/global.css";
 
 .car {
   @apply relative bottom-0;
@@ -44,7 +44,7 @@
 }
 
 @keyframes rotate {
-  0 % {
+  0% {
     transform: rotate(0deg);
   }
   100% {

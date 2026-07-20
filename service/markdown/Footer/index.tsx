@@ -1,5 +1,5 @@
-import React from 'react'
-import cn from 'classnames'
+import cn from 'clsx'
+import type React from 'react'
 import neonCss from 'service/style/neon.module.css'
 import css from './footer.module.css'
 
@@ -23,9 +23,7 @@ const Footer: React.FC<{
       <footer className='flex items-center'>
         <a
           href={createTwitterSearch(`/papers/${props.slug}`)}
-          className={cn('text-cyan-400', {
-            [neonCss.neon]: true,
-          })}
+          className={cn('text-cyan-400', neonCss.neon)}
           rel='noopener noreferrer'
           target='_blank'
         >
@@ -34,9 +32,7 @@ const Footer: React.FC<{
         <span className='mx-2 mt-1 text-xs font-bold opacity-75'>▼</span>
         <a
           href={createGithubLink(props.slug)}
-          className={cn('text-cyan-400', {
-            [neonCss.neon]: true,
-          })}
+          className={cn('text-cyan-400', neonCss.neon)}
           rel='noopener noreferrer'
           target='_blank'
         >

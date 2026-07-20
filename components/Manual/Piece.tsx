@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from 'react'
 import css from './piece.module.css'
 
 const Piece: React.FC<{

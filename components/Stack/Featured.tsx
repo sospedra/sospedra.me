@@ -1,9 +1,9 @@
-import React from 'react'
-import cn from 'classnames'
+import cn from 'clsx'
 import Emoji from 'components/Emoji'
-import css from './featured.module.css'
-import { useStack } from 'service/stack'
+import type React from 'react'
 import { createRange } from 'service/random'
+import { useStack } from 'service/stack'
+import css from './featured.module.css'
 
 const Featured: React.FC = () => {
   const { stack, filter, search, setCategory, scrollTo } = useStack()
@@ -23,6 +23,7 @@ const Featured: React.FC = () => {
       <h2 className='pb-8 text-3xl font-bold'>Featured collections</h2>
       <div className={css.featured}>
         <button
+          type='button'
           className={css.category}
           onClick={() => {
             setCategory('service')
@@ -57,6 +58,7 @@ const Featured: React.FC = () => {
         </a>
 
         <button
+          type='button'
           className={cn('col-span-2', css.category)}
           onClick={() => setCategory('react')}
         >
@@ -81,6 +83,7 @@ const Featured: React.FC = () => {
         )}
 
         <button
+          type='button'
           className={css.tag}
           onClick={() => {
             filter(({ isGithub }) => !isGithub)

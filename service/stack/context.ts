@@ -1,16 +1,13 @@
+import { countBy } from 'es-toolkit'
 import { createContext, createRef } from 'react'
 import stack from './stack.json'
 
 export const defaultState = {
   stack,
-  categories: stack.reduce<{ [category: string]: number }>((memo, tech) => {
-    const patch = { ...memo }
-    tech.categories.forEach((category) => {
-      const current = patch[category]
-      patch[category] = current ? current + 1 : 1
-    })
-    return patch
-  }, {}),
+  categories: countBy(
+    stack.flatMap((tech) => tech.categories),
+    (category) => category,
+  ),
   results: [] as (typeof stack)[0][],
   category: 'all',
   setCategory: (() => {}) as (category: string) => void,
@@ -21,7 +18,5 @@ export const defaultState = {
   scrollTo: () => {},
   anchor: createRef<HTMLDivElement>(),
 }
-
-export type State = typeof defaultState
 
 export default createContext(defaultState)

@@ -1,4 +1,4 @@
-@reference '../../../service/style/global.css';
+@reference "../../../service/style/global.css";
 
 .anchor {
   @apply relative;
@@ -10,7 +10,6 @@
   top: -16rem;
   margin-left: calc((100% - 100vw) / 2);
   height: calc(100% + 16rem);
-  background: rgb(0, 0, 0);
   background: linear-gradient(
     0deg,
     rgba(0, 0, 0, 0) 0%,

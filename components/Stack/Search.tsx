@@ -1,5 +1,5 @@
-import React from 'react'
 import Emoji from 'components/Emoji'
+import type React from 'react'
 import { useStack } from 'service/stack'
 
 const Search: React.FC = () => {

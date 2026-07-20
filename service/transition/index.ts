@@ -1,2 +1,2 @@
-export { Provider } from './Provider'
 export { useTransition } from './context'
+export { Provider } from './Provider'

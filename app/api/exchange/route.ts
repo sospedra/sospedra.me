@@ -1,11 +1,11 @@
 import { connection } from 'next/server'
-import { subDays, format } from 'date-fns'
 import { sendMessage } from 'service/telegram'
 
 const RATE_THRESHOLD = 0.85
+const DAY_MS = 24 * 60 * 60 * 1000
 
 const fetchRate = async (date: Date) => {
-  const day = format(date, 'yyyy-MM-dd')
+  const day = date.toISOString().slice(0, 10)
   const response = await fetch(
     `https://api.exchangeratesapi.io/${day}?base=USD&symbols=EUR`,
   )
@@ -24,7 +24,7 @@ export async function GET() {
     const now = new Date()
     const [today, yesterday] = await Promise.all([
       fetchRate(now),
-      fetchRate(subDays(now, 1)),
+      fetchRate(new Date(now.getTime() - DAY_MS)),
     ])
 
     if (today >= RATE_THRESHOLD) {

@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .neon {
   @apply text-cyan-400;
@@ -15,8 +15,13 @@
     color: #60f8eb;
   }
   50% {
-    text-shadow: 0 0 1vw #00a895, 0 0 2vw #00a895, 0 0 1.4vw #00a895,
-      0 0 2vw #00a895, 0 0 0.4vw #8bfdfe, 0.25vw 0.25vw 0.1vw #147280;
+    text-shadow:
+      0 0 1vw #00a895,
+      0 0 2vw #00a895,
+      0 0 1.4vw #00a895,
+      0 0 2vw #00a895,
+      0 0 0.4vw #8bfdfe,
+      0.25vw 0.25vw 0.1vw #147280;
     color: #d7fffc;
   }
 }

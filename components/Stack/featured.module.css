@@ -1,4 +1,4 @@
-@reference '../../service/style/global.css';
+@reference "../../service/style/global.css";
 
 .featured {
   @apply grid grid-flow-row-dense grid-cols-3 gap-4;

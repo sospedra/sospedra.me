@@ -1,7 +1,7 @@
+import Link, { LinkBack } from 'components/Link'
+import Shell from 'components/Shell'
 import type { Metadata } from 'next'
 import { STACK_DESC } from 'service/descriptions'
-import Shell from 'components/Shell'
-import Link, { LinkBack } from 'components/Link'
 import StackView from './stack-view'
 
 export const metadata: Metadata = {

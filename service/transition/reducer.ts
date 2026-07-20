@@ -1,8 +1,8 @@
-import { useReducer } from 'react'
 import type { Route } from 'next'
-import { TransitionT } from './context'
+import { useReducer } from 'react'
+import type { TransitionT } from './context'
 
-export enum ActionTypes {
+enum ActionTypes {
   NAVIGATE = 'NAVIGATE',
   UNMOUNT = 'UNMOUNT',
   RESET = 'RESET',
