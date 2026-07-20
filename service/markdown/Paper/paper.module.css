@@ -161,6 +161,19 @@
   transition: all 0.33s ease-in-out;
 }
 
+/* Enhanced editorial media is opt-in so the Fireworks legacy exhibit remains
+   byte-for-byte visual with its original markdown treatment. */
+.regularMarkdown > p:has([data-paper-media]),
+.regularMarkdown > p:has([data-code-frame]) {
+  margin-bottom: 0;
+}
+
+.regularMarkdown [data-paper-media] img {
+  max-width: none;
+  margin: 0;
+  transition: none;
+}
+
 .markdown a {
   @apply text-cyan-400;
 }

@@ -1,98 +1,923 @@
 @reference "../../service/style/global.css";
 
+.shell {
+  background: #09050f;
+}
+
 .scroll {
+  position: relative;
+  isolation: isolate;
   width: 100%;
   height: 100dvh;
   overflow: auto;
+  overscroll-behavior-y: contain;
+  background:
+    radial-gradient(circle at 49% 4%, rgb(255 51 190 / 19%), transparent 26rem),
+    linear-gradient(180deg, #260525 0%, #13081d 24%, #080912 63%, #04070c 100%);
+  scrollbar-color: var(--market-pink) #09050f;
+  --market-pink: #ff47bd;
+  --market-cyan: #68fff1;
+  --market-yellow: #fff266;
+  --market-ink: #080811;
+  --market-paper: #fff8db;
+}
+
+.scroll::before {
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgb(255 255 255 / 92%) 0 1px, transparent 1.4px),
+    radial-gradient(circle, rgb(104 255 241 / 70%) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgb(255 71 189 / 62%) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgb(255 242 102 / 55%) 0 1px, transparent 1.5px);
+  background-position:
+    2rem 1rem,
+    9rem 6rem,
+    14rem 2.5rem,
+    5rem 11rem;
+  background-size:
+    17rem 19rem,
+    23rem 21rem,
+    29rem 27rem,
+    31rem 33rem;
+  content: "";
+  opacity: 0.56;
+  pointer-events: none;
+  animation: star-drift 26s ease-in-out infinite alternate;
+}
+
+.scroll::after {
+  position: fixed;
+  z-index: -1;
+  right: 0;
+  bottom: -7rem;
+  left: 0;
+  height: 19rem;
+  background-image:
+    linear-gradient(rgb(255 71 189 / 16%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(104 255 241 / 11%) 1px, transparent 1px);
+  background-size: 3.25rem 2.25rem;
+  content: "";
+  opacity: 0.8;
+  pointer-events: none;
+  transform: perspective(22rem) rotateX(64deg);
+  transform-origin: bottom;
+}
+
+.starField {
+  position: fixed;
+  z-index: -1;
+  top: 14vh;
+  right: 9vw;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--market-yellow);
+  box-shadow:
+    0 0 0 1px rgb(255 242 102 / 30%),
+    14vw 8vh 0 var(--market-cyan),
+    -23vw 13vh 0 rgb(255 255 255 / 70%),
+    -56vw -6vh 0 var(--market-pink),
+    -72vw 20vh 0 rgb(255 255 255 / 75%),
+    -36vw 34vh 0 var(--market-cyan),
+    4vw 43vh 0 rgb(255 255 255 / 80%),
+    -67vw 56vh 0 var(--market-yellow);
+  pointer-events: none;
+  animation: star-pulse 3.6s steps(2, end) infinite;
 }
 
 .bazaar {
-  @apply flex flex-col w-full max-w-xl px-4 pb-20 mx-auto text-white;
-  padding-top: max(1rem, env(safe-area-inset-top));
-  animation: fade var(--motion-route, 480ms) var(--ease-signal, ease-out) both;
+  position: relative;
+  z-index: 2;
+  width: min(100%, 78rem);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: max(1rem, env(safe-area-inset-top))
+    max(1rem, calc(env(safe-area-inset-right) + 1rem))
+    max(7rem, calc(env(safe-area-inset-bottom) + 5rem))
+    max(1rem, calc(env(safe-area-inset-left) + 1rem));
+  color: var(--color-text-strong, #fff);
+  animation: market-open 680ms var(--ease-signal, ease-out) both;
 }
 
-.list {
-  @apply relative text-center;
+.routeHeader {
+  padding-bottom: clamp(2rem, 5vw, 4.5rem);
 }
 
-.list li {
-  @apply relative flex flex-col items-center justify-center;
-  min-height: 11rem;
-  margin-block: clamp(4.5rem, 15vh, 8rem);
+.routeHeader :global(h1) {
+  color: var(--market-paper);
+  font-size: clamp(3rem, 10vw, 6.8rem);
+  letter-spacing: -0.045em;
+  text-shadow:
+    0 0 0.08em #fff,
+    0 0 0.35em rgb(255 71 189 / 74%),
+    0.05em 0.06em 0 #74075f;
 }
 
-.title {
-  @apply italic text-cyan-400;
+.routeHeader :global(h1)::after {
+  display: inline-block;
+  margin-left: 0.14em;
+  color: var(--market-pink);
+  content: "✦";
+  font-size: 0.35em;
+  vertical-align: top;
+  animation: star-pulse 2.3s steps(2, end) infinite;
+}
+
+.marketGate {
+  position: relative;
+  width: min(100%, 56rem);
+  margin: 0 auto clamp(2rem, 5vw, 4rem);
+  padding: clamp(2rem, 6vw, 4.5rem) clamp(1rem, 5vw, 4rem) 1.5rem;
+  border: 2px solid var(--market-pink);
+  background:
+    linear-gradient(90deg, rgb(255 71 189 / 7%) 1px, transparent 1px),
+    linear-gradient(rgb(104 255 241 / 5%) 1px, transparent 1px),
+    linear-gradient(145deg, rgb(59 8 61 / 94%), rgb(9 8 20 / 97%));
+  background-size:
+    2rem 2rem,
+    2rem 2rem,
+    auto;
+  box-shadow:
+    0 0 0 5px #09050f,
+    0 0 0 7px rgb(104 255 241 / 46%),
+    0 1.25rem 0 -0.65rem rgb(0 0 0 / 55%),
+    0 0 3rem rgb(255 71 189 / 23%);
+  text-align: center;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 1rem),
+    calc(100% - 1rem) 100%,
+    1rem 100%,
+    0 calc(100% - 1rem)
+  );
+}
+
+.bulbRail {
+  position: absolute;
+  top: 0.9rem;
+  right: 1rem;
+  left: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.bulbRail span {
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 1px solid var(--market-paper);
+  border-radius: 50%;
+  background: var(--market-yellow);
+  box-shadow: 0 0 0.7rem var(--market-yellow);
+  animation: bulb-chase 1.8s steps(2, end) infinite;
+}
+
+.bulbRail span:nth-child(even) {
+  background: var(--market-cyan);
+  box-shadow: 0 0 0.7rem var(--market-cyan);
+  animation-delay: -0.9s;
+}
+
+.overline,
+.bestViewed,
+.directoryHeader p,
+.stallMeta,
+.stallFooter,
+.marketFooter p {
+  font-family: var(--font-code, monospace);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.overline {
+  margin: 0 0 0.8rem;
+  color: var(--market-yellow);
+  font-size: clamp(0.7rem, 2vw, 0.86rem);
+}
+
+.marketGate h2 {
+  margin: 0;
+  color: var(--market-cyan);
+  font-family: var(--font-signage, cursive);
+  font-size: clamp(2.3rem, 7vw, 4.6rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1;
+  text-shadow:
+    0.05em 0.06em 0 #007b74,
+    0 0 0.45em rgb(104 255 241 / 70%);
+  transform: skewY(-2deg);
+}
+
+.intro {
+  max-width: 42rem;
+  margin: 1.25rem auto 0;
+  color: rgb(255 248 219 / 78%);
+  font-size: clamp(1rem, 2vw, 1.18rem);
+  line-height: 1.6;
+  text-wrap: balance;
+}
+
+.marketStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin: clamp(1.5rem, 4vw, 2.5rem) 0 0;
+  border: 1px solid rgb(104 255 241 / 40%);
+  background: rgb(104 255 241 / 35%);
+}
+
+.marketStats div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column-reverse;
+  gap: 0.2rem;
+  padding: 0.75rem 0.45rem;
+  background: rgb(8 8 17 / 86%);
+}
+
+.marketStats dt {
+  overflow: hidden;
+  color: rgb(255 248 219 / 58%);
+  font-family: var(--font-code, monospace);
+  font-size: clamp(0.55rem, 1.4vw, 0.7rem);
+  letter-spacing: 0.08em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.marketStats dd {
+  margin: 0;
+  color: var(--market-pink);
+  font-family: var(--font-display, monospace);
+  font-size: clamp(1.2rem, 3vw, 1.75rem);
+  line-height: 1;
+  text-shadow: 0 0 0.5rem rgb(255 71 189 / 65%);
+}
+
+.bestViewed {
+  margin: 1.25rem 0 0;
+  color: rgb(255 248 219 / 46%);
+  font-size: 0.63rem;
+}
+
+.ticker {
+  position: relative;
+  width: calc(100% + 2rem);
+  margin: 0 -1rem clamp(4rem, 9vw, 8rem);
+  overflow: hidden;
+  border-block: 2px solid var(--market-yellow);
+  background: var(--market-pink);
+  color: #160414;
+  font-family: var(--font-code, monospace);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 2.3rem;
+  text-transform: uppercase;
+  transform: rotate(-0.45deg);
+}
+
+.tickerTrack {
+  display: flex;
+  width: max-content;
+  animation: ticker 30s linear infinite;
+}
+
+.tickerTrack span {
+  display: block;
+  padding-right: 3rem;
+  white-space: nowrap;
+}
+
+.directory {
+  position: relative;
+}
+
+.directoryHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed rgb(104 255 241 / 45%);
+}
+
+.directoryHeader p {
+  margin: 0 0 0.35rem;
+  color: var(--market-cyan);
+  font-size: 0.68rem;
+}
+
+.directoryHeader h2 {
+  margin: 0;
+  color: var(--market-paper);
+  font-family: var(--font-display, monospace);
+  font-size: clamp(1.7rem, 5vw, 3.25rem);
+  line-height: 1;
+}
+
+.directoryHeader .legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin: 0;
+  color: rgb(255 248 219 / 60%);
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legend i {
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.localKey {
+  color: var(--market-pink);
+  background: var(--market-pink);
+  box-shadow: 0 0 0.45rem var(--market-pink);
+}
+
+.remoteKey {
+  color: var(--market-cyan);
+  background: transparent;
+}
+
+.mapFrame {
+  position: relative;
+  padding: clamp(2rem, 5vw, 4rem);
+  border: 1px solid rgb(104 255 241 / 25%);
+  background:
+    radial-gradient(circle at 50% 0, rgb(255 71 189 / 10%), transparent 35%),
+    linear-gradient(rgb(104 255 241 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(104 255 241 / 4%) 1px, transparent 1px),
+    rgb(5 8 15 / 74%);
+  background-size:
+    auto,
+    3rem 3rem,
+    3rem 3rem,
+    auto;
+  box-shadow: inset 0 0 3rem rgb(0 0 0 / 65%);
+}
+
+.cornerTop,
+.cornerBottom {
+  position: absolute;
+  z-index: 3;
+  color: var(--market-yellow);
+  font-family: var(--font-code, monospace);
+  font-size: 1.2rem;
+}
+
+.cornerTop {
+  top: 0.25rem;
+  left: 0.45rem;
+}
+
+.cornerBottom {
+  right: 0.45rem;
+  bottom: 0.25rem;
+}
+
+.constellation {
+  position: absolute;
+  z-index: 0;
+  inset: clamp(2.5rem, 6vw, 5rem);
+  width: calc(100% - clamp(5rem, 12vw, 10rem));
+  height: calc(100% - clamp(5rem, 12vw, 10rem));
+  overflow: visible;
+  pointer-events: none;
+}
+
+.routeGlow,
+.routeSignal {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.routeGlow {
+  stroke: rgb(255 71 189 / 17%);
+  stroke-width: 8;
+}
+
+.routeSignal {
+  stroke: var(--market-pink);
+  stroke-dasharray: 0.018 0.025;
+  stroke-linecap: round;
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 0.2rem rgb(255 71 189 / 80%));
+  animation: route-current 18s linear infinite;
+}
+
+.routeNodes {
+  fill: var(--market-yellow);
+  stroke: #09050f;
+  stroke-width: 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.marketList {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3.5rem, 8vw, 7rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stall {
+  position: relative;
+  width: min(48%, 32rem);
+  border: 0;
+  color: var(--market-paper);
+  --stall-accent: var(--market-pink);
+  --stall-shadow: #700755;
+  transform: rotate(-0.65deg);
+  transition:
+    transform 240ms var(--ease-signal, ease-out),
+    filter 240ms var(--ease-signal, ease-out);
+  animation: stall-arrive 540ms var(--ease-signal, ease-out) both;
+}
+
+.stall:nth-child(even) {
+  align-self: flex-end;
+  transform: rotate(0.65deg);
+}
+
+.stall:nth-child(2) {
+  animation-delay: 70ms;
+}
+.stall:nth-child(3) {
+  animation-delay: 120ms;
+}
+.stall:nth-child(4) {
+  animation-delay: 170ms;
+}
+.stall:nth-child(5) {
+  animation-delay: 220ms;
+}
+.stall:nth-child(6) {
+  animation-delay: 270ms;
+}
+.stall:nth-child(7) {
+  animation-delay: 320ms;
+}
+.stall:nth-child(8) {
+  animation-delay: 370ms;
+}
+.stall:nth-child(9) {
+  animation-delay: 420ms;
+}
+
+.stall[data-tone="cyan"] {
+  --stall-accent: var(--market-cyan);
+  --stall-shadow: #006e69;
+}
+
+.stall[data-tone="yellow"] {
+  --stall-accent: var(--market-yellow);
+  --stall-shadow: #8a6900;
+}
+
+.stall:hover,
+.stall:focus-within {
+  filter: brightness(1.08);
+  transform: translateY(-0.45rem) rotate(0deg);
+}
+
+.stallPanel {
+  position: relative;
+  min-height: 12rem;
+  padding: 1.25rem;
+  border: 2px solid var(--stall-accent);
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 4%) 25%, transparent 25%) 0 0 /
+    0.8rem 0.8rem,
+    linear-gradient(315deg, rgb(255 255 255 / 3%) 25%, transparent 25%) 0 0 /
+    0.8rem 0.8rem,
+    linear-gradient(155deg, #171020 0%, #090911 72%);
+  box-shadow:
+    0.5rem 0.55rem 0 var(--stall-shadow),
+    0 0 1.3rem rgb(255 71 189 / 11%),
+    inset 0 0 1.2rem rgb(0 0 0 / 60%);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 0.65rem),
+    calc(100% - 0.65rem) 100%,
+    0 100%
+  );
+}
+
+.awning {
+  position: relative;
+  z-index: 2;
+  height: 1.05rem;
+  margin: 0 0 -0.1rem 0.35rem;
+  border: 1px solid var(--stall-accent);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--stall-accent) 0 1.2rem,
+    var(--market-paper) 1.2rem 2.4rem
+  );
+  box-shadow: 0 0.35rem 0 rgb(0 0 0 / 44%);
+  transform: perspective(3rem) rotateX(-8deg);
+  transform-origin: bottom;
+}
+
+.starNode {
+  position: absolute;
+  z-index: 4;
+  top: -2.15rem;
+  left: -1.75rem;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 1px solid var(--stall-accent);
+  border-radius: 50%;
+  background: #080811;
+  color: var(--stall-accent);
+  box-shadow:
+    0 0 0 0.3rem #080811,
+    0 0 1.1rem var(--stall-accent);
+}
+
+.starNode span {
+  animation: node-pulse 2.6s steps(2, end) infinite;
+}
+
+.stall:nth-child(3n) .starNode span {
+  animation-delay: -1.1s;
+}
+
+.stallMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  color: rgb(255 248 219 / 52%);
+  font-size: 0.64rem;
+}
+
+.openSign {
+  padding: 0.2rem 0.38rem;
+  border: 1px solid currentColor;
+  color: var(--stall-accent);
+  box-shadow: inset 0 0 0.5rem
+    color-mix(in srgb, var(--stall-accent) 24%, transparent);
+}
+
+.stall h3 {
+  margin: 0;
+  font-size: inherit;
+}
+
+.stallAction {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--stall-accent);
+  font-family: var(--font-signage, cursive);
+  font-size: clamp(1.75rem, 4.1vw, 3.25rem);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.05;
+  text-align: left;
+  text-decoration: none;
+  text-shadow:
+    0.045em 0.05em 0 var(--stall-shadow),
+    0 0 0.45em color-mix(in srgb, var(--stall-accent) 68%, transparent);
+  transform: skewY(-2deg);
+  transform-origin: left;
+  transition:
+    letter-spacing 180ms ease,
+    transform 180ms var(--ease-signal, ease-out);
+}
+
+.stallAction::after {
+  margin-left: 0.3em;
+  content: "✦";
+  font-family: var(--font-code, monospace);
+  font-size: 0.35em;
+  font-style: normal;
+  opacity: 0;
+  transform: translateX(-0.4rem);
+  transition:
+    opacity 180ms ease,
+    transform 180ms var(--ease-signal, ease-out);
+}
+
+.stallAction:hover,
+.stallAction:focus-visible {
+  letter-spacing: 0.025em;
+  transform: skewY(-2deg) translateX(0.2rem);
+}
+
+.stallAction:hover::after,
+.stallAction:focus-visible::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.description {
+  padding-top: 0.8rem;
+  color: rgb(255 248 219 / 73%);
+  font-size: clamp(0.88rem, 1.45vw, 1rem);
+  line-height: 1.55;
+}
+
+.description b {
+  color: var(--market-paper);
+}
+
+.stallFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.2rem 0 0;
+  padding-top: 0.65rem;
+  border-top: 1px dashed
+    color-mix(in srgb, var(--stall-accent) 45%, transparent);
+  color: rgb(255 248 219 / 42%);
+  font-size: 0.58rem;
+}
+
+.stallFooter span:last-child {
+  color: var(--stall-accent);
+}
+
+.marketFooter {
+  margin: clamp(5rem, 12vw, 10rem) 0 0;
+  padding: 2.5rem 1rem;
+  border-block: 1px dashed rgb(255 71 189 / 40%);
+  text-align: center;
+}
+
+.marketFooter p {
+  margin: 0 0 0.75rem;
+  color: rgb(255 248 219 / 43%);
+  font-size: 0.65rem;
+}
+
+.exitLink {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  font-family: var(--font-lazer84);
-  font-size: clamp(2.65rem, 12vw, 4.5rem);
-  line-height: 1.05;
-  transform: skewY(-4deg);
-  text-shadow:
-    2px 0px 3px var(--color-signal-cyan-deep, #00a895),
-    2px 3px 1rem var(--color-signal-cyan-deep, #00a895),
-    2px 0px 1rem,
-    20px 0vw 10rem var(--color-signal-cyan-deep, #00a895),
-    40px 0vw 10rem var(--color-signal-cyan-deep, #00a895);
+  color: var(--market-cyan);
+  font-family: var(--font-code, monospace);
+  text-underline-offset: 0.3em;
 }
 
-.list p {
-  @apply pt-8;
-  max-width: 34rem;
-  color: var(--color-text-muted, rgb(255 255 255 / 76%));
-  font-size: clamp(1rem, 3vw, 1.2rem);
-  line-height: var(--line-body, 1.65);
+.horizon {
+  position: fixed;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: min(48vh, 30rem);
+  contain: layout paint;
+  opacity: 0.42;
+  pointer-events: none;
+  transform: translateY(0);
+  transition:
+    opacity 700ms var(--ease-signal, ease-out),
+    transform 900ms var(--ease-signal, ease-out);
+}
+
+.horizonHidden {
+  opacity: 0;
+  transform: translateY(105%);
 }
 
 .car {
-  @apply absolute left-0 z-10 w-screen;
-  bottom: 4vh;
-  transform: translateX(120%);
-  animation: car 900ms linear forwards;
-  animation-delay: 650ms;
+  position: absolute;
+  z-index: 3;
+  bottom: 3vh;
+  left: 0;
+  width: 100vw;
+  transform: translateX(-120%);
+  animation: car-arrival 1.1s linear 180ms forwards;
 }
 
-.offscreen {
-  @apply fixed bottom-0 z-10 w-full transition-transform duration-1000 transform pointer-events-none;
-  height: 50vh;
-  contain: layout paint;
-}
-
-.hidden {
-  /* biome-ignore lint/complexity/noImportantStyles: overrides the translate-y set by .offscreen's transform utilities */
-  transform: translateY(100%) !important;
-}
-
-@keyframes fade {
+@keyframes market-open {
   from {
-    opacity: 0.88;
-    transform: translate3d(0, 8px, 0);
+    opacity: 0;
+    transform: translateY(1rem);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0, 0);
+    transform: translateY(0);
   }
 }
 
-@keyframes car {
+@keyframes stall-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(1.4rem) rotate(0deg);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes star-drift {
+  to {
+    transform: translate3d(-1.2rem, 0.7rem, 0);
+  }
+}
+
+@keyframes star-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes bulb-chase {
+  50% {
+    opacity: 0.38;
+    transform: scale(0.72);
+  }
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes route-current {
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+
+@keyframes node-pulse {
+  50% {
+    transform: scale(0.72) rotate(45deg);
+  }
+}
+
+@keyframes car-arrival {
   from {
     transform: translateX(-120%);
   }
   to {
-    transform: translateX(100vw);
+    transform: translateX(110vw);
   }
 }
 
-@media (max-width: 639px) {
-  .offscreen {
-    height: 38vh;
-    opacity: 0.74;
+@media (max-width: 720px) {
+  .routeHeader :global(h1) {
+    font-size: clamp(3.25rem, 18vw, 5rem);
   }
 
-  .list li {
-    margin-block: 4rem;
+  .marketStats {
+    grid-template-columns: 1fr;
+  }
+
+  .marketStats div {
+    min-height: 3.8rem;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 0.85rem;
+  }
+
+  .ticker {
+    margin-bottom: 4.5rem;
+  }
+
+  .directoryHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .directoryHeader .legend {
+    justify-content: flex-start;
+  }
+
+  .mapFrame {
+    padding: 3rem 1rem 3rem 2rem;
+  }
+
+  .mapFrame::before {
+    position: absolute;
+    top: 4.5rem;
+    bottom: 4.5rem;
+    left: 0.78rem;
+    border-left: 1px dashed rgb(255 71 189 / 55%);
+    content: "";
+  }
+
+  .constellation {
+    display: none;
+  }
+
+  .marketList {
+    gap: 4.5rem;
+  }
+
+  .stall,
+  .stall:nth-child(even) {
+    width: 100%;
+    align-self: stretch;
+    transform: rotate(0deg);
+  }
+
+  .stall:hover,
+  .stall:focus-within {
+    transform: translateY(-0.3rem);
+  }
+
+  .stallPanel {
+    padding: 1rem;
+    box-shadow:
+      0.35rem 0.45rem 0 var(--stall-shadow),
+      inset 0 0 1rem rgb(0 0 0 / 60%);
+  }
+
+  .starNode {
+    top: -2rem;
+    left: -2.55rem;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .stallAction {
+    font-size: clamp(1.7rem, 9vw, 2.65rem);
+  }
+
+  .stallFooter {
+    font-size: 0.54rem;
+  }
+
+  .horizon {
+    height: 35vh;
+    opacity: 0.26;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll::before,
+  .starField,
+  .routeHeader :global(h1)::after,
+  .bulbRail span,
+  .tickerTrack,
+  .routeSignal,
+  .stall,
+  .starNode span,
+  .car,
+  .bazaar {
+    animation: none;
+  }
+
+  .tickerTrack {
+    transform: translateX(0);
+  }
+}
+
+:global(.fx-quiet) .scroll::before,
+:global(.fx-quiet) .starField,
+:global(.fx-quiet) .routeHeader :global(h1)::after,
+:global(.fx-quiet) .bulbRail span,
+:global(.fx-quiet) .tickerTrack,
+:global(.fx-quiet) .routeSignal,
+:global(.fx-quiet) .stall,
+:global(.fx-quiet) .starNode span,
+:global(.fx-quiet) .car,
+:global(.fx-quiet) .bazaar {
+  animation: none;
+}
+
+@media (forced-colors: active) {
+  .marketGate,
+  .stallPanel,
+  .mapFrame {
+    border-color: CanvasText;
+  }
+
+  .stallAction,
+  .exitLink {
+    color: LinkText;
   }
 }

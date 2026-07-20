@@ -1,6 +1,7 @@
 import type { MDXComponents } from 'mdx/types'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import CodeBlock from 'service/markdown/Code'
 import { fetchPaper, fetchPapers, type Paper } from 'service/markdown/files'
 import PaperImage from 'service/markdown/Image'
 import PaperShell from 'service/markdown/Paper'
@@ -33,15 +34,22 @@ export async function generateMetadata(props: {
 }
 
 // metadata flows by closure: the img override needs this paper's dimensions
-const createMdxComponents = (meta: Paper): MDXComponents => ({
-  img: (props) => {
-    const src = props.src ?? ''
-    if (src.includes('.jpeg')) {
-      return <PaperImage src={src} alt={props.alt ?? ''} meta={meta} />
-    }
-    return <img src={src} alt={props.alt} />
-  },
-})
+const createMdxComponents = (meta: Paper): MDXComponents => {
+  const images: MDXComponents = {
+    img: (props) => {
+      const src = props.src ?? ''
+      if (src.includes('.jpeg')) {
+        return <PaperImage src={src} alt={props.alt ?? ''} meta={meta} />
+      }
+      return <img src={src} alt={props.alt} />
+    },
+  }
+
+  // This paper is an intentional legacy exhibit. Keep its original renderer.
+  if (meta.slug === 'scroll-60fps-animation') return images
+
+  return { ...images, pre: CodeBlock }
+}
 
 export default async function PaperPage(props: {
   params: Promise<{ slug: string }>

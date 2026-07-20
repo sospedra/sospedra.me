@@ -62,7 +62,9 @@ const PaperShell: React.FC<Paper & { children: React.ReactNode }> = (props) => {
         }
       />
       <article>
-        <div className={`${css.markdown} mb-8`}>{props.children}</div>
+        <div className={`${css.markdown} ${css.regularMarkdown} mb-8`}>
+          {props.children}
+        </div>
       </article>
       <Footer slug={props.slug} />
     </Shell>

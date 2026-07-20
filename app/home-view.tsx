@@ -1,6 +1,11 @@
 'use client'
 
-import { animated, config, useSpring } from '@react-spring/web'
+import {
+  animated,
+  config,
+  useReducedMotion,
+  useSpring,
+} from '@react-spring/web'
 import css from 'app/home.module.css'
 import Link from 'components/Link'
 import Shell from 'components/Shell'
@@ -8,6 +13,7 @@ import SpriteCar from 'components/Sprite/Car'
 import SpriteCity from 'components/Sprite/City'
 import Title from 'components/Title'
 import Triangle from 'components/Triangle'
+import { useRouter } from 'next/navigation'
 import type { MouseEvent as ReactMouseEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useNav } from 'service/nav'
@@ -15,9 +21,9 @@ import { useTheme } from 'service/theme'
 import { useTransition } from 'service/transition'
 import { usePrefetch } from 'service/transition/use-prefetch'
 
-const BAZAAR_SIGNATURE_DURATION = 1200
-const BAZAAR_EXPRESS_DURATION = 600
-const BAZAAR_OFFSET = -600
+const BAZAAR_SIGNATURE_DURATION = 3500
+const BAZAAR_EXPRESS_DURATION = 2200
+const BAZAAR_OFFSET = -180
 const BAZAAR_SESSION_KEY = 'midnight-io:bazaar-ride'
 
 export default function HomeView() {
@@ -38,23 +44,29 @@ export default function HomeView() {
 function HomeStage() {
   const [[offsetX, offsetY], setOffset] = useState([0, 0])
   const [driveDuration, setDriveDuration] = useState(BAZAAR_EXPRESS_DURATION)
+  const router = useRouter()
   const refs = useNav()
   const transition = useTransition()
   const { fxMode } = useTheme()
+  const prefersReducedMotion = useReducedMotion()
+  const motionAllowed = fxMode === 'full' && !prefersReducedMotion
   const isDeparting = offsetX === BAZAAR_OFFSET
   const prefetchBazaar = usePrefetch('/bazaar')
   const { opacity, transform } = useSpring({
-    // Meaningful content paints immediately; the stage only settles into place.
-    from: { opacity: 0.88, transform: 'translate(0, 12px)' },
+    // The original stage reveal is part of the site's identity: the whole
+    // night-drive scene rises into view, then remains directly manipulable.
+    from: { opacity: 0.82, transform: 'translate3d(0, 100vh, 0)' },
     opacity: 1,
-    transform: `translate(${offsetX}vw, ${offsetY}vh)`,
-    config: isDeparting ? { duration: driveDuration } : { duration: 480 },
+    transform: `translate3d(${offsetX}vw, ${offsetY}vh, 0)`,
+    immediate: !motionAllowed,
+    config: isDeparting ? { duration: driveDuration } : config.slow,
   })
   const carSpring = useSpring({
-    transform: `translateX(${isDeparting ? '100vw' : '0vw'})`,
-    delay: isDeparting ? Math.min(250, driveDuration / 4) : 0,
+    transform: `translate3d(${isDeparting ? '100vw' : '0vw'}, 0, 0)`,
+    delay: isDeparting ? Math.min(420, driveDuration * 0.12) : 0,
+    immediate: !motionAllowed,
     config: isDeparting
-      ? { duration: Math.max(360, driveDuration / 2) }
+      ? { duration: Math.max(900, driveDuration * 0.55) }
       : config.slow,
   })
 
@@ -63,11 +75,11 @@ function HomeStage() {
     const skipDeparture = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
       event.preventDefault()
-      transition.navigate('/bazaar')
+      router.push('/bazaar')
     }
     window.addEventListener('keydown', skipDeparture)
     return () => window.removeEventListener('keydown', skipDeparture)
-  }, [isDeparting, transition])
+  }, [isDeparting, router])
 
   const departForBazaar = (event: ReactMouseEvent<HTMLAnchorElement>) => {
     const shouldUseNativeNavigation =
@@ -81,7 +93,7 @@ function HomeStage() {
     event.preventDefault()
 
     if (isDeparting) {
-      transition.navigate('/bazaar')
+      router.push('/bazaar')
       return
     }
 
@@ -93,31 +105,32 @@ function HomeStage() {
       // Session storage is optional; retain the signature ride.
     }
 
-    const duration =
-      fxMode === 'quiet'
-        ? 0
-        : isFirstRide
-          ? BAZAAR_SIGNATURE_DURATION
-          : BAZAAR_EXPRESS_DURATION
+    const duration = !motionAllowed
+      ? 0
+      : isFirstRide
+        ? BAZAAR_SIGNATURE_DURATION
+        : BAZAAR_EXPRESS_DURATION
 
     if (duration === 0) {
-      transition.navigate('/bazaar')
+      router.push('/bazaar')
       return
     }
 
     setDriveDuration(duration)
     setOffset([BAZAAR_OFFSET, 0])
     const origin = window.location.pathname
-    if (duration > 1000) {
+    if (duration > 1400) {
       window.setTimeout(
         () => {
           if (window.location.pathname !== origin) return
-          transition.setOffshore('cloud', Math.min(duration, 1200))
+          transition.setOffshore('cloud', 1900)
         },
-        Math.max(duration - 900, 0),
+        Math.max(duration - 1450, 0),
       )
     }
-    transition.navigateLater('/bazaar', Math.max(duration - 220, 0))
+    // Provider commits 360ms after the route signal, so this lands exactly
+    // as the drive completes while the cloud wipe is still covering the cut.
+    transition.navigateLater('/bazaar', Math.max(duration - 360, 0))
   }
 
   return (

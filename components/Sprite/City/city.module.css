@@ -1,35 +1,144 @@
 @reference "../../../service/style/global.css";
 
 .city {
-  @apply absolute bottom-0 left-0 m-0 bg-contain;
-  animation: city-arrival 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  position: absolute;
+  z-index: -2;
+  bottom: 0;
+  left: 0;
+  width: 420vw;
+  height: clamp(20rem, 54vh, 38rem);
+  margin: 0;
+  overflow: hidden;
+  animation: city-arrival 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  contain: layout paint style;
+  isolation: isolate;
+  pointer-events: none;
+  transform: translate3d(-100vw, 0, 0);
+}
+
+.city > span {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.horizon {
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 90%;
+  background:
+    radial-gradient(
+      ellipse 18rem 10rem at 13vw 76%,
+      rgb(255 52 203 / 28%),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 24rem 12rem at 58vw 68%,
+      rgb(109 247 234 / 16%),
+      transparent 72%
+    ),
+    linear-gradient(180deg, transparent 35%, rgb(26 8 52 / 32%) 100%);
+  background-size: 100vw 100%;
+}
+
+.architecture {
+  z-index: 1;
+  inset: 0;
+  background-image: url(/images/street.svg);
   background-position: bottom left;
   background-repeat: repeat-x;
   background-size: auto 100%;
-  contain: layout paint style;
-  height: 50vh;
-  background-image: url(/images/street.svg);
-  pointer-events: none;
-  transform: translate3d(-100vw, 0, 0);
-  width: 220vw;
-  z-index: -2;
+  filter: saturate(1.16) contrast(1.06) brightness(0.94);
+}
+
+.roadway {
+  z-index: 2;
+  right: 0;
+  bottom: -10%;
+  left: 0;
+  height: 26%;
+  border-top: 1px solid rgb(109 247 234 / 24%);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 7rem,
+      rgb(109 247 234 / 9%) 7rem calc(7rem + 1px)
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 1.35rem,
+      rgb(255 79 216 / 8%) 1.35rem calc(1.35rem + 1px)
+    ),
+    linear-gradient(180deg, rgb(7 10 25 / 4%), rgb(3 4 13 / 72%));
+  mask-image: linear-gradient(180deg, transparent, black 42%);
+  transform: perspective(18rem) rotateX(58deg) scaleX(1.08);
+  transform-origin: bottom;
+}
+
+.atmosphere {
+  z-index: 3;
+  inset: 0;
+  animation: electric-haze 6s ease-in-out infinite alternate;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 3px,
+      rgb(255 255 255 / 1.4%) 3px 4px
+    ),
+    linear-gradient(
+      90deg,
+      rgb(3 5 16 / 32%),
+      transparent 12% 88%,
+      rgb(3 5 16 / 32%)
+    );
+  mix-blend-mode: screen;
+  opacity: 0.72;
 }
 
 @keyframes city-arrival {
   from {
-    transform: translate3d(0, 0, 0);
+    opacity: 0.5;
+    transform: translate3d(0, 2.5rem, 0);
   }
   to {
+    opacity: 1;
     transform: translate3d(-100vw, 0, 0);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@keyframes electric-haze {
+  from {
+    opacity: 0.52;
+  }
+  to {
+    opacity: 0.82;
+  }
+}
+
+@media (max-width: 48rem) {
   .city {
+    height: min(53vh, 29rem);
+  }
+
+  .architecture {
+    filter: saturate(1.12) contrast(1.04) brightness(0.9);
+  }
+
+  .roadway {
+    opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .city,
+  .atmosphere {
     animation: none;
   }
 }
 
-:global(.fx-quiet) .city {
+:global(.fx-quiet) .city,
+:global(.fx-quiet) .atmosphere {
   animation: none;
 }

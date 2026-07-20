@@ -3,8 +3,14 @@
 .field {
   @apply absolute inset-0 overflow-hidden;
   contain: layout paint style;
+  opacity: 1;
   pointer-events: none;
+  transition: opacity 900ms ease;
   transform-origin: center top;
+}
+
+.hidden {
+  opacity: 0;
 }
 
 .signalLock {
@@ -101,9 +107,10 @@
   @apply absolute flex items-center;
   top: 15%;
   left: 85%;
-  animation: shooting 1s linear forwards;
-  animation-delay: inherit;
+  animation: shooting 20s linear infinite;
+  animation-delay: var(--shooting-delay, 8s);
   opacity: 0;
+  will-change: opacity, transform;
 }
 
 .shooting .star {
@@ -111,18 +118,21 @@
 }
 
 @keyframes shooting {
-  0% {
-    transform: rotate(135deg) translateX(0);
+  0%,
+  0.01% {
+    opacity: 0;
+    transform: rotate(135deg) translate3d(0, 0, 0);
   }
-  40% {
+  2% {
     opacity: 1;
   }
-  95% {
-    transform: rotate(135deg) translateX(200px);
+  4.8% {
+    transform: rotate(135deg) translate3d(200px, 0, 0);
     opacity: 1;
   }
+  5%,
   100% {
-    transform: rotate(135deg) translateX(200px);
+    transform: rotate(135deg) translate3d(200px, 0, 0);
     opacity: 0;
   }
 }
@@ -135,17 +145,20 @@
   background: linear-gradient(-45deg, white, rgba(0, 0, 255, 0));
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.72);
   transform-origin: right;
-  animation: tail 1s ease-in-out forwards;
-  animation-delay: inherit;
+  animation: tail 20s ease-in-out infinite;
+  animation-delay: var(--shooting-delay, 8s);
 }
 
 @keyframes tail {
-  0%,
-  100% {
+  0% {
     transform: scaleX(0);
   }
-  30% {
+  1.5% {
     transform: scaleX(1.2);
+  }
+  5%,
+  100% {
+    transform: scaleX(0);
   }
 }
 

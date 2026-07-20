@@ -15,7 +15,11 @@
   --color-text-muted: rgb(255 255 255 / 64%);
   --color-signal-cyan: #6df7ea;
   --color-signal-cyan-deep: #00a895;
-  --color-signal-pink: #d9478c;
+  --color-signal-pink: #f04bb8;
+  --color-signal-pink-hot: #ff4fd8;
+  --color-signal-pink-deep: #8d0d72;
+  --color-midnight-purple: #180a38;
+  --color-home-neon: var(--color-signal-pink-hot);
   --color-signal-yellow: #ffea00;
   --color-focus: var(--color-signal-yellow);
 
@@ -48,6 +52,7 @@
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-left: env(safe-area-inset-left, 0px);
   --shadow-neon: 0 0 0.75rem rgb(109 247 234 / 28%);
+  --shadow-neon-pink: 0 0 0.85rem rgb(255 79 216 / 50%);
   --shadow-panel: 0 1rem 3rem rgb(0 0 0 / 38%);
   --shadow-focus: 0 0 0.9rem rgb(255 234 0 / 32%);
   --motion-micro: 160ms;
@@ -67,7 +72,7 @@
 
 @theme {
   --color-turbo: #ffea00;
-  --color-cranberry: #d9478c;
+  --color-cranberry: #f04bb8;
   --color-cyan-100: #d7fffc;
   --color-cyan-200: #b8fef8;
   --color-cyan-300: #99fdf4;
@@ -203,7 +208,7 @@ html[data-scroll-behavior][data-scroll-behavior] .site-main:focus {
 .theme {
   --cyan: #6df7ea;
   --violet: #49257c;
-  --pink: #d9478c;
+  --pink: var(--color-signal-pink);
   --blue: #46628c;
   --yellow: #ffea00;
   --magenta: #800d79;

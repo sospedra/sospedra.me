@@ -60,13 +60,17 @@ const getHidden = (href: string) => {
 
 const stars = createStars()
 // own rng instance: the shared one advances per prerendered page and breaks hydration
-const shootingDelay = createRange(createRng('shooting-star'))(30, 8)
+const shootingDelay = createRange(createRng('shooting-star'))(14, 7)
 
 const ShootingStar: React.FC = () => {
   return (
     <span
       className={css.shooting}
-      style={{ animationDelay: `${shootingDelay}s` }}
+      style={
+        {
+          '--shooting-delay': `${shootingDelay}s`,
+        } as React.CSSProperties
+      }
     >
       <span className={cn('start', css.star)} />
     </span>
@@ -78,10 +82,15 @@ const Stars: React.FC = () => {
   const { url } = useTransition()
   const hidden = getHidden(url || pathname)
 
-  if (hidden) return null
-
   return (
-    <div aria-hidden='true' className={cn(css.field, url && css.signalLock)}>
+    <div
+      aria-hidden='true'
+      className={cn(
+        css.field,
+        hidden && css.hidden,
+        url && !hidden && css.signalLock,
+      )}
+    >
       <ShootingStar />
       {stars.map(({ y, x, size, delay, id, animation }) => (
         <span

@@ -4,34 +4,39 @@
   @apply absolute z-50 h-64;
   --frame-width: 0.25rem;
   --border-extra: 0.1rem;
+  --frame-primary: var(--color-home-neon, #ff4fd8);
+  --frame-secondary: var(--color-signal-cyan, #6df7ea);
   transform: rotate(68deg);
   width: 19rem;
   top: 0;
   left: calc(50% - 7.5rem);
   z-index: -1;
   border: calc(var(--frame-width) + var(--border-extra)) solid transparent;
-  border-bottom-color: var(--cyan);
+  border-bottom-color: var(--frame-primary);
   background:
     linear-gradient(
       to bottom left,
       transparent 49.5%,
-      var(--cyan) 50% calc(50% + var(--frame-width)),
+      var(--frame-secondary) 50% calc(50% + var(--frame-width)),
       transparent calc(50% + var(--frame-width) + 1px)
     )
     right,
     linear-gradient(
       to bottom right,
       transparent 49.5%,
-      var(--cyan) 50% calc(50% + var(--frame-width)),
+      var(--frame-primary) 50% calc(50% + var(--frame-width)),
       transparent calc(50% + var(--frame-width) + 1px)
     )
     left;
   background-size: 50% 100%;
   background-origin: border-box;
   background-repeat: no-repeat;
+  filter: drop-shadow(0 0 0.2rem rgb(255 79 216 / 70%))
+    drop-shadow(0 0 0.6rem rgb(109 247 234 / 36%));
 }
 
 .blur {
   --frame-width: 0.3rem;
-  filter: blur(0.3rem);
+  filter: blur(0.35rem);
+  opacity: 0.78;
 }

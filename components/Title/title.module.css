@@ -1,17 +1,22 @@
 @reference "../../service/style/global.css";
 
 .title {
-  @apply relative z-50 italic text-cyan-400;
+  @apply relative z-50 italic;
+  color: var(--color-home-neon, #ff4fd8);
+  filter: saturate(1.08);
   font-family: var(--font-lazer84);
   font-size: clamp(3.1rem, 14vw, 5.25rem);
-  transform: skewY(-4deg);
+  isolation: isolate;
   margin-left: clamp(-5rem, -12vw, -2.5rem);
+  transform: skewY(-4deg);
+  -webkit-text-stroke: 0.018em rgb(255 255 255 / 32%);
   text-shadow:
-    2px 0px 3px var(--color-signal-cyan-deep, #00a895),
-    2px 3px 1rem var(--color-signal-cyan-deep, #00a895),
-    2px 0px 1rem,
-    20px 0vw 10rem var(--color-signal-cyan-deep, #00a895),
-    40px 0vw 10rem var(--color-signal-cyan-deep, #00a895);
+    0.025em 0 rgb(255 255 255 / 72%),
+    0.055em 0.08em 0 var(--color-signal-pink-deep, #8d0d72),
+    0 0 0.18em var(--color-home-neon, #ff4fd8),
+    0 0 0.52em var(--color-home-neon, #ff4fd8),
+    0 0 1.5em rgb(255 79 216 / 74%),
+    0.2em 0.1em 2.5em rgb(109 247 234 / 38%);
 }
 
 .title span:last-child {
@@ -40,4 +45,14 @@
   69.999% {
     opacity: 0.4;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title span:last-child {
+    animation: none;
+  }
+}
+
+:global(.fx-quiet) .title span:last-child {
+  animation: none;
 }
