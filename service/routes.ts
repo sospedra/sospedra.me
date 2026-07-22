@@ -42,6 +42,12 @@ export const ROUTE_SIGNALS: RouteSignal[] = [
     status: 'Routes resolved',
   },
   {
+    href: '/travel',
+    label: 'Flight log',
+    sector: '05',
+    status: 'Orbit locked',
+  },
+  {
     href: '/talks',
     label: 'Broadcast',
     sector: '06',
