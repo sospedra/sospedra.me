@@ -17,7 +17,7 @@
   z-index: 0;
   bottom: 0;
   left: -100vw;
-  width: 400vw;
+  width: 450vw;
   height: var(--street);
   margin: 0;
   overflow: hidden;
@@ -157,6 +157,16 @@
 
   .roadway {
     opacity: 0.72;
+  }
+
+  /* portrait rides are mostly bridge: give the cruise a taller backdrop */
+  .skyline {
+    height: 30vh;
+  }
+
+  /* the town tile-rounds shorter here, so slow the nightfall to match */
+  .dusk {
+    background: linear-gradient(90deg, transparent, rgb(8 12 28 / 92%) 150vw);
   }
 }
 

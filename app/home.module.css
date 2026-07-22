@@ -2,7 +2,7 @@
 
 .world {
   position: relative;
-  width: 350vw;
+  width: 400vw;
   height: 100dvh;
   align-self: flex-start;
   flex: none;
@@ -103,7 +103,7 @@
  * Ori-style foreground silhouettes, fixed above the car (z 150 beats the
  * departing carDock's 140): the car drives behind them. Content sits past
  * the resting frame (x > 100vw) so the home screen stays clean. During the
- * drive each track slides at its own speed against the world's -200vw pan;
+ * drive each track slides at its own speed against the world's -250vw pan;
  * the gap track moves at exactly world speed, so its tower stays glued over
  * the town/bridge joint the whole ride.
  */
@@ -114,6 +114,9 @@
   overflow: hidden;
   pointer-events: none;
   transition: opacity 340ms ease-out;
+
+  /* must match driveEase in home-view.tsx or the gap tower drifts */
+  --drive-ease: cubic-bezier(0.4, 0, 0.6, 0.52);
 
   /* mirrors Sprite/City .city custom props; keep both in sync */
   --street: clamp(20rem, 54vh, 38rem);
@@ -141,7 +144,7 @@
 
 .foreground[data-driving="true"] > div {
   animation-duration: var(--drive-ms, 2900ms);
-  animation-timing-function: linear;
+  animation-timing-function: var(--drive-ease);
   animation-fill-mode: both;
   will-change: transform;
 }
@@ -168,12 +171,15 @@
   background-size: 100% 100%;
 }
 
-/* One lamp mid-tile down the whole street, in front of the passing car. */
+/*
+ * One lamp mid-tile down the street, in front of the passing car. The two
+ * westmost tiles are skipped so no lamp shows on the resting home screen.
+ */
 .fgLamps {
   position: absolute;
-  left: -100vw;
+  left: calc(-100vw + 2 * var(--tile));
   bottom: 0;
-  width: var(--city-end);
+  width: max(0vw, calc(var(--city-end) - 2 * var(--tile)));
   height: var(--street);
   background:
     url("/images/streetlamp-row.svg") bottom left / var(--tile) 100% repeat-x;
@@ -201,21 +207,47 @@
   background-image: url("/images/foreground-tower.svg");
 }
 
+/* The ride ends in a quick fade to pitch black right at the route swap. */
+.blackout {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+}
+
+.foreground[data-driving="true"] .blackout {
+  animation: blackout-fade var(--drive-ms, 2500ms) linear both;
+}
+
+/* full black by 86%: the route swap fires at drive-ms minus 360ms */
+@keyframes blackout-fade {
+  0%,
+  78% {
+    opacity: 0;
+  }
+
+  86%,
+  100% {
+    opacity: 1;
+  }
+}
+
 @keyframes fg-world {
   to {
-    transform: translate3d(-200vw, 0, 0);
+    transform: translate3d(-250vw, 0, 0);
   }
 }
 
 @keyframes fg-near {
   to {
-    transform: translate3d(-280vw, 0, 0);
+    transform: translate3d(-350vw, 0, 0);
   }
 }
 
 @keyframes fg-nearest {
   to {
-    transform: translate3d(-320vw, 0, 0);
+    transform: translate3d(-400vw, 0, 0);
   }
 }
 
@@ -256,22 +288,23 @@
 
 /*
  * The town hard-ends on a tile boundary near world 178vw (Sprite/City
- * --city-end) and the bridge deck starts there, so the car rides onto it
- * around 50-60% of the pan. The 66–74vw cruise keeps the car on the bridge
+ * --city-end) and the bridge deck starts there. The car rolls out slow,
+ * pulls hard ahead while the eased pan winds up behind it, and rides onto
+ * the deck near 60% of the ride. The 60-72vw cruise keeps it on the bridge
  * until the route swap, where the bazaar arrival continues on the same deck.
  */
 @keyframes car-departure {
   0% {
     transform: translate3d(0, 0, 0);
   }
-  20% {
-    transform: translate3d(30vw, 0, 0);
+  16% {
+    transform: translate3d(4vw, 0, 0);
   }
-  42% {
-    transform: translate3d(66vw, 0, 0);
+  50% {
+    transform: translate3d(60vw, 0, 0);
   }
   84% {
-    transform: translate3d(74vw, 0, 0);
+    transform: translate3d(72vw, 0, 0);
   }
   98%,
   100% {
@@ -298,11 +331,28 @@
   .foreground {
     --street: min(53vh, 29rem);
   }
+
+  /* vh-sized slabs swallow a portrait screen; scale them to the street */
+  .fgGapTower {
+    width: 18vw;
+    height: 58vh;
+  }
+
+  .fgNearBlock {
+    width: 24vw;
+    height: 30vh;
+  }
+
+  .fgNearestTower {
+    width: 34vw;
+    height: 42vh;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .homeFrame,
   .foreground > div,
+  .foreground .blackout,
   .carDock[data-car-state="departing"] .carJourney {
     animation: none;
   }
@@ -310,6 +360,7 @@
 
 :global(.fx-quiet) .homeFrame,
 :global(.fx-quiet) .foreground > div,
+:global(.fx-quiet) .foreground .blackout,
 :global(.fx-quiet) .carDock[data-car-state="departing"] .carJourney {
   animation: none;
 }

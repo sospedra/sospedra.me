@@ -17,6 +17,7 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import type { CSSProperties, MouseEvent as ReactMouseEvent } from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
+import { useHotkeys } from 'service/hotkeys'
 import { useNav } from 'service/nav'
 import { useTheme } from 'service/theme'
 import { useTransition } from 'service/transition'
@@ -24,7 +25,7 @@ import { usePrefetch } from 'service/transition/use-prefetch'
 
 const BAZAAR_SIGNATURE_DURATION = 3100
 const BAZAAR_EXPRESS_DURATION = 2500
-const BAZAAR_OFFSET = -200
+const BAZAAR_OFFSET = -250
 const BAZAAR_SESSION_KEY = 'midnight-io:bazaar-ride'
 const HOME_INTRO_DURATION = 1200
 const CAR_ARRIVAL_DURATION = 820
@@ -33,6 +34,28 @@ const CAR_EXIT_DURATION = 340
 
 const loadSpriteCar = () => import('components/Sprite/Car')
 const SpriteCar = dynamic(loadSpriteCar, { ssr: false })
+
+const bezierAxis = (c1: number, c2: number) => (u: number) =>
+  3 * (1 - u) * (1 - u) * u * c1 + 3 * (1 - u) * u * u * c2 + u * u * u
+
+// cubic-bezier(0.4, 0, 0.6, 0.52), must match --drive-ease in home.module.css:
+// the car pulls away from rest and settles into a ~1.2x cruise on the bridge
+const driveTime = bezierAxis(0.4, 0.6)
+const driveProgress = bezierAxis(0, 0.52)
+
+const driveEase = (t: number) => {
+  if (t <= 0) return 0
+  if (t >= 1) return 1
+  let lo = 0
+  let hi = 1
+  // per-frame hot path: 20 bisection steps pin u within 1e-6
+  for (let step = 0; step < 20; step++) {
+    const mid = (lo + hi) / 2
+    if (driveTime(mid) < t) lo = mid
+    else hi = mid
+  }
+  return driveProgress((lo + hi) / 2)
+}
 
 type StageState = {
   offset: readonly [number, number]
@@ -164,7 +187,9 @@ function HomeStage() {
   const { transform } = useSpring({
     transform: `translate3d(${offsetX}vw, ${offsetY}vh, 0)`,
     immediate: !motionAllowed,
-    config: isDeparting ? { duration: driveDuration } : config.slow,
+    config: isDeparting
+      ? { duration: driveDuration, easing: driveEase }
+      : config.slow,
   })
   const carSpring = useSpring({
     ...carPose(stage, isDeparting),
@@ -249,6 +274,18 @@ function HomeStage() {
 
   const leaveHome = () => dispatch({ type: 'leave-home' })
 
+  const carParked = carVisible && !carArriving && !isDeparting
+  useHotkeys([
+    [
+      'e',
+      (event) => {
+        if (!carParked) return
+        event.preventDefault()
+        dispatch({ type: 'engine-toggle' })
+      },
+    ],
+  ])
+
   return (
     <Shell
       className='flex flex-col items-center justify-center flex-1 w-screen h-dvh'
@@ -317,6 +354,7 @@ function HomeStage() {
         <div className={css.fgTrackNearest}>
           <span className={css.fgNearestTower} />
         </div>
+        <span className={css.blackout} />
       </div>
 
       <animated.div
