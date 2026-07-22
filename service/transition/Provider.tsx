@@ -2,6 +2,7 @@ import type { Route } from 'next'
 import { usePathname, useRouter } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef } from 'react'
+import { recordPathname } from './altitude'
 import Background from './Background'
 import { TransitionCTX } from './context'
 import Offshore from './Offshore'
@@ -24,6 +25,12 @@ export const Provider: React.FunctionComponent<{
     lastPathname.current = pathname
     transition.reset()
   }, [pathname, transition.reset])
+
+  // passive effect: entering stages read the origin in their layout
+  // effect first, then this records the new pathname for the next hop
+  useEffect(() => {
+    recordPathname(pathname)
+  }, [pathname])
 
   // timer, not spring onStart: v10 fires onStart only from idle,
   // so retargeting a running background pan would never unmount

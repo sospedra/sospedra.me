@@ -1,3 +1,4 @@
+import cn from 'clsx'
 import type React from 'react'
 import count from './count.svg'
 import demons from './demons.svg'
@@ -6,6 +7,7 @@ import handshake from './handshake.svg'
 import home from './home.svg'
 import insert from './insert.svg'
 import lost from './lost.svg'
+import css from './manual.module.css'
 import mobius from './mobius.svg'
 import support from './support.svg'
 import triangle from './triangle.svg'
@@ -37,7 +39,7 @@ const SpriteManual: React.FC<{
       height={sprite.height}
       loading='lazy'
       decoding='async'
-      className={`h-full p-4 ${props.className || ''}`}
+      className={cn(css.sprite, props.className)}
     />
   )
 }

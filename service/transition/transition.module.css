@@ -1,93 +1,48 @@
 @reference "../../service/style/global.css";
 
 .bg {
-  --sky-home-hot: #ff28ac;
-  --sky-home-core: #c40b82;
-  --sky-about-hot: #ef159c;
-  --sky-about-core: #9c0b70;
-  --sky-papers-hot: #8d126e;
-  --sky-papers-core: #510b51;
-  --sky-paper-hot: #37205d;
-  --sky-paper-core: #1b1539;
-  --sky-bazaar-cyan: rgb(43 235 225 / 82%);
-  --sky-bazaar-cyan-core: rgb(24 126 152 / 46%);
-  --sky-bazaar-pink: #df178e;
-  --sky-bazaar-pink-core: #6e125f;
-  --sky-base-1: #120f2b;
-  --sky-base-2: #22133d;
-  --sky-base-3: #3f103f;
-  --sky-base-4: #6e0a5c;
-  --sky-base-5: #37072f;
+  --sky-paper: #160b2f;
+  --sky-upper: #1d0c35;
+  --sky-papers: #290d37;
+  --sky-home: #37113f;
+  --sky-about-wash: rgb(128 13 121 / 18%);
+  --sky-bazaar-wash: rgb(0 86 98 / 44%);
+  --sky-scan: rgb(255 255 255 / 1.4%);
   @apply absolute;
   background:
-    radial-gradient(
-      ellipse 18% 20% at 12% 92%,
-      var(--sky-home-hot) 0%,
-      var(--sky-home-core) 38%,
-      transparent 74%
-    ),
-    radial-gradient(
-      ellipse 17% 20% at 37% 92%,
-      var(--sky-about-hot) 0%,
-      var(--sky-about-core) 42%,
-      transparent 76%
-    ),
-    radial-gradient(
-      ellipse 19% 18% at 12% 66%,
-      var(--sky-papers-hot) 0%,
-      var(--sky-papers-core) 46%,
-      transparent 78%
-    ),
-    radial-gradient(
-      ellipse 18% 19% at 12% 14%,
-      var(--sky-paper-hot) 0%,
-      var(--sky-paper-core) 56%,
-      transparent 82%
-    ),
-    radial-gradient(
-      ellipse 15% 18% at 88% 64%,
-      var(--sky-bazaar-cyan) 0%,
-      var(--sky-bazaar-cyan-core) 44%,
-      transparent 76%
-    ),
-    radial-gradient(
-      ellipse 17% 18% at 78% 70%,
-      var(--sky-bazaar-pink) 0%,
-      var(--sky-bazaar-pink-core) 48%,
-      transparent 78%
+    repeating-linear-gradient(0deg, var(--sky-scan) 0 1px, transparent 1px 4px),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 20%,
+      var(--sky-about-wash) 29%,
+      var(--sky-about-wash) 42%,
+      transparent 52%,
+      transparent 68%,
+      var(--sky-bazaar-wash) 84%,
+      var(--sky-bazaar-wash) 100%
     ),
     linear-gradient(
       180deg,
-      var(--sky-base-1) 0%,
-      var(--sky-base-2) 24%,
-      var(--sky-base-3) 51%,
-      var(--sky-base-4) 75%,
-      var(--sky-base-5) 100%
+      var(--sky-paper) 0%,
+      var(--sky-upper) 30%,
+      var(--sky-papers) 60%,
+      var(--sky-home) 100%
     );
   contain: strict;
-  height: 400dvh;
+  height: 500dvh;
   transform-origin: left top;
   width: 400vw;
 }
 
 :global(.theme-maintenance) .bg {
-  --sky-home-hot: #5df59a;
-  --sky-home-core: #176943;
-  --sky-about-hot: #82ffae;
-  --sky-about-core: #205c41;
-  --sky-papers-hot: #246a4a;
-  --sky-papers-core: #153d2d;
-  --sky-paper-hot: #244d3a;
-  --sky-paper-core: #10271e;
-  --sky-bazaar-cyan: rgb(140 255 180 / 78%);
-  --sky-bazaar-cyan-core: rgb(31 112 70 / 48%);
-  --sky-bazaar-pink: #ff91c7;
-  --sky-bazaar-pink-core: #713c58;
-  --sky-base-1: #091711;
-  --sky-base-2: #10271e;
-  --sky-base-3: #163627;
-  --sky-base-4: #1a4b34;
-  --sky-base-5: #0c2118;
+  --sky-paper: #091711;
+  --sky-upper: #10271e;
+  --sky-papers: #163627;
+  --sky-home: #1a4b34;
+  --sky-about-wash: rgb(93 245 154 / 12%);
+  --sky-bazaar-wash: rgb(140 255 180 / 16%);
+  --sky-scan: rgb(197 255 218 / 1.4%);
 }
 
 .moving {

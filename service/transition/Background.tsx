@@ -1,9 +1,4 @@
-import {
-  animated,
-  config,
-  useReducedMotion,
-  useSpring,
-} from '@react-spring/web'
+import { animated, useReducedMotion, useSpring } from '@react-spring/web'
 import cn from 'clsx'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
@@ -17,19 +12,25 @@ type OffsetT = {
   transform: string
 }
 
+const ROUTE_SPRING = {
+  tension: 150,
+  friction: 34,
+  mass: 1.15,
+}
+
 const getOffsetFromHref = (href: string): OffsetT => {
   const ptr = createPtr(href)
   switch (true) {
     case ptr('/papers'):
-      return { transform: 'translate3d(0vw, -200vh, 0)' }
+      return { transform: 'translate3d(0vw, -250vh, 0)' }
     case ptr('/papers/:slug'):
       return { transform: 'translate3d(0vw, 0vh, 0)' }
     case ptr('/about'):
-      return { transform: 'translate3d(-100vw, -300vh, 0)' }
+      return { transform: 'translate3d(-100vw, -400vh, 0)' }
     case ptr('/bazaar'):
-      return { transform: 'translate3d(-300vw, -200vh, 0)' }
+      return { transform: 'translate3d(-300vw, -250vh, 0)' }
     default:
-      return { transform: 'translate3d(0vw, -300vh, 0)' }
+      return { transform: 'translate3d(0vw, -400vh, 0)' }
   }
 }
 
@@ -83,7 +84,7 @@ const Background: React.FunctionComponent = () => {
   const isQuiet = Boolean(prefersReducedMotion || fxQuiet)
   const [animation, api] = useSpring(() => ({
     to: getOffsetFromHref(pathname),
-    config: config.molasses,
+    config: ROUTE_SPRING,
   }))
 
   return (
@@ -93,7 +94,7 @@ const Background: React.FunctionComponent = () => {
         start={(offset, immediate, onRest) =>
           api.start({
             ...offset,
-            config: config.molasses,
+            config: ROUTE_SPRING,
             immediate,
             onRest,
           })

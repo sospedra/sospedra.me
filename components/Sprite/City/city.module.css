@@ -1,19 +1,41 @@
 @reference "../../../service/style/global.css";
 
+/*
+ * The town hard-ends on a street-home.webp tile boundary (1659x650 art drawn
+ * at auto 100%) nearest to 278vw (world 178vw), so no building gets sliced.
+ * The bazaar bridge deck starts exactly there and runs to the world's edge.
+ */
+.city,
+.dusk {
+  --street: clamp(20rem, 54vh, 38rem);
+  --tile: calc(var(--street) * (1659 / 650));
+  --city-end: clamp(var(--tile), round(nearest, 278vw, var(--tile)), 400vw);
+}
+
 .city {
   position: absolute;
-  z-index: -2;
+  z-index: 0;
   bottom: 0;
-  left: 0;
-  width: 420vw;
-  height: clamp(20rem, 54vh, 38rem);
+  left: -100vw;
+  width: 400vw;
+  height: var(--street);
   margin: 0;
   overflow: hidden;
-  animation: city-arrival 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
   contain: layout paint style;
   isolation: isolate;
   pointer-events: none;
-  transform: translate3d(-100vw, 0, 0);
+}
+
+/* The sky settles into the bazaar night as the town gives way to the bridge. */
+.dusk {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: calc(-140vw + var(--city-end));
+  background: linear-gradient(90deg, transparent, rgb(8 12 28 / 92%) 90vw);
+  pointer-events: none;
 }
 
 .city > span {
@@ -45,19 +67,39 @@
 
 .architecture {
   z-index: 1;
-  inset: 0;
-  background-image: url(/images/street.svg);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--city-end);
+  background-image: image-set(
+    url("/images/street-home.webp?v=crisp-1") 1x,
+    url("/images/street-home@2x.webp?v=crisp-1") 2x
+  );
   background-position: bottom left;
   background-repeat: repeat-x;
   background-size: auto 100%;
-  filter: saturate(1.16) contrast(1.06) brightness(0.94);
+  image-rendering: pixelated;
+}
+
+/*
+ * A massive far-away city on the horizon. It rises from behind the town's
+ * last buildings and shows through the bridge railing for the whole ride.
+ */
+.skyline {
+  z-index: 0;
+  right: 0;
+  bottom: 9vh;
+  left: calc(var(--city-end) - 40vw);
+  height: 24vh;
+  background: url(/images/skyline-far.svg) bottom left / auto 100% repeat-x;
+  opacity: 0.85;
 }
 
 .roadway {
   z-index: 2;
-  right: 0;
   bottom: -10%;
   left: 0;
+  width: var(--city-end);
   height: 26%;
   border-top: 1px solid rgb(109 247 234 / 24%);
   background:
@@ -77,10 +119,21 @@
   transform-origin: bottom;
 }
 
+/* Same deck as components/Sprite/Mountain so the route swap is a match cut. */
+.bridge {
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  left: var(--city-end);
+  height: 14vh;
+  filter: brightness(0.8) contrast(1.2);
+  background-image: url(/images/bridge.svg);
+  background-repeat: repeat-x;
+}
+
 .atmosphere {
   z-index: 3;
   inset: 0;
-  animation: electric-haze 6s ease-in-out infinite alternate;
   background:
     repeating-linear-gradient(
       0deg,
@@ -93,37 +146,13 @@
       transparent 12% 88%,
       rgb(3 5 16 / 32%)
     );
-  mix-blend-mode: screen;
-  opacity: 0.72;
-}
-
-@keyframes city-arrival {
-  from {
-    opacity: 0.5;
-    transform: translate3d(0, 2.5rem, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(-100vw, 0, 0);
-  }
-}
-
-@keyframes electric-haze {
-  from {
-    opacity: 0.52;
-  }
-  to {
-    opacity: 0.82;
-  }
+  opacity: 0.58;
 }
 
 @media (max-width: 48rem) {
-  .city {
-    height: min(53vh, 29rem);
-  }
-
-  .architecture {
-    filter: saturate(1.12) contrast(1.04) brightness(0.9);
+  .city,
+  .dusk {
+    --street: min(53vh, 29rem);
   }
 
   .roadway {
@@ -132,13 +161,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .city,
   .atmosphere {
     animation: none;
   }
 }
 
-:global(.fx-quiet) .city,
 :global(.fx-quiet) .atmosphere {
   animation: none;
 }
