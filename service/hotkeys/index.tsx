@@ -1,9 +1,10 @@
+import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef } from 'react'
 import { tinykeys } from 'tinykeys'
 
-type Trap = [string | string[], (event: KeyboardEvent) => void]
+export type Trap = [string | string[], (event: KeyboardEvent) => void]
 
 const konamiSequence = [
   'ArrowUp',
@@ -24,7 +25,7 @@ const konamiDirectionalKeys = new Set([
   'ArrowLeft',
   'ArrowRight',
 ])
-const konamiCapturedEvents = new WeakSet<KeyboardEvent>()
+const capturedEvents = new WeakSet<KeyboardEvent>()
 const konamiListeners = new Set<() => void>()
 let konamiCursor = 0
 let konamiTimeout: number | null = null
@@ -76,7 +77,7 @@ const startKonamiSession = () => {
 }
 
 const captureEvent = (event: KeyboardEvent) => {
-  konamiCapturedEvents.add(event)
+  capturedEvents.add(event)
   event.preventDefault()
   event.stopImmediatePropagation()
 }
@@ -162,6 +163,73 @@ const releaseKonamiSuccessKey = (event: KeyboardEvent) => {
   if (event.key !== successKey) return
   clearSuccessKey()
 }
+
+const GOTO_ROUTES: Record<string, Route> = {
+  h: '/',
+  p: '/papers',
+  a: '/about',
+  b: '/bazaar',
+  m: '/manual',
+  u: '/uses',
+  s: '/serve',
+  r: '/rewrite',
+  t: '/talks',
+  v: '/travel',
+}
+
+const GOTO_WINDOW = 1400
+const MODIFIER_KEYS = new Set(['Shift', 'Control', 'Alt', 'Meta'])
+let gotoPending = false
+let gotoTimeout: number | null = null
+
+const clearGotoSession = () => {
+  gotoPending = false
+  if (gotoTimeout !== null) {
+    window.clearTimeout(gotoTimeout)
+    gotoTimeout = null
+  }
+}
+
+const startGotoSession = () => {
+  clearGotoSession()
+  gotoPending = true
+  gotoTimeout = window.setTimeout(clearGotoSession, GOTO_WINDOW)
+}
+
+const resolveGotoKey = (
+  event: KeyboardEvent,
+  navigate: (url: Route) => void,
+) => {
+  if (isModifiedOrRepeatedKey(event)) return
+  if (event.key === 'g') {
+    captureEvent(event)
+    scrollToPageEdge(-1)
+    return
+  }
+  const route = GOTO_ROUTES[event.key]
+  if (!route) return
+  captureEvent(event)
+  navigate(route)
+}
+
+// vim-style leader: `g` arms a goto window, the next key picks the sector.
+// Capture phase, like konami: the second key must never reach single-key
+// traps (`g b` warps to the bazaar instead of also triggering "back").
+const createGotoCapture =
+  (navigate: (url: Route) => void) => (event: KeyboardEvent) => {
+    if (gameInputClaims > 0 || MODIFIER_KEYS.has(event.key)) return
+    if (event.isComposing || isEditableTarget(event.target)) {
+      clearGotoSession()
+      return
+    }
+    if (!gotoPending) {
+      if (event.key === 'g' && !isModifiedOrRepeatedKey(event))
+        startGotoSession()
+      return
+    }
+    clearGotoSession()
+    resolveGotoKey(event, navigate)
+  }
 
 const canScrollVertically = (element: HTMLElement) => {
   if (element.scrollHeight - element.clientHeight <= 1) return false
@@ -256,10 +324,7 @@ const scrollSurfaceByPage = (surface: HTMLElement, direction: -1 | 1) => {
 }
 
 export const scrollActivePage = (direction: -1 | 1) => {
-  const modal = document.querySelector<HTMLElement>(
-    'dialog[open], [aria-modal="true"]',
-  )
-  if (modal) return false
+  if (hasOpenModal()) return false
 
   const surface = getActiveScrollSurface()
   if (!surface) return false
@@ -274,8 +339,37 @@ export const scrollActivePage = (direction: -1 | 1) => {
   return scrollSurfaceByPage(surface, direction)
 }
 
+const hasOpenModal = () =>
+  Boolean(document.querySelector('dialog[open], [aria-modal="true"]'))
+
+export const scrollToPageEdge = (direction: -1 | 1) => {
+  if (hasOpenModal()) return false
+
+  const surface = getActiveScrollSurface()
+  if (!surface) return false
+
+  surface.scrollTo({
+    behavior: getScrollBehavior(),
+    top: direction === -1 ? 0 : surface.scrollHeight,
+  })
+  return true
+}
+
+// `[` / `]` on authored sequences (manual sheets): jump to the sibling
+// element marked with the selector instead of a percentage scroll
+export const scrollMarkedScene = (selector: string, direction: -1 | 1) => {
+  if (hasOpenModal()) return false
+
+  const surface = getActiveScrollSurface()
+  if (!surface) return false
+
+  const scenes = Array.from(surface.querySelectorAll<HTMLElement>(selector))
+  if (scenes.length < 2) return false
+  return scrollSceneSequence(scenes, direction, surface)
+}
+
 const shouldIgnoreTrap = (event: KeyboardEvent, combo: string) =>
-  konamiCapturedEvents.has(event) ||
+  capturedEvents.has(event) ||
   event.defaultPrevented ||
   event.isComposing ||
   isEditableTarget(event.target) ||
@@ -330,19 +424,25 @@ export const Hotkeys: React.FC<{ children: React.ReactNode }> = (props) => {
   const router = useRouter()
 
   useEffect(() => {
+    const captureGotoInput = createGotoCapture((url) => router.push(url))
     window.addEventListener('keydown', captureKonamiInput, { capture: true })
+    window.addEventListener('keydown', captureGotoInput, { capture: true })
     window.addEventListener('keyup', releaseKonamiSuccessKey, { capture: true })
     return () => {
       window.removeEventListener('keydown', captureKonamiInput, {
+        capture: true,
+      })
+      window.removeEventListener('keydown', captureGotoInput, {
         capture: true,
       })
       window.removeEventListener('keyup', releaseKonamiSuccessKey, {
         capture: true,
       })
       clearKonamiSession()
+      clearGotoSession()
       clearSuccessKey()
     }
-  }, [])
+  }, [router])
 
   useHotkeys([
     [
@@ -383,6 +483,14 @@ export const Hotkeys: React.FC<{ children: React.ReactNode }> = (props) => {
       'k',
       (event) => {
         if (scrollActivePage(-1)) event.preventDefault()
+      },
+    ],
+    [
+      // 'G' alone would also match a bare 'g': tinykeys compares keys
+      // case-insensitively, so the shift modifier must be explicit
+      'Shift+G',
+      (event) => {
+        if (scrollToPageEdge(1)) event.preventDefault()
       },
     ],
   ])

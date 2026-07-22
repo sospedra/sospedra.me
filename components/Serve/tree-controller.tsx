@@ -1,5 +1,6 @@
 'use client'
 
+import ArrowNav from 'components/ArrowNav'
 import type React from 'react'
 import { useEffect, useRef } from 'react'
 
@@ -26,5 +27,10 @@ export default function TreeController(props: { children: React.ReactNode }) {
     }
   }, [])
 
-  return <div ref={rootRef}>{props.children}</div>
+  return (
+    <div ref={rootRef}>
+      {props.children}
+      <ArrowNav />
+    </div>
+  )
 }

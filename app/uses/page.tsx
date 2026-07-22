@@ -1,4 +1,5 @@
-import External, { TWITTER } from 'components/External'
+import ArrowNav from 'components/ArrowNav'
+import External, { X } from 'components/External'
 import Link from 'components/Link'
 import RouteHeader from 'components/RouteHeader'
 import Shell from 'components/Shell'
@@ -25,7 +26,7 @@ export default function UsesPage() {
           <p>
             The tools behind every part of my work. The idea comes from{' '}
             <External href='https://uses.tech'>uses.tech</External>. If you
-            don't agree, <External href={TWITTER}>fight me</External>.
+            don't agree, <External href={X}>fight me</External>.
           </p>
         }
       />
@@ -38,9 +39,15 @@ export default function UsesPage() {
               <li key={item.title}>
                 <h3>
                   {item.url.includes('http') ? (
-                    <External href={item.url}>{item.title}</External>
+                    <External href={item.url} data-arrow-item=''>
+                      {item.title}
+                    </External>
                   ) : (
-                    <Link url={item.url as Route} className={cssNeon.neon}>
+                    <Link
+                      url={item.url as Route}
+                      className={cssNeon.neon}
+                      data-arrow-item=''
+                    >
                       {item.title}
                     </Link>
                   )}
@@ -51,6 +58,7 @@ export default function UsesPage() {
           </ul>
         </section>
       ))}
+      <ArrowNav />
     </Shell>
   )
 }

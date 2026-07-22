@@ -70,14 +70,16 @@
   }
 }
 
-/* official rubik's brand hexes; every second each letter takes the color of
-   the letter before it, so the r>b>o>g>y ring spins ad infinitum */
+/* official rubik's brand hexes; each letter blends into the color of the
+   letter before it, so the r>b>o>g>y ring spins ad infinitum */
 .rubik {
+  font-family: var(--font-code, monospace);
+  text-transform: lowercase;
   filter: brightness(1.5);
 }
 
 .rubik span {
-  animation: rubik-shift 5s step-end infinite;
+  animation: rubik-shift 2.5s linear infinite;
 }
 
 .rubik span:nth-child(1) {
@@ -86,26 +88,27 @@
 
 .rubik span:nth-child(2) {
   color: #0046ad;
-  animation-delay: -4s;
+  animation-delay: -2s;
 }
 
 .rubik span:nth-child(3) {
   color: #ff5800;
-  animation-delay: -3s;
+  animation-delay: -1.5s;
 }
 
 .rubik span:nth-child(4) {
   color: #009b48;
-  animation-delay: -2s;
+  animation-delay: -1s;
 }
 
 .rubik span:nth-child(5) {
   color: #ffd500;
-  animation-delay: -1s;
+  animation-delay: -0.5s;
 }
 
 @keyframes rubik-shift {
-  0% {
+  0%,
+  100% {
     color: #b71234;
   }
   20% {

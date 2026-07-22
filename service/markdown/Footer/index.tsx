@@ -3,9 +3,9 @@ import type React from 'react'
 import neonCss from 'service/style/neon.module.css'
 import css from './footer.module.css'
 
-const createTwitterSearch = (url: string) => {
+const createXSearch = (url: string) => {
   const href = `https://sospedra.me${url}`
-  return `https://mobile.twitter.com/search?q=${encodeURIComponent(href)}`
+  return `https://x.com/search?q=${encodeURIComponent(href)}`
 }
 
 const createGithubLink = (slug: string) => {
@@ -22,12 +22,12 @@ const Footer: React.FC<{
       </p>
       <footer className='flex items-center'>
         <a
-          href={createTwitterSearch(`/papers/${props.slug}`)}
+          href={createXSearch(`/papers/${props.slug}`)}
           className={cn('text-cyan-400', neonCss.neon)}
           rel='noopener noreferrer'
           target='_blank'
         >
-          Discuss on Twitter
+          Discuss on X
         </a>
         <span className='mx-2 mt-1 text-xs font-bold opacity-75'>▼</span>
         <a

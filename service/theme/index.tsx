@@ -11,32 +11,25 @@ import {
 } from 'react'
 
 type FxMode = 'full' | 'quiet'
-type Palette = 'midnight' | 'maintenance'
 
 type ThemeContextValue = {
   fxMode: FxMode
   osReducedMotion: boolean
-  palette: Palette
   setFxMode: (mode: FxMode) => void
-  setPalette: (palette: Palette) => void
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
   fxMode: 'full',
   osReducedMotion: false,
-  palette: 'midnight',
   setFxMode: () => {},
-  setPalette: () => {},
 })
 
 const FX_KEY = 'midnight-io:fx'
-const PALETTE_KEY = 'midnight-io:palette'
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = (
   props,
 ) => {
   const [fxPreference, setFxPreference] = useState<FxMode>('full')
-  const [palette, setPaletteState] = useState<Palette>('midnight')
   const [osReducedMotion, setOsReducedMotion] = useState(false)
 
   useEffect(() => {
@@ -47,12 +40,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = (
 
     try {
       const storedFx = localStorage.getItem(FX_KEY)
-      const storedPalette = localStorage.getItem(PALETTE_KEY)
       if (storedFx === 'full' || storedFx === 'quiet') {
         setFxPreference(storedFx)
-      }
-      if (storedPalette === 'midnight' || storedPalette === 'maintenance') {
-        setPaletteState(storedPalette)
       }
     } catch {
       // Preferences remain session-only when storage is unavailable.
@@ -66,12 +55,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = (
   useEffect(() => {
     const root = document.documentElement
     root.classList.toggle('fx-quiet', fxMode === 'quiet')
-    root.dataset.palette = palette
     return () => {
       root.classList.remove('fx-quiet')
-      delete root.dataset.palette
     }
-  }, [fxMode, palette])
+  }, [fxMode])
 
   const setFxMode = useCallback((mode: FxMode) => {
     setFxPreference(mode)
@@ -82,33 +69,18 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = (
     }
   }, [])
 
-  const setPalette = useCallback((nextPalette: Palette) => {
-    setPaletteState(nextPalette)
-    try {
-      localStorage.setItem(PALETTE_KEY, nextPalette)
-    } catch {
-      // Keep the preference for the current session.
-    }
-  }, [])
-
   const value = useMemo(
     () => ({
       fxMode,
       osReducedMotion,
-      palette,
       setFxMode,
-      setPalette,
     }),
-    [fxMode, osReducedMotion, palette, setFxMode, setPalette],
+    [fxMode, osReducedMotion, setFxMode],
   )
 
   return (
     <ThemeContext.Provider value={value}>
-      <div
-        className={`theme dark ${fxMode === 'quiet' ? 'fx-quiet' : ''} ${
-          palette === 'maintenance' ? 'theme-maintenance' : ''
-        }`}
-      >
+      <div className={`theme dark ${fxMode === 'quiet' ? 'fx-quiet' : ''}`}>
         {props.children}
       </div>
     </ThemeContext.Provider>

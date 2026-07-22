@@ -1,6 +1,5 @@
 'use client'
 
-import SystemPanel from 'components/SystemPanel'
 import EasterEgg from 'service/easteregg'
 import { Hotkeys } from 'service/hotkeys'
 import { SystemProvider } from 'service/system'
@@ -14,7 +13,6 @@ export default function Providers(props: { children: React.ReactNode }) {
         <TransitionProvider>
           <Hotkeys>
             <EasterEgg>{props.children}</EasterEgg>
-            <SystemPanel />
           </Hotkeys>
         </TransitionProvider>
       </SystemProvider>

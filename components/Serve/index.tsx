@@ -18,7 +18,11 @@ export const TreeParent: React.FC<TreeProps> = function TreeParent(props) {
       data-node-name={props.name}
       open={props.defaultOpen}
     >
-      <summary aria-controls={controlsId} className={css.summary}>
+      <summary
+        aria-controls={controlsId}
+        className={css.summary}
+        data-arrow-item=''
+      >
         <span aria-hidden='true' className={css.directoryMark} />
         <span className={css.nodeName}>{props.name}</span>
         <span aria-hidden='true' className={css.nodeType}>
@@ -38,6 +42,7 @@ export const TreeChild: React.FC<TreeProps> = function TreeChild(props) {
     <div className={css.file}>
       <a
         className={css.fileLink}
+        data-arrow-item=''
         href={props.route?.replace('/public', '')}
         rel='noopener noreferrer'
         target='_blank'

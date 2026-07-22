@@ -6,6 +6,7 @@ import Shell from 'components/Shell'
 import { clamp } from 'es-toolkit'
 import type { CSSProperties } from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
+import { type Trap, useHotkeys } from 'service/hotkeys'
 import { useTheme } from 'service/theme'
 import { createDeckAudio } from './deck-audio'
 import css from './talks.module.css'
@@ -277,10 +278,32 @@ export default function TalksView() {
   }
 
   const insertTape = (index: number) => {
+    if (index === state.tape) return
     setClock('0:00:00')
     flash(formatChannel(index))
     dispatch({ type: 'insert', tape: index })
   }
+
+  const deckTrap =
+    (press: () => void) =>
+    (event: KeyboardEvent): void => {
+      event.preventDefault()
+      press()
+    }
+
+  const tapeTraps = TAPES.map(
+    (_, index): Trap => [String(index + 1), deckTrap(() => insertTape(index))],
+  )
+
+  useHotkeys([
+    ['Space', deckTrap(toggle)],
+    ['t', deckTrap(power)],
+    ['ArrowLeft', deckTrap(() => seek(-SEEK_STEP))],
+    ['ArrowRight', deckTrap(() => seek(SEEK_STEP))],
+    ['ArrowUp', deckTrap(() => nudgeVolume(VOLUME_STEP))],
+    ['ArrowDown', deckTrap(() => nudgeVolume(-VOLUME_STEP))],
+    ...tapeTraps,
+  ])
 
   const screenHint = powered
     ? 'Pause or resume the tape'
@@ -486,6 +509,9 @@ export default function TalksView() {
               Slides (PDF)
             </a>
           )}
+          <p aria-hidden='true'>
+            SPACE PLAY · ← → SEEK · ↑ ↓ VOL · 1–{TAPES.length} TAPE · T POWER
+          </p>
         </footer>
       </section>
 

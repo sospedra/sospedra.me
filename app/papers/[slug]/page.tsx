@@ -5,6 +5,7 @@ import CodeBlock from 'service/markdown/Code'
 import { fetchPaper, fetchPapers, type Paper } from 'service/markdown/files'
 import PaperImage from 'service/markdown/Image'
 import PaperShell from 'service/markdown/Paper'
+import PaperKeys from './paper-keys'
 
 export async function generateStaticParams() {
   const papers = await fetchPapers()
@@ -59,9 +60,15 @@ export default async function PaperPage(props: {
   const { slug } = await props.params
   const meta = await fetchPaperOr404(slug)
   const { default: Post } = await import(`content/papers/${slug}/index.mdx`)
+  const papers = await fetchPapers()
+  const index = papers.findIndex((paper) => paper.slug === slug)
 
   return (
     <PaperShell {...meta}>
+      <PaperKeys
+        newer={papers[index - 1]?.slug}
+        older={papers[index + 1]?.slug}
+      />
       <Post components={createMdxComponents(meta)} />
     </PaperShell>
   )

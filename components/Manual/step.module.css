@@ -40,6 +40,7 @@
 }
 
 .step p {
+  max-width: 68ch;
   margin: 0 0 0.65rem;
   padding: 0;
   counter-increment: paragraphs;

@@ -8,7 +8,7 @@ const Page: React.FC<{
   wear?: 'stapled' | 'stained' | 'creased' | 'folded'
 }> = (props) => {
   return (
-    <section className={cn(css.page, props.className)}>
+    <section className={cn(css.page, props.className)} data-manual-page=''>
       {props.wear ? (
         <span
           className={css.sheetWear}

@@ -1,6 +1,7 @@
 'use client'
 
 import cn from 'clsx'
+import ArrowNav from 'components/ArrowNav'
 import Cheatcodes from 'components/Cheatcodes'
 import External from 'components/External'
 import Link, { LinkBack } from 'components/Link'
@@ -36,35 +37,39 @@ export default function BazaarView() {
 
           <ul className={css.list}>
             <li>
-              <Link className={css.title} url='/manual'>
+              <Link className={css.title} url='/manual' data-arrow-item=''>
                 user guide manual
               </Link>
               <p>{MANUAL_DESC}</p>
             </li>
             <li>
-              <Link className={css.title} url='/uses'>
+              <Link className={css.title} url='/uses' data-arrow-item=''>
                 uses
               </Link>
               <p>{USES_DESC}</p>
             </li>
             <li>
-              <Link className={css.title} url='/serve'>
+              <Link className={css.title} url='/serve' data-arrow-item=''>
                 serve assets
               </Link>
               <p>{SERVE_DESC}</p>
             </li>
             <li>
-              <Link className={css.title} url='/rewrite'>
+              <Link className={css.title} url='/rewrite' data-arrow-item=''>
                 rewrites
               </Link>
               <p>{REWRITE_DESC}</p>
             </li>
             <li>
-              <Cheatcodes className={css.title} />
+              <Cheatcodes className={css.title} data-arrow-item='' />
               <p>wait wat?</p>
             </li>
             <li>
-              <External href='https://rfm.sospedra.me' className={css.title}>
+              <External
+                href='https://rfm.sospedra.me'
+                className={css.title}
+                data-arrow-item=''
+              >
                 rfm
               </External>
               <p>
@@ -76,13 +81,18 @@ export default function BazaarView() {
               <External
                 href='https://reinput.sospedra.me'
                 className={css.title}
+                data-arrow-item=''
               >
                 reinput
               </External>
               <p>A React Native TextInput with material style 😎</p>
             </li>
             <li>
-              <External href='https://spg.sospedra.me' className={css.title}>
+              <External
+                href='https://spg.sospedra.me'
+                className={css.title}
+                data-arrow-item=''
+              >
                 spg
               </External>
               <p>
@@ -97,6 +107,7 @@ export default function BazaarView() {
               <External
                 href='https://keycodes.sospedra.me'
                 className={css.title}
+                data-arrow-item=''
               >
                 which key code
               </External>
@@ -105,6 +116,7 @@ export default function BazaarView() {
           </ul>
         </div>
       </div>
+      <ArrowNav />
       <aside
         className={cn(css.offscreen, {
           [css.hidden]: isHidden,

@@ -321,32 +321,6 @@ html[data-scroll-behavior][data-scroll-behavior]
   --shadow: 0 2px 15px 0 rgba(26, 26, 27, 0.637);
 }
 
-.theme.theme-maintenance {
-  --color-bg-void: #07130f;
-  --color-bg-plasma: #184333;
-  --color-surface: #0c1d16;
-  --color-surface-raised: #10281d;
-  --color-line: rgb(140 255 180 / 32%);
-  --color-text: rgb(230 255 240 / 90%);
-  --color-text-strong: #f4fff8;
-  --color-text-muted: rgb(203 242 217 / 68%);
-  --color-signal-cyan: #8cffb4;
-  --color-signal-pink: #ff91c7;
-  --color-signal-yellow: #eaff75;
-  --cyan: var(--color-signal-cyan);
-  --pink: var(--color-signal-pink);
-  --yellow: var(--color-signal-yellow);
-  --magenta: var(--color-bg-plasma);
-  --black: var(--color-bg-void);
-  --teal: #dfffea;
-  --bg-start: var(--color-bg-void);
-  --bg-end: var(--color-bg-plasma);
-  --header: var(--color-text-strong);
-  --textNormal: var(--color-text);
-  --textTitle: var(--color-text-strong);
-  --textLink: var(--color-signal-cyan);
-}
-
 html.fx-quiet.fx-quiet *,
 html.fx-quiet.fx-quiet *::before,
 html.fx-quiet.fx-quiet *::after {

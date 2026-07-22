@@ -47,17 +47,21 @@ export default function AboutView(props: { years: number }) {
                 have helped companies grow their products.
               </p>
               <p className='pb-4'>
-                I founded a remote startup, worked with companies big and small,
-                built internal tools. I contribute to open source, speak at
-                conferences, teach and write. The whole journey settled into one
+                I co-founded a remote startup as CTO, owned developer experience
+                for a 40-engineer org, and now set technical direction as a
+                principal engineer. I stay close to the code: open source,
+                conferences, teaching, writing. AI is a multiplier in my
+                toolkit, not a crutch. The whole journey settled into one
                 principle:{' '}
-                <b className='font-bold'>deliver the best in the fastest way</b>
-                . It's a balance.
+                <b className='font-bold'>
+                  know when to move fast and when to get it right
+                </b>
+                . It's the skill behind every other skill.
               </p>
               <p>
                 Want more? Let's{' '}
-                <External href='https://twitter.com/sospedra_r'>chat</External>,
-                read my{' '}
+                <External href='https://x.com/sospedra_r'>chat</External>, read
+                my{' '}
                 <Link url='/manual' className={neonCss.neon}>
                   user-guide manual
                 </Link>
@@ -81,7 +85,7 @@ export default function AboutView(props: { years: number }) {
               <p className='mb-4'>
                 Associate’s in Computer Science
                 <br />
-                LaSalle Gràcia, 2014
+                LaSalle Gràcia, 2013
               </p>
               <p>
                 Bachelor’s in Political Science
@@ -103,15 +107,15 @@ export default function AboutView(props: { years: number }) {
                 <span className='ml-2 sm:ml-4'>Experience</span>
               </h3>
               <h4>
-                Independent contractor
+                Principal engineer
                 <br />
-                Self-employed, Oct 2019 ▸ present
+                Digg, Jul 2025 ▸ present
               </h4>
               <p>
-                Work with startups around the globe. Build greenfield projects
-                and move their key metrics. Lead performance projects: TTI down
-                from 6s to 1.2s. Ship new software modules and raise both
-                quality and delivery speed.
+                Set technical direction across mobile, web, and backend for a
+                team of 8. Led the mobile platform from concept to release: a
+                cross-platform app with 4.8+ store ratings. Built an AI
+                knowledge system and cut onboarding time by 60%.
               </p>
             </section>
           }
@@ -134,6 +138,7 @@ export default function AboutView(props: { years: number }) {
                     Write articles
                   </Link>
                 </li>
+                <li>OSS contributor & mentor</li>
                 <li>Part-time lecturer</li>
                 <li>
                   <p>
@@ -155,14 +160,15 @@ export default function AboutView(props: { years: number }) {
           right={
             <section className='mt-4'>
               <h4>
-                Lead software engineer
+                Staff engineer & head of clients
                 <br />
-                FreeNOW, Mar 2018 ▸ Oct 2019
+                Cameo, Oct 2019 ▸ Jul 2025
               </h4>
               <p>
-                Develop the internal tools behind a 10x company growth. Design
-                and ship a new driver registration: half the cost, more
-                engagement. Empower teams to own their decisions.
+                Led DX and client devops for 40 engineers: deploys went from
+                under 12 a week to multiple daily. Led the iOS quality overhaul
+                to a WWDC showcase: crash rate down from 2.1% to 0.3%, App Store
+                rating up from 3.8 to 4.7.
               </p>
             </section>
           }
@@ -174,12 +180,12 @@ export default function AboutView(props: { years: number }) {
               <h3>Skills</h3>
 
               <ul>
-                <li>javascript ~ typescript</li>
-                <li>react ~ css ~ react-native</li>
-                <li>node.js ~ next.js</li>
-                <li>mongodb ~ faunadb ~ redis</li>
+                <li>typescript ~ rust ~ ruby</li>
+                <li>react ~ react-native ~ next.js</li>
+                <li>node.js ~ swift ~ kotlin</li>
+                <li>postgres ~ mongodb ~ redis</li>
                 <li>
-                  <p>devops ~ serverless ~ git</p>
+                  <p>ai agents ~ rag ~ devops</p>
                 </li>
               </ul>
             </section>
@@ -187,15 +193,15 @@ export default function AboutView(props: { years: number }) {
           right={
             <section className='mt-4'>
               <h4>
-                Co-founder & CTO
+                Lead software engineer
                 <br />
-                Huballin, Dec 2013 ▸ Jan 2016
+                FreeNOW, Mar 2018 ▸ Oct 2019
               </h4>
               <p>
-                Build a whole company from scratch. Learn the true meaning of
-                agile: ship fast, get feedback, iterate. Hire and mentor a full
-                team of talented people. Define the culture and spread it.
-                Envision and develop the functional architecture.
+                Engineered the internal tools behind 10x user growth across 9
+                markets. Architected a new driver registration flow: half the
+                overhead, 5x the retention. Delivered regulation-compliant apps
+                across complex legal standards.
               </p>
             </section>
           }
@@ -219,9 +225,7 @@ export default function AboutView(props: { years: number }) {
                   </External>
                 </li>
                 <li>
-                  <External href='https://twitter.com/sospedra_r'>
-                    twitter
-                  </External>
+                  <External href='https://x.com/sospedra_r'>x.com</External>
                 </li>
                 <li>
                   <External href='https://sospedra.me/serve/cv.pdf'>
@@ -229,6 +233,21 @@ export default function AboutView(props: { years: number }) {
                   </External>
                 </li>
               </ul>
+            </section>
+          }
+          right={
+            <section className='mt-4'>
+              <h4>
+                Co-founder & CTO
+                <br />
+                Huballin, Dec 2013 ▸ Jan 2016
+              </h4>
+              <p>
+                Built a B2B company from zero to $500k EBITDA. Hired and led the
+                engineering team, set the technical culture, made every
+                architectural decision. Balanced speed with quality under tight
+                market constraints.
+              </p>
             </section>
           }
         />

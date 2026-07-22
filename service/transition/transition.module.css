@@ -35,16 +35,6 @@
   width: 400vw;
 }
 
-:global(.theme-maintenance) .bg {
-  --sky-paper: #091711;
-  --sky-upper: #10271e;
-  --sky-papers: #163627;
-  --sky-home: #1a4b34;
-  --sky-about-wash: rgb(93 245 154 / 12%);
-  --sky-bazaar-wash: rgb(140 255 180 / 16%);
-  --sky-scan: rgb(197 255 218 / 1.4%);
-}
-
 .moving {
   will-change: transform;
 }

@@ -80,9 +80,31 @@
   text-underline-position: under;
 }
 
+/* One emphasis hue, three intensities: white italic, neon-pink bold, pink-washed thesis. */
+.markdown em {
+  color: var(--color-text-strong, #fff);
+}
+
+/* Load-bearing phrases take the neon pink channel; cyan stays navigation. */
 .markdown strong {
   @apply font-semibold;
+  color: var(--color-signal-pink-hot, #ff4fd8);
+  text-shadow: 0 0 0.75rem rgb(255 79 216 / 22%);
+}
+
+/* The thesis line: one per paper, a soft neon wash under white text. */
+.markdown u {
+  padding-inline: 0.15em;
+  margin-inline: -0.05em;
+  background: rgb(255 79 216 / 14%);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
   color: var(--color-text-strong, #fff);
+  text-decoration: underline;
+  text-decoration-color: rgb(255 79 216 / 60%);
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.25em;
 }
 
 .markdown a {

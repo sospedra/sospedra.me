@@ -10,6 +10,7 @@ import SpriteManual from 'components/Sprite/Manual'
 import type { Metadata } from 'next'
 import { MANUAL_DESC } from 'service/descriptions'
 import css from './manual.module.css'
+import ManualKeys from './manual-keys'
 
 export const metadata: Metadata = {
   title: 'Manual of instructions',
@@ -24,8 +25,9 @@ export default function ManualPage() {
         <Link url='/'>
           <LinkBack>Home</LinkBack>
         </Link>
-        <p>SECTOR 04.1 / RS-19911201-11 / READ PROTOCOL</p>
+        <p>SECTOR 04.1 / RS-19911201-11 / READ PROTOCOL / [ ] FLIP SHEETS</p>
       </nav>
+      <ManualKeys />
 
       {/* react 19 hoists resource links, next/head dies with the app router */}
       <link rel='preload' as='image' href='/sospedra.png' />
@@ -366,8 +368,8 @@ export default function ManualPage() {
         <header className={css.sectionHeader}>
           <span>SECTION 05</span>
           <div>
-            <h2>Strengths &amp; grow areas</h2>
-            <p>Rated capabilities and areas under active development.</p>
+            <h2>Strengths</h2>
+            <p>Rated capabilities of the unit.</p>
           </div>
         </header>
         <Step number={5} title='My strengths'>
@@ -388,24 +390,6 @@ export default function ManualPage() {
             </span>
           </p>
         </Step>
-        <Step number={6} title='My grow areas'>
-          <p>
-            More efficiency. I don't think I'm inefficient. But sometimes I take
-            too many things in my basket. Thus, everything slows down a little
-            each time. <span className={css.penMark}>One task at a time</span>.
-          </p>
-          <p>
-            Alternative thinking. Not lateral, but alternative. What is this? I
-            hear you asking. Well, you know when you're presented with a
-            problem. You think of a solution. And that's it. You fail to
-            continue elaborate alternative solutions. That's something that
-            happens to me quite often. If I don't realize it's happening then
-            I'm usually stuck with my first thought. That's one of the reasons I
-            love team-work so much.
-          </p>
-        </Step>
-      </Page>
-      <Page className={css.procedurePage} wear='stained'>
         <header className={css.sectionHeader}>
           <span>SECTION 06</span>
           <div>

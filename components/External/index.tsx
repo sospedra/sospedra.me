@@ -1,21 +1,22 @@
 import type React from 'react'
 import css from 'service/style/neon.module.css'
 
-export const TWITTER = 'https://twitter.com/sospedra_r'
+export const X = 'https://x.com/sospedra_r'
 
-const External: React.FC<{
-  href: string
-  className?: string
-  children: React.ReactNode
-}> = (props) => {
+const External: React.FC<
+  React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+    href: string
+    children: React.ReactNode
+  }
+> = ({ children, className, ...nativeProps }) => {
   return (
     <a
-      className={props.className || css.neon}
-      href={props.href}
+      {...nativeProps}
+      className={className || css.neon}
       rel='noopener noreferrer'
       target='_blank'
     >
-      {props.children}
+      {children}
     </a>
   )
 }

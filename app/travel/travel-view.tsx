@@ -5,6 +5,7 @@ import Link, { LinkBack } from 'components/Link'
 import Shell from 'components/Shell'
 import type { CSSProperties } from 'react'
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { useHotkeys } from 'service/hotkeys'
 import { useTheme } from 'service/theme'
 import {
   DESTINATIONS,
@@ -193,6 +194,39 @@ export default function TravelView() {
   const activeRegionSpots = DESTINATIONS.filter(
     (spot) => spot.region === activeRegion,
   )
+
+  const trackSibling = (direction: -1 | 1) => {
+    const index = DESTINATIONS.findIndex((spot) => spot.code === tracked.code)
+    const count = DESTINATIONS.length
+    trackDestination(DESTINATIONS[(index + direction + count) % count])
+  }
+
+  const trackSiblingRegion = (direction: -1 | 1) => {
+    const index = REGIONS.findIndex((region) => region.id === activeRegion)
+    const count = REGIONS.length
+    const next = REGIONS[(index + direction + count) % count]
+    const first = DESTINATIONS.find((spot) => spot.region === next.id)
+    if (first) trackDestination(first)
+  }
+
+  const radarTrap =
+    (press: () => void) =>
+    (event: KeyboardEvent): void => {
+      event.preventDefault()
+      press()
+    }
+
+  useHotkeys([
+    ['[', radarTrap(() => trackSibling(-1))],
+    [']', radarTrap(() => trackSibling(1))],
+    // tinykeys rejects presses with unlisted modifiers: shifted
+    // characters need the Shift declared or they never match
+    ['Shift+{', radarTrap(() => trackSiblingRegion(-1))],
+    ['Shift+}', radarTrap(() => trackSiblingRegion(1))],
+    [['Equal', 'Shift+Equal'], radarTrap(globe.zoomIn)],
+    ['Minus', radarTrap(globe.zoomOut)],
+    ['0', radarTrap(() => trackDestination(HOME))],
+  ])
 
   return (
     <Shell
@@ -497,6 +531,7 @@ export default function TravelView() {
           <span>DRAG / ORBIT</span>
           <span>WHEEL / PINCH / TELEGRAPH RANGE</span>
           <span>POINT / TAP / STRIP TO ACQUIRE</span>
+          <span>KEYS [ ] CONTACT / {'{ }'} SECTOR / + − RANGE / 0 HOME</span>
         </footer>
       </section>
     </Shell>

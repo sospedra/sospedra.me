@@ -23,6 +23,17 @@ import { play, transitionSound } from './sound'
 const TOP_KEY = 'g-snake-top'
 const LEVEL_KEY = 'g-snake-level'
 
+const HUD_PHASE: Record<Phase, string> = {
+  menu: 'menu',
+  level: 'level',
+  tops: 'tops',
+  running: 'run',
+  paused: 'pause',
+  over: 'over',
+}
+
+const lcdDigits = (value: number) => String(value).padStart(4, '0')
+
 const KEY_TURNS: Record<string, Dir> = {
   ArrowUp: 'up',
   w: 'up',
@@ -323,9 +334,29 @@ export default function SnakeView() {
 
   return (
     <Shell
-      className={`relative w-full max-w-5xl px-4 mx-auto text-white ${css.page}`}
+      className={`relative w-full px-4 text-white ${css.page}`}
       canonical='/g-snake'
     >
+      {/* the escaped snake: one-bit mural crawling the wall behind the phone */}
+      <svg
+        className={css.mural}
+        viewBox='0 0 1200 800'
+        preserveAspectRatio='xMidYMid slice'
+        aria-hidden='true'
+      >
+        <path
+          className={css.muralPath}
+          d='M-40 560H200V320H120V120H400V220H640V90H980V260H1110V520H940V660H1240'
+        />
+        <rect
+          className={css.muralFood}
+          x={300}
+          y={648}
+          width={24}
+          height={24}
+        />
+      </svg>
+
       {/* block wrapper: Row is flex-1 and would split the page column */}
       <div className={css.navRow}>
         <Row
@@ -352,6 +383,17 @@ export default function SnakeView() {
         </header>
 
         <div className={css.consoleDeck} data-phase={state.phase}>
+          {/* aria-hidden: the sr-only status line already announces this */}
+          <aside className={`${css.hud} ${css.hudLeft}`} aria-hidden='true'>
+            <p className={css.hudItem}>
+              <span className={css.hudLabel}>score</span>
+              <span className={css.hudValue}>{lcdDigits(state.score)}</span>
+            </p>
+            <p className={css.hudItem}>
+              <span className={css.hudLabel}>mode</span>
+              <span className={css.hudValue}>{HUD_PHASE[state.phase]}</span>
+            </p>
+          </aside>
           <div className={css.phone}>
             <div className={css.inner}>
               <img
@@ -389,6 +431,16 @@ export default function SnakeView() {
               ))}
             </div>
           </div>
+          <aside className={`${css.hud} ${css.hudRight}`} aria-hidden='true'>
+            <p className={css.hudItem}>
+              <span className={css.hudLabel}>top</span>
+              <span className={css.hudValue}>{lcdDigits(state.top)}</span>
+            </p>
+            <p className={css.hudItem}>
+              <span className={css.hudLabel}>level</span>
+              <span className={css.hudValue}>{state.level}</span>
+            </p>
+          </aside>
         </div>
 
         <p className={css.hint}>

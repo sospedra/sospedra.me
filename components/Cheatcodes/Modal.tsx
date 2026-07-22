@@ -48,6 +48,9 @@ const Message: React.FC = () => {
           <kbd>b</kbd> Go back
         </li>
         <li>
+          <kbd>g</kbd>+<kbd>key</kbd> Warp to any sector
+        </li>
+        <li>
           <kbd>esc</kbd> Close things
         </li>
         <li>

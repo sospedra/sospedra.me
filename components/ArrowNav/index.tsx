@@ -17,13 +17,15 @@ const shouldIgnoreKey = (event: KeyboardEvent) =>
   isEditableTarget(event.target)
 
 const listItems = () =>
-  Array.from(document.querySelectorAll<HTMLAnchorElement>(ITEM_SELECTOR))
+  Array.from(document.querySelectorAll<HTMLElement>(ITEM_SELECTOR)).filter(
+    (item) => item.checkVisibility?.() ?? true,
+  )
 
 const focusSibling = (delta: -1 | 1) => {
   const items = listItems()
   if (items.length === 0) return false
 
-  const index = items.indexOf(document.activeElement as HTMLAnchorElement)
+  const index = items.indexOf(document.activeElement as HTMLElement)
   const fallback = delta === 1 ? 0 : items.length - 1
   const target =
     index === -1
@@ -31,6 +33,14 @@ const focusSibling = (delta: -1 | 1) => {
       : items[(index + delta + items.length) % items.length]
 
   target.focus()
+  return true
+}
+
+const activateFocusedItem = () => {
+  const item = document.activeElement
+  if (!(item instanceof HTMLElement) || !item.matches(ITEM_SELECTOR))
+    return false
+  item.click()
   return true
 }
 
@@ -54,16 +64,26 @@ const blurDepartedItem = (event: PointerEvent) => {
   if (leftTheItem) item.blur()
 }
 
-const ARROW_DELTA: Record<string, 1 | -1> = { ArrowDown: 1, ArrowUp: -1 }
+const KEY_DELTA: Record<string, 1 | -1> = {
+  ArrowDown: 1,
+  ArrowUp: -1,
+  j: 1,
+  k: -1,
+}
 
 // arrow scrolling shifts the page under a resting mouse and fires pointerover;
 // keyboard keeps the focus cursor until the mouse genuinely moves
-function trackArrowNavigation() {
+function trackArrowNavigation(activationKeys: string[]) {
   let keyboardDriving = false
+  const activation = new Set(activationKeys)
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (shouldIgnoreKey(event)) return
-    const delta = ARROW_DELTA[event.key]
+    if (activation.has(event.key) && activateFocusedItem()) {
+      event.preventDefault()
+      return
+    }
+    const delta = KEY_DELTA[event.key]
     if (delta === undefined || !focusSibling(delta)) return
     keyboardDriving = true
     event.preventDefault()
@@ -83,21 +103,25 @@ function trackArrowNavigation() {
     blurDepartedItem(event)
   }
 
-  window.addEventListener('keydown', onKeyDown)
+  // capture phase: j/k must claim the list cursor before the global
+  // page-scroll trap sees the event (it skips defaultPrevented ones)
+  window.addEventListener('keydown', onKeyDown, { capture: true })
   document.addEventListener('pointermove', onPointerMove)
   document.addEventListener('pointerover', onPointerOver)
   document.addEventListener('pointerout', onPointerOut)
   return () => {
-    window.removeEventListener('keydown', onKeyDown)
+    window.removeEventListener('keydown', onKeyDown, { capture: true })
     document.removeEventListener('pointermove', onPointerMove)
     document.removeEventListener('pointerover', onPointerOver)
     document.removeEventListener('pointerout', onPointerOut)
   }
 }
 
-// TV-remote nav: arrows walk the board, Enter reads, hover shares the focus
-// cursor. Plain listeners: useHotkeys drops ArrowUp, the konami tracker owns it.
-export default function ArrowNav() {
-  useEffect(trackArrowNavigation, [])
+// TV-remote nav for any screen marking rows with data-arrow-item: arrows or
+// j/k walk the list, Enter follows natively, `o` (plus any extra activation
+// keys) clicks the focused row. Hover shares the same focus cursor.
+export default function ArrowNav(props: { activationKeys?: string[] }) {
+  const keys = props.activationKeys?.join(' ') ?? 'o'
+  useEffect(() => trackArrowNavigation(keys.split(' ')), [keys])
   return null
 }

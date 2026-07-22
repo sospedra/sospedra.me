@@ -1,3 +1,4 @@
+import ArrowNav from 'components/ArrowNav'
 import Icon, { type IconName } from 'components/Icon'
 import Link from 'components/Link'
 import RouteHeader from 'components/RouteHeader'
@@ -7,7 +8,6 @@ import type React from 'react'
 import { PAPERS_DESC } from 'service/descriptions'
 import { fetchPapers, type Paper } from 'service/markdown/files'
 import glitchCss from 'service/style/glitch.module.css'
-import ArrowNav from './arrow-nav'
 import css from './papers.module.css'
 
 export const metadata: Metadata = {
@@ -166,7 +166,7 @@ export default async function PapersPage() {
         </section>
 
         <footer className={css.receiverFooter}>
-          <span>↑↓ SELECT · ENTER READ</span>
+          <span>↑↓ / J K SELECT · ENTER READ</span>
           <span>TEXT SERVICE / CH.02</span>
         </footer>
 

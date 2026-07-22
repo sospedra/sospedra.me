@@ -3,7 +3,7 @@ import AboutView from './about-view'
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'javascript hacker ▼ fullstack engineer contractor',
+  description: 'javascript hacker ▼ principal engineer',
   alternates: { canonical: '/about' },
 }
 
@@ -14,6 +14,6 @@ const getYearsSince = async (start: number) => {
 }
 
 export default async function AboutPage() {
-  const years = await getYearsSince(2014)
+  const years = await getYearsSince(2013)
   return <AboutView years={years} />
 }

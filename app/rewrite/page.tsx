@@ -1,3 +1,4 @@
+import ArrowNav from 'components/ArrowNav'
 import RouteHeader from 'components/RouteHeader'
 import Shell from 'components/Shell'
 import type { Metadata } from 'next'
@@ -60,6 +61,8 @@ export default function RewritesPage() {
           ))}
         </ol>
       </section>
+      {/* y = yank: the focused row's copy button is its arrow item */}
+      <ArrowNav activationKeys={['o', 'y']} />
     </Shell>
   )
 }

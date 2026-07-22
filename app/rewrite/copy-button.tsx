@@ -31,6 +31,7 @@ export default function CopyButton(props: { source: string }) {
       <button
         aria-label={`Copy ${url}`}
         className={css.copy}
+        data-arrow-item=''
         onClick={() => void copy()}
         type='button'
       >
