@@ -1,0 +1,21 @@
+{
+  "createdAt": "2021-10-14T17:05:39.000Z",
+  "excerpt": "The ESM migration is on. Sindre Sorhus committed to ESM-only and dragged a thousand packages with him; node-fetch@3 followed this summer. Your dependency tree is now a mix of CommonJS and ES Modules, and there's a failure mode hiding in that mix. Node's docs name it the dual package hazard. Most people meet it as a cryptic instanceof bug.",
+  "og": "/papers/dual-package-hazard.png",
+  "slug": "dual-package-hazard",
+  "title": "The dual package hazard",
+  "updatedAt": "2021-10-14T17:05:39.000Z",
+  "images": {},
+  "minutes": 3.06,
+  "categories": [
+    "dual package hazard",
+    "esm",
+    "commonjs",
+    "conditional exports",
+    "instanceof false different module",
+    "cannot use from another module or realm",
+    "esm only packages",
+    "node exports field",
+    "cjs esm interop"
+  ]
+}

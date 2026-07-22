@@ -1,0 +1,44 @@
+[Tailwind 4.0](https://tailwindcss.com/blog/tailwindcss-v4) shipped this week, and the real story isn't the benchmarks. For eight years Tailwind was a JavaScript program that emitted CSS. **Version 4 is CSS.** The config file is dead and I'm here to celebrate at the funeral.
+
+## The whole setup
+
+```css
+@import 'tailwindcss';
+
+@theme {
+  --color-midnight: oklch(0.15 0.04 265);
+  --color-neon: oklch(0.72 0.2 330);
+  --font-display: 'Satoshi', sans-serif;
+  --breakpoint-3xl: 120rem;
+}
+```
+
+No `tailwind.config.js`, no `module.exports`, no `theme.extend` nesting, no restarting the dev server because the config is JavaScript and JavaScript is cached. Even the `content` glob array, the one every monorepo got wrong once a quarter, is gone: template detection is automatic and respects `.gitignore`.
+
+The part that compounds: `@theme` tokens become **real custom properties at runtime**, not build-time constants. `var(--color-neon)` works in handwritten CSS, in inline styles, in a `getComputedStyle` read feeding a canvas. And when you *don't* want a token in the cascade (say, one derived from another variable), `@theme inline` inlines the value into the generated utilities and skips emitting the `:root` variable. Token system and utility system, one system, with an explicit opt-out. That distinction is buried in the docs and it's the first thing that bites theme-switching setups.
+
+Under the tokens sits more platform machinery: v4 registers its internal variables with [`@property`](https://developer.mozilla.org/en-US/docs/Web/CSS/@property), typed syntax and all:
+
+```css
+@property --tw-gradient-from {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #0000;
+}
+```
+
+Typed registration is why v4 can *animate* gradients and composed transforms that v3 could only swap between states.
+
+## The engine
+
+The numbers, from Tailwind's own table rather than my adjectives: full builds 378ms → 100ms, incremental builds with new CSS 44ms → 5ms, and incremental builds that reuse existing classes finish in **192µs**. Median rebuild while you're coding is the third case. The [v4 alpha post](https://tailwindcss.com/blog/tailwindcss-v4-alpha) from last March explains the machinery: Oxide keeps the framework core in TypeScript and moves the hot paths (scanning, parsing) to Rust, and the entire PostCSS caravan (`postcss-import`, `autoprefixer`, `postcss-nesting`) is replaced by [Lightning CSS](https://lightningcss.dev/), which handles import inlining, nesting, prefixing and syntax lowering in one Rust pass.
+
+One more mechanism worth knowing before you fight specificity: v4 emits `@layer theme, base, components, utilities`. Cascade layers lose to unlayered styles by design, so your legacy unlayered CSS **always beats Tailwind utilities** without `!important`. Specificity fights are now adjudicated by the platform, and the platform rules in your favor.
+
+## The tradeoff, named honestly
+
+Dynamic configuration got harder. If your theme was computed by JavaScript (multi-tenant white-labeling, tokens from an API), the config file was your escape hatch, and now the answer is "generate the CSS file". Plugins need porting. And the browser floor rose to **Safari 16.4, Chrome 111, Firefox 128**: v4 leans on `@property`, `color-mix()` and cascade layers, so there's no dead-browser flexibility to negotiate. Check your analytics before the migration guide. Colors moved to `oklch` while they were at it; wide-gamut displays are common enough now that the extra chroma is free real estate on good screens and clamps gracefully on the rest.
+
+The `npx @tailwindcss/upgrade` codemod handled this site in one shot, for reference.
+
+There's a pattern this decade: tools that bootstrapped on JavaScript's flexibility keep returning their borrowed powers to the platform. Sass variables became custom properties; FLIP libraries became view transitions; now Tailwind's config becomes `@theme`. The framework that spent years being accused of "not being real CSS" just made its entire configuration surface real CSS.

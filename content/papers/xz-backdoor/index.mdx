@@ -1,0 +1,30 @@
+A Postgres developer at Microsoft noticed his SSH logins burned ~500ms of CPU they shouldn't, and that Valgrind was throwing weird errors in liblzma. He profiled it, because Andres Freund is the kind of person who profiles half a second. [What he found](https://www.openwall.com/lists/oss-security/2024/03/29/4) was a backdoor in `xz/liblzma` wired into `sshd`, already shipped to Debian sid, Fedora 40/41 beta and openSUSE Tumbleweed, and weeks from riding stable releases everywhere. The payload is world-class tradecraft. And it's still the boring half of the story.
+
+## The payload, briefly, because it's gorgeous
+
+The git repository was clean. The **release tarballs were not**: a modified `build-to-host.m4` existed only in the tarball's generated autotools output, the part of a release nobody diffs. From there, a Rube Goldberg machine of hiding in plain sight, reconstructed in [gynvael's analysis](https://gynvael.coldwind.pl/?lang=en&id=782):
+
+```bash
+# stage 1: "uncorrupt" a test file, then decompress it into a script
+tr "\t \-_" " \t_\-" < tests/files/bad-3-corrupt_lzma2.xz | xz -dc
+```
+
+Stage 2 carves byte ranges out of a second "test" file with `head` and `tail`, decrypts them with an RC4 variant *implemented in AWK*, and links the resulting object file into liblzma. At runtime the backdoor abuses **glibc IFUNC resolvers**, which execute during dynamic linking before `main`, to hook symbol resolution and intercept `RSA_public_decrypt` inside sshd. Why does sshd load a compression library at all? It doesn't, upstream. Distros patch OpenSSH to link `libsystemd` for `sd_notify`, and libsystemd pulls liblzma. The attack rode a distro patch, not OpenSSH.
+
+The trigger is the elegant part: an attacker presents an SSH certificate whose CA field smuggles a ChaCha20-encrypted command, verified against a hardcoded **ed448 public key**, then handed to `system()`. Pre-auth RCE, cryptographically locked so only the author can use it, invisible in logs. [xzbot](https://github.com/amlweems/xzbot) demonstrates it end to end by patching in a known key. There's even a detail for connoisseurs: a [February commit](https://research.swtch.com/xz-timeline) "accidentally" broke the configure test for Landlock sandboxing with a stray syntax error, silently disabling a mitigation. Every accident pointed the same direction.
+
+## The org chart was the vulnerability
+
+Now rewind three years, with [Russ Cox's timeline](https://research.swtch.com/xz-timeline) and the [community FAQ](https://gist.github.com/thesamesam/223949d5a074ebc3dce9ee78baad9e27) open. Lasse Collin maintains xz alone, unpaid, for over a decade. In 2021 a contributor appears: Jia Tan. Helpful, competent, tireless. Around the same time, accounts that exist nowhere else on the internet start working the mailing list. Jigar Kumar, June 2022: *"Progress will not happen until there is new maintainer."* Collin, one day later: *"I haven't lost interest but my ability to care has been fairly limited mostly due to longterm mental health issues."* The good cop commits, the bad cops squeeze, and by the end of 2022 Jia Tan has the keys: added to the Tukaani org in October, co-maintainer in the README by November, direct releases after that.
+
+Then two more years of legitimate work. Trust compounding like interest. The withdrawal came in xz 5.6.0, hidden where code review is structurally blind: binary test fixtures and generated build scripts. There was nothing to review. The review surface had been engineered away.
+
+Strip the tradecraft and look at what was attacked:
+
+1. A **single maintainer** with no succession plan and no institution behind him.
+2. Burnout as the entry point. The pressure campaign wasn't hacking. It was HR.
+3. A trust model where years of good commits equal root on the planet.
+
+None of that is patchable with a CVE. The attacker, likely salaried and patient, understood what the industry still refuses to: the cheapest zero-day in the supply chain is a tired volunteer. xkcd drew [the load-bearing stick](https://xkcd.com/2347/) years ago. Someone finally kicked it, professionally.
+
+I built [RFM](https://rfm.sospedra.me/) in 2020 around exactly this failure mode, thinking abandonment was the risk. I undershot: the worse outcome is that someone answers the maintainer's call for help, and it's not who you hope. So the checklist writes itself and none of it is technical. Know which single-maintainer packages sit in your money path. Fund them, staff them, or vendor them. And when a maintainer says he's burning out, that's not community drama. That's a security advisory.

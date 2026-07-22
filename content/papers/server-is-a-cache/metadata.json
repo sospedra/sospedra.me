@@ -1,0 +1,22 @@
+{
+  "createdAt": "2025-08-02T16:07:58.000Z",
+  "excerpt": "Why is Linear fast? Not \"good engineering\" fast. Fast like local software, on a network product, with multiplayer. The answer is an architecture, and thanks to Tuomas Artman's talks plus one obsessive reverse-engineering repo (Artman: \"probably the best documentation that exists\"), we know exactly which one: the client owns a replica, the server's job is ordering and reconciliation. The industry settled on a name for the family: sync engines. The server is becoming a cache.",
+  "og": "/papers/server-is-a-cache.png",
+  "slug": "server-is-a-cache",
+  "title": "The server is just a cache",
+  "updatedAt": "2025-08-02T16:07:58.000Z",
+  "images": {},
+  "minutes": 6.03,
+  "categories": [
+    "sync engines",
+    "local-first",
+    "linear sync engine",
+    "electricsql",
+    "zero rocicorp",
+    "crdt",
+    "optimistic updates",
+    "offline first",
+    "partial replication",
+    "client side database"
+  ]
+}

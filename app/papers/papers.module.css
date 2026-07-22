@@ -7,37 +7,330 @@
   color: var(--color-text, rgb(255 255 255 / 90%));
 }
 
-.list {
+.receiver {
+  position: relative;
+}
+
+.routeHeader {
+  margin-bottom: 1.5rem;
+}
+
+.signalMeter {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.2rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+}
+
+.signalMeter span {
+  width: 0.25rem;
+  background: var(--color-signal-cyan, #6df7ea);
+}
+
+.signalMeter span:nth-child(1) {
+  height: 0.35rem;
+}
+.signalMeter span:nth-child(2) {
+  height: 0.55rem;
+}
+.signalMeter span:nth-child(3) {
+  height: 0.75rem;
+}
+.signalMeter span:nth-child(4) {
+  height: 0.95rem;
+}
+.signalMeter span:nth-child(5) {
+  height: 1.15rem;
+}
+
+.signalMeter small {
+  margin-left: 0.45rem;
+  font-family: var(--font-display, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+}
+
+/* no chrome: broadcast text sits straight on the starfield like every route */
+.board {
+  position: relative;
+  font-family: var(--font-display, monospace);
+  animation: prompter-roll 640ms var(--ease-signal, ease-out) backwards;
+}
+
+.band {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  justify-content: space-between;
   margin: 0;
-  padding: 0;
+  padding: 0.5rem 0.5rem 0.55rem;
+  border-block: 1px solid rgb(109 247 234 / 22%);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.band span:first-child {
+  color: var(--color-signal-cyan, #6df7ea);
+}
+
+.band span:nth-child(2) {
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+}
+
+.band span:last-child {
+  color: var(--color-signal-yellow, #ffea00);
+}
+
+.headline {
+  display: block;
+  padding: 1.1rem 0.5rem 1.2rem;
+}
+
+.headlineTag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.8rem;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  color: var(--color-signal-yellow, #ffea00);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+}
+
+.blink {
+  animation: teletext-blink 1.1s step-end infinite;
+}
+
+.headline h2 {
+  color: var(--color-text-strong, #fff);
+  font-size: clamp(1.5rem, 6vw, 2.1rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.headline:hover h2,
+.headline:focus-visible h2 {
+  color: var(--color-signal-cyan, #6df7ea);
+  text-shadow: 0 0 14px rgb(109 247 234 / 55%);
+}
+
+.headlineExcerpt {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 0.6rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.rows {
+  margin: 0;
+  padding: 0 0 0.6rem;
   list-style: none;
 }
 
-.list li {
-  position: relative;
-  padding: 1.5rem 0 2rem;
-  border-top: 1px solid var(--color-line, rgb(109 247 234 / 22%));
+/* teletext palette: rows cycle the four signal colors */
+.rows li:nth-child(4n + 1) {
+  --row-color: var(--color-signal-cyan, #6df7ea);
 }
 
-.list li::before {
+.rows li:nth-child(4n + 2) {
+  --row-color: var(--color-signal-yellow, #ffea00);
+}
+
+.rows li:nth-child(4n + 3) {
+  /* shared with the bazaar's --market-violet */
+  --row-color: #a883ff;
+}
+
+.rows li:nth-child(4n + 4) {
+  --row-color: var(--color-signal-pink-hot, #ff4fd8);
+}
+
+/* the cue zone: rows brighten as they pass the read line, dim above and below */
+@supports (animation-timeline: view()) {
+  .rows li {
+    animation: prompter-cue linear both;
+    animation-timeline: view();
+  }
+
+  .rows li:has(a:hover),
+  .rows li:has(a:focus-visible) {
+    animation: none;
+  }
+}
+
+.rows a {
+  display: block;
+  padding: 0.6rem 0.5rem 0.75rem;
+  color: var(--row-color, var(--color-signal-cyan));
+}
+
+/* teletext cursor: full invert on the row */
+.rows a:hover,
+.rows a:focus-visible {
+  background: var(--row-color, var(--color-signal-cyan));
+  color: var(--color-bg-void, #0e141b);
+  outline: none;
+}
+
+.rowLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.6rem;
+}
+
+.pg {
+  min-width: 3ch;
+  opacity: 0.8;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+}
+
+.rowTitle {
+  font-size: clamp(1rem, 3.5vw, 1.3rem);
+  font-weight: 400;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* dotted leader: ties the title to its pizza clock and date, teletext index style */
+.leader {
+  flex: 1 1 2rem;
+  min-width: 2rem;
+  border-bottom: 2px dotted currentColor;
+  opacity: 0.45;
+  transform: translateY(-0.25rem);
+}
+
+.rowExcerpt {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 0.35rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.rowMeta {
+  color: rgb(255 255 255 / 55%);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.rows a:hover .rowMeta,
+.rows a:hover .rowExcerpt,
+.rows a:focus-visible .rowMeta,
+.rows a:focus-visible .rowExcerpt {
+  color: inherit;
+}
+
+.slices img {
+  width: 0.9rem;
+  min-width: 0;
+  height: 0.9rem;
+}
+
+/* the read line: fixed cue marker at screen center, prompter style */
+.readLine {
+  position: fixed;
+  z-index: 4;
+  top: 50dvh;
+  left: 50%;
+  display: flex;
+  width: min(100vw, var(--measure-reading, 42rem));
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 0.2rem;
+  color: var(--color-signal-yellow, #ffea00);
+  font-family: var(--font-display, monospace);
+  font-size: 0.8rem;
+  pointer-events: none;
+  text-shadow: 0 0 10px rgb(255 234 0 / 55%);
+  transform: translate(-50%, -50%);
+}
+
+.readLine::before {
   position: absolute;
-  top: -0.38rem;
-  right: 0;
-  padding-left: 0.5rem;
-  background: var(--color-bg-void, #0e141b);
-  color: var(--color-signal-cyan, #6df7ea);
-  content: "▼";
-  font-size: 0.65rem;
+  content: "";
+  inset-inline: 1.5rem;
+  border-top: 1px dashed rgb(255 234 0 / 24%);
 }
 
-.paperTitle {
-  color: var(--color-text, white);
-  font-family: var(--font-display, var(--font-serif));
-  font-size: clamp(1.75rem, 6vw, 2.25rem);
-  line-height: 1.05;
+.fastext {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.4rem;
+  padding: 0.6rem 0.5rem;
+  border-top: 1px solid rgb(109 247 234 / 22%);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.list p {
-  color: var(--color-text-muted, rgb(255 255 255 / 72%));
-  line-height: var(--line-body, 1.65);
+.fastext a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+}
+
+.fastext a:hover,
+.fastext a:focus-visible {
+  color: var(--color-text-strong, #fff);
+}
+
+.fastext i {
+  width: 0.75rem;
+  height: 0.75rem;
+  background: var(--key-color, currentColor);
+}
+
+.receiverFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  justify-content: space-between;
+  margin-top: 0.8rem;
+  padding-inline: 0.5rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-display, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@keyframes teletext-blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes prompter-roll {
+  from {
+    opacity: 0;
+    transform: translateY(1.6rem);
+  }
+}
+
+@keyframes prompter-cue {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  38%,
+  62% {
+    opacity: 1;
+  }
 }

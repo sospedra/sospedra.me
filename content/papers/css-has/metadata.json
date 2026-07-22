@@ -1,0 +1,21 @@
+{
+  "createdAt": "2022-07-18T16:24:50.000Z",
+  "excerpt": "CSS has wanted a parent selector for as long as I've written CSS. Shaun Inman proposed qualified selectors in 2008 and Dave Hyatt shot it down on dynamics: \"just not functioning in dynamic contexts... or on particularly large sample sets\". Firefox has bug 418039 open since 2008. Snook declared it impossible-ish in 2010. Fourteen years of \"too slow\". Then WebKit shipped it. Safari 15.4 shipped :has() first, this March, and Chrome's Intent to Ship targets 105. Today you can play with it in Canary behind the Experimental Web Platform Features flag. Strange timeline, I'll take it.",
+  "og": "/papers/css-has.png",
+  "slug": "css-has",
+  "title": "The :has() heist",
+  "updatedAt": "2022-07-18T16:24:50.000Z",
+  "images": {},
+  "minutes": 2.7,
+  "categories": [
+    "css has selector",
+    "parent selector css",
+    "quantity queries",
+    "previous sibling selector",
+    "label has input invalid",
+    "css :has performance",
+    "safari 15.4",
+    "chrome 105",
+    "supports selector"
+  ]
+}

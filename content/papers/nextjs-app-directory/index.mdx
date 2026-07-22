@@ -1,0 +1,53 @@
+Next 13 landed two weeks ago with the `app/` directory in beta. The discourse treats it as a folder rename with layouts. It's not. **`app/` inverts the data model of your application**, and porting `pages/` file by file is the fastest way to hate it.
+
+## The inversion
+
+Since `getInitialProps`, and later `getServerSideProps`, the Next model was: pages fetch, components receive. Data enters at the route's top, props waterfall down, everything below is a client component because everything *is* a client component.
+
+The `app/` directory flips both halves. Every component is a [React Server Component](https://github.com/reactjs/rfcs/pull/188) by default (that RFC opened in December 2020; it got merged the day Next 13 shipped, which tells you who the launch vehicle is), and any component can fetch, because [components can be async now](https://github.com/acdlite/rfcs/blob/first-class-promises/text/0000-first-class-support-for-promises.md):
+
+```jsx
+// app/papers/page.jsx
+export default async function Papers() {
+  const papers = await getPapers()
+  return <PaperList papers={papers} />
+}
+```
+
+The `fetch` options replace the old API surface one-to-one, per the [launch post](https://nextjs.org/blog/next-13):
+
+```js
+fetch(url, { cache: 'force-cache' })     // getStaticProps
+fetch(url, { cache: 'no-store' })        // getServerSideProps
+fetch(url, { next: { revalidate: 10 } }) // ISR
+```
+
+And dedup is real but subtle: React itself patches `fetch` in the server runtime, so two components requesting the same URL in one render pass cost one request. The dedup lives in React, not Next.
+
+## The wire format is right there
+
+None of this is magic, and you can watch it work. View source on any `app/` page: the RSC render travels as the React Flight format, inlined into script chunks:
+
+```html
+<script>self.__next_f.push([1,"J0:[\"$\",\"main\",null,{\"children\":…"])</script>
+```
+
+Rendered elements are `["$","div",null,{…}]` tuples; client components appear as module references resolved through the bundler manifest (`react-server-dom-webpack` is the serializer). On soft navigation the same stream comes over the network instead, and the router caches it **per route segment**: the [Layouts RFC](https://nextjs.org/blog/layouts-rfc) from May spells out that navigation fetches "special instructions (not HTML or JSON)" and re-renders only the changed segment. That's the actual mechanism behind "layouts don't re-render", and behind layouts finally persisting state after six years of `getLayout` hacks.
+
+## The boundary
+
+Client components still exist. They're opt-in, and they're the leaves:
+
+```jsx
+'use client'
+```
+
+The directive is three weeks old as a convention: [Module Conventions v2](https://github.com/reactjs/rfcs/pull/227) (Markbåge, October 11) killed the `.server.js`/`.client.js` filename scheme from the earlier RFCs. Its model in one quote: "everything is implicitly shared until proven otherwise, and then the build errors". `'use client'` is not "this runs on the client". It's a **module-graph marker**: everything imported below it ships to the browser, and every prop crossing it must survive Flight serialization. Functions don't cross. Class instances don't cross. Your `Date` arrives as a string.
+
+Two practical consequences. First, one `useState` three levels down client-taints its whole import subtree; you'll spend the first week discovering which components secretly do. Second, the escape hatch is compositional: a Client Component can receive a Server Component as `children`, so interactive shells wrap server-rendered content. The Layouts RFC documents this children-slot pattern explicitly, and it's the single most useful trick for keeping bundles lean.
+
+## What you should do
+
+Not migrate. The beta is honest about being a beta, and the cache semantics are still settling. Mount one leaf route in `app/` (both directories coexist), feel where the boundary wants to sit, and watch how much of your bundle evaporates when list rendering stays on the server. Skim the rest of the [Layouts RFC](https://nextjs.org/blog/layouts-rfc) too: route groups, `@slot` parallel routes and `(..)` intercepting routes are all specced there, waiting.
+
+Treat it as a new framework that happens to share a router. Because that's what it is.

@@ -1,0 +1,21 @@
+{
+  "createdAt": "2021-06-24T08:42:11.000Z",
+  "excerpt": "Your browser renders DOM nobody sees. Every node below the fold pays layout, style and paint. A long article, a feed, a huge table: the user watches one viewport and the engine computes ten. That's the tax. And since Chrome 85 there's a one-line refund: content-visibility.",
+  "og": "/papers/content-visibility.png",
+  "slug": "content-visibility",
+  "title": "content-visibility: the lazy render",
+  "updatedAt": "2021-06-24T08:42:11.000Z",
+  "images": {},
+  "minutes": 3.38,
+  "categories": [
+    "content-visibility",
+    "contain-intrinsic-size",
+    "css performance",
+    "rendering performance",
+    "skip offscreen rendering",
+    "long page performance",
+    "virtualized list css",
+    "css containment",
+    "first paint optimization"
+  ]
+}

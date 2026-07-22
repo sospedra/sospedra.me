@@ -1,8 +1,7 @@
 .frame {
   --code-gutter: 3.5rem;
   position: relative;
-  left: 50%;
-  width: min(var(--measure-wide, 56rem), calc(100vw - 2rem));
+  width: 100%;
   margin: 2.75rem 0 3rem;
   overflow: hidden;
   border: 1px solid rgb(240 75 184 / 72%);
@@ -12,7 +11,6 @@
     0 1.25rem 3.25rem rgb(0 0 0 / 30%),
     0 0 1.25rem rgb(240 75 184 / 12%),
     inset 0 1px rgb(255 255 255 / 5%);
-  transform: translateX(-50%);
 }
 
 .frame::after {
@@ -97,7 +95,7 @@
 .source.source {
   max-width: none;
   margin: 0;
-  padding: 1.25rem 0 1.5rem;
+  padding: 1rem 0 1.125rem;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
   border: 0;
@@ -115,13 +113,13 @@
   padding: 0;
   background: transparent;
   font-size: 0.9375rem;
-  line-height: 1.65;
+  line-height: 1.22;
   white-space: pre;
 }
 
 .source :global(.line) {
-  display: block;
-  min-height: 1lh;
+  display: inline-block;
+  width: 100%;
   padding-right: 1.5rem;
   padding-left: var(--code-gutter);
   position: relative;

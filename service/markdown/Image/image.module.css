@@ -1,8 +1,7 @@
 .figure {
   position: relative;
-  left: 50%;
   display: grid;
-  width: min(var(--measure-wide, 56rem), calc(100vw - 2rem));
+  width: 100%;
   margin: 2.75rem 0 3rem;
   overflow: hidden;
   border: 1px solid rgb(109 247 234 / 36%);
@@ -12,7 +11,6 @@
     0 1.25rem 3.25rem rgb(0 0 0 / 28%),
     0 0 1.5rem rgb(109 247 234 / 10%);
   color: var(--color-text);
-  transform: translateX(-50%);
 }
 
 .viewport {

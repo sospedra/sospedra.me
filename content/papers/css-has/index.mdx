@@ -1,0 +1,51 @@
+CSS has wanted a parent selector for as long as I've written CSS. Shaun Inman [proposed qualified selectors](https://www.css3.info/shaun-inman-proposes-css-qualified-selectors/) in 2008 and Dave Hyatt shot it down on dynamics: "just not functioning in dynamic contexts... or on particularly large sample sets". Firefox has [bug 418039](https://bugzilla.mozilla.org/show_bug.cgi?id=418039) open since 2008. [Snook declared it impossible-ish](https://snook.ca/archives/html_and_css/css-parent-selectors) in 2010. Fourteen years of "too slow". Then WebKit shipped it. **Safari 15.4 shipped `:has()` first**, this March, and Chrome's [Intent to Ship](https://groups.google.com/a/chromium.org/g/blink-dev/c/bRsbl3wLuyk) targets 105. Today you can play with it in Canary behind the Experimental Web Platform Features flag. Strange timeline, I'll take it.
+
+## What it is
+
+`:has()` matches an element by looking at its insides:
+
+```css
+label:has(input:invalid) {
+  color: crimson;
+}
+```
+
+No class toggling, no `MutationObserver` decorating the parent. Four jobs it steals from JavaScript:
+
+```css
+/* form states, upward */
+.field:has(:focus-visible) { outline: 2px solid var(--accent); }
+
+/* quantity queries: 8+ items, denser grid */
+.grid:has(> :nth-child(8)) { grid-template-columns: repeat(4, 1fr); }
+
+/* previous sibling, finally */
+li:has(+ li:hover) { transform: scale(0.97); }
+
+/* page-level state, no body.modal-open class */
+body:has(dialog[open]) { overflow: hidden; }
+```
+
+jQuery shipped `:has()` in 1.1.4, back in 2007. Fifteen years for the platform to pay that debt back natively. Worth asking what took so long, because the answer is the interesting part.
+
+## How they made it fast
+
+Hyatt wasn't wrong in 2008. Blink's style invalidation compiles selectors into *invalidation sets* and, on a DOM mutation, walks **downward** from the mutated element to find what needs restyling. `:has()` breaks the direction: the subject sits *above* the thing that changed. Igalia (Byungwoo Lee, funded by eyeo) built the mirror image: [ancestor invalidation sets and preceding-sibling invalidation sets](https://github.com/Igalia/explainers/tree/main/css/has), walked **upward** from the mutation, and across earlier siblings for `:has(~ …)`, to find candidate subjects. Lee's [writeup](https://blogs.igalia.com/blee/posts/2021/09/03/css-has-a-way-of-selecting-parent.html) is the best thing published on this.
+
+Matching cost got the same treatment. Naive `:has()` matching is quadratic: for every candidate, scan its subtree. Blink instead matches in reverse DOM order and caches results per style lifecycle, with bloom-filter-style fast rejection on top (a trick [Blink adopted from WebKit's implementation](https://groups.google.com/a/chromium.org/g/blink-dev/c/bRsbl3wLuyk), where Antti Koivisto landed the feature). Igalia [published measurements](https://blogs.igalia.com/blee/posts/2022/04/12/how-blink-tests-has-pseudo-class.html): `querySelectorAll('.a:has(.b)')` around 1ms at 2.000 elements; the pathological non-subject form `:has(.b) .a` around 24ms at 8.000. Try their [live harness](https://has-pseudo-class-performance.glitch.me) yourself. Not free, but nothing like the disaster everyone predicted for fourteen years.
+
+## The fine print, from the spec
+
+Per the [May 2022 Selectors 4 draft](https://www.w3.org/TR/2022/WD-selectors-4-20220507/), `:has()` takes a *forgiving* relative selector list (unknown selectors inside don't kill the rule) and is still formally marked at-risk. Restrictions you'll hit:
+
+1. **No `:has()` inside `:has()`**. Not a performance tip, a parse error: the CSSWG [resolved the ban](https://github.com/w3c/csswg-drafts/issues/6952) this June. Same for `:is()`/`:where()` wrapping a `:has()`.
+2. **`:visited` never matches inside `:has()`**. Otherwise `body:has(a:visited[href="https://yoursite.com"])` is a [history sniffer](https://dbaron.org/mozilla/visited-privacy). The privacy model wins.
+3. `@supports selector(:has(a))` works reliably because the CSSWG [resolved](https://github.com/w3c/csswg-drafts/issues/7280) that `@supports` uses *non-forgiving* parsing. So the gate is honest:
+
+```css
+@supports selector(:has(a)) {
+  /* the good stuff */
+}
+```
+
+Firefox has no implementation and, as of today, no official position. Keep the JavaScript fallback for critical states, let `:has()` carry the cosmetic ones, and delete the glue as support lands. The parent selector was the white whale. Igalia dragged it onto the deck.

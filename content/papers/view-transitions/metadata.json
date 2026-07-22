@@ -1,0 +1,21 @@
+{
+  "createdAt": "2023-12-08T18:22:41.000Z",
+  "excerpt": "Three years ago I wrote about 60fps scroll animations. The trick was staying out of the browser's way. Today's trick is stronger: the browser animates *for* you. The View Transitions API turns any DOM change into an animated crossfade, morph included, with one function call. No framework, no FLIP math, no getBoundingClientRect bookkeeping. It shipped in Chrome 111 this March; Jake Archibald and Khushal Sagar's explainer work is the source of everything below.",
+  "og": "/papers/view-transitions.png",
+  "slug": "view-transitions",
+  "title": "View transitions without the framework",
+  "updatedAt": "2023-12-08T18:22:41.000Z",
+  "images": {},
+  "minutes": 2.885,
+  "categories": [
+    "view transitions api",
+    "startviewtransition",
+    "view-transition-name",
+    "flip animation",
+    "page transition animation",
+    "spa transitions",
+    "mpa view transitions",
+    "astro view transitions",
+    "css page transitions"
+  ]
+}

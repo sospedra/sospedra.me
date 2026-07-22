@@ -1,0 +1,55 @@
+Why is Linear fast? Not "good engineering" fast. Fast like local software, on a network product, with multiplayer. The answer is an architecture, and thanks to [Tuomas Artman's talks](https://linear.app/now/scaling-the-linear-sync-engine) plus one obsessive [reverse-engineering repo](https://github.com/wzhudev/reverse-linear-sync-engine) (Artman: "probably the best documentation that exists"), we know exactly which one: **the client owns a replica, the server's job is ordering and reconciliation**. The industry settled on a name for the family: sync engines. The server is becoming a cache.
+
+## Linear's machine, concretely
+
+Every transaction the server accepts increments a global monotonic counter, `lastSyncId`: the version number of the entire database. Each client keeps an IndexedDB replica recording the `lastSyncId` it has seen and which `syncGroups` it belongs to. Permissions live *there*, as membership in replication streams rather than as endpoint auth: your replica physically never receives rows outside your groups. A mutation enters a local `TransactionQueue`, also persisted, and the MobX object graph updates instantly. Here's the inversion that keeps it correct: **the client never writes model tables from its own mutations**. Local truth updates optimistically in memory, but IndexedDB persists only when the server's confirming *delta packet* arrives, ordered, with side effects applied, because the server may compute a different result than the client predicted (a workflow trigger fires, an automation renames the thing) and the confirmed delta wins. Undo falls out of the same log: every transaction knows how to build its inverse. Offline falls out too: the queue just grows until the socket returns. Bootstrap is tiered so a giant workspace doesn't block first paint: some models hydrate instantly, some lazily, some partially, and the workspace streams itself into IndexedDB while you already work.
+
+That's one design from one company. The new generation generalizes it in two directions:
+
+- [Zero](https://zero.rocicorp.dev/docs/introduction) makes **queries** the unit of sync. The client registers ZQL queries; `zero-cache` tails Postgres logical replication and maintains each client's result set with incremental view maintenance, diffing per-client version maps (the CVR strategy inherited from [Replicache](https://doc.replicache.dev/strategies/row-version)) so only deltas travel:
+
+```js
+const [issues] = useQuery(
+  z.query.issue.where('assignee', me.id).orderBy('updatedAt', 'desc')
+)
+```
+
+- [Electric](https://electric-sql.com/docs/guides/shapes) makes replication **HTTP-shaped**. A "shape" is table + where-clause + columns, streamed as a log you consume with plain GETs:
+
+```
+GET /v1/shape?table=issues&offset=-1        → snapshot + electric-handle + electric-offset
+GET /v1/shape?table=issues&offset=0_128&handle=…&live=true   → long-poll for deltas
+```
+
+Control messages ride the same stream: `up-to-date` says you're current, and a `409 must-refetch` means your shape's definition changed, discard and resync. Because it's GETs with offsets, CDNs collapse the fan-out; their [1.0 GA post](https://electric-sql.com/blog/2025/03/17/electricsql-1.0-released) claims a million concurrent clients off one commodity Postgres, and the claim is believable *because* the protocol is boring: the CDN does what CDNs do. Reads only, though. Writes go through your API like it's 2015, and Electric resolves nothing.
+
+## The write path, drawn once
+
+Optimism is easy; *reconciliation* is the product, and the emerging consensus shape is the same in all three systems. Zero's custom mutators make it explicit:
+
+```ts
+// runs twice, by design
+async function completeIssue(tx, { id }) {
+  await tx.issue.update({ id, status: 'done', completedAt: Date.now() })
+}
+```
+
+The client runs it speculatively against the local store: instant UI. The server re-executes the *same mutator* authoritatively, where it can consult permissions, run side effects, and see mutations from other clients that landed first. Then the client **rebases**: throws away its speculative result and applies the server's, replaying any still-unacknowledged local mutations on top. Git semantics for app state. If the speculation matched, nobody notices; if it didn't, the UI corrects in one frame instead of drifting forever.
+
+## About conflicts, and the CRDT myth
+
+The reflexive assumption is "local-first, so CRDTs". The systems winning in production mostly said no. Figma's Evan Wallace wrote [the canonical rejection](https://www.figma.com/blog/how-figmas-multiplayer-technology-works/) back in 2019: with a central server you don't need distributed timestamps, "the server can define the order of events", so Figma runs per-property last-writer-wins plus two tricks everyone since has stolen. Fractional indexing for ordering: a child's position is a fraction between its neighbors, so insertion is one property write (with the known interleaving wart when two users insert at the same gap). And flicker prevention: unacknowledged local changes *mask* conflicting server updates until acked, which is the same rebase trick under another name. Linear orders transactions centrally, OT-adjacent. Zero re-executes on the server. The winning pattern is a central sequencer plus client rebase.
+
+CRDTs remain the right tool where their guarantees are the product: collaborative *text* (Yjs powers half the editors you use; Automerge keeps proving the general case), true peer-to-peer, and offline-heavy tools with no authority to appeal to. The distinction that matters: CRDTs guarantee convergence, not *intent*. Two people editing the same issue title converge under LWW just fine; two people editing the same sentence need character-level merge semantics, and that's where the CRDT machinery earns its complexity. Most SaaS is issue titles, not sentences.
+
+Same honesty about offline: it is a product decision, not a free property. Zero's own docs support offline reads while [planning to restrict offline writes](https://zero.rocicorp.dev/docs/introduction) during beta, for a good reason: an unbounded offline queue rebasing against a week of teammate changes produces conflicts no algorithm resolves *meaningfully*. Linear queues offline mutations happily, but Linear's domain (small, discrete, per-field writes) is the friendliest possible case. And this whole family is the server-authoritative *fork* of [local-first](https://www.inkandswitch.com/essay/local-first/): of Ink & Switch's seven ideals, these systems deliberately fail the last three. The server is the authority and the company is load-bearing. Call it what it is.
+
+## The new hard parts
+
+Complexity relocates, never dissolves. Partial replication is the big one: which rows does this client get, and what happens at the edges when the answer changes. Zero diffs CVRs, Electric 409s the shape, Linear recomputes sync-group membership, three answers to one question, and every one of them has a "the client must now forget things it knows" path that plain REST never needed. Permissions move from endpoints into the replication stream: get a filter wrong and you've synced a salary column into someone's IndexedDB, where no `DELETE` endpoint can un-ship it. Schema migrations must tolerate clients running last month's code against yesterday's local data. And the bill moves: you're now paying for per-client server state (CVRs, sync groups), replication CPU (IVM isn't free), and client storage quotas, in exchange for reads that cost nothing at request time. Electric's whole bet is that making the read path plain HTTP keeps that bill CDN-shaped; Zero's bet is that IVM keeps it query-shaped; Linear's bet was that one product's shape can be hand-tuned. Nobody bets on free.
+
+## Where it lands
+
+The fit is workspace software: tools a user stares at for hours and mutates constantly, where the working set fits a laptop and the collaboration is per-field. The non-fit is content sites, payment flows, anything where the replica is dead weight or a liability, and text-collaboration cores where CRDTs already won. Rule of thumb: if users would notice going offline mid-session, you're a sync engine candidate. If they'd just leave, keep your fetches.
+
+Request/response wasn't a law of nature, just a reasonable answer from 1994. Thirty-one years later the client has gigabytes of RAM, a database engine in the browser, and a workload that's 95% reads of data it already saw. The architecture is finally noticing.

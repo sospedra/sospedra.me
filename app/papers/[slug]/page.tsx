@@ -33,22 +33,24 @@ export async function generateMetadata(props: {
   }
 }
 
+const localImagePattern = /\.(?:avif|gif|jpe?g|png|svg|webp)(?:[?#].*)?$/i
+const protocolPattern = /^(?:[a-z][a-z\d+.-]*:|\/\/)/i
+
+const isLocalContentImage = (src: string) =>
+  localImagePattern.test(src) && !protocolPattern.test(src)
+
 // metadata flows by closure: the img override needs this paper's dimensions
 const createMdxComponents = (meta: Paper): MDXComponents => {
-  const images: MDXComponents = {
+  return {
     img: (props) => {
       const src = props.src ?? ''
-      if (src.includes('.jpeg')) {
+      if (isLocalContentImage(src)) {
         return <PaperImage src={src} alt={props.alt ?? ''} meta={meta} />
       }
       return <img src={src} alt={props.alt} />
     },
+    pre: CodeBlock,
   }
-
-  // This paper is an intentional legacy exhibit. Keep its original renderer.
-  if (meta.slug === 'scroll-60fps-animation') return images
-
-  return { ...images, pre: CodeBlock }
 }
 
 export default async function PaperPage(props: {

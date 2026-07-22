@@ -1,0 +1,22 @@
+{
+  "createdAt": "2023-05-20T10:16:08.000Z",
+  "excerpt": "Block the JavaScript thread of a React Native app with a while(true) and watch a Reanimated gesture keep tracking your finger at 60fps. That shouldn't be possible. The animation is written in JavaScript and the JavaScript thread is dead. The trick: your app runs two JavaScript runtimes, and the second one lives on the UI thread.",
+  "og": "/papers/worklets.png",
+  "slug": "worklets",
+  "title": "Worklets: the other JavaScript runtime",
+  "updatedAt": "2023-05-20T10:16:08.000Z",
+  "images": {},
+  "minutes": 3.08,
+  "categories": [
+    "react native",
+    "reanimated",
+    "worklets",
+    "usesharedvalue",
+    "useanimatedstyle",
+    "ui thread animations",
+    "gesture handler",
+    "runonjs",
+    "60fps react native",
+    "expo animations"
+  ]
+}

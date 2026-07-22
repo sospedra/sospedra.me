@@ -1,0 +1,22 @@
+{
+  "createdAt": "2024-04-02T07:58:19.000Z",
+  "excerpt": "A Postgres developer at Microsoft noticed his SSH logins burned ~500ms of CPU they shouldn't, and that Valgrind was throwing weird errors in liblzma. He profiled it, because Andres Freund is the kind of person who profiles half a second. What he found was a backdoor in xz/liblzma wired into sshd, already shipped to Debian sid, Fedora 40/41 beta and openSUSE Tumbleweed, and weeks from riding stable releases everywhere. The payload is world-class tradecraft. And it's still the boring half of the story.",
+  "og": "/papers/xz-backdoor.png",
+  "slug": "xz-backdoor",
+  "title": "The maintainer was the exploit",
+  "updatedAt": "2024-04-02T07:58:19.000Z",
+  "images": {},
+  "minutes": 3.395,
+  "categories": [
+    "xz backdoor",
+    "liblzma",
+    "jia tan",
+    "cve-2024-3094",
+    "supply chain attack",
+    "open source maintainers",
+    "maintainer burnout",
+    "sshd backdoor",
+    "social engineering",
+    "single maintainer risk"
+  ]
+}

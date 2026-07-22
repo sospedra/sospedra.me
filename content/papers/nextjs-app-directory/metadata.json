@@ -1,0 +1,21 @@
+{
+  "createdAt": "2022-11-12T11:03:17.000Z",
+  "excerpt": "Next 13 landed two weeks ago with the app/ directory in beta. The discourse treats it as a folder rename with layouts. It's not. app/ inverts the data model of your application, and porting pages/ file by file is the fastest way to hate it.",
+  "og": "/papers/nextjs-app-directory.png",
+  "slug": "nextjs-app-directory",
+  "title": "app/ is a rewrite, not an upgrade",
+  "updatedAt": "2022-11-12T11:03:17.000Z",
+  "images": {},
+  "minutes": 3.015,
+  "categories": [
+    "next 13",
+    "app directory",
+    "app router",
+    "react server components",
+    "use client",
+    "getserversideprops replacement",
+    "nextjs layouts",
+    "server components boundary",
+    "nextjs migration"
+  ]
+}

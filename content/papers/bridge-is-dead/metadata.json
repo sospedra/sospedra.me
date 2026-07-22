@@ -1,0 +1,22 @@
+{
+  "createdAt": "2026-05-14T14:19:27.000Z",
+  "excerpt": "React Native's old architecture is dead. Since 0.82 no app can run on the bridge (newArchEnabled=false is ignored), and the codebase removal is underway for real: 0.85 deleted CatalystInstanceImpl, the Android bridge's core class, while the interop layer for legacy modules stays \"for the foreseeable future\". Announced in 2018, default in 0.76, frozen in 0.80, unplugged in 0.82. Eight years to swap the foundation under Facebook, Instagram and the Quest Store. Worth a postmortem, because the original sin is one every architecture keeps recommitting: an asynchronous serialization boundary in a UI hot path.",
+  "og": "/papers/bridge-is-dead.png",
+  "slug": "bridge-is-dead",
+  "title": "The bridge is dead, long live JSI",
+  "updatedAt": "2026-05-14T14:19:27.000Z",
+  "images": {},
+  "minutes": 3.34,
+  "categories": [
+    "react native",
+    "new architecture",
+    "jsi",
+    "fabric renderer",
+    "turbomodules",
+    "codegen",
+    "react native bridge",
+    "hermes",
+    "legacy architecture removal",
+    "expo new architecture"
+  ]
+}

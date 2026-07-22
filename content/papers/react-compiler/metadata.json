@@ -1,0 +1,21 @@
+{
+  "createdAt": "2024-06-25T13:36:02.000Z",
+  "excerpt": "React Conf happened and the React Compiler is finally open source, experimental channel, running in production on instagram.com and the Quest Store. The pitch fits in one sentence: memoization stops being your job. Every useMemo, every useCallback, every memo() wrapper you've sprinkled across five years of components just got reclassified as tech debt in waiting.",
+  "og": "/papers/react-compiler.png",
+  "slug": "react-compiler",
+  "title": "The compiler will remember for you",
+  "updatedAt": "2024-06-25T13:36:02.000Z",
+  "images": {},
+  "minutes": 2.945,
+  "categories": [
+    "react compiler",
+    "react 19",
+    "usememo",
+    "usecallback",
+    "auto memoization",
+    "babel-plugin-react-compiler",
+    "rules of react",
+    "react performance",
+    "react conf 2024"
+  ]
+}

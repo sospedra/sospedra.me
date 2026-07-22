@@ -1,0 +1,51 @@
+React Conf happened and the [React Compiler](https://react.dev/learn/react-compiler) is finally open source, experimental channel, running in production on instagram.com and the Quest Store. The pitch fits in one sentence: memoization stops being your job. Every `useMemo`, every `useCallback`, every `memo()` wrapper you've sprinkled across five years of components just got reclassified as tech debt in waiting.
+
+## What it emits
+
+Skip the marketing, look at the output. Paste a component into the [compiler playground](https://playground.react.dev/) and this comes back:
+
+```jsx
+function Papers({ papers, filter }) {
+  const $ = _c(5)
+  let visible
+  if ($[0] !== papers || $[1] !== filter) {
+    visible = papers.filter((p) => p.tags.includes(filter))
+    $[0] = papers
+    $[1] = filter
+    $[2] = visible
+  } else {
+    visible = $[2]
+  }
+  // ...onOpen and the <List /> element get their own slots
+}
+```
+
+`_c(n)` (née `useMemoCache`) allocates a flat per-component cache array. Every intermediate value gets a numbered slot, guarded by identity checks on exactly its inputs. It's `useMemo` unrolled **per expression**, including the JSX elements themselves, which is how child components skip re-rendering without a single `memo()` wrapper.
+
+How it gets there is the interesting part, and the [deep dive talk](https://www.youtube.com/watch?v=0ckOUBiuxVY) by Gunasekaran and Zhang walks it: the compiler lowers your component into a High-level Intermediate Representation in SSA form, runs type inference plus **mutability and aliasing analysis** to find which values can change between renders and which merely look like they can, then reconstructs JavaScript. It tracks data flow, not syntax. That's why it memoizes correctly where humans memoize coarsely: nobody hand-writes a dependency check per expression, and one unstable object prop from a lazy human voids a whole `memo` chain downstream. This tedium is exactly what compilers were invented for.
+
+## The numbers Meta showed
+
+From the [React Conf keynote](https://react.dev/blog/2024/05/22/react-conf-2024-recap): instagram.com pages average ~3% faster with zero code changes, and on the Quest Store initial loads improved up to 12% with some interactions over 2.5x faster, memory flat. Three percent sounds small until you remember it's *across every page* of one of the largest React apps alive, bought by a build step.
+
+## The contract
+
+The compiler only optimizes code that follows the [Rules of React](https://react.dev/reference/rules): pure render, no mutating props or state, hooks unconditional. The rules were always the deal; now a machine reads the fine print. Break them and the compiler **silently bails out per component**, back to unmemoized reality. No error, no warning at runtime. Mutate a prop in render and that subtree just quietly loses the optimization.
+
+That makes the linter the real product:
+
+```bash
+npm install -D babel-plugin-react-compiler@experimental eslint-plugin-react-compiler@experimental
+```
+
+`eslint-plugin-react-compiler` is not a style checker. It runs the compiler's own diagnostics and reports every place the compiler gave up, and why: mutation during render, ref reads in render, conditional hooks. Run it before adopting anything. It's a census of everywhere you've been lying to React, and some of those lies are your "un-debuggable stale value" bugs wearing a disguise.
+
+## What to do with the old code
+
+Don't delete your `useMemo` calls this month; the compiler tolerates them and this is an experimental release. But the policy forward writes itself:
+
+1. New code: zero manual memoization. Write the naive version.
+2. Keep `eslint-plugin-react-compiler` green. It's the contract, enforced early.
+3. Delete the old ceremony opportunistically once the compiler runs in your build, with Lauren Tan's ["Forget About Memo"](https://www.youtube.com/watch?v=T8TZQ6k4SLE) as the migration sermon.
+
+Five years of "memoize everything" versus "measure first" debates, and the answer was "neither, wait for the compiler". The machine reads your render function better than you do.

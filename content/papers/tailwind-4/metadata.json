@@ -1,0 +1,22 @@
+{
+  "createdAt": "2025-01-25T12:29:34.000Z",
+  "excerpt": "Tailwind 4.0 shipped this week, and the real story isn't the benchmarks. For eight years Tailwind was a JavaScript program that emitted CSS. Version 4 is CSS. The config file is dead and I'm here to celebrate at the funeral.",
+  "og": "/papers/tailwind-4.png",
+  "slug": "tailwind-4",
+  "title": "Tailwind 4 speaks CSS at last",
+  "updatedAt": "2025-01-25T12:29:34.000Z",
+  "images": {},
+  "minutes": 2.82,
+  "categories": [
+    "tailwind 4",
+    "tailwind css v4",
+    "css first configuration",
+    "@theme",
+    "oxide engine",
+    "cascade layers",
+    "container queries",
+    "oklch colors",
+    "tailwind migration",
+    "design tokens css"
+  ]
+}

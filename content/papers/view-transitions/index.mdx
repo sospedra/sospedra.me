@@ -1,0 +1,73 @@
+Three years ago I wrote about [60fps scroll animations](/papers/scroll-60fps-animation). The trick was staying out of the browser's way. Today's trick is stronger: the browser animates *for* you. The [View Transitions API](https://developer.chrome.com/docs/web-platform/view-transitions) turns any DOM change into an animated crossfade, morph included, with one function call. No framework, no FLIP math, no `getBoundingClientRect` bookkeeping. It shipped in [Chrome 111 this March](https://developer.chrome.com/blog/spa-view-transitions-land); Jake Archibald and Khushal Sagar's explainer work is the source of everything below.
+
+## One function
+
+```js
+const transition = document.startViewTransition(() => {
+  list.prepend(newCard)
+})
+```
+
+The browser captures the old state, runs your callback, captures the new state, and animates between them on the compositor. Rendering pauses only between the old capture and your callback finishing; keep the callback synchronous and fast. What most articles skip is *what the snapshots become*. The engine builds a pseudo-element tree over the page:
+
+```
+::view-transition                          overlay root, covers the viewport
+└─ ::view-transition-group(name)           animates transform + size
+   └─ ::view-transition-image-pair(name)   isolation: isolate
+      ├─ ::view-transition-old(name)       static snapshot image
+      └─ ::view-transition-new(name)       live representation
+```
+
+Two details in there are pure gold. `::view-transition-old` is a static image but `::view-transition-new` is **live**: the incoming state keeps rendering during the animation (the "page is frozen" feel actually comes from input hitting the overlay). And the image pair is isolated so old and new can blend with `mix-blend-mode: plus-lighter`, which is the reason a crossfade of two identical overlapping pixels doesn't dip in brightness mid-transition. That anti-flicker detail is [specced](https://drafts.csswg.org/css-view-transitions-1/) and almost nobody knows it exists. The default `(root)` transition works because the UA stylesheet ships `:root { view-transition-name: root }`.
+
+## The morph
+
+Tag an element on both sides of the change and the browser morphs it, position and size:
+
+```css
+.card-thumbnail { view-transition-name: hero; }
+.detail-cover   { view-transition-name: hero; }
+```
+
+This is FLIP, implemented by the engine, minus the failure modes. One rule: names must be unique per capture. Don't name twenty grid items `hero`; name on interaction and clean up after:
+
+```js
+card.style.viewTransitionName = 'hero'
+const t = document.startViewTransition(() => openDetail(card))
+t.finished.finally(() => (card.style.viewTransitionName = ''))
+```
+
+A duplicated name isn't a mystery failure either: the transition skips and `t.ready` rejects. Which brings up the API's second half. `startViewTransition` returns a `ViewTransition` object: `{ updateCallbackDone, ready, finished, skipTransition() }`. `ready` resolves once the pseudo-tree exists, and that's the hook for driving the animation with WAAPI instead of CSS:
+
+```js
+const t = document.startViewTransition(updateDOM)
+await t.ready
+document.documentElement.animate(
+  { transform: ['translateY(0)', 'translateY(-100%)'] },
+  { duration: 250, pseudoElement: '::view-transition-old(root)' },
+)
+```
+
+## Where's the catch
+
+Three catches, honestly labeled:
+
+1. **Chromium only.** The progressive enhancement is a one-liner, and the fallback is your app exactly as it is:
+
+```js
+const transition = (update) =>
+  document.startViewTransition ? document.startViewTransition(update) : update()
+```
+
+2. **Same-document only, for now.** Cross-document transitions (real MPA navigations, zero router JS) are [specced and in origin trial](https://github.com/WICG/view-transitions/blob/main/cross-doc-explainer.md). Astro didn't wait: [Astro 3.0](https://astro.build/blog/astro-3/) intercepts the navigation, swaps the DOM itself, and calls this same-document API, with a ~3KB fallback for other browsers. First major framework to ship it, and the best argument for the API in production today.
+3. **Motion sensitivity is your job.** The API does nothing automatic for reduced motion:
+
+```css
+@media (prefers-reduced-motion) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
+```
+
+Every SPA router animation library is now living on borrowed time, and I say that with affection for the hours I gave them. The platform keeps absorbing the patterns the ecosystem proved. Let the browser hold the tween.

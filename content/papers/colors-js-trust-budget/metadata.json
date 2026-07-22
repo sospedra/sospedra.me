@@ -1,0 +1,23 @@
+{
+  "createdAt": "2022-01-12T21:18:04.000Z",
+  "excerpt": "On January 8 the maintainer of colors.js shipped commit 074a0f8, title: \"Adds new American flag module\". It prints an ASCII Statue of Liberty and enters an infinite loop, at require time, before any consumer code runs:",
+  "og": "/papers/colors-js-trust-budget.png",
+  "slug": "colors-js-trust-budget",
+  "title": "colors.js and the trust budget",
+  "updatedAt": "2022-01-12T21:18:04.000Z",
+  "images": {},
+  "minutes": 3.135,
+  "categories": [
+    "colors.js",
+    "faker.js",
+    "supply chain attack",
+    "npm security",
+    "lockfile",
+    "npm ci",
+    "npm overrides",
+    "dependency pinning",
+    "open source maintainers",
+    "ua-parser-js",
+    "log4shell"
+  ]
+}

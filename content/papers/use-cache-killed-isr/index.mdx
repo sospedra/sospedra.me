@@ -1,0 +1,114 @@
+In 2020, Next 9.5 shipped Incremental Static Regeneration (the beta hid in 9.4 as `unstable_revalidate`) and it carried half the framework's marketing for years. Static speed, periodic freshness, one `revalidate: 60` per page. We all internalized the model: **the route is the cache unit**. Next 16's Cache Components end that era. The unit is the function now, and ISR turns out to be what it always was underneath: one caching policy, hardcoded at the wrong granularity.
+
+## The old model and its lie
+
+ISR's `revalidate` lived at the page level, so a route with five data sources got exactly one freshness contract. Your product prices want 60 seconds, your nav menu wants a week, your markdown wants forever: too bad, the page has one dial. So we split routes artificially, or over-revalidated everything, and on-demand `revalidatePath` was a hammer shaped like a URL. The route was never the natural boundary of freshness. It was just the boundary Next could see.
+
+## The new unit
+
+Flip the switch and every route becomes dynamic by default, zero implicit caching:
+
+```ts
+// next.config.ts
+const nextConfig = { cacheComponents: true }
+```
+
+Then [`'use cache'`](https://nextjs.org/docs/app/api-reference/directives/use-cache) moves the freshness contract to the code that owns the data:
+
+```ts
+'use cache'
+
+import { cacheLife, cacheTag } from 'next/cache'
+
+export async function fetchPapers() {
+  cacheLife('max')
+  cacheTag('papers')
+  // fs reads, db calls, whatever
+}
+```
+
+That's real code from this site: papers are markdown on disk, immutable per deploy, so `max`. A pricing function next door declares `cacheLife('minutes')`. A personalized fragment declares nothing and stays dynamic. Each function signs its own freshness contract, and a route becomes what it composes.
+
+## Three dials where ISR had one
+
+`cacheLife` isn't a fancier `revalidate`. It's three numbers, per the [profile table](https://nextjs.org/docs/app/api-reference/functions/cacheLife):
+
+- `stale`: how long the *client router* serves its in-memory copy without asking the server. ISR never had this dial at all; the client cache was folklore you debugged.
+- `revalidate`: server-side background refresh. The docs describe it literally as ISR's behavior: serve stale, regenerate in the background.
+- `expire`: the hard ceiling. Past it, the next request blocks for fresh data instead of serving stale. ISR's closest equivalent was "delete the page and pray".
+
+The named profiles just fill the triple: `seconds` is 30s/1s/1m, `hours` is 5m/1h/1d, `max` is 5m/30d/1y. Two consequences people miss. First, `max` still background-revalidates monthly; "cache forever" isn't in the vocabulary, the ceiling is a year. Second, you can define your own profiles in `next.config.ts` and give the marketing site a `campaign` profile that dies on Friday:
+
+```ts
+const nextConfig = {
+  cacheComponents: true,
+  cacheLife: {
+    campaign: { stale: 300, revalidate: 3600, expire: 604800 },
+  },
+}
+```
+
+## What the cache key actually is
+
+The reason this is a *directive* and not a `cache(fn, keys)` wrapper is key derivation, and Vercel's [composable caching post](https://nextjs.org/blog/composable-caching) spells it out. The key is: build ID + a hash of the function's location and signature + **the serialized arguments and every closed-over value**. The compiler walks the closure, so a `userId` read from parent scope joins the cache key with zero annotation:
+
+```ts
+async function ProfilePanel({ userId }: { userId: string }) {
+  async function loadProfile() {
+    'use cache'
+    // userId is closed over: it joins the key automatically.
+    // Forgetting it is impossible; the compiler saw it.
+    return db.profile.find(userId)
+  }
+  return <Panel data={await loadProfile()} />
+}
+```
+
+A runtime wrapper can't see closures; hand-maintained key arrays drift from the code they describe; both bug classes just died. Serialization is React Flight, not JSON, which buys the elegant part: non-serializable values like `children` pass *through* as references, excluded from the key, restored at render. A cached layout can wrap dynamic children without busting its own entry:
+
+```tsx
+async function CachedShell({ children }: { children: React.ReactNode }) {
+  'use cache'
+  const nav = await fetchNav()          // cached with the shell
+  return <Frame nav={nav}>{children}</Frame> // children stay dynamic
+}
+```
+
+It's the `'use client'` donut pattern, reapplied to caching. Same donut, different filling.
+
+## Invalidation grew a philosophy
+
+Tags name data, not URLs, and Next 16 split invalidation by *who's asking*:
+
+```ts
+'use server'
+import { updateTag } from 'next/cache'
+
+export async function publishPaper(draft: Draft) {
+  await persist(draft)
+  updateTag('papers') // expires now: the redirect sees the new paper
+}
+```
+
+[`updateTag`](https://nextjs.org/docs/app/api-reference/functions/updateTag) is server-actions-only and gives read-your-writes: the mutation's own response renders fresh data. `revalidateTag(tag, 'max')` (the single-argument form is deprecated in [Next 16](https://nextjs.org/blog/next-16)) is the stale-while-revalidate cousin for route handlers and webhooks: it marks entries stale and regenerates lazily, so the *next* visitor may still catch the old page. `revalidateTag(tag, { expire: 0 })` is the webhook nuke. And `refresh()` re-fetches uncached dynamic data without touching the cache at all, the server sibling of `router.refresh()`. Four verbs where ISR had `res.revalidate(path)` and a prayer.
+
+Tag design matters more now that tags are the API. Two working rules. Tag by entity for surgical writes (`paper:${slug}`) *and* by collection for list pages (`papers`); a publish calls both. And don't tag what a deploy already invalidates: the build ID in the key means every deploy is a global flush for free, which is why this site's markdown needs no tag gymnastics at all.
+
+## The migration map
+
+For the road out of ISR, the correspondences are mechanical:
+
+- `export const revalidate = 60` on a page → `'use cache'` + `cacheLife('minutes')` on the functions that actually need it.
+- `getStaticProps`-era full-static → `'use cache'` at the top of `layout.tsx` and `page.tsx`.
+- `res.revalidate('/papers')` / `revalidatePath` → a tag and `revalidateTag(tag, profile)`.
+- "Bump revalidate to 1 so the CMS preview shows up" → `updateTag` in the publish action, actual read-your-writes.
+
+## The part that will bite someone
+
+Sharp edges, all by design. Reading request state (`cookies()`, `headers()`) inside a `'use cache'` scope throws immediately: an entry serving multiple users can't depend on one user's cookies. Uncached IO awaited outside a `<Suspense>` boundary fails the **build** with the [blocking-route error](https://nextjs.org/docs/messages/blocking-route), which is the whole model in one sentence: everything in a route is either cached (part of the prerendered shell) or explicitly given a fallback. And the subtle one: `Math.random()` or `Date.now()` inside a cached function isn't an error, it's *frozen*. You cached the randomness. Every visitor gets the same "random" hero image until revalidation. Entropy is input, and inputs belong outside the boundary.
+
+One operational honesty note: at runtime on serverless, the local flavor of `'use cache'` is an in-memory LRU per instance, so cross-request hits are a deployment detail; the durable wins are the prerendered shell and, where you need shared entries, the `'use cache: remote'` variant. `'use cache: private'` covers the per-user case. Three flavors, one directive.
+
+## The obituary
+
+ISR deserves a kind one: it made static sites dynamic enough, five years before the real primitive was ready. Under Cache Components it survives as the degenerate case, `'use cache'` at the top of a route, one entry per segment, one dial in use. But route-level caching was a compromise with the bundler, not a design. Freshness is a property of data, and the API finally says so. Stop thinking in pages. Think in functions with expiration dates.
