@@ -11,6 +11,7 @@ const STATIC_ROUTES = [
   '/papers',
   '/rewrite',
   '/serve',
+  '/talks',
   '/uses',
 ]
 

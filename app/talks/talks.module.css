@@ -1,0 +1,1248 @@
+.frame {
+  --den-floor: #050608;
+  --tv-plastic: #35383a;
+  --tv-plastic-light: #4a4d4f;
+  --tv-plastic-shadow: #202224;
+  --tv-shell-deep: #17191a;
+  --tv-shell-edge: #56595b;
+  --tv-bezel: #161819;
+  --tv-panel: #303335;
+  --tv-panel-deep: #1b1d1e;
+  --tv-silkscreen: rgb(220 222 216 / 72%);
+  --tv-led-on: #78fff1;
+  --tv-led-off: #4b2228;
+  --tv-osd: #c8fff6;
+  --tv-sticker: #e5dfc8;
+  --tv-sticker-stripe: #f062b7;
+  --tv-metal: #474943;
+  --tv-dur-press: 90ms;
+  --tv-radius-shell: clamp(0.8rem, 1.8vw, 1.35rem);
+
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+  padding: calc(var(--safe-area-top) + var(--space-4))
+    max(var(--space-page-inline), var(--safe-area-right))
+    calc(var(--safe-area-bottom) + var(--space-6))
+    max(var(--space-page-inline), var(--safe-area-left));
+  background:
+    linear-gradient(rgb(255 255 255 / 2%) 1px, transparent 1px) 0 0 / 100% 4px,
+    radial-gradient(120% 90% at 50% 8%, rgb(24 19 33 / 64%) 0%, transparent 62%),
+    radial-gradient(
+      90% 70% at 50% 100%,
+      rgb(240 98 183 / 8%) 0%,
+      transparent 65%
+    ),
+    var(--den-floor);
+}
+
+.rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-6);
+  margin-bottom: var(--space-4);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  color: var(--color-text-muted);
+}
+
+.rail::after {
+  content: "REC ●";
+  margin-left: auto;
+  color: rgb(240 98 183 / 78%);
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  animation: talks-rec 1.6s steps(2, jump-none) infinite;
+}
+
+@keyframes talks-rec {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.35;
+  }
+}
+
+.rail h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-text-strong);
+}
+
+.rail p {
+  margin: 0;
+}
+
+.backLink {
+  color: var(--color-signal-cyan);
+  text-decoration: none;
+}
+
+.backLink:focus-visible,
+.slides:focus-visible {
+  border-radius: 0.15rem;
+  outline: 2px solid var(--color-focus);
+  outline-offset: 0.28rem;
+}
+
+.den {
+  display: grid;
+  flex: 1;
+  grid-template:
+    "tv stack" minmax(0, 1fr)
+    "caption caption" auto
+    / minmax(0, 1fr) auto;
+  align-items: center;
+  justify-items: center;
+  align-content: center;
+  gap: var(--space-6) var(--space-8);
+}
+
+.stack {
+  grid-area: stack;
+}
+
+.caption {
+  grid-area: caption;
+}
+
+/* ── Chassis ─────────────────────────────────────────────── */
+
+.tv {
+  grid-area: tv;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  container: talks-tv / inline-size;
+  /* the third bound keeps screen + fascia + rail + caption inside 100dvh;
+     the 38rem floor keeps the wide fascia layout viable */
+  width: min(48rem, 100%, max(38rem, calc((100dvh - 24rem) * 4 / 3)));
+  min-width: 18rem;
+  grid-template:
+    "screen" auto
+    "fascia" auto
+    / minmax(0, 1fr);
+  gap: clamp(0.55rem, 1.2vw, 0.85rem);
+  padding: clamp(1.1rem, 2.7vw, 1.75rem) clamp(1.15rem, 4vw, 2.6rem)
+    clamp(0.85rem, 2vw, 1.3rem);
+  border: 1px solid #17191a;
+  border-radius: var(--tv-radius-shell) var(--tv-radius-shell) 0.75rem 0.75rem;
+  background:
+    radial-gradient(130% 32% at 50% 0%, rgb(255 255 255 / 13%), transparent 62%),
+    linear-gradient(
+      100deg,
+      transparent 0 72%,
+      rgb(0 0 0 / 8%) 72.2% 72.5%,
+      transparent 72.7%
+    ),
+    linear-gradient(
+      148deg,
+      var(--tv-plastic-light),
+      var(--tv-plastic) 45%,
+      var(--tv-plastic-shadow)
+    );
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 20%),
+    inset 0 -0.45rem 0.9rem rgb(0 0 0 / 28%),
+    inset 0 0 0 0.22rem rgb(0 0 0 / 12%),
+    0 0.45rem 0 #151718,
+    0 1.5rem 2.8rem rgb(0 0 0 / 58%);
+  transition: box-shadow var(--motion-route) var(--ease-signal);
+}
+
+.tv::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  top: 1.25rem;
+  right: -1.9rem;
+  bottom: 0.75rem;
+  left: 58%;
+  border: 1px solid #111314;
+  border-radius: 0 1.7rem 1rem 0;
+  background:
+    repeating-linear-gradient(0deg, #0c0e0f 0 0.16rem, #303334 0.16rem 0.3rem)
+    right 0.72rem top 28% / 0.78rem 44% no-repeat,
+    linear-gradient(90deg, rgb(255 255 255 / 5%), transparent 18%),
+    linear-gradient(145deg, #343738, #17191a 74%);
+  box-shadow: 1.1rem 1.2rem 2.2rem rgb(0 0 0 / 42%);
+  clip-path: polygon(0 0, 84% 3%, 100% 10%, 100% 91%, 84% 100%, 0 100%);
+}
+
+.tv::after {
+  content: "";
+  position: absolute;
+  z-index: -3;
+  right: 5%;
+  bottom: -1.25rem;
+  left: 5%;
+  height: 1.2rem;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 58%);
+  filter: blur(0.55rem);
+}
+
+.tv[data-power="on"] {
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 20%),
+    inset 0 -0.45rem 0.9rem rgb(0 0 0 / 28%),
+    inset 0 0 0 0.22rem rgb(0 0 0 / 12%),
+    0 0.45rem 0 #151718,
+    0 1.5rem 2.8rem rgb(0 0 0 / 58%),
+    0 0 3rem rgb(120 255 241 / 5%);
+}
+
+.fascia {
+  grid-area: fascia;
+  display: grid;
+  grid-template:
+    "deck" auto
+    "controls" auto
+    / minmax(0, 1fr);
+  gap: 0.35rem;
+  padding: clamp(0.35rem, 0.8vw, 0.55rem);
+  border: 1px solid #1a1c1d;
+  border-radius: 0.3rem 0.3rem 0.65rem 0.65rem;
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 2%) 1px, transparent 1px) 0 0 / 6px
+    100%,
+    linear-gradient(180deg, #3c3f41, #282a2c 64%, #1b1d1e);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 10%),
+    inset 0 -0.3rem 0.7rem rgb(0 0 0 / 38%),
+    0 1px 0 rgb(255 255 255 / 5%);
+}
+
+/* ── Tube ────────────────────────────────────────────────── */
+
+.screen {
+  position: relative;
+  z-index: 1;
+  grid-area: screen;
+  aspect-ratio: 4 / 3;
+  border: clamp(0.65rem, 1.7vw, 1.05rem) solid var(--tv-bezel);
+  border-radius: clamp(1rem, 2.4vw, 1.75rem) / clamp(0.85rem, 2vw, 1.45rem);
+  padding: clamp(0.22rem, 0.55vw, 0.38rem);
+  background:
+    radial-gradient(140% 25% at 50% 0%, #4b4e49, transparent 65%),
+    linear-gradient(180deg, #222524, #090b0b);
+  box-shadow:
+    inset 0 0.35rem 0.65rem rgb(0 0 0 / 88%),
+    inset 0 0 0 1px rgb(255 255 255 / 7%),
+    0 0 0 1px #5a5d5f,
+    0 0.25rem 0 #222425,
+    0 0.6rem 0.9rem rgb(0 0 0 / 48%);
+}
+
+.tube {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #050706;
+  border-radius: 7% / 9%;
+  background: radial-gradient(ellipse at center, #08110f, #010302 74%);
+  box-shadow:
+    inset 0 0 3.5rem rgb(0 0 0 / 88%),
+    inset 0 0 0.45rem rgb(0 0 0 / 95%),
+    0 1px 0 rgb(255 255 255 / 12%);
+  transform: translateZ(0);
+}
+
+/* the raster melts into the glass along the rounded corners, like a real
+   tube: a blurred dark ring that follows the border radius */
+.tube::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 2rem 0.55rem rgb(1 3 10 / 88%),
+    inset 0 0 0.5rem 0.1rem rgb(1 3 10 / 95%);
+  pointer-events: none;
+}
+
+.tube::before {
+  content: "";
+  position: absolute;
+  z-index: 6;
+  inset: 2.5% 4% 48% 8%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgb(236 255 250 / 12%),
+    transparent 64%
+  );
+  pointer-events: none;
+  transform: rotate(-2deg);
+}
+
+.film {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  filter: saturate(1.18) contrast(1.07) brightness(1.04);
+  opacity: 0;
+  transition: opacity var(--motion-micro) linear;
+}
+
+.screen[data-status="playing"] .film,
+.screen[data-status="paused"] .film {
+  opacity: 1;
+}
+
+.screen[data-status="paused"] .film {
+  filter: saturate(0.9) contrast(1.02) brightness(0.92);
+}
+
+/* analog snow, visible while the set warms up or hunts for tracking */
+.noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 10rem 10rem;
+  opacity: 0;
+  transition: opacity var(--motion-micro) linear;
+}
+
+.screen[data-status="warming"] .noise,
+.screen[data-status="switching"][data-burst="snow"] .noise,
+.tv[data-power="on"] .screen[data-status="inserting"] .noise {
+  opacity: 0.5;
+  animation: talks-snow 240ms steps(4) infinite;
+}
+
+/* SMPTE color bars: the deck sometimes cues a test card between tapes */
+.bars {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background:
+    linear-gradient(
+      90deg,
+      #c0c0c0 0 14.28%,
+      #c0c000 0 28.57%,
+      #00c0c0 0 42.85%,
+      #00c000 0 57.14%,
+      #c000c0 0 71.42%,
+      #c00000 0 85.71%,
+      #0000c0 0 100%
+    )
+    top / 100% 72% no-repeat,
+    linear-gradient(
+      90deg,
+      #0000c0 0 14.28%,
+      #131313 0 28.57%,
+      #c000c0 0 42.85%,
+      #131313 0 57.14%,
+      #00c0c0 0 71.42%,
+      #131313 0 85.71%,
+      #c0c0c0 0 100%
+    )
+    bottom / 100% 28% no-repeat;
+}
+
+.screen[data-status="switching"][data-burst="bars"] .bars {
+  opacity: 1;
+}
+
+@keyframes talks-snow {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 5rem 8rem;
+  }
+}
+
+/* power-on: a scanline collapses open into full raster */
+.bloom {
+  position: absolute;
+  inset: 0;
+  background: #eaffff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.screen[data-status="warming"] .bloom {
+  animation: talks-crt-on 1100ms var(--ease-signal) both;
+}
+
+@keyframes talks-crt-on {
+  0% {
+    opacity: 1;
+    transform: scale(0, 0.006);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1, 0.006);
+  }
+  60% {
+    opacity: 0.45;
+    transform: scale(1, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1, 1);
+  }
+}
+
+.phosphor {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 2px, rgb(0 0 0 / 16%) 2px 3px),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 60 60 / 3%) 0 1px,
+      rgb(60 255 120 / 3%) 1px 2px,
+      rgb(80 120 255 / 4%) 2px 3px
+    );
+  opacity: 0;
+  transition: opacity var(--motion-micro) linear;
+}
+
+.tv[data-power="on"] .phosphor {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tv[data-power="on"] .phosphor {
+    animation: talks-flicker 160ms steps(2) infinite;
+  }
+}
+
+@keyframes talks-flicker {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.86;
+  }
+}
+
+/* curved glass: corner shading plus a diagonal window reflection */
+.glass {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(115% 115% at 50% 48%, transparent 56%, rgb(0 0 0 / 58%) 94%),
+    linear-gradient(
+      118deg,
+      transparent 30%,
+      rgb(214 240 255 / 9%) 42%,
+      rgb(214 240 255 / 3%) 50%,
+      transparent 58%
+    ),
+    radial-gradient(
+      140% 60% at 50% -18%,
+      rgb(214 240 255 / 10%) 0%,
+      transparent 55%
+    );
+}
+
+.screenBadge {
+  position: absolute;
+  z-index: 8;
+  bottom: -0.78rem;
+  left: 50%;
+  padding: 0.12rem 0.45rem;
+  background: var(--tv-bezel);
+  color: rgb(235 236 229 / 78%);
+  font-family: var(--font-body);
+  font-size: clamp(0.52rem, 1vw, 0.68rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px #000;
+  transform: translateX(-50%);
+}
+
+.screenAction {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: transparent;
+}
+
+.screenAction:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 0.35rem;
+}
+
+/* ── OSD ─────────────────────────────────────────────────── */
+
+.osd {
+  position: absolute;
+  inset: 11% 12%;
+  display: grid;
+  grid-template:
+    "status channel" auto
+    "flash flash" 1fr
+    "counter ." auto
+    / 1fr auto;
+  font-family: var(--font-display);
+  font-size: clamp(0.75rem, 2.2vw, 1.25rem);
+  letter-spacing: 0.12em;
+  color: var(--tv-osd);
+  text-shadow:
+    0.08em 0.08em 0 rgb(2 20 8 / 92%),
+    0 0 0.5rem rgb(130 255 130 / 75%);
+  opacity: 0;
+  transition: opacity var(--motion-micro) linear;
+}
+
+.tv[data-power="on"] .osd {
+  opacity: 1;
+}
+
+.osdStatus {
+  grid-area: status;
+}
+
+.osdChannel {
+  grid-area: channel;
+}
+
+.osdCounter {
+  grid-area: counter;
+}
+
+.osdFlash {
+  grid-area: flash;
+  place-self: center;
+  animation: talks-osd-hold 1800ms steps(1) both;
+}
+
+@keyframes talks-osd-hold {
+  0%,
+  95% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ── Controls ────────────────────────────────────────────── */
+
+.controls {
+  grid-area: controls;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-inline-size: 0;
+  grid-template:
+    "header header header header" auto
+    "inputs transport volume power" auto
+    / minmax(8.5rem, 1.2fr) minmax(9rem, 1.4fr) minmax(6rem, 0.75fr) minmax(
+      3.6rem,
+      0.5fr
+    );
+  align-items: end;
+  gap: 0.45rem clamp(0.45rem, 1.2vw, 0.8rem);
+  margin: 0;
+  padding: clamp(0.5rem, 1.1vw, 0.75rem) clamp(0.35rem, 0.9vw, 0.65rem)
+    clamp(0.35rem, 0.8vw, 0.55rem);
+  border: 0;
+  border-top: 1px solid rgb(10 11 12 / 78%);
+  background: transparent;
+  box-shadow: inset 0 1px rgb(255 255 255 / 5%);
+}
+
+.controlHeader {
+  grid-area: header;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.3rem;
+  margin: 0;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgb(0 0 0 / 55%);
+  color: var(--tv-silkscreen);
+  font-family: var(--font-code);
+  font-size: 0.42rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-shadow: 0 1px 0 #000;
+}
+
+.controlHeader b {
+  color: rgb(220 222 216 / 72%);
+  font-size: 0.46rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.avInputs {
+  grid-area: inputs;
+  display: flex;
+  align-items: end;
+  justify-content: flex-start;
+  gap: clamp(0.45rem, 1vw, 0.75rem);
+  min-height: 2.6rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 999px;
+  background: rgb(8 9 10 / 42%);
+  box-shadow:
+    inset 0 2px 4px rgb(0 0 0 / 70%),
+    0 1px rgb(255 255 255 / 5%);
+}
+
+.avInputs span {
+  display: grid;
+  justify-items: center;
+  gap: 0.22rem;
+  color: var(--tv-silkscreen);
+  font: 500 0.38rem / 1 var(--font-code);
+  letter-spacing: 0.06em;
+}
+
+.avInputs i {
+  width: 0.9rem;
+  aspect-ratio: 1;
+  border: 0.16rem solid #0d0e0e;
+  border-radius: 50%;
+  background: #262829;
+  box-shadow:
+    inset 0 0 0 1px #727576,
+    0 1px rgb(255 255 255 / 9%);
+}
+
+.avInputs i[data-signal="video"] {
+  background: radial-gradient(circle, #080808 0 31%, #d8bd28 33% 53%, #111 55%);
+}
+
+.avInputs i[data-signal="audio"] {
+  background: radial-gradient(circle, #080808 0 31%, #ddd 33% 53%, #111 55%);
+}
+
+.avInputs i[data-signal="phones"] {
+  background: radial-gradient(circle, #060708 0 40%, #555 42% 54%, #111 56%);
+}
+
+.keyWrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.32rem;
+  min-width: 0;
+}
+
+.keyWrap[data-kind="power"] {
+  grid-area: power;
+  align-self: end;
+}
+
+.keyWrap small {
+  font-family: var(--font-code);
+  font-size: 0.4rem;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  color: var(--tv-silkscreen);
+  text-align: center;
+  text-shadow: 0 1px 0 #000;
+}
+
+.key {
+  display: inline-flex;
+  width: 100%;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #080909;
+  border-radius: 0.16rem 0.16rem 0.22rem 0.22rem;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(255 255 255 / 5%),
+      transparent 18% 82%,
+      rgb(0 0 0 / 18%)
+    ),
+    linear-gradient(180deg, #4b4e4f 0%, #303233 72%, #1d1f20 100%);
+  color: var(--tv-silkscreen);
+  font-family: var(--font-code);
+  font-size: clamp(0.56rem, 1vw, 0.72rem);
+  line-height: 1;
+  box-shadow:
+    inset 0 2px 0 rgb(255 255 255 / 17%),
+    inset 0 -2px 0 rgb(0 0 0 / 28%),
+    0 0.18rem 0 #121413,
+    0 0.28rem 0.32rem rgb(0 0 0 / 62%);
+  transform: translateY(0);
+  transition:
+    transform var(--tv-dur-press) ease-out,
+    box-shadow var(--tv-dur-press) ease-out,
+    color var(--tv-dur-press) linear;
+}
+
+.key:hover {
+  color: #fffcec;
+}
+
+.key:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 0.28rem;
+}
+
+.key:active {
+  transform: translateY(0.15rem);
+  box-shadow:
+    inset 0 3px 5px rgb(0 0 0 / 54%),
+    inset 0 -1px 0 rgb(255 255 255 / 7%),
+    0 0.04rem 0 #101211,
+    0 0.1rem 0.18rem rgb(0 0 0 / 72%);
+}
+
+.powerKey {
+  width: 3rem;
+  min-height: 3rem;
+  border-color: #0a0b0b;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 30%, #5c5f60, #292b2c 62%, #151617);
+  color: #d9dcda;
+  font-size: 0.82rem;
+  box-shadow:
+    inset 0 2px 1px rgb(255 255 255 / 14%),
+    inset 0 -2px 1px rgb(0 0 0 / 34%),
+    0 0.18rem 0 #0b0c0d,
+    0 0.3rem 0.35rem rgb(0 0 0 / 62%);
+}
+
+.led {
+  position: absolute;
+  top: 0.08rem;
+  right: 0.15rem;
+  width: 0.3rem;
+  height: 0.38rem;
+  border: 1px solid #181a19;
+  border-radius: 50%;
+  background: var(--tv-led-off);
+  box-shadow:
+    inset 0 0 2px rgb(0 0 0 / 60%),
+    0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.led[data-on="true"] {
+  background: var(--tv-led-on);
+  box-shadow:
+    0 0 0.46rem rgb(120 255 241 / 72%),
+    inset 0 0 2px rgb(255 255 255 / 65%);
+}
+
+.transport,
+.volumeKeys {
+  display: grid;
+  min-inline-size: 0;
+  gap: 0.34rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.transport {
+  grid-area: transport;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.volumeKeys {
+  grid-area: volume;
+  grid-template-columns: repeat(2, 2.75rem);
+  justify-content: center;
+}
+
+.volumeKeys .key {
+  width: 2.75rem;
+  border-radius: 50%;
+}
+
+/* ── Deck: VHS slot, grille, brand ───────────────────────── */
+
+.deck {
+  grid-area: deck;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template:
+    "brand brand" auto
+    "slot grille" auto
+    / minmax(0, 2.2fr) minmax(5.5rem, 0.72fr);
+  align-items: center;
+  gap: 0.3rem clamp(0.55rem, 1.3vw, 0.9rem);
+  padding: 0.25rem clamp(0.35rem, 0.9vw, 0.65rem) 0.45rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.slot {
+  grid-area: slot;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.35rem;
+  padding: 0.55rem 0.85rem;
+  border: 0.14rem solid #151718;
+  border-radius: 0.12rem;
+  background: linear-gradient(180deg, #030404 0%, #101211 100%);
+  box-shadow:
+    inset 0 3px 6px rgb(0 0 0 / 85%),
+    inset 0 0 0 1px rgb(255 255 255 / 4%),
+    0 1px rgb(255 255 255 / 7%);
+  overflow: hidden;
+}
+
+.flap {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid #1b1d1e;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(255 255 255 / 3%),
+      transparent 16% 84%,
+      rgb(0 0 0 / 13%)
+    ),
+    linear-gradient(180deg, #424547, #2b2d2f 72%, #202223);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 10%),
+    inset 0 -0.2rem 0.35rem rgb(0 0 0 / 28%);
+  color: rgb(218 220 215 / 72%);
+  font-style: normal;
+  text-shadow: 0 1px #000;
+  transition: transform var(--motion-micro) var(--ease-signal);
+}
+
+.flap::before {
+  content: "VHS";
+  padding: 0.1rem 0.22rem;
+  border: 1px solid currentColor;
+  font: 700 0.48rem / 1 var(--font-code);
+  letter-spacing: -0.04em;
+}
+
+.flap::after {
+  content: "QUICK START · DIGITAL AUTO TRACKING";
+  position: absolute;
+  bottom: 0.45rem;
+  font: 500 0.37rem / 1 var(--font-code);
+  letter-spacing: 0.08em;
+}
+
+.slot[data-open="true"] {
+  box-shadow:
+    inset 0 3px 6px rgb(0 0 0 / 85%),
+    inset 0 0 0 1px rgb(120 255 241 / 34%),
+    0 0 0.75rem rgb(120 255 241 / 13%);
+}
+
+.slot[data-open="true"] .flap {
+  transform: translateY(-105%);
+}
+
+.sticker {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  max-width: 100%;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.15rem;
+  background:
+    linear-gradient(
+      180deg,
+      var(--tv-sticker-stripe) 0 0.16rem,
+      transparent 0.16rem
+    ),
+    var(--tv-sticker);
+  color: #23262e;
+  font-family: var(--font-display);
+  font-size: clamp(0.55rem, 1.4vw, 0.75rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0;
+  transform: rotate(-0.6deg);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 55%);
+  transition: opacity var(--motion-micro) linear;
+}
+
+.slot[data-open="true"] .sticker {
+  opacity: 1;
+}
+
+.grille {
+  grid-area: grille;
+  height: 3.35rem;
+  border: 1px solid #151716;
+  border-radius: 0.12rem;
+  background:
+    radial-gradient(circle, #080a09 0 0.1rem, transparent 0.11rem) 0 0 / 0.42rem
+    0.42rem,
+    linear-gradient(180deg, #343733, #222421);
+  box-shadow:
+    inset 0 2px 4px rgb(0 0 0 / 72%),
+    0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.brand {
+  grid-area: brand;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin: 0;
+  font-family: var(--font-code);
+  font-size: 0.48rem;
+  letter-spacing: 0.18em;
+  color: var(--tv-silkscreen);
+  text-align: center;
+  text-shadow: 0 1px 0 #000;
+}
+
+.brand b {
+  color: #d5cfb9;
+  font-size: 0.45rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.brand span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Tape pile ───────────────────────────────────────────── */
+
+.stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-self: stretch;
+  gap: 0.3rem;
+  width: clamp(17rem, 26vw, 23rem);
+  padding-bottom: 0.6rem;
+}
+
+/* wall-mounted studio sign, lit while the set broadcasts */
+.onAir {
+  align-self: center;
+  margin-bottom: auto;
+  padding: 0.4rem 1.1rem 0.34rem;
+  border: 1px solid rgb(240 75 184 / 22%);
+  border-radius: 0.25rem;
+  background: rgb(5 6 8 / 72%);
+  color: rgb(240 75 184 / 30%);
+  font-family: var(--font-display);
+  font-size: var(--text-md);
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 5%);
+  transition:
+    color var(--motion-route) var(--ease-signal),
+    border-color var(--motion-route) var(--ease-signal),
+    box-shadow var(--motion-route) var(--ease-signal),
+    text-shadow var(--motion-route) var(--ease-signal);
+}
+
+.onAir[data-live="true"] {
+  border-color: rgb(255 79 216 / 55%);
+  color: var(--color-signal-pink-hot);
+  text-shadow: var(--shadow-neon-pink);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 5%),
+    0 0 1.4rem rgb(255 79 216 / 22%);
+}
+
+/* the table the pile rests on */
+.stack::after {
+  content: "";
+  position: absolute;
+  inset: auto -1.5rem 0;
+  height: 0.45rem;
+  background: linear-gradient(180deg, #2a2f3a, #0a0c10);
+  border-radius: 2px;
+  box-shadow: 0 6px 12px rgb(0 0 0 / 55%);
+}
+
+/* one VHS lying flat, spine out */
+.vhs {
+  position: relative;
+  display: flex;
+  height: 3.3rem;
+  align-items: center;
+  padding: 0.32rem 1.1rem 0.38rem 2.1rem;
+  border: 0;
+  border-radius: 0.3rem;
+  background:
+    radial-gradient(
+      0.3rem circle at 0.55rem 50%,
+      #454c5a 0 25%,
+      #04060a 40% 60%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, #31353f 0%, #1a1d24 18%, #14161c 70%, #07080a 100%),
+    #14161c;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 9%),
+    0 3px 5px rgb(0 0 0 / 55%);
+  transform: translateX(var(--drift)) rotate(var(--tip));
+  transition:
+    transform var(--motion-micro) var(--ease-signal),
+    filter var(--motion-micro) var(--ease-signal);
+}
+
+.vhs:hover,
+.vhs:focus-visible {
+  transform: translateX(calc(var(--drift) + 0.7rem)) rotate(var(--tip));
+  filter: brightness(1.18);
+}
+
+.vhs:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 0.25rem;
+}
+
+/* the loading-door notch on the shell */
+.notch {
+  position: absolute;
+  top: 26%;
+  left: 1.15rem;
+  width: 0.65rem;
+  height: 0.5rem;
+  background: #0a0c10;
+  border-radius: 1px;
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 80%);
+}
+
+.vhsLabel {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 2px;
+  background:
+    radial-gradient(70% 130% at 18% 0%, rgb(0 0 0 / 5%) 0%, transparent 55%),
+    radial-gradient(50% 120% at 88% 100%, rgb(0 0 0 / 6%) 0%, transparent 50%),
+    var(--tv-sticker);
+  color: #1d2027;
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 14%),
+    0 1px 2px rgb(0 0 0 / 45%);
+}
+
+.vhsCode,
+.vhsTag {
+  font-family: var(--font-code);
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.vhsTag {
+  color: rgb(29 32 39 / 72%);
+}
+
+.vhsTitle {
+  display: block;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  line-height: 1.1;
+  font-family: var(--font-display);
+  font-size: clamp(0.72rem, 1.4vw, 0.85rem);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* handwritten-label economics: shrink and wrap before cutting words off */
+.vhsName {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.vhsTitle small {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-code);
+  font-size: 0.5rem;
+  letter-spacing: 0.14em;
+  color: rgb(29 32 39 / 62%);
+}
+
+/* the hole in the pile: that tape is in the deck */
+.bay {
+  display: flex;
+  height: 3.3rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--color-line);
+  border-radius: 0.3rem;
+  color: var(--color-signal-cyan);
+  font-family: var(--font-code);
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  text-shadow: var(--shadow-neon);
+  transform: translateX(var(--drift)) rotate(var(--tip));
+}
+
+.ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  transform-origin: 0 0;
+  pointer-events: none;
+  will-change: transform, opacity, clip-path;
+  opacity: 0;
+  filter: drop-shadow(0 0.9rem 1.4rem rgb(0 0 0 / 65%));
+}
+
+.caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-2) var(--space-6);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  color: var(--color-text-muted);
+}
+
+.caption p {
+  margin: 0;
+}
+
+.slides {
+  color: var(--color-signal-cyan);
+  text-decoration: none;
+}
+
+.slides:hover {
+  color: var(--color-text-strong);
+}
+
+/* ── Small sets ──────────────────────────────────────────── */
+
+@media (max-width: 64rem) {
+  .den {
+    grid-template:
+      "tv" auto
+      "stack" auto
+      "caption" auto
+      / minmax(0, 1fr);
+  }
+
+  .stack {
+    width: min(23rem, 100%);
+  }
+}
+
+@media (max-width: 44rem) {
+  .tv {
+    width: 100%;
+  }
+}
+
+/* the set can be height-capped narrow on a wide viewport, so the fascia
+   collapses on chassis width, not viewport width */
+@container talks-tv (max-width: 31rem) {
+  .controls {
+    grid-template:
+      "header header" auto
+      "inputs power" auto
+      "transport transport" auto
+      "volume volume" auto
+      / minmax(0, 1fr) minmax(3.25rem, 0.22fr);
+    align-items: end;
+  }
+
+  .deck {
+    grid-template-columns: minmax(0, 1.7fr) minmax(5rem, 0.75fr);
+  }
+
+  .brand span {
+    letter-spacing: 0.09em;
+  }
+}
+
+@media (max-width: 28rem) {
+  .frame {
+    padding-right: max(var(--space-3), var(--safe-area-right));
+    padding-left: max(var(--space-3), var(--safe-area-left));
+  }
+
+  .tv {
+    min-width: 0;
+    padding: 1rem 0.85rem 1.1rem;
+  }
+
+  .tv::before {
+    right: -0.65rem;
+  }
+
+  .brand b {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tv,
+  .film,
+  .noise,
+  .phosphor,
+  .osd,
+  .flap,
+  .sticker,
+  .key,
+  .vhs {
+    transition-duration: 0.001ms;
+  }
+
+  .screen[data-status="warming"] .noise,
+  .screen[data-status="switching"][data-burst="snow"] .noise,
+  .tv[data-power="on"] .screen[data-status="inserting"] .noise,
+  .screen[data-status="warming"] .bloom,
+  .phosphor,
+  .osdFlash {
+    animation: none;
+  }
+
+  .screen[data-status="warming"] .bloom {
+    opacity: 0;
+  }
+
+  .vhs:hover,
+  .vhs:focus-visible {
+    transform: translateX(var(--drift)) rotate(var(--tip));
+  }
+}

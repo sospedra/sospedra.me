@@ -41,6 +41,12 @@ export const ROUTE_SIGNALS: RouteSignal[] = [
     sector: '04.4',
     status: 'Routes resolved',
   },
+  {
+    href: '/talks',
+    label: 'Broadcast',
+    sector: '06',
+    status: 'Tape loaded',
+  },
 ]
 
 const PAPER_SIGNAL: RouteSignal = {
