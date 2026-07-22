@@ -26,10 +26,17 @@ export default function VerificationStamp() {
   }, [discover])
 
   return (
-    <div ref={stampRef} className={css.stamp} data-verified={verified}>
+    <div
+      ref={stampRef}
+      className={css.stamp}
+      data-verified={verified}
+      aria-live='polite'
+    >
       <span>RS-19911201-11</span>
-      <strong>VERIFIED</strong>
-      <small>OPERATOR MAY PROCEED ▼</small>
+      <strong>{verified ? 'VERIFIED' : 'PENDING'}</strong>
+      <small>
+        {verified ? 'OPERATOR MAY PROCEED ▼' : 'AWAITING FINAL INSPECTION'}
+      </small>
     </div>
   )
 }

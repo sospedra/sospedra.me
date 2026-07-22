@@ -3,8 +3,12 @@ import { join } from 'node:path'
 
 export * from './paths-to-tree'
 
+const BUNDLED_EXTENSIONS = new Set(['tsx', 'ts', 'js', 'lock', 'css'])
+
 const filterStatic = (name: string) => {
-  return /^.*\.(?!tsx$|ts$|js$|lock|css$)[^.]+$/i.test(name)
+  if (name.startsWith('.')) return false
+  const extension = name.split('.').at(-1) ?? ''
+  return name.includes('.') && !BUNDLED_EXTENSIONS.has(extension.toLowerCase())
 }
 
 // build-time only: next.config.ts snapshots the result into static-files.json

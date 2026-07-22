@@ -23,7 +23,7 @@ export default function UsesPage() {
         status='Inventory ready'
         description={
           <p>
-            The tools used for different parts of my work, inspired by{' '}
+            The tools behind every part of my work. The idea comes from{' '}
             <External href='https://uses.tech'>uses.tech</External>. If you
             don't agree, <External href={TWITTER}>fight me</External>.
           </p>

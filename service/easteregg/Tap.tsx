@@ -3,7 +3,9 @@ import { useState } from 'react'
 import { useInterval } from './interval'
 import css from './tap.module.css'
 
-const Tap: React.FC<{ activate: () => void }> = (props) => {
+const Tap: React.FC<{ activate: (exitFullscreen?: boolean) => void }> = (
+  props,
+) => {
   const [count, setCount] = useState(13)
 
   useInterval(() => {
@@ -12,6 +14,22 @@ const Tap: React.FC<{ activate: () => void }> = (props) => {
     }
   }, 750)
 
+  const launch = () => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate([125, 75, 275])
+    }
+
+    if (!document.fullscreenEnabled || document.fullscreenElement) {
+      props.activate(false)
+      return
+    }
+
+    document.documentElement
+      .requestFullscreen()
+      .then(() => props.activate(true))
+      .catch(() => props.activate(false))
+  }
+
   return (
     <button
       type='button'
@@ -19,17 +37,9 @@ const Tap: React.FC<{ activate: () => void }> = (props) => {
       onClick={() => {
         if (count > 1) {
           setCount(count - 1)
-        } else {
-          if (document.fullscreenEnabled) {
-            // best effort: a denied fullscreen must not block activation
-            document.documentElement.requestFullscreen().catch(() => {})
-          }
-          if ('vibrate' in navigator) {
-            navigator.vibrate([125, 75, 275])
-          }
-
-          props.activate()
+          return
         }
+        launch()
       }}
     >
       <div className={css.count}>

@@ -1,5 +1,6 @@
 import cn from 'clsx'
 import type React from 'react'
+import StageMain from 'service/transition/Stage'
 
 type ShellProps = {
   canonical: string
@@ -7,12 +8,18 @@ type ShellProps = {
   description?: string
   image?: string
   shellClassName?: string
+  stage?: boolean
   title?: string
   keywords?: string[]
   children: React.ReactNode
 }
 
-const Shell = ({ children, className, shellClassName = '' }: ShellProps) => {
+const Shell = ({
+  children,
+  className,
+  shellClassName = '',
+  stage = false,
+}: ShellProps) => {
   return (
     <>
       <a className='skip-link' href='#main-content'>
@@ -26,13 +33,17 @@ const Shell = ({ children, className, shellClassName = '' }: ShellProps) => {
           shellClassName,
         )}
       >
-        <main
-          id='main-content'
-          tabIndex={-1}
-          className={cn('site-main', className)}
-        >
-          {children}
-        </main>
+        {stage ? (
+          <StageMain className={className}>{children}</StageMain>
+        ) : (
+          <main
+            id='main-content'
+            tabIndex={-1}
+            className={cn('site-main', className)}
+          >
+            {children}
+          </main>
+        )}
       </div>
     </>
   )

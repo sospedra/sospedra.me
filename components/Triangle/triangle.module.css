@@ -4,7 +4,7 @@
   @apply absolute z-50 h-64;
   --frame-width: 0.25rem;
   --border-extra: 0.1rem;
-  --frame-primary: var(--color-home-neon, #ff4fd8);
+  --frame-primary: var(--color-signal-cyan, #6df7ea);
   --frame-secondary: var(--color-signal-cyan, #6df7ea);
   transform: rotate(68deg);
   width: 19rem;
@@ -31,8 +31,8 @@
   background-size: 50% 100%;
   background-origin: border-box;
   background-repeat: no-repeat;
-  filter: drop-shadow(0 0 0.2rem rgb(255 79 216 / 70%))
-    drop-shadow(0 0 0.6rem rgb(109 247 234 / 36%));
+  filter: drop-shadow(0 0 0.2rem rgb(109 247 234 / 74%))
+    drop-shadow(0 0 0.7rem rgb(0 168 149 / 46%));
 }
 
 .blur {

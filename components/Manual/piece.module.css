@@ -1,8 +1,49 @@
-@reference "../../service/style/global.css";
+.item {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 13rem;
+  flex: 1 1 14rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.5rem, 2vw, 1rem);
+  border: 1px solid rgb(32 35 30 / 42%);
+  background: rgb(255 255 255 / 10%);
+}
+
+.illustration {
+  position: relative;
+  width: 100%;
+  min-height: 10rem;
+  flex: 1;
+}
+
+/* Cap the drawing, not the box: parts stay small on the big inventory plate. */
+.illustration img {
+  position: absolute;
+  inset: 0;
+  max-width: 60%;
+  max-height: 8.5rem;
+  margin: auto;
+}
 
 .piece {
-  @apply absolute;
-  bottom: 1rem;
-  right: -1rem;
-  writing-mode: vertical-lr;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.15rem 0.25rem;
+  border: 1px solid currentColor;
+  color: var(--manual-ink-muted, #57594d);
+  font: 700 0.58rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.08em;
+}
+
+.quantity {
+  align-self: stretch;
+  padding-top: 0.35rem;
+  border-top: 2px solid var(--manual-ink, #20231e);
+  font: 800 0.72rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.14em;
+  text-align: right;
 }

@@ -9,8 +9,6 @@ import { ANOMALIES, useSystem } from 'service/system'
 import { useTheme } from 'service/theme'
 import css from './system-panel.module.css'
 
-const FIREWORKS_PATH = '/papers/scroll-60fps-animation'
-
 export default function SystemPanel() {
   const pathname = usePathname() || '/'
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -44,9 +42,6 @@ export default function SystemPanel() {
     dialog.addEventListener('click', onClick)
     return () => dialog.removeEventListener('click', onClick)
   }, [close])
-
-  // The user asked for the Fireworks paper to remain entirely undisturbed.
-  if (pathname === FIREWORKS_PATH) return null
 
   return (
     <>
@@ -95,7 +90,7 @@ export default function SystemPanel() {
               <h3 id='system-route-title'>Route map</h3>
               <nav aria-label='Midnight I/O sectors'>
                 <ul className={css.routes}>
-                  {ROUTE_SIGNALS.slice(0, 8).map((route) => (
+                  {ROUTE_SIGNALS.map((route) => (
                     <li key={route.href} data-current={route.href === pathname}>
                       <span>{route.sector}</span>
                       <Link url={route.href} onClick={close}>
@@ -200,7 +195,7 @@ export default function SystemPanel() {
                   <dt>
                     <kbd>j / k</kbd>
                   </dt>
-                  <dd>Move cursor</dd>
+                  <dd>Scroll page</dd>
                 </div>
                 <div>
                   <dt>

@@ -19,7 +19,7 @@
   --color-signal-pink-hot: #ff4fd8;
   --color-signal-pink-deep: #8d0d72;
   --color-midnight-purple: #180a38;
-  --color-home-neon: var(--color-signal-pink-hot);
+  --color-home-neon: var(--color-signal-cyan);
   --color-signal-yellow: #ffea00;
   --color-focus: var(--color-signal-yellow);
 
@@ -198,6 +198,70 @@ html[data-scroll-behavior][data-scroll-behavior] .site-main:focus {
   min-width: 44px;
   min-height: 44px;
   align-items: center;
+}
+
+/* Inline reading links get a short chromatic signal without leaking into
+   navigation, headings, card titles, or media. */
+html[data-scroll-behavior][data-scroll-behavior]
+:where(
+  .prose-link,
+  .site-main :where(p, blockquote, dd, td) a,
+  .site-main article li a
+):not(:where(nav, h1, h2, h3, h4, h5, h6, footer) a):not(
+  :has(img, [data-paper-media])
+) {
+  color: var(--color-signal-cyan);
+  text-decoration: none;
+  transition:
+    color var(--motion-micro) var(--ease-signal),
+    text-shadow var(--motion-micro) var(--ease-signal);
+}
+
+html[data-scroll-behavior][data-scroll-behavior]
+  :where(
+    .prose-link,
+    .site-main :where(p, blockquote, dd, td) a,
+    .site-main article li a
+  ):not(:where(nav, h1, h2, h3, h4, h5, h6, footer) a):not(
+    :has(img, [data-paper-media])
+  ):where(:hover, :focus-visible) {
+  color: var(--color-text-strong);
+  text-decoration: none;
+  text-shadow:
+    -0.075em 0 var(--color-signal-pink),
+    0.075em 0 var(--color-signal-cyan);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html[data-scroll-behavior][data-scroll-behavior]
+    :where(
+      .prose-link,
+      .site-main :where(p, blockquote, dd, td) a,
+      .site-main article li a
+    ):not(:where(nav, h1, h2, h3, h4, h5, h6, footer) a):not(
+      :has(img, [data-paper-media])
+    ):hover {
+    animation: prose-link-signal 420ms steps(2, end) both;
+  }
+}
+
+@keyframes prose-link-signal {
+  0%,
+  100% {
+    text-shadow:
+      -0.075em 0 var(--color-signal-pink),
+      0.075em 0 var(--color-signal-cyan);
+  }
+  28% {
+    text-shadow:
+      0.12em 0 var(--color-signal-pink),
+      -0.04em 0 var(--color-signal-cyan);
+  }
+  58% {
+    text-shadow:
+      -0.03em 0 var(--color-signal-pink),
+      0.13em 0 var(--color-signal-cyan);
+  }
 }
 
 .safe-area-inline {

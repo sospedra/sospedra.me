@@ -7,12 +7,12 @@ const Piece: React.FC<{
   children: React.ReactNode
 }> = ({ children, quantity, id }) => {
   return (
-    <div className='flex flex-col items-center justify-center flex-1 h-full pr-4 md:p-4'>
-      <div className='relative h-full'>
+    <div className={css.item}>
+      <div className={css.illustration}>
         {children}
         <div className={css.piece}>{id}</div>
       </div>
-      <span className='font-bold'>{quantity}x</span>
+      <span className={css.quantity}>{quantity}x</span>
     </div>
   )
 }

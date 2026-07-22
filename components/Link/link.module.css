@@ -4,11 +4,13 @@
   @apply inline-flex;
   min-height: 44px;
   align-items: center;
+  /* reserve the underline so hover doesn't shift the layout below */
+  border-bottom: 1px dashed transparent;
   color: var(--color-signal-yellow);
 }
 
 .back:hover {
-  border-bottom: 1px dashed var(--color-signal-yellow);
+  border-bottom-color: var(--color-signal-yellow);
 }
 
 .back img {

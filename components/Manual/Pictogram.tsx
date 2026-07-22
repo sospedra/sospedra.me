@@ -1,5 +1,6 @@
 import cn from 'clsx'
 import type React from 'react'
+import css from './pictogram.module.css'
 
 const Pictogram: React.FC<{
   left: React.ReactNode
@@ -8,20 +9,15 @@ const Pictogram: React.FC<{
   willHide?: boolean
 }> = ({ left, right, style = {}, willHide = false }) => {
   return (
-    <div
-      className='flex flex-row items-center w-full h-full border border-current rounded-lg md:p-4'
-      style={style}
-    >
+    <div className={css.pictogram} style={style}>
       <div
-        className={cn('flex items-center justify-center flex-1 h-full', {
-          'hidden sm:block': willHide,
+        className={cn(css.panel, {
+          [css.optional]: willHide,
         })}
       >
         {left}
       </div>
-      <div className='flex items-center justify-center flex-1 h-full'>
-        {right}
-      </div>
+      <div className={css.panel}>{right}</div>
     </div>
   )
 }

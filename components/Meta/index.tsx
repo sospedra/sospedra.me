@@ -20,10 +20,14 @@ const Reading: React.FC<{ minutes: number }> = (props) => {
   const slices = Math.max(Math.round(props.minutes / 3), 1)
   const pizza: IconName[] =
     slices > 5 ? ['pizza-box.png'] : Array(slices).fill('pizza.svg')
-  const title =
-    slices > 5 ? 'More than 30 minutes long' : `${slices * 5} minutes long`
+  const label = `${Math.max(1, Math.round(props.minutes))} minute read`
   return (
-    <div className='inline-flex flex-wrap' title={title}>
+    <div
+      className='inline-flex flex-wrap'
+      role='img'
+      title={label}
+      aria-label={label}
+    >
       {pizza.map((name, idx) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: identical static slices
         <Icon name={name} key={idx} />
@@ -40,11 +44,11 @@ const Meta: React.FC<{
 }> = (props) => {
   return (
     <div>
-      {props.update && (
+      {props.update ? (
         <p>
           Last update on <Time time={props.update} />
         </p>
-      )}
+      ) : null}
       <div className={cn('flex items-center font-bold', props.className)}>
         <Time time={props.time} />
         <span className='mx-2 mt-1 text-xs opacity-75'>▼</span>

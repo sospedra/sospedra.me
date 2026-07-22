@@ -1,5 +1,6 @@
 'use client'
 
+import cn from 'clsx'
 import Icon from 'components/Icon'
 import type { Route } from 'next'
 import React from 'react'
@@ -12,6 +13,7 @@ const Link = React.forwardRef(function Link(
     url: Route
     children: React.ReactNode
     instant?: boolean
+    prefetchOnFocus?: boolean
   },
   ref?: React.Ref<HTMLAnchorElement>,
 ) {
@@ -25,6 +27,7 @@ const Link = React.forwardRef(function Link(
     onTouchStart,
     target,
     url,
+    prefetchOnFocus = true,
     ...nativeProps
   } = props
   const transition = useTransition()
@@ -39,7 +42,7 @@ const Link = React.forwardRef(function Link(
       download={download}
       onFocus={(event) => {
         onFocus?.(event)
-        prefetch()
+        if (prefetchOnFocus) prefetch()
       }}
       onMouseEnter={(event) => {
         onMouseEnter?.(event)
@@ -78,7 +81,7 @@ export const LinkBack: React.FC<{
   children: React.ReactNode
 }> = (props) => {
   return (
-    <span className={[css.back, props.className].filter(Boolean).join(' ')}>
+    <span className={cn(css.back, props.className)}>
       <Icon name='back.svg' />
       <span>{props.children}</span>
     </span>

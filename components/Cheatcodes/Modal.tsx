@@ -11,28 +11,28 @@ type Props = {
 const Message: React.FC = () => {
   const isTouchScreen = matchScreen(queryTouchScreen)
 
+  if (isTouchScreen && hasMotion()) {
+    return (
+      <p>
+        <kbd>⌇⌇⌇</kbd> Shake the phone!
+      </p>
+    )
+  }
+
   if (isTouchScreen) {
-    if (hasMotion()) {
-      return (
-        <p>
-          <kbd>⌇⌇⌇</kbd> Shake the phone!
-        </p>
-      )
-    } else {
-      return (
-        <p>
-          Cheatcodes are available only on keyboard controlled devices and
-          devices with motion support.
-        </p>
-      )
-    }
+    return (
+      <p>
+        Cheatcodes need a keyboard or a motion sensor. This device has neither.
+        Sorry!
+      </p>
+    )
   }
 
   return (
     <>
       <p>
-        This website fully support keyboard-base navigation. These are{' '}
-        <b>some useful</b> hotkeys but there are more. Discover them!
+        This website fully supports keyboard navigation. These are{' '}
+        <b>some useful</b> hotkeys. There are more. Discover them!
       </p>
       <ul>
         <li>

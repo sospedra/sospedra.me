@@ -19,7 +19,7 @@ export default function RewritesPage() {
         title='Link shortener'
         sector='04.4'
         status='Routes resolved'
-        description={`${REWRITE_DESC}. Activate a code to copy its short URL.`}
+        description={`${REWRITE_DESC}. Activate a code and copy its short URL.`}
       />
 
       <section className={css.terminal} aria-labelledby='route-index-title'>

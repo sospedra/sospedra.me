@@ -1,8 +1,7 @@
-import cn from 'clsx'
 import Link, { LinkBack } from 'components/Link'
 import Page from 'components/Manual/Page'
-import Pictogram from 'components/Manual/Pictogram'
 import Piece from 'components/Manual/Piece'
+import SetupDiagram from 'components/Manual/SetupDiagram'
 import Step from 'components/Manual/Step'
 import VerificationStamp from 'components/Manual/VerificationStamp'
 import Shell from 'components/Shell'
@@ -31,102 +30,247 @@ export default function ManualPage() {
       {/* react 19 hoists resource links, next/head dies with the app router */}
       <link rel='preload' as='image' href='/sospedra.png' />
 
-      <Page className='justify-start p-4 pt-12'>
-        <h1 className={css.title} aria-label='Sospedra'>
-          <span>SOS</span>
-          <span>PE</span>
-          <span>DRA</span>
-        </h1>
-        <div className={css.bust}>
-          <SpriteBust />
+      <Page className={css.cover} wear='stapled'>
+        <header className={css.documentHeader}>
+          <p>
+            <span>Personal interface unit</span>
+            <strong>Operating &amp; service manual</strong>
+          </p>
+          <p>
+            <span>Document</span>
+            <strong>RS-19911201-11</strong>
+          </p>
+        </header>
+
+        <div className={css.coverGrid}>
+          <div className={css.coverCopy}>
+            <p className={css.eyebrow}>MODEL RS–91 / HUMAN, TYPE 01</p>
+            <h1 className={css.title} aria-label='Sospedra'>
+              <span>SOS</span>
+              <span>PE</span>
+              <span>DRA</span>
+            </h1>
+            <p className={css.coverSummary}>
+              Instructions for installation, normal operation, communication,
+              maintenance and fault diagnosis. Read before first contact. Retain
+              for future reference.
+            </p>
+            <dl className={css.specification}>
+              <div>
+                <dt>Accepted input</dt>
+                <dd>Context + evidence</dd>
+              </div>
+              <div>
+                <dt>Nominal output</dt>
+                <dd>Software + opinions</dd>
+              </div>
+              <div>
+                <dt>Communications</dt>
+                <dd>Async / distributed</dd>
+              </div>
+            </dl>
+          </div>
+
+          <figure className={css.coverFigure}>
+            <div className={css.bust}>
+              <SpriteBust />
+            </div>
+            <span className={css.calloutA}>A1 / OPERATOR</span>
+            <span className={css.calloutB}>CAL. 1991–12</span>
+            <figcaption>FIG. 00 — FRONT ELEVATION / NOT TO SCALE</figcaption>
+          </figure>
         </div>
-        <img alt='sospedra' src='/sospedra.png' className={css.logo} />
+
+        <div className={css.calibrationStrip}>
+          <div>
+            <span>CALIBRATION TRACE</span>
+            <strong>CH–01 / 0.8 V</strong>
+          </div>
+          <svg
+            className={css.trace}
+            viewBox='0 0 480 72'
+            role='img'
+            aria-label='Stable calibration waveform'
+          >
+            <path d='M0 36h42l12-24 22 48 19-38 18 28 22-14h42l13-25 21 50 22-44 23 38 18-19h43l14-26 19 52 22-45 22 39 18-20h48' />
+          </svg>
+          <img
+            alt='Sospedra inspection mark'
+            src='/sospedra.png'
+            className={css.logo}
+          />
+        </div>
       </Page>
 
-      <Page>
-        <div className={cn(css.griddy, 'grid-rows-3')}>
-          <div className='flex flex-row row-span-1'>
-            <SpriteManual name='support' />
-            <Pictogram
-              willHide
-              left={<SpriteManual name='gameboy' className='p-8' />}
-              right={<SpriteManual name='handshake' className='p-8' />}
-            />
+      <Page className={css.safetyPage} wear='stained'>
+        <header className={css.sectionHeader}>
+          <span>SECTION 01</span>
+          <div>
+            <h2>Precautions &amp; initial setup</h2>
+            <p>Read all notices before placing the unit in service.</p>
           </div>
-          <div className='row-span-1'>
-            <Pictogram
-              left={<SpriteManual name='lost' />}
-              right={
-                <Link url='/' className={css.home}>
-                  <SpriteManual name='home' />
-                </Link>
-              }
+        </header>
+
+        <div className={css.setupIllustrations}>
+          <div className={css.commissionPlate}>
+            <SetupDiagram
+              variant='commission'
+              number='01'
+              title='Commissioning the unit'
+              caption='Insert the objective, connect context and verify the ethical interlock.'
             />
+            <span className={css.penStart} aria-hidden='true'>
+              start here ↘
+            </span>
           </div>
-          <div className='flex flex-row row-span-1'>
-            <div className='flex-1'>
-              <p>
-                <b>WARNING</b>
-              </p>
-              <p>
-                Serious or fatal emotion injuries can occur from not reading
-                this document in advance. To prevent this situation you must
-                acknowledge what's on the manual with the included attached pun
-                jokes.
-              </p>
-            </div>
-            <div className='flex-1 hidden pl-2 sm:block'>
-              <p>
-                <b>ATENCIÓ</b>
-              </p>
-              <p>
-                Risc de lesions emocionals series o fatals és poden produir si
-                no es llegeix aquest document. Per prevenir aquesta situación
-                vosté ha de comprendre allò qué está escrit en el manual.
-                Incloses les bromes dolentes.
-              </p>
-            </div>
-            <div className='flex-1 hidden pl-2 lg:block'>
-              <p>
-                <b>ADVERTENCIA</b>
-              </p>
-              <p>
-                Pueden producirse lesiones emocionales graves o fatales si no
-                lee este documento. Para evitar dicha situación, debe entenderse
-                lo que se encuentra escrito en el manual. Incluidas las bromas
-                adjuntas.
-              </p>
-            </div>
+          <div className={css.secondaryDiagrams}>
+            <SetupDiagram
+              variant='channel'
+              number='02'
+              title='Connect the channel'
+              caption='Transmit asynchronously unless latency blocks the work.'
+            />
+            <Link
+              url='/'
+              className={css.homeDiagram}
+              aria-label='Follow the recovery diagram and return home'
+            >
+              <SetupDiagram
+                variant='recovery'
+                number='03'
+                title='Recover to home'
+                caption='If the route fails, return to HOME and re-establish the objective.'
+              />
+            </Link>
+          </div>
+        </div>
+
+        <div className={css.commissioningGrid}>
+          <section>
+            <h3>1.1 Before commissioning</h3>
+            <ol>
+              <li>
+                Remove assumptions, stale requirements and meeting residue.
+              </li>
+              <li>
+                Supply one clear objective and the evidence needed to act.
+              </li>
+              <li>
+                Select <b>SPEED</b> or <b>PRECISION</b>. Do not force both
+                without reducing scope.
+              </li>
+              <li>
+                Confirm the honour interlock is engaged before applying
+                workload.
+              </li>
+            </ol>
+          </section>
+          <aside className={css.serviceBulletin}>
+            <p>
+              <strong>FACTORY SERVICE BULLETIN 04-B</strong>
+              <span>AUTHORIZED PERSONNEL ONLY</span>
+            </p>
+            <p>
+              Do not disclose the{' '}
+              <span
+                className={css.redacted}
+                role='img'
+                aria-label='redacted service information'
+              >
+                secondary coffee protocol
+              </span>{' '}
+              or bypass code{' '}
+              <span
+                className={css.redacted}
+                role='img'
+                aria-label='redacted service information'
+              >
+                JUPITER FORTY
+              </span>
+              .
+            </p>
+          </aside>
+        </div>
+
+        <div className={css.warningGrid}>
+          <div>
+            <p className={css.warningTitle}>
+              <b>WARNING</b>
+              <span>EN / 01</span>
+            </p>
+            <p>
+              Serious or fatal emotion injuries can occur from not reading this
+              document in advance. To prevent this situation you must
+              acknowledge what's on the manual with the included attached pun
+              jokes.
+            </p>
+          </div>
+          <div lang='ca'>
+            <p className={css.warningTitle}>
+              <b>ATENCIÓ</b>
+              <span>CA / 02</span>
+            </p>
+            <p>
+              Risc de lesions emocionals series o fatals és poden produir si no
+              es llegeix aquest document. Per prevenir aquesta situación vosté
+              ha de comprendre allò qué está escrit en el manual. Incloses les
+              bromes dolentes.
+            </p>
+          </div>
+          <div lang='es'>
+            <p className={css.warningTitle}>
+              <b>ADVERTENCIA</b>
+              <span>ES / 03</span>
+            </p>
+            <p>
+              Pueden producirse lesiones emocionales graves o fatales si no lee
+              este documento. Para evitar dicha situación, debe entenderse lo
+              que se encuentra escrito en el manual. Incluidas las bromas
+              adjuntas.
+            </p>
           </div>
         </div>
       </Page>
 
-      <Page>
-        <div className={cn(css.griddy, 'grid-rows-4')}>
-          <div className={cn(css.center, 'row-span-1')}>
-            <Piece quantity={19} id={101811}>
-              <SpriteManual name='demons' />
-            </Piece>
-            <Piece quantity={91} id={101933}>
-              <SpriteManual name='triangle' />
-            </Piece>
+      <Page className={css.partsPage} wear='folded'>
+        <header className={css.sectionHeader}>
+          <span>SECTION 02</span>
+          <div>
+            <h2>Illustrated component inventory</h2>
+            <p>Confirm component count before placing the unit in service.</p>
           </div>
-          <div className={cn(css.center, 'row-span-1')}>
-            <Piece quantity={12} id={102053}>
-              <SpriteManual name='insert' />
-            </Piece>
-            <Piece quantity={1} id={101697}>
-              <SpriteManual name='mobius' />
-            </Piece>
-          </div>
-          <div className={cn(css.center, 'row-span-2 p-8')}>
+        </header>
+        <div className={css.partsGrid}>
+          <Piece quantity={19} id={101811}>
+            <SpriteManual name='demons' />
+          </Piece>
+          <Piece quantity={91} id={101933}>
+            <SpriteManual name='triangle' />
+          </Piece>
+          <Piece quantity={12} id={102053}>
+            <SpriteManual name='insert' />
+          </Piece>
+          <Piece quantity={1} id={101697}>
+            <SpriteManual name='mobius' />
+            <span className={css.penTally} aria-hidden='true'>
+              only one??
+            </span>
+          </Piece>
+          <div className={css.widePart}>
             <Piece quantity={11} id={102287}>
               <SpriteManual name='count' />
             </Piece>
           </div>
         </div>
       </Page>
-      <Page className='h-auto'>
+      <Page className={css.procedurePage} wear='creased'>
+        <header className={css.sectionHeader}>
+          <span>SECTION 03</span>
+          <div>
+            <h2>Operating principles</h2>
+            <p>How the unit defines success and communicates.</p>
+          </div>
+        </header>
         <Step number={1} title='How I view success'>
           <p>
             Success isn't vertical. Nor a straight path. Resiliency is the real
@@ -142,8 +286,8 @@ export default function ManualPage() {
             world. Every minute counts, make it valuable.
           </p>
           <p>
-            Finally, there's no winning without honour. The rule is simple: if
-            it's not right, don't do it.
+            Finally, there's no winning without honour. The rule is simple:{' '}
+            <span className={css.penMark}>if it's not right, don't do it</span>.
           </p>
         </Step>
         <Step number={2} title='How I communicate'>
@@ -160,17 +304,29 @@ export default function ManualPage() {
           <p>
             Async and distributed over everything else. Does this need to be a
             meeting? Probably could be an email. Or a slack message. Rule of
-            thumb: think about me as if I'm working from Jupiter thus real-time
-            comms don't work.
+            thumb: think about me as if{' '}
+            <span className={css.textHighlight}>I'm working from Jupiter</span>{' '}
+            thus real-time comms don't work.
           </p>
         </Step>
+        <span className={css.penData} aria-hidden='true'>
+          async or nothing!
+        </span>
       </Page>
-      <Page className='h-auto'>
+      <Page className={css.procedurePage} wear='stained'>
+        <header className={css.sectionHeader}>
+          <span>SECTION 04</span>
+          <div>
+            <h2>Operating characteristics</h2>
+            <p>Normal behaviour of the unit. Not a malfunction.</p>
+          </div>
+        </header>
         <Step number={3} title='Things I do that may annoy you'>
           <p>
             I can be too harsh sometimes. Well, not really. I can sound too
             harsh. It's probably a side-effect caused by the async comms. It
-            takes a lot for me to get angry, so don't worry about it.
+            takes a lot for me to get angry, so{' '}
+            <span className={css.penMark}>don't worry about it</span>.
           </p>
           <p>
             I don't want to listen to opinions (if I don't ask for them). I'm
@@ -181,11 +337,15 @@ export default function ManualPage() {
             I have a dark sense of humour. If I offend you I'm sorry. Really I
             am. Please, let me know and I'll adapt my jokes to you.
           </p>
+          <p className={css.cautionLine}>
+            <b>CAUTION —</b> Confirm tone before diagnosing hostility.
+          </p>
         </Step>
         <Step number={4} title='What gains and loses my trust'>
           <p>
             Loyalty is the best. Lying is the worst. I can understand almost
-            anything. Just try to explain it. Don't lie to me.
+            anything. Just try to explain it.{' '}
+            <span className={css.textHighlight}>Don't lie to me.</span>
           </p>
           <p>
             Now, regarding day-to-day work. Taking ownership of your task is a
@@ -198,8 +358,18 @@ export default function ManualPage() {
             something that goes bad, just be transparent. No big deal.
           </p>
         </Step>
+        <span className={css.penScope} aria-hidden='true'>
+          scope ≠ weekend
+        </span>
       </Page>
-      <Page className='h-auto'>
+      <Page className={css.procedurePage} wear='folded'>
+        <header className={css.sectionHeader}>
+          <span>SECTION 05</span>
+          <div>
+            <h2>Strengths &amp; grow areas</h2>
+            <p>Rated capabilities and areas under active development.</p>
+          </div>
+        </header>
         <Step number={5} title='My strengths'>
           <p>
             I'm thoughtful. I'm strategic and I like to plan. Having a good
@@ -212,15 +382,17 @@ export default function ManualPage() {
           </p>
           <p>
             I understand. Understand other problems and needs. Understand
-            business operations and the market. Understand the context. This
-            life is about adapting.
+            business operations and the market. Understand the context.{' '}
+            <span className={css.textHighlight}>
+              This life is about adapting.
+            </span>
           </p>
         </Step>
         <Step number={6} title='My grow areas'>
           <p>
             More efficiency. I don't think I'm inefficient. But sometimes I take
             too many things in my basket. Thus, everything slows down a little
-            each time. One task at a time.
+            each time. <span className={css.penMark}>One task at a time</span>.
           </p>
           <p>
             Alternative thinking. Not lateral, but alternative. What is this? I
@@ -232,6 +404,144 @@ export default function ManualPage() {
             love team-work so much.
           </p>
         </Step>
+      </Page>
+      <Page className={css.procedurePage} wear='stained'>
+        <header className={css.sectionHeader}>
+          <span>SECTION 06</span>
+          <div>
+            <h2>Troubleshooting</h2>
+            <p>Consult the fault table before escalating.</p>
+          </div>
+        </header>
+        <Step title='Fault diagnosis & corrective action'>
+          <table>
+            <thead>
+              <tr>
+                <th scope='col'>Observed condition</th>
+                <th scope='col'>Probable cause</th>
+                <th scope='col'>Corrective action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label='Observed condition'>Reply contains one line</td>
+                <td data-label='Probable cause'>
+                  Deep-work mode; no malfunction detected
+                </td>
+                <td data-label='Corrective action'>
+                  Send one asynchronous ping and wait. Do not escalate to a
+                  call.
+                </td>
+              </tr>
+              <tr>
+                <td data-label='Observed condition'>
+                  Review contains many questions
+                </td>
+                <td data-label='Probable cause'>
+                  Request or PR arrived without context
+                </td>
+                <td data-label='Corrective action'>
+                  Add the rationale, constraints and evidence; request review
+                  again.
+                </td>
+              </tr>
+              <tr>
+                <td data-label='Observed condition'>
+                  Unit asks “do we have data on this?”
+                </td>
+                <td data-label='Probable cause'>
+                  Opinion supplied without evidence
+                </td>
+                <td data-label='Corrective action'>
+                  Attach numbers or clearly label the input as a hypothesis.
+                </td>
+              </tr>
+              <tr>
+                <td data-label='Observed condition'>Unscheduled ███ event</td>
+                <td data-label='Probable cause'>
+                  <span
+                    className={css.redacted}
+                    role='img'
+                    aria-label='redacted service information'
+                  >
+                    factory field anomaly
+                  </span>
+                </td>
+                <td data-label='Corrective action'>
+                  Return HOME, restore context and act normal.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </Step>
+        <div className={css.maintenanceRecord}>
+          <p>Maintenance record — to be completed by the operator</p>
+          <table>
+            <thead>
+              <tr>
+                <th scope='col'>Date</th>
+                <th scope='col'>Service performed</th>
+                <th scope='col'>Sig.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span className={css.penNote}>1991-12</span>
+                </td>
+                <td>
+                  <span className={css.penNote}>unit commissioned</span>
+                </td>
+                <td>
+                  <span className={css.penNote}>RS</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span className={css.penNote}>2026-07</span>
+                </td>
+                <td>
+                  <span className={css.penNote}>
+                    manual reprinted — midnight io edition
+                  </span>
+                </td>
+                <td>
+                  <span className={css.penNote}>RS</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span className={css.penNote}>ongoing</span>
+                </td>
+                <td>
+                  <span className={css.penNote}>
+                    efficiency patch: one task at a time
+                  </span>
+                </td>
+                <td>
+                  <span className={css.penNote}>RS</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span className={css.penNote}>next</span>
+                </td>
+                <td>
+                  <a
+                    className={css.recordContact}
+                    href='mailto:hello@sospedra.me?subject=RS-91%20service%20request'
+                  >
+                    {/* data-paper-media opts out of the global cyan prose-link rule */}
+                    <span data-paper-media='true'>
+                      your entry here — email the unit
+                    </span>
+                  </a>
+                </td>
+                <td />
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </Page>
       <VerificationStamp />
     </Shell>
