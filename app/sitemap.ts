@@ -5,6 +5,8 @@ const STATIC_ROUTES = [
   '',
   '/about',
   '/bazaar',
+  '/g-mines',
+  '/g-snake',
   '/manual',
   '/papers',
   '/rewrite',

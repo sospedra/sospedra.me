@@ -50,6 +50,22 @@ const PAPER_SIGNAL: RouteSignal = {
   status: 'Transmission open',
 }
 
+// arcade pages stay out of ROUTE_SIGNALS: the system panel nav skips them
+const ARCADE_SIGNALS: Record<string, RouteSignal> = {
+  '/g-mines': {
+    href: '/g-mines',
+    label: 'Arcade',
+    sector: '07',
+    status: 'Field armed',
+  },
+  '/g-snake': {
+    href: '/g-snake',
+    label: 'Arcade',
+    sector: '07.1',
+    status: 'Battery full',
+  },
+}
+
 const UNKNOWN_SIGNAL: RouteSignal = {
   href: '/',
   label: 'Unknown',
@@ -59,5 +75,9 @@ const UNKNOWN_SIGNAL: RouteSignal = {
 
 export const getRouteSignal = (pathname: string): RouteSignal => {
   if (pathname.startsWith('/papers/')) return PAPER_SIGNAL
-  return ROUTE_SIGNALS.find(({ href }) => href === pathname) || UNKNOWN_SIGNAL
+  return (
+    ARCADE_SIGNALS[pathname] ??
+    ROUTE_SIGNALS.find(({ href }) => href === pathname) ??
+    UNKNOWN_SIGNAL
+  )
 }

@@ -1,9 +1,36 @@
 import { useRouter } from 'next/navigation'
 import type React from 'react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { tinykeys } from 'tinykeys'
 
 type Trap = [string | string[], (event: KeyboardEvent) => void]
+
+const konamiSequence = [
+  'ArrowUp',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowLeft',
+  'ArrowRight',
+  'b',
+  'a',
+] as const
+const konamiWindow = 3000
+const konamiDirectionalKeys = new Set([
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+])
+const konamiCapturedEvents = new WeakSet<KeyboardEvent>()
+const konamiListeners = new Set<() => void>()
+let konamiCursor = 0
+let konamiTimeout: number | null = null
+let successKey: string | null = null
+let successKeyTimeout: number | null = null
+let gameInputClaims = 0
 
 const isEditableTarget = (target: EventTarget | null) => {
   if (!(target instanceof Element)) return false
@@ -21,16 +48,238 @@ const hasUnexpectedModifier = (event: KeyboardEvent, combo: string) => {
   const matchesShiftedCharacter =
     event.shiftKey && !binding.includes('+') && event.key === combo
 
-  return (
-    (event.metaKey && !usesMod && !binding.includes('meta+')) ||
-    (event.ctrlKey &&
-      !usesMod &&
-      !binding.includes('control+') &&
-      !binding.includes('ctrl+')) ||
-    (event.altKey && !binding.includes('alt+')) ||
-    (event.shiftKey && !binding.includes('shift+') && !matchesShiftedCharacter)
-  )
+  const unexpectedMeta = event.metaKey && !usesMod && !binding.includes('meta+')
+  const unexpectedCtrl =
+    event.ctrlKey &&
+    !usesMod &&
+    !binding.includes('control+') &&
+    !binding.includes('ctrl+')
+  const unexpectedAlt = event.altKey && !binding.includes('alt+')
+  const unexpectedShift =
+    event.shiftKey && !binding.includes('shift+') && !matchesShiftedCharacter
+
+  return unexpectedMeta || unexpectedCtrl || unexpectedAlt || unexpectedShift
 }
+
+const clearKonamiSession = () => {
+  konamiCursor = 0
+  if (konamiTimeout !== null) {
+    window.clearTimeout(konamiTimeout)
+    konamiTimeout = null
+  }
+}
+
+const startKonamiSession = () => {
+  clearKonamiSession()
+  konamiCursor = 1
+  konamiTimeout = window.setTimeout(clearKonamiSession, konamiWindow)
+}
+
+const captureEvent = (event: KeyboardEvent) => {
+  konamiCapturedEvents.add(event)
+  event.preventDefault()
+  event.stopImmediatePropagation()
+}
+
+const clearSuccessKey = () => {
+  successKey = null
+  if (successKeyTimeout !== null) {
+    window.clearTimeout(successKeyTimeout)
+    successKeyTimeout = null
+  }
+}
+
+const scheduleSuccessKeyClear = () => {
+  if (successKeyTimeout !== null) window.clearTimeout(successKeyTimeout)
+  successKeyTimeout = window.setTimeout(clearSuccessKey, 750)
+}
+
+const isModifiedOrRepeatedKey = (event: KeyboardEvent) =>
+  event.metaKey ||
+  event.ctrlKey ||
+  event.altKey ||
+  event.shiftKey ||
+  event.repeat
+
+const dropModifiedKonamiInput = (event: KeyboardEvent) => {
+  if (konamiCursor > 0 && !konamiDirectionalKeys.has(event.key)) {
+    captureEvent(event)
+  }
+  clearKonamiSession()
+}
+
+const advanceKonamiSequence = (event: KeyboardEvent) => {
+  // Directional keys stay available to local UI (the Papers remote, native
+  // scrolling, games) while Konami listens in capture phase. The tail keys
+  // are consumed so `b`/`a` cannot trigger global routes mid-sequence.
+  if (!konamiDirectionalKeys.has(event.key)) captureEvent(event)
+
+  if (event.key !== konamiSequence[konamiCursor]) {
+    if (event.key === konamiSequence[0]) startKonamiSession()
+    else clearKonamiSession()
+    return
+  }
+
+  konamiCursor += 1
+  if (konamiCursor !== konamiSequence.length) return
+
+  clearKonamiSession()
+  successKey = event.key
+  scheduleSuccessKeyClear()
+  for (const listener of konamiListeners) listener()
+}
+
+const captureKonamiInput = (event: KeyboardEvent) => {
+  // arcade pages own the keyboard: their steering walks the konami prefix,
+  // and the trap would eat the next space/5/enter for the whole window
+  if (gameInputClaims > 0) return
+
+  if (successKey === event.key) {
+    captureEvent(event)
+    scheduleSuccessKeyClear()
+    return
+  }
+
+  if (event.isComposing || isEditableTarget(event.target)) {
+    clearKonamiSession()
+    return
+  }
+
+  if (isModifiedOrRepeatedKey(event)) {
+    dropModifiedKonamiInput(event)
+    return
+  }
+
+  if (konamiCursor === 0) {
+    if (event.key === konamiSequence[0]) startKonamiSession()
+    return
+  }
+
+  advanceKonamiSequence(event)
+}
+
+const releaseKonamiSuccessKey = (event: KeyboardEvent) => {
+  if (event.key !== successKey) return
+  clearSuccessKey()
+}
+
+const canScrollVertically = (element: HTMLElement) => {
+  if (element.scrollHeight - element.clientHeight <= 1) return false
+  const overflow = getComputedStyle(element).overflowY
+  return overflow === 'auto' || overflow === 'scroll' || overflow === 'overlay'
+}
+
+const findScrollableAncestor = (
+  seed: HTMLElement | null,
+  root: HTMLElement,
+) => {
+  let candidate = seed
+  while (candidate) {
+    if (canScrollVertically(candidate)) return candidate
+    if (candidate === root) break
+    candidate = candidate.parentElement
+  }
+  return null
+}
+
+export const getActiveScrollSurface = () => {
+  const root = document.getElementById('vbody')
+  if (!root) return null
+
+  const focused = document.activeElement
+  const focusedSurface =
+    focused instanceof HTMLElement && root.contains(focused)
+      ? findScrollableAncestor(focused, root)
+      : null
+  if (focusedSurface) return focusedSurface
+
+  const centered = document.elementFromPoint(
+    window.innerWidth / 2,
+    window.innerHeight / 2,
+  )
+  const centeredSurface =
+    centered instanceof HTMLElement && root.contains(centered)
+      ? findScrollableAncestor(centered, root)
+      : null
+  if (centeredSurface) return centeredSurface
+
+  return findScrollableAncestor(root, root)
+}
+
+const getScrollBehavior = (): ScrollBehavior => {
+  const prefersReducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches
+  const isQuietFx = document.documentElement.classList.contains('fx-quiet')
+  return prefersReducedMotion || isQuietFx ? 'auto' : 'smooth'
+}
+
+const nearestSceneIndex = (scenes: HTMLElement[], surfaceTop: number) => {
+  const distances = scenes.map((scene) =>
+    Math.abs(scene.getBoundingClientRect().top - surfaceTop),
+  )
+  return distances.indexOf(Math.min(...distances))
+}
+
+// The Bazaar is a scene sequence, so j/k should select the next authored
+// stage rather than land between rows with a generic percentage scroll.
+const scrollSceneSequence = (
+  scenes: HTMLElement[],
+  direction: -1 | 1,
+  surface: HTMLElement,
+) => {
+  const current = nearestSceneIndex(scenes, surface.getBoundingClientRect().top)
+  const next = Math.max(0, Math.min(scenes.length - 1, current + direction))
+  if (next === current) return false
+
+  scenes[next]?.scrollIntoView({
+    behavior: getScrollBehavior(),
+    block: 'start',
+  })
+  return true
+}
+
+const scrollSurfaceByPage = (surface: HTMLElement, direction: -1 | 1) => {
+  const atStart = surface.scrollTop <= 1
+  const atEnd =
+    surface.scrollTop + surface.clientHeight >= surface.scrollHeight - 1
+  const atBoundary = direction === -1 ? atStart : atEnd
+  if (atBoundary) return false
+
+  const distance = Math.min(
+    720,
+    Math.max(240, Math.round(surface.clientHeight * 0.68)),
+  )
+
+  surface.scrollBy({ behavior: getScrollBehavior(), top: distance * direction })
+  return true
+}
+
+export const scrollActivePage = (direction: -1 | 1) => {
+  const modal = document.querySelector<HTMLElement>(
+    'dialog[open], [aria-modal="true"]',
+  )
+  if (modal) return false
+
+  const surface = getActiveScrollSurface()
+  if (!surface) return false
+
+  const marketScenes = Array.from(
+    surface.querySelectorAll<HTMLElement>('[data-market-scene]'),
+  )
+  if (marketScenes.length > 1) {
+    return scrollSceneSequence(marketScenes, direction, surface)
+  }
+
+  return scrollSurfaceByPage(surface, direction)
+}
+
+const shouldIgnoreTrap = (event: KeyboardEvent, combo: string) =>
+  konamiCapturedEvents.has(event) ||
+  event.defaultPrevented ||
+  event.isComposing ||
+  isEditableTarget(event.target) ||
+  hasUnexpectedModifier(event, combo)
 
 export const useHotkeys = (traps: Trap[]) => {
   useEffect(() => {
@@ -41,15 +290,7 @@ export const useHotkeys = (traps: Trap[]) => {
           [
             combo,
             (event: KeyboardEvent) => {
-              if (
-                event.defaultPrevented ||
-                event.isComposing ||
-                isEditableTarget(event.target) ||
-                hasUnexpectedModifier(event, combo)
-              ) {
-                return
-              }
-
+              if (shouldIgnoreTrap(event, combo)) return
               handler(event)
             },
           ] as const,
@@ -59,8 +300,49 @@ export const useHotkeys = (traps: Trap[]) => {
   }, [traps])
 }
 
+export const useGameInput = () => {
+  useEffect(() => {
+    gameInputClaims += 1
+    clearKonamiSession()
+    return () => {
+      gameInputClaims -= 1
+    }
+  }, [])
+}
+
+export const useKonami = (handler: () => void) => {
+  const handlerRef = useRef(handler)
+
+  useEffect(() => {
+    handlerRef.current = handler
+  }, [handler])
+
+  useEffect(() => {
+    const notify = () => handlerRef.current()
+    konamiListeners.add(notify)
+    return () => {
+      konamiListeners.delete(notify)
+    }
+  }, [])
+}
+
 export const Hotkeys: React.FC<{ children: React.ReactNode }> = (props) => {
   const router = useRouter()
+
+  useEffect(() => {
+    window.addEventListener('keydown', captureKonamiInput, { capture: true })
+    window.addEventListener('keyup', releaseKonamiSuccessKey, { capture: true })
+    return () => {
+      window.removeEventListener('keydown', captureKonamiInput, {
+        capture: true,
+      })
+      window.removeEventListener('keyup', releaseKonamiSuccessKey, {
+        capture: true,
+      })
+      clearKonamiSession()
+      clearSuccessKey()
+    }
+  }, [])
 
   useHotkeys([
     [
@@ -89,6 +371,18 @@ export const Hotkeys: React.FC<{ children: React.ReactNode }> = (props) => {
       (event) => {
         event.preventDefault()
         router.push('/about')
+      },
+    ],
+    [
+      'j',
+      (event) => {
+        if (scrollActivePage(1)) event.preventDefault()
+      },
+    ],
+    [
+      'k',
+      (event) => {
+        if (scrollActivePage(-1)) event.preventDefault()
       },
     ],
   ])
