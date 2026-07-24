@@ -1,0 +1,394 @@
+{
+  "live-rat-1.png": {
+    "w": 128,
+    "h": 64
+  },
+  "live-rat-2.png": {
+    "w": 128,
+    "h": 64
+  },
+  "mkt-env-1.png": {
+    "w": 1024,
+    "h": 1440
+  },
+  "mkt-env-2.png": {
+    "w": 1024,
+    "h": 1440
+  },
+  "mkt-env-3.png": {
+    "w": 1024,
+    "h": 1440
+  },
+  "p1-bg-band.png": {
+    "w": 768,
+    "h": 944
+  },
+  "p1-bg-full.png": {
+    "w": 768,
+    "h": 1440
+  },
+  "p1-busstop-off.png": {
+    "w": 480,
+    "h": 608
+  },
+  "p1-busstop-on-1.png": {
+    "w": 480,
+    "h": 608
+  },
+  "p1-busstop-on-2.png": {
+    "w": 480,
+    "h": 608
+  },
+  "p1-door-closed.png": {
+    "w": 288,
+    "h": 608
+  },
+  "p1-door-half.png": {
+    "w": 288,
+    "h": 608
+  },
+  "p1-door-open.png": {
+    "w": 288,
+    "h": 608
+  },
+  "p1-sign-1.png": {
+    "w": 416,
+    "h": 128
+  },
+  "p1-sign-2.png": {
+    "w": 416,
+    "h": 128
+  },
+  "p1-street-scene-desktop.png": {
+    "w": 2400,
+    "h": 1120
+  },
+  "p1-street-scene-mobile.png": {
+    "w": 1360,
+    "h": 1560
+  },
+  "prop-lightstrip-1.png": {
+    "w": 768,
+    "h": 192
+  },
+  "prop-lightstrip-2.png": {
+    "w": 768,
+    "h": 192
+  },
+  "prop-lightstrip-3.png": {
+    "w": 768,
+    "h": 192
+  },
+  "stairs-c-mobile.png": {
+    "w": 240,
+    "h": 2120
+  },
+  "stairs-h-desktop.png": {
+    "w": 320,
+    "h": 1408
+  },
+  "stairs-h-mobile.png": {
+    "w": 240,
+    "h": 2120
+  },
+  "stairs-i-desktop.png": {
+    "w": 320,
+    "h": 1408
+  },
+  "stairs-i-mobile.png": {
+    "w": 240,
+    "h": 2120
+  },
+  "stairs-o-desktop.png": {
+    "w": 320,
+    "h": 1408
+  },
+  "stairs-o-mobile.png": {
+    "w": 240,
+    "h": 2120
+  },
+  "stall-console-desktop-front.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-console-desktop-interior.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-console-keeper-hover-1.png": {
+    "w": 208,
+    "h": 384
+  },
+  "stall-console-keeper-hover-2.png": {
+    "w": 208,
+    "h": 384
+  },
+  "stall-console-keeper-hover-3.png": {
+    "w": 208,
+    "h": 384
+  },
+  "stall-console-keeper-idle-1.png": {
+    "w": 208,
+    "h": 384
+  },
+  "stall-console-keeper-idle-2.png": {
+    "w": 208,
+    "h": 384
+  },
+  "stall-console-mobile-front.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-console-mobile-interior.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-games-desktop-front.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-games-desktop-interior.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-games-keeper-hover-1.png": {
+    "w": 304,
+    "h": 560
+  },
+  "stall-games-keeper-hover-2.png": {
+    "w": 304,
+    "h": 560
+  },
+  "stall-games-keeper-hover-3.png": {
+    "w": 304,
+    "h": 560
+  },
+  "stall-games-keeper-idle-1.png": {
+    "w": 304,
+    "h": 560
+  },
+  "stall-games-keeper-idle-2.png": {
+    "w": 304,
+    "h": 560
+  },
+  "stall-games-mobile-front.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-games-mobile-interior.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-manual-customer-idle-1.png": {
+    "w": 208,
+    "h": 384
+  },
+  "stall-manual-customer-idle-2.png": {
+    "w": 208,
+    "h": 384
+  },
+  "stall-manual-desktop-front.png": {
+    "w": 1152,
+    "h": 960
+  },
+  "stall-manual-desktop-interior.png": {
+    "w": 1152,
+    "h": 960
+  },
+  "stall-manual-keeper-hover-1.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-manual-keeper-hover-2.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-manual-keeper-hover-3.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-manual-keeper-idle-1.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-manual-keeper-idle-2.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-manual-mobile-front.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-manual-mobile-interior.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-papers-desktop-front.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-papers-desktop-interior.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-papers-keeper-idle-1.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-papers-keeper-idle-2.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-papers-mobile-front.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-papers-mobile-interior.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-projects-desktop-front.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-projects-desktop-interior.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-projects-keeper-hover-1.png": {
+    "w": 288,
+    "h": 336
+  },
+  "stall-projects-keeper-hover-2.png": {
+    "w": 288,
+    "h": 336
+  },
+  "stall-projects-keeper-hover-3.png": {
+    "w": 288,
+    "h": 336
+  },
+  "stall-projects-keeper-idle-1.png": {
+    "w": 288,
+    "h": 336
+  },
+  "stall-projects-keeper-idle-2.png": {
+    "w": 288,
+    "h": 336
+  },
+  "stall-projects-mobile-front.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-projects-mobile-interior.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-talks-desktop-front.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-talks-desktop-interior.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-talks-keeper-hover-1.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-talks-keeper-hover-2.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-talks-keeper-hover-3.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-talks-keeper-idle-1.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-talks-keeper-idle-2.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-talks-mobile-front.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-talks-mobile-interior.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-travel-desktop-front.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-travel-desktop-interior.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-travel-keeper-hover-1.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-travel-keeper-hover-2.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-travel-keeper-hover-3.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-travel-keeper-idle-1.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-travel-keeper-idle-2.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-travel-mobile-front.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-travel-mobile-interior.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-uses-desktop-front.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-uses-desktop-interior.png": {
+    "w": 720,
+    "h": 960
+  },
+  "stall-uses-keeper-hover-1.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-uses-keeper-hover-2.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-uses-keeper-hover-3.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-uses-keeper-idle-1.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-uses-keeper-idle-2.png": {
+    "w": 152,
+    "h": 560
+  },
+  "stall-uses-mobile-front.png": {
+    "w": 736,
+    "h": 928
+  },
+  "stall-uses-mobile-interior.png": {
+    "w": 736,
+    "h": 928
+  }
+}

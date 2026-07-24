@@ -1,0 +1,787 @@
+.scene {
+  --m: min(20svh, 10.2vw);
+  --hs: 1;
+  --alley-gap: 5svh;
+  /* A(32.55svh) + gap + CD(53.45svh) centered as one block, then shifted */
+  --street-shift: 5vw;
+  --street-margin: calc((100vw - 83.5svh - var(--alley-gap)) / 2);
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow-y: auto;
+  overflow-x: clip;
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+  background: var(--color-bg-void); /* the site's normal sky */
+  color: #d6dbe6;
+  image-rendering: pixelated;
+}
+
+@media (pointer: fine) {
+  .scene {
+    scroll-snap-type: y mandatory;
+  }
+}
+
+@media (max-width: 700px) {
+  .scene {
+    --m: min(10svh, 13vw);
+    --hs: 2;
+  }
+}
+
+.scene img {
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+.mobileTree {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .desktopTree {
+    display: none;
+  }
+  .mobileTree {
+    display: block;
+  }
+}
+
+.floor {
+  position: relative;
+  height: 100svh;
+  scroll-snap-align: start;
+  overflow: hidden;
+  transition: filter 0.5s ease;
+}
+
+.dimmed {
+  filter: brightness(0.55);
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- street level: gemini extraction kit ---------- */
+.streetBg {
+  position: absolute;
+  inset: 0 0 20svh 0;
+  background: url("/images/bazaar2/assets/street2/bg.png") left bottom repeat-x;
+  background-size: auto 96%;
+  image-rendering: pixelated;
+}
+
+/* bottom of the skyline blurs progressively: more depth of field low */
+.streetBg::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 20svh;
+  backdrop-filter: blur(5px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 85%);
+  mask-image: linear-gradient(to bottom, transparent, #000 85%);
+  pointer-events: none;
+}
+
+/* street-level light haze: the bottom of the skyline glows */
+.streetBg::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 10svh;
+  background: linear-gradient(
+    to top,
+    rgb(255 170 220 / 0.34),
+    rgb(120 200 255 / 0.12) 55%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.sFloor {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 20svh;
+  background: url("/images/bazaar2/assets/street2/floor.png") left bottom
+    repeat-x;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  z-index: 1;
+  filter: brightness(0.8);
+}
+
+/* alley shadow: darkens the gap from CD's base, fading up over 10u */
+.alleyShade {
+  position: absolute;
+  left: calc(var(--street-margin) + var(--street-shift) + 36.5svh);
+  width: var(--alley-gap);
+  bottom: 10svh;
+  height: 10svh;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.82), rgb(0 0 0 / 0.98));
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* the pavement recedes: darken it progressively toward its top edge */
+.sFloor::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.55),
+    rgb(0 0 0 / 0.18) 45%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* pads sit in front of A+CD, overlapping the block 1u on each side */
+.sPadL {
+  position: absolute;
+  /* right edge = A left edge + 1svh; pad width 52svh * 0.8764 = 45.6svh */
+  left: calc(var(--street-margin) + var(--street-shift) + 3svh - 72.2svh);
+  bottom: 13svh;
+  height: 82.4svh;
+  z-index: 3;
+}
+
+.sPadR {
+  position: absolute;
+  /* left edge = CD right edge - 1svh; pad width 56svh * 0.8764 = 49.1svh */
+  right: calc(var(--street-margin) - var(--street-shift) + 3svh - 86.4svh);
+  bottom: 11svh;
+  height: 98.6svh;
+  z-index: 3;
+}
+
+.sA {
+  position: absolute;
+  /* right edge = CD left edge - --alley-gap, all in svh so the gap is
+     constant on any viewport: 95vw - CDw(53.45svh) - gap - Aw(32.55svh) */
+  left: calc(var(--street-margin) + var(--street-shift));
+  bottom: 13svh;
+  height: 87.4svh;
+  z-index: 4;
+  filter: brightness(0.8);
+}
+
+/* CD wrapper: door and neon are children, positioned in % of the
+   building so they track it through any move or resize */
+.sCDWrap {
+  position: absolute;
+  right: calc(var(--street-margin) - var(--street-shift));
+  bottom: 15svh;
+  height: 65.1svh;
+  aspect-ratio: 801 / 1109;
+  z-index: 2;
+}
+
+.sCDImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.sNeon {
+  position: absolute;
+  right: 6%;
+  top: 51%;
+  height: 13%;
+  z-index: 5;
+  transform: rotate(45deg);
+}
+
+.sBus {
+  position: absolute;
+  left: calc(var(--street-margin) + var(--street-shift) - 3svh);
+  bottom: 10svh;
+  height: 28.8svh;
+  z-index: 10;
+}
+
+.sDoor {
+  position: absolute;
+  right: 9%;
+  bottom: -0.4%;
+  height: 43%;
+  z-index: 3;
+  transform: rotate(5deg);
+  transform-origin: 50% 100%;
+}
+
+.sBus img,
+.sDoor img {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+/* foreground parallax silhouettes, home-bridge style: one per side,
+   anchored off the outer edges of the random buildings */
+.fgLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.fgL,
+.fgR {
+  position: absolute;
+  top: -6svh;
+  bottom: -6svh;
+  height: auto;
+  width: 24vw;
+  background: url("/images/foreground-tower.svg") bottom / 100% 100% no-repeat;
+  filter: brightness(0.5) blur(3px);
+  transform: scaleY(1.2);
+  transform-origin: bottom;
+}
+
+.fgL {
+  /* bleeds off the left end, covering the left wall's outer portion */
+  left: calc(-6vw - 10svh);
+}
+
+.fgR {
+  background-image: url("/images/foreground-block.svg");
+  right: calc(-6vw - 20svh);
+}
+
+/* the home-page neon car, parked center, wheels on the 98 line, 2x */
+/* the home car passes through on load: offscreen left to offscreen
+   right, same easing as the home drive (must match --drive-ease there) */
+.sCar {
+  position: absolute;
+  left: 0;
+  bottom: -0.5svh;
+  z-index: 39;
+  pointer-events: none;
+  transform: translateX(-40vw);
+  animation: carDrive 1s cubic-bezier(0.4, 0, 0.6, 0.52) 1.6s both;
+}
+
+@keyframes carDrive {
+  to {
+    transform: translateX(110vw);
+  }
+}
+
+/* safari has no directional blur: squash 4x, blur, stretch back, so the
+   blur radius comes out 4x horizontal vs vertical */
+.sCarStretch {
+  transform: scaleX(4);
+  transform-origin: bottom left;
+}
+
+.sCarSquash {
+  transform: scaleX(0.25);
+  transform-origin: bottom left;
+  filter: blur(1.5px);
+}
+
+.sCarScale {
+  transform: scale(1.8);
+  transform-origin: bottom left;
+  filter: brightness(0.45);
+}
+
+/* arrival: the home blackout hands over, we fade in, then the car passes */
+.fadeIn {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #000;
+  pointer-events: none;
+  animation: sceneFade 1.5s ease-in both;
+}
+
+@keyframes sceneFade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* ---------- direction grid ---------- */
+.grid {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      rgb(55 247 224 / 0.22) 0 1px,
+      transparent 1px 5vw
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(55 247 224 / 0.22) 0 1px,
+      transparent 1px 5svh
+    );
+}
+
+.gridLabelV,
+.gridLabelH {
+  position: absolute;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 9px;
+  line-height: 1;
+  color: #37f7e0;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.gridLabelV {
+  top: 2px;
+  translate: 3px 0;
+}
+
+.gridLabelH {
+  left: 2px;
+  translate: 0 3px;
+}
+
+/* ---------- market floors ---------- */
+/* stairs desktop are 40x176u: floors take their natural height (5.5m) */
+.floorMkt {
+  height: calc(var(--m) * 5.5);
+  scroll-snap-align: center;
+  overflow: visible; /* dialogs pop past the floor edge */
+}
+
+@media (max-width: 700px) {
+  .floorMkt {
+    height: 100svh;
+    scroll-snap-align: start;
+  }
+}
+
+/* mkt-env: merged wall + ground, ground band is the bottom 22% */
+.envTile {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+}
+
+.mktRow {
+  position: absolute;
+  inset: auto 0 calc(var(--m) * 0.65) 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: calc(var(--m) * 0.35);
+  z-index: 2;
+}
+
+.stairs {
+  align-self: stretch;
+  width: calc(var(--m) * 1.25);
+  flex: 0 0 auto;
+  line-height: 0;
+}
+
+.stairsL,
+.stairsR {
+  position: absolute;
+  top: 0;
+  bottom: calc(var(--m) * 0.55);
+  z-index: 2;
+}
+
+.stairsL {
+  left: 0;
+}
+
+.stairsR {
+  right: 0;
+}
+
+.stairs img {
+  width: 100%;
+  height: 100%;
+}
+
+.mGridR,
+.mGridL {
+  position: absolute;
+  inset: 0 0 calc(var(--m) * 0.65) 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-items: end;
+  z-index: 2;
+}
+
+.mGridR {
+  grid-template-columns: minmax(0, 1fr) 24vw;
+}
+
+.mGridR .stairs {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  width: auto;
+  align-self: stretch;
+}
+
+.mGridL {
+  grid-template-columns: 24vw minmax(0, 1fr);
+}
+
+.mGridL .stairs {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: auto;
+  align-self: stretch;
+}
+
+/* ---------- stalls ---------- */
+.stallWrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: calc(var(--m) * var(--stall-w) / 32);
+  height: calc(var(--m) * var(--stall-h) / 32);
+}
+
+@media (max-width: 700px) {
+  .stallWrap {
+    width: auto;
+    height: 43svh;
+    aspect-ratio: 736 / 928;
+    justify-self: center;
+  }
+}
+
+.mGridL .stallWrap {
+  grid-column: 2;
+}
+
+.stall {
+  position: absolute;
+  inset: 0;
+  display: block;
+  line-height: 0;
+}
+
+/* very subtle interior idle: the stall bg breathes light */
+.interior {
+  animation: interiorIdle 7s steps(1, end) infinite;
+}
+
+.stallWrap:hover .interior,
+.stallWrap:focus-within .interior {
+  animation: none;
+}
+
+@keyframes interiorIdle {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  44% {
+    filter: brightness(1.05);
+  }
+  91% {
+    filter: brightness(0.96);
+  }
+}
+
+/* hover illumination: same pixels, brighter */
+.stallWrap:hover img,
+.stallWrap:focus-within img {
+  filter: brightness(1.35) saturate(1.4);
+}
+
+.glowWash {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    color-mix(in srgb, var(--tint) 34%, transparent),
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stallWrap:hover .glowWash,
+.stallWrap:focus-within .glowWash {
+  opacity: 1;
+}
+
+/* keeper: behind the front, feet behind the counter band */
+.keeper {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  bottom: 8%;
+  z-index: 1;
+}
+
+.keeper img {
+  height: calc(var(--m) * 2.1875 * var(--hs));
+  width: auto;
+}
+
+/* console keeper sits cross-legged (26x48u), projects is a squat robot (36x42u) */
+.stallWrap[data-stall="console"] .keeper img {
+  height: calc(var(--m) * 1.5 * var(--hs));
+}
+
+.stallWrap[data-stall="projects"] .keeper img {
+  height: calc(var(--m) * 1.3125 * var(--hs));
+}
+
+.keeperIdle {
+  display: grid;
+}
+
+.keeperIdle img {
+  grid-area: 1 / 1;
+  animation: slot2 1.4s steps(1, end) infinite;
+}
+
+.keeperIdle img:nth-child(2) {
+  animation-delay: -0.7s;
+}
+
+.keeperHover {
+  display: none;
+}
+
+.keeperHover img {
+  grid-area: 1 / 1;
+  opacity: 0;
+}
+
+.stallWrap:hover .keeperIdle,
+.stallWrap:focus-within .keeperIdle {
+  display: none;
+}
+
+.stallWrap:hover .keeperHover,
+.stallWrap:focus-within .keeperHover {
+  display: grid;
+}
+
+/* greeting plays once, holds the last frame */
+.keeperHover img:nth-child(1) {
+  animation: seqOut 0.3s steps(1, end) forwards;
+}
+
+.keeperHover img:nth-child(2) {
+  animation: seqMid 0.6s steps(1, end) forwards;
+}
+
+.keeperHover img:nth-child(3) {
+  animation: seqEnd 0.6s steps(1, end) forwards;
+}
+
+@keyframes seqOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes seqMid {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes seqEnd {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slot2 {
+  0% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* the seated ramen customer, back to the viewer */
+.customer {
+  position: absolute;
+  left: 20%;
+  bottom: 10%;
+  z-index: 1;
+}
+
+.customer img {
+  height: calc(var(--m) * 1.5 * var(--hs));
+  width: auto;
+}
+
+.cycle2 {
+  display: grid;
+  line-height: 0;
+}
+
+.cycle2 img {
+  grid-area: 1 / 1;
+  animation: slot2 1.4s steps(1, end) infinite;
+}
+
+.cycle2 img:nth-child(2) {
+  animation-delay: -0.7s;
+}
+
+/* papers: the hologram flickers at runtime, no hover frames */
+.stallWrap[data-stall="papers"] .keeper {
+  animation: holoFlicker 2.8s steps(1, end) infinite;
+}
+
+.stallWrap[data-stall="papers"]:hover .keeperIdle,
+.stallWrap[data-stall="papers"]:focus-within .keeperIdle {
+  display: grid;
+}
+
+.stallWrap[data-stall="papers"]:hover .keeper {
+  animation-duration: 0.9s;
+}
+
+@keyframes holoFlicker {
+  0%,
+  86%,
+  100% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 0.4;
+  }
+  91% {
+    opacity: 0.85;
+  }
+  95% {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- FFIX dialog: bottom of the screen, never over the stall ---------- */
+.dialog {
+  position: fixed;
+  bottom: calc(var(--m) * 0.35);
+  left: 50%;
+  translate: -50% 0;
+  width: max-content;
+  max-width: min(440px, 86vw);
+  z-index: 30;
+  display: none;
+  padding: 10px 12px;
+  border: 2px solid #f2f2f2;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.04) 0 2px,
+      transparent 2px 4px
+    ),
+    linear-gradient(180deg, #7c8088, #5e626a);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.45),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 6px 16px rgba(0, 0, 0, 0.5);
+  font-size: 10px;
+  line-height: 1.8;
+  color: #fff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+  text-transform: none;
+}
+
+.stallWrap:hover .dialog,
+.stallWrap:focus-within .dialog,
+.dialogOpen .dialog {
+  display: block;
+}
+
+.dialogDesc {
+  margin: 0 0 8px;
+}
+
+.dialogLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dialogLinks a {
+  color: #ffe9a8;
+  text-decoration: none;
+}
+
+.dialogLinks a::before {
+  content: "\25B8 ";
+}
+
+.dialogLinks a:hover {
+  color: #ffffff;
+}
+
+/* ---------- hud ---------- */
+.hud {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hudBtn {
+  padding: 0.45rem 0.7rem;
+  border: 2px solid #37f7e0;
+  background: rgb(6 7 13 / 0.85);
+  color: #37f7e0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.55rem;
+  cursor: pointer;
+}
+
+.hudBtn:hover {
+  background: #12202b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene *,
+  .scene *::before,
+  .scene *::after {
+    /* last block in the file: source order beats the animation classes above */
+    /* last block in the file: source order beats the animation classes above */
+    animation: none;
+    transition: none;
+  }
+}
