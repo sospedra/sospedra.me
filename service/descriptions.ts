@@ -25,4 +25,4 @@ export const TRAVEL_DESC =
   'The flight log. Every destination pinned on a low-orbit globe.'
 
 export const USES_DESC =
-  'The exact hardware and software I work with every day. Highly opinionated.'
+  'The exact hardware and software I work with, served as a late-night ramen menu: the bowls, the broth, the toppings. Prices in verdict-yen. Highly opinionated.'

@@ -5,66 +5,92 @@
       {
         "title": "13'' MacBook Pro, 3.1ghz dual-core i7, 16GB of RAM, Intel Iris 5100 (2014)",
         "url": "https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i7-3.0-13-mid-2014-retina-display-specs.html",
+        "slot": "laptop",
+        "verdict": "fine",
         "description": "Are there newer MBPs? Yes. Do I need one? No. Plus the horrendous butterfly keyboard: Apple is finally killing it, but not yet on the 13''. And I don't consider anything bigger than that."
       },
       {
         "title": "Dell Ultrasharp U2415 24''",
         "url": "https://www.amazon.com/dp/B00NZTKOQI/",
+        "slot": "display",
+        "verdict": "buy",
         "description": "Outstanding price-quality ratio. Rotates to vertical. That pays off on code reviews."
       },
       {
         "title": "Das Keyboard 4C TKL",
         "url": "https://www.daskeyboard.com/daskeyboard-4C-tkl/",
+        "slot": "keyboard",
+        "verdict": "goat",
         "description": "German-made mechanical keyboard, 87-key layout of pure excellence. Cherry MX Blue, for a noisy typing experience. The best wired mechanical keyboard on the market."
       },
       {
         "title": "Ergonomic vertical mouse",
         "url": "https://www.amazon.com/dp/B00BIFNTMC",
+        "slot": "mouse",
+        "verdict": "cheap",
         "description": "All vertical mice are the same. Don't waste money on an expensive one. The accessory worth real money is the keyboard."
       },
       {
         "title": "Razer Kiyo camera",
         "url": "https://www.razer.com/eu-en/gaming-broadcaster/razer-kiyo",
+        "slot": "camera",
+        "verdict": "cheap",
         "description": "Meets the minimum specs for high-quality streaming: the best out of the cheapest. The ring light and the USB power gave me some trouble. Nothing horrible, a bit cumbersome."
       },
       {
         "title": "HyperX Cloud MIX",
         "url": "https://www.hyperxgaming.com/us/headsets/cloud-mix-wired-gaming-headset-with-bluetooth",
+        "slot": "headset",
+        "verdict": "buy",
         "description": "Before you judge me: there are as many headsets as people nowadays. It's madness. The Cloud MIX fits my requirements per-fect-ly. One headset for gaming and working. Great for music, great bass, fast Bluetooth. And superior for gaming: they're made for that. Worth every single penny."
       },
       {
         "title": "RØDE NT microphone",
         "url": "http://www.rode.com/microphones/nt-usb",
+        "slot": "mic",
+        "verdict": "buy",
         "description": "It's this one or the Blue Yeti. Both are USB, so no music-nerd setup required. Plug in and enjoy almost-studio quality on your video calls."
       },
       {
         "title": "Airpods (1st Gen)",
         "url": "https://www.apple.com/airpods-2nd-generation/",
+        "slot": "earbuds",
+        "verdict": "cheap",
         "description": "Bought second hand in 2020. I only need an unobtrusive headset for on-the-go calls. Others sound better. None mic better."
       },
       {
         "title": "Cyxus Ayanna glasses",
         "url": "https://www.cyxus.com/collections/men-glasses/products/anti-blue-light-blocking-retro-round-lightweight-computer-glasses-for-men-women-8090-metal-clear-lenses?variant=9091052961839",
+        "slot": "glasses",
+        "verdict": "cheap",
         "description": "I wore blue-filter glasses before they were a thing. My first pair were Gunnar Onyx: best brand, expensive as hell. Then I learned how the tech works. Now I don't spend more than 30 bucks, and neither should you."
       },
       {
         "title": "Electric sit/stand desk",
         "url": "https://www.amazon.com/dp/B082DG2LQD",
+        "slot": "desk",
+        "verdict": "cheap",
         "description": "For a normal-sized table one motor is enough, and any brand works the same. But buy electric. I had a manual one and you end up never changing modes."
       },
       {
         "title": "Interstuhl UPis1 100U",
         "url": "https://www.interstuhl.com/I/es-es/modelle.php?modell=100U",
+        "slot": "stool",
+        "verdict": "goat",
         "description": "Hands down, this removes lower back pain. It's a stool with a rounded base, so you stabilize yourself all the time. Height is a non-issue with the desk above."
       },
       {
         "title": "Eames plastic chair",
         "url": "https://www.vitra.com/product/eames-plastic-chair",
+        "slot": "chair",
+        "verdict": "goat",
         "description": "Best chair ever. Worth it for historical reasons alone: this chair changed the world. Read up on Eames design."
       },
       {
         "title": "Standing desk mat",
         "url": "https://www.amazon.com/dp/B00V3TO9EK",
+        "slot": "mat",
+        "verdict": "cheap",
         "description": "Stand long enough and your feet, hips and knees complain. A desk mat releases that stress. Any brand works."
       }
     ]
@@ -75,36 +101,50 @@
       {
         "title": "VS Code",
         "url": "https://code.visualstudio.com/",
+        "slot": "editor",
+        "verdict": "buy",
         "description": "I was an Atom fanboy: plug-and-play, unlike Sublime. VS Code is Atom on steroids. It's built on TypeScript, so its TypeScript support is the best in town."
       },
       {
         "title": "Hyper",
         "url": "https://hyper.is/",
+        "slot": "terminal",
+        "verdict": "fine",
         "description": "There are many terminals out there. This one is TypeScript-based."
       },
       {
         "title": "Fish shell",
         "url": "https://fishshell.com/",
+        "slot": "shell",
+        "verdict": "goat",
         "description": "The terminal is nice, but have you ever played with shells? This is the real deal. Fish is out of this world."
       },
       {
         "title": "SynthWave '84 theme",
         "url": "https://github.com/robb0wen/synthwave-vscode",
+        "slot": "theme",
+        "verdict": "goat",
         "description": "Of course. What did you expect? The freaking best theme EVER, period. It matches my vapor/retro aesthetic."
       },
       {
         "title": "Menlo font (Bitstream Vera)",
         "url": "https://en.wikipedia.org/wiki/Menlo_(typeface)",
+        "slot": "font",
+        "verdict": "fine",
         "description": "The monospace font that ships with the MacBook. Always favour the standards. Open-sourcerer? Try Bitstream Vera. Menlo descends from it."
       },
       {
         "title": "Brave Browser",
         "url": "https://brave.com/",
+        "slot": "browser",
+        "verdict": "buy",
         "description": "Best UX. And one subtle developer superpower: block your analytics stack and watch your web break. It will. Believe me."
       },
       {
         "title": "dotfiles",
         "url": "/serve?o=dotfiles",
+        "slot": "config",
+        "verdict": "goat",
         "description": "All my cool configs. Steal anything you want. My aliases are legendary."
       }
     ]
@@ -115,36 +155,50 @@
       {
         "title": "eqMac equalizer",
         "url": "https://eqmac.app/",
+        "slot": "audio",
+        "verdict": "buy",
         "description": "How does Apple not include this by default? The missing audio setting. Huge kudos to the maintainers. The bass drops are extra juicy now."
       },
       {
         "title": "Dropbox Paper",
         "url": "https://www.dropbox.com/paper",
+        "slot": "notes",
+        "verdict": "buy",
         "description": "Notion is great and has two flaws: my small brain can't handle all the options, and copy-pasting, the 101 of note-taking, is broken. A solid second place. Paper is just perfectly balanced."
       },
       {
         "title": "Avast Password",
         "url": "https://www.avast.com/passwords",
+        "slot": "vault",
+        "verdict": "cheap",
         "description": "I know, weird. I don't know anyone else using it. But it covers everything I need for free: multiple devices, cross-platform, notes and cards, top-notch autofill."
       },
       {
         "title": "1clipboard",
         "url": "http://1clipboard.io/",
+        "slot": "clipboard",
+        "verdict": "goat",
         "description": "I can't live without this. Are you ok sharing your clipboard with Apple? I'm not. Long live the OSS!"
       },
       {
         "title": "Gifski",
         "url": "https://sindresorhus.com/gifski",
+        "slot": "media",
+        "verdict": "buy",
         "description": "GitHub doesn't allow mp4/avi/mov videos. It can't resize a gif for you either. It's just... I can't. Thanks, Sindre."
       },
       {
         "title": "Kap",
         "url": "https://sindresorhus.com/kap",
+        "slot": "capture",
+        "verdict": "buy",
         "description": "Record anything on your screen, outstanding UX. Again: how is this not part of macOS? Again: thank you, Sindre."
       },
       {
         "title": "Sketch",
         "url": "https://www.sketch.com/",
+        "slot": "design",
+        "verdict": "buy",
         "description": "Brilliant piece of software. I found Sketch and designing felt fun again. All my assets are powered by it."
       }
     ]
