@@ -33,9 +33,6 @@ export const moonPhase = (date: Date): MoonPhase => {
   }
 }
 
-// Latitude leans the lit limb over and the hour walks it across the sky.
-// Coefficients from https://dev.to/madsstoumann/phases-of-the-moon-in-css-2lbo
-export const moonTilt = (lat: number, date: Date): number => {
-  const hour = date.getHours() + date.getMinutes() / 60
-  return lat * 1.5 + (hour - 12) * 15 * 0.7
-}
+// Latitude leans the lit limb over. No hour term: it spun 10.5°/hour and
+// flipped the shadow side past ±90°, reading as a wrong phase.
+export const moonTilt = (lat: number): number => lat * 1.5

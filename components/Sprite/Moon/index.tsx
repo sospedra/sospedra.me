@@ -56,14 +56,12 @@ const SpriteMoon: React.FunctionComponent = () => {
 
   // Clock and IP are client facts: the server renders nothing, mount fills in
   useEffect(() => {
-    const now = new Date()
-    setMountedAt(now.getTime())
-    setTilt(moonTilt(0, now))
+    setMountedAt(Date.now())
 
     let cancelled = false
     requestGeo().then((geo) => {
       if (cancelled || !geo?.located || typeof geo.lat !== 'number') return
-      setTilt(moonTilt(geo.lat, now))
+      setTilt(moonTilt(geo.lat))
     })
     return () => {
       cancelled = true
