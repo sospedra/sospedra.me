@@ -1,8 +1,6 @@
 import { readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
-export * from './paths-to-tree'
-
 const BUNDLED_EXTENSIONS = new Set(['tsx', 'ts', 'js', 'lock', 'css'])
 
 const filterStatic = (name: string) => {

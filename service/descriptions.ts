@@ -12,9 +12,8 @@ export const MINES_DESC =
 export const PAPERS_DESC =
   "Papers on JavaScript, TypeScript, the web platform and the occasional politics of software. Not your usual blog: dense over long, niche over SEO chum. Words are my own. It's dangerous to go unknowing, take some pills 💊"
 
-export const REWRITE_DESC = 'Short links I share often'
-
-export const SERVE_DESC = 'Every publicly served static asset, in one list'
+export const SERVE_DESC =
+  'Every public asset and short link, served from an amber-phosphor terminal. Type HELP.'
 
 export const TALKS_DESC =
   'My conference talks on tape. A CRT, a VCR combo and five cassettes: finite state machines, functional programming and React Native.'

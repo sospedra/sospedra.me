@@ -12,12 +12,16 @@
     "listed": false
   },
   {
-    "destination": "/rewrite",
+    "destination": "/serve",
     "source": "/r/:id"
   },
   {
-    "destination": "/rewrite",
+    "destination": "/serve",
     "source": "/rewrite/:id"
+  },
+  {
+    "destination": "/serve",
+    "source": "/rewrite"
   },
   {
     "destination": "/serve",

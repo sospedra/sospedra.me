@@ -1,3 +1,8 @@
 import rewrites from './rewrites.json'
 
-export const publicRewrites = rewrites.filter(({ listed }) => listed)
+type Rewrite = (typeof rewrites)[number]
+
+export const publicRewrites = rewrites.filter(
+  (rewrite): rewrite is Extract<Rewrite, { title: string }> =>
+    Boolean(rewrite.listed),
+)
