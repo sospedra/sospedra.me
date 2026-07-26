@@ -1,68 +1,1016 @@
-@reference "../../service/style/global.css";
-
-.bazaar {
-  @apply flex flex-col w-full max-w-xl px-4 pt-12 pb-20 mx-auto text-white opacity-0;
-  animation: fade 1s ease-in forwards;
-  animation-delay: 1s;
+.scene {
+  /* 1 in-game meter; --hs doubles sprite scale on mobile (human gold standard) */
+  --m: min(20svh, 10.2vw);
+  --hs: 1;
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow-y: auto;
+  overflow-x: clip;
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+  background: #0b0e14;
+  color: #d6dbe6;
 }
 
-.list {
-  @apply relative text-center;
+/* mandatory snap traps touch scrolling: short swipes bounce back */
+@media (pointer: fine) {
+  .scene {
+    scroll-snap-type: y mandatory;
+  }
 }
 
-.list li {
-  @apply relative flex flex-col items-center justify-center my-24;
+@media (max-width: 700px) {
+  .scene {
+    --m: min(10svh, 13vw);
+    --hs: 2;
+  }
 }
 
-.title {
-  @apply text-5xl italic text-cyan-400;
-  font-family: var(--font-lazer84);
-  transform: skewY(-4deg);
-  text-shadow:
-    2px 0px 3px #00a895,
-    2px 3px 1rem #00a895,
-    2px 0px 1rem,
-    20px 0vw 10rem #00a895,
-    40px 0vw 10rem #00a895;
+.scene img {
+  image-rendering: pixelated;
+  user-select: none;
 }
 
-.list p {
-  @apply pt-8 text-xl;
+.floor {
+  position: relative;
+  height: 100svh;
+  scroll-snap-align: start;
+  overflow: hidden;
+}
+
+.mobileTree {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .desktopTree {
+    display: none;
+  }
+  .mobileTree {
+    display: block;
+  }
+}
+
+/* ---------- shared layers ---------- */
+.fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cover {
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.tile {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+}
+
+/* mkt-depth: soften the haze layer */
+.tile + .tile {
+  opacity: 0.55;
+}
+
+/* ---------- frame cycling ---------- */
+.cycle {
+  display: grid;
+  line-height: 0;
+}
+
+.cycle > img {
+  grid-area: 1 / 1;
+  animation: 1.4s steps(1, end) infinite;
+}
+
+.n2 > img {
+  animation-name: slot2;
+}
+.n2 > img:nth-child(2) {
+  animation-delay: -0.7s;
+}
+
+.n3 > img {
+  animation-name: slot3;
+  animation-duration: 1.8s;
+}
+.n3 > img:nth-child(2) {
+  animation-delay: -1.2s;
+}
+.n3 > img:nth-child(3) {
+  animation-delay: -0.6s;
+}
+
+@keyframes slot2 {
+  0% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes slot3 {
+  0% {
+    opacity: 1;
+  }
+  33.4%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------- floor 1: the street ---------- */
+.bgFull {
+  z-index: 0;
+}
+
+.bgBand {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 65svh;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+}
+
+.ground {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: calc(var(--m) * 0.75);
+}
+
+.mktGround {
+  height: calc(var(--m) * 1.3);
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  z-index: 1;
+}
+
+.streetScene {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--m) * 0.75);
+  height: 70svh;
+  aspect-ratio: 267 / 127;
+  translate: -50% 0;
+  line-height: 0;
+  z-index: 1;
+}
+
+.streetScene > img {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 700px) {
+  .streetScene {
+    width: 100vw;
+    height: auto;
+    aspect-ratio: 160 / 185;
+  }
+}
+
+/* distant traffic on the band */
+.carLane {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
 .car {
-  @apply absolute left-0 z-10 w-screen;
-  bottom: 4vh;
-  transform: translateX(120%);
-  animation: car 1s linear forwards;
-  animation-delay: 3s;
+  position: absolute;
+  bottom: 26svh;
+  left: 0;
+  animation: drive 26s linear infinite;
 }
 
-.offscreen {
-  @apply fixed bottom-0 z-10 w-full transition-transform duration-1000 transform pointer-events-none;
-  will-change: transform;
-  height: 50vh;
+.car img {
+  height: calc(var(--m) * 0.5);
+  width: auto;
 }
 
-.hidden {
-  /* biome-ignore lint/complexity/noImportantStyles: overrides the translate-y set by .offscreen's transform utilities */
-  transform: translateY(100%) !important;
+.carBack {
+  bottom: 29svh;
+  animation-name: driveBack;
+  animation-duration: 34s;
+  animation-delay: -12s;
+  opacity: 0.75;
 }
 
-@keyframes fade {
+.carBack img {
+  height: calc(var(--m) * 0.38);
+  transform: scaleX(-1);
+}
+
+@keyframes drive {
   from {
-    opacity: 0;
+    transform: translateX(-8vw);
   }
   to {
+    transform: translateX(108vw);
+  }
+}
+
+@keyframes driveBack {
+  from {
+    transform: translateX(108vw);
+  }
+  to {
+    transform: translateX(-8vw);
+  }
+}
+
+/* ---------- street furniture ---------- */
+.busLink {
+  position: absolute;
+  left: 3.75%;
+  top: 47.24%;
+  width: 21.72%;
+  height: 52.76%;
+  display: block;
+  border: 0;
+}
+
+.door {
+  position: absolute;
+  left: 67.04%;
+  top: 47.24%;
+  width: 11.99%;
+  height: 52.76%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.busLink::after,
+.door::after {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    rgba(255, 210, 122, 0.32),
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.busLink:hover::after,
+.busLink:focus-visible::after,
+.door:hover::after,
+.door:focus-visible::after {
+  opacity: 1;
+}
+
+.doorFrame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.doorFrame:nth-child(1) {
+  opacity: 1;
+}
+
+.door:hover .doorFrame:nth-child(1),
+.door:focus-visible .doorFrame:nth-child(1) {
+  animation: seqOut 0.24s steps(1, end) forwards;
+}
+
+.door:hover .doorFrame:nth-child(2),
+.door:focus-visible .doorFrame:nth-child(2) {
+  animation: seqMid 0.24s steps(1, end) forwards;
+}
+
+.door:hover .doorFrame:nth-child(3),
+.door:focus-visible .doorFrame:nth-child(3) {
+  animation: seqEnd 0.24s steps(1, end) forwards;
+}
+
+.sign {
+  position: absolute;
+  left: 64.61%;
+  top: 34.65%;
+  width: 16.85%;
+  line-height: 0;
+}
+
+.streetScene[data-bp="mobile"] .busLink {
+  left: 0.63%;
+  top: 63.78%;
+  width: 36.25%;
+  height: 36.22%;
+}
+
+.streetScene[data-bp="mobile"] .door {
+  left: 72.5%;
+  top: 63.78%;
+  width: 20%;
+  height: 36.22%;
+}
+
+.streetScene[data-bp="mobile"] .sign {
+  left: 68.44%;
+  top: 55.14%;
+  width: 28.13%;
+}
+
+.sign > img {
+  width: 100%;
+  height: auto;
+  animation: signFlicker 4.5s steps(1, end) infinite;
+}
+
+.signText {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-lazer84);
+  font-style: italic;
+  font-size: calc(var(--m) * 0.28);
+  line-height: 1;
+  color: #7ef1e1;
+  text-shadow:
+    0 0 6px #00a895,
+    0 0 18px #00a895;
+  animation: signFlicker 4.5s steps(1, end) infinite;
+  pointer-events: none;
+}
+
+@keyframes signFlicker {
+  0%,
+  6% {
+    opacity: 0.4;
+  }
+  8%,
+  52% {
+    opacity: 1;
+  }
+  54% {
+    opacity: 0.3;
+  }
+  56%,
+  100% {
     opacity: 1;
   }
 }
 
-@keyframes car {
+/* ---------- livingness ---------- */
+.propImg {
+  position: absolute;
+  image-rendering: pixelated;
+  user-select: none;
+  z-index: 1;
+}
+
+.pLamp {
+  left: 21%;
+  top: 26%;
+  width: calc(var(--m) * 0.75);
+}
+
+.pCrow {
+  right: 16%;
+  top: 2%;
+  width: calc(var(--m) * 0.5);
+}
+
+.pVent {
+  position: absolute;
+  left: 36%;
+  bottom: calc(var(--m) * 0.9);
+  z-index: 1;
+}
+
+.pVent img {
+  width: calc(var(--m) * 1);
+  height: auto;
+}
+
+.pPuddle {
+  position: absolute;
+  left: 7%;
+  bottom: calc(var(--m) * 0.2);
+  z-index: 1;
+}
+
+.pPuddle img {
+  width: calc(var(--m) * 1.5);
+  height: auto;
+}
+
+.rat {
+  position: absolute;
+  bottom: calc(var(--m) * 0.2);
+  left: 0;
+  z-index: 2;
+  animation: ratRun 17s linear infinite;
+}
+
+.rat img {
+  width: calc(var(--m) * 0.5);
+  height: auto;
+}
+
+@keyframes ratRun {
+  0% {
+    transform: translateX(-15vw);
+  }
+  55%,
+  100% {
+    transform: translateX(112vw);
+  }
+}
+
+.pBlink {
+  position: absolute;
+  top: 7%;
+  right: 12%;
+}
+
+.pBlink img {
+  width: calc(var(--m) * 0.25);
+  height: auto;
+}
+
+.pGlitch {
+  position: absolute;
+  top: 13%;
+  left: 26%;
+}
+
+.pGlitch img {
+  width: calc(var(--m) * 3);
+  height: auto;
+}
+
+/* ---------- market floors ---------- */
+.mktGround {
+  height: calc(var(--m) * 1.5);
+  z-index: 1;
+}
+
+.ledge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - var(--m) * 0.25);
+  height: calc(var(--m) * 0.5);
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  z-index: 1;
+}
+
+.mktRow {
+  position: absolute;
+  inset: auto 0 calc(var(--m) * 1.45) 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: calc(var(--m) * 0.1);
+  z-index: 2;
+}
+
+.stairs {
+  align-self: stretch;
+  width: calc(var(--m) * 1.25);
+  flex: 0 0 auto;
+  line-height: 0;
+}
+
+.stairsL,
+.stairsR {
+  position: absolute;
+  top: 0;
+  bottom: calc(var(--m) * 1.05);
+  z-index: 2;
+}
+
+.stairsL {
+  left: 0;
+}
+
+.stairsR {
+  right: 0;
+}
+
+.stairs img {
+  width: 100%;
+  height: 100%;
+}
+
+.pStrip {
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: calc(var(--m) * 3 * var(--hs));
+  z-index: 2;
+}
+
+.pSideL {
+  left: calc(var(--m) * 0.3);
+  bottom: calc(var(--m) * 0.6);
+  width: calc(var(--m) * 0.9 * var(--hs));
+}
+
+.pSideR {
+  right: calc(var(--m) * 0.3);
+  bottom: calc(var(--m) * 0.6);
+  width: calc(var(--m) * 0.7 * var(--hs));
+}
+
+.mGridR,
+.mGridL {
+  position: absolute;
+  inset: 0 0 calc(var(--m) * 1.45) 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-items: end;
+  z-index: 2;
+}
+
+.mGridR {
+  grid-template-columns: minmax(0, 1fr) 24vw;
+}
+
+.mGridR .stairs {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  width: auto;
+  align-self: stretch;
+}
+
+.mGridL {
+  grid-template-columns: 24vw minmax(0, 1fr);
+}
+
+.mGridL .stairs {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: auto;
+  align-self: stretch;
+}
+
+/* ---------- stalls ---------- */
+.stallWrap {
+  position: relative;
+  flex: 0 0 auto;
+  width: calc(var(--m) * var(--stall-w) / 32);
+  height: calc(var(--m) * var(--stall-h) / 32);
+}
+
+@media (max-width: 700px) {
+  .stallWrap {
+    width: auto;
+    height: 43svh;
+  }
+}
+
+.mGridL .stallWrap {
+  grid-column: 2;
+}
+
+.stall {
+  position: absolute;
+  inset: 0;
+  display: block;
+  line-height: 0;
+}
+
+/* very subtle interior idle: the stall bg breathes light */
+.interior {
+  animation: interiorIdle 7s steps(1, end) infinite;
+}
+
+.stallWrap:hover .interior,
+.stallWrap:focus-within .interior {
+  animation: none;
+}
+
+@keyframes interiorIdle {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  44% {
+    filter: brightness(1.05);
+  }
+  91% {
+    filter: brightness(0.96);
+  }
+}
+
+/* hover illumination: same pixels, brighter */
+.stallWrap:hover img,
+.stallWrap:focus-within img {
+  filter: brightness(1.35) saturate(1.4);
+}
+
+.glowWash {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    color-mix(in srgb, var(--tint) 34%, transparent),
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stallWrap:hover .glowWash,
+.stallWrap:focus-within .glowWash {
+  opacity: 1;
+}
+
+/* keeper: behind the front, feet behind the counter band */
+.keeper {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  bottom: 6%;
+  z-index: 1;
+}
+
+.keeper img {
+  height: calc(var(--m) * 2.2 * var(--hs));
+  width: auto;
+}
+
+.keeperIdle {
+  display: grid;
+}
+
+.keeperIdle img {
+  grid-area: 1 / 1;
+  animation: slot2 1.4s steps(1, end) infinite;
+}
+
+.keeperIdle img:nth-child(2) {
+  animation-delay: -0.7s;
+}
+
+.keeperHover {
+  display: none;
+}
+
+.keeperHover img {
+  grid-area: 1 / 1;
+  opacity: 0;
+}
+
+.stallWrap:hover .keeperIdle,
+.stallWrap:focus-within .keeperIdle {
+  display: none;
+}
+
+.stallWrap:hover .keeperHover,
+.stallWrap:focus-within .keeperHover {
+  display: grid;
+}
+
+/* greeting plays once, holds the last frame */
+.keeperHover img:nth-child(1) {
+  animation: seqOut 0.3s steps(1, end) forwards;
+}
+
+.keeperHover img:nth-child(2) {
+  animation: seqMid 0.6s steps(1, end) forwards;
+}
+
+.keeperHover img:nth-child(3) {
+  animation: seqEnd 0.6s steps(1, end) forwards;
+}
+
+@keyframes seqOut {
   from {
-    transform: translateX(-120%);
+    opacity: 1;
   }
   to {
-    transform: translateX(100vw);
+    opacity: 0;
+  }
+}
+
+@keyframes seqMid {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes seqEnd {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* the stall's idle prop, inside the opening */
+.stallProp {
+  position: absolute;
+  right: 13%;
+  bottom: 22%;
+  z-index: 2;
+}
+
+.stallProp img {
+  width: calc(var(--m) * 0.9 * var(--hs));
+  height: auto;
+}
+
+.stall[data-stall="manual"] .stallProp {
+  left: 28%;
+  right: auto;
+  bottom: 52%;
+}
+
+.stall[data-stall="manual"] .stallProp img {
+  width: calc(var(--m) * 0.65 * var(--hs));
+}
+
+@media (max-width: 700px) {
+  .stall[data-stall="manual"] .stallProp {
+    left: 5%;
+  }
+
+  .stall[data-stall="manual"] .stallProp img {
+    width: calc(var(--m) * 0.45 * var(--hs));
+  }
+}
+
+.customer {
+  position: absolute;
+  right: 18%;
+  bottom: 17%;
+  z-index: 1;
+}
+
+.customer img {
+  height: calc(var(--m) * 1.5 * var(--hs));
+  width: auto;
+}
+
+.stall[data-stall="serve"] .keeperIdle {
+  animation: hologramFlicker 1.9s steps(1, end) infinite;
+}
+
+@keyframes hologramFlicker {
+  0%,
+  91%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 0.35;
+  }
+  94% {
+    opacity: 0.8;
+  }
+  96% {
+    opacity: 0.25;
+  }
+}
+
+/* marquee text: the hard rect from the brief (9-23% height) */
+.stallSign {
+  position: absolute;
+  top: 9%;
+  left: 10%;
+  right: 10%;
+  height: 14%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--m) * 0.24 * var(--hs));
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--tint) 55%, white);
+  text-shadow:
+    0 0 calc(var(--m) * 0.06) var(--tint),
+    0 0 calc(var(--m) * 0.16) var(--tint);
+  pointer-events: none;
+}
+
+.stallWrap:hover .stallSign,
+.stallWrap:focus-within .stallSign {
+  color: #ffffff;
+}
+
+/* market floors take the stairs' natural height (1.25m wide, 40:176 aspect = 5.5m) */
+.floorMkt {
+  height: calc(var(--m) * 5.5);
+  scroll-snap-align: center;
+  overflow: visible; /* dialogs pop above the stalls, past the floor edge */
+}
+
+@media (max-width: 700px) {
+  .floorMkt {
+    height: 100svh;
+    scroll-snap-align: start;
+  }
+}
+
+.floor {
+  transition: filter 0.5s ease;
+}
+
+.dimmed {
+  filter: brightness(0.55);
+}
+
+/* ---------- FFIX dialog ---------- */
+/* FFIX: the dialog sits at the bottom of the screen, never over the stall */
+.dialog {
+  position: fixed;
+  bottom: calc(var(--m) * 0.35);
+  left: 50%;
+  translate: -50% 0;
+  width: max-content;
+  max-width: min(440px, 86vw);
+  z-index: 30;
+  display: none;
+  padding: 10px 12px;
+  border: 2px solid #f2f2f2;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.04) 0 2px,
+      transparent 2px 4px
+    ),
+    linear-gradient(180deg, #7c8088, #5e626a);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.45),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 6px 16px rgba(0, 0, 0, 0.5);
+  font-size: 10px;
+  line-height: 1.8;
+  color: #fff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+  text-transform: none;
+}
+
+.stallWrap:hover .dialog,
+.stallWrap:focus-within .dialog,
+.dialogOpen .dialog {
+  display: block;
+}
+
+.dialogDesc {
+  margin: 0 0 8px;
+}
+
+.dialogLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dialogLinks a {
+  color: #ffe9a8;
+  text-decoration: none;
+}
+
+.dialogLinks a::before {
+  content: "\25B8 ";
+}
+
+.dialogLinks a:hover {
+  color: #ffffff;
+}
+
+/* frame-speed overrides: the rat runs, the steam drifts */
+.rat .cycle > img {
+  animation-duration: 0.35s;
+}
+
+.stallWrap[data-stall="manual"] .stallProp > img {
+  animation-duration: 1.1s;
+}
+
+/* ---------- slabs ---------- */
+.slab {
+  position: relative;
+  z-index: 3;
+  height: calc(var(--m) * 0.75);
+  margin: calc(var(--m) * -0.25) 0;
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.55),
+    0 -10px 24px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- hud ---------- */
+.hud {
+  position: fixed;
+  top: 12px;
+  right: 14px;
+  z-index: 10;
+}
+
+.hudBtn {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #d6dbe6;
+  background: rgba(5, 7, 11, 0.8);
+  border: 1px solid #1c212e;
+  border-radius: 3px;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+
+.hudBtn:hover {
+  border-color: #4fd8c8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene *,
+  .scene *::before,
+  .scene *::after {
+    /* last block in the file: source order beats the animation classes above */
+    animation: none;
+    transition: none;
+  }
+}
+
+/* the seated ramen customer, back to the viewer */
+.customer {
+  position: absolute;
+  left: 22%;
+  bottom: 12%;
+  z-index: 2;
+}
+
+.customer img {
+  height: calc(var(--m) * 1.5 * var(--hs));
+  width: auto;
+}
+
+/* serve: hologram flicker is runtime, no hover frames */
+.stallWrap[data-stall="serve"] .keeper {
+  animation: holoFlicker 2.8s steps(1, end) infinite;
+}
+
+.stallWrap[data-stall="serve"]:hover .keeperIdle,
+.stallWrap[data-stall="serve"]:focus-within .keeperIdle {
+  display: grid;
+}
+
+.stallWrap[data-stall="serve"]:hover .keeper {
+  animation-duration: 0.9s;
+}
+
+@keyframes holoFlicker {
+  0%,
+  86%,
+  100% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 0.4;
+  }
+  91% {
+    opacity: 0.85;
+  }
+  95% {
+    opacity: 0.55;
   }
 }

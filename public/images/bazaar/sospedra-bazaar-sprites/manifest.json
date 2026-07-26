@@ -1,0 +1,2839 @@
+{
+  "scale": 8,
+  "count": 167,
+  "assets": [
+    {
+      "file": "live-ac-1.png",
+      "vpx": {
+        "width": 40,
+        "height": 28
+      },
+      "output": {
+        "width": 320,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 3
+    },
+    {
+      "file": "live-ac-2.png",
+      "vpx": {
+        "width": 40,
+        "height": 28
+      },
+      "output": {
+        "width": 320,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 4
+    },
+    {
+      "file": "live-ac-3.png",
+      "vpx": {
+        "width": 40,
+        "height": 28
+      },
+      "output": {
+        "width": 320,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 5
+    },
+    {
+      "file": "live-cables.png",
+      "vpx": {
+        "width": 96,
+        "height": 40
+      },
+      "output": {
+        "width": 768,
+        "height": 320
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "top-center",
+      "sourceSheet": "livingness",
+      "cell": 9
+    },
+    {
+      "file": "live-crow-1.png",
+      "vpx": {
+        "width": 16,
+        "height": 12
+      },
+      "output": {
+        "width": 128,
+        "height": 96
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 10
+    },
+    {
+      "file": "live-crow-2.png",
+      "vpx": {
+        "width": 16,
+        "height": 12
+      },
+      "output": {
+        "width": 128,
+        "height": 96
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 11
+    },
+    {
+      "file": "live-glitch-1.png",
+      "vpx": {
+        "width": 96,
+        "height": 12
+      },
+      "output": {
+        "width": 768,
+        "height": 96
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 16
+    },
+    {
+      "file": "live-glitch-2.png",
+      "vpx": {
+        "width": 96,
+        "height": 12
+      },
+      "output": {
+        "width": 768,
+        "height": 96
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 17
+    },
+    {
+      "file": "live-lamp-1.png",
+      "vpx": {
+        "width": 24,
+        "height": 24
+      },
+      "output": {
+        "width": 192,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 1
+    },
+    {
+      "file": "live-lamp-2.png",
+      "vpx": {
+        "width": 24,
+        "height": 24
+      },
+      "output": {
+        "width": 192,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 2
+    },
+    {
+      "file": "live-puddle-1.png",
+      "vpx": {
+        "width": 48,
+        "height": 16
+      },
+      "output": {
+        "width": 384,
+        "height": 128
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 18
+    },
+    {
+      "file": "live-puddle-2.png",
+      "vpx": {
+        "width": 48,
+        "height": 16
+      },
+      "output": {
+        "width": 384,
+        "height": 128
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 19
+    },
+    {
+      "file": "live-rat-1.png",
+      "vpx": {
+        "width": 16,
+        "height": 8
+      },
+      "output": {
+        "width": 128,
+        "height": 64
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 12
+    },
+    {
+      "file": "live-rat-2.png",
+      "vpx": {
+        "width": 16,
+        "height": 8
+      },
+      "output": {
+        "width": 128,
+        "height": 64
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 13
+    },
+    {
+      "file": "live-sky-blink-1.png",
+      "vpx": {
+        "width": 8,
+        "height": 8
+      },
+      "output": {
+        "width": 64,
+        "height": 64
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 14
+    },
+    {
+      "file": "live-sky-blink-2.png",
+      "vpx": {
+        "width": 8,
+        "height": 8
+      },
+      "output": {
+        "width": 64,
+        "height": 64
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 15
+    },
+    {
+      "file": "live-vent-1.png",
+      "vpx": {
+        "width": 32,
+        "height": 24
+      },
+      "output": {
+        "width": 256,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 6
+    },
+    {
+      "file": "live-vent-2.png",
+      "vpx": {
+        "width": 32,
+        "height": 24
+      },
+      "output": {
+        "width": 256,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 7
+    },
+    {
+      "file": "live-vent-3.png",
+      "vpx": {
+        "width": 32,
+        "height": 24
+      },
+      "output": {
+        "width": 256,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "livingness",
+      "cell": 8
+    },
+    {
+      "file": "mkt-depth.png",
+      "vpx": {
+        "width": 288,
+        "height": 180
+      },
+      "output": {
+        "width": 2304,
+        "height": 1440
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": true,
+      "anchor": "bottom-left",
+      "sourceSheet": "mkt-depth"
+    },
+    {
+      "file": "mkt-floor.png",
+      "vpx": {
+        "width": 512,
+        "height": 48
+      },
+      "output": {
+        "width": 4096,
+        "height": 384
+      },
+      "scale": 8,
+      "alpha": false,
+      "tileableX": true,
+      "anchor": "canvas",
+      "sourceSheet": "mkt-floor"
+    },
+    {
+      "file": "mkt-wall.png",
+      "vpx": {
+        "width": 288,
+        "height": 180
+      },
+      "output": {
+        "width": 2304,
+        "height": 1440
+      },
+      "scale": 8,
+      "alpha": false,
+      "tileableX": true,
+      "anchor": "canvas",
+      "sourceSheet": "mkt-wall"
+    },
+    {
+      "file": "p1-bg-band.png",
+      "vpx": {
+        "width": 512,
+        "height": 114
+      },
+      "output": {
+        "width": 4096,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": true,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-bg-band"
+    },
+    {
+      "file": "p1-bg-full.png",
+      "vpx": {
+        "width": 288,
+        "height": 180
+      },
+      "output": {
+        "width": 2304,
+        "height": 1440
+      },
+      "scale": 8,
+      "alpha": false,
+      "tileableX": false,
+      "anchor": "canvas",
+      "sourceSheet": "p1-bg-full"
+    },
+    {
+      "file": "p1-bldg-a-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 123
+      },
+      "output": {
+        "width": 640,
+        "height": 984
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-buildings",
+      "cell": 1
+    },
+    {
+      "file": "p1-bldg-a-mobile.png",
+      "vpx": {
+        "width": 42,
+        "height": 186
+      },
+      "output": {
+        "width": 336,
+        "height": 1488
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-buildings",
+      "cell": 2
+    },
+    {
+      "file": "p1-bldg-c-desktop.png",
+      "vpx": {
+        "width": 54,
+        "height": 140
+      },
+      "output": {
+        "width": 432,
+        "height": 1120
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-buildings",
+      "cell": 3
+    },
+    {
+      "file": "p1-bldg-d-desktop.png",
+      "vpx": {
+        "width": 106,
+        "height": 140
+      },
+      "output": {
+        "width": 848,
+        "height": 1120
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-buildings",
+      "cell": 4
+    },
+    {
+      "file": "p1-bldg-d-mobile.png",
+      "vpx": {
+        "width": 66,
+        "height": 212
+      },
+      "output": {
+        "width": 528,
+        "height": 1696
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-buildings",
+      "cell": 5
+    },
+    {
+      "file": "p1-busstop-lit-1.png",
+      "vpx": {
+        "width": 70,
+        "height": 80
+      },
+      "output": {
+        "width": 560,
+        "height": 640
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-interactives",
+      "cell": 2
+    },
+    {
+      "file": "p1-busstop-lit-2.png",
+      "vpx": {
+        "width": 70,
+        "height": 80
+      },
+      "output": {
+        "width": 560,
+        "height": 640
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-interactives",
+      "cell": 3
+    },
+    {
+      "file": "p1-busstop.png",
+      "vpx": {
+        "width": 70,
+        "height": 80
+      },
+      "output": {
+        "width": 560,
+        "height": 640
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-interactives",
+      "cell": 1
+    },
+    {
+      "file": "p1-door-ajar.png",
+      "vpx": {
+        "width": 32,
+        "height": 67
+      },
+      "output": {
+        "width": 256,
+        "height": 536
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-interactives",
+      "cell": 6
+    },
+    {
+      "file": "p1-door-closed.png",
+      "vpx": {
+        "width": 32,
+        "height": 67
+      },
+      "output": {
+        "width": 256,
+        "height": 536
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-interactives",
+      "cell": 4
+    },
+    {
+      "file": "p1-door-mid.png",
+      "vpx": {
+        "width": 32,
+        "height": 67
+      },
+      "output": {
+        "width": 256,
+        "height": 536
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-interactives",
+      "cell": 5
+    },
+    {
+      "file": "p1-sign-plate-lit.png",
+      "vpx": {
+        "width": 45,
+        "height": 16
+      },
+      "output": {
+        "width": 360,
+        "height": 128
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-interactives",
+      "cell": 8
+    },
+    {
+      "file": "p1-sign-plate.png",
+      "vpx": {
+        "width": 45,
+        "height": 16
+      },
+      "output": {
+        "width": 360,
+        "height": 128
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "p1-interactives",
+      "cell": 7
+    },
+    {
+      "file": "p1-street.png",
+      "vpx": {
+        "width": 512,
+        "height": 48
+      },
+      "output": {
+        "width": 4096,
+        "height": 384
+      },
+      "scale": 8,
+      "alpha": false,
+      "tileableX": true,
+      "anchor": "canvas",
+      "sourceSheet": "p1-street"
+    },
+    {
+      "file": "prop-bottles.png",
+      "vpx": {
+        "width": 24,
+        "height": 24
+      },
+      "output": {
+        "width": 192,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "props",
+      "cell": 6
+    },
+    {
+      "file": "prop-cablefall.png",
+      "vpx": {
+        "width": 96,
+        "height": 40
+      },
+      "output": {
+        "width": 768,
+        "height": 320
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "top-center",
+      "sourceSheet": "props",
+      "cell": 8
+    },
+    {
+      "file": "prop-crate-a.png",
+      "vpx": {
+        "width": 32,
+        "height": 32
+      },
+      "output": {
+        "width": 256,
+        "height": 256
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "props",
+      "cell": 4
+    },
+    {
+      "file": "prop-crate-b.png",
+      "vpx": {
+        "width": 32,
+        "height": 32
+      },
+      "output": {
+        "width": 256,
+        "height": 256
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "props",
+      "cell": 5
+    },
+    {
+      "file": "prop-hydrant.png",
+      "vpx": {
+        "width": 24,
+        "height": 48
+      },
+      "output": {
+        "width": 192,
+        "height": 384
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "props",
+      "cell": 7
+    },
+    {
+      "file": "prop-lightstrip-1.png",
+      "vpx": {
+        "width": 96,
+        "height": 24
+      },
+      "output": {
+        "width": 768,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "top-center",
+      "sourceSheet": "props",
+      "cell": 1
+    },
+    {
+      "file": "prop-lightstrip-2.png",
+      "vpx": {
+        "width": 96,
+        "height": 24
+      },
+      "output": {
+        "width": 768,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "top-center",
+      "sourceSheet": "props",
+      "cell": 2
+    },
+    {
+      "file": "prop-lightstrip-3.png",
+      "vpx": {
+        "width": 96,
+        "height": 24
+      },
+      "output": {
+        "width": 768,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "top-center",
+      "sourceSheet": "props",
+      "cell": 3
+    },
+    {
+      "file": "slab-pipes-1.png",
+      "vpx": {
+        "width": 512,
+        "height": 24
+      },
+      "output": {
+        "width": 4096,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": true,
+      "anchor": "bottom-left",
+      "sourceSheet": "slab-pipes",
+      "cell": 1
+    },
+    {
+      "file": "slab-pipes-2.png",
+      "vpx": {
+        "width": 512,
+        "height": 24
+      },
+      "output": {
+        "width": 4096,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": true,
+      "anchor": "bottom-left",
+      "sourceSheet": "slab-pipes",
+      "cell": 2
+    },
+    {
+      "file": "slab-pipes-3.png",
+      "vpx": {
+        "width": 512,
+        "height": 24
+      },
+      "output": {
+        "width": 4096,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": true,
+      "anchor": "bottom-left",
+      "sourceSheet": "slab-pipes",
+      "cell": 3
+    },
+    {
+      "file": "stairs-c-mobile.png",
+      "vpx": {
+        "width": 30,
+        "height": 265
+      },
+      "output": {
+        "width": 240,
+        "height": 2120
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stairs-c",
+      "cell": 1
+    },
+    {
+      "file": "stairs-h-desktop.png",
+      "vpx": {
+        "width": 40,
+        "height": 176
+      },
+      "output": {
+        "width": 320,
+        "height": 1408
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stairs-h",
+      "cell": 1
+    },
+    {
+      "file": "stairs-h-mobile.png",
+      "vpx": {
+        "width": 30,
+        "height": 265
+      },
+      "output": {
+        "width": 240,
+        "height": 2120
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stairs-h",
+      "cell": 2
+    },
+    {
+      "file": "stairs-i-desktop.png",
+      "vpx": {
+        "width": 40,
+        "height": 176
+      },
+      "output": {
+        "width": 320,
+        "height": 1408
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stairs-i",
+      "cell": 1
+    },
+    {
+      "file": "stairs-i-mobile.png",
+      "vpx": {
+        "width": 30,
+        "height": 265
+      },
+      "output": {
+        "width": 240,
+        "height": 2120
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stairs-i",
+      "cell": 2
+    },
+    {
+      "file": "stairs-o-desktop.png",
+      "vpx": {
+        "width": 40,
+        "height": 176
+      },
+      "output": {
+        "width": 320,
+        "height": 1408
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stairs-o",
+      "cell": 1
+    },
+    {
+      "file": "stairs-o-mobile.png",
+      "vpx": {
+        "width": 30,
+        "height": 265
+      },
+      "output": {
+        "width": 240,
+        "height": 2120
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stairs-o",
+      "cell": 2
+    },
+    {
+      "file": "stall-games-front-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 3
+    },
+    {
+      "file": "stall-games-front-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 4
+    },
+    {
+      "file": "stall-games-interior-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 1
+    },
+    {
+      "file": "stall-games-interior-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 2
+    },
+    {
+      "file": "stall-games-keeper-hover-1.png",
+      "vpx": {
+        "width": 38,
+        "height": 70
+      },
+      "output": {
+        "width": 304,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-games",
+      "cell": 9
+    },
+    {
+      "file": "stall-games-keeper-hover-2.png",
+      "vpx": {
+        "width": 38,
+        "height": 70
+      },
+      "output": {
+        "width": 304,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-games",
+      "cell": 10
+    },
+    {
+      "file": "stall-games-keeper-hover-3.png",
+      "vpx": {
+        "width": 38,
+        "height": 70
+      },
+      "output": {
+        "width": 304,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-games",
+      "cell": 11
+    },
+    {
+      "file": "stall-games-keeper-idle-1.png",
+      "vpx": {
+        "width": 38,
+        "height": 70
+      },
+      "output": {
+        "width": 304,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-games",
+      "cell": 7
+    },
+    {
+      "file": "stall-games-keeper-idle-2.png",
+      "vpx": {
+        "width": 38,
+        "height": 70
+      },
+      "output": {
+        "width": 304,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-games",
+      "cell": 8
+    },
+    {
+      "file": "stall-games-lit-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 5
+    },
+    {
+      "file": "stall-games-lit-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 6
+    },
+    {
+      "file": "stall-games-prop-coin-1.png",
+      "vpx": {
+        "width": 40,
+        "height": 16
+      },
+      "output": {
+        "width": 320,
+        "height": 128
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 12
+    },
+    {
+      "file": "stall-games-prop-coin-2.png",
+      "vpx": {
+        "width": 40,
+        "height": 16
+      },
+      "output": {
+        "width": 320,
+        "height": 128
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 13
+    },
+    {
+      "file": "stall-games-prop-marquee-1.png",
+      "vpx": {
+        "width": 48,
+        "height": 12
+      },
+      "output": {
+        "width": 384,
+        "height": 96
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 14
+    },
+    {
+      "file": "stall-games-prop-marquee-2.png",
+      "vpx": {
+        "width": 48,
+        "height": 12
+      },
+      "output": {
+        "width": 384,
+        "height": 96
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 15
+    },
+    {
+      "file": "stall-games-prop-marquee-3.png",
+      "vpx": {
+        "width": 48,
+        "height": 12
+      },
+      "output": {
+        "width": 384,
+        "height": 96
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-games",
+      "cell": 16
+    },
+    {
+      "file": "stall-manual-front-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-manual",
+      "cell": 3
+    },
+    {
+      "file": "stall-manual-front-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-manual",
+      "cell": 4
+    },
+    {
+      "file": "stall-manual-interior-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-manual",
+      "cell": 1
+    },
+    {
+      "file": "stall-manual-interior-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-manual",
+      "cell": 2
+    },
+    {
+      "file": "stall-manual-keeper-hover-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-manual",
+      "cell": 9
+    },
+    {
+      "file": "stall-manual-keeper-hover-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-manual",
+      "cell": 10
+    },
+    {
+      "file": "stall-manual-keeper-hover-3.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-manual",
+      "cell": 11
+    },
+    {
+      "file": "stall-manual-keeper-idle-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-manual",
+      "cell": 7
+    },
+    {
+      "file": "stall-manual-keeper-idle-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-manual",
+      "cell": 8
+    },
+    {
+      "file": "stall-manual-lit-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-manual",
+      "cell": 5
+    },
+    {
+      "file": "stall-manual-lit-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-manual",
+      "cell": 6
+    },
+    {
+      "file": "stall-manual-prop-steam-1.png",
+      "vpx": {
+        "width": 40,
+        "height": 32
+      },
+      "output": {
+        "width": 320,
+        "height": 256
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-manual-steam",
+      "cell": 1
+    },
+    {
+      "file": "stall-manual-prop-steam-2.png",
+      "vpx": {
+        "width": 40,
+        "height": 32
+      },
+      "output": {
+        "width": 320,
+        "height": 256
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-manual-steam",
+      "cell": 2
+    },
+    {
+      "file": "stall-manual-prop-steam-3.png",
+      "vpx": {
+        "width": 40,
+        "height": 32
+      },
+      "output": {
+        "width": 320,
+        "height": 256
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-manual-steam",
+      "cell": 3
+    },
+    {
+      "file": "stall-papers-front-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-papers",
+      "cell": 3
+    },
+    {
+      "file": "stall-papers-front-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-papers",
+      "cell": 4
+    },
+    {
+      "file": "stall-papers-interior-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-papers",
+      "cell": 1
+    },
+    {
+      "file": "stall-papers-interior-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-papers",
+      "cell": 2
+    },
+    {
+      "file": "stall-papers-keeper-hover-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-papers",
+      "cell": 9
+    },
+    {
+      "file": "stall-papers-keeper-hover-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-papers",
+      "cell": 10
+    },
+    {
+      "file": "stall-papers-keeper-hover-3.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-papers",
+      "cell": 11
+    },
+    {
+      "file": "stall-papers-keeper-idle-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-papers",
+      "cell": 7
+    },
+    {
+      "file": "stall-papers-keeper-idle-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-papers",
+      "cell": 8
+    },
+    {
+      "file": "stall-papers-lit-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-papers",
+      "cell": 5
+    },
+    {
+      "file": "stall-papers-lit-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-papers",
+      "cell": 6
+    },
+    {
+      "file": "stall-papers-prop-line-1.png",
+      "vpx": {
+        "width": 48,
+        "height": 24
+      },
+      "output": {
+        "width": 384,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "top-center",
+      "sourceSheet": "stall-papers",
+      "cell": 12
+    },
+    {
+      "file": "stall-papers-prop-line-2.png",
+      "vpx": {
+        "width": 48,
+        "height": 24
+      },
+      "output": {
+        "width": 384,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "top-center",
+      "sourceSheet": "stall-papers",
+      "cell": 13
+    },
+    {
+      "file": "stall-projects-front-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-projects",
+      "cell": 3
+    },
+    {
+      "file": "stall-projects-front-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-projects",
+      "cell": 4
+    },
+    {
+      "file": "stall-projects-interior-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-projects",
+      "cell": 1
+    },
+    {
+      "file": "stall-projects-interior-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-projects",
+      "cell": 2
+    },
+    {
+      "file": "stall-projects-keeper-hover-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-projects",
+      "cell": 9
+    },
+    {
+      "file": "stall-projects-keeper-hover-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-projects",
+      "cell": 10
+    },
+    {
+      "file": "stall-projects-keeper-hover-3.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-projects",
+      "cell": 11
+    },
+    {
+      "file": "stall-projects-keeper-idle-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-projects",
+      "cell": 7
+    },
+    {
+      "file": "stall-projects-keeper-idle-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-projects",
+      "cell": 8
+    },
+    {
+      "file": "stall-projects-lit-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-projects",
+      "cell": 5
+    },
+    {
+      "file": "stall-projects-lit-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-projects",
+      "cell": 6
+    },
+    {
+      "file": "stall-projects-prop-drip-1.png",
+      "vpx": {
+        "width": 20,
+        "height": 24
+      },
+      "output": {
+        "width": 160,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-projects",
+      "cell": 12
+    },
+    {
+      "file": "stall-projects-prop-drip-2.png",
+      "vpx": {
+        "width": 20,
+        "height": 24
+      },
+      "output": {
+        "width": 160,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-projects",
+      "cell": 13
+    },
+    {
+      "file": "stall-projects-prop-drip-3.png",
+      "vpx": {
+        "width": 20,
+        "height": 24
+      },
+      "output": {
+        "width": 160,
+        "height": 192
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-projects",
+      "cell": 14
+    },
+    {
+      "file": "stall-serve-front-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-serve",
+      "cell": 3
+    },
+    {
+      "file": "stall-serve-front-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-serve",
+      "cell": 4
+    },
+    {
+      "file": "stall-serve-interior-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-serve",
+      "cell": 1
+    },
+    {
+      "file": "stall-serve-interior-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-serve",
+      "cell": 2
+    },
+    {
+      "file": "stall-serve-keeper-hover-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-serve",
+      "cell": 10
+    },
+    {
+      "file": "stall-serve-keeper-hover-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-serve",
+      "cell": 11
+    },
+    {
+      "file": "stall-serve-keeper-hover-3.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-serve",
+      "cell": 12
+    },
+    {
+      "file": "stall-serve-keeper-idle-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-serve",
+      "cell": 7
+    },
+    {
+      "file": "stall-serve-keeper-idle-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-serve",
+      "cell": 8
+    },
+    {
+      "file": "stall-serve-keeper-idle-3.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-serve",
+      "cell": 9
+    },
+    {
+      "file": "stall-serve-lit-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-serve",
+      "cell": 5
+    },
+    {
+      "file": "stall-serve-lit-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-serve",
+      "cell": 6
+    },
+    {
+      "file": "stall-serve-prop-scale-1.png",
+      "vpx": {
+        "width": 24,
+        "height": 40
+      },
+      "output": {
+        "width": 192,
+        "height": 320
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-serve",
+      "cell": 13
+    },
+    {
+      "file": "stall-serve-prop-scale-2.png",
+      "vpx": {
+        "width": 24,
+        "height": 40
+      },
+      "output": {
+        "width": 192,
+        "height": 320
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-serve",
+      "cell": 14
+    },
+    {
+      "file": "stall-talks-front-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-talks",
+      "cell": 3
+    },
+    {
+      "file": "stall-talks-front-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-talks",
+      "cell": 4
+    },
+    {
+      "file": "stall-talks-interior-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-talks",
+      "cell": 1
+    },
+    {
+      "file": "stall-talks-interior-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-talks",
+      "cell": 2
+    },
+    {
+      "file": "stall-talks-keeper-hover-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-talks",
+      "cell": 9
+    },
+    {
+      "file": "stall-talks-keeper-hover-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-talks",
+      "cell": 10
+    },
+    {
+      "file": "stall-talks-keeper-hover-3.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-talks",
+      "cell": 11
+    },
+    {
+      "file": "stall-talks-keeper-idle-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-talks",
+      "cell": 7
+    },
+    {
+      "file": "stall-talks-keeper-idle-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-talks",
+      "cell": 8
+    },
+    {
+      "file": "stall-talks-lit-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-talks",
+      "cell": 5
+    },
+    {
+      "file": "stall-talks-lit-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-talks",
+      "cell": 6
+    },
+    {
+      "file": "stall-talks-prop-static-1.png",
+      "vpx": {
+        "width": 32,
+        "height": 28
+      },
+      "output": {
+        "width": 256,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-talks",
+      "cell": 12
+    },
+    {
+      "file": "stall-talks-prop-static-2.png",
+      "vpx": {
+        "width": 32,
+        "height": 28
+      },
+      "output": {
+        "width": 256,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-talks",
+      "cell": 13
+    },
+    {
+      "file": "stall-travel-front-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-travel",
+      "cell": 3
+    },
+    {
+      "file": "stall-travel-front-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-travel",
+      "cell": 4
+    },
+    {
+      "file": "stall-travel-interior-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-travel",
+      "cell": 1
+    },
+    {
+      "file": "stall-travel-interior-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-travel",
+      "cell": 2
+    },
+    {
+      "file": "stall-travel-keeper-hover-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-travel",
+      "cell": 9
+    },
+    {
+      "file": "stall-travel-keeper-hover-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-travel",
+      "cell": 10
+    },
+    {
+      "file": "stall-travel-keeper-hover-3.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-travel",
+      "cell": 11
+    },
+    {
+      "file": "stall-travel-keeper-idle-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-travel",
+      "cell": 7
+    },
+    {
+      "file": "stall-travel-keeper-idle-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-travel",
+      "cell": 8
+    },
+    {
+      "file": "stall-travel-lit-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-travel",
+      "cell": 5
+    },
+    {
+      "file": "stall-travel-lit-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-travel",
+      "cell": 6
+    },
+    {
+      "file": "stall-travel-prop-cage-1.png",
+      "vpx": {
+        "width": 36,
+        "height": 28
+      },
+      "output": {
+        "width": 288,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-travel",
+      "cell": 12
+    },
+    {
+      "file": "stall-travel-prop-cage-2.png",
+      "vpx": {
+        "width": 36,
+        "height": 28
+      },
+      "output": {
+        "width": 288,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-travel",
+      "cell": 13
+    },
+    {
+      "file": "stall-uses-front-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-uses",
+      "cell": 3
+    },
+    {
+      "file": "stall-uses-front-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-uses",
+      "cell": 4
+    },
+    {
+      "file": "stall-uses-interior-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-uses",
+      "cell": 1
+    },
+    {
+      "file": "stall-uses-interior-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-uses",
+      "cell": 2
+    },
+    {
+      "file": "stall-uses-keeper-hover-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-uses",
+      "cell": 9
+    },
+    {
+      "file": "stall-uses-keeper-hover-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-uses",
+      "cell": 10
+    },
+    {
+      "file": "stall-uses-keeper-hover-3.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-uses",
+      "cell": 11
+    },
+    {
+      "file": "stall-uses-keeper-idle-1.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-uses",
+      "cell": 7
+    },
+    {
+      "file": "stall-uses-keeper-idle-2.png",
+      "vpx": {
+        "width": 19,
+        "height": 70
+      },
+      "output": {
+        "width": 152,
+        "height": 560
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-center",
+      "sourceSheet": "stall-uses",
+      "cell": 8
+    },
+    {
+      "file": "stall-uses-lit-desktop.png",
+      "vpx": {
+        "width": 80,
+        "height": 115
+      },
+      "output": {
+        "width": 640,
+        "height": 920
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-uses",
+      "cell": 5
+    },
+    {
+      "file": "stall-uses-lit-mobile.png",
+      "vpx": {
+        "width": 92,
+        "height": 114
+      },
+      "output": {
+        "width": 736,
+        "height": 912
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-uses",
+      "cell": 6
+    },
+    {
+      "file": "stall-uses-prop-screens-1.png",
+      "vpx": {
+        "width": 32,
+        "height": 28
+      },
+      "output": {
+        "width": 256,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-uses",
+      "cell": 12
+    },
+    {
+      "file": "stall-uses-prop-screens-2.png",
+      "vpx": {
+        "width": 32,
+        "height": 28
+      },
+      "output": {
+        "width": 256,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-uses",
+      "cell": 13
+    },
+    {
+      "file": "stall-uses-prop-screens-3.png",
+      "vpx": {
+        "width": 32,
+        "height": 28
+      },
+      "output": {
+        "width": 256,
+        "height": 224
+      },
+      "scale": 8,
+      "alpha": true,
+      "tileableX": false,
+      "anchor": "bottom-left",
+      "sourceSheet": "stall-uses",
+      "cell": 14
+    }
+  ]
+}

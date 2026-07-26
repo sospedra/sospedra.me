@@ -1,0 +1,341 @@
+{
+  "version": 4,
+  "scale": "1u = 8 output pixels; 1u = 1/32 in-game meter",
+  "styleLock": "approved-v3-pixel-recomposition",
+  "street": {
+    "desktop": {
+      "canvasU": {
+        "w": 267,
+        "h": 127
+      },
+      "doorSlotPct": {
+        "x": 67.04,
+        "y": 47.24,
+        "w": 11.99,
+        "h": 52.76
+      },
+      "busHitboxPct": {
+        "x": 3.75,
+        "y": 47.24,
+        "w": 21.72,
+        "h": 52.76
+      }
+    },
+    "mobile": {
+      "canvasU": {
+        "w": 160,
+        "h": 185
+      },
+      "doorSlotPct": {
+        "x": 72.5,
+        "y": 63.78,
+        "w": 20,
+        "h": 36.22
+      },
+      "busHitboxPct": {
+        "x": 0.63,
+        "y": 63.78,
+        "w": 36.25,
+        "h": 36.22
+      }
+    }
+  },
+  "backgrounds": {
+    "p1-bg-band": {
+      "canvasU": {
+        "w": 96,
+        "h": 118
+      },
+      "horizontalTile": true
+    },
+    "p1-bg-full": {
+      "canvasU": {
+        "w": 96,
+        "h": 180
+      },
+      "horizontalTile": true
+    }
+  },
+  "stalls": {
+    "uses": {
+      "desktop": {
+        "canvasU": {
+          "w": 92,
+          "h": 118
+        },
+        "openingRectPct": {
+          "x": 14,
+          "y": 28,
+          "w": 72,
+          "h": 56
+        },
+        "counterTopYPct": 78
+      },
+      "mobile": {
+        "canvasU": {
+          "w": 92,
+          "h": 116
+        },
+        "openingRectPct": {
+          "x": 14,
+          "y": 28,
+          "w": 72,
+          "h": 56
+        },
+        "counterTopYPct": 78
+      }
+    },
+    "games": {
+      "desktop": {
+        "canvasU": {
+          "w": 88,
+          "h": 120
+        },
+        "openingRectPct": {
+          "x": 12,
+          "y": 22,
+          "w": 76,
+          "h": 70
+        },
+        "counterTopYPct": null
+      },
+      "mobile": {
+        "canvasU": {
+          "w": 92,
+          "h": 118
+        },
+        "openingRectPct": {
+          "x": 12,
+          "y": 22,
+          "w": 76,
+          "h": 70
+        },
+        "counterTopYPct": null
+      }
+    },
+    "travel": {
+      "desktop": {
+        "canvasU": {
+          "w": 84,
+          "h": 112
+        },
+        "openingRectPct": {
+          "x": 10,
+          "y": 24,
+          "w": 80,
+          "h": 66
+        },
+        "counterTopYPct": null
+      },
+      "mobile": {
+        "canvasU": {
+          "w": 92,
+          "h": 112
+        },
+        "openingRectPct": {
+          "x": 10,
+          "y": 24,
+          "w": 80,
+          "h": 66
+        },
+        "counterTopYPct": null
+      }
+    },
+    "manual": {
+      "desktop": {
+        "canvasU": {
+          "w": 128,
+          "h": 118
+        },
+        "openingRectPct": {
+          "x": 12,
+          "y": 25,
+          "w": 76,
+          "h": 58
+        },
+        "counterTopYPct": 77
+      },
+      "mobile": {
+        "canvasU": {
+          "w": 92,
+          "h": 114
+        },
+        "openingRectPct": {
+          "x": 12,
+          "y": 25,
+          "w": 76,
+          "h": 58
+        },
+        "counterTopYPct": 77
+      }
+    },
+    "serve": {
+      "desktop": {
+        "canvasU": {
+          "w": 88,
+          "h": 124
+        },
+        "openingRectPct": {
+          "x": 14,
+          "y": 30,
+          "w": 72,
+          "h": 52
+        },
+        "counterTopYPct": 76
+      },
+      "mobile": {
+        "canvasU": {
+          "w": 92,
+          "h": 122
+        },
+        "openingRectPct": {
+          "x": 14,
+          "y": 30,
+          "w": 72,
+          "h": 52
+        },
+        "counterTopYPct": 76
+      }
+    },
+    "projects": {
+      "desktop": {
+        "canvasU": {
+          "w": 96,
+          "h": 126
+        },
+        "openingRectPct": {
+          "x": 10,
+          "y": 22,
+          "w": 80,
+          "h": 72
+        },
+        "counterTopYPct": null
+      },
+      "mobile": {
+        "canvasU": {
+          "w": 92,
+          "h": 124
+        },
+        "openingRectPct": {
+          "x": 10,
+          "y": 22,
+          "w": 80,
+          "h": 72
+        },
+        "counterTopYPct": null
+      }
+    },
+    "talks": {
+      "desktop": {
+        "canvasU": {
+          "w": 86,
+          "h": 110
+        },
+        "openingRectPct": {
+          "x": 12,
+          "y": 26,
+          "w": 76,
+          "h": 62
+        },
+        "counterTopYPct": 80
+      },
+      "mobile": {
+        "canvasU": {
+          "w": 92,
+          "h": 110
+        },
+        "openingRectPct": {
+          "x": 12,
+          "y": 26,
+          "w": 76,
+          "h": 62
+        },
+        "counterTopYPct": 80
+      }
+    },
+    "papers": {
+      "desktop": {
+        "canvasU": {
+          "w": 90,
+          "h": 116
+        },
+        "openingRectPct": {
+          "x": 13,
+          "y": 27,
+          "w": 74,
+          "h": 55
+        },
+        "counterTopYPct": 78
+      },
+      "mobile": {
+        "canvasU": {
+          "w": 92,
+          "h": 116
+        },
+        "openingRectPct": {
+          "x": 13,
+          "y": 27,
+          "w": 74,
+          "h": 55
+        },
+        "counterTopYPct": 78
+      }
+    }
+  },
+  "keepers": {
+    "travel": {
+      "canvasU": {
+        "w": 19,
+        "h": 70
+      },
+      "hover": "pets shoulder animal"
+    },
+    "projects": {
+      "canvasU": {
+        "w": 19,
+        "h": 70
+      },
+      "hover": "waters plant"
+    },
+    "talks": {
+      "canvasU": {
+        "w": 19,
+        "h": 70
+      },
+      "hover": "both hands on countertop"
+    },
+    "papers": {
+      "canvasU": {
+        "w": 19,
+        "h": 70
+      },
+      "hover": "ojigi bow"
+    },
+    "serve": {
+      "canvasU": {
+        "w": 19,
+        "h": 70
+      },
+      "hoverFrames": 0,
+      "effect": "CSS hologram flicker"
+    }
+  },
+  "manualCustomer": {
+    "canvasU": {
+      "w": 26,
+      "h": 48
+    },
+    "frames": 2,
+    "anchor": "bottom-center"
+  },
+  "market": {
+    "wallVariants": ["mkt-wall-1.png", "mkt-wall-2.png", "mkt-wall-3.png"],
+    "floor": {
+      "canvasU": {
+        "w": 512,
+        "h": 48
+      },
+      "stallAnchor": "far edge/top"
+    }
+  }
+}
