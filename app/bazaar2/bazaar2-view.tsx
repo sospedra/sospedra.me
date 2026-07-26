@@ -5,7 +5,7 @@ import Link from 'components/Link'
 import SpriteCar from 'components/Sprite/Car'
 import type { Route } from 'next'
 import { Press_Start_2P } from 'next/font/google'
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import {
   MANUAL_DESC,
   PAPERS_DESC,
@@ -58,6 +58,10 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
   return (
     <section className={styles.floor} data-floor=''>
       <div className={styles.streetBg} />
+      <div className={styles.sAlleySigns} aria-hidden>
+        <img src={`${STREET}/alley-signs-1.png`} alt='' />
+        <img src={`${STREET}/alley-signs-2.png`} alt='' data-alt='' />
+      </div>
       <div className={styles.alleyShade} aria-hidden />
       <img src={`${STREET}/building-pad.png`} alt='' className={styles.sPadL} />
       <img src={`${STREET}/building-pad.png`} alt='' className={styles.sPadR} />
@@ -68,7 +72,12 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
           alt=''
           className={styles.sCDImg}
         />
-        <img src={`${STREET}/neon.png`} alt='Bazaar' className={styles.sNeon} />
+        <div className={styles.sNeon} aria-hidden>
+          <img src={`${STREET}/neon-off.png`} alt='' />
+          <div className={styles.sNeonOn}>
+            <img src={`${STREET}/neon.png`} alt='Bazaar' />
+          </div>
+        </div>
         <button
           type='button'
           className={cn(styles.hit, styles.sDoor)}
@@ -81,8 +90,11 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
           }}
         >
           <img src={`${STREET}/door.png`} alt='' />
+          <img src={`${STREET}/door-open-1.png`} alt='' data-frame='1' />
+          <img src={`${STREET}/door-open-2.png`} alt='' data-frame='2' />
         </button>
       </div>
+      <div className={styles.alleyGlow} aria-hidden />
       <div className={styles.sFloor} />
       <div className={styles.sCar} aria-hidden>
         <div className={styles.sCarStretch}>
@@ -101,7 +113,8 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
         onMouseEnter={() => sfx.hover()}
         onClick={() => sfx.bus()}
       >
-        <img src={`${STREET}/bus.png`} alt='' />
+        <img src={`${STREET}/bus.png?v=8`} alt='' />
+        <img src={`${STREET}/bus-on.png?v=8`} alt='' data-on='' />
       </Link>
     </section>
   )
@@ -147,8 +160,8 @@ const STALLS: Record<Stall2Id, StallSpec> = {
   uses: {
     label: 'uses',
     href: '/uses',
-    tint: '#3fd8c8',
-    desktopSize: [90, 120],
+    tint: '#e06080',
+    desktopSize: [152, 120],
     desc: USES_DESC,
     links: [{ label: 'browse the gear', href: '/uses' }],
   },
@@ -156,7 +169,7 @@ const STALLS: Record<Stall2Id, StallSpec> = {
     label: 'games',
     href: '/g-snake',
     tint: '#4a90d9',
-    desktopSize: [90, 120],
+    desktopSize: [86, 96],
     desc: 'Two arcade cabinets, no coins needed.',
     links: [
       { label: 'g-snake', href: '/g-snake' },
@@ -168,7 +181,7 @@ const STALLS: Record<Stall2Id, StallSpec> = {
     label: 'travel',
     href: '/travel',
     tint: '#7a6fe6',
-    desktopSize: [90, 120],
+    desktopSize: [117, 150],
     desc: TRAVEL_DESC,
     links: [{ label: 'see the flight log', href: '/travel' }],
   },
@@ -176,7 +189,7 @@ const STALLS: Record<Stall2Id, StallSpec> = {
     label: 'manual',
     href: '/manual',
     tint: '#e06080',
-    desktopSize: [144, 120],
+    desktopSize: [91, 120],
     desc: MANUAL_DESC,
     links: [{ label: 'read the manual', href: '/manual' }],
   },
@@ -184,7 +197,7 @@ const STALLS: Record<Stall2Id, StallSpec> = {
     label: 'console',
     href: '/serve',
     tint: '#a8b04a',
-    desktopSize: [90, 120],
+    desktopSize: [74, 96],
     desc: SERVE_DESC,
     links: [{ label: 'open the archive', href: '/serve' }],
   },
@@ -193,7 +206,7 @@ const STALLS: Record<Stall2Id, StallSpec> = {
     href: 'https://rfm.sospedra.me' as Route,
     external: true,
     tint: '#4ab06a',
-    desktopSize: [90, 120],
+    desktopSize: [94, 150],
     desc: 'Side quests growing on their own subdomains.',
     links: [
       { label: 'rfm', href: 'https://rfm.sospedra.me', external: true },
@@ -210,7 +223,7 @@ const STALLS: Record<Stall2Id, StallSpec> = {
     label: 'talks',
     href: '/talks',
     tint: '#e0a040',
-    desktopSize: [90, 120],
+    desktopSize: [100, 150],
     desc: TALKS_DESC,
     links: [{ label: 'play the tapes', href: '/talks' }],
   },
@@ -218,7 +231,7 @@ const STALLS: Record<Stall2Id, StallSpec> = {
     label: 'papers',
     href: '/papers',
     tint: '#7ab0d0',
-    desktopSize: [90, 120],
+    desktopSize: [97, 120],
     desc: PAPERS_DESC,
     links: [{ label: 'read the papers', href: '/papers' }],
   },
@@ -226,6 +239,18 @@ const STALLS: Record<Stall2Id, StallSpec> = {
 
 /* papers is the hologram: idle frames only, flicker is runtime CSS */
 const HOVERLESS: ReadonlySet<Stall2Id> = new Set(['papers'])
+
+/* places delivered as one baked scene render (new pipeline) */
+const BAKED: ReadonlySet<Stall2Id> = new Set([
+  'uses',
+  'travel',
+  'console',
+  'manual',
+  'papers',
+  'games',
+  'talks',
+  'projects',
+])
 
 type Bp = 'desktop' | 'mobile'
 
@@ -253,6 +278,14 @@ function KeeperFrames(props: {
 }
 
 function StallInner({ id, bp }: { id: Stall2Id; bp: Bp }) {
+  if (BAKED.has(id)) {
+    return (
+      <>
+        <img src={src(`stall-${id}-baked`)} alt='' className={styles.fill} />
+        <div className={styles.glowWash} />
+      </>
+    )
+  }
   return (
     <>
       <img
@@ -377,8 +410,8 @@ function Stall({ id, bp }: { id: Stall2Id; bp: Bp }) {
   )
 }
 
-function Stairs(props: { id: string; bp: Bp; side?: 'left' | 'right' }) {
-  const { id, bp, side } = props
+function Stairs(props: { id: number; side?: 'left' | 'right' }) {
+  const { id, side } = props
   return (
     <div
       className={cn(
@@ -387,31 +420,26 @@ function Stairs(props: { id: string; bp: Bp; side?: 'left' | 'right' }) {
         side === 'right' && styles.stairsR,
       )}
     >
-      <img
-        src={src(`stairs-${id}-${bp}`)}
-        alt=''
-        draggable={false}
-        loading='lazy'
-      />
+      <img src={src(`stairs-${id}`)} alt='' draggable={false} loading='lazy' />
     </div>
   )
 }
 
 /* ---------- market floors ---------- */
 
-type MarketSpec = { stalls: Stall2Id[]; stairs: string; stairsFirst?: boolean }
+type MarketSpec = { stalls: Stall2Id[]; stairs: number; stairsFirst?: boolean }
 
 const DESKTOP_MARKETS: MarketSpec[] = [
-  { stalls: ['uses', 'games', 'travel'], stairs: 'h' },
-  { stalls: ['manual', 'console'], stairs: 'i', stairsFirst: true },
-  { stalls: ['talks', 'papers', 'projects'], stairs: 'o', stairsFirst: true },
+  { stalls: ['uses', 'games', 'travel'], stairs: 1 },
+  { stalls: ['manual', 'console'], stairs: 2, stairsFirst: true },
+  { stalls: ['talks', 'papers', 'projects'], stairs: 3, stairsFirst: true },
 ]
 
 const MOBILE_MARKETS: MarketSpec[] = [
-  { stalls: ['uses', 'games'], stairs: 'h' },
-  { stalls: ['travel', 'manual'], stairs: 'i', stairsFirst: true },
-  { stalls: ['console', 'projects'], stairs: 'c' },
-  { stalls: ['talks', 'papers'], stairs: 'o', stairsFirst: true },
+  { stalls: ['uses', 'games'], stairs: 1 },
+  { stalls: ['travel', 'manual'], stairs: 2, stairsFirst: true },
+  { stalls: ['console', 'projects'], stairs: 3 },
+  { stalls: ['talks', 'papers'], stairs: 1, stairsFirst: true },
 ]
 
 function MarketFloor(props: { spec: MarketSpec; bp: Bp; index: number }) {
@@ -420,32 +448,35 @@ function MarketFloor(props: { spec: MarketSpec; bp: Bp; index: number }) {
   const stairs = (
     <Stairs
       id={spec.stairs}
-      bp={bp}
       side={mobile ? undefined : spec.stairsFirst ? 'left' : 'right'}
     />
   )
   return (
-    <section className={cn(styles.floor, styles.floorMkt)} data-floor=''>
+    <section
+      className={cn(styles.floor, styles.floorMkt)}
+      data-floor=''
+      data-stairs={mobile ? undefined : spec.stairsFirst ? 'left' : 'right'}
+    >
       <div
         className={styles.envTile}
         style={{ backgroundImage: `url(${src(`mkt-env-${(index % 3) + 1}`)})` }}
       />
-      {mobile ? (
-        <div className={cn(spec.stairsFirst ? styles.mGridL : styles.mGridR)}>
-          <Stall id={spec.stalls[0]} bp='mobile' />
-          {stairs}
-          <Stall id={spec.stalls[1]} bp='mobile' />
-        </div>
-      ) : (
-        <>
-          {stairs}
+      {!mobile && stairs}
+      <div className={styles.mktFrame}>
+        {mobile ? (
+          <div className={cn(spec.stairsFirst ? styles.mGridL : styles.mGridR)}>
+            <Stall id={spec.stalls[0]} bp='mobile' />
+            {stairs}
+            <Stall id={spec.stalls[1]} bp='mobile' />
+          </div>
+        ) : (
           <div className={styles.mktRow}>
             {spec.stalls.map((id) => (
               <Stall key={id} id={id} bp='desktop' />
             ))}
           </div>
-        </>
-      )}
+        )}
+      </div>
     </section>
   )
 }
@@ -465,7 +496,12 @@ export default function Bazaar2View() {
     const fg = fgRef.current
     if (!scene || !fg) return
     const onScroll = () => {
-      fg.style.transform = `translateY(${-scene.scrollTop * 0.35}px)`
+      const st = scene.scrollTop
+      fg.style.transform = `translateY(${-st * 0.35}px)`
+      /* the fg silhouettes belong to the street: gone by the first market */
+      fg.style.opacity = String(
+        Math.max(0, 1 - st / (scene.clientHeight * 0.5)),
+      )
     }
     scene.addEventListener('scroll', onScroll, { passive: true })
     return () => scene.removeEventListener('scroll', onScroll)
@@ -559,14 +595,30 @@ export default function Bazaar2View() {
       <div className={styles.desktopTree}>
         <StreetFloor onDoor={scrollToMarket} />
         {DESKTOP_MARKETS.map((spec, i) => (
-          <MarketFloor key={spec.stairs} spec={spec} bp='desktop' index={i} />
+          <Fragment key={spec.stalls[0]}>
+            <div
+              className={styles.slab}
+              style={{
+                backgroundImage: `url(/images/bazaar/assets/slab-pipes-${(i % 3) + 1}.png)`,
+              }}
+            />
+            <MarketFloor spec={spec} bp='desktop' index={i} />
+          </Fragment>
         ))}
       </div>
 
       <div className={styles.mobileTree}>
         <StreetFloor onDoor={scrollToMarket} />
         {MOBILE_MARKETS.map((spec, i) => (
-          <MarketFloor key={spec.stairs} spec={spec} bp='mobile' index={i} />
+          <Fragment key={spec.stalls[0]}>
+            <div
+              className={styles.slab}
+              style={{
+                backgroundImage: `url(/images/bazaar/assets/slab-pipes-${(i % 3) + 1}.png)`,
+              }}
+            />
+            <MarketFloor spec={spec} bp='mobile' index={i} />
+          </Fragment>
         ))}
       </div>
     </main>
