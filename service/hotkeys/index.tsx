@@ -170,9 +170,9 @@ const GOTO_ROUTES: Record<string, Route> = {
   a: '/about',
   b: '/bazaar',
   m: '/manual',
+  r: '/rubiks',
   u: '/uses',
   s: '/serve',
-  r: '/rewrite',
   t: '/talks',
   v: '/travel',
 }
@@ -369,6 +369,7 @@ export const scrollMarkedScene = (selector: string, direction: -1 | 1) => {
 }
 
 const shouldIgnoreTrap = (event: KeyboardEvent, combo: string) =>
+  gameInputClaims > 0 ||
   capturedEvents.has(event) ||
   event.defaultPrevented ||
   event.isComposing ||

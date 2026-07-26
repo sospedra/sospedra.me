@@ -12,6 +12,9 @@ export const MINES_DESC =
 export const PAPERS_DESC =
   "Papers on JavaScript, TypeScript, the web platform and the occasional politics of software. Not your usual blog: dense over long, niche over SEO chum. Words are my own. It's dangerous to go unknowing, take some pills 💊"
 
+export const RUBIKS_DESC =
+  "A Rubik's cube in CSS 3D. Scramble it, race the clock, unwind the mess move by move. The record stands at 27 seconds."
+
 export const SERVE_DESC =
   'Every public asset and short link, served from an amber-phosphor terminal. Type HELP.'
 

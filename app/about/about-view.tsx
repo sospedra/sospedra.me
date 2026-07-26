@@ -143,14 +143,14 @@ export default function AboutView(props: { years: number }) {
                 <li>
                   <p>
                     My{' '}
-                    <span className={css.rubik}>
+                    <Link url='/rubiks' className={css.rubik}>
                       <span>R</span>
                       <span>u</span>
                       <span>b</span>
                       <span>i</span>
                       <span>k</span>
                       {"'s"}
-                    </span>{' '}
+                    </Link>{' '}
                     record is <span title='2721ms'>27s</span>
                   </p>
                 </li>

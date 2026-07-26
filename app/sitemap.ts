@@ -9,7 +9,7 @@ const STATIC_ROUTES = [
   '/g-snake',
   '/manual',
   '/papers',
-  '/rewrite',
+  '/rubiks',
   '/serve',
   '/talks',
   '/travel',
