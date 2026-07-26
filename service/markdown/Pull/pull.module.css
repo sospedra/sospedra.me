@@ -1,0 +1,34 @@
+/* Doubled class: .markdown > * + * in paper.module.css ties on specificity,
+   and chunk order across CSS modules is not guaranteed. */
+.pull.pull {
+  margin: 3.25rem auto 3rem;
+  color: var(--color-text-strong, #fff);
+  font-family: var(--font-display, monospace);
+  font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+  line-height: 1.45;
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* The scanhead rule, quoted in miniature: the transmission pauses on a line. */
+.pull::before,
+.pull::after {
+  display: block;
+  width: 4.5rem;
+  height: 2px;
+  margin-inline: auto;
+  background: linear-gradient(
+    90deg,
+    var(--color-signal-cyan, #6df7ea),
+    var(--color-signal-yellow, #ffea00)
+  );
+  content: "";
+}
+
+.pull::before {
+  margin-bottom: 1.4rem;
+}
+
+.pull::after {
+  margin-top: 1.4rem;
+}

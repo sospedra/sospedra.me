@@ -1,8 +1,10 @@
 @reference "../../service/style/global.css";
 
 .bg {
-  --sky-paper: #160b2f;
-  --sky-upper: #1d0c35;
+  /* Reading band stays desaturated navy, darker than the /papers purple:
+     purple behind body text halates. The purple sky begins below the paper. */
+  --sky-paper: #10161f;
+  --sky-upper: #161b28;
   --sky-papers: #290d37;
   --sky-home: #37113f;
   --sky-about-wash: rgb(128 13 121 / 18%);

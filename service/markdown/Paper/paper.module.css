@@ -38,9 +38,9 @@
   @apply font-sans break-words align-baseline;
   color: var(--color-text, var(--textNormal));
 
-  /* 19px on a 42rem measure lands ~68ch per line; 1.7 gives the air */
+  /* 19px on a 42rem measure lands ~68ch per line; 1.55 keeps lines banded together */
   font-size: 1.1875rem;
-  line-height: 1.7;
+  line-height: 1.55;
 }
 
 .markdown p,
@@ -58,9 +58,9 @@
 
 /* The lede carries the hook: half a step louder than the body. */
 .regularMarkdown > p:first-of-type {
-  color: rgb(255 255 255 / 94%);
+  color: var(--color-text-strong, #fff);
   font-size: 1.3rem;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .markdown > * + * {
@@ -80,16 +80,15 @@
   text-underline-position: under;
 }
 
-/* One emphasis hue, three intensities: white italic, neon-pink bold, pink-washed thesis. */
+/* Emphasis stays white; pink is reserved for the one <u> thesis line. */
 .markdown em {
   color: var(--color-text-strong, #fff);
 }
 
-/* Load-bearing phrases take the neon pink channel; cyan stays navigation. */
+/* Bold stays body-colored: pink emphasis measured dimmer than the body text. */
 .markdown strong {
   @apply font-semibold;
-  color: var(--color-signal-pink-hot, #ff4fd8);
-  text-shadow: 0 0 0.75rem rgb(255 79 216 / 22%);
+  color: var(--color-text-strong, #fff);
 }
 
 /* The thesis line: one per paper, a soft neon wash under white text. */

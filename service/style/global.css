@@ -317,7 +317,7 @@ html[data-scroll-behavior][data-scroll-behavior]
   --hr: hsla(0, 0%, 100%, 0.3);
   --code-text: #e6e6e6;
   --inlineCode-bg: rgba(115, 124, 153, 0.2);
-  --inlineCode-text: var(--pink);
+  --inlineCode-text: var(--code-text);
   --shadow: 0 2px 15px 0 rgba(26, 26, 27, 0.637);
 }
 

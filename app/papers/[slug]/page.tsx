@@ -1,10 +1,12 @@
 import type { MDXComponents } from 'mdx/types'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import Aside from 'service/markdown/Aside'
 import CodeBlock from 'service/markdown/Code'
 import { fetchPaper, fetchPapers, type Paper } from 'service/markdown/files'
 import PaperImage from 'service/markdown/Image'
 import PaperShell from 'service/markdown/Paper'
+import Pull from 'service/markdown/Pull'
 import PaperKeys from './paper-keys'
 
 export async function generateStaticParams() {
@@ -51,6 +53,8 @@ const createMdxComponents = (meta: Paper): MDXComponents => {
       return <img src={src} alt={props.alt} />
     },
     pre: CodeBlock,
+    Aside,
+    Pull,
   }
 }
 

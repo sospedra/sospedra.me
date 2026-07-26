@@ -1,0 +1,68 @@
+/* Doubled class: .markdown > * + * in paper.module.css ties on specificity,
+   and chunk order across CSS modules is not guaranteed. */
+.aside.aside {
+  margin: 2.75rem 0 3rem;
+  overflow: hidden;
+  border: 1px solid rgb(109 247 234 / 24%);
+  border-radius: 0.375rem;
+  background: rgb(109 247 234 / 4%);
+}
+
+.label {
+  display: block;
+  padding: 0.6rem 1rem 0.55rem;
+  border-bottom: 1px solid rgb(109 247 234 / 18%);
+  background: rgb(109 247 234 / 5%);
+  color: var(--color-signal-cyan, #6df7ea);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.body {
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.body > :last-child {
+  margin-bottom: 0;
+}
+
+/* Ledger rows: a list inside an aside drops bullets and reads as a keyed table. */
+.aside .body ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aside .body li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0.45rem 0;
+  border-top: 1px solid rgb(109 247 234 / 12%);
+  font-family: var(--font-code, monospace);
+  font-size: 0.9375rem;
+}
+
+.aside .body li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.aside .body li:last-child {
+  padding-bottom: 0;
+}
+
+/* Two-column rows don't survive narrow screens; stack key over value. */
+@media (max-width: 496px) {
+  .aside .body li {
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+}

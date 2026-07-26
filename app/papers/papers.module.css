@@ -135,22 +135,8 @@
   list-style: none;
 }
 
-/* teletext palette: rows cycle the four signal colors */
-.rows li:nth-child(4n + 1) {
+.rows li {
   --row-color: var(--color-signal-cyan, #6df7ea);
-}
-
-.rows li:nth-child(4n + 2) {
-  --row-color: var(--color-signal-yellow, #ffea00);
-}
-
-.rows li:nth-child(4n + 3) {
-  /* shared with the bazaar's --market-violet */
-  --row-color: #a883ff;
-}
-
-.rows li:nth-child(4n + 4) {
-  --row-color: var(--color-signal-pink-hot, #ff4fd8);
 }
 
 /* the cue zone: rows brighten as they pass the read line, dim above and below */
