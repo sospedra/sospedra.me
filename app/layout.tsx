@@ -5,7 +5,19 @@ import Providers from './providers'
 import 'service/style/global.css'
 
 const wotfard = localFont({
-  src: '../public/fonts/wotfard.woff2',
+  src: [
+    { path: '../public/fonts/wotfard.woff2', weight: '400', style: 'normal' },
+    {
+      path: '../public/fonts/wotfard-italic.woff2',
+      weight: '400',
+      style: 'italic',
+    },
+    {
+      path: '../public/fonts/wotfard-semibold.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+  ],
   display: 'swap',
   variable: '--font-wotfard',
 })
