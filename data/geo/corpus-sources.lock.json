@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "geo-corpus-2026-07-27.2",
+  "importReady": true,
+  "geonames": {
+    "snapshotDate": "2026-07-27",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "documentationUrl": "https://download.geonames.org/export/dump/readme.txt",
+    "files": {
+      "cities": {
+        "path": "work/raw-data/cities500.zip",
+        "archiveEntry": "cities500.txt",
+        "url": "https://download.geonames.org/export/dump/cities500.zip",
+        "sha256": "d126dd38ab313e47829ee76faf72398bd1cf2031e2699e2fe39f4d9d111e8382"
+      },
+      "alternateNames": {
+        "path": "work/raw-data/alternateNamesV2.zip",
+        "archiveEntry": "alternateNamesV2.txt",
+        "url": "https://download.geonames.org/export/dump/alternateNamesV2.zip",
+        "sha256": "f1f50069c9bcd13015a4b40de9f086a72def9aa9a5c58d91b76213857140e324"
+      },
+      "countryInfo": {
+        "path": "work/raw-data/countryInfo.txt",
+        "url": "https://download.geonames.org/export/dump/countryInfo.txt",
+        "sha256": "93bafc525813f22e4711ff9ed6d626343094ce48c26388dc7c49189b3d7d5512"
+      }
+    }
+  },
+  "worldBank": {
+    "indicator": "SP.POP.TOTL",
+    "snapshotYear": 2024,
+    "retrievedOn": "2026-07-27",
+    "datasetUrl": "https://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?date=2024&format=json&per_page=20000",
+    "termsUrl": "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+    "file": {
+      "path": "work/raw-data/world-bank-population-2024.json",
+      "sha256": "d6e16192cdf34009fffa8dfa042362b36c96690d86bc7e68c4b0d2de3d9e66ec"
+    }
+  },
+  "naturalEarth": {
+    "purpose": "future-full-country-geometry-import",
+    "file": {
+      "path": "work/raw-data/ne_10m_admin_0_countries.geojson",
+      "sha256": "239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255"
+    }
+  }
+}

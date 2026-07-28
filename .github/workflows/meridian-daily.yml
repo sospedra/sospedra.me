@@ -1,0 +1,58 @@
+name: Meridian daily static rebuild
+
+on:
+  schedule:
+    - cron: '5 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: meridian-daily-publication
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Generate, verify, and trigger deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out the deployment branch
+        uses: actions/checkout@v4
+
+      - name: Resolve the UTC publication date
+        run: |
+          publication_date="$(date -u +%F)"
+          echo "MERIDIAN_PUBLICATION_DATE=${publication_date}" >> "$GITHUB_ENV"
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.13.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify the timed geography engine
+        run: pnpm geo:test
+
+      - name: Generate and build the UTC edition
+        run: pnpm build
+
+      - name: Validate the generated edition and locked corpus
+        run: pnpm geo:validate:challenges
+
+      - name: Trigger the connected static deployment
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore(geo): publish Meridian ${MERIDIAN_PUBLICATION_DATE}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

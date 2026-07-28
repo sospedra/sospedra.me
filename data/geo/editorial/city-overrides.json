@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "policyRevision": "geo-city-coverage-2026-07-27.1",
+  "overrides": [],
+  "reviewQueue": [
+    {
+      "countryCode": "BO",
+      "topic": "multiple-capital-roles",
+      "reason": "Confirm constitutional and administrative capital treatment before capital questions are enabled."
+    },
+    {
+      "countryCode": "ID",
+      "topic": "capital-transition",
+      "reason": "Confirm the current capital and accepted names at every source revision."
+    },
+    {
+      "countryCode": "LK",
+      "topic": "multiple-capital-roles",
+      "reason": "Confirm legislative and commercial capital treatment before capital questions are enabled."
+    },
+    {
+      "countryCode": "PS",
+      "topic": "recognition-sensitive-capital",
+      "reason": "Capital presentation requires an explicit editorial decision."
+    },
+    {
+      "countryCode": "ZA",
+      "topic": "multiple-capital-roles",
+      "reason": "Retain all reviewed capital roles in the corpus; do not collapse them automatically."
+    }
+  ]
+}

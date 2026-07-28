@@ -1,0 +1,348 @@
+export const GEO_SCHEMA_VERSION = 1 as const
+export const GEO_ROUND_LIMIT_MS = 60_000 as const
+
+export type Locale = 'en' | 'es'
+export type ISOAlpha2 = string
+export type Difficulty = 1 | 2 | 3 | 4
+export type RoundType = 'shape' | 'flag' | 'capital' | 'map'
+export type MapMode = 'pin' | 'region'
+export type RunKind = 'official' | 'practice'
+
+export type LocalizedText = Record<Locale, string>
+export type LocalizedPrompt = LocalizedText
+
+export interface LocalizedOption {
+  id: string
+  label: LocalizedText
+}
+
+export type CityAutocompleteOptionId =
+  | `capital-${string}`
+  | `city-${string}-${number}`
+
+export interface CityAutocompleteOption extends LocalizedOption {
+  id: CityAutocompleteOptionId
+}
+
+export interface GeoCoordinate {
+  latitude: number
+  longitude: number
+}
+
+export interface CountryDifficulty {
+  shape?: Difficulty
+  flag?: Difficulty
+  capital?: Difficulty
+  map?: Difficulty
+}
+
+export interface RoundEligibility {
+  shape: boolean
+  flag: boolean
+  capital: boolean
+  map: boolean
+}
+
+export interface CountryRecord {
+  code: ISOAlpha2
+  iso3: string
+  wikidataId: string
+  names: Record<Locale, string>
+  shortNames?: Partial<Record<Locale, string>>
+  acceptedNames: Record<Locale, string[]>
+  continent: 'AF' | 'AS' | 'EU' | 'NA' | 'OC' | 'SA'
+  subregion: string
+  capital: {
+    wikidataId?: string
+    geonamesId?: number
+    names: Record<Locale, string>
+    acceptedNames?: Record<Locale, string[]>
+    latitude: number
+    longitude: number
+    promptNote?: Partial<Record<Locale, string>>
+  }
+  assets: {
+    shapeUrl?: string
+    flagUrl: string
+  }
+  eligibility: RoundEligibility
+  difficulty: CountryDifficulty
+  status: 'active' | 'review' | 'excluded'
+  sourceRevision: string
+}
+
+export interface ChoiceQuestion {
+  id: string
+  type: 'shape' | 'flag' | 'capital'
+  countryCode?: ISOAlpha2
+  difficulty: Difficulty
+  prompt: LocalizedPrompt
+  assetUrl?: string
+  options: LocalizedOption[]
+  correctOptionId: string
+}
+
+export interface MapRegionAlternative {
+  options: LocalizedOption[]
+  correctOptionId: string
+}
+
+export interface MapQuestion {
+  id: string
+  type: 'map'
+  countryCode?: ISOAlpha2
+  difficulty: Difficulty
+  prompt: LocalizedPrompt
+  answerCoordinate: GeoCoordinate
+  regionOptions?: LocalizedOption[]
+  correctRegionOptionId?: string
+  /**
+   * Equivalent nested representation accepted for generated packs that keep
+   * the alternative self-contained.
+   */
+  regionAlternative?: MapRegionAlternative
+}
+
+export const mapRegionAlternativeFor = (
+  question: MapQuestion,
+): MapRegionAlternative | null => {
+  if (question.regionAlternative) return question.regionAlternative
+  if (question.regionOptions && question.correctRegionOptionId) {
+    return {
+      options: question.regionOptions,
+      correctOptionId: question.correctRegionOptionId,
+    }
+  }
+  return null
+}
+
+export type Question = ChoiceQuestion | MapQuestion
+
+export interface Round {
+  id: string
+  type: RoundType
+  /**
+   * Per-answer speed-scoring horizon.
+   */
+  questionLimitMs: number
+  /**
+   * Shared time budget for the whole round. Older generated packs may omit it;
+   * the game contract still gives those rounds a 60-second budget.
+   */
+  roundLimitMs?: number
+  questions: Question[]
+}
+
+export const roundTimeLimitMs = (round: Round) =>
+  Math.max(0, round.roundLimitMs ?? GEO_ROUND_LIMIT_MS)
+
+/**
+ * Maps an unbounded timed-round attempt cursor back onto the finite country
+ * deck. The first pass preserves the seeded opener → 3 → 4 ramp exactly.
+ * Later passes rotate only the hard tail, so difficulty never drops after
+ * attempt three and no country can cross section boundaries.
+ */
+export const roundQuestionIndexForAttempt = (
+  round: Round,
+  attemptIndex: number,
+): number | null => {
+  const questionCount = round.questions.length
+  if (
+    questionCount === 0 ||
+    !Number.isSafeInteger(attemptIndex) ||
+    attemptIndex < 0
+  ) {
+    return null
+  }
+
+  if (attemptIndex < questionCount) return attemptIndex
+  if (questionCount <= 2) return attemptIndex % questionCount
+
+  const hardQuestionCount = questionCount - 2
+  const hardAttemptIndex = attemptIndex - questionCount
+  const position = hardAttemptIndex % hardQuestionCount
+  const cycle = Math.floor(hardAttemptIndex / hardQuestionCount)
+  const rotation = hardQuestionCount > 2 ? cycle % hardQuestionCount : 0
+  return 2 + ((position + rotation) % hardQuestionCount)
+}
+
+export const roundQuestionForAttempt = (
+  round: Round,
+  attemptIndex: number,
+): Question | null => {
+  const questionIndex = roundQuestionIndexForAttempt(round, attemptIndex)
+  return questionIndex === null
+    ? null
+    : (round.questions[questionIndex] ?? null)
+}
+
+export interface GeoChallengeRules {
+  choice: {
+    min: number
+    max: number
+  }
+  streak: {
+    step: number
+    cap: number
+  }
+  mapBands: {
+    maxKm: number
+    score: number
+  }[]
+  feedbackMs: number
+  roundSummaryMs: number
+}
+
+export interface DailyGeoChallenge {
+  schemaVersion: 1
+  generatorVersion: string
+  rulesVersion: string
+  id: string
+  publicationDate: string
+  seed: string
+  cityOptions: CityAutocompleteOption[]
+  rounds: Round[]
+  sourceRevision: string
+  rules?: GeoChallengeRules
+  /**
+   * Optional display issue assigned by the publication pipeline. It is never
+   * used as part of selection or scoring.
+   */
+  sequence?: number
+}
+
+export type MapDistanceBand =
+  | 'within-100'
+  | 'within-300'
+  | 'within-750'
+  | 'within-1500'
+  | 'within-3000'
+  | 'miss'
+  | 'expired'
+
+interface AnswerResultBase {
+  questionId: string
+  roundId: string
+  roundType: RoundType
+  difficulty: Difficulty
+  /**
+   * Zero-based attempt cursor within the round. This disambiguates repeated
+   * questions when a timed player exhausts and recycles the finite deck.
+   * Optional so pre-recycling schema-v1 saves remain readable.
+   */
+  attemptIndex?: number
+  /**
+   * Per-question response time used by speed scoring and response statistics.
+   */
+  elapsedMs: number
+  /**
+   * Explicit shared round-clock reading for records created by the corrected
+   * round loop. Optional so existing schema-v1 saves can still be restored.
+   */
+  roundElapsedMs?: number
+  questionLimitMs: number
+  remainingMs: number
+  correct: boolean
+  expired: boolean
+  /**
+   * Explicit player pass. It is incorrect but distinct from round-clock
+   * expiry, which does not create an answer record.
+   */
+  skipped?: boolean
+  baseScore: number
+  streakBefore: number
+  streakAfter: number
+  streakMultiplier: number
+  score: number
+  answeredAt: string
+}
+
+export interface ChoiceAnswerResult extends AnswerResultBase {
+  kind: 'choice'
+  selectedOptionId: string | null
+  correctOptionId: string
+  /**
+   * The localized text transmitted through the answer console. Older
+   * multiple-choice records omit it and remain valid.
+   */
+  submittedText?: string
+}
+
+export interface MapPinAnswerResult extends AnswerResultBase {
+  kind: 'map-pin'
+  submittedCoordinate: GeoCoordinate | null
+  answerCoordinate: GeoCoordinate
+  distanceKm: number | null
+  distanceBand: MapDistanceBand
+}
+
+export interface MapRegionAnswerResult extends AnswerResultBase {
+  kind: 'map-region'
+  selectedOptionId: string | null
+  correctOptionId: string
+}
+
+export type AnswerResult =
+  | ChoiceAnswerResult
+  | MapPinAnswerResult
+  | MapRegionAnswerResult
+
+export interface PersistedGeoRun {
+  schemaVersion: 1
+  challengeId: string
+  rulesVersion: string
+  status: 'started' | 'completed'
+  roundIndex: number
+  questionIndex: number
+  answers: AnswerResult[]
+  score: number
+  currentStreak: number
+  bestStreak: number
+  startedAt: string
+  completedAt?: string
+  mapMode?: MapMode
+  /**
+   * Elapsed response time for the active prompt.
+   */
+  questionElapsedMs?: number
+  /**
+   * Elapsed time on the current round's single shared clock.
+   */
+  roundElapsedMs?: number
+  /**
+   * Marks a round whose questions are finished or whose shared clock expired.
+   * This lets a refresh restore the round summary even when unanswered
+   * questions remain.
+   */
+  roundComplete?: boolean
+  /**
+   * The latest answer is still in its brief feedback phase. Persisting this
+   * avoids restoring onto an already-answered question after a refresh.
+   */
+  feedbackPending?: boolean
+}
+
+export interface GeoSettings {
+  schemaVersion: 1
+  sound: boolean
+  reducedMotion: boolean
+  highContrast: boolean
+  mapMode: MapMode
+}
+
+export interface OfficialGeoRunRecord {
+  challengeId: string
+  publicationDate: string
+  rulesVersion: string
+  mapMode: MapMode
+  completedAt: string
+  totalScore: number
+  correctAnswers: number
+  totalQuestions: number
+  bestStreak: number
+}
+
+export interface PersistedGeoStats {
+  schemaVersion: 1
+  runs: OfficialGeoRunRecord[]
+}

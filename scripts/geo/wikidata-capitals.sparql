@@ -1,0 +1,20 @@
+SELECT ?country ?code ?capital ?capitalEn ?capitalEs ?coord WHERE {
+  VALUES (?country ?code) {
+    (wd:Q38 "IT") (wd:Q408 "AU") (wd:Q668 "IN") (wd:Q258 "ZA")
+    (wd:Q298 "CL") (wd:Q17 "JP") (wd:Q16 "CA") (wd:Q155 "BR")
+    (wd:Q114 "KE") (wd:Q917 "BT") (wd:Q142 "FR") (wd:Q414 "AR")
+    (wd:Q869 "TH") (wd:Q117 "GH") (wd:Q232 "KZ") (wd:Q145 "GB")
+    (wd:Q79 "EG") (wd:Q96 "MX") (wd:Q252 "ID") (wd:Q664 "NZ")
+  }
+  ?country wdt:P36 ?capital.
+  ?capital wdt:P625 ?coord.
+  OPTIONAL {
+    ?capital rdfs:label ?capitalEn.
+    FILTER(LANG(?capitalEn) = "en")
+  }
+  OPTIONAL {
+    ?capital rdfs:label ?capitalEs.
+    FILTER(LANG(?capitalEs) = "es")
+  }
+}
+ORDER BY ?code ?capital

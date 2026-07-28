@@ -1,0 +1,4454 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "geo-corpus-2026-07-27.2",
+  "policyRevision": "geo-city-coverage-2026-07-27.1",
+  "rosterRevision": "geo-country-roster-2026-07-27.2",
+  "countries": [
+    {
+      "code": "AD",
+      "iso3": "AND",
+      "names": {
+        "en": "Andorra",
+        "es": "Andorra"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 81938,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3041563],
+      "cityIds": [
+        3041563, 3040051, 3040686, 3039163, 3040132, 3041204, 3039181, 3039678,
+        3039604, 3041519, 3038832, 3040067, 3041604
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 19,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AE",
+      "iso3": "ARE",
+      "names": {
+        "en": "United Arab Emirates",
+        "es": "Emiratos Árabes Unidos"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 10986400,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [292968],
+      "cityIds": [
+        292223, 292968, 292672, 292913, 292932, 291074, 12042053, 11524601,
+        292878, 290503, 8057551, 13118447, 12047417
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 50,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AF",
+      "iso3": "AFG",
+      "names": {
+        "en": "Afghanistan",
+        "es": "Afganistán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 42647492,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1138958],
+      "cityIds": [
+        1138958, 1140026, 1133616, 1138336, 1139715, 1135689, 1141269, 1147290,
+        1147540, 1141857, 1136469, 1133453, 1137168
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 317,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AG",
+      "iso3": "ATG",
+      "names": {
+        "en": "Antigua and Barbuda",
+        "es": "Antigua y Barbuda"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 93772,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3576022],
+      "cityIds": [3576022, 13590582, 13590584, 13590586],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 39,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AL",
+      "iso3": "ALB",
+      "names": {
+        "en": "Albania",
+        "es": "Albania"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 2377128,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3183875],
+      "cityIds": [
+        3183875, 3185728, 3183719, 783263, 3184081, 3184862, 3186084, 782756,
+        3185672, 3185082, 781988, 782661, 3185060
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 417,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AM",
+      "iso3": "ARM",
+      "names": {
+        "en": "Armenia",
+        "es": "Armenia"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 3033500,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [616052],
+      "cityIds": [
+        616052, 616635, 616530, 617026, 616629, 616062, 174875, 616631, 616435,
+        174979, 616785, 616250, 616627
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 611,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AO",
+      "iso3": "AGO",
+      "names": {
+        "en": "Angola",
+        "es": "Angola"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 37885849,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2240449],
+      "cityIds": [
+        2240449, 8307074, 2236500, 7758790, 2239888, 2591957, 2591953, 2242906,
+        13631351, 3347762, 3348313, 3351663, 2243271
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 560,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AR",
+      "iso3": "ARG",
+      "names": {
+        "en": "Argentina",
+        "es": "Argentina"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 45696159,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3435910],
+      "cityIds": [
+        3435910, 3860259, 3838583, 3430863, 3836873, 3838233, 3836277, 7535637,
+        3435217, 3429886, 3865086, 3429577, 3430697
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1180,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AT",
+      "iso3": "AUT",
+      "names": {
+        "en": "Austria",
+        "es": "Austria"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 9177982,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2761369],
+      "cityIds": [
+        2761369, 2778067, 2772400, 2766824, 2775220, 2774326, 2762372, 2780180,
+        2780741, 2761353, 2764359, 2779674, 2781503
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 2863,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AU",
+      "iso3": "AUS",
+      "names": {
+        "en": "Australia",
+        "es": "Australia"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 27194286,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2172517],
+      "cityIds": [
+        2147714, 2158177, 2174003, 2063523, 2078025, 2165087, 2155472, 10630449,
+        2172517, 8310663, 7281838, 2165798, 2171507
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1613,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "AZ",
+      "iso3": "AZE",
+      "names": {
+        "en": "Azerbaijan",
+        "es": "Azerbaiyán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 10202830,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [587084],
+      "cityIds": [
+        587084, 584923, 586523, 585915, 584649, 585514, 147429, 147622, 585103,
+        147611, 148565, 585170, 584717
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 242,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BA",
+      "iso3": "BIH",
+      "names": {
+        "en": "Bosnia and Herzegovina",
+        "es": "Bosnia y Herzegovina"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 3164253,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3191281],
+      "cityIds": [
+        3191281, 3204541, 3186573, 3188582, 3194828, 3204222, 3199145, 3196079,
+        3203099, 3203521, 3204186, 3192409, 3188893
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 238,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BB",
+      "iso3": "BRB",
+      "names": {
+        "en": "Barbados",
+        "es": "Barbados"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 282467,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3374036],
+      "cityIds": [3374036, 3373419, 3373505, 3373652],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 15,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BD",
+      "iso3": "BGD",
+      "names": {
+        "en": "Bangladesh",
+        "es": "Bangladés"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 173562364,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1185241],
+      "cityIds": [
+        1185241, 1205733, 1200109, 1336135, 1185188, 1185128, 1185186, 1194041,
+        1462674, 1185270, 1185107, 7483813, 1199503
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 153,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BE",
+      "iso3": "BEL",
+      "names": {
+        "en": "Belgium",
+        "es": "Bélgica"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 11858610,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2800866],
+      "cityIds": [
+        2800866, 2803138, 2797656, 2800481, 2792413, 2803201, 2787149, 2800931,
+        2790471, 2792482, 2791018, 2790869, 2795011
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 2254,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BF",
+      "iso3": "BFA",
+      "names": {
+        "en": "Burkina Faso",
+        "es": "Burkina Faso"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 23548781,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2357048],
+      "cityIds": [
+        2357048, 2362344, 2358946, 2356157, 2357043, 2359608, 2362909, 2356300,
+        2360073, 2360886, 2357109, 2361477, 2354675
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 117,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BG",
+      "iso3": "BGR",
+      "names": {
+        "en": "Bulgaria",
+        "es": "Bulgaria"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 6441421,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [727011],
+      "cityIds": [
+        727011, 728193, 726050, 732770, 726848, 727523, 728203, 727079, 728330,
+        727233, 726418, 733191, 730435
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 329,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BH",
+      "iso3": "BHR",
+      "names": {
+        "en": "Bahrain",
+        "es": "Baréin"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 1588670,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [290340],
+      "cityIds": [290332, 290340, 290247, 385038],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 10,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BI",
+      "iso3": "BDI",
+      "names": {
+        "en": "Burundi",
+        "es": "Burundi"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 14047786,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [426272],
+      "cityIds": [
+        425378, 426272, 430569, 428632, 423549, 430021, 430952, 427204, 428515,
+        421930, 426423, 425309, 428219
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 31,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BJ",
+      "iso3": "BEN",
+      "names": {
+        "en": "Benin",
+        "es": "Benín"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 14462724,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2392087],
+      "cityIds": [
+        2394819, 2395914, 2392087, 2392204, 2394092, 2395915, 2394560, 2395049,
+        2394427, 2392505, 2392837, 2393693, 2393561
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 86,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BN",
+      "iso3": "BRN",
+      "names": {
+        "en": "Brunei",
+        "es": "Brunéi"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 462721,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1820906],
+      "cityIds": [1820906, 1820575, 1820635, 1820491],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 62,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BO",
+      "iso3": "BOL",
+      "names": {
+        "en": "Bolivia",
+        "es": "Bolivia"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 12413315,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3903987],
+      "cityIds": [
+        3911925, 3904906, 3919968, 3903987, 3909234, 3906194, 3906791, 3903320,
+        3907584, 3906466, 3910027, 3901742, 3902377
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 181,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BR",
+      "iso3": "BRA",
+      "names": {
+        "en": "Brazil",
+        "es": "Brasil"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 211998573,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3469058],
+      "cityIds": [
+        3448439, 3451190, 3470127, 3450554, 3399415, 3663517, 3469058, 3464975,
+        3390760, 3462377, 3405870, 3452925, 3461786
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 5724,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BS",
+      "iso3": "BHS",
+      "names": {
+        "en": "Bahamas",
+        "es": "Bahamas"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 401283,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3571824],
+      "cityIds": [3571824, 3571971, 3572375, 3572106],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 27,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BT",
+      "iso3": "BTN",
+      "names": {
+        "en": "Bhutan",
+        "es": "Bután"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 791524,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1252416],
+      "cityIds": [1252416, 1252484, 1252608, 1252479],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 32,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BW",
+      "iso3": "BWA",
+      "names": {
+        "en": "Botswana",
+        "es": "Botsuana"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 2521139,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [933773],
+      "cityIds": [933773, 933778, 933331, 933366],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 129,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BY",
+      "iso3": "BLR",
+      "names": {
+        "en": "Belarus",
+        "es": "Bielorrusia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 9132629,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [625144],
+      "cityIds": [
+        625144, 627907, 627904, 620127, 625665, 629634, 630468, 630429, 630376,
+        623549, 625324, 626081, 624079
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 311,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "BZ",
+      "iso3": "BLZ",
+      "names": {
+        "en": "Belize",
+        "es": "Belice"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 417072,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3582672],
+      "cityIds": [3582677, 3581194, 3581164, 3582672],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 137,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CA",
+      "iso3": "CAN",
+      "names": {
+        "en": "Canada",
+        "es": "Canadá"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 41262329,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [6094817],
+      "cityIds": [
+        6167865, 6077243, 5913490, 6094817, 5946768, 6183235, 6075357, 6173331,
+        5907364, 5969782, 6159905, 6325494, 6324729
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1904,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CD",
+      "iso3": "COD",
+      "names": {
+        "en": "Democratic Republic of the Congo",
+        "es": "República Democrática del Congo"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 109276265,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2314302],
+      "cityIds": [
+        2314302, 922704, 209228, 214481, 212730, 217831, 922773, 922741, 204953,
+        2314705, 2593460, 2312895, 216281
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 117,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CF",
+      "iso3": "CAF",
+      "names": {
+        "en": "Central African Republic",
+        "es": "República Centroafricana"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 5330690,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2389853],
+      "cityIds": [2389853, 2388873, 2389422, 2387495],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 50,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CG",
+      "iso3": "COG",
+      "names": {
+        "en": "Republic of the Congo",
+        "es": "República del Congo"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 6332961,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2260535],
+      "cityIds": [2260535, 2255414, 2258261, 8521334],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 59,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CH",
+      "iso3": "CHE",
+      "names": {
+        "en": "Switzerland",
+        "es": "Suiza"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 9005582,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2661552],
+      "cityIds": [
+        2657896, 2660646, 2661604, 2659994, 2661552, 2657970, 2659811, 2658822,
+        2659836, 2661513, 2658377, 2661567, 2660119
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1538,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CI",
+      "iso3": "CIV",
+      "names": {
+        "en": "Côte d’Ivoire",
+        "es": "Costa de Marfil"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 31934230,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2279755],
+      "cityIds": [
+        2293538, 2293521, 2290956, 2286304, 2290486, 2285853, 2282006, 2288829,
+        2279755, 2281606, 2284647, 2595323, 2291136
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 5131,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CL",
+      "iso3": "CHL",
+      "names": {
+        "en": "Chile",
+        "es": "Chile"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 19764771,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3871336],
+      "cityIds": [
+        3871336, 3875024, 3880980, 3899539, 3868121, 3868626, 3872348, 3874960,
+        3899361, 3876682, 3870011, 3893894, 3873775
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 286,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CM",
+      "iso3": "CMR",
+      "names": {
+        "en": "Cameroon",
+        "es": "Camerún"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 29123744,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2220957],
+      "cityIds": [
+        2232593, 2220957, 2234974, 2235189, 2228373, 2224827, 2229752, 2223763,
+        2233410, 2229798, 2234359, 2229411, 2231506
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 144,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CN",
+      "iso3": "CHN",
+      "names": {
+        "en": "China",
+        "es": "China"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 1408975000,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1816670],
+      "cityIds": [
+        1796236, 1816670, 1795565, 1809858, 1815286, 1792947, 1791247, 1812545,
+        1790630, 1799962, 1808926, 1811103, 1814906
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 15968,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CO",
+      "iso3": "COL",
+      "names": {
+        "en": "Colombia",
+        "es": "Colombia"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 52886363,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3688689],
+      "cityIds": [
+        3688689, 3687925, 3674962, 3689147, 3687238, 3685533, 3667905, 3688465,
+        3680656, 3668605, 3674453, 3666304, 3672486
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1174,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CR",
+      "iso3": "CRI",
+      "names": {
+        "en": "Costa Rica",
+        "es": "Costa Rica"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 5129910,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3621849],
+      "cityIds": [3621849, 3622247, 3624955, 3623076],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 125,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CU",
+      "iso3": "CUB",
+      "names": {
+        "en": "Cuba",
+        "es": "Cuba"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 10979783,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3553478],
+      "cityIds": [
+        3553478, 3536729, 3566067, 3556969, 3557689, 3537906, 3568342, 3550598,
+        3567597, 3544091, 3564124, 3558729, 3538803
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 185,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CV",
+      "iso3": "CPV",
+      "names": {
+        "en": "Cabo Verde",
+        "es": "Cabo Verde"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 524877,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3374333],
+      "cityIds": [3374333, 3374462, 8521418, 3374888],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 152,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CY",
+      "iso3": "CYP",
+      "names": {
+        "en": "Cyprus",
+        "es": "Chipre"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 1358282,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [146268],
+      "cityIds": [
+        146268, 146384, 146400, 146054, 146617, 146523, 146214, 146412, 146286,
+        146516, 146796, 146619, 146638
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 131,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "CZ",
+      "iso3": "CZE",
+      "names": {
+        "en": "Czechia",
+        "es": "Chequia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 10905028,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3067696],
+      "cityIds": [
+        3067696, 3078610, 3068799, 3068160, 3071961, 3069011, 3077916, 3074967,
+        3063548, 3068582, 6694367, 3075921, 3061370
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 2696,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "DE",
+      "iso3": "DEU",
+      "names": {
+        "en": "Germany",
+        "es": "Alemania"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 83516593,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2950159],
+      "cityIds": [
+        2950159, 2911298, 2867714, 2886242, 2925533, 2934246, 2825297, 2928810,
+        2935517, 2935022, 2944388, 2861650, 2910831
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 11382,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "DJ",
+      "iso3": "DJI",
+      "names": {
+        "en": "Djibouti",
+        "es": "Yibuti"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 1168722,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [223817],
+      "cityIds": [223817, 7648070, 225284, 223890],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 31,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "DK",
+      "iso3": "DNK",
+      "names": {
+        "en": "Denmark",
+        "es": "Dinamarca"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 5976992,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2618425],
+      "cityIds": [
+        2618425, 2624652, 2615876, 2624886, 2621942, 2622447, 2615006, 2618528,
+        2619771, 2610613, 2619528, 2618741, 2624427
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 495,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "DM",
+      "iso3": "DMA",
+      "names": {
+        "en": "Dominica",
+        "es": "Dominica"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 66205,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3575635],
+      "cityIds": [3575635, 3575654, 3575721, 3575899],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 19,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "DO",
+      "iso3": "DOM",
+      "names": {
+        "en": "Dominican Republic",
+        "es": "República Dominicana"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 11427557,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3492908],
+      "cityIds": [
+        3492908, 3492914, 7874116, 8601412, 3493032, 3500957, 3511540, 3493175,
+        3493146, 3493240, 3509382, 3494242, 3492985
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 205,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "DZ",
+      "iso3": "DZA",
+      "names": {
+        "en": "Algeria",
+        "es": "Argelia"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 46814308,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2507480],
+      "cityIds": [
+        2507480, 2485926, 2501152, 2506999, 2503769, 2505572, 2505854, 2500017,
+        2481700, 2481007, 2503826, 2477461, 2497411
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 346,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "EC",
+      "iso3": "ECU",
+      "names": {
+        "en": "Ecuador",
+        "es": "Ecuador"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 18135478,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3652462],
+      "cityIds": [
+        3652462, 3657509, 3658666, 3651297, 3660689, 3652941, 3658192, 3654533,
+        3654667, 3654410, 3652350, 3655673, 3657990
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 541,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "EE",
+      "iso3": "EST",
+      "names": {
+        "en": "Estonia",
+        "es": "Estonia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 1372341,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [588409],
+      "cityIds": [
+        588409, 588335, 590031, 589580, 591260, 587577, 590447, 589165, 590939,
+        588686, 587450, 588215, 587876
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 206,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "EG",
+      "iso3": "EGY",
+      "names": {
+        "en": "Egypt",
+        "es": "Egipto"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 116538258,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [360630],
+      "cityIds": [
+        360630, 361058, 360995, 349076, 358619, 359796, 360761, 360829, 347497,
+        359783, 361320, 360890, 355449
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 252,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ER",
+      "iso3": "ERI",
+      "names": {
+        "en": "Eritrea",
+        "es": "Eritrea"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 3535603,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [343300],
+      "cityIds": [343300, 333287, 334717, 330546],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 15,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ES",
+      "iso3": "ESP",
+      "names": {
+        "en": "Spain",
+        "es": "España"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 48848840,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3117735],
+      "cityIds": [
+        3117735, 3128760, 2509954, 3104324, 2510911, 2514256, 2513416, 2512989,
+        2515270, 2521978, 3128026, 2519240, 3106672
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 7140,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ET",
+      "iso3": "ETH",
+      "names": {
+        "en": "Ethiopia",
+        "es": "Etiopía"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 132059767,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [344979],
+      "cityIds": [
+        344979, 333795, 336014, 331180, 330186, 326282, 343137, 342884, 338832,
+        339219, 333772, 328689, 339666
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 252,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "FI",
+      "iso3": "FIN",
+      "names": {
+        "en": "Finland",
+        "es": "Finlandia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 5619911,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [658225],
+      "cityIds": [
+        658225, 660158, 634963, 632453, 643492, 633679, 655194, 650224, 649360,
+        640999, 655808, 650859, 648900
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 574,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "FJ",
+      "iso3": "FJI",
+      "names": {
+        "en": "Fiji",
+        "es": "Fiyi"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 928784,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2198148],
+      "cityIds": [8740209, 2198148, 2204506, 2202064],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 15,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "FM",
+      "iso3": "FSM",
+      "names": {
+        "en": "Micronesia",
+        "es": "Micronesia"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 113160,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2081986],
+      "cityIds": [2081114, 2081342, 7648112, 2081986],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 60,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "FR",
+      "iso3": "FRA",
+      "names": {
+        "en": "France",
+        "es": "Francia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 68551653,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2988507],
+      "cityIds": [
+        2988507, 2995469, 2996944, 2972315, 2990440, 2990969, 12278193, 2973783,
+        3031582, 2992166, 2998324, 2970479, 2983990
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 15186,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GA",
+      "iso3": "GAB",
+      "names": {
+        "en": "Gabon",
+        "es": "Gabón"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 2538952,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2399697],
+      "cityIds": [2399697, 2396518, 2400555, 2396657],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 49,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GB",
+      "iso3": "GBR",
+      "names": {
+        "en": "United Kingdom",
+        "es": "Reino Unido"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 69281000,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2643743],
+      "cityIds": [
+        2643743, 2655603, 2648579, 2643123, 2638077, 2644688, 2650225, 2644210,
+        2654675, 2653822, 2644668, 2654993, 2655984
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 5696,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GD",
+      "iso3": "GRD",
+      "names": {
+        "en": "Grenada",
+        "es": "Granada"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 117207,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3579925],
+      "cityIds": [3579925, 3580279, 3580236, 3580257],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 9,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GE",
+      "iso3": "GEO",
+      "names": {
+        "en": "Georgia",
+        "es": "Georgia"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 3812518,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [611717],
+      "cityIds": [
+        611717, 615532, 613607, 612287, 611847, 614455, 612366, 610824, 611403,
+        615912, 613074, 613988, 612126
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 217,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GH",
+      "iso3": "GHA",
+      "names": {
+        "en": "Ghana",
+        "es": "Ghana"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 34427414,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2306104],
+      "cityIds": [
+        2298890, 2306104, 2294877, 2294915, 11808941, 2302357, 2306079, 2304121,
+        2296606, 2294700, 2299522, 2295458, 2300379
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 114,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GM",
+      "iso3": "GMB",
+      "names": {
+        "en": "Gambia",
+        "es": "Gambia"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 2759988,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2413876],
+      "cityIds": [2411989, 2413753, 2411880, 2413876],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 175,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GN",
+      "iso3": "GIN",
+      "names": {
+        "en": "Guinea",
+        "es": "Guinea"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 14754785,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2422465],
+      "cityIds": [
+        2422465, 2422488, 2416969, 2419992, 2417786, 2421535, 2419533, 2415703,
+        2421820, 2419472, 2416402, 2418362, 2420562
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 82,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GQ",
+      "iso3": "GNQ",
+      "names": {
+        "en": "Equatorial Guinea",
+        "es": "Guinea Ecuatorial"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 1892516,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [12226438],
+      "cityIds": [2310046, 2309527, 2309332, 12226438],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 26,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GR",
+      "iso3": "GRC",
+      "names": {
+        "en": "Greece",
+        "es": "Grecia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 10405134,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [264371],
+      "cityIds": [
+        264371, 734077, 255683, 255274, 258576, 255524, 261745, 261414, 265488,
+        736083, 256429, 262036, 251833
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1976,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GT",
+      "iso3": "GTM",
+      "names": {
+        "en": "Guatemala",
+        "es": "Guatemala"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 18406359,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3598132],
+      "cityIds": [
+        3598132, 3587902, 3592519, 3598119, 3590979, 3595237, 3595803, 3587923,
+        3595069, 3598655, 3589885, 3591415, 3589289
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 339,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GW",
+      "iso3": "GNB",
+      "names": {
+        "en": "Guinea-Bissau",
+        "es": "Guinea-Bisáu"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 2201352,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2374775],
+      "cityIds": [2374775, 2372532, 2373235, 2370317],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 43,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "GY",
+      "iso3": "GUY",
+      "names": {
+        "en": "Guyana",
+        "es": "Guyana"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 831087,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3378644],
+      "cityIds": [3378644, 3377408, 3376762, 7303406],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 21,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "HN",
+      "iso3": "HND",
+      "names": {
+        "en": "Honduras",
+        "es": "Honduras"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 10825703,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3600949],
+      "cityIds": [
+        3600949, 3601782, 3612907, 3608248, 8556321, 3600026, 3613974, 3613533,
+        3601311, 3604251, 3600704, 3610613, 3601627
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 543,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "HR",
+      "iso3": "HRV",
+      "names": {
+        "en": "Croatia",
+        "es": "Croacia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 3866200,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3186886],
+      "cityIds": [
+        3186886, 3190261, 3191648, 3193935, 3186952, 3190966, 3192224, 3190586,
+        3345300, 3188383, 3190941, 3188244, 3187719
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1188,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "HT",
+      "iso3": "HTI",
+      "names": {
+        "en": "Haiti",
+        "es": "Haití"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 11772557,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3718426],
+      "cityIds": [
+        3718426, 6201369, 3726786, 3719028, 3718420, 3717588, 3727135, 3726540,
+        3723779, 3728474, 3722286, 3731088, 3728097
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 112,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "HU",
+      "iso3": "HUN",
+      "names": {
+        "en": "Hungary",
+        "es": "Hungría"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 9562065,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3054643],
+      "cityIds": [
+        3054643, 721472, 715429, 717582, 3046526, 3052009, 716935, 3050434,
+        3044774, 3044310, 715126, 3044082, 3050616
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1073,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ID",
+      "iso3": "IDN",
+      "names": {
+        "en": "Indonesia",
+        "es": "Indonesia"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 283487931,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1642911],
+      "cityIds": [
+        1642911, 1625822, 1649378, 1650357, 1214520, 1645524, 1625084, 1633070,
+        1627896, 1622786, 8581443, 6295587, 1642548
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 9296,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "IE",
+      "iso3": "IRL",
+      "names": {
+        "en": "Ireland",
+        "es": "Irlanda"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 5395790,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2964574],
+      "cityIds": [
+        2964574, 2965140, 2962943, 2964180, 2961284, 2960992, 2964661, 2964540,
+        2961297, 2962308, 2966022, 2964506, 2964405
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 543,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "IN",
+      "iso3": "IND",
+      "names": {
+        "en": "India",
+        "es": "India"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 1450935791,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1261481],
+      "cityIds": [
+        1275339, 1273294, 1277333, 1269843, 1279233, 1264527, 1275004, 1255364,
+        1259229, 1269515, 1267995, 1264733, 1261481
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 6973,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "IQ",
+      "iso3": "IRQ",
+      "names": {
+        "en": "Iraq",
+        "es": "Irak"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 46042015,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [98182],
+      "cityIds": [
+        98182, 99072, 95446, 99532, 94824, 7802746, 94787, 100077, 98463, 98854,
+        98860, 99347, 13631407
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 164,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "IR",
+      "iso3": "IRN",
+      "names": {
+        "en": "Iran",
+        "es": "Irán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 91567738,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [112931],
+      "cityIds": [
+        112931, 124665, 418863, 128747, 113646, 115019, 119208, 144448, 128226,
+        118743, 128234, 121801, 1159301
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 2499,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "IS",
+      "iso3": "ISL",
+      "names": {
+        "en": "Iceland",
+        "es": "Islandia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 386506,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3413829],
+      "cityIds": [
+        3413829, 3415212, 3416706, 8644037, 2633274, 3415496, 3415021, 3417195,
+        3413604, 3418653, 3414979, 3412093, 2629833
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 49,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "IT",
+      "iso3": "ITA",
+      "names": {
+        "en": "Italy",
+        "es": "Italia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 58952704,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3169070],
+      "cityIds": [
+        3169070, 3173435, 3172394, 3165524, 2523920, 3176219, 3181928, 3176959,
+        3182351, 2525068, 3164527, 2524170, 3165185
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 11691,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "JM",
+      "iso3": "JAM",
+      "names": {
+        "en": "Jamaica",
+        "es": "Jamaica"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 2839175,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3489854],
+      "cityIds": [3489854, 3488465, 3488981, 3489460],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 98,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "JO",
+      "iso3": "JOR",
+      "names": {
+        "en": "Jordan",
+        "es": "Jordania"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 11552876,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [250441],
+      "cityIds": [
+        250441, 250090, 248946, 7838895, 248460, 246013, 250336, 13286467,
+        250799, 250258, 250774, 11428685, 13308287
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 142,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "JP",
+      "iso3": "JPN",
+      "names": {
+        "en": "Japan",
+        "es": "Japón"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 123975371,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1850147],
+      "cityIds": [
+        1850147, 1848354, 1853909, 1856057, 2128295, 1863967, 1859642, 1859171,
+        1857910, 6940394, 1862415, 2111149, 2113015
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 2025,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KE",
+      "iso3": "KEN",
+      "names": {
+        "en": "Kenya",
+        "es": "Kenia"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 56432944,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [184745],
+      "cityIds": [
+        184745, 195272, 186301, 184622, 181032, 198629, 191245, 192126, 179330,
+        184707, 193624, 193627, 187269
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 332,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KG",
+      "iso3": "KGZ",
+      "names": {
+        "en": "Kyrgyzstan",
+        "es": "Kirguistán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 7221868,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1528675],
+      "cityIds": [1528675, 1527534, 1528249, 1528121],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 105,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KH",
+      "iso3": "KHM",
+      "names": {
+        "en": "Cambodia",
+        "es": "Camboya"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 17638801,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1821306],
+      "cityIds": [
+        1821306, 1821940, 1822214, 1831797, 1830194, 1830784, 1831167, 1831142,
+        1825978, 1831173, 1831898, 1822768, 1821935
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 333,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KI",
+      "iso3": "KIR",
+      "names": {
+        "en": "Kiribati",
+        "es": "Kiribati"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 134518,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2110257],
+      "cityIds": [2110257, 2110248, 7601774, 2110070],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 35,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KM",
+      "iso3": "COM",
+      "names": {
+        "en": "Comoros",
+        "es": "Comoras"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 866628,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [921772],
+      "cityIds": [921772, 921753, 921889, 921664],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 116,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KN",
+      "iso3": "KNA",
+      "names": {
+        "en": "Saint Kitts and Nevis",
+        "es": "San Cristóbal y Nieves"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 46843,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3575551],
+      "cityIds": [3575551, 3575156, 3575423, 3575296],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 17,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KP",
+      "iso3": "PRK",
+      "names": {
+        "en": "North Korea",
+        "es": "Corea del Norte"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 26498823,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1871859],
+      "cityIds": [
+        1871859, 1877449, 1873757, 1869012, 1877030, 1876373, 1866923, 2044757,
+        1874533, 1876401, 1870883, 2040893, 1868144
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 123,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KR",
+      "iso3": "KOR",
+      "names": {
+        "en": "South Korea",
+        "es": "Corea del Sur"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 51751065,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1835848],
+      "cityIds": [
+        1835848, 1838524, 1843564, 1835329, 1835235, 1841811, 1835553, 1833747,
+        1842485, 1846326, 1897000, 1845604, 1838716
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 306,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KW",
+      "iso3": "KWT",
+      "names": {
+        "en": "Kuwait",
+        "es": "Kuwait"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 4897263,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [285787],
+      "cityIds": [285839, 285629, 412800, 285787],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 20,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "KZ",
+      "iso3": "KAZ",
+      "names": {
+        "en": "Kazakhstan",
+        "es": "Kazajistán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 20592571,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1526273],
+      "cityIds": [
+        1526384, 1526273, 1518980, 610611, 609655, 1516905, 1519922, 608668,
+        1520240, 1520316, 1519422, 610529, 1517945
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 347,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LA",
+      "iso3": "LAO",
+      "names": {
+        "en": "Laos",
+        "es": "Laos"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 7769819,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1651944],
+      "cityIds": [1651944, 1653316, 1655199, 1654379],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 106,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LB",
+      "iso3": "LBN",
+      "names": {
+        "en": "Lebanon",
+        "es": "Líbano"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 5805962,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [276781],
+      "cityIds": [276781, 266826, 268064, 267008],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 50,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LC",
+      "iso3": "LCA",
+      "names": {
+        "en": "Saint Lucia",
+        "es": "Santa Lucía"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 179744,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3576812],
+      "cityIds": [3576686, 3576812, 3576765, 3576663],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 28,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LI",
+      "iso3": "LIE",
+      "names": {
+        "en": "Liechtenstein",
+        "es": "Liechtenstein"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 40450,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3042030],
+      "cityIds": [
+        3042041, 3042035, 3042030, 3042073, 3042068, 3042055, 3042033, 3042046,
+        3042072, 3042062, 3042052, 3315349, 3042037
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 13,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LK",
+      "iso3": "LKA",
+      "names": {
+        "en": "Sri Lanka",
+        "es": "Sri Lanka"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 21916000,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1248991],
+      "cityIds": [
+        1248991, 1234569, 1236854, 1242833, 1234633, 1233369, 1230089, 1238992,
+        1241622, 1226260, 1242110, 1246294, 1229989
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 88,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LR",
+      "iso3": "LBR",
+      "names": {
+        "en": "Liberia",
+        "es": "Liberia"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 5612817,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2274895],
+      "cityIds": [2274895, 2277060, 2278158, 2277241],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 26,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LS",
+      "iso3": "LSO",
+      "names": {
+        "en": "Lesotho",
+        "es": "Lesoto"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 2337423,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [932505],
+      "cityIds": [932505, 932521, 932438, 932614],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 46,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LT",
+      "iso3": "LTU",
+      "names": {
+        "en": "Lithuania",
+        "es": "Lituania"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 2888278,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [593116],
+      "cityIds": [
+        593116, 598316, 598098, 594739, 596128, 601084, 597231, 597188, 598818,
+        593672, 598272, 593926, 593959
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 142,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LU",
+      "iso3": "LUX",
+      "names": {
+        "en": "Luxembourg",
+        "es": "Luxemburgo"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 677012,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2960316],
+      "cityIds": [
+        2960316, 2960596, 2960634, 2960800, 2960102, 2960010, 2960143, 2960777,
+        2960657, 2960187, 2960067, 2960589, 2960054
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 209,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LV",
+      "iso3": "LVA",
+      "names": {
+        "en": "Latvia",
+        "es": "Letonia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 1866124,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [456172],
+      "cityIds": [
+        456172, 460413, 457954, 459279, 459201, 454310, 456202, 453754, 457065,
+        459283, 864723, 455898, 454768
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 136,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "LY",
+      "iso3": "LBY",
+      "names": {
+        "en": "Libya",
+        "es": "Libia"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 7381023,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2210247],
+      "cityIds": [2210247, 88319, 2214846, 2208485],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 118,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MA",
+      "iso3": "MAR",
+      "names": {
+        "en": "Morocco",
+        "es": "Marruecos"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 38081173,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2538475],
+      "cityIds": [
+        2553604, 2538475, 2548885, 2530335, 2542997, 2537763, 2561668, 2542715,
+        2540483, 2544571, 2528910, 2558545, 2529013
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 474,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MC",
+      "iso3": "MCO",
+      "names": {
+        "en": "Monaco",
+        "es": "Mónaco"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 38631,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2993458],
+      "cityIds": [2993458],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 0,
+        "eligibleNonCapitalAvailable": 0,
+        "shortfall": true
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MD",
+      "iso3": "MDA",
+      "names": {
+        "en": "Moldova",
+        "es": "Moldavia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 2402306,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [618426],
+      "cityIds": [
+        618426, 617239, 618605, 618577, 617486, 618456, 617180, 617367, 618356,
+        617638, 618365, 618405, 617076
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 92,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ME",
+      "iso3": "MNE",
+      "names": {
+        "en": "Montenegro",
+        "es": "Montenegro"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 623525,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3193044],
+      "cityIds": [
+        3193044, 3194494, 3199394, 3193161, 3203106, 3204509, 3204176, 3202641,
+        3199071, 3188516, 786234, 3189073, 3197538
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 53,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MG",
+      "iso3": "MDG",
+      "names": {
+        "en": "Madagascar",
+        "es": "Madagascar"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 31964956,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1070940],
+      "cityIds": [
+        1070940, 1053384, 1069166, 1062663, 1064890, 1055429, 1069129, 1056899,
+        1064121, 1071296, 1055433, 1070661, 1079048
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 151,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MH",
+      "iso3": "MHL",
+      "names": {
+        "en": "Marshall Islands",
+        "es": "Islas Marshall"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 37548,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2113779],
+      "cityIds": [2113779, 8347657, 7304467, 7306514],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 25,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MK",
+      "iso3": "MKD",
+      "names": {
+        "en": "North Macedonia",
+        "es": "Macedonia del Norte"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 1824359,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [785842],
+      "cityIds": [
+        785842, 788886, 786735, 792578, 833262, 785082, 863675, 785058, 790295,
+        785482, 7886881, 787487, 789541
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 294,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ML",
+      "iso3": "MLI",
+      "names": {
+        "en": "Mali",
+        "es": "Mali"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 24478595,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2460596],
+      "cityIds": [
+        2460596, 2451185, 2454268, 2451478, 2455518, 2453348, 2455914, 2457163,
+        2455558, 2451778, 2459775, 2449067, 2455216
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 93,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MM",
+      "iso3": "MMR",
+      "names": {
+        "en": "Myanmar",
+        "es": "Myanmar"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 54500091,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [6611854],
+      "cityIds": [
+        1298824, 1311874, 6611854, 8740157, 1308465, 1321218, 1321937, 1300466,
+        1329221, 1328421, 1285693, 1308522, 1316752
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 510,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MN",
+      "iso3": "MNG",
+      "names": {
+        "en": "Mongolia",
+        "es": "Mongolia"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 3524788,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2028462],
+      "cityIds": [2028462, 2031405, 2031964, 2032054],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 331,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MR",
+      "iso3": "MRT",
+      "names": {
+        "en": "Mauritania",
+        "es": "Mauritania"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 5169395,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2377450],
+      "cityIds": [2377450, 2377457, 2378538, 11496397],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 84,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MT",
+      "iso3": "MLT",
+      "names": {
+        "en": "Malta",
+        "es": "Malta"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 568847,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2562305],
+      "cityIds": [
+        2562541, 2563191, 2562704, 2562501, 2562629, 2562266, 2562683, 2567539,
+        2562850, 2562557, 2562698, 2563189, 2562305
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 68,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MU",
+      "iso3": "MUS",
+      "names": {
+        "en": "Mauritius",
+        "es": "Mauricio"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 1245779,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [934154],
+      "cityIds": [934154, 933945, 934765, 934570],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 115,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MV",
+      "iso3": "MDV",
+      "names": {
+        "en": "Maldives",
+        "es": "Maldivas"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 527799,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1282027],
+      "cityIds": [1282027, 1337611, 1282256, 1337613],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 32,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MW",
+      "iso3": "MWI",
+      "names": {
+        "en": "Malawi",
+        "es": "Malaui"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 21655286,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [927967],
+      "cityIds": [
+        927967, 931755, 925475, 923295, 235715, 928534, 927246, 924055, 927834,
+        931865, 930025, 924705, 926747
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 38,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MX",
+      "iso3": "MEX",
+      "names": {
+        "en": "Mexico",
+        "es": "México"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 130861007,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3530597],
+      "cityIds": [
+        3530597, 3981609, 3526683, 3521081, 3529612, 3991164, 3998655, 4013708,
+        3979770, 4005539, 3523349, 3514674, 3995465
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 16820,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MY",
+      "iso3": "MYS",
+      "names": {
+        "en": "Malaysia",
+        "es": "Malasia"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 35557673,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1735161],
+      "cityIds": [
+        1735161, 1732752, 1771023, 1735158, 1734634, 1732903, 13118225, 1732747,
+        1734759, 10063567, 1736376, 1735227, 6847550
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 724,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "MZ",
+      "iso3": "MOZ",
+      "names": {
+        "en": "Mozambique",
+        "es": "Mozambique"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 34631766,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1040652],
+      "cityIds": [
+        1040652, 1039854, 1033356, 1052373, 1049261, 1026014, 1028434, 1043893,
+        1035025, 1028918, 1024694, 1045512, 1024552
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 93,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "NA",
+      "iso3": "NAM",
+      "names": {
+        "en": "Namibia",
+        "es": "Namibia"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 3030131,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3352136],
+      "cityIds": [3352136, 3353383, 3359638, 3352844],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 89,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "NE",
+      "iso3": "NER",
+      "names": {
+        "en": "Niger",
+        "es": "Níger"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 27032412,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2440485],
+      "cityIds": [
+        2440485, 2441291, 2437798, 2439376, 2448085, 2447513, 2447938, 2437732,
+        2445488, 2444489, 2438823, 2445704, 2445553
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 73,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "NG",
+      "iso3": "NGA",
+      "names": {
+        "en": "Nigeria",
+        "es": "Nigeria"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 232679478,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2352778],
+      "cityIds": [
+        2332459, 2335204, 2339354, 2352778, 2324774, 2335727, 2347283, 2326016,
+        2353151, 2331447, 2337639, 2322911, 2335953
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 925,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "NI",
+      "iso3": "NIC",
+      "names": {
+        "en": "Nicaragua",
+        "es": "Nicaragua"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 6916140,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3617763],
+      "cityIds": [3617763, 3618030, 3617723, 3620381],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 166,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "NL",
+      "iso3": "NLD",
+      "names": {
+        "en": "Netherlands",
+        "es": "Países Bajos"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 17993485,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2759794],
+      "cityIds": [
+        2747891, 2759794, 2747373, 2745912, 2755251, 2756253, 2746301, 2758401,
+        2750053, 2759879, 2755003, 2759661, 2747351
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1682,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "NO",
+      "iso3": "NOR",
+      "names": {
+        "en": "Norway",
+        "es": "Noruega"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 5572279,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3143244],
+      "cityIds": [
+        3143244, 3161732, 3133880, 3137115, 3149318, 3159016, 3147465, 3140321,
+        3156529, 3140390, 3162657, 3140084, 3134331
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 597,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "NP",
+      "iso3": "NPL",
+      "names": {
+        "en": "Nepal",
+        "es": "Nepal"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 29651054,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1283240],
+      "cityIds": [
+        1283240, 1282898, 1283613, 1282931, 1283581, 1283582, 1283467, 1283339,
+        1283318, 1283562, 1283460, 6941099, 6254843
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 78,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "NR",
+      "iso3": "NRU",
+      "names": {
+        "en": "Nauru",
+        "es": "Nauru"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 11947,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [7626461],
+      "cityIds": [7626485, 12129637, 11695310, 7626461],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 14,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "NZ",
+      "iso3": "NZL",
+      "names": {
+        "en": "New Zealand",
+        "es": "Nueva Zelanda"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 5290000,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2179537],
+      "cityIds": [2193733, 2192362, 2179537, 2187404],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 427,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "OM",
+      "iso3": "OMN",
+      "names": {
+        "en": "Oman",
+        "es": "Omán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 5281538,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [287286],
+      "cityIds": [287286, 288967, 288764, 287830],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 36,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PA",
+      "iso3": "PAN",
+      "names": {
+        "en": "Panama",
+        "es": "Panamá"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 4515577,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3703443],
+      "cityIds": [3703443, 3701329, 3708306, 3711668],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 759,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PE",
+      "iso3": "PER",
+      "names": {
+        "en": "Peru",
+        "es": "Perú"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 34217848,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3936456],
+      "cityIds": [
+        3936456, 3946083, 3947322, 3691175, 3693528, 3698350, 3939459, 3941584,
+        3696183, 3693345, 3698304, 3928128, 3938527
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 2281,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PG",
+      "iso3": "PNG",
+      "names": {
+        "en": "Papua New Guinea",
+        "es": "Papúa Nueva Guinea"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 10576502,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2088122],
+      "cityIds": [
+        2088122, 2092740, 2100633, 2090409, 2088163, 2091996, 2093685, 2090990,
+        2093967, 2096742, 2083537, 2098869, 2098329
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 51,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PH",
+      "iso3": "PHL",
+      "names": {
+        "en": "Philippines",
+        "es": "Filipinas"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 115843670,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1701668],
+      "cityIds": [
+        1692192, 1715348, 1720151, 1701668, 1684308, 1723510, 1978681, 1679432,
+        1717512, 1730501, 7290466, 1721080, 1680102
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 4498,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PK",
+      "iso3": "PAK",
+      "names": {
+        "en": "Pakistan",
+        "es": "Pakistán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 251269164,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1176615],
+      "cityIds": [
+        1172451, 1174872, 1168197, 1179400, 1166993, 1177662, 1169825, 1176734,
+        1167528, 1183460, 1166000, 1164909, 1176615
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 557,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PL",
+      "iso3": "POL",
+      "names": {
+        "en": "Poland",
+        "es": "Polonia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 36559233,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [756135],
+      "cityIds": [
+        756135, 3094802, 3081368, 3093133, 3088171, 3099434, 3083829, 765876,
+        3102014, 776069, 3096472, 3099424, 3100946
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 3733,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PS",
+      "iso3": "PSE",
+      "names": {
+        "en": "Palestine",
+        "es": "Palestina"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 5289152,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [7303419],
+      "cityIds": [7303419, 281133, 281124, 281129],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 405,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PT",
+      "iso3": "PRT",
+      "names": {
+        "en": "Portugal",
+        "es": "Portugal"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 10694681,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2267057],
+      "cityIds": [
+        2267057, 2735943, 2742032, 2271772, 2740637, 2267095, 2262963, 2267827,
+        2732265, 2264268, 2270503, 2742611, 2732544
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1054,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PW",
+      "iso3": "PLW",
+      "names": {
+        "en": "Palau",
+        "es": "Palaos"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 17695,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [8063361],
+      "cityIds": [1559446, 7732415, 1559400, 8063361],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 26,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "PY",
+      "iso3": "PRY",
+      "names": {
+        "en": "Paraguay",
+        "es": "Paraguay"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 6929153,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3439389],
+      "cityIds": [3439389, 3439101, 3437056, 3439214],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 171,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "QA",
+      "iso3": "QAT",
+      "names": {
+        "en": "Qatar",
+        "es": "Catar"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 2857822,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [290030],
+      "cityIds": [290030, 289888, 13512674, 289847],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 21,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "RO",
+      "iso3": "ROU",
+      "names": {
+        "en": "Romania",
+        "es": "Rumanía"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 19051804,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [683506],
+      "cityIds": [
+        683506, 675810, 680963, 681290, 683844, 665087, 680332, 677697, 665004,
+        671768, 670474, 686254, 683902
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 7013,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "RS",
+      "iso3": "SRB",
+      "names": {
+        "en": "Serbia",
+        "es": "Serbia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 6586476,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [792680],
+      "cityIds": [
+        792680, 787657, 3194360, 783920, 789128, 792078, 3189595, 788709,
+        787595, 789107, 783814, 787237, 788975
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 465,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "RU",
+      "iso3": "RUS",
+      "names": {
+        "en": "Russia",
+        "es": "Rusia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 143669648,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [524901],
+      "cityIds": [
+        524901, 498817, 1496747, 1486209, 520555, 551487, 1508291, 1496153,
+        499099, 501175, 479561, 1502026, 472045
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 5127,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "RW",
+      "iso3": "RWA",
+      "names": {
+        "en": "Rwanda",
+        "es": "Ruanda"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 14256567,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [202061],
+      "cityIds": [
+        202061, 202905, 201521, 201650, 202217, 203112, 202065, 201463, 202068,
+        202326, 202345, 203104, 202572
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 46,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SA",
+      "iso3": "SAU",
+      "names": {
+        "en": "Saudi Arabia",
+        "es": "Arabia Saudí"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 35300280,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [108410],
+      "cityIds": [
+        105343, 108410, 104515, 109223, 110336, 101760, 107304, 107968, 101628,
+        106281, 103630, 109353, 105072
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 153,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SB",
+      "iso3": "SLB",
+      "names": {
+        "en": "Solomon Islands",
+        "es": "Islas Salomón"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 819198,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2108502],
+      "cityIds": [2108502, 13527002, 13527001, 2106543],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 12,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SC",
+      "iso3": "SYC",
+      "names": {
+        "en": "Seychelles",
+        "es": "Seychelles"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 121354,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [241131],
+      "cityIds": [241131, 241395, 12718739, 6691843],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 19,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SD",
+      "iso3": "SDN",
+      "names": {
+        "en": "Sudan",
+        "es": "Sudán"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 50448963,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [379252],
+      "cityIds": [
+        379252, 365137, 379251, 369004, 377039, 372753, 379003, 379062, 371760,
+        364103, 380148, 379555, 366847
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 111,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SE",
+      "iso3": "SWE",
+      "names": {
+        "en": "Sweden",
+        "es": "Suecia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 10569709,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2673730],
+      "cityIds": [
+        2673730, 2711537, 2692969, 2666199, 2694762, 2686657, 2675408, 602150,
+        2664454, 2702979, 2706767, 2688368, 2704620
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1294,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SG",
+      "iso3": "SGP",
+      "names": {
+        "en": "Singapore",
+        "es": "Singapur"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 6036860,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1880252],
+      "cityIds": [1880252, 1880159, 1884382, 7289760],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 42,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SI",
+      "iso3": "SVN",
+      "names": {
+        "en": "Slovenia",
+        "es": "Eslovenia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 2127400,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3196359],
+      "cityIds": [
+        3196359, 3195506, 3202781, 3197378, 3197753, 3194351, 3189075, 3192241,
+        3188915, 3198365, 3198647, 3201730, 3194452
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 587,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SK",
+      "iso3": "SVK",
+      "names": {
+        "en": "Slovakia",
+        "es": "Eslovaquia"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 5422069,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3060972],
+      "cityIds": [
+        3060972, 724443, 3058213, 3058531, 723819, 3056508, 3061186, 3057124,
+        3057140, 3058780, 723846, 3058000, 3056459
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 741,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SL",
+      "iso3": "SLE",
+      "names": {
+        "en": "Sierra Leone",
+        "es": "Sierra Leona"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 8642022,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2409306],
+      "cityIds": [2409306, 2407790, 2410048, 2407656],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 86,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SM",
+      "iso3": "SMR",
+      "names": {
+        "en": "San Marino",
+        "es": "San Marino"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 33977,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3168070],
+      "cityIds": [
+        3166645, 3177564, 8199071, 3181793, 3168070, 3177542, 3176966, 8199067,
+        7302190, 3183500, 3177299, 3177260, 3170472
+      ],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 14,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SN",
+      "iso3": "SEN",
+      "names": {
+        "en": "Senegal",
+        "es": "Senegal"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 18501984,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2253354],
+      "cityIds": [
+        2253354, 2246678, 2244322, 2595778, 2244802, 2250805, 2246512, 2248477,
+        2246452, 2244799, 2243940, 2252309, 2244991
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 146,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SO",
+      "iso3": "SOM",
+      "names": {
+        "en": "Somalia",
+        "es": "Somalia"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 19009151,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [53654],
+      "cityIds": [
+        53654, 64021, 57289, 64435, 55671, 54225, 60149, 52407, 64536, 63400,
+        63795, 56055, 58831
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 74,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SR",
+      "iso3": "SUR",
+      "names": {
+        "en": "Suriname",
+        "es": "Surinam"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 634431,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3383330],
+      "cityIds": [3383330, 3383714, 3384482, 3383427],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 21,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SS",
+      "iso3": "SSD",
+      "names": {
+        "en": "South Sudan",
+        "es": "Sudán del Sur"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 11943408,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [373303],
+      "cityIds": [
+        373303, 363807, 363619, 370737, 363885, 371712, 375495, 374739, 363656,
+        364367, 367927, 377241, 365742
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 22,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ST",
+      "iso3": "STP",
+      "names": {
+        "en": "São Tomé and Príncipe",
+        "es": "Santo Tomé y Príncipe"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 235536,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2410763],
+      "cityIds": [2410763, 2410972, 2411305, 11204006],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 47,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SV",
+      "iso3": "SLV",
+      "names": {
+        "en": "El Salvador",
+        "es": "El Salvador"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 6338193,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3583361],
+      "cityIds": [3583361, 3583096, 3583446, 3583334],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 101,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SY",
+      "iso3": "SYR",
+      "names": {
+        "en": "Syria",
+        "es": "Siria"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 24672760,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [170654],
+      "cityIds": [
+        170063, 170654, 169577, 173576, 172955, 170017, 163345, 173811, 170794,
+        173377, 174018, 169389, 170592
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 305,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "SZ",
+      "iso3": "SWZ",
+      "names": {
+        "en": "Eswatini",
+        "es": "Esuatini"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 1242822,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [934985],
+      "cityIds": [934995, 934985, 935005, 934913],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 24,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TD",
+      "iso3": "TCD",
+      "names": {
+        "en": "Chad",
+        "es": "Chad"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 20299123,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2427123],
+      "cityIds": [
+        2427123, 2427455, 245785, 2425791, 2430506, 245338, 2433437, 2426240,
+        2434910, 243787, 2429605, 2427637, 2434979
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 73,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TG",
+      "iso3": "TGO",
+      "names": {
+        "en": "Togo",
+        "es": "Togo"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 8406558,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2365267],
+      "cityIds": [2365267, 2364104, 2366152, 2367886],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 34,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TH",
+      "iso3": "THA",
+      "names": {
+        "en": "Thailand",
+        "es": "Tailandia"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 71668011,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1609350],
+      "cityIds": [
+        1609350, 1606590, 1608133, 1611110, 1607508, 7026720, 1610780, 1608048,
+        7026886, 1606250, 7027003, 13494069, 1619485
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 1033,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TJ",
+      "iso3": "TJK",
+      "names": {
+        "en": "Tajikistan",
+        "es": "Tayikistán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 10590927,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1221874],
+      "cityIds": [
+        1221874, 1514896, 1220253, 1221194, 1514891, 1514879, 1220747, 1514883,
+        1220855, 1282601, 1538311, 1220798, 1222175
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 102,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TL",
+      "iso3": "TLS",
+      "names": {
+        "en": "Timor-Leste",
+        "es": "Timor-Leste"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 1400638,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1645457],
+      "cityIds": [1645457, 1636670, 1626459, 1637730],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 31,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TM",
+      "iso3": "TKM",
+      "names": {
+        "en": "Turkmenistan",
+        "es": "Turkmenistán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 7494498,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [162183],
+      "cityIds": [162183, 1219649, 601734, 1218667],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 105,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TN",
+      "iso3": "TUN",
+      "names": {
+        "en": "Tunisia",
+        "es": "Túnez"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 12277109,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2464470],
+      "cityIds": [
+        2464470, 2467454, 2464915, 2464960, 2473449, 2472706, 2467243, 11204413,
+        2473247, 2468369, 2473164, 2473744, 2467242
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 281,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TO",
+      "iso3": "TON",
+      "names": {
+        "en": "Tonga",
+        "es": "Tonga"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 104175,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [4032402],
+      "cityIds": [4032402, 4032443, 4032420, 4032623],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 46,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TR",
+      "iso3": "TUR",
+      "names": {
+        "en": "Türkiye",
+        "es": "Turquía"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 85518661,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [323786],
+      "cityIds": [
+        745044, 323786, 750269, 311046, 314830, 316541, 325363, 308464, 306571,
+        323777, 747323, 315202, 6955677
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 3877,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TT",
+      "iso3": "TTO",
+      "names": {
+        "en": "Trinidad and Tobago",
+        "es": "Trinidad y Tobago"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 1368333,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3573890],
+      "cityIds": [3574810, 3574116, 3573738, 3573890],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 26,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TV",
+      "iso3": "TUV",
+      "names": {
+        "en": "Tuvalu",
+        "es": "Tuvalu"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 9646,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2110394],
+      "cityIds": [2110394, 7602373, 7602271, 2110322],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 6,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "TZ",
+      "iso3": "TZA",
+      "names": {
+        "en": "Tanzania",
+        "es": "Tanzania"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 68560157,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [160196],
+      "cityIds": [
+        160263, 152224, 160196, 148730, 161325, 154380, 153220, 158597, 149606,
+        159908, 149658, 149703, 877401
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 318,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "UA",
+      "iso3": "UKR",
+      "names": {
+        "en": "Ukraine",
+        "es": "Ucrania"
+      },
+      "continent": "EU",
+      "worldBankPopulation": 37860221,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [703448],
+      "cityIds": [
+        703448, 706483, 698740, 709930, 709717, 702550, 687700, 703845, 694423,
+        700569, 689558, 702658, 702320
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m", "europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 5225,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "UG",
+      "iso3": "UGA",
+      "names": {
+        "en": "Uganda",
+        "es": "Uganda"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 50015092,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [232422],
+      "cityIds": [
+        232422, 10943053, 231165, 234179, 10858926, 229268, 232110, 228853,
+        227812, 233346, 231954, 232713, 229911
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 210,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "US",
+      "iso3": "USA",
+      "names": {
+        "en": "United States",
+        "es": "Estados Unidos"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 340003797,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [4140963],
+      "cityIds": [
+        5128581, 5368361, 5110302, 4887398, 5133273, 4699066, 5308655, 4560349,
+        4726206, 5125771, 5391811, 5110266, 4140963
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 21017,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "UY",
+      "iso3": "URY",
+      "names": {
+        "en": "Uruguay",
+        "es": "Uruguay"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 3386588,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3441575],
+      "cityIds": [3441575, 3440714, 3441894, 3440781],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 152,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "UZ",
+      "iso3": "UZB",
+      "names": {
+        "en": "Uzbekistan",
+        "es": "Uzbekistán"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 36361859,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1512569],
+      "cityIds": [
+        1512569, 1514588, 1513157, 1216265, 601294, 1514019, 1217662, 1216311,
+        1512979, 1513243, 1514581, 1215957, 1513886
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 217,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "VA",
+      "iso3": "VAT",
+      "names": {
+        "en": "Vatican City",
+        "es": "Ciudad del Vaticano"
+      },
+      "continent": "EU",
+      "worldBankPopulation": null,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [6691831],
+      "cityIds": [6691831],
+      "coverage": {
+        "reasons": ["europe-plus"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 0,
+        "eligibleNonCapitalAvailable": 0,
+        "shortfall": true
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "VC",
+      "iso3": "VCT",
+      "names": {
+        "en": "Saint Vincent and the Grenadines",
+        "es": "San Vicente y las Granadinas"
+      },
+      "continent": "NA",
+      "worldBankPopulation": 100616,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3577887],
+      "cityIds": [3577887, 3748746, 13526719, 3748724],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 20,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "VE",
+      "iso3": "VEN",
+      "names": {
+        "en": "Venezuela",
+        "es": "Venezuela"
+      },
+      "continent": "SA",
+      "worldBankPopulation": 28405543,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [3646738],
+      "cityIds": [
+        3646738, 3633009, 3625549, 3648522, 3645528, 3648559, 3778045, 3632998,
+        3645532, 3644768, 3648546, 3629672, 3630297
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 411,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "VN",
+      "iso3": "VNM",
+      "names": {
+        "en": "Vietnam",
+        "es": "Vietnam"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 100987686,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [1581130],
+      "cityIds": [
+        1566083, 1581130, 1581298, 1586203, 1580240, 1583992, 1587923, 1566166,
+        1562798, 12382296, 1572151, 1565019, 1568574
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 896,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "VU",
+      "iso3": "VUT",
+      "names": {
+        "en": "Vanuatu",
+        "es": "Vanuatu"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 327777,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [2135171],
+      "cityIds": [2135171, 2136150, 2135517, 2135349],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 9,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "WS",
+      "iso3": "WSM",
+      "names": {
+        "en": "Samoa",
+        "es": "Samoa"
+      },
+      "continent": "OC",
+      "worldBankPopulation": 218019,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [4035413],
+      "cityIds": [4035413, 4035153, 4034908, 7106456],
+      "coverage": {
+        "reasons": ["default"],
+        "rankedNonCapitalTarget": 3,
+        "rankedNonCapitalSelected": 3,
+        "eligibleNonCapitalAvailable": 73,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "YE",
+      "iso3": "YEM",
+      "names": {
+        "en": "Yemen",
+        "es": "Yemen"
+      },
+      "continent": "AS",
+      "worldBankPopulation": 40583164,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [71137],
+      "cityIds": [
+        71137, 415189, 70225, 74477, 79415, 78754, 76184, 78428, 70979, 69500,
+        71334, 77408, 75337
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 304,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ZA",
+      "iso3": "ZAF",
+      "names": {
+        "en": "South Africa",
+        "es": "Sudáfrica"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 64007187,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [964137],
+      "cityIds": [
+        993800, 3369157, 1007311, 964137, 953781, 964420, 954013, 965301,
+        1004866, 1020098, 1018725, 949880, 1006984
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 963,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ZM",
+      "iso3": "ZMB",
+      "names": {
+        "en": "Zambia",
+        "es": "Zambia"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 21314956,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [909137],
+      "cityIds": [
+        909137, 911148, 901344, 918702, 897045, 916095, 919009, 909863, 912764,
+        910111, 907770, 905395, 13132725
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 97,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    },
+    {
+      "code": "ZW",
+      "iso3": "ZWE",
+      "names": {
+        "en": "Zimbabwe",
+        "es": "Zimbabue"
+      },
+      "continent": "AF",
+      "worldBankPopulation": 16634373,
+      "worldBankPopulationYear": 2024,
+      "capitalCityIds": [890299],
+      "cityIds": [
+        890299, 894701, 1106542, 884979, 890422, 888710, 889453, 882009, 893697,
+        886763, 884141, 886990, 894239
+      ],
+      "coverage": {
+        "reasons": ["population-over-10m"],
+        "rankedNonCapitalTarget": 12,
+        "rankedNonCapitalSelected": 12,
+        "eligibleNonCapitalAvailable": 66,
+        "shortfall": false
+      },
+      "sourceRevision": "geo-corpus-2026-07-27.2"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "geo-source-2026-07-27.2",
+  "overrides": [
+    {
+      "countryCode": "ZA",
+      "field": "capital",
+      "value": {
+        "wikidataId": "Q3926",
+        "names": { "en": "Pretoria", "es": "Pretoria" },
+        "latitude": -25.7479,
+        "longitude": 28.2293
+      },
+      "reason": "South Africa has three capital cities. Pretoria is retained only as reviewed executive-capital metadata; South Africa is not eligible for Capital or Map in this source revision."
+    },
+    {
+      "countryCode": "BR",
+      "field": "capital.names.es",
+      "value": "Brasilia",
+      "reason": "Use the reviewed Spanish exonym without the Portuguese acute accent."
+    },
+    {
+      "countryCode": "BT",
+      "field": "capital.names.es",
+      "value": "Timbu",
+      "reason": "Use the reviewed Spanish exonym."
+    },
+    {
+      "countryCode": "CL",
+      "field": "capital.names.es",
+      "value": "Santiago de Chile",
+      "reason": "Use the unambiguous reviewed Spanish display label."
+    },
+    {
+      "countryCode": "EG",
+      "field": "capital.names.es",
+      "value": "El Cairo",
+      "reason": "Preserve the conventional Spanish article."
+    },
+    {
+      "countryCode": "ID",
+      "field": "capital.names.es",
+      "value": "Yakarta",
+      "reason": "Use the reviewed Spanish exonym."
+    },
+    {
+      "countryCode": "KZ",
+      "field": "capital.names.es",
+      "value": "Astaná",
+      "reason": "Preserve the reviewed Spanish accent."
+    },
+    {
+      "countryCode": "MX",
+      "field": "capital.names.es",
+      "value": "Ciudad de México",
+      "reason": "Use the full reviewed Spanish capital name."
+    }
+  ]
+}

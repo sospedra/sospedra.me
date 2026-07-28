@@ -1,0 +1,1967 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "geo-corpus-2026-07-27.2",
+  "naturalEarth": {
+    "countries": {
+      "dataset": "ne_10m_admin_0_countries",
+      "sha256": "239eec57ac17f100a11e2536cffc56752c318b50ae765b0918ff7aab4ce8f255"
+    },
+    "land": {
+      "dataset": "ne_10m_land",
+      "sha256": "1ac90796408bc6ad6911d69448485d3c4dbf2190370080368a09976e1c9f7416"
+    }
+  },
+  "flagIcons": {
+    "version": "7.5.0"
+  },
+  "shapes": {
+    "AD": {
+      "url": "/games/geo/assets/shapes/08da9a7f08508499b7f5.svg",
+      "sha256": "08da9a7f08508499b7f5d042b4b07c873a1b3d465f325c80c2c4cd25c548acbf",
+      "bytes": 219
+    },
+    "AE": {
+      "url": "/games/geo/assets/shapes/214b7f269332386e6073.svg",
+      "sha256": "214b7f269332386e6073f6d24bb1b991f0cbc24dac93ac11c2995d3ef718d23e",
+      "bytes": 1569
+    },
+    "AF": {
+      "url": "/games/geo/assets/shapes/059d3f42144b00c2feaf.svg",
+      "sha256": "059d3f42144b00c2feafd2c2d5e0096c1948bc48f1718bb580a5e7b4befe0529",
+      "bytes": 2547
+    },
+    "AG": {
+      "url": "/games/geo/assets/shapes/3b3d0c44d633fa371f16.svg",
+      "sha256": "3b3d0c44d633fa371f160da65da685505b552b4e64d9e9ded7e295b241143246",
+      "bytes": 520
+    },
+    "AL": {
+      "url": "/games/geo/assets/shapes/7485be44f1968b849c1e.svg",
+      "sha256": "7485be44f1968b849c1ee30260c919b00b405f6570bb8f2950cf50eb39500a3e",
+      "bytes": 925
+    },
+    "AM": {
+      "url": "/games/geo/assets/shapes/bcfb1f18b099478677b6.svg",
+      "sha256": "bcfb1f18b099478677b60fcb5cac54035dd07cd79a1fe86a4a72c89525d0b96a",
+      "bytes": 1287
+    },
+    "AO": {
+      "url": "/games/geo/assets/shapes/515cbed3e3164bc650da.svg",
+      "sha256": "515cbed3e3164bc650dab3e255a5b0d9e8a557bb2c26911006b2ed5be4215df8",
+      "bytes": 2197
+    },
+    "AR": {
+      "url": "/games/geo/assets/shapes/8f60387b53b061f27ea7.svg",
+      "sha256": "8f60387b53b061f27ea71550be813ea16b4e340f42962f8b94756c183dc97ea3",
+      "bytes": 7108
+    },
+    "AT": {
+      "url": "/games/geo/assets/shapes/4dca2221ad168773c12f.svg",
+      "sha256": "4dca2221ad168773c12f6a74e6b0efaec4dd70f7aa68ad09cd3bdeb37b0f6048",
+      "bytes": 1493
+    },
+    "AU": {
+      "url": "/games/geo/assets/shapes/80be1cdb13299002e5ab.svg",
+      "sha256": "80be1cdb13299002e5ab5a8e867f4007ce2f469c50b04ee65f7f072611787cba",
+      "bytes": 14409
+    },
+    "AZ": {
+      "url": "/games/geo/assets/shapes/7fc2bbe69c8ff011ea70.svg",
+      "sha256": "7fc2bbe69c8ff011ea70670bc8765b106f4194e205d1acaf0e3a618ced7ad7cc",
+      "bytes": 1835
+    },
+    "BA": {
+      "url": "/games/geo/assets/shapes/88f10c87a90553c29282.svg",
+      "sha256": "88f10c87a90553c292820dd8e2fb4a4b2d8e12c9bb4366f0531506cef5dd114a",
+      "bytes": 980
+    },
+    "BB": {
+      "url": "/games/geo/assets/shapes/1077b45b5457561e5580.svg",
+      "sha256": "1077b45b5457561e5580d5b11afa5c2d417f35f7e5ca156c68a60f2212311318",
+      "bytes": 220
+    },
+    "BD": {
+      "url": "/games/geo/assets/shapes/a88285cb3ac24b515dfb.svg",
+      "sha256": "a88285cb3ac24b515dfbc95db8aeba68b19123219ec2fe0ab12d614fc13e56bc",
+      "bytes": 3857
+    },
+    "BE": {
+      "url": "/games/geo/assets/shapes/7c684c482c462d52770d.svg",
+      "sha256": "7c684c482c462d52770df472391f3e89d31b40bf1f88c78713dfbd8cc345e4bc",
+      "bytes": 986
+    },
+    "BF": {
+      "url": "/games/geo/assets/shapes/3acd2c68218b938d5162.svg",
+      "sha256": "3acd2c68218b938d5162c28041806198a5b35bde745091444a45d29fe6b57de1",
+      "bytes": 1751
+    },
+    "BG": {
+      "url": "/games/geo/assets/shapes/ac05d2cdfd33f92f8273.svg",
+      "sha256": "ac05d2cdfd33f92f8273cb07b0f20a088eeea62e269468d493ade422230d0ff9",
+      "bytes": 1366
+    },
+    "BH": {
+      "url": "/games/geo/assets/shapes/cc5ba91cc64fdd21fef8.svg",
+      "sha256": "cc5ba91cc64fdd21fef85d4b0097059f995dc55bdfcbd37b143656e49bd67ecf",
+      "bytes": 1517
+    },
+    "BI": {
+      "url": "/games/geo/assets/shapes/3473b9512cb4ec121f6c.svg",
+      "sha256": "3473b9512cb4ec121f6cd17f59ad9a57f4b6612155ccd17feafeff3e06203d94",
+      "bytes": 612
+    },
+    "BJ": {
+      "url": "/games/geo/assets/shapes/f1155b48f958d8bbe6a5.svg",
+      "sha256": "f1155b48f958d8bbe6a557efe97c2233e473c6b96d2d9c9c40da04c47f4d74c2",
+      "bytes": 944
+    },
+    "BN": {
+      "url": "/games/geo/assets/shapes/28d287c3663ae38ac12e.svg",
+      "sha256": "28d287c3663ae38ac12e8576201d786eda7f81967097cb648466bc1a340dea68",
+      "bytes": 433
+    },
+    "BO": {
+      "url": "/games/geo/assets/shapes/8c7f01ec475073200e58.svg",
+      "sha256": "8c7f01ec475073200e58621cac6809a20da800b99b38664c64b8eb83f45ec96e",
+      "bytes": 2367
+    },
+    "BR": {
+      "url": "/games/geo/assets/shapes/2741cd931420620601de.svg",
+      "sha256": "2741cd931420620601de564f2635843f2c055bcc35564a181397bd0331e01ea6",
+      "bytes": 14005
+    },
+    "BS": {
+      "url": "/games/geo/assets/shapes/9aae63606bbfb1ae49a5.svg",
+      "sha256": "9aae63606bbfb1ae49a5f9c8ef083a0874087b3a2797d96bdd3f1cc97b95fb25",
+      "bytes": 6829
+    },
+    "BT": {
+      "url": "/games/geo/assets/shapes/c9085405320a4d0ce2d0.svg",
+      "sha256": "c9085405320a4d0ce2d0cb646c5084f1490d77ec660313264cdf9c3a5f33fe5d",
+      "bytes": 768
+    },
+    "BW": {
+      "url": "/games/geo/assets/shapes/dc3d5443b2c8f5c85495.svg",
+      "sha256": "dc3d5443b2c8f5c85495f341b0056bd7284d58be9b7d18c071dbc8ef9a2a73a1",
+      "bytes": 1297
+    },
+    "BY": {
+      "url": "/games/geo/assets/shapes/0e02e5dbe0cb50ae9095.svg",
+      "sha256": "0e02e5dbe0cb50ae909510b55472b158009cc2b5b0fecac3131dbbd8fd2dc12e",
+      "bytes": 1985
+    },
+    "BZ": {
+      "url": "/games/geo/assets/shapes/d6aa493e9b2e069c111a.svg",
+      "sha256": "d6aa493e9b2e069c111a2dfb36decbf52828cdbd5d35cf175a1e54f22a1cb773",
+      "bytes": 2164
+    },
+    "CA": {
+      "url": "/games/geo/assets/shapes/738e75b76176d20e9bad.svg",
+      "sha256": "738e75b76176d20e9baddddbf153ab29f4d51b8be37ccf45d1b01e4c82cf8ddb",
+      "bytes": 19533
+    },
+    "CD": {
+      "url": "/games/geo/assets/shapes/776dc0fd13c7e8ce90c3.svg",
+      "sha256": "776dc0fd13c7e8ce90c3020dda06b0db66635147181b71a76bff0fa71f21aa92",
+      "bytes": 3765
+    },
+    "CF": {
+      "url": "/games/geo/assets/shapes/b15219c3d31c919dba90.svg",
+      "sha256": "b15219c3d31c919dba9067f1b2cbb4aa17702e6cbca76127e998e381dc200d2e",
+      "bytes": 2254
+    },
+    "CG": {
+      "url": "/games/geo/assets/shapes/0f83f319a8438e65ffd8.svg",
+      "sha256": "0f83f319a8438e65ffd88d84f412136be2e31c40930eb424fc6a9dd6d609a6a2",
+      "bytes": 2106
+    },
+    "CH": {
+      "url": "/games/geo/assets/shapes/246223dd09078df988c2.svg",
+      "sha256": "246223dd09078df988c21d162d39a6eb5374e22cad69b7905366ccb9af136e1a",
+      "bytes": 1189
+    },
+    "CI": {
+      "url": "/games/geo/assets/shapes/01384c5b57fb8c33b3b8.svg",
+      "sha256": "01384c5b57fb8c33b3b8d3d9d8724bdd231dc26dc498b9aa9297ebaa7fa1006b",
+      "bytes": 2059
+    },
+    "CL": {
+      "url": "/games/geo/assets/shapes/889a91b881f23f616e13.svg",
+      "sha256": "889a91b881f23f616e13137842ed915722689bef0f80aa9b1a1fec02d54871e4",
+      "bytes": 13085
+    },
+    "CM": {
+      "url": "/games/geo/assets/shapes/9d857047d4cf713c5daa.svg",
+      "sha256": "9d857047d4cf713c5daa6ba39fb042f7732b162939d4658bd998fe8bb6232d64",
+      "bytes": 2301
+    },
+    "CN": {
+      "url": "/games/geo/assets/shapes/f0ccc89dd0acddffdce6.svg",
+      "sha256": "f0ccc89dd0acddffdce6e84dd2956613954eee7106e05220ef72b9b85cb01e7b",
+      "bytes": 20174
+    },
+    "CO": {
+      "url": "/games/geo/assets/shapes/dd3aa3e4460ed7219e98.svg",
+      "sha256": "dd3aa3e4460ed7219e9832a73c39033de5321e02c8447d7cc0d5924ed62ac56d",
+      "bytes": 4393
+    },
+    "CR": {
+      "url": "/games/geo/assets/shapes/791c5c591733918f4d97.svg",
+      "sha256": "791c5c591733918f4d978c6835d8bfb3ababf8e6423bcfe5e569c7e7a9e04759",
+      "bytes": 1557
+    },
+    "CU": {
+      "url": "/games/geo/assets/shapes/3979ec98f03f65a93ce7.svg",
+      "sha256": "3979ec98f03f65a93ce7b4b04e8f9ca8e971b3e1059f42028568e1519d10387b",
+      "bytes": 3339
+    },
+    "CV": {
+      "url": "/games/geo/assets/shapes/6cfbb8e23a43a6f82c80.svg",
+      "sha256": "6cfbb8e23a43a6f82c808db3a5a08c86b9924d367b1b0fe1fb60ef401e801854",
+      "bytes": 1451
+    },
+    "CY": {
+      "url": "/games/geo/assets/shapes/7565579b6029961e31c7.svg",
+      "sha256": "7565579b6029961e31c7246909a6a64e771265a5ad5e8dfd587a5e50c3a9bdba",
+      "bytes": 484
+    },
+    "CZ": {
+      "url": "/games/geo/assets/shapes/1bcbd25c09769cf7a7f6.svg",
+      "sha256": "1bcbd25c09769cf7a7f6d49b3602d83562c827ab505fac6b4eeb45724d224787",
+      "bytes": 1350
+    },
+    "DE": {
+      "url": "/games/geo/assets/shapes/5222e9b81bd2f6735a44.svg",
+      "sha256": "5222e9b81bd2f6735a444d31b0749a60db3bea8f96a853b1eb9b1b2348ad2789",
+      "bytes": 4026
+    },
+    "DJ": {
+      "url": "/games/geo/assets/shapes/efc50402c2e713748849.svg",
+      "sha256": "efc50402c2e713748849baeefae02a3afea2897d0bfd668b11ee10e72276970a",
+      "bytes": 495
+    },
+    "DK": {
+      "url": "/games/geo/assets/shapes/76f8e61c84ee41382c2b.svg",
+      "sha256": "76f8e61c84ee41382c2bfc5f5d3a3cfbc293a31de4eaf35ce7de697ec63e9873",
+      "bytes": 4734
+    },
+    "DM": {
+      "url": "/games/geo/assets/shapes/8408483a0e33c8ba09f8.svg",
+      "sha256": "8408483a0e33c8ba09f8792c1e99d277394d82e8596de100ec74a22f65bcaf68",
+      "bytes": 221
+    },
+    "DO": {
+      "url": "/games/geo/assets/shapes/2e7611a5c7564fc33ea6.svg",
+      "sha256": "2e7611a5c7564fc33ea6445d838c3103e6fd713bacf58d50178605cdc11109d2",
+      "bytes": 1098
+    },
+    "DZ": {
+      "url": "/games/geo/assets/shapes/317d4503e026ce41e17e.svg",
+      "sha256": "317d4503e026ce41e17e3822928334612f1e1092af3bfb9aeabf2fdb3e8620ab",
+      "bytes": 2161
+    },
+    "EC": {
+      "url": "/games/geo/assets/shapes/5618eadc5fe7b58f1879.svg",
+      "sha256": "5618eadc5fe7b58f187945d2012f0b9c2b37a381a121911430454c9a06566e2f",
+      "bytes": 2663
+    },
+    "EE": {
+      "url": "/games/geo/assets/shapes/c227374aaadb36ac651e.svg",
+      "sha256": "c227374aaadb36ac651e46a82614f3afaff636bb216780a70862888a9bf40dbc",
+      "bytes": 1784
+    },
+    "EG": {
+      "url": "/games/geo/assets/shapes/a5302fa1ce9e78c7281e.svg",
+      "sha256": "a5302fa1ce9e78c7281e223fd8a66e4acef0086dd0195532ecfde45ed3f11c9e",
+      "bytes": 2039
+    },
+    "ER": {
+      "url": "/games/geo/assets/shapes/a1ae529d455cfcc9d74f.svg",
+      "sha256": "a1ae529d455cfcc9d74fa541a9bb8715fa3b66979971f0f9ee81c2c955bfbdfe",
+      "bytes": 1560
+    },
+    "ES": {
+      "url": "/games/geo/assets/shapes/e011e0473eb91bde75eb.svg",
+      "sha256": "e011e0473eb91bde75eb62238c0efd1ca083c2242cffac908f9a31a3c512b33b",
+      "bytes": 4388
+    },
+    "ET": {
+      "url": "/games/geo/assets/shapes/89c5c40cf40e75916c51.svg",
+      "sha256": "89c5c40cf40e75916c516884becbf72604c94ff49ac6d1a24288a64b515b4b76",
+      "bytes": 1565
+    },
+    "FI": {
+      "url": "/games/geo/assets/shapes/7bc26e67fa923b0d50d7.svg",
+      "sha256": "7bc26e67fa923b0d50d7257d43966b4750f750507d24109fe66ebd6059080a49",
+      "bytes": 4212
+    },
+    "FJ": {
+      "url": "/games/geo/assets/shapes/7b43e303d79597bf6738.svg",
+      "sha256": "7b43e303d79597bf673815a4989111f56040cc6560be9e6eff8bb39105af9f56",
+      "bytes": 6865
+    },
+    "FM": {
+      "url": "/games/geo/assets/shapes/90848cab2d290acdff20.svg",
+      "sha256": "90848cab2d290acdff20a2322d1abe7920b9e3cd4b7d3825afe9b1115afca4c4",
+      "bytes": 2871
+    },
+    "FR": {
+      "url": "/games/geo/assets/shapes/83df3ada53bd5cb6a99b.svg",
+      "sha256": "83df3ada53bd5cb6a99b89143e06aa5a064fbbcab1bd58ecfac600b5a7c0d1e7",
+      "bytes": 5168
+    },
+    "GA": {
+      "url": "/games/geo/assets/shapes/4cda9476a82139cc7cb6.svg",
+      "sha256": "4cda9476a82139cc7cb665a9f4a98e2bb62f983ebcb4d24d2a9e1a8c081800f3",
+      "bytes": 2305
+    },
+    "GB": {
+      "url": "/games/geo/assets/shapes/1703baa6d178ccad0912.svg",
+      "sha256": "1703baa6d178ccad0912d34a8d905b97427992a8e8c232a3e4fbcc749ec253d6",
+      "bytes": 12338
+    },
+    "GD": {
+      "url": "/games/geo/assets/shapes/14de121cff5b4497ec72.svg",
+      "sha256": "14de121cff5b4497ec72bd301ff6afbe435d3dd8fb2074a87b65b6ed70ca7526",
+      "bytes": 296
+    },
+    "GE": {
+      "url": "/games/geo/assets/shapes/d2d47cd4bc2e6edda8ac.svg",
+      "sha256": "d2d47cd4bc2e6edda8acad617a7377da2d930588aa46bdd514349dd917149c55",
+      "bytes": 1051
+    },
+    "GH": {
+      "url": "/games/geo/assets/shapes/e763a2291b22ffe7daae.svg",
+      "sha256": "e763a2291b22ffe7daae3d351e2caba530f2e9f57001058e24a468292b665556",
+      "bytes": 1297
+    },
+    "GM": {
+      "url": "/games/geo/assets/shapes/e4d4b430f7cbb0d68a0c.svg",
+      "sha256": "e4d4b430f7cbb0d68a0ce22d7b3556038cbb94d920045dafa37cffe7e0b848a9",
+      "bytes": 713
+    },
+    "GN": {
+      "url": "/games/geo/assets/shapes/fc10597310e2a22e8db1.svg",
+      "sha256": "fc10597310e2a22e8db143a447c857666764dc786f4eefd1254c965440c966e6",
+      "bytes": 2488
+    },
+    "GQ": {
+      "url": "/games/geo/assets/shapes/3b50c36a9d691c094784.svg",
+      "sha256": "3b50c36a9d691c094784a683ec124e92d7106c30db12d44f51d6f7eaf20ccc4f",
+      "bytes": 776
+    },
+    "GR": {
+      "url": "/games/geo/assets/shapes/31587996a98a6640c22b.svg",
+      "sha256": "31587996a98a6640c22b02f5e28c4747cd269bf0191cc16bceb8140784a5fa1a",
+      "bytes": 8447
+    },
+    "GT": {
+      "url": "/games/geo/assets/shapes/817c7323b9bbec835f1d.svg",
+      "sha256": "817c7323b9bbec835f1d3816e822e32a3e91df1a20289899a6465c539b61755f",
+      "bytes": 753
+    },
+    "GW": {
+      "url": "/games/geo/assets/shapes/e409780adab0cdfce186.svg",
+      "sha256": "e409780adab0cdfce18650d50d816fac8a5fb05fdcd253a382de9725c9d5b2ea",
+      "bytes": 3005
+    },
+    "GY": {
+      "url": "/games/geo/assets/shapes/59c13d057ce64d3e85a5.svg",
+      "sha256": "59c13d057ce64d3e85a582f11d0f31d3a9e39c88ea208d8c7d0d2c9c960afb7f",
+      "bytes": 1533
+    },
+    "HN": {
+      "url": "/games/geo/assets/shapes/46bf4e04c185a5957a4e.svg",
+      "sha256": "46bf4e04c185a5957a4ebe7afcfb7925f77f47c80fbfd490bc9ee02eb3bc1ae1",
+      "bytes": 1884
+    },
+    "HR": {
+      "url": "/games/geo/assets/shapes/338a00f84376c162aff4.svg",
+      "sha256": "338a00f84376c162aff4a49eb051497b835515ebf949de1e2ce0cdfe4c624208",
+      "bytes": 5067
+    },
+    "HT": {
+      "url": "/games/geo/assets/shapes/b22eb9fe2ab1afc74054.svg",
+      "sha256": "b22eb9fe2ab1afc7405483f2510412e2a003a03e78afac4c540528fccd411f1d",
+      "bytes": 1635
+    },
+    "HU": {
+      "url": "/games/geo/assets/shapes/363bdfcaaf69bc8df5e6.svg",
+      "sha256": "363bdfcaaf69bc8df5e6ee9230bfa884f2be26f62e9b5c4a830820ed778b7d09",
+      "bytes": 1155
+    },
+    "ID": {
+      "url": "/games/geo/assets/shapes/007b1e6059403a2277a9.svg",
+      "sha256": "007b1e6059403a2277a90f1e15cd2830d2cdb9aed2c7dc0d85c0c977c249ae74",
+      "bytes": 15435
+    },
+    "IE": {
+      "url": "/games/geo/assets/shapes/3c38f6ada209d5b8b9e6.svg",
+      "sha256": "3c38f6ada209d5b8b9e66e0ca858a7fc3da5a175583d3b91b08604cbb270d1a0",
+      "bytes": 3101
+    },
+    "IN": {
+      "url": "/games/geo/assets/shapes/7dbb03078903368e2e2d.svg",
+      "sha256": "7dbb03078903368e2e2dc0ac097aea252f1decd1641f2687707049f17cc693f0",
+      "bytes": 12764
+    },
+    "IQ": {
+      "url": "/games/geo/assets/shapes/4fbc428621fc651fb679.svg",
+      "sha256": "4fbc428621fc651fb6793767d2a8317bfca04550b2d2b0c0469ff71dd3c5f90d",
+      "bytes": 1492
+    },
+    "IR": {
+      "url": "/games/geo/assets/shapes/637d2d4e15ecf6909f3b.svg",
+      "sha256": "637d2d4e15ecf6909f3bb0b500826819bad49b46582db2cf747b09aac3f6d2b4",
+      "bytes": 4070
+    },
+    "IS": {
+      "url": "/games/geo/assets/shapes/77f079f1ec5c5b42d860.svg",
+      "sha256": "77f079f1ec5c5b42d860994ba70dc5e4b86e3b1e156b6137db5109693be3fd49",
+      "bytes": 5118
+    },
+    "IT": {
+      "url": "/games/geo/assets/shapes/39b4f79d5dd59f2e5527.svg",
+      "sha256": "39b4f79d5dd59f2e5527408c403c2afa9d5db93a5f4ca6c1e8b79fbc429b53a0",
+      "bytes": 6493
+    },
+    "JM": {
+      "url": "/games/geo/assets/shapes/96476d47f4ac4ca1a1b9.svg",
+      "sha256": "96476d47f4ac4ca1a1b9cd70abff1bd7b08565d5943b1426eb3a444d61ad4baf",
+      "bytes": 438
+    },
+    "JO": {
+      "url": "/games/geo/assets/shapes/dbd13ad2669cee4964fd.svg",
+      "sha256": "dbd13ad2669cee4964fd1c680331fe54327ace9ea73f04b49ea38ae266ba8f37",
+      "bytes": 550
+    },
+    "JP": {
+      "url": "/games/geo/assets/shapes/a028a47381b8f8df3bc8.svg",
+      "sha256": "a028a47381b8f8df3bc8051b6ecc2128914dad06249edcb85d9a304359236070",
+      "bytes": 9571
+    },
+    "KE": {
+      "url": "/games/geo/assets/shapes/a9995ffdb43b77b84aed.svg",
+      "sha256": "a9995ffdb43b77b84aed44d8ec37cb6600c16fa6e6d5352892dd9771e8c29fec",
+      "bytes": 1445
+    },
+    "KG": {
+      "url": "/games/geo/assets/shapes/fe60b831c76ad5386f2c.svg",
+      "sha256": "fe60b831c76ad5386f2cf3d9040582bea14f7f1521613de2357ee0ccdd65246f",
+      "bytes": 2352
+    },
+    "KH": {
+      "url": "/games/geo/assets/shapes/2155c499a317d55a9a96.svg",
+      "sha256": "2155c499a317d55a9a9635a95eb3c72f013f84a559ca7e8e21df55865a8a7d89",
+      "bytes": 1723
+    },
+    "KI": {
+      "url": "/games/geo/assets/shapes/737ed4acd32fb5588a57.svg",
+      "sha256": "737ed4acd32fb5588a5751dedde849158e3474909aad2161da10da13e506fd34",
+      "bytes": 7167
+    },
+    "KM": {
+      "url": "/games/geo/assets/shapes/369a50a60826840ace11.svg",
+      "sha256": "369a50a60826840ace1185cf718449d2fa6fa55892a352bb44b8c52f77595215",
+      "bytes": 429
+    },
+    "KN": {
+      "url": "/games/geo/assets/shapes/a4f8ad4953038d21df35.svg",
+      "sha256": "a4f8ad4953038d21df359ea1da9e8d66d0732e78f5c0b952b7cfa1a4cc89eb46",
+      "bytes": 309
+    },
+    "KP": {
+      "url": "/games/geo/assets/shapes/df14ab9834e6489ae4bf.svg",
+      "sha256": "df14ab9834e6489ae4bf6ee95ebd84aa9d8b0323afe5c614d331a4d5685b511f",
+      "bytes": 2375
+    },
+    "KR": {
+      "url": "/games/geo/assets/shapes/e3bff0ce0efafb609a24.svg",
+      "sha256": "e3bff0ce0efafb609a249a00f1e33904faf53422ce7b81d403545865a3292216",
+      "bytes": 4299
+    },
+    "KW": {
+      "url": "/games/geo/assets/shapes/138c84327783c1c76ce6.svg",
+      "sha256": "138c84327783c1c76ce6178d9bc2fd8b4832eb3989a6861dff750fa608d27f59",
+      "bytes": 869
+    },
+    "KZ": {
+      "url": "/games/geo/assets/shapes/df6de8576f63795f08fb.svg",
+      "sha256": "df6de8576f63795f08fbc0fb2bdb069acf95d80fa7cc61c35051da56f4231c31",
+      "bytes": 7521
+    },
+    "LA": {
+      "url": "/games/geo/assets/shapes/3efda8840137b23f2ba5.svg",
+      "sha256": "3efda8840137b23f2ba5885721c9d0515bbecc803ec0e4a28240082935210d50",
+      "bytes": 2543
+    },
+    "LB": {
+      "url": "/games/geo/assets/shapes/ae7a9f7bbc2d8a76ff46.svg",
+      "sha256": "ae7a9f7bbc2d8a76ff46ffd3e03bcdf5c26d6cfc7195924f56e3d2307d0f89ec",
+      "bytes": 463
+    },
+    "LC": {
+      "url": "/games/geo/assets/shapes/8333792447f07ce78aed.svg",
+      "sha256": "8333792447f07ce78aeda416dd5f1a51caab57c99cc3510ba4474d8d198aa6b1",
+      "bytes": 223
+    },
+    "LI": {
+      "url": "/games/geo/assets/shapes/0e728de8a108014ac0b4.svg",
+      "sha256": "0e728de8a108014ac0b4ba63c68f36282e27056da4c89c73e9ca659b3289b08a",
+      "bytes": 206
+    },
+    "LK": {
+      "url": "/games/geo/assets/shapes/93fd946315aa02480272.svg",
+      "sha256": "93fd946315aa02480272c27f26ecc862fde08f45d864abb84d8fa7635bbf881d",
+      "bytes": 1246
+    },
+    "LR": {
+      "url": "/games/geo/assets/shapes/162ec85d6b127769dc9f.svg",
+      "sha256": "162ec85d6b127769dc9f4631d17f7ab3cab00c1e874101d5ed2581d91af19e0d",
+      "bytes": 912
+    },
+    "LS": {
+      "url": "/games/geo/assets/shapes/3d1a8f7f849d5dbaa961.svg",
+      "sha256": "3d1a8f7f849d5dbaa961e25d0e06537c6347ed1935fa18df7a97af1cc8547902",
+      "bytes": 509
+    },
+    "LT": {
+      "url": "/games/geo/assets/shapes/fbd6415c7175658828b5.svg",
+      "sha256": "fbd6415c7175658828b5b2ece1405e9ba8f53fdef3bc5597def56ed41a06b11c",
+      "bytes": 1095
+    },
+    "LU": {
+      "url": "/games/geo/assets/shapes/cd2040e728eeb81ea24b.svg",
+      "sha256": "cd2040e728eeb81ea24b1b029cef163bbd89fec10de69a7ab30aa8f939ba5350",
+      "bytes": 328
+    },
+    "LV": {
+      "url": "/games/geo/assets/shapes/fbee582882ff6821c6c7.svg",
+      "sha256": "fbee582882ff6821c6c785cd9a56cd6125d2c6ac4656d1f91330ea63cc28a49f",
+      "bytes": 991
+    },
+    "LY": {
+      "url": "/games/geo/assets/shapes/9b98e36602ff4f935760.svg",
+      "sha256": "9b98e36602ff4f9357604b2c4699df0f8e5200008d09eada4a5fa6fee33b5bdb",
+      "bytes": 1324
+    },
+    "MA": {
+      "url": "/games/geo/assets/shapes/9c24d33e1d9bd991d59e.svg",
+      "sha256": "9c24d33e1d9bd991d59e57fc5f83d3ac881f6866f5520f3715fca2264c5c165f",
+      "bytes": 1943
+    },
+    "MC": {
+      "url": "/games/geo/assets/shapes/a3692782fdb519e29035.svg",
+      "sha256": "a3692782fdb519e29035f04835ff9ec7572e17ba28a54b78e11f0a81a7e403a3",
+      "bytes": 300
+    },
+    "MD": {
+      "url": "/games/geo/assets/shapes/d74e1aee6ca71be3e312.svg",
+      "sha256": "d74e1aee6ca71be3e31297eed528350e728300e7af4cf3597e672c3ab27d9652",
+      "bytes": 1052
+    },
+    "ME": {
+      "url": "/games/geo/assets/shapes/954c1b2116427d211454.svg",
+      "sha256": "954c1b2116427d211454e4f41160a891c695dee13835ae47b5b3684164cb8f6a",
+      "bytes": 721
+    },
+    "MG": {
+      "url": "/games/geo/assets/shapes/156bd27e80fd4a6e454c.svg",
+      "sha256": "156bd27e80fd4a6e454c385258fba1a51608434a4797ea776513d15a6240f039",
+      "bytes": 2482
+    },
+    "MH": {
+      "url": "/games/geo/assets/shapes/e9026b315542f351c999.svg",
+      "sha256": "e9026b315542f351c9993d108c32c8b6c30e2d582eb5256bead548c0a71de0d8",
+      "bytes": 3589
+    },
+    "MK": {
+      "url": "/games/geo/assets/shapes/517ea229e4358510db39.svg",
+      "sha256": "517ea229e4358510db3941f7c2401ed84517b742354eb8ff60b7b3402663e5c4",
+      "bytes": 574
+    },
+    "ML": {
+      "url": "/games/geo/assets/shapes/32bc10c1b5781dbae13e.svg",
+      "sha256": "32bc10c1b5781dbae13ecbe1e03e1c05355d6718e9b74dae54adfcb21934a455",
+      "bytes": 2532
+    },
+    "MM": {
+      "url": "/games/geo/assets/shapes/3ce966da7c3510cc6ca6.svg",
+      "sha256": "3ce966da7c3510cc6ca6a37f2accecd444ba7aaa3f0010d424fc0fc7ad774e53",
+      "bytes": 6097
+    },
+    "MN": {
+      "url": "/games/geo/assets/shapes/385a8321f77a68fbb808.svg",
+      "sha256": "385a8321f77a68fbb80869bebbefcbff4d8aad474826933e9a296507307cadde",
+      "bytes": 3326
+    },
+    "MR": {
+      "url": "/games/geo/assets/shapes/87217120ce10c1c6e2a2.svg",
+      "sha256": "87217120ce10c1c6e2a25be08e4501edc8367cc909dd5f2bd8fef34782bd1645",
+      "bytes": 1361
+    },
+    "MT": {
+      "url": "/games/geo/assets/shapes/da6a948c0b2175865ab6.svg",
+      "sha256": "da6a948c0b2175865ab681f0fd99abcedb60890a02e68d604d67d93e1be7a24d",
+      "bytes": 469
+    },
+    "MU": {
+      "url": "/games/geo/assets/shapes/3bc34a09552d0dd8f9c4.svg",
+      "sha256": "3bc34a09552d0dd8f9c473256f1acc53b1a0df7d1f6c3ab592465080a57e0630",
+      "bytes": 549
+    },
+    "MV": {
+      "url": "/games/geo/assets/shapes/0785fb3d9b5f807ad123.svg",
+      "sha256": "0785fb3d9b5f807ad1238867fa0400de4cb5b9fe6cc2434a8f2a619fb2ae360d",
+      "bytes": 21870
+    },
+    "MW": {
+      "url": "/games/geo/assets/shapes/828bf06c13c8317db8d4.svg",
+      "sha256": "828bf06c13c8317db8d4eb46313e1091ccb918325d71b03aa445e77f1ac1d713",
+      "bytes": 1631
+    },
+    "MX": {
+      "url": "/games/geo/assets/shapes/e8283e76618676b879df.svg",
+      "sha256": "e8283e76618676b879dfcc0bc06d2d53b9c1bb3e39fd93a6cdc1a44e0cb829ed",
+      "bytes": 7640
+    },
+    "MY": {
+      "url": "/games/geo/assets/shapes/b628aec0fb7d869a03bb.svg",
+      "sha256": "b628aec0fb7d869a03bb16b4f616be05f24eeb63be7aa40b1b8be5252c6b7b2a",
+      "bytes": 4204
+    },
+    "MZ": {
+      "url": "/games/geo/assets/shapes/f0c55e09b25d10a0d05c.svg",
+      "sha256": "f0c55e09b25d10a0d05c0bfcc1f652e3ae2a7aae38ed0b5708a0395d70e9125b",
+      "bytes": 3717
+    },
+    "NA": {
+      "url": "/games/geo/assets/shapes/53d7ea0a7a0a70353961.svg",
+      "sha256": "53d7ea0a7a0a70353961e3712e3e28cab64121da8d92551a3a0dc8f97b24afab",
+      "bytes": 1384
+    },
+    "NE": {
+      "url": "/games/geo/assets/shapes/03904b5f0e32bd833c2e.svg",
+      "sha256": "03904b5f0e32bd833c2e2dff668fa2ad79e6555cedcbefd3fd836db1d2a74d8a",
+      "bytes": 1493
+    },
+    "NG": {
+      "url": "/games/geo/assets/shapes/cad283c44657a12a2f3f.svg",
+      "sha256": "cad283c44657a12a2f3f96da2718eda86e6c35ca90ebd38f92499a1df19c133b",
+      "bytes": 2764
+    },
+    "NI": {
+      "url": "/games/geo/assets/shapes/f8bdd80b20c3cd6a5da1.svg",
+      "sha256": "f8bdd80b20c3cd6a5da1af6da6195b08dd1e17d0db27619df365f589e8fec84f",
+      "bytes": 1343
+    },
+    "NL": {
+      "url": "/games/geo/assets/shapes/1e35739ee17d58078eca.svg",
+      "sha256": "1e35739ee17d58078ecaffbbb3d1d28f68fee752dc7afc23ddec016c7bd99900",
+      "bytes": 2530
+    },
+    "NO": {
+      "url": "/games/geo/assets/shapes/dac18781154bde23f65f.svg",
+      "sha256": "dac18781154bde23f65f0da083c6f6a87139a724e8ec386b947fc0e8c1ad1f34",
+      "bytes": 27904
+    },
+    "NP": {
+      "url": "/games/geo/assets/shapes/fbf274e8de07394bdea7.svg",
+      "sha256": "fbf274e8de07394bdea79e90521d7044fb80b9fb951dca51dd70d752820edad7",
+      "bytes": 1554
+    },
+    "NR": {
+      "url": "/games/geo/assets/shapes/56145168f34ba3f31095.svg",
+      "sha256": "56145168f34ba3f3109573271466bc1ba7595338ad71597ab37594ddff481120",
+      "bytes": 253
+    },
+    "NZ": {
+      "url": "/games/geo/assets/shapes/05d71f07ec788366c358.svg",
+      "sha256": "05d71f07ec788366c358b91cee4c3c10d0324e5fc1fd5a1cc0384503ab5a3f82",
+      "bytes": 5544
+    },
+    "OM": {
+      "url": "/games/geo/assets/shapes/6e6929e375aa44c93c77.svg",
+      "sha256": "6e6929e375aa44c93c77d40ccd8a7ec39da52468be9020268f8a3f1f846b8262",
+      "bytes": 1526
+    },
+    "PA": {
+      "url": "/games/geo/assets/shapes/c1aba2d819a27876afef.svg",
+      "sha256": "c1aba2d819a27876afef0a41a1483f535182cc0a4342866f9f046d9ad6c2d5ac",
+      "bytes": 3269
+    },
+    "PE": {
+      "url": "/games/geo/assets/shapes/2856cb50c803871d611a.svg",
+      "sha256": "2856cb50c803871d611a65bf491382bd33de3a0a3faae0af3a22b54e4c153f67",
+      "bytes": 3646
+    },
+    "PG": {
+      "url": "/games/geo/assets/shapes/76d999c5709425eb3712.svg",
+      "sha256": "76d999c5709425eb3712027c06b735969f122449a21e9531d0481bb33e729d31",
+      "bytes": 6254
+    },
+    "PH": {
+      "url": "/games/geo/assets/shapes/b71056cdfc9a90183281.svg",
+      "sha256": "b71056cdfc9a90183281a8eca29261806147cd31114a842f128df245b27d030a",
+      "bytes": 10916
+    },
+    "PK": {
+      "url": "/games/geo/assets/shapes/07e08a895720ad96b1ca.svg",
+      "sha256": "07e08a895720ad96b1ca4394e78f13a444bd20a720d25e21f9c507ed377bc1e4",
+      "bytes": 3988
+    },
+    "PL": {
+      "url": "/games/geo/assets/shapes/46740ea43c654f001134.svg",
+      "sha256": "46740ea43c654f001134a76c358e91d30927fe5b17933d3ad270ff35f8bf3b99",
+      "bytes": 1810
+    },
+    "PS": {
+      "url": "/games/geo/assets/shapes/5d4d3b0e5da7a848c8b7.svg",
+      "sha256": "5d4d3b0e5da7a848c8b7db560a8e95267022b81ba7c3ce354aacf3756af950c0",
+      "bytes": 486
+    },
+    "PT": {
+      "url": "/games/geo/assets/shapes/8839acd56238718c956d.svg",
+      "sha256": "8839acd56238718c956de1de35839dea0aa3955033f72c3d827d903648774f3c",
+      "bytes": 2434
+    },
+    "PW": {
+      "url": "/games/geo/assets/shapes/fd5f6b83da93da419bff.svg",
+      "sha256": "fd5f6b83da93da419bff9ae2f5e251f3507ebab37304165603e9ed626161c567",
+      "bytes": 1526
+    },
+    "PY": {
+      "url": "/games/geo/assets/shapes/ba258b47f0a50a32e2f3.svg",
+      "sha256": "ba258b47f0a50a32e2f3d04f935336fff3cf85ba2c93231b6795fd9605ae8549",
+      "bytes": 1546
+    },
+    "QA": {
+      "url": "/games/geo/assets/shapes/bc0d3dd69fff12a819c8.svg",
+      "sha256": "bc0d3dd69fff12a819c81463b8829a14eaba67976018172984536d04f29b476c",
+      "bytes": 571
+    },
+    "RO": {
+      "url": "/games/geo/assets/shapes/faf22a6cb24c9d79205c.svg",
+      "sha256": "faf22a6cb24c9d79205c6f298406d76c137b044372a417953849d65aab28970f",
+      "bytes": 1731
+    },
+    "RS": {
+      "url": "/games/geo/assets/shapes/1d53f7d380c84ed03cf1.svg",
+      "sha256": "1d53f7d380c84ed03cf199cfea4b62defd10953763c25b28afa4d5d2167d9429",
+      "bytes": 1341
+    },
+    "RU": {
+      "url": "/games/geo/assets/shapes/33d67fb68e0e239cd61d.svg",
+      "sha256": "33d67fb68e0e239cd61dc7d74388f1bea0e5d245e105bf6be3f6cbc0118e977f",
+      "bytes": 59989
+    },
+    "RW": {
+      "url": "/games/geo/assets/shapes/64120b16757dadbb8899.svg",
+      "sha256": "64120b16757dadbb8899fcc7d912ddeb5e92f4878bea6a78797bd0d3466fcb47",
+      "bytes": 564
+    },
+    "SA": {
+      "url": "/games/geo/assets/shapes/f8c056158c675f7fdfa5.svg",
+      "sha256": "f8c056158c675f7fdfa5618ef61379790edf14bb0d45385546a11e124f9380be",
+      "bytes": 2571
+    },
+    "SB": {
+      "url": "/games/geo/assets/shapes/a74448217acb0c303b44.svg",
+      "sha256": "a74448217acb0c303b44684a638619ff43b4acc018cbd5bb00038fc3d233d40c",
+      "bytes": 6884
+    },
+    "SC": {
+      "url": "/games/geo/assets/shapes/16516d6403cd19115615.svg",
+      "sha256": "16516d6403cd1911561546a8d54389c84210aca24758cfaf7d569ec784878c3d",
+      "bytes": 4197
+    },
+    "SD": {
+      "url": "/games/geo/assets/shapes/c11946cf338e9a5e365e.svg",
+      "sha256": "c11946cf338e9a5e365ed37bd7d373f60bbc1ada38da303fcbf7d7959eb74d03",
+      "bytes": 2236
+    },
+    "SE": {
+      "url": "/games/geo/assets/shapes/523665bc2f87835e1289.svg",
+      "sha256": "523665bc2f87835e12899cd2baf2ec51c54e38287900d7c492b544d49dcd5859",
+      "bytes": 6580
+    },
+    "SG": {
+      "url": "/games/geo/assets/shapes/69da76b49b595e4974da.svg",
+      "sha256": "69da76b49b595e4974da56a2fa06bc7ee3ec9a8e40e681ef33712a3bbda7b890",
+      "bytes": 213
+    },
+    "SI": {
+      "url": "/games/geo/assets/shapes/4969c8ad6f94b1076426.svg",
+      "sha256": "4969c8ad6f94b10764262897d6bd65d7e21315dfa15873d391b9d403772cf0ce",
+      "bytes": 771
+    },
+    "SK": {
+      "url": "/games/geo/assets/shapes/42a86c5dd5c93df8624a.svg",
+      "sha256": "42a86c5dd5c93df8624a8a9f77b4b74af51cbcf869e6a10397c624b16ee0aec5",
+      "bytes": 876
+    },
+    "SL": {
+      "url": "/games/geo/assets/shapes/6ba9d009ae9bc79c2d63.svg",
+      "sha256": "6ba9d009ae9bc79c2d635ab5b209604bc4cec9c00d72776698ee37a8aa08f62b",
+      "bytes": 1160
+    },
+    "SM": {
+      "url": "/games/geo/assets/shapes/3177646ce43bb8daa62a.svg",
+      "sha256": "3177646ce43bb8daa62a10582378ea2866706039319b64a46aba1f4e39454b90",
+      "bytes": 194
+    },
+    "SN": {
+      "url": "/games/geo/assets/shapes/bebdb3bbc380bb546153.svg",
+      "sha256": "bebdb3bbc380bb5461533bdb3dcf0f90d8386aad21fe6e4fb383f43997c94d84",
+      "bytes": 1962
+    },
+    "SO": {
+      "url": "/games/geo/assets/shapes/f2f2fb79996c67c199a1.svg",
+      "sha256": "f2f2fb79996c67c199a1e9b68566ab38375b74272baa9676eeef3ce2d4f53550",
+      "bytes": 983
+    },
+    "SR": {
+      "url": "/games/geo/assets/shapes/b67b8a862d098b6bc019.svg",
+      "sha256": "b67b8a862d098b6bc0199c1a7a0dee80c4f04cd79bc6f20ef78029c14a7bedbb",
+      "bytes": 980
+    },
+    "SS": {
+      "url": "/games/geo/assets/shapes/c38a86bc53bdd1d07177.svg",
+      "sha256": "c38a86bc53bdd1d07177481ab71cbe387a6879c1e18776531f47c044a849bb4f",
+      "bytes": 2047
+    },
+    "ST": {
+      "url": "/games/geo/assets/shapes/95ef56a1bee16b09c7ab.svg",
+      "sha256": "95ef56a1bee16b09c7ab1401227127d83ecf8d06d87183b3700c0f528552ce1f",
+      "bytes": 310
+    },
+    "SV": {
+      "url": "/games/geo/assets/shapes/ceba806b92a0641da15e.svg",
+      "sha256": "ceba806b92a0641da15ea78d6cc60fed1ecb3f504d5638836eb017da2f8748cd",
+      "bytes": 908
+    },
+    "SY": {
+      "url": "/games/geo/assets/shapes/6ad2a56d917b0da8b179.svg",
+      "sha256": "6ad2a56d917b0da8b179dec3196e82d40a7be4b618a6f63951b87c985003a602",
+      "bytes": 984
+    },
+    "SZ": {
+      "url": "/games/geo/assets/shapes/0ec0259d728e11553c2a.svg",
+      "sha256": "0ec0259d728e11553c2a0c59f1b86b85f4606878b4c3c041930a0f13c43003cb",
+      "bytes": 346
+    },
+    "TD": {
+      "url": "/games/geo/assets/shapes/8cd175e680e386e2886b.svg",
+      "sha256": "8cd175e680e386e2886bd29cd9423da9f6a123dab81ddffafa0fdd7472e903e9",
+      "bytes": 1688
+    },
+    "TG": {
+      "url": "/games/geo/assets/shapes/09167d4fc08765204a58.svg",
+      "sha256": "09167d4fc08765204a5807f5815b956e63ee05a3610cc1fb2bce295ce9e6077f",
+      "bytes": 877
+    },
+    "TH": {
+      "url": "/games/geo/assets/shapes/4206eb1d0ca9930134b4.svg",
+      "sha256": "4206eb1d0ca9930134b4ed48b20e5ef2c271372365892c03b4f6179f2395c2f5",
+      "bytes": 4218
+    },
+    "TJ": {
+      "url": "/games/geo/assets/shapes/e29b5ce7c7145391c0c8.svg",
+      "sha256": "e29b5ce7c7145391c0c8923f36f9247db34a746065c6f3582a9e657035e3942f",
+      "bytes": 2146
+    },
+    "TL": {
+      "url": "/games/geo/assets/shapes/ee1d24c5037a50c6f09d.svg",
+      "sha256": "ee1d24c5037a50c6f09ddbc3c3af9929d4daa0a498cfa28135c6e06be526a1ba",
+      "bytes": 662
+    },
+    "TM": {
+      "url": "/games/geo/assets/shapes/732469af11442a454396.svg",
+      "sha256": "732469af11442a454396752ba5494f23a8c2e014c6e1fd7c68482609f7871593",
+      "bytes": 2844
+    },
+    "TN": {
+      "url": "/games/geo/assets/shapes/d4322654b8436372f93b.svg",
+      "sha256": "d4322654b8436372f93b5072c6597acb0c2aa268b5f4625c5041ca369cf40eb8",
+      "bytes": 1586
+    },
+    "TO": {
+      "url": "/games/geo/assets/shapes/3f90fedf4cfb49c253da.svg",
+      "sha256": "3f90fedf4cfb49c253da5a627c572be1623214e5466b33ed1dc4bae720051add",
+      "bytes": 1691
+    },
+    "TR": {
+      "url": "/games/geo/assets/shapes/001d4b5ef2368c143b3e.svg",
+      "sha256": "001d4b5ef2368c143b3e8a808d8617339fcaf063fab7af8b829e7e14dd25f252",
+      "bytes": 4250
+    },
+    "TT": {
+      "url": "/games/geo/assets/shapes/f12bc6bc281ad5878b14.svg",
+      "sha256": "f12bc6bc281ad5878b149499e95fae247fe3aa80934684ba22ec114cdf50b492",
+      "bytes": 407
+    },
+    "TV": {
+      "url": "/games/geo/assets/shapes/8b101fa47c85aef3516a.svg",
+      "sha256": "8b101fa47c85aef3516a97840135e6dde54b159db01d3cf87ebbde9252842c62",
+      "bytes": 1350
+    },
+    "TZ": {
+      "url": "/games/geo/assets/shapes/2efc50d2bce5ea790994.svg",
+      "sha256": "2efc50d2bce5ea790994570ccbe8f82d2eab51b77e8a7e7965e47dd212a8406b",
+      "bytes": 2524
+    },
+    "UA": {
+      "url": "/games/geo/assets/shapes/a48bc22f38c493d9d129.svg",
+      "sha256": "a48bc22f38c493d9d129133583b492c28561e5b4dbf23fe794f83b281ff99613",
+      "bytes": 4305
+    },
+    "UG": {
+      "url": "/games/geo/assets/shapes/24e1e67365b55dca274a.svg",
+      "sha256": "24e1e67365b55dca274a0f9dc01c693cd3694b845550d84c0eb3f18a956013f4",
+      "bytes": 1034
+    },
+    "US": {
+      "url": "/games/geo/assets/shapes/8139167a6927766543fd.svg",
+      "sha256": "8139167a6927766543fdfc6301ace24643e268ac209fe271055f734e2741458e",
+      "bytes": 40079
+    },
+    "UY": {
+      "url": "/games/geo/assets/shapes/be3da9f63fb6bcdda75b.svg",
+      "sha256": "be3da9f63fb6bcdda75b02044818445cf581ca4dcc978a57d3c9a6e546404fce",
+      "bytes": 1063
+    },
+    "UZ": {
+      "url": "/games/geo/assets/shapes/cc739311cdf32666a751.svg",
+      "sha256": "cc739311cdf32666a75104804a9c9a619c82be9843369e2b803b760284f0db1f",
+      "bytes": 3075
+    },
+    "VA": {
+      "url": "/games/geo/assets/shapes/353b8e1a1ebbccf726ad.svg",
+      "sha256": "353b8e1a1ebbccf726ad952193bfb71aaacf64e68bebd30179061e92c183f157",
+      "bytes": 228
+    },
+    "VC": {
+      "url": "/games/geo/assets/shapes/64a41e43bce4489c3dd7.svg",
+      "sha256": "64a41e43bce4489c3dd76ffe350606b751ad00de741ec417c7a96aae78ccb480",
+      "bytes": 1153
+    },
+    "VE": {
+      "url": "/games/geo/assets/shapes/3990e2bde7ba47185195.svg",
+      "sha256": "3990e2bde7ba471851957cbc2ad2a38a4548d315714661b4cd7c2a79f2bbcb36",
+      "bytes": 4372
+    },
+    "VN": {
+      "url": "/games/geo/assets/shapes/3956919ddf499d91342c.svg",
+      "sha256": "3956919ddf499d91342c486f745fa90615ad34264a86da8ca250636c85a72609",
+      "bytes": 5433
+    },
+    "VU": {
+      "url": "/games/geo/assets/shapes/c24e2192b52b08315794.svg",
+      "sha256": "c24e2192b52b083157940b715e196c28041c608ae2e02da4f22b08386a6102f8",
+      "bytes": 4591
+    },
+    "WS": {
+      "url": "/games/geo/assets/shapes/3f1f011997bf99d0d617.svg",
+      "sha256": "3f1f011997bf99d0d617c91e74b703cbe8319537aeefb6896b21a3b1ea8c2e6d",
+      "bytes": 348
+    },
+    "YE": {
+      "url": "/games/geo/assets/shapes/c1053af65e2773d6f19e.svg",
+      "sha256": "c1053af65e2773d6f19e446dbd10f2f215c6df7821c438e08404d01810948cf9",
+      "bytes": 1429
+    },
+    "ZA": {
+      "url": "/games/geo/assets/shapes/a3fdbadb2746c5bd0e4b.svg",
+      "sha256": "a3fdbadb2746c5bd0e4b2cc3b895a4fd20a5d1da97db9b9f6ad1d00303180bab",
+      "bytes": 4641
+    },
+    "ZM": {
+      "url": "/games/geo/assets/shapes/fce565d766a573ba113b.svg",
+      "sha256": "fce565d766a573ba113bc3a89b559c5b409bfc545ab7a9c1147ad4b45b1a47ba",
+      "bytes": 2057
+    },
+    "ZW": {
+      "url": "/games/geo/assets/shapes/56392b8ff0cb419b1cf6.svg",
+      "sha256": "56392b8ff0cb419b1cf626511710568516e5375bc2746a441e05d565fdd9d239",
+      "bytes": 1274
+    }
+  },
+  "flags": {
+    "AD": {
+      "url": "/games/geo/assets/flags/1914f0d751b810056fdd.svg",
+      "sha256": "1914f0d751b810056fdde2fa27d5c255082b4eeaa5942f8ac27e48dca3a377ed",
+      "bytes": 30510
+    },
+    "AE": {
+      "url": "/games/geo/assets/flags/3bc52a4aac7c6c68cd7c.svg",
+      "sha256": "3bc52a4aac7c6c68cd7c0a04013fa14f715abfe6958e7a6e3194f0793c9eb816",
+      "bytes": 266
+    },
+    "AF": {
+      "url": "/games/geo/assets/flags/313a7dd89f3d4bdceae6.svg",
+      "sha256": "313a7dd89f3d4bdceae673908ede1bca4a2f1aa0ea3562d8e96fe430d3b4c690",
+      "bytes": 19192
+    },
+    "AG": {
+      "url": "/games/geo/assets/flags/131282135f0f5cfca72e.svg",
+      "sha256": "131282135f0f5cfca72efa3a6dc6a3392b5999b5b15e1cbd0f3f73253c24080d",
+      "bytes": 743
+    },
+    "AL": {
+      "url": "/games/geo/assets/flags/4ae4d2950f6a08528639.svg",
+      "sha256": "4ae4d2950f6a08528639700e48d19930b964478a2548cb9bf41b898c2b757b11",
+      "bytes": 3126
+    },
+    "AM": {
+      "url": "/games/geo/assets/flags/efb6cdaad5658ae5024c.svg",
+      "sha256": "efb6cdaad5658ae5024c86b099a96c4e3769028894240f4015cbc090a0e90e0f",
+      "bytes": 228
+    },
+    "AO": {
+      "url": "/games/geo/assets/flags/3a4b1f9b0c95729b128e.svg",
+      "sha256": "3a4b1f9b0c95729b128ed86c7446ce82733f29ad9f6387e7a2ca951fa488e763",
+      "bytes": 1602
+    },
+    "AR": {
+      "url": "/games/geo/assets/flags/da39bfbe83fd35fae781.svg",
+      "sha256": "da39bfbe83fd35fae781f605c4a297b632f03ccf72d4cb0499e86dac8370663d",
+      "bytes": 3461
+    },
+    "AT": {
+      "url": "/games/geo/assets/flags/c0e5cb3c1d59fd002afd.svg",
+      "sha256": "c0e5cb3c1d59fd002afd6e2b0dd03787677ca3c9e7b2321f4af6d9e28256ebcd",
+      "bytes": 195
+    },
+    "AU": {
+      "url": "/games/geo/assets/flags/cbb2206c5e59a25d7922.svg",
+      "sha256": "cbb2206c5e59a25d79228306af973666a191e163f0ae337681f447977e6edb18",
+      "bytes": 1296
+    },
+    "AZ": {
+      "url": "/games/geo/assets/flags/33ad245b2125c36fbf0f.svg",
+      "sha256": "33ad245b2125c36fbf0f863b0edd5c85cbef37587900e101db3a615870504502",
+      "bytes": 501
+    },
+    "BA": {
+      "url": "/games/geo/assets/flags/b321fe9b47c1cd741c61.svg",
+      "sha256": "b321fe9b47c1cd741c61b330aee66cf00550622a6a9e740161a9f240a14e0787",
+      "bytes": 1240
+    },
+    "BB": {
+      "url": "/games/geo/assets/flags/46cfd88ab5ea96e75627.svg",
+      "sha256": "46cfd88ab5ea96e75627e044d008462586fbd04a346205dfd258984a46ffc27a",
+      "bytes": 628
+    },
+    "BD": {
+      "url": "/games/geo/assets/flags/1aabb4a772651fb9a673.svg",
+      "sha256": "1aabb4a772651fb9a673660233d5bc6f3d78dfc71df09d567769bc97b9eb554f",
+      "bytes": 187
+    },
+    "BE": {
+      "url": "/games/geo/assets/flags/d6aff6fa4c913404eafd.svg",
+      "sha256": "d6aff6fa4c913404eafd53f91c0a9b240fcecaddc8f0ac2160d362e38469342c",
+      "bytes": 302
+    },
+    "BF": {
+      "url": "/games/geo/assets/flags/606b17add6a8aeb9610b.svg",
+      "sha256": "606b17add6a8aeb9610b06aae674785a3e795c22b564f5a204c6de93753e612e",
+      "bytes": 353
+    },
+    "BG": {
+      "url": "/games/geo/assets/flags/b6d979fc96dc6b46c169.svg",
+      "sha256": "b6d979fc96dc6b46c1697a5e05ecfe1fac1fa912ed480ca7a2a9b450f087faf6",
+      "bytes": 225
+    },
+    "BH": {
+      "url": "/games/geo/assets/flags/7a519f58c9007731d70a.svg",
+      "sha256": "7a519f58c9007731d70a975a48cc81fcf516ab52ab972f9739eace370431e0c2",
+      "bytes": 252
+    },
+    "BI": {
+      "url": "/games/geo/assets/flags/5ef1a56b4ebe90326d6d.svg",
+      "sha256": "5ef1a56b4ebe90326d6d807bbf61bd2d6f0b752fd6966588cd42471a886307bb",
+      "bytes": 1078
+    },
+    "BJ": {
+      "url": "/games/geo/assets/flags/0a46cbae6018acdbc4a4.svg",
+      "sha256": "0a46cbae6018acdbc4a485f6b1c4a3df7a7b36680439f6eb5d1bfb957f704888",
+      "bytes": 499
+    },
+    "BN": {
+      "url": "/games/geo/assets/flags/4fc01eb8e4b3d4776d17.svg",
+      "sha256": "4fc01eb8e4b3d4776d179cd06dfca4f21ee7ca833751eb564e7943d3203b6851",
+      "bytes": 13340
+    },
+    "BO": {
+      "url": "/games/geo/assets/flags/ee1075ebb655dd8252ec.svg",
+      "sha256": "ee1075ebb655dd8252ec317827baa0a75cf0a5e4f0b0b35d6e9766b30686d183",
+      "bytes": 102880
+    },
+    "BR": {
+      "url": "/games/geo/assets/flags/b0a912826c3ffd728743.svg",
+      "sha256": "b0a912826c3ffd7287435ebed66e18fe058e992309c00dc10b430dd41a29ba91",
+      "bytes": 7140
+    },
+    "BS": {
+      "url": "/games/geo/assets/flags/1f179c39f296e5e3e062.svg",
+      "sha256": "1f179c39f296e5e3e062114d62fea394ff0ea487bd29cdffbe3837b7238d46dc",
+      "bytes": 557
+    },
+    "BT": {
+      "url": "/games/geo/assets/flags/05ff0d4d725835782318.svg",
+      "sha256": "05ff0d4d7258357823180eec1e53baa11846505234f51061a47c2f95641d1f43",
+      "bytes": 24784
+    },
+    "BW": {
+      "url": "/games/geo/assets/flags/180bfa4e76b78fa7b52b.svg",
+      "sha256": "180bfa4e76b78fa7b52bf9f3c8e99d3c1b4aa520b97a239661a8953dc90658b3",
+      "bytes": 264
+    },
+    "BY": {
+      "url": "/games/geo/assets/flags/a1efa44ad1167d6d77ab.svg",
+      "sha256": "a1efa44ad1167d6d77abbe59ce85aa3a68ff4bd57af79454c08a3ade5c178578",
+      "bytes": 2078
+    },
+    "BZ": {
+      "url": "/games/geo/assets/flags/9aef8f4ef9d86bf989fb.svg",
+      "sha256": "9aef8f4ef9d86bf989fbdd714d64c5440dceaa2bc1a23e493942129022e6b677",
+      "bytes": 42505
+    },
+    "CA": {
+      "url": "/games/geo/assets/flags/345ec9dac057e203f133.svg",
+      "sha256": "345ec9dac057e203f1331b2d3f9f473789864edaee1182a26bc261356bcf72f1",
+      "bytes": 625
+    },
+    "CD": {
+      "url": "/games/geo/assets/flags/ad93c1afd68e6a7364d1.svg",
+      "sha256": "ad93c1afd68e6a7364d141e0989a798e81a202fe4674f21fece3ceea83fd167c",
+      "bytes": 334
+    },
+    "CF": {
+      "url": "/games/geo/assets/flags/1b58dc2035ff0039c82e.svg",
+      "sha256": "1b58dc2035ff0039c82e4dfb16a536dcf74ee09ab4d95b75221d404ad616dc0f",
+      "bytes": 687
+    },
+    "CG": {
+      "url": "/games/geo/assets/flags/628dcfc7f00ab09cc907.svg",
+      "sha256": "628dcfc7f00ab09cc9074b837863c31fe4472c7c3e17c30e233332d94c37585b",
+      "bytes": 470
+    },
+    "CH": {
+      "url": "/games/geo/assets/flags/ac676cd39d7032988598.svg",
+      "sha256": "ac676cd39d7032988598ef2dd73f6bebcd767738e3e469705d6a437835ac485c",
+      "bytes": 290
+    },
+    "CI": {
+      "url": "/games/geo/assets/flags/4ecfea70e4e0860fdb49.svg",
+      "sha256": "4ecfea70e4e0860fdb49a523db7cd64431b4da8130ee9038cf87bfcc85c3806e",
+      "bytes": 277
+    },
+    "CL": {
+      "url": "/games/geo/assets/flags/bcf0ccdf0999a1cd8206.svg",
+      "sha256": "bcf0ccdf0999a1cd82061202988e1f6088c2070e3e76794d67cb375ef325ef76",
+      "bytes": 552
+    },
+    "CM": {
+      "url": "/games/geo/assets/flags/c9a327dc0e355739a9f2.svg",
+      "sha256": "c9a327dc0e355739a9f2bc0a91e1293f8e08e13910e718bc63fda35a244acef5",
+      "bytes": 840
+    },
+    "CN": {
+      "url": "/games/geo/assets/flags/981da9bdf82d48e31691.svg",
+      "sha256": "981da9bdf82d48e31691f20578cefcb26cf7d0bd95e4ebd5c0df00bdfe988c1a",
+      "bytes": 813
+    },
+    "CO": {
+      "url": "/games/geo/assets/flags/6bab3c96c1657510c6e4.svg",
+      "sha256": "6bab3c96c1657510c6e49354dd40203c69401bee54da497392ab9267334e5fd4",
+      "bytes": 286
+    },
+    "CR": {
+      "url": "/games/geo/assets/flags/4775ef01d28b8a887cde.svg",
+      "sha256": "4775ef01d28b8a887cde3dbe2826466ed77c87aae4d00517c99d4977afdbdc20",
+      "bytes": 290
+    },
+    "CU": {
+      "url": "/games/geo/assets/flags/15013e0bb414c074af96.svg",
+      "sha256": "15013e0bb414c074af963bab167806dc81b7e1bb6dabc05dac20b2583511e535",
+      "bytes": 610
+    },
+    "CV": {
+      "url": "/games/geo/assets/flags/2fa67e0a2477306f0427.svg",
+      "sha256": "2fa67e0a2477306f0427877b78d2276c58c496ff50faf4b3d69252350821e138",
+      "bytes": 1411
+    },
+    "CY": {
+      "url": "/games/geo/assets/flags/d2ddf86c24e9d4dc4e2f.svg",
+      "sha256": "d2ddf86c24e9d4dc4e2f5cd298b189b9d04a08c0f6497c35249f07d6f1969e33",
+      "bytes": 5466
+    },
+    "CZ": {
+      "url": "/games/geo/assets/flags/d601fcc2e5b1fd48b79d.svg",
+      "sha256": "d601fcc2e5b1fd48b79d53c55108af4c0e90793f146db51f3ee449d8d69512bc",
+      "bytes": 225
+    },
+    "DE": {
+      "url": "/games/geo/assets/flags/efd480af5a154a7651f2.svg",
+      "sha256": "efd480af5a154a7651f29da23ee0d09dbc892410fb4041898ddf8face336c575",
+      "bytes": 221
+    },
+    "DJ": {
+      "url": "/games/geo/assets/flags/2a22d382f85cef20ba39.svg",
+      "sha256": "2a22d382f85cef20ba39a9abb6e6ecffdfa806d46afea3f6d26b8a23a5c12e43",
+      "bytes": 585
+    },
+    "DK": {
+      "url": "/games/geo/assets/flags/d2847c0bd7a1fb97977e.svg",
+      "sha256": "d2847c0bd7a1fb97977ee51f2f618c5ebc5898dd66ef9804f187613c27bdca1a",
+      "bytes": 236
+    },
+    "DM": {
+      "url": "/games/geo/assets/flags/0a4bf1a27390308c6267.svg",
+      "sha256": "0a4bf1a27390308c62675099f3fb7c86ac3098fce4e8c5e95046c7a15c54226d",
+      "bytes": 15787
+    },
+    "DO": {
+      "url": "/games/geo/assets/flags/02e5f5efbc60a73716f7.svg",
+      "sha256": "02e5f5efbc60a73716f754ecb3f112dcccfeab1da925cb7b8a1764736a3a3ebd",
+      "bytes": 40346
+    },
+    "DZ": {
+      "url": "/games/geo/assets/flags/9ea0cf93222ab7b5e7b7.svg",
+      "sha256": "9ea0cf93222ab7b5e7b77b9576afcad80dad1eff33827e8e58dbfbb42aeb8213",
+      "bytes": 294
+    },
+    "EC": {
+      "url": "/games/geo/assets/flags/4472b0618e2f5e31d31d.svg",
+      "sha256": "4472b0618e2f5e31d31d16c0d7d811310c33b07d5a101b54f60fcb7ec84d1d4d",
+      "bytes": 28777
+    },
+    "EE": {
+      "url": "/games/geo/assets/flags/25642310e287fbdc02e1.svg",
+      "sha256": "25642310e287fbdc02e1ac3e0e08fadca9a32eae195f67b6863bf0fc6247176b",
+      "bytes": 225
+    },
+    "EG": {
+      "url": "/games/geo/assets/flags/3f85d1d2bdb03692ad68.svg",
+      "sha256": "3f85d1d2bdb03692ad68f84efff36be2f5b1b5b7438b7b7be50def3837bf532f",
+      "bytes": 8726
+    },
+    "ER": {
+      "url": "/games/geo/assets/flags/64c98a80601fc019f9ca.svg",
+      "sha256": "64c98a80601fc019f9ca7a71f7dd384ca995da1403e7775edcbfd79118564e45",
+      "bytes": 3158
+    },
+    "ES": {
+      "url": "/games/geo/assets/flags/f9cfaff858e95f830733.svg",
+      "sha256": "f9cfaff858e95f830733ade9591037b5322dfb5827a53b70956a3d190bb49b9a",
+      "bytes": 80958
+    },
+    "ET": {
+      "url": "/games/geo/assets/flags/43d5922fff81ae1accda.svg",
+      "sha256": "43d5922fff81ae1accda75ed99b1b6e68dbebaa3d88a5d87f10a744f17cba34c",
+      "bytes": 1145
+    },
+    "FI": {
+      "url": "/games/geo/assets/flags/012edd984cf1879463c2.svg",
+      "sha256": "012edd984cf1879463c2855b7df02dea2f7de7f7a66b244fb1e22b4227f7aa65",
+      "bytes": 234
+    },
+    "FJ": {
+      "url": "/games/geo/assets/flags/b23cbee897c889ce2d05.svg",
+      "sha256": "b23cbee897c889ce2d057aaca7c221b74a386ea58efb29da1982418564b58343",
+      "bytes": 24100
+    },
+    "FM": {
+      "url": "/games/geo/assets/flags/23db3e9fe582cc8dd5d3.svg",
+      "sha256": "23db3e9fe582cc8dd5d3b9ad58aff1ef5cb359c330bbed59fc053d76355434de",
+      "bytes": 771
+    },
+    "FR": {
+      "url": "/games/geo/assets/flags/8cdacc8d79bcf210cdca.svg",
+      "sha256": "8cdacc8d79bcf210cdca2777a2c0de1f9e5862526877bd3026c9d59ecdcd4578",
+      "bytes": 231
+    },
+    "GA": {
+      "url": "/games/geo/assets/flags/f7b775c474b0331222ed.svg",
+      "sha256": "f7b775c474b0331222ed84a3d1b5a5d66af1c097c8565766db17a5cff5237c93",
+      "bytes": 271
+    },
+    "GB": {
+      "url": "/games/geo/assets/flags/c8be1e7208798a4ae692.svg",
+      "sha256": "c8be1e7208798a4ae692ee1e937065d498bb29e741943f6172b29118b8ed8066",
+      "bytes": 504
+    },
+    "GD": {
+      "url": "/games/geo/assets/flags/eecc1f130ed02b2166c6.svg",
+      "sha256": "eecc1f130ed02b2166c6f185439b7c95cabfa4a41b33c1a834ca59ffe4780785",
+      "bytes": 1712
+    },
+    "GE": {
+      "url": "/games/geo/assets/flags/0280a1279c3d1d772f1e.svg",
+      "sha256": "0280a1279c3d1d772f1e885ee821e37a1cdb4aa085ca2870825fe10bad8d7ff1",
+      "bytes": 1313
+    },
+    "GH": {
+      "url": "/games/geo/assets/flags/53c55ca455293bceecfe.svg",
+      "sha256": "53c55ca455293bceecfe6a5d6b12dc0bb670734c50bfd95cb21dc4ef12197405",
+      "bytes": 293
+    },
+    "GM": {
+      "url": "/games/geo/assets/flags/2aa3fad4e8820fb42386.svg",
+      "sha256": "2aa3fad4e8820fb42386f62d3efee1d3923817a49ed2bb05ba364c58d0ca4d3f",
+      "bytes": 543
+    },
+    "GN": {
+      "url": "/games/geo/assets/flags/ee01e7dd4abb0a995980.svg",
+      "sha256": "ee01e7dd4abb0a995980ec8d0ba2bf314b564c73fcaba39fed8a5f48a7c49753",
+      "bytes": 292
+    },
+    "GQ": {
+      "url": "/games/geo/assets/flags/61ddf0a98d1d4bf93c6e.svg",
+      "sha256": "61ddf0a98d1d4bf93c6ec53eec080662efceabc37d1361eda4e7d291e10976d8",
+      "bytes": 4941
+    },
+    "GR": {
+      "url": "/games/geo/assets/flags/a184070f7678b06777be.svg",
+      "sha256": "a184070f7678b06777be8ac38cb05ba41829591a6dac9b64b2b72db66aec82f5",
+      "bytes": 868
+    },
+    "GT": {
+      "url": "/games/geo/assets/flags/a20814d011af90ab2e80.svg",
+      "sha256": "a20814d011af90ab2e80ea88eae9928cfce824cb9b50edf7b74ce2a98a159059",
+      "bytes": 31352
+    },
+    "GW": {
+      "url": "/games/geo/assets/flags/6b81a234b51ceacb4b67.svg",
+      "sha256": "6b81a234b51ceacb4b67e889bb5b7ccf5f1084ac34b4fded2b97af5336f4797e",
+      "bytes": 846
+    },
+    "GY": {
+      "url": "/games/geo/assets/flags/5bd7a7b326efd9c28c3e.svg",
+      "sha256": "5bd7a7b326efd9c28c3ec3b23118b241cb7643967fe9410611f392bc3deb65b0",
+      "bytes": 493
+    },
+    "HN": {
+      "url": "/games/geo/assets/flags/67130fa043e9d30dda76.svg",
+      "sha256": "67130fa043e9d30dda7691e0d59567ff32db435a0d72e4e57309bd439fd79995",
+      "bytes": 1144
+    },
+    "HR": {
+      "url": "/games/geo/assets/flags/3c98eae5ee93f0d75e10.svg",
+      "sha256": "3c98eae5ee93f0d75e10170beb96e26908830e2e6f7f7af2a4b281a097aeb946",
+      "bytes": 30732
+    },
+    "HT": {
+      "url": "/games/geo/assets/flags/d45f0285b56379b6816a.svg",
+      "sha256": "d45f0285b56379b6816ab02ac0fcef2dc47b3f9a926a661e51a5c546b259e5d6",
+      "bytes": 13301
+    },
+    "HU": {
+      "url": "/games/geo/assets/flags/ffc4edd580d4b9789bee.svg",
+      "sha256": "ffc4edd580d4b9789bee68f33cef24afe826ae571464350fe7b98c7a36b4ff8f",
+      "bytes": 271
+    },
+    "ID": {
+      "url": "/games/geo/assets/flags/5cd3acc4939dd7eae631.svg",
+      "sha256": "5cd3acc4939dd7eae6318c8d75df8c0d1733f650e2504a2635b0dbf3dfabb040",
+      "bytes": 178
+    },
+    "IE": {
+      "url": "/games/geo/assets/flags/f82568d70bd1624ff7ce.svg",
+      "sha256": "f82568d70bd1624ff7ce3ced8712a718a224ff2424fd2ade2da4339be3bba463",
+      "bytes": 289
+    },
+    "IN": {
+      "url": "/games/geo/assets/flags/91185efa1a9b52cdc0e4.svg",
+      "sha256": "91185efa1a9b52cdc0e470712518efeefc4e4d6a6555bae9de997ba71885bb98",
+      "bytes": 1090
+    },
+    "IQ": {
+      "url": "/games/geo/assets/flags/073b07113d582dfea58f.svg",
+      "sha256": "073b07113d582dfea58fbd7e7e63cd9626bfa4afc87b3446a2a798981e26a412",
+      "bytes": 1420
+    },
+    "IR": {
+      "url": "/games/geo/assets/flags/cb363e09bafbff6de7c2.svg",
+      "sha256": "cb363e09bafbff6de7c2fba6a002ca33f0563dc83a2328d34adb492cf80ca629",
+      "bytes": 15397
+    },
+    "IS": {
+      "url": "/games/geo/assets/flags/4ef2de6fb25ff5a16789.svg",
+      "sha256": "4ef2de6fb25ff5a16789e8ffc3b68894527e68c89dce3b4e1118f5bbcc0bb7ae",
+      "bytes": 509
+    },
+    "IT": {
+      "url": "/games/geo/assets/flags/9fa88118818d9b64838f.svg",
+      "sha256": "9fa88118818d9b64838f578e2babcca3d0630aed21b5c33b34aff7ac5ce506bc",
+      "bytes": 289
+    },
+    "JM": {
+      "url": "/games/geo/assets/flags/f837df1ac21a4c64be2c.svg",
+      "sha256": "f837df1ac21a4c64be2c977e2faeb6d6593624703d7c61b71a857fa8355b7f47",
+      "bytes": 401
+    },
+    "JO": {
+      "url": "/games/geo/assets/flags/e3a570d5c50c15f4aca7.svg",
+      "sha256": "e3a570d5c50c15f4aca73d27b2543ee335fd04151847e3d8ef2b42e5ac1ebe12",
+      "bytes": 727
+    },
+    "JP": {
+      "url": "/games/geo/assets/flags/bfea80baf9989383dc4b.svg",
+      "sha256": "bfea80baf9989383dc4bf7ca594ed95be0df0ff125bfc88d0bfa878eb0198022",
+      "bytes": 470
+    },
+    "KE": {
+      "url": "/games/geo/assets/flags/699163d87382eb969d8a.svg",
+      "sha256": "699163d87382eb969d8a26d4ce1a99a00264e8b7b95276abf585476506f46e82",
+      "bytes": 1421
+    },
+    "KG": {
+      "url": "/games/geo/assets/flags/b0cf3e6806af23d8712a.svg",
+      "sha256": "b0cf3e6806af23d8712a7007a27e8669403c00aef75faa2d7a15d183fc3d0587",
+      "bytes": 4743
+    },
+    "KH": {
+      "url": "/games/geo/assets/flags/21a9681682a2158cab29.svg",
+      "sha256": "21a9681682a2158cab294bd1826a2dda2e3edf17aff891d692c6c976c3d9c874",
+      "bytes": 7122
+    },
+    "KI": {
+      "url": "/games/geo/assets/flags/01206661587925daf1e5.svg",
+      "sha256": "01206661587925daf1e57d8b6a6eb85f07a8ccf2230b89ed9b6e3a39b83f0ce0",
+      "bytes": 5627
+    },
+    "KM": {
+      "url": "/games/geo/assets/flags/81e1befbbdeab3b2a4ec.svg",
+      "sha256": "81e1befbbdeab3b2a4ec451e060b161bbcc6de00b97ef9d99791bc5741dfddab",
+      "bytes": 1053
+    },
+    "KN": {
+      "url": "/games/geo/assets/flags/0832acb7396986c7ba99.svg",
+      "sha256": "0832acb7396986c7ba99bdfdadc563df322363f91659775f14aeeeacdd546c7e",
+      "bytes": 796
+    },
+    "KP": {
+      "url": "/games/geo/assets/flags/f79bc8b6502445b51fd6.svg",
+      "sha256": "f79bc8b6502445b51fd6db4bb9b6fa9d49f7fbe00da77b6af4d052b6d9fec4d3",
+      "bytes": 783
+    },
+    "KR": {
+      "url": "/games/geo/assets/flags/7a6cd5b51d0e2841ed8b.svg",
+      "sha256": "7a6cd5b51d0e2841ed8b79b1147ad8a66cf3c09f6344d4a63b5e4413ffa5d15b",
+      "bytes": 1061
+    },
+    "KW": {
+      "url": "/games/geo/assets/flags/172a4281fdaf4b168471.svg",
+      "sha256": "172a4281fdaf4b168471afcffc9e9ea277d6b5e54acc1a18b2f8ddc0a255cd7c",
+      "bytes": 517
+    },
+    "KZ": {
+      "url": "/games/geo/assets/flags/381b22e4c287b13e191c.svg",
+      "sha256": "381b22e4c287b13e191c208bccfc2cfb9156cd657de248f033b920a0c713a1f3",
+      "bytes": 7094
+    },
+    "LA": {
+      "url": "/games/geo/assets/flags/da591b989d90a90d03c7.svg",
+      "sha256": "da591b989d90a90d03c736d8515fe567832eb9f24dcfa7a2870b1cf3196fdb05",
+      "bytes": 456
+    },
+    "LB": {
+      "url": "/games/geo/assets/flags/94b12b3f1dc43809f935.svg",
+      "sha256": "94b12b3f1dc43809f93516592f07bb4eb85dabbfdd6010b736f467fa64283e7f",
+      "bytes": 2770
+    },
+    "LC": {
+      "url": "/games/geo/assets/flags/99645e005699eba454a0.svg",
+      "sha256": "99645e005699eba454a0c3bf052b84d161267b615d8be60c41acb41f9355e47d",
+      "bytes": 352
+    },
+    "LI": {
+      "url": "/games/geo/assets/flags/77a33513c5288a0f2044.svg",
+      "sha256": "77a33513c5288a0f2044f918efd2f82ba789d599f2e934b2af39b60fba8d9458",
+      "bytes": 7318
+    },
+    "LK": {
+      "url": "/games/geo/assets/flags/ed3eee24d19872d6adce.svg",
+      "sha256": "ed3eee24d19872d6adcecd589513c057c6ecfe4997af36e8d25ef9ed58660d23",
+      "bytes": 10724
+    },
+    "LR": {
+      "url": "/games/geo/assets/flags/69f2ce4b9490ab3c94ca.svg",
+      "sha256": "69f2ce4b9490ab3c94ca30dc94862e5f1e8cb0f84344e5db0eb9300df5c66146",
+      "bytes": 713
+    },
+    "LS": {
+      "url": "/games/geo/assets/flags/83d2e4152ef06ed39f57.svg",
+      "sha256": "83d2e4152ef06ed39f5792dd2d5b9aa9953e3cbfe645f0384449e87b73dc96fb",
+      "bytes": 1133
+    },
+    "LT": {
+      "url": "/games/geo/assets/flags/dc0401993f6e14b3a58f.svg",
+      "sha256": "dc0401993f6e14b3a58fa496d874b95dfcb58614052a868b14492166782c1006",
+      "bytes": 439
+    },
+    "LU": {
+      "url": "/games/geo/assets/flags/a0a530e396ac2e2490d3.svg",
+      "sha256": "a0a530e396ac2e2490d32d432a89c08a3d35081816ba089241b9b2b2a76a049e",
+      "bytes": 225
+    },
+    "LV": {
+      "url": "/games/geo/assets/flags/15d4e812a30208a1caab.svg",
+      "sha256": "15d4e812a30208a1caaba6922a3f585db17827d67afae81626ffe4e1e9344ea7",
+      "bytes": 230
+    },
+    "LY": {
+      "url": "/games/geo/assets/flags/47d96b6e011cd540bdeb.svg",
+      "sha256": "47d96b6e011cd540bdeb30155cbd7994f929cd2f5b84cffdd50936b876823f41",
+      "bytes": 549
+    },
+    "MA": {
+      "url": "/games/geo/assets/flags/28cfcdecf9675b0a14fb.svg",
+      "sha256": "28cfcdecf9675b0a14fbfae176324aea03711edab1a13592cfb7d58e6772b25c",
+      "bytes": 247
+    },
+    "MC": {
+      "url": "/games/geo/assets/flags/690c23fe64b6ac717706.svg",
+      "sha256": "690c23fe64b6ac71770657fd87f744b88196a7853abb28017b5bff54473ae0da",
+      "bytes": 234
+    },
+    "MD": {
+      "url": "/games/geo/assets/flags/987ca12a752ec2b3594c.svg",
+      "sha256": "987ca12a752ec2b3594c115923d50160343a7d30af8ea5e316ae04fb12b8e9dd",
+      "bytes": 11126
+    },
+    "ME": {
+      "url": "/games/geo/assets/flags/d284332e23ef88ae4f1b.svg",
+      "sha256": "d284332e23ef88ae4f1b957ce1c6d9b9f691f94e4726f15d1a4219840008387b",
+      "bytes": 56372
+    },
+    "MG": {
+      "url": "/games/geo/assets/flags/59246c21300e2456c0c5.svg",
+      "sha256": "59246c21300e2456c0c5170791698e43399b089de80a69474deeac00697d2b7b",
+      "bytes": 299
+    },
+    "MH": {
+      "url": "/games/geo/assets/flags/96d7c0b917a5c064636d.svg",
+      "sha256": "96d7c0b917a5c064636d11239b2a3031e574bc782e2445ec917208eeb051ccaa",
+      "bytes": 729
+    },
+    "MK": {
+      "url": "/games/geo/assets/flags/22488dc890fe1e5f7a8b.svg",
+      "sha256": "22488dc890fe1e5f7a8bea423dfe2e74f8ccf04402e75090cdeca030b12ca010",
+      "bytes": 379
+    },
+    "ML": {
+      "url": "/games/geo/assets/flags/49e84081981f2b8ec245.svg",
+      "sha256": "49e84081981f2b8ec245dcc66ebf44521fc91b3eae6e9f10c925616f78951f14",
+      "bytes": 273
+    },
+    "MM": {
+      "url": "/games/geo/assets/flags/c0b2e23a7e202ff2ad69.svg",
+      "sha256": "c0b2e23a7e202ff2ad69421ea1b528e58af4e541fc2f4b986479a9cdef7f18e0",
+      "bytes": 710
+    },
+    "MN": {
+      "url": "/games/geo/assets/flags/92d5422514f63fc10800.svg",
+      "sha256": "92d5422514f63fc10800714e71e14b576437e69a22645cf74a7ac0f516d67a69",
+      "bytes": 1397
+    },
+    "MR": {
+      "url": "/games/geo/assets/flags/ea338a9f7744fb25c366.svg",
+      "sha256": "ea338a9f7744fb25c3664f3cee5b2355e70bed7b0d79d952d246436cb600edb9",
+      "bytes": 437
+    },
+    "MT": {
+      "url": "/games/geo/assets/flags/a2ad157eeb5f1bb92dc9.svg",
+      "sha256": "a2ad157eeb5f1bb92dc9706ad90faa111dd39ec019586bc5d12e67c5a6aa6cd5",
+      "bytes": 13925
+    },
+    "MU": {
+      "url": "/games/geo/assets/flags/51f86810118855ca9a0b.svg",
+      "sha256": "51f86810118855ca9a0b0501f3d363e0556fe74f429a66d1be9af5c027b3b593",
+      "bytes": 316
+    },
+    "MV": {
+      "url": "/games/geo/assets/flags/5546d527d669b3935bbf.svg",
+      "sha256": "5546d527d669b3935bbff11e0344fb8522200cf5ea84eba730d8a7a0b1e86f15",
+      "bytes": 286
+    },
+    "MW": {
+      "url": "/games/geo/assets/flags/29a3e7057ec47f18bd8d.svg",
+      "sha256": "29a3e7057ec47f18bd8dd54312074335263b607c1543fcd969f89f14e307985f",
+      "bytes": 3563
+    },
+    "MX": {
+      "url": "/games/geo/assets/flags/9dbc8ad8b35e52ce7cb6.svg",
+      "sha256": "9dbc8ad8b35e52ce7cb686d5cd93bd95e4c0dd8505c184186a740148ffd34901",
+      "bytes": 84753
+    },
+    "MY": {
+      "url": "/games/geo/assets/flags/bb30e84a099d2d9dc286.svg",
+      "sha256": "bb30e84a099d2d9dc286ab091bdd40ae7a8e332eb49827f2df4f11803e613667",
+      "bytes": 1378
+    },
+    "MZ": {
+      "url": "/games/geo/assets/flags/ad91c2f8e6d6f80f19dc.svg",
+      "sha256": "ad91c2f8e6d6f80f19dca1fb080488539e2e39a4670ead32169d491bc88c3c03",
+      "bytes": 2563
+    },
+    "NA": {
+      "url": "/games/geo/assets/flags/caa43fcdebb595ebf980.svg",
+      "sha256": "caa43fcdebb595ebf9808be7c5ba326a65bb40f78172182b1470102dd97a0182",
+      "bytes": 993
+    },
+    "NE": {
+      "url": "/games/geo/assets/flags/4b91653d53f76ddaf492.svg",
+      "sha256": "4b91653d53f76ddaf492a61adad3c1be86528ee9f23d7a18a6044c4eed165cad",
+      "bytes": 273
+    },
+    "NG": {
+      "url": "/games/geo/assets/flags/b7a2a45a6499095efce4.svg",
+      "sha256": "b7a2a45a6499095efce41592428ff558ec5bd83d2751858dfe5fa4589334b66f",
+      "bytes": 257
+    },
+    "NI": {
+      "url": "/games/geo/assets/flags/b9dfe1fc2aded19b2796.svg",
+      "sha256": "b9dfe1fc2aded19b2796ad7b9b681b64457250ca6043f2865b4160e9230d097f",
+      "bytes": 17249
+    },
+    "NL": {
+      "url": "/games/geo/assets/flags/8f691f17fe70894537af.svg",
+      "sha256": "8f691f17fe70894537af8e92f2ca47761d353639b0defc15cbe561eb503ab010",
+      "bytes": 225
+    },
+    "NO": {
+      "url": "/games/geo/assets/flags/ceea17af051dceefd575.svg",
+      "sha256": "ceea17af051dceefd5759a824213eb40ac8a8095aa88a6874a7bbc8de637357a",
+      "bytes": 318
+    },
+    "NP": {
+      "url": "/games/geo/assets/flags/b84c02e2fa659d0be6fc.svg",
+      "sha256": "b84c02e2fa659d0be6fc6b5963d5e9fbd25c3a6ab4d469aa61f1e3cdbd3f4637",
+      "bytes": 1005
+    },
+    "NR": {
+      "url": "/games/geo/assets/flags/f1de4b06479d454bb0a2.svg",
+      "sha256": "f1de4b06479d454bb0a23a1bfee221e97d68e0a128002bfef1a1b3ea4c88ad46",
+      "bytes": 646
+    },
+    "NZ": {
+      "url": "/games/geo/assets/flags/794a2c8c09796090ab74.svg",
+      "sha256": "794a2c8c09796090ab748a74bc35aed825e701eaddc46b138f300401ac9a25cd",
+      "bytes": 2172
+    },
+    "OM": {
+      "url": "/games/geo/assets/flags/3204f5aa802cf3b2b782.svg",
+      "sha256": "3204f5aa802cf3b2b782ba0ddfd798b42c0ba7c3125606245ac34bbb1cf26cc1",
+      "bytes": 22223
+    },
+    "PA": {
+      "url": "/games/geo/assets/flags/6181586e499d3bafb619.svg",
+      "sha256": "6181586e499d3bafb6190e0304904662dc31fc878ec8efcfab879455c15e83c4",
+      "bytes": 744
+    },
+    "PE": {
+      "url": "/games/geo/assets/flags/e9dd299d453d9c173203.svg",
+      "sha256": "e9dd299d453d9c173203e60f69623ef2148dbee24b2a1763328e94d4dfece05f",
+      "bytes": 186
+    },
+    "PG": {
+      "url": "/games/geo/assets/flags/43e492331c192a947d9b.svg",
+      "sha256": "43e492331c192a947d9bd72ac6e1f4edcab1d86af097b8840faa9ac24e439d97",
+      "bytes": 1608
+    },
+    "PH": {
+      "url": "/games/geo/assets/flags/c3bd5e08ddc5f6dbdfa8.svg",
+      "sha256": "c3bd5e08ddc5f6dbdfa899af9efb45577e3841402e6a7f5d00fef754816b2884",
+      "bytes": 1382
+    },
+    "PK": {
+      "url": "/games/geo/assets/flags/89e851c0d541d8166b29.svg",
+      "sha256": "89e851c0d541d8166b297e13bed97e0cb500bdb4ae48fd83a86b606a078352a8",
+      "bytes": 725
+    },
+    "PL": {
+      "url": "/games/geo/assets/flags/369bb3e14ee718df1ee1.svg",
+      "sha256": "369bb3e14ee718df1ee15fd2fb3ad0dae713f78f622e277710fb2b30a313f2aa",
+      "bytes": 219
+    },
+    "PS": {
+      "url": "/games/geo/assets/flags/5d95ca7526bf8edd90a9.svg",
+      "sha256": "5d95ca7526bf8edd90a913d7de08130688d68b7c2dd2825cbf0dde3a6aec20e3",
+      "bytes": 276
+    },
+    "PT": {
+      "url": "/games/geo/assets/flags/a7a2cf0b44aaaaf4f3bd.svg",
+      "sha256": "a7a2cf0b44aaaaf4f3bdc0ee0fa308ec7085bdfedd3f72da1473d43fd2a569fb",
+      "bytes": 8001
+    },
+    "PW": {
+      "url": "/games/geo/assets/flags/a61ab9d94f2968304eaf.svg",
+      "sha256": "a61ab9d94f2968304eaf62d838e0ba1674977da8a5056beae5776fe912a8e233",
+      "bytes": 466
+    },
+    "PY": {
+      "url": "/games/geo/assets/flags/fe0968470b7910543b23.svg",
+      "sha256": "fe0968470b7910543b23f7621b00cdeeebde8d90cffbd4fbcbfa97783a01cc04",
+      "bytes": 16184
+    },
+    "QA": {
+      "url": "/games/geo/assets/flags/fb955ef352ff3ba1ea98.svg",
+      "sha256": "fb955ef352ff3ba1ea980090c31d5cf15257729d32949d04b18402651e93b986",
+      "bytes": 354
+    },
+    "RO": {
+      "url": "/games/geo/assets/flags/17a3a747fc5e63302aaa.svg",
+      "sha256": "17a3a747fc5e63302aaa670a667e5812f3676f46768e5a3e87b254bd41762840",
+      "bytes": 302
+    },
+    "RS": {
+      "url": "/games/geo/assets/flags/b6e08e2eca1ec4c287e5.svg",
+      "sha256": "b6e08e2eca1ec4c287e5d5d7c36d7d4ad9503ad030133b04cf315f95ab49961c",
+      "bytes": 181634
+    },
+    "RU": {
+      "url": "/games/geo/assets/flags/7100aaae51ff3b6a2bf0.svg",
+      "sha256": "7100aaae51ff3b6a2bf0ca932b3bc518bdc760814725e7cca31d821a26c3dd7c",
+      "bytes": 225
+    },
+    "RW": {
+      "url": "/games/geo/assets/flags/9512100aa3e8079ed378.svg",
+      "sha256": "9512100aa3e8079ed3780e8b3d6cd6a49639d0986ad78a709f81e9d0827b65b2",
+      "bytes": 755
+    },
+    "SA": {
+      "url": "/games/geo/assets/flags/5738c8cfca5fea63587c.svg",
+      "sha256": "5738c8cfca5fea63587cbcf69237996c8ce6283f8016853150686f37311b620e",
+      "bytes": 9968
+    },
+    "SB": {
+      "url": "/games/geo/assets/flags/b34eabf373af639cec1d.svg",
+      "sha256": "b34eabf373af639cec1d7de7c0dff84df6487737f04510efcc356810147c2cfa",
+      "bytes": 940
+    },
+    "SC": {
+      "url": "/games/geo/assets/flags/30cdbe42a1aed2dab0b2.svg",
+      "sha256": "30cdbe42a1aed2dab0b26cb7b510901813cad3289835ef58e07d5ff1b554ec61",
+      "bytes": 317
+    },
+    "SD": {
+      "url": "/games/geo/assets/flags/25b3fa24693ccbb80991.svg",
+      "sha256": "25b3fa24693ccbb80991235e235e9370895f182c509c687e96824faf6b65809a",
+      "bytes": 505
+    },
+    "SE": {
+      "url": "/games/geo/assets/flags/b3b5071e6c1d4a0e3db8.svg",
+      "sha256": "b3b5071e6c1d4a0e3db828bab5c7dfd68d0e90fcf3b25b15e9a2c4f96c1f79c9",
+      "bytes": 209
+    },
+    "SG": {
+      "url": "/games/geo/assets/flags/25de9044c2e2775f7ccf.svg",
+      "sha256": "25de9044c2e2775f7ccf9c1df02dd02342f915715b22c43248452b7ae24079a5",
+      "bytes": 889
+    },
+    "SI": {
+      "url": "/games/geo/assets/flags/3a5e0cac44baaea6b6d8.svg",
+      "sha256": "3a5e0cac44baaea6b6d8e91054844b6ea72764f6dbe363c11ea11fd81203733a",
+      "bytes": 1993
+    },
+    "SK": {
+      "url": "/games/geo/assets/flags/578d0693bc9521433424.svg",
+      "sha256": "578d0693bc95214334248b47c5719dd01cfc9839bd909a726df045d499fabbb6",
+      "bytes": 1182
+    },
+    "SL": {
+      "url": "/games/geo/assets/flags/d0c384b03a037f4eeb6c.svg",
+      "sha256": "d0c384b03a037f4eeb6c967346e3faafb4a09a3706667ac762999e54b55bc647",
+      "bytes": 272
+    },
+    "SM": {
+      "url": "/games/geo/assets/flags/fc3388637c187533a086.svg",
+      "sha256": "fc3388637c187533a086e1a25253cd96ce657bd7d105886624d21addb380af16",
+      "bytes": 15683
+    },
+    "SN": {
+      "url": "/games/geo/assets/flags/6437db13c13fa5cc1b12.svg",
+      "sha256": "6437db13c13fa5cc1b121e6b59739902c6583be6db361260873ce2664f666478",
+      "bytes": 421
+    },
+    "SO": {
+      "url": "/games/geo/assets/flags/249e1acb87efcd0ef0f6.svg",
+      "sha256": "249e1acb87efcd0ef0f685285f14f5063f0bf260e0d28ca462e713c3f6178e7d",
+      "bytes": 483
+    },
+    "SR": {
+      "url": "/games/geo/assets/flags/5194a6af4e0d8a350ba7.svg",
+      "sha256": "5194a6af4e0d8a350ba7c1f66873725a9e1c91f2054fb9e85fc59cf7f7f2c0f2",
+      "bytes": 312
+    },
+    "SS": {
+      "url": "/games/geo/assets/flags/f7ac7017201841eee0b2.svg",
+      "sha256": "f7ac7017201841eee0b261f66be6787200a80fbeadbb869dc6e8823e3b2ec220",
+      "bytes": 398
+    },
+    "ST": {
+      "url": "/games/geo/assets/flags/880c17f94cb564b1818f.svg",
+      "sha256": "880c17f94cb564b1818f604b764ac8c3b87e019d97724a7ebb9e69aa96821238",
+      "bytes": 954
+    },
+    "SV": {
+      "url": "/games/geo/assets/flags/4c2b4e2b8bbb85d6cb97.svg",
+      "sha256": "4c2b4e2b8bbb85d6cb97a5a35399f6fa9f269dc4b4c17591350441b61137041d",
+      "bytes": 77273
+    },
+    "SY": {
+      "url": "/games/geo/assets/flags/04c5e853ade8f2e5585a.svg",
+      "sha256": "04c5e853ade8f2e5585a3c42e9c1a1a80248125acf6a44afa85e9bbf36cd96c5",
+      "bytes": 366
+    },
+    "SZ": {
+      "url": "/games/geo/assets/flags/5d6399c149d143306981.svg",
+      "sha256": "5d6399c149d143306981f386048047b984586b2f85b0cf11fd7aeaa5757a81e9",
+      "bytes": 4663
+    },
+    "TD": {
+      "url": "/games/geo/assets/flags/19a278fbd88e7fa245b4.svg",
+      "sha256": "19a278fbd88e7fa245b44b40a829bd2bc83f4a2b5521feb665cee8d629e2f026",
+      "bytes": 271
+    },
+    "TG": {
+      "url": "/games/geo/assets/flags/f52b955fb48669d14999.svg",
+      "sha256": "f52b955fb48669d149991f511db818761589e8d45ce4dcc84478737cc0156d75",
+      "bytes": 708
+    },
+    "TH": {
+      "url": "/games/geo/assets/flags/329cc0d520536d6eb4b9.svg",
+      "sha256": "329cc0d520536d6eb4b9304105f23650c2d02bbdba8f8696e996dbf166de6f2e",
+      "bytes": 284
+    },
+    "TJ": {
+      "url": "/games/geo/assets/flags/cd1afa9808833e498398.svg",
+      "sha256": "cd1afa9808833e4983986fa8818b73a9e1640f42c827692123a9639220c4a720",
+      "bytes": 1843
+    },
+    "TL": {
+      "url": "/games/geo/assets/flags/09c763aa3e5a48e20923.svg",
+      "sha256": "09c763aa3e5a48e2092348367b0bc93b1bc0536f5b527b31175e493132c55e19",
+      "bytes": 611
+    },
+    "TM": {
+      "url": "/games/geo/assets/flags/378178e3d5c91c62dafd.svg",
+      "sha256": "378178e3d5c91c62dafd0416b3f2b789f9505d26db0aef93dab8f5979ad60841",
+      "bytes": 38349
+    },
+    "TN": {
+      "url": "/games/geo/assets/flags/8e0274e5762a4d5f783e.svg",
+      "sha256": "8e0274e5762a4d5f783e64f1206dd69008454f750de21d3ba61439d0af3c577c",
+      "bytes": 343
+    },
+    "TO": {
+      "url": "/games/geo/assets/flags/b351703fccc1e08a13d2.svg",
+      "sha256": "b351703fccc1e08a13d2d57260dd71bee8280e393030b879b9df1c7ccd3a9538",
+      "bytes": 352
+    },
+    "TR": {
+      "url": "/games/geo/assets/flags/256a1d6afbedb9f73156.svg",
+      "sha256": "256a1d6afbedb9f731566982331a1cd1ad14aba211b8a61d338855879505e74f",
+      "bytes": 549
+    },
+    "TT": {
+      "url": "/games/geo/assets/flags/04c13dcd0b3690f91e75.svg",
+      "sha256": "04c13dcd0b3690f91e752680653def1c2bbe5b4553b9e5dc75748b9339636749",
+      "bytes": 304
+    },
+    "TV": {
+      "url": "/games/geo/assets/flags/d94fa5f107cbacdba297.svg",
+      "sha256": "d94fa5f107cbacdba29731226bc5ad06edc95784e3d29c20e1ea41fe384530b7",
+      "bytes": 1427
+    },
+    "TZ": {
+      "url": "/games/geo/assets/flags/fd317abae009fa3629c5.svg",
+      "sha256": "fd317abae009fa3629c51b82a6b9f1c529a7254406478047734bb52de83611cd",
+      "bytes": 548
+    },
+    "UA": {
+      "url": "/games/geo/assets/flags/2d869c23ebfefb2ae0a6.svg",
+      "sha256": "2d869c23ebfefb2ae0a633297c11dee06fcb666ce7b3ca75eba09b7a1a3a03ac",
+      "bytes": 232
+    },
+    "UG": {
+      "url": "/games/geo/assets/flags/ab6aa03e1324d54ffbed.svg",
+      "sha256": "ab6aa03e1324d54ffbed5ea4560f757797f4729da58fc977527cedd586e928a5",
+      "bytes": 3929
+    },
+    "US": {
+      "url": "/games/geo/assets/flags/e7be4240cf5798792667.svg",
+      "sha256": "e7be4240cf57987926673708f09233be1ab6bdf35acc7b86bd32a263f197a2a7",
+      "bytes": 648
+    },
+    "UY": {
+      "url": "/games/geo/assets/flags/47656c0bf4961a1f7233.svg",
+      "sha256": "47656c0bf4961a1f7233841eb78756cd45d074e7d4061b8a1217bba7754a30fe",
+      "bytes": 1724
+    },
+    "UZ": {
+      "url": "/games/geo/assets/flags/62ce6f1073416e8d3d59.svg",
+      "sha256": "62ce6f1073416e8d3d599639ec8b105f4de167c0730f036e47c650e686c4ff5d",
+      "bytes": 1498
+    },
+    "VA": {
+      "url": "/games/geo/assets/flags/e0c5f2ab3c7cc99a89c8.svg",
+      "sha256": "e0c5f2ab3c7cc99a89c8a0b02253229b5eb7239ed2969103d5f2e49c0de91fc8",
+      "bytes": 28720
+    },
+    "VC": {
+      "url": "/games/geo/assets/flags/4e0a86447af4924dc11f.svg",
+      "sha256": "4e0a86447af4924dc11f26179f5cbb91195451ae766b2f777effe9c5f7cbc8f6",
+      "bytes": 429
+    },
+    "VE": {
+      "url": "/games/geo/assets/flags/5712f1c63ba0bfa25a85.svg",
+      "sha256": "5712f1c63ba0bfa25a853c100cdebfd6698cce98fc2e0ba8d3fab35df541efa1",
+      "bytes": 1206
+    },
+    "VN": {
+      "url": "/games/geo/assets/flags/2355037201315d74581a.svg",
+      "sha256": "2355037201315d74581ab0ad60b5587a29a087d26b0525bdeb8676e64fae5b86",
+      "bytes": 490
+    },
+    "VU": {
+      "url": "/games/geo/assets/flags/57d3b67abf0e57ef73b7.svg",
+      "sha256": "57d3b67abf0e57ef73b71822b7982abc49a9461883e8b60cbc85cf86dab28959",
+      "bytes": 2006
+    },
+    "WS": {
+      "url": "/games/geo/assets/flags/6b1a7ebcce97d75020af.svg",
+      "sha256": "6b1a7ebcce97d75020af84da13b918875ba38ba4535b4d990b2be8985a67b8ad",
+      "bytes": 687
+    },
+    "YE": {
+      "url": "/games/geo/assets/flags/4ad43705cb40095dc7dd.svg",
+      "sha256": "4ad43705cb40095dc7dd16d6981eb2a3f46dcebe879eed54b188c62cf48e9c65",
+      "bytes": 287
+    },
+    "ZA": {
+      "url": "/games/geo/assets/flags/1755a5e16f1c9f5120e4.svg",
+      "sha256": "1755a5e16f1c9f5120e4871e8454bdee663beb4fb4827012bcd02cb9044249c2",
+      "bytes": 860
+    },
+    "ZM": {
+      "url": "/games/geo/assets/flags/2753554062cd3761e53a.svg",
+      "sha256": "2753554062cd3761e53a180c3c8f8e245af622fb6ecf1c02020c79db0ff2d644",
+      "bytes": 5421
+    },
+    "ZW": {
+      "url": "/games/geo/assets/flags/e27fcdcc882d7175cc4c.svg",
+      "sha256": "e27fcdcc882d7175cc4c07542779911043dc56262fe43b42f39bdaca09b762d5",
+      "bytes": 6186
+    }
+  },
+  "map": {
+    "url": "/games/geo/assets/map/world-map.svg",
+    "sha256": "bfc0d0e0935ec8c9837f5e706c3c2799ec6c6703b0a98b8a5dfc828f1d86746f",
+    "bytes": 123622,
+    "projection": "Equirectangular"
+  }
+}

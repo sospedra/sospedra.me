@@ -1,0 +1,198 @@
+import type {
+  AnswerResult,
+  DailyGeoChallenge,
+  MapMode,
+  OfficialGeoRunRecord,
+  PersistedGeoStats,
+  RoundType,
+} from './model'
+
+export interface RoundStatistics {
+  type: RoundType
+  score: number
+  correctAnswers: number
+  totalQuestions: number
+}
+
+export interface GeoRunStatistics {
+  totalScore: number
+  correctAnswers: number
+  totalQuestions: number
+  accuracyPercentage: number
+  bestCorrectStreak: number
+  medianChoiceResponseMs: number | null
+  medianMapErrorKm: number | null
+  rounds: RoundStatistics[]
+}
+
+const median = (values: readonly number[]) => {
+  if (values.length === 0) return null
+
+  const sorted = [...values].sort((left, right) => left - right)
+  const midpoint = Math.floor(sorted.length / 2)
+  if (sorted.length % 2 === 1) return sorted[midpoint]
+
+  return (sorted[midpoint - 1] + sorted[midpoint]) / 2
+}
+
+export const calculateRunStatistics = (
+  challenge: DailyGeoChallenge,
+  answers: readonly AnswerResult[],
+): GeoRunStatistics => {
+  const publishedQuestionIds = new Set(
+    challenge.rounds.flatMap((round) =>
+      round.questions.map((question) => question.id),
+    ),
+  )
+  const orderedAnswers = answers.filter((answer) =>
+    publishedQuestionIds.has(answer.questionId),
+  )
+  const totalQuestions = orderedAnswers.length
+  const correctAnswers = orderedAnswers.filter(
+    (answer) => answer.correct,
+  ).length
+  let streak = 0
+  let bestCorrectStreak = 0
+
+  for (const answer of orderedAnswers) {
+    streak = answer.correct ? streak + 1 : 0
+    bestCorrectStreak = Math.max(bestCorrectStreak, streak)
+  }
+
+  const choiceResponseTimes = orderedAnswers.flatMap((answer) =>
+    answer.roundType === 'map' ? [] : [answer.elapsedMs],
+  )
+  const mapErrors = orderedAnswers.flatMap((answer) =>
+    answer.kind === 'map-pin' && answer.distanceKm !== null
+      ? [answer.distanceKm]
+      : [],
+  )
+  const rounds = challenge.rounds.map((round): RoundStatistics => {
+    const roundAnswers = orderedAnswers.filter(
+      (answer) => answer.roundId === round.id,
+    )
+
+    return {
+      type: round.type,
+      score: roundAnswers.reduce((total, answer) => total + answer.score, 0),
+      correctAnswers: roundAnswers.filter((answer) => answer.correct).length,
+      totalQuestions: roundAnswers.length,
+    }
+  })
+
+  return {
+    totalScore: orderedAnswers.reduce(
+      (total, answer) => total + answer.score,
+      0,
+    ),
+    correctAnswers,
+    totalQuestions,
+    accuracyPercentage:
+      totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0,
+    bestCorrectStreak,
+    medianChoiceResponseMs: median(choiceResponseTimes),
+    medianMapErrorKm: median(mapErrors),
+    rounds,
+  }
+}
+
+export const createOfficialRunRecord = ({
+  answers,
+  challenge,
+  completedAt,
+  mapMode,
+}: {
+  answers: readonly AnswerResult[]
+  challenge: DailyGeoChallenge
+  completedAt: string
+  mapMode: MapMode
+}): OfficialGeoRunRecord => {
+  const statistics = calculateRunStatistics(challenge, answers)
+
+  return {
+    challengeId: challenge.id,
+    publicationDate: challenge.publicationDate,
+    rulesVersion: challenge.rulesVersion,
+    mapMode,
+    completedAt,
+    totalScore: statistics.totalScore,
+    correctAnswers: statistics.correctAnswers,
+    totalQuestions: statistics.totalQuestions,
+    bestStreak: statistics.bestCorrectStreak,
+  }
+}
+
+/**
+ * The first completed result for a challenge remains official.
+ */
+export const recordOfficialRun = (
+  stats: PersistedGeoStats,
+  run: OfficialGeoRunRecord,
+): PersistedGeoStats => {
+  if (stats.runs.some((existing) => existing.challengeId === run.challengeId)) {
+    return stats
+  }
+
+  return {
+    schemaVersion: 1,
+    runs: [...stats.runs, run].sort((left, right) =>
+      left.publicationDate.localeCompare(right.publicationDate),
+    ),
+  }
+}
+
+const utcDayNumber = (date: string) => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date)
+  if (!match) return null
+
+  const year = Number(match[1])
+  const month = Number(match[2])
+  const day = Number(match[3])
+  const timestamp = Date.UTC(year, month - 1, day)
+  const parsed = new Date(timestamp)
+  if (
+    parsed.getUTCFullYear() !== year ||
+    parsed.getUTCMonth() !== month - 1 ||
+    parsed.getUTCDate() !== day
+  ) {
+    return null
+  }
+
+  return Math.floor(timestamp / 86_400_000)
+}
+
+export const calculateDailyPlayStreak = (
+  runs: readonly OfficialGeoRunRecord[],
+) => {
+  const days = [
+    ...new Set(
+      runs.flatMap((run) => {
+        const day = utcDayNumber(run.publicationDate)
+        return day === null ? [] : [day]
+      }),
+    ),
+  ].sort((left, right) => right - left)
+  if (days.length === 0) return 0
+
+  let streak = 1
+  for (let index = 1; index < days.length; index += 1) {
+    if (days[index - 1] - days[index] !== 1) break
+    streak += 1
+  }
+  return streak
+}
+
+export const personalBestFor = (
+  runs: readonly OfficialGeoRunRecord[],
+  rulesVersion: string,
+  mapMode: MapMode,
+) =>
+  runs
+    .filter(
+      (run) => run.rulesVersion === rulesVersion && run.mapMode === mapMode,
+    )
+    .reduce<number | null>(
+      (best, run) =>
+        best === null ? run.totalScore : Math.max(best, run.totalScore),
+      null,
+    )

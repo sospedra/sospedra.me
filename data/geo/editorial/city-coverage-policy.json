@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "policyRevision": "geo-city-coverage-2026-07-27.1",
+  "runtime": {
+    "mode": "committed-generated-snapshot",
+    "networkRequestsAllowed": false
+  },
+  "countryPopulation": {
+    "source": "world-bank",
+    "indicator": "SP.POP.TOTL",
+    "snapshotYear": 2024,
+    "largeCountryThreshold": 10000000,
+    "comparison": "greater-than"
+  },
+  "coverage": {
+    "largeCountryRankedNonCapitalCount": 12,
+    "europePlusRankedNonCapitalCount": 12,
+    "defaultRankedNonCapitalCount": 3,
+    "includeEveryCapital": true,
+    "capitalCountsTowardRankedCount": false,
+    "shortfall": "include-all-eligible-localities-without-padding"
+  },
+  "europePlus": {
+    "description": "UN M49 Europe, including Russia, plus Armenia, Azerbaijan, Cyprus, Georgia, and Türkiye. Only entities in the 194-country editorial roster are eligible.",
+    "countryCodes": [
+      "AD",
+      "AL",
+      "AM",
+      "AT",
+      "AZ",
+      "BA",
+      "BE",
+      "BG",
+      "BY",
+      "CH",
+      "CY",
+      "CZ",
+      "DE",
+      "DK",
+      "EE",
+      "ES",
+      "FI",
+      "FR",
+      "GB",
+      "GE",
+      "GR",
+      "HR",
+      "HU",
+      "IE",
+      "IS",
+      "IT",
+      "LI",
+      "LT",
+      "LU",
+      "LV",
+      "MC",
+      "MD",
+      "ME",
+      "MK",
+      "MT",
+      "NL",
+      "NO",
+      "PL",
+      "PT",
+      "RO",
+      "RS",
+      "RU",
+      "SE",
+      "SI",
+      "SK",
+      "SM",
+      "TR",
+      "UA",
+      "VA"
+    ]
+  },
+  "citySelection": {
+    "source": "geonames",
+    "featureClass": "P",
+    "eligibleFeatureCodes": [
+      "PPL",
+      "PPLA",
+      "PPLA2",
+      "PPLA3",
+      "PPLA4",
+      "PPLA5",
+      "PPLC",
+      "PPLG"
+    ],
+    "ranking": ["population-descending", "geonames-id-ascending"],
+    "capitalEligibilityOverridesFeatureCode": true,
+    "capitalDetection": [
+      "geonames-feature-code-PPLC",
+      "normalized-countryInfo-capital-name"
+    ],
+    "aliases": {
+      "languages": ["en", "es"],
+      "includePreferred": true,
+      "includeShort": true,
+      "includeOtherCurrent": true,
+      "excludeHistoric": true,
+      "excludeColloquial": true
+    }
+  },
+  "difficulty": {
+    "populationRankBands": [
+      { "minimumRank": 1, "maximumRank": 2, "difficulty": 1 },
+      { "minimumRank": 3, "maximumRank": 4, "difficulty": 2 },
+      { "minimumRank": 5, "maximumRank": 7, "difficulty": 3 },
+      { "minimumRank": 8, "maximumRank": null, "difficulty": 4 }
+    ],
+    "capitalMaximumDifficulty": 3
+  }
+}
