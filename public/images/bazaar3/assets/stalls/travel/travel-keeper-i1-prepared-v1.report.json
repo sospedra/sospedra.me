@@ -1,0 +1,31 @@
+{
+  "input": "/Users/sospedra/labs/sospedra.me/public/images/bazaar3/assets/stalls/travel/travel-keeper-i1-candidate-v1.png",
+  "output": "/Users/sospedra/labs/sospedra.me/public/images/bazaar3/assets/stalls/travel/travel-keeper-i1-prepared-v1.png",
+  "sourceLogicalCanvas": {
+    "width": 320,
+    "height": 420
+  },
+  "scaledStage": {
+    "width": 112,
+    "height": 147,
+    "left": 100,
+    "top": 173
+  },
+  "outputCanvas": {
+    "width": 960,
+    "height": 1264
+  },
+  "logicalBbox": {
+    "x": 101,
+    "y": 195,
+    "width": 102,
+    "height": 91,
+    "pixels": 5954
+  },
+  "outputBbox": {
+    "x": 303,
+    "y": 585,
+    "width": 306,
+    "height": 273
+  }
+}

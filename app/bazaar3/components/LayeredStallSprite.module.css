@@ -1,0 +1,190 @@
+.stage {
+  --sprite-idle-duration: 2800ms;
+  --sprite-hover-duration: 600ms;
+
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 960px;
+  aspect-ratio: 960 / 1264;
+  overflow: hidden;
+  isolation: isolate;
+  contain: layout paint style;
+  touch-action: manipulation;
+  image-rendering: pixelated;
+}
+
+.stage:focus-visible {
+  outline: 3px solid #37f7e0;
+  outline-offset: 3px;
+}
+
+/*
+ * Every bitmap occupies the same full authored canvas. There is deliberately
+ * no per-frame position, scale, object-position or transform escape hatch.
+ */
+.layer {
+  position: absolute;
+  inset: 0;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+  image-rendering: pixelated;
+}
+
+.stage[data-ready="false"] .layer {
+  visibility: hidden;
+}
+
+.stage[data-validation="invalid"] .layer {
+  visibility: hidden;
+}
+
+.rear {
+  z-index: 0;
+}
+
+.effectsBehind {
+  z-index: 1;
+}
+
+.keeper {
+  z-index: 2;
+}
+
+.effectsOver {
+  z-index: 3;
+}
+
+.front {
+  z-index: 4;
+}
+
+.idleFirst {
+  opacity: 1;
+  animation: spriteIdleFirst var(--sprite-idle-duration) steps(1, end) infinite;
+}
+
+.idleSecond {
+  opacity: 0;
+  animation: spriteIdleSecond var(--sprite-idle-duration) steps(1, end) infinite;
+}
+
+.hoverFrame {
+  opacity: 0;
+}
+
+.stage[data-active="true"] .idleFirst,
+.stage[data-active="true"] .idleSecond {
+  animation: none;
+  opacity: 0;
+}
+
+.stage[data-active="true"] .hoverFirst {
+  animation: spriteHoverFirst var(--sprite-hover-duration) steps(1, end) both;
+}
+
+.stage[data-active="true"] .hoverMiddle {
+  animation: spriteHoverMiddle var(--sprite-hover-duration) steps(1, end) both;
+}
+
+.stage[data-active="true"] .hoverLast {
+  animation: spriteHoverLast var(--sprite-hover-duration) steps(1, end) both;
+}
+
+.stage[data-ready="false"] .animatedLayer {
+  animation-play-state: paused;
+}
+
+@keyframes spriteIdleSecond {
+  0%,
+  84.99%,
+  96%,
+  100% {
+    opacity: 0;
+  }
+
+  85%,
+  95.99% {
+    opacity: 1;
+  }
+}
+
+@keyframes spriteIdleFirst {
+  0%,
+  84.99%,
+  96%,
+  100% {
+    opacity: 1;
+  }
+
+  85%,
+  95.99% {
+    opacity: 0;
+  }
+}
+
+@keyframes spriteHoverFirst {
+  0%,
+  33.32% {
+    opacity: 1;
+  }
+
+  33.33%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes spriteHoverMiddle {
+  0%,
+  33.32% {
+    opacity: 0;
+  }
+
+  33.33%,
+  66.65% {
+    opacity: 1;
+  }
+
+  66.66%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes spriteHoverLast {
+  0%,
+  66.65% {
+    opacity: 0;
+  }
+
+  66.66%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .idleFirst {
+    animation: none;
+    opacity: 1;
+  }
+
+  .idleSecond,
+  .hoverFrame,
+  .stage[data-active="true"] .hoverFirst,
+  .stage[data-active="true"] .hoverMiddle {
+    animation: none;
+    opacity: 0;
+  }
+
+  .stage[data-active="true"] .hoverLast {
+    animation: none;
+    opacity: 1;
+  }
+}

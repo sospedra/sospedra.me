@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORDERS: the eight places</title>
+<style>
+  body { margin: 0; padding: 24px; background: #0d0a1e; color: #d6dbe6; font: 14px/1.5 ui-monospace, Menlo, monospace; }
+  h1 { font-size: 16px; color: #37f7e0; }
+  nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  nav button { padding: 8px 14px; border: 2px solid #2a2545; background: #131022; color: #8891a8;
+    font: inherit; cursor: pointer; }
+  nav button.active { border-color: #37f7e0; color: #37f7e0; }
+  .copy { padding: 10px 18px; border: 2px solid #37f7e0; background: #12202b; color: #37f7e0;
+    font: inherit; cursor: pointer; margin-bottom: 12px; }
+  .copy:hover { background: #1a2f3f; }
+  section { display: none; }
+  section.active { display: block; }
+  pre { white-space: pre-wrap; background: #131022; border: 1px solid #2a2545; padding: 20px; max-width: 900px; }
+  .note { color: #e0a040; margin: 0 0 10px; }
+</style>
+</head>
+<body>
+<h1>the eight places - standalone codex orders</h1>
+<nav id="tabs"></nav>
+
+<!-- ============ TRAVEL ============ -->
+<section data-tab="travel">
+<button class="copy">Copy travel</button>
+<pre>Generate exactly ONE PNG image. This instruction is standalone and complete: no previous context exists. Read it all, then verify every line of the final checklist before delivering.
+
+== WHAT THIS IS ==
+
+A production sprite for a 2D pixel-art game: ONE free-standing space-travel agency booth photographed alone against a flat magenta backing. An OBJECT with an irregular silhouette, not a poster, not a card. Magenta surrounds it on all sides.
+
+== MOOD BLEND (this defines the whole image) ==
+
+Two flavors mixed deeply, not side by side:
+1. OUTER WILDS energy: a cozy, handmade, backyard space program. Wooden beams and canvas next to riveted scrap metal; instruments that look hand-built and loved; hand-drawn star charts; a canvas-and-brass space suit patched at the elbows; warm campfire-colored lantern light; a sense that these people REALLY go to space, in a ship held together by enthusiasm.
+2. SKETCHY CRUISE AGENCY: this cozy space program sells tourist cruises it probably shouldn't: taped-over prices, a fire-sale "LAST SEATS" strip, crooked stamps, a captain who is half officer, half smuggler.
+The result: a warm, hand-built, slightly illegal space-travel booth. NOT sleek sci-fi, NOT chrome, NOT holographic-corporate.
+
+== PIXEL GRID (absolute rule) ==
+
+The art must look AUTHORED AT LOW RESOLUTION: drawn on a 341 x 421 pixel grid, upscaled 3x with nearest neighbor. Every visible art pixel is a 3x3 block. No detail smaller than one block. Fine hatching, smooth curves, thin 1-px lines = wrong image. Deliver pixel art, not an illustration.
+
+== CANVAS AND UNITS ==
+
+- Canvas: exactly 1024 x 1264 px. 1 unit (u) = 8 px (128 x 158 u).
+- Background: flat pure MAGENTA #ff00ff. No magenta inside the art.
+- A standing adult human is 70 u = 560 px. Rects are x-left, y-top in px from the top-left. Tolerance 10%.
+
+== DEPTH AXIS (quantified - the background HAS distance, use these numbers) ==
+
+Depth is measured in units (u) straight away from the viewer: depth 0 is the nearest plane, and this booth is 40 u = 5 meters deep in total. The camera is LOW: about 12 degrees above horizontal, so depth compresses hard. Two hard conversion rules, calibrated pixel-by-pixel against our approved ramen-bar reference:
+1. GROUND CONTACT: an object standing at depth d touches the ground at canvas y = 1232 - 1.6*d. Nearer objects stand slightly LOWER on the canvas; the spread is subtle, about 64 px across the full 40 u.
+2. ATMOSPHERE: each ~12 u of depth costs one shading step; the deepest plane is near-black.
+Plane depths and contacts:
+- FOREGROUND supply crates and the little model rocket: depth 0-6 u, contacts y 1232 to y 1222.
+- DESK front face: depth 10 u, skirt touches y 1216; its top band (see camera law) spans depth 10-24 u.
+- THE CAPTAIN: depth 24 u, feet (hidden) at y 1194.
+- INTERIOR: ship-log board, shelves, suit rack: depth 34 u, base line y 1178, one step darker.
+- BACK WALL: depth 40 u = 5 m, near-black at its edges.
+- AWNING + hanging sign + lanterns: overhang the front at depth 0-4 u, above everything.
+Two elements at different depths must NEVER share a contact y, but keep the offsets SMALL: this is a flat, low camera, not a top-down view.
+
+== SILHOUETTE MAP (against magenta, top to bottom) ==
+
+1. y 96-204: THE AWNING, x 32-992 (widest): a patched CANVAS tarp over a crooked WOODEN beam frame, shallow sloped top band (y 96-180), edge hanging in loose waves (y 180-204). A thin weathervane rocket may poke above it.
+2. y 180-300: THE SIGN, x 320-704, hanging on two ropes in front of the awning edge.
+3. y 220-340: two LANTERNS at x 72-152 and x 872-952: glass-and-brass camp lanterns on ropes, warm amber cores.
+4. y 204-1080: THE BODY, x 64-960: interior box between two posts - LEFT post is a rough wooden beam, RIGHT post is riveted salvaged hull plate (the mixed construction shows).
+5. y 898-1080: THE DESK, x 96-928.
+6. y 950-1232: FOREGROUND: left x 8-232 wooden supply crates with rope handles and a rolled sleeping bag; right x 792-1016 a knee-high MODEL ROCKET of wood and patched metal on a launch cradle plus a battered fuel canister.
+7. y 1080-1232: desk lower skirt to ground line y 1232. 8. y 1232-1248: flat shadow strips. Magenta below.
+
+== STRUCTURAL ANATOMY ==
+
+AWNING: faded rust-orange and cream canvas stripes, patched with mismatched cloth squares, stitched seams, rope-tied to the wooden beams. Underside casts a dark band on the interior top (y 204-260).
+SIGN (x 320-704, y 180-300): a thick WOODEN plank hung by two ropes, slightly crooked: the word exactly "travel" (lowercase) BURNED into the wood in round letters, with a small hand-painted rocket-with-wings crest at its left. Unlike everything else it is freshly oiled and cared for - the one pristine thing, an authority the business does not deserve.
+INTERIOR (x 112-912, y 204-1080, dim, warm):
+- THE SHIP-LOG BOARD (the centerpiece of the back wall, x 380-700, y 300-620): a cork board with pinned photo cards of destinations (each an unreadable tiny landscape: a purple planet, a ringed gas giant, a cracked moon) CONNECTED BY RED STRING between pins, detective-board style.
+- LEFT: shelves with rolled hand-drawn star charts, a stack of ticket books, a jar of marshmallows, a small banjo leaning against the shelf.
+- RIGHT: a patched canvas SPACE SUIT on a wooden hanger (brass helmet with a round glass face hanging beside it), and a rail of 5 boarding-pass tags on strings.
+- Wall bits: a taped "LAST SEATS" strip (x 190-330, y 720), two crooked price tags with taped-over corrections near the desk, one poster of spiral alien calligraphy (elegant curling glyph lines, unreadable).
+POSTS: left, a rough wooden beam with carved tally marks; right, riveted hull plates with rough welds. Crisp straight outer silhouette edges.
+DESK (front x 96-928, y 920-1080; top band y 898-920): RECTANGULAR, square corners; top band exactly 22 px tall (14 u of depth at the 0.2 compression - measured off the ramen reference), flat, parallel edges, no ellipse. A THIN band: if the visible desk top is taller than ~25 px the camera is wrong. The desk itself is half wood planks, half riveted metal sheet - visibly two salvage halves bolted together. Props ON the band, left to right:
+ 1. ORRERY at x 170-300: a hand-built brass-and-wood mechanical model of a tiny star system: a warm lamp-lit sun sphere at center, three little planets on bent wire arms, one visibly repaired with tape.
+ 2. TICKET PRESS at x 380-470: a hand-cranked stamping machine with a lever and one ticket mid-stamp.
+ 3. SIGNALSCOPE at x 560-700: a wooden-and-brass trumpet-shaped scope on a small tripod, angled up as if listening to space, a faint cyan wave-arc drawn above its horn (flat halo bands).
+ 4. LAMP clipped at x 790-880: a camp lantern, visible amber flame-bulb, tight warm pool on the band.
+Front face: wood planks left half, patched hull plate right half, a small hand-painted rocket-with-wings emblem at center. Lower skirt darker with a rope bumper along the bottom.
+FOREGROUND: left crates stenciled with unreadable scribbles, rope handles, a rolled sleeping bag on top (they travel WITH you); right the model rocket - wooden nose cone, patched metal body, little fins, standing on a launch cradle of sticks, next to a rusted fuel canister. Both overlap the desk corners, nearest plane.
+THE CHARACTER (centerline x 512, head top y ~640): a non-humanoid alien SPACESHIP captain, half captain half smuggler, dressed for the handmade space age. Stocky amphibian build, GREEN skin with teal spots, wide frog-like head, webbed three-fingered hands, TWO arms, no tentacles. He wears a patched CANVAS-AND-BRASS space suit (chest toggles of carved wood, hose fitting at the collar, elbows patched with different cloth) with a captain's cap bearing the rocket-with-wings badge. Smuggler half: fingerless gloves, a low-slung tool belt, one gold tooth in a flat grin, a faded cargo-manifest tattoo on the forearm. Standing 60 u = 480 px, hidden below the waist by the desk. One gloved hand rests flat on the desk band (NO ship wheel exists in this image), the other holds a stamped ticket. Clean unobstructed silhouette.
+
+== CAMERA (axonometric) ==
+
+Frontal oblique top-down (RPG Maker "3/4 view"), with a LOW camera: about 12 degrees of elevation, calibrated against our approved ramen-bar reference. Parallel projection: no vanishing point, no horizon, no rotation.
+1. Vertical faces dead straight-on, full scale, parallel to the screen; not isometric, no 30/45 views.
+2. Horizontal tops below the eye line = flat parallel BANDS going straight up-canvas at ONE-FIFTH scale (1 u of depth = 1.6 px vertical). Tops are THIN slivers, not table surfaces: the desk band is 22 px on a 160 px-tall desk. Anything rounder or taller = regenerate.
+3. ROUND TOPS (lantern caps, orrery base, canisters, pot rims): drawn as shallow ellipse bands with height = 0.2 x width, exactly like the stool tops in the reference. A round top with height over 0.25 x width = wrong camera, regenerate.
+4. Eye line 48 u above ground (y 848).
+5. AWNING EXCEPTION: the awning may show a shallow sloped TOP band (up to 12 u at one-fifth scale, so about 20 px) plus edge and underside shade - the only visible top.
+6. Side faces never visible. 7. Shadows fall straight down.
+
+== AGE AND GRIME ==
+
+Everything except the sign is handmade salvage, worn but LOVED: patched canvas, carved and dented wood, oxidized brass, taped repairs, rope lashings, grime in the corners. Warm decay, not ruin. Nothing factory-new, nothing chrome, nothing sleek. The sign alone is cared for. A clean corporate travel kiosk = wrong image.
+
+== LIGHTING MODEL ==
+
+Dark ambience, warm-leaning, exactly FIVE practical sources: the two rope lanterns (amber), the camp lantern on the desk (amber pool), the orrery's tiny sun (warm core with a small halo), and the signalscope's faint cyan arc. Everything outside these pools 40-60% darker; interior edges near-black. Every lit pixel traces to one source.
+
+== COLOR BUDGET ==
+
+~60% neutral structure: dark wood browns, gunmetal, black-blue, deep violet shadow. ~40% accents: faded rust-orange and cream canvas, oxidized brass, warm amber light, one cyan instrument glow, the captain's green skin with teal spots. Warmer than the rest of the bazaar but still nocturnal. Gold never dominates a surface.
+
+== RENDERING STYLE ==
+
+Chunky 16-bit-inspired pixel art per the PIXEL GRID rule, matching the rendering of our approved ramen-bar reference EXACTLY: the same 3x3 chunk size, the same heavy dark outline weight, the same 3-tone hard banding, the same low color count. Flat colors, strong outlines, simplified in rendering NOT in layout. One 3x3-block near-black (#14101f) outline per major silhouette. Exactly 3 tones per material (base + hard shadow band + hard highlight band). ~28 colors. Glow = 1-2 flat halo bands. Sparse checker dither only at band edges. No anti-aliasing, painterly rendering, photorealism, vignettes, frames.
+
+== PROHIBITED ==
+
+Sleek or corporate sci-fi. Chrome surfaces. Holographic interfaces. Illustration-grade detail breaking the 3x3 grid. One flat wall with no depth planes. Poster-filling the canvas. Even or cheerful lighting. Ship wheels. Anchors or any sea iconography. Radar dishes or radar screens (the signalscope and orrery replaced them). Rounded desks, elliptical tabletops. Isometric views, vanishing points. Environment behind the booth. Extra characters. Readable text besides "travel" and "LAST SEATS". Watermarks.
+
+== FINAL SELF-CHECK (regenerate on any failure) ==
+
+1. Art reads as 3x-upscaled low-res pixel art; no fine lines; chunk size and outline weight match the ramen reference. 2. Booth WIDE (awning x 32-992); magenta on all four sides; irregular silhouette. 3. The Outer-Wilds mix is visible: wood + canvas + brass handmade construction, ship-log string board, orrery, signalscope, patched space suit on its hanger. 4. Sign: rope-hung wooden plank, wood-burned "travel", rocket-with-wings crest, slightly crooked, the only cared-for object. 5. Desk half wood half metal; top band exactly 22 px, straight and THIN; round tops are 0.2-ratio ellipse slivers. 6. Desk props in order: orrery (x~235), ticket press (x~425), signalscope (x~630), camp lantern (x~835). NO wheel, NO radar dish. 7. Foreground: crates + sleeping bag left, model rocket on launch cradle + canister right, overlapping desk corners on ground line y 1232. 8. Captain 480 px at x 512: green skin, two arms, canvas-and-brass suit, rocket-badge cap, fingerless gloves, tool belt, gold tooth. 9. Warm dark ambience, five pools. 10. All loved salvage except the pristine sign. 11. Flat colors, 3-tone bands, ~28 colors. 12. No green outside skin, no magenta inside art.
+13. The camera reads as LOW (about 12 degrees): thin top bands, shallow 0.2 ellipses, subtle contact offsets - like the reference, not a 30-degree tabletop view.</pre>
+</section>
+
+<!-- ============ GAMES ============ -->
+<section data-tab="games">
+<button class="copy">Copy games</button>
+<pre>Generate exactly ONE PNG image. This instruction is standalone and complete: no previous context exists. Read it all, then verify the final checklist before delivering.
+
+== WHAT THIS IS ==
+
+A production sprite for a 2D pixel-art game: ONE free-standing kids' arcade stand photographed alone against a flat green backing. An OBJECT with an irregular silhouette, not a poster, not a card. Green surrounds it on all sides.
+
+== PIXEL GRID (absolute rule) ==
+
+The art must look AUTHORED AT LOW RESOLUTION: drawn on a 235 x 277 grid, upscaled 3x nearest neighbor. Every art pixel is a 3x3 block. No detail smaller than one block. Fine hatching, smooth curves, 1-px lines = wrong image.
+
+== CANVAS AND UNITS ==
+
+- Canvas: exactly 704 x 832 px. 1 unit (u) = 8 px (88 x 104 u).
+- Background: flat pure GREEN #00ff00. No green tones inside the art (any green object becomes teal or blue).
+- A standing adult human is 70 u = 560 px. Rects in px from the top-left. Tolerance 10%.
+
+== DEPTH MODEL (five planes, depth = overlap) ==
+
+1. FOREGROUND plastic bins of cartridges and tangled controllers flanking on the ground. 2. THE KIDS standing in the open front. 3. THE FRAME: plank posts and top beam with fairy lights. 4. INTERIOR CONTENTS: arcade cabinet and console shelves. 5. BACK WALL planks, darkest. No countertop exists: the front is OPEN, a visitor could walk in.
+
+== DEPTH AXIS (quantified - the background HAS distance, use these numbers) ==
+
+Depth is measured in units (u) straight away from the viewer: depth 0 is the nearest plane, and this place is 32 u = 4 meters deep in total. Two hard conversion rules under the camera law:
+1. GROUND CONTACT: an object standing at depth d touches the ground at canvas y = 800 - 4*d. Each unit of depth raises its contact 4 px up the canvas. Nearer objects stand LOWER on the canvas.
+2. ATMOSPHERE: each ~12 u of depth costs one shading step: the nearest plane is fully lit by its light pools, the deepest plane is near-black.
+
+Plane depths and resulting ground contacts:
+- FOREGROUND bins: depth 0-4 u, contacts y 800 to y 784.
+- THE KIDS: depth 8 u, feet at y 768.
+- FRAME posts and crate step: depth 12 u, contacts y 752.
+- ARCADE CABINET and shelves: depth 20 u, bases y 720, one step darker.
+- BACK WALL planks: depth 32 u = 4 m, near-black corners.
+Draw every element at its computed contact line; two elements at different depths must NEVER share a contact y.
+
+== SILHOUETTE MAP (against green, top to bottom) ==
+
+1. y 32-144: THE SIGN, x 176-528: a kid's hand-painted board nailed crooked (4-6 degrees) to the top beam.
+2. y 144-192: TOP BEAM, x 64-640: mismatched planks; a string of fairy lights droops below it in two sags.
+3. y 192-768: THE BODY, x 64-640: open-front box between two plank posts (x 64-104 and x 600-640).
+4. y 950-... none: no desk. The interior and kids are visible straight through the open front.
+5. y 610-800: FOREGROUND BINS breaking the flanks: left x 16-168, right x 536-688, on the ground.
+6. Ground line y 800. y 800-816: flat cast-shadow strips. Green below and above everything else.
+
+== STRUCTURAL ANATOMY ==
+
+SIGN (x 176-528, y 32-144): raw plank board painted by a kid: "games" in wobbly uneven letters, drips running down, the "s" painted backwards then crossed out and repainted beside it, leftover paint splotches, two bent nails.
+FRAME: lemonade-stand-grade build: mismatched plank posts and beam, visible nail heads, one crate used as a step at the front-left inside. Fairy lights: a wire with 9-11 small warm bulbs sagging in two arcs under the beam, each bulb a 2-3 block dot with a tiny flat halo.
+INTERIOR (x 104-600, y 192-768): back wall of vertical planks, dim. LEFT: one full ARCADE CABINET x 128-280, y 288-736: chunky cabinet with marquee, glowing blue screen (the brightest thing in the image), joystick panel, side art sticker peeling. RIGHT: shelf unit x 420-584, y 320-736 stacked with old consoles (chunky gray and black boxes with colored buttons), piles of cartridges, coiled controller cables in a plastic tub. Nothing readable: labels are scribbles.
+THE KIDS (the heart of the image, standing center in the open front, on the ground line):
+- OLDER SISTER: 52 u = 416 px tall, feet at y 800, head top y 384. Brown hair in a messy ponytail, oversized hoodie, holding ONE handheld console (Switch-like: a small tablet with two colored side pads) at chest height with both hands.
+- YOUNGER BROTHER: 44 u = 352 px, feet at y 800, head top y 448. Black hair, striped tee, leaning into her arm to watch the handheld screen, one hand pointing at it.
+- They stand shoulder to shoulder, sister centerline x 330, brother x 425, both absorbed in the little screen: its glow lights their faces from below. Clean silhouettes, nothing crossing in front (extracted later as sprites).
+FOREGROUND BINS: left x 16-168 y 610-800: two stacked plastic crates overflowing with cartridges; right x 536-688 y 640-800: a bin of tangled controllers with one joystick hanging over the edge. Both overlap the posts, nearest plane.
+
+== CAMERA (axonometric) ==
+
+Frontal oblique top-down (RPG Maker "3/4 view"). Parallel projection: no vanishing point, no rotation. Vertical faces straight-on and full scale; not isometric. Horizontal tops below the 48 u eye line (y 416) = flat bands going up-canvas at half scale (1 u = 4 px): bin rims and the crate step show such bands. No ellipses. Side faces never visible. Shadows straight down.
+
+== AGE AND GRIME ==
+
+Everything is improvised and worn but LOVED: scuffed planks, mismatched nails, tape repairs, sticker residue - kid-built, not ruined. No polish, no symmetry. The arcade cabinet is second-hand: faded art, one dent.
+
+== LIGHTING MODEL ==
+
+Dark ambience, exactly THREE sources: the arcade screen's blue glow (dominant, washing the interior left side), the fairy lights' warm dots (small halos along the beam), and the handheld's tiny glow on the kids' faces. Outside these pools 40-60% darker; back wall corners near-black.
+
+== COLOR BUDGET ==
+
+~65% neutral: raw plank browns, dark walnut, black-blue shadow. ~35% accents: arcade blue glow, cartridge grays and reds, fairy-light amber, the kids' clothes (hoodie dusty blue, striped tee rust/cream). No green anywhere.
+
+== RENDERING STYLE ==
+
+Chunky 16-bit-inspired pixel art per the PIXEL GRID rule. Flat colors, strong outlines. One 3x3-block near-black outline per silhouette; exactly 3 tones per material; ~26 colors; glow = flat halo bands; sparse checker dither only. No anti-aliasing, no gradients, no painterly rendering.
+
+== PROHIBITED ==
+
+Countertops or any barrier across the front. Illustration-grade detail. Flat depthless composition. Clean toy-store styling. Readable brand names or real logos (all labels are scribbles; the handheld is generic). Isometric views. Environment behind the stand. Extra characters. Text besides "games". Watermarks.
+
+== FINAL SELF-CHECK ==
+
+1. 3x-upscaled pixel-art look, no fine lines. 2. Green on all four sides; irregular silhouette (sign crooked on top, bins breaking flanks). 3. Open front: no counter, kids fully visible feet to head. 4. Sign reads exactly "games", wobbly, one letter repainted. 5. Sister 416 px at x 330 with the handheld; brother 352 px at x 425 leaning in. 6. Arcade cabinet glowing blue inside-left; console shelves inside-right. 7. Three light pools only. 8. No green inside the art, no readable labels.</pre>
+</section>
+
+<!-- ============ MANUAL ============ -->
+<section data-tab="manual">
+<button class="copy">Copy manual</button>
+<pre>Generate exactly ONE PNG image. This instruction is standalone and complete: no previous context exists. Read it all, then verify the final checklist before delivering.
+
+== WHAT THIS IS ==
+
+A production sprite for a 2D pixel-art game: ONE free-standing scrap-merchant stall photographed alone against a flat green backing. An OBJECT with an irregular silhouette. Green surrounds it on all sides.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn on a 288 x 341 grid, upscaled 3x nearest neighbor. Every art pixel is a 3x3 block. No finer detail anywhere. Fine hatching or 1-px lines = wrong image.
+
+== CANVAS AND UNITS ==
+
+- Canvas: exactly 864 x 1024 px. 1 unit (u) = 8 px (108 x 128 u).
+- Background: flat pure GREEN #00ff00. No green tones inside the art (greenish scrap becomes teal or olive-brown, never chroma green).
+- A standing adult human is 70 u = 560 px. Rects in px from top-left. Tolerance 10%.
+
+== DEPTH MODEL (six planes, depth = overlap) ==
+
+1. FOREGROUND: paint cans and tool crates flanking on the ground, overlapping the counter corners. 2. HANGING scrap-banner sign. 3. The COUNTER whose front face is a bins grid, plus its top band with goods. 4. THE ROBOT floating behind the counter. 5. INTERIOR shelves crammed to the ceiling. 6. BACK WALL, darkest. One flat wall = wrong image.
+
+== DEPTH AXIS (quantified - the background HAS distance, use these numbers) ==
+
+Depth is measured in units (u) straight away from the viewer: depth 0 is the nearest plane, and this place is 36 u = 4.5 meters deep in total. Two hard conversion rules under the camera law:
+1. GROUND CONTACT: an object standing at depth d touches the ground at canvas y = 992 - 4*d. Each unit of depth raises its contact 4 px up the canvas. Nearer objects stand LOWER on the canvas.
+2. ATMOSPHERE: each ~12 u of depth costs one shading step: the nearest plane is fully lit by its light pools, the deepest plane is near-black.
+
+Plane depths and resulting ground contacts:
+- FOREGROUND paint cans / tool crate: depth 0-5 u, contacts y 992 to y 972.
+- COUNTER (bins-grid front): depth 9 u, base y 956; its 40 px top band spans depth 9-19 u.
+- THE ROBOT: depth 22 u, hover-glow base at y 904.
+- INTERIOR shelving: depth 30 u, base y 872, one step darker.
+- BACK WALL: depth 36 u = 4.5 m, near-black edges.
+- SIGN banner: hangs over the front at depth 2 u.
+Draw every element at its computed contact line; two elements at different depths must NEVER share a contact y.
+
+== SILHOUETTE MAP (against green, top to bottom) ==
+
+1. y 32-140: THE SIGN, x 128-736: a banner stitched from scrap metal sheets and fabric patches, hung crooked from two chains off the frame top.
+2. y 140-830: THE BODY, x 80-784: interior box between salvaged angle-iron posts (x 80-120 and x 744-784).
+3. y 640-830: THE COUNTER, x 96-768, in front of the body: top band y 640-680, bins-grid front face y 680-830.
+4. y 700-992: FOREGROUND stacks breaking the flanks: left paint cans + brushes x 16-200, right crate of tools + coiled cable x 584-848. On the ground, overlapping counter corners.
+5. y 830-992: counter base skirt to ground line y 992. 6. y 992-1008: flat shadow strips. Green everywhere else.
+
+== STRUCTURAL ANATOMY ==
+
+SIGN (x 128-736, y 32-140): patchwork banner: three metal sheets riveted to two fabric strips, "manual" painted unevenly across all five pieces, letters jumping baseline, one letter on fabric half-faded. Hung by chains, sagging slightly at center.
+BODY/INTERIOR (x 120-744, y 140-680, dim): floor-to-ceiling salvaged shelving crammed with organized chaos: stacked electronics (radios, keyboards, circuit boards), jars of screws, pen cups and paper bundles, spare parts, a hanging bicycle wheel, coiled wires. One cyan WORK LAMP clamped to a shelf at x 620 y 240, casting a cold pool on the right shelves. Everything is a chunky readable silhouette; labels are scribbles. Edges near-black.
+THE COUNTER: the star of the stall. Front face (y 680-830) is a Marrakesh-spice-shop GRID of open compartments: 3 rows x 7 columns of wooden bins, each ~88x48 px, each holding a DIFFERENT pile with its own color: screws (gray), fuses (amber), knobs (cream), chips (dark green-teal), springs (steel blue), washers (copper), cable bits (mixed). Bins tilt forward slightly showing their contents as flat heaps. Top band (y 640-680, exactly 40 px, straight parallel edges): a brass scale, a parts tray, and a handwritten price stand (scribbles).
+THE ROBOT (behind the counter, centerline x 400): a floating salvage robot in the spirit of a Fallout Codsworth: a tarnished-chrome SPHERE body 48 u = 384 px tall (from thruster flame base y 640 up to dome top y 256), three articulated EYE-STALKS on top, and FOUR arms: one sorting a bin, one holding a feather duster, one holding a wrench, one folded. A soft downward thruster glow keeps it hovering at counter height. Dented chrome, oxidized copper panels, one mismatched bolted patch. Clean silhouette, nothing crossing it.
+FOREGROUND: left x 16-200 y 700-992: stacked paint cans (lids crusted, drips), brushes in a jar. Right x 584-848 y 730-992: an open crate of hand tools and a coil of heavy cable. Nearest plane, overlapping the counter corners.
+
+== CAMERA (axonometric) ==
+
+Frontal oblique top-down (RPG Maker "3/4 view"). Parallel projection: no vanishing point, no rotation. Vertical faces straight-on, full scale; not isometric. Horizontal tops below the 48 u eye line (y 608) = flat bands going up-canvas at half scale: the counter top band (40 px) and the bin heaps. No ellipses. Side faces never visible. Shadows straight down.
+
+== AGE AND GRIME ==
+
+Everything is salvage: dents, rust blooms, oxidized copper, peeling paint, taped repairs, grime in every corner. Nothing clean or symmetrical. This stall has NO pristine element: even the sign is junk.
+
+== LIGHTING MODEL ==
+
+Dark ambience, exactly THREE sources: the cyan work lamp (cold pool on the right shelves), a bare warm bulb hanging under the sign (small amber pool on the counter center), and the robot's soft thruster glow beneath it. Outside these pools 40-60% darker; edges near-black.
+
+== COLOR BUDGET ==
+
+~65% neutral: gunmetal, rusted iron browns, dark walnut, black-blue. ~35% accents: oxidized copper, tarnished chrome, cyan lamp, amber bulb, bin-content colors as small patches. No chroma green.
+
+== RENDERING STYLE ==
+
+Chunky 16-bit pixel art per the PIXEL GRID rule. Flat colors, strong outlines, 3 tones per material, ~28 colors, flat halo glows, sparse checker dither only. No anti-aliasing, gradients, painterly rendering.
+
+== PROHIBITED ==
+
+Illustration-grade micro-detail. Flat depthless wall. Poster-filling. Clean styling. Humanoid robot (it is a floating sphere with arms). Readable text besides "manual". Isometric views. Environment behind the stall. Extra characters. Watermarks.
+
+== FINAL SELF-CHECK ==
+
+1. 3x-upscaled pixel-art look. 2. Green on all four sides, irregular silhouette. 3. Six overlapping depth planes. 4. Banner sign reads exactly "manual" across stitched scrap pieces, crooked. 5. Counter front = 3x7 bins grid, each bin a distinct pile; top band exactly 40 px, straight. 6. Robot: floating chrome sphere, three eye-stalks, four arms, thruster glow, 384 px at x 400, behind the counter. 7. Foreground cans and tool crate overlap the counter corners on ground line y 992. 8. Three light pools; edges near-black. 9. All junk, no pristine element. 10. No green inside the art.</pre>
+</section>
+
+<!-- ============ USES ============ -->
+<section data-tab="uses">
+<p class="note">Already shipped: the ramen masterpiece is mounted as this place. This order exists only for future re-rolls.</p>
+<button class="copy">Copy uses</button>
+<pre>Generate exactly ONE PNG image. This instruction is standalone and complete: no previous context exists.
+
+== WHAT THIS IS ==
+
+A production sprite for a 2D pixel-art game: ONE free-standing Japanese ramen bar photographed alone against a flat green backing. An OBJECT with an irregular silhouette. Green on all sides.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn on a ~427 x 341 grid, upscaled 3x nearest neighbor. Every art pixel is a 3x3 block; nothing finer exists.
+
+== CANVAS AND UNITS ==
+
+- Canvas: exactly 1280 x 1024 px. 1 u = 8 px (160 x 128 u). Background flat pure GREEN #00ff00; no green in the art.
+- A standing adult human is 70 u = 560 px. Tolerance 10%.
+
+== DEPTH MODEL (six planes) ==
+
+1. FOREGROUND: bottle crates left, box stack right, three bar stools, two seated CUSTOMERS with their backs to the viewer overlapping the counter. 2. HANGING sign and two red lanterns on the awning face. 3. STRIPED AWNING overhanging with sloped top band. 4. COUNTER with visible top band (bowls, tip jar). 5. THE CHEF behind the counter. 6. INTERIOR kitchen wall: shelves, pots, steam, menu strips - darkest at edges.
+
+== DEPTH AXIS (quantified - the background HAS distance, use these numbers) ==
+
+Depth is measured in units (u) straight away from the viewer: depth 0 is the nearest plane, and this place is 40 u = 5 meters deep in total. Two hard conversion rules under the camera law:
+1. GROUND CONTACT: an object standing at depth d touches the ground at canvas y = 992 - 4*d. Each unit of depth raises its contact 4 px up the canvas. Nearer objects stand LOWER on the canvas.
+2. ATMOSPHERE: each ~12 u of depth costs one shading step: the nearest plane is fully lit by its light pools, the deepest plane is near-black.
+
+Plane depths and resulting ground contacts:
+- FOREGROUND crates / box stack: depth 0-4 u, contacts y 992 to y 976.
+- STOOLS + seated CUSTOMERS: depth 6 u, stool feet y 968.
+- COUNTER front: depth 12 u, base y 944; its 40 px top band spans depth 12-22 u.
+- THE CHEF: depth 26 u, feet (hidden) at y 888.
+- KITCHEN back wall (shelves, pots, menu): depth 40 u = 5 m, near-black edges.
+- AWNING + sign + lanterns: overhang at depth 0-4 u.
+Draw every element at its computed contact line; two elements at different depths must NEVER share a contact y.
+
+== KEY CONTENT ==
+
+- AWNING: patched stripes (dirty red / cream / one purple and one slate stripe), scalloped, a small vent pipe poking above, sloped top band up to 12 u at half scale.
+- SIGN: a crooked wooden board hung by ropes from the awning center: "uses" in brush-calligraphy latin, warm white with red outline, and smaller "ラーメン" in faded amber beneath. Exact spellings.
+- LANTERNS: two round RED paper lanterns with amber cores and a painted crest, one per awning corner.
+- COUNTER: full width, wooden, its top band exactly 40 px (straight, no ellipse) carrying two noodle bowls, a tip jar with folded notes, chopstick cup. Front face: vertical wood slats with a patched metal sheet.
+- CHEF: old Japanese man, thin, white hair tied back, folded arms, dark apron over rolled-sleeve shirt, standing centered behind the counter, 70 u = 560 px, hidden below the waist. Stern face, kind eyes.
+- CUSTOMERS (foreground, backs to viewer, on stools, apart, not adjacent): one broad adult in a worn patched jacket (seated 48 u = 384 px), one smaller figure in a purple hoodie with a cat patch (seated 42 u = 336 px). Center stool empty.
+- INTERIOR: shelf rows of stacked bowls, steaming pots with flat-band steam wisps, hanging ladles, a menu board of unreadable hand-written paper strips, one cyan gadget glowing on a shelf.
+- FOREGROUND FLANKS: left, red bottle crates with green-free bottles (amber glass); right, stacked cardboard and a rice sack.
+
+== CAMERA / STYLE / LIGHT (same laws as the whole set) ==
+
+Axonometric frontal oblique top-down; vertical faces straight-on; horizontal tops = flat half-scale bands; awning exception for its sloped top; no isometric, no vanishing points, no ellipses. Dark ambience: lantern glow, one bare bulb, steam catching light; edges near-black. All salvage and patina, warm reds and ambers as the accent exception of the bazaar (~35%), neutrals elsewhere. Chunky 16-bit pixel art: 3x3 blocks, 3 tones per material, flat halo glows, ~28 colors, strong outlines. No anti-aliasing, gradients, painterly rendering, readable text besides "uses" and "ラーメン", watermarks.
+
+== FINAL SELF-CHECK ==
+
+1. Pixel-grid look. 2. Green surrounds an irregular silhouette. 3. Six overlapping planes with seated customers overlapping the counter. 4. Sign exactly "uses" + "ラーメン", rope-hung, crooked. 5. Counter band 40 px straight. 6. Chef 560 px folded arms; customers 384 px and 336 px backs-to-viewer, apart. 7. Practical light pools only. 8. No green in art.</pre>
+</section>
+
+<!-- ============ CONSOLE ============ -->
+<section data-tab="console">
+<button class="copy">Copy console</button>
+<pre>Generate exactly ONE PNG image. This instruction is standalone and complete: no previous context exists. Read it all, then verify the final checklist before delivering.
+
+== WHAT THIS IS ==
+
+A production sprite for a 2D pixel-art game: ONE merchant "place" that is NOT a stall - a hacker's den on a carpet, photographed alone against a flat magenta backing. An OBJECT group with an irregular silhouette. Magenta on all sides.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn on a 256 x 277 grid, upscaled 3x nearest neighbor. Every art pixel is a 3x3 block; nothing finer.
+
+== CANVAS AND UNITS ==
+
+- Canvas: exactly 768 x 832 px. 1 u = 8 px (96 x 104 u).
+- Background: flat pure MAGENTA #ff00ff (this scene contains green CRT light, so the backing is magenta). No magenta/pink tones inside the art.
+- A standing adult human is 70 u = 560 px. Rects in px from top-left. Tolerance 10%.
+
+== DEPTH MODEL (five planes, depth = overlap) ==
+
+1. FOREGROUND: coiled cables, an open pizza-like box and small boxes spilling toward the viewer, overlapping the carpet edge. 2. THE GIRL seated cross-legged on the carpet, center. 3. THE SIGN POLE planted behind-right of her. 4. FLANK TOWERS: server racks, CRT stacks, HDD towers, cardboard boxes - the tallest things, framing a junk canyon. 5. BACK ROW: lower boxes and a rack in gloom, darkest.
+
+== DEPTH AXIS (quantified - the background HAS distance, use these numbers) ==
+
+Depth is measured in units (u) straight away from the viewer: depth 0 is the nearest plane, and this place is 32 u = 4 meters deep in total. Two hard conversion rules under the camera law:
+1. GROUND CONTACT: an object standing at depth d touches the ground at canvas y = 800 - 4*d. Each unit of depth raises its contact 4 px up the canvas. Nearer objects stand LOWER on the canvas.
+2. ATMOSPHERE: each ~12 u of depth costs one shading step: the nearest plane is fully lit by its light pools, the deepest plane is near-black.
+
+Plane depths and resulting ground contacts:
+- FOREGROUND cable spill and boxes: depth 0-4 u, contacts y 800 to y 784.
+- THE CARPET: spans depth 6-30 u (its flat band on canvas is exactly (30-6)*4 = 96 px tall).
+- THE GIRL: seated at depth 14 u, base y 744.
+- SIGN POLE in its rubble box: depth 18 u, box base y 728.
+- FLANK TOWERS (racks, CRTs, boxes): depth 22 u, bases y 712, one step darker.
+- BACK ROW: depth 32 u = 4 m, near-black.
+Draw every element at its computed contact line; two elements at different depths must NEVER share a contact y.
+
+== SILHOUETTE MAP (against magenta, top to bottom) ==
+
+1. y 240-352: THE SIGN plate on its pole at x 460-660 (plate ~200x90 px), ABOVE the girl's head.
+2. y 224-800: LEFT TOWER x 32-224: stacked server racks + two CRTs, the tallest mass (~72 u tall).
+3. y 256-800: RIGHT TOWER x 544-736: HDD towers + cardboard boxes, nearly as tall. The sign pole (x ~560, 12 px wide) rises through this side from a rubble box at y 640 up to the plate.
+4. y 448-800: BACK ROW between the towers, x 224-544: lower racks and boxes in gloom.
+5. y 560-800: THE GIRL seated center x ~370 on the carpet.
+6. y 720-816: THE CARPET, x 208-560: a worn rug drawn as a flat half-scale band (top edge straight, sides straight, 96 px tall on canvas = 24 u of depth).
+7. y 640-800: FOREGROUND spill: cables and small boxes at x 160-300 and x 460-620 overlapping the carpet's front edge. Ground line y 800; shadow strips y 800-816. Magenta everywhere else.
+
+== STRUCTURAL ANATOMY ==
+
+SIGN: a salvaged STREET-SIGN POLE (galvanized, bent 3 degrees) planted upright in a rubble-filled box; on top, the original rectangular street plate graffitied over: "console" sprayed in terminal-style lettering with a crude ARROW pointing DOWN at the carpet. The plate sits clearly ABOVE the girl's head.
+LEFT TOWER: 3 stacked 19-inch server racks (ventilation slits, blinking amber LEDs, one missing panel) with two dead CRT monitors on top, one cracked. Cables drape from rack to floor.
+RIGHT TOWER: a column of external HDD towers and battered cardboard boxes (unreadable marker scribbles), a keyboard sticking out of one box.
+BACK ROW: two lower racks and box piles fading into gloom.
+THE CARPET: worn oriental-ish rug, frayed edge, pattern reduced to chunky geometric marks, drawn as a flat band per the camera law (no ellipse).
+THE GIRL (seated cross-legged center on the carpet, centerline x 370): wiry hacker girl, seated height 48 u = 384 px (head top y 416, base y 800). Big goggles pushed onto her forehead, short wild RED hair, white tank top, shorts, barefoot. A chunky LAPTOP on her lap, lid covered in stickers, screen tilted up: its green-on-black terminal glow lights her face and knees. She is mid-typing. Clean silhouette: cables pass BESIDE her, never in front (extracted later as a sprite).
+FOREGROUND SPILL: fat coiled cables, a multi-plug strip glowing one amber dot, two small boxes, an energy-drink can - overlapping the carpet's front edge, nearest plane.
+
+== CAMERA (axonometric) ==
+
+Frontal oblique top-down (RPG Maker "3/4 view"). Parallel projection: no vanishing point, no rotation. Vertical faces straight-on, full scale; not isometric. Horizontal tops below the 48 u eye line (y 416) = flat half-scale bands: the CARPET is the biggest such band (96 px), rack tops show 8-16 px bands. No ellipses. Side faces never visible. Shadows straight down.
+
+== AGE AND GRIME ==
+
+Everything is scavenged e-waste: scuffed racks, yellowed plastics, dust, cable chaos, coffee rings on boxes. Lived-in mess (Cowboy-Bebop-Ed energy), not destroyed. No pristine element.
+
+== LIGHTING MODEL ==
+
+Dark ambience, exactly THREE sources: the laptop's green terminal glow (dominant, on her face, chest, knees and the carpet before her), scattered amber LED dots on the racks (tiny flat halos), and one bare hanging bulb far right (weak warm pool on the right tower). Outside pools 40-60% darker; back row near-black.
+
+== COLOR BUDGET ==
+
+~65% neutral: rack beige-gray, gunmetal, cardboard brown, black-blue shadow. ~35% accents: terminal green glow (light only - no green painted surfaces), amber LEDs, her red hair, cable colors as small ticks. No magenta/pink inside the art.
+
+== RENDERING STYLE ==
+
+Chunky 16-bit pixel art per the PIXEL GRID rule: 3x3 blocks, one near-black outline per silhouette, 3 tones per material, ~26 colors, flat halo glows, sparse checker dither. No anti-aliasing, gradients, painterly rendering.
+
+== PROHIBITED ==
+
+Any stall structure, counter or booth. Illustration-grade detail. Flat depthless composition. Readable text besides "console". Pink/magenta tones in the art. Isometric views, ellipses (especially the carpet). Environment/floor beyond the described props and shadow strips. Extra characters. Watermarks.
+
+== FINAL SELF-CHECK ==
+
+1. Pixel-grid look. 2. Magenta on all four sides; irregular junk-canyon silhouette. 3. Towers taller than everything, girl framed low between them. 4. Sign plate reads exactly "console" with a down arrow, ABOVE her head on a bent pole planted in rubble. 5. Carpet = flat band, no ellipse. 6. Girl 384 px seated at x 370: goggles, red hair, white tank top, laptop glow green-on-black. 7. Foreground cables/boxes overlap the carpet edge. 8. Three light sources; back row near-black. 9. No pink in art, no green painted surfaces (green exists only as light).</pre>
+</section>
+
+<!-- ============ TALKS ============ -->
+<section data-tab="talks">
+<button class="copy">Copy talks</button>
+<pre>Generate exactly ONE PNG image. This instruction is standalone and complete: no previous context exists. Read it all, then verify the final checklist before delivering.
+
+== WHAT THIS IS ==
+
+A production sprite for a 2D pixel-art game: ONE free-standing 90s VIDEO CLUB stall photographed alone against a flat green backing. An OBJECT with an irregular silhouette. Green on all sides.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn on a 299 x 421 grid, upscaled 3x nearest neighbor. Every art pixel is a 3x3 block; nothing finer. Fine hatching or 1-px lines = wrong image.
+
+== CANVAS AND UNITS ==
+
+- Canvas: exactly 896 x 1264 px. 1 u = 8 px (112 x 158 u).
+- Background: flat pure GREEN #00ff00. No green tones inside the art (spines and posters use every faded color EXCEPT green; teal allowed).
+- A standing adult human is 70 u = 560 px. Rects in px from top-left. Tolerance 10%.
+
+== DEPTH AXIS (quantified - the background HAS distance, use these numbers) ==
+
+Depth is measured in units (u) straight away from the viewer: depth 0 is the nearest plane, and this place is 36 u = 4.5 meters deep in total. Two hard conversion rules:
+1. GROUND CONTACT: an object standing at depth d touches the ground at canvas y = 1232 - 4*d. Nearer objects stand LOWER on the canvas.
+2. ATMOSPHERE: each ~12 u of depth costs one shading step; the deepest plane is near-black.
+
+Plane depths and contacts:
+- BARGAIN BIN and cardboard STANDEE (foreground): depth 0-4 u, contacts y 1232 to y 1216.
+- COUNTER front: depth 9 u, base y 1196; its 40 px top band spans depth 9-19 u.
+- THE CLERK leaning on the counter: depth 22 u, feet (hidden) at y 1144.
+- SIDE SHELF AISLES (left and right walls of the shop, drawn frontal): depth 24 u, bases y 1136, one step darker.
+- BACK WALL shelving + chart: depth 36 u = 4.5 m, base y 1088, near-black corners.
+- ROOF SIGN: on the roof plane above the shop front (depth 8 u).
+Draw every element at its computed contact line; two elements at different depths must NEVER share a contact y.
+
+== SILHOUETTE MAP (against green, top to bottom) ==
+
+1. y 48-300: THE ROOF SIGN, x 200-696: a GIANT VHS CASSETTE sculpture lying flat-frontal on the roof, oversized for the shop, mounted on two rusty struts (y 300-360 with green visible between them).
+2. y 360-1080: THE SHOP BOX, x 96-800, between salvaged posts (x 96-136, x 760-800).
+3. y 880-1080: THE COUNTER, x 128-768: top band y 880-920 (40 px), front face y 920-1080.
+4. y 1000-1232: FOREGROUND: left BARGAIN BIN x 24-192; right CARDBOARD STANDEE x 704-872. On the ground, overlapping the counter corners.
+5. y 1080-1232: counter base skirt down to ground line y 1232; shadow strips y 1232-1248. Green everywhere else.
+
+== STRUCTURAL ANATOMY ==
+
+THE ROOF SIGN (x 200-696, y 48-300): a huge VHS tape drawn frontal: black shell with chunky spool windows (two big reels visible, one fuller than the other), a peeling white label across its middle with "talks" hand-markered in fat 90s letters, one corner of the label lifting. A dead neon tube outlines the shell, only its bottom edge segment still lit (small amber-pink halo). Rust streaks under the struts.
+THE SHOP FRONT: a 90s video-club facade: cracked plastic fascia strip along the top edge of the box (y 360-420) in faded blue with a yellow torn-ticket motif, backlight dead on one half. Under it, the open shop.
+INTERIOR (x 136-760, y 420-880, dim - this is a real ROOM with depth):
+- BACK WALL (depth 36 u): shelving packed with VHS spines in faded reds/blues/oranges/cream; above it a hand-drawn TOP 10 chart poster (ten unreadable scribble lines, gold star) and two movie posters with peeling corners (unreadable art: one sci-fi with a purple planet, one action with an explosion silhouette).
+- LEFT AISLE SHELF (depth 24 u, drawn frontal at x 152-296): a full CASSETTE TAPE wall: small colorful tape spines in rows, a "2 for 1" splash sticker (scribbles).
+- RIGHT AISLE SHELF (depth 24 u, x 600-744): VINYL crates on a low shelf with flip-through records, a boombox on top playing (small equalizer bars glowing teal).
+- Hanging from the ceiling: a paper mobile of a star and a rocket (video-store promo energy), slightly crooked.
+THE COUNTER (front x 128-768, y 920-1080; top band y 880-920, exactly 40 px, straight, no ellipse): ON the band, left to right: a small CRT TV playing static (blue-white flicker, rabbit ears), a TAPE REWINDER mid-rewind, a membership-card index box with tabs, a bell. Front face: wood veneer peeling at one corner, sticker residue, a taped hand-written note (scribbles), a "be kind rewind" style pictogram sticker (no readable words).
+THE CLERK (behind the counter, centerline x 448): a young Congolese Black woman, braided hair tied back, big hoop earrings, retro mustard store vest over a black tee, name tag (scribble). She LEANS on the counter, visibly bored: right elbow planted on the band, that hand holding her head; left arm lying crossed in front, its hand near the right elbow. Standing height 65 u = 520 px, drawn in the lean (head top ~y 640). Deadpan face lit faintly by the CRT static. Clean silhouette, nothing crossing her.
+FOREGROUND: left x 24-192 y 1000-1232: a wheeled BARGAIN BIN overflowing with loose tapes, a "3 credits" scribble sign taped to it. Right x 704-872 y 1030-1232: a battered CARDBOARD STANDEE of a generic action hero (faded, torn at the shoulder, propped by a visible strut). Both stand nearest to the viewer and overlap the counter corners.
+
+== CAMERA (axonometric) ==
+
+Frontal oblique top-down (RPG Maker "3/4 view"). Parallel projection: no vanishing point, no rotation. Vertical faces straight-on, full scale; not isometric; the aisle shelves are drawn as frontal panels at their depth, never angled. Horizontal tops below the 48 u eye line (y 848) = flat half-scale bands: the counter band, bin rim, shelf tops. The roof sign is far above the eye line: frontal only, no top surface. No ellipses. Shadows straight down.
+
+== AGE AND GRIME ==
+
+Everything is a decade past its prime: sun-faded spines, peeling veneer and labels, rust streaks, dead neon, dust lines on shelves, worn carpet-colored floor edge. Be-kind-rewind melancholy. No pristine element - even the giant tape is weathered.
+
+== LIGHTING MODEL ==
+
+Dark ambience, exactly FOUR sources: the CRT's static blue-white flicker (on her face and the counter), an amber counter lamp clipped to the back wall shelf, the boombox's teal equalizer glow, and the roof sign's single surviving neon segment. Outside pools 40-60% darker; back-wall corners near-black.
+
+== COLOR BUDGET ==
+
+~65% neutral: dark walnut shelving, gunmetal, black-blue. ~35% accents: faded spine reds/blues/oranges/cream, mustard vest, amber lamp, CRT blue-white, teal equalizer. No green anywhere.
+
+== RENDERING STYLE ==
+
+Chunky 16-bit pixel art per the PIXEL GRID rule: 3x3 blocks, near-black outlines, 3 tones per material, ~28 colors, flat halo glows, sparse checker dither. No anti-aliasing, gradients, painterly rendering.
+
+== PROHIBITED ==
+
+Billboards on lattice towers (the roof sign is the giant VHS tape). Illustration-grade detail. Flat depthless wall. Perky or smiling clerk (she is bored). Readable text besides "talks". Real brand names or logos. Green tones. Isometric views, ellipses. Environment behind the stall. Extra characters. Watermarks.
+
+== FINAL SELF-CHECK ==
+
+1. Pixel-grid look. 2. Green on all four sides; the giant VHS tape dominates the silhouette top, struts showing green between them. 3. Tape label reads exactly "talks" in fat marker letters, one lifting corner, one lit neon segment. 4. Interior reads deep: back wall (36 u) darker than aisles (24 u) darker than counter (9 u); contacts follow y = 1232 - 4*d. 5. Cassette wall left aisle, vinyl + boombox right aisle, top-10 chart and two posters on the back wall. 6. Counter band exactly 40 px: CRT static, rewinder, card box, bell. 7. Clerk leaning bored: elbow planted, hand holding head, other arm crossed. 8. Bargain bin and standee overlap the counter corners at the ground line. 9. Four light pools; corners near-black. 10. No green in art, nothing readable but "talks".</pre>
+</section>
+
+<!-- ============ PAPERS ============ -->
+<section data-tab="papers">
+<button class="copy">Copy papers</button>
+<pre>Generate exactly ONE PNG image. This instruction is standalone and complete: no previous context exists. Read it all, then verify the final checklist before delivering.
+
+== WHAT THIS IS ==
+
+A production sprite for a 2D pixel-art game: ONE free-standing news kiosk photographed alone against a flat green backing. An OBJECT with an irregular silhouette. Green on all sides.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn on a 288 x 341 grid, upscaled 3x nearest neighbor. Every art pixel is a 3x3 block; nothing finer.
+
+== CANVAS AND UNITS ==
+
+- Canvas: exactly 864 x 1024 px. 1 u = 8 px (108 x 128 u).
+- Background: flat pure GREEN #00ff00. No green tones inside the art.
+- A standing adult human is 70 u = 560 px. Rects in px from top-left. Tolerance 10%.
+
+== DEPTH MODEL (six planes, depth = overlap) ==
+
+1. FOREGROUND: two freestanding newspaper racks on the ground in FRONT of the kiosk, with a walk-in gap between them. 2. THE CANOPY projecting forward with its fabric valance (which IS the sign). 3. THE COUNTER WINDOW sill with goods. 4. THE HOLOGRAM bookkeeper behind the window. 5. INTERIOR rack walls of papers and books. 6. THE KIOSK BOX, darkest at edges.
+
+== DEPTH AXIS (quantified - the background HAS distance, use these numbers) ==
+
+Depth is measured in units (u) straight away from the viewer: depth 0 is the nearest plane, and this place is 36 u = 4.5 meters deep in total. Two hard conversion rules under the camera law:
+1. GROUND CONTACT: an object standing at depth d touches the ground at canvas y = 992 - 4*d. Each unit of depth raises its contact 4 px up the canvas. Nearer objects stand LOWER on the canvas.
+2. ATMOSPHERE: each ~12 u of depth costs one shading step: the nearest plane is fully lit by its light pools, the deepest plane is near-black.
+
+Plane depths and resulting ground contacts:
+- FOREGROUND freestanding racks: depth 0-5 u, contacts y 992 to y 972.
+- WALK-IN GAP: depth 5-12 u of clear floor between racks and kiosk.
+- KIOSK front / counter window sill: depth 12 u, base y 944; sill band spans depth 12-22 u.
+- THE HOLOGRAM: depth 24 u, emitter glow base at y 896.
+- INTERIOR racks: depth 30 u, one step darker.
+- BACK OF KIOSK: depth 36 u = 4.5 m, near-black.
+- CANOPY + valance: overhang forward at depth 0-6 u, above everything.
+Draw every element at its computed contact line; two elements at different depths must NEVER share a contact y.
+
+== SILHOUETTE MAP (against green, top to bottom) ==
+
+1. y 64-150: CANOPY sloped top band, x 48-816 (the widest element), receding up-and-back at half scale.
+2. y 150-256: the VALANCE: a scalloped hanging fabric strip along the canopy's front edge, carrying the sign text.
+3. y 256-860: THE KIOSK BOX, x 96-768: a rounded-shouldered news kiosk between corner posts.
+4. y 620-860: the COUNTER WINDOW: sill band y 620-660 (40 px), open window above it x 256-608 where the hologram stands.
+5. y 640-992: FOREGROUND RACKS: left x 32-224, right x 640-832, freestanding on the ground, a clear walk-in gap between them and the kiosk. They overlap the kiosk's lower corners.
+6. y 860-992: kiosk base skirt to ground line y 992; shadow strips y 992-1008. Green everywhere else.
+
+== STRUCTURAL ANATOMY ==
+
+CANOPY + VALANCE: a metal-ribbed canopy projecting forward; its scalloped fabric valance (Spanish bar-awning style) carries the sign: "papers" printed across the scallops in stencil letters, one scallop segment SUN-BLEACHED almost white, another TORN and hanging. Faded teal-and-cream stripes.
+KIOSK BOX (x 96-768): classic street news kiosk built from salvaged panels: side wings angled INWARD (drawn frontal, as stepped flat facets, not perspective), each wing covered in magazine clip racks (covers = unreadable color blocks). Corner posts riveted. Roof line under the canopy carries a dead clock (hands missing).
+COUNTER WINDOW: sill band exactly 40 px straight, carrying a stack of today's papers (top one turned toward the viewer with unreadable headline blocks), a jar of pens, a small brass bell, and the hologram EMITTER puck (see character).
+INTERIOR (x 256-608 around the window, dim): shelves of newspaper bundles tied with string, book spines, a sorting tray. Edges near-black.
+THE HOLOGRAM (behind the window, centerline x 432): a bookkeeper projected from the emitter puck on the sill: middle-aged, round glasses, cardigan over a collared shirt, neat side-parted hair, a folded paper under one arm. Rendered entirely in MONOCHROME CYAN-BLUE with horizontal scanline dither bands (every 4th block skipped), edges softly stepped, feet DISSOLVING into the emitter's small glow cone 20 px above the sill. Height 65 u = 520 px (head top ~y 240 behind the window arch). All pixels opaque: translucency is faked by color and dither only. Clean silhouette.
+FOREGROUND RACKS: two wire newspaper racks, each x-width ~192 px, standing closer to the viewer: angled display rows (drawn as stepped flat bands) full of folded papers and magazines, unreadable covers, one rack with a hanging plastic bag of postcards. They overlap the kiosk's lower corners; the center gap stays clear so a visitor could walk to the window.
+
+== CAMERA (axonometric) ==
+
+Frontal oblique top-down (RPG Maker "3/4 view"). Parallel projection: no vanishing point, no rotation. Vertical faces straight-on, full scale; not isometric; the kiosk's angled wings are drawn as stepped frontal facets. Horizontal tops below the 48 u eye line (y 608) = flat half-scale bands: the sill band, rack shelf bands. CANOPY EXCEPTION: the canopy shows a shallow sloped top band (up to 12 u at half scale) plus valance and underside shade - the only visible top. No ellipses. Shadows straight down.
+
+== AGE AND GRIME ==
+
+The kiosk is decades old: faded paint, rust at rivets, yellowed papers, string-tied bundles, taped cracks. The hologram is the only "new" thing - and even it glitches. No polish anywhere else.
+
+== LIGHTING MODEL ==
+
+Dark ambience, exactly THREE sources: the hologram's cyan glow (dominant: on the sill, the window frame, the papers), a warm strip light under the canopy (soft pool on the sill and racks' tops), and the emitter puck's tiny core. Outside pools 40-60% darker; kiosk edges near-black.
+
+== COLOR BUDGET ==
+
+~65% neutral: newsprint gray, cream, ink black, gunmetal, dark walnut. ~35% accents: hologram cyan, faded teal valance stripes, warm strip light, magazine color blocks as small patches. No green anywhere.
+
+== RENDERING STYLE ==
+
+Chunky 16-bit pixel art per the PIXEL GRID rule: 3x3 blocks, near-black outlines, 3 tones per material, ~26 colors, flat halo glows, scanline dither ONLY on the hologram. No anti-aliasing, gradients, painterly rendering.
+
+== PROHIBITED ==
+
+Illustration-grade detail. Flat depthless wall. Racks blocking the walk-in gap. A solid-flesh bookkeeper (he is a cyan hologram). Readable text besides "papers". Green tones. Isometric views, ellipses. Environment behind the kiosk. Extra characters. Watermarks.
+
+== FINAL SELF-CHECK ==
+
+1. Pixel-grid look. 2. Green on all four sides; canopy widest, racks breaking the flanks. 3. Valance carries exactly "papers" across scallops, one bleached, one torn. 4. Sill band exactly 40 px with papers, pens, bell, emitter puck. 5. Hologram: cyan monochrome, scanline dither, feet dissolving into the emitter glow, glasses, cardigan, 520 px. 6. Foreground racks freestanding with a clear center gap, overlapping kiosk corners. 7. Three light pools; edges near-black. 8. No green in art; hologram is cyan-blue, never green.</pre>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section data-tab="projects">
+<button class="copy">Copy projects</button>
+<pre>Generate exactly ONE PNG image. This instruction is standalone and complete: no previous context exists. Read it all, then verify the final checklist before delivering.
+
+== WHAT THIS IS ==
+
+A production sprite for a 2D pixel-art game: ONE free-standing ROOFLESS garden shop photographed alone against a flat magenta backing. An OBJECT with an irregular, plant-broken silhouette. Magenta on all sides. There is NO greenhouse, NO glass, NO roof of any kind: the shop is open to the air, and its top silhouette is a ragged line of foliage and posts against the magenta.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn on a 320 x 421 grid, upscaled 3x nearest neighbor. Every art pixel is a 3x3 block; nothing finer. Foliage is chunky leaf CLUSTERS, never fine fronds.
+
+== CANVAS AND UNITS ==
+
+- Canvas: exactly 960 x 1264 px. 1 u = 8 px (120 x 158 u).
+- Background: flat pure MAGENTA #ff00ff (the scene is full of green plants). No magenta tones inside the art; alien blooms use muted violet or dusty rose, never hot pink.
+- A standing adult human is 70 u = 560 px. Rects in px from top-left. Tolerance 10%.
+
+== DEPTH AXIS (quantified - the background HAS distance, use these numbers) ==
+
+Depth is measured in units (u) straight away from the viewer: depth 0 is the nearest plane, and this shop is 40 u = 5 meters deep in total. Two hard conversion rules:
+1. GROUND CONTACT: an object standing at depth d touches the ground at canvas y = 1232 - 4*d. Nearer objects stand LOWER on the canvas.
+2. ATMOSPHERE: each ~12 u of depth costs one shading step; the deepest plane is near-black.
+Plane depths and contacts:
+- FOREGROUND spilled pots and foliage mounds: depth 0-5 u, contacts y 1232 to y 1212.
+- DISPLAY TABLES of potted plants: depth 8 u, legs at y 1200.
+- THE ROBOT GARDENER: depth 16 u, feet at y 1168.
+- SHELF-TRELLIS WALLS (left and right wings): depth 24 u, bases y 1136, one step darker.
+- BACK TRELLIS WALL with dense vines: depth 40 u = 5 m, base y 1072, near-black behind the leaves.
+- SIGN: hangs on the front-left post plane at depth 6 u.
+Two elements at different depths must NEVER share a contact y.
+
+== SILHOUETTE MAP (against magenta, top to bottom) ==
+
+1. y 64-240: the tops of two tall rusty IRON POSTS (x 120-168 and x 792-840) and the ragged crowns of the tallest plants between and around them - an open, roofless, irregular top line. One string of small warm bulbs sags between the two posts (its lowest point ~y 300). Magenta shows through all the gaps.
+2. y 320-480: THE SIGN, x 96-312, hanging by a rope from the left post, slightly askew.
+3. y 240-1136: the SHOP BODY, x 88-872: left and right shelf-trellis wings drowning in vines, an open entry gap in the center (x 360-600) with no door and no bars, the back trellis visible through it, darker.
+4. y 900-1232: FOREGROUND spill: cracked pots, a toppled watering bucket, chunky leaf mounds at x 8-260 and x 690-952, overlapping the shop base at both flanks.
+5. Ground line y 1232; shadow strips y 1232-1248. Magenta everywhere else.
+
+== STRUCTURAL ANATOMY ==
+
+THE FRAME: two tall rusty iron posts (riveted, one slightly bent) and low iron rails - the remains of a market pergola whose roof is long gone. Rope lashings and a pulley on the left post. The string lights hang post to post: 9-11 warm bulbs, each a 2-3 block dot with a flat halo.
+THE WINGS (x 88-360 and x 600-872, depth 24 u): tiered wooden shelf-trellis walls packed with potted plants: chunky monstera-like leaves, hanging tendrils, seed trays, stacked terracotta, a barrel of soil, a tool rack (shears, trowel, hand rake). Vines climb every upright and spill over the tops.
+THE BACK TRELLIS (through the entry gap, depth 40 u): a dense vine-covered lattice fading to near-black, one dim seed-lamp glowing violet among the leaves.
+DISPLAY TABLES (depth 8 u): two low wooden tables in front of the wings, each crowded with small potted plants and seedlings in trays; one price stick per table (unreadable scribbles).
+THE SIGN (x 96-312, y 320-480): a hand-made wooden board hung from a rope knotted on the left post: "projects" carved and painted in worn white, edges chipped, swaying 4 degrees askew. Everything else is overgrown; the sign is merely old.
+THE ROBOT GARDENER (in the entry gap, centerline x 480, depth 16 u): a SLIM, clearly MECHANICAL humanoid robot, 75 u = 600 px tall (head top ~y 568, feet y 1168): thin cylindrical limbs with exposed piston actuators and cable bundles at the joints, a narrow segmented torso frame you can see through in places, oversized three-fingered gripper hands, a small rectangular head unit with two round lens-eyes (one dimmer) and a tiny antenna. Weathered olive-gray plating with moss patches on the shoulders and one vine wrapped around the left forearm. It wears a canvas GARDENER'S APRON with tool pockets, and tilts a dented watering can over a potted seedling with both grippers. Gentle stooped posture. Clean silhouette, nothing crossing it.
+THE ALIEN ANIMALS (two, resting, uncaged, UNMISTAKABLY not Earth animals):
+1. draped over the right wing's top shelf: a slow six-limbed creature (~110 px) with velvet indigo skin, THREE amber eyes in a vertical row, moss growing on its back, and a curled bioluminescent tail tip (dusty-rose glow dot). Eyes half closed, dozing.
+2. curled at a pot's base left of the entry: a small round creature (~60 px) with translucent-looking dorsal fins, FOUR stubby legs, two feather-antennae, and a belly that emits a soft dusty-rose light (flat halo). No fur, no cat/dog/sloth anatomy.
+FOREGROUND SPILL: cracked clay pots (one tipped, soil spilling), a rusted watering bucket on its side, chunky leaf mounds - nearest plane, overlapping the shop base at both flanks.
+
+== CAMERA (axonometric) ==
+
+Frontal oblique top-down (RPG Maker "3/4 view"). Parallel projection: no vanishing point, no rotation. Vertical faces straight-on, full scale; not isometric. Horizontal tops below the 48 u eye line (y 848) = flat half-scale bands: table tops, shelf tops, pot rims (shallow flat bands, never ellipses). There is no roof and therefore no roof surface at all. Shadows fall straight down.
+
+== AGE AND GRIME ==
+
+The iron frame is a rusted relic; the wood is warped and split; the pots are chipped. The plants are the only thriving thing - overgrowth swallowing the structure. Warm decay, alive. No pristine element.
+
+== LIGHTING MODEL ==
+
+Dark ambience, exactly THREE sources: the string lights (dominant: warm dots and pools across the foliage and the robot's shoulders), the small creature's dusty-rose belly glow, and the dim violet seed-lamp deep in the back trellis. Outside pools 40-60% darker; the back trellis near-black.
+
+== COLOR BUDGET ==
+
+~55% neutral: rusted iron, warped wood browns, dark soil, black-blue depths. ~45% living: deep foliage greens (2-3 tones, all clearly darker and yellower than chroma green), warm string-light amber, muted violet and dusty-rose blooms and glows, olive robot plating. Greens must never approach pure #00ff00.
+
+== RENDERING STYLE ==
+
+Chunky 16-bit pixel art per the PIXEL GRID rule: 3x3 blocks, near-black outlines, 3 tones per material, ~30 colors, flat halo glows, sparse checker dither. Foliage = overlapping chunky leaf clusters with hard edges. No anti-aliasing, gradients, painterly rendering.
+
+== PROHIBITED ==
+
+Greenhouses, glass panes, glass arches, or any ROOF (the top is open air). Bulky or heavy-armored robots (it is slim and skeletal-mechanical). Earth-animal anatomy (no sloths, cats, birds - the creatures are clearly alien). Illustration-grade detail or fine fronds. Flat depthless facade. Caged animals. Hot pink or magenta tones inside the art. Chroma-green foliage. Isometric views, vanishing points, ellipses. Environment behind the shop. Extra characters. Readable text besides "projects". Watermarks.
+
+== FINAL SELF-CHECK (regenerate on any failure) ==
+
+1. Pixel-grid look; foliage is chunky clusters. 2. Magenta on all four sides AND through the open roofless top; silhouette is a ragged plant-and-post line. 3. NO glass, NO roof, NO greenhouse anywhere. 4. Sign: rope-hung wooden board on the left post, askew, exactly "projects". 5. Open entry gap x 360-600, no door; back trellis visible through it, near-black. 6. Robot 600 px at x 480: SLIM mechanical frame, exposed pistons and cables, gripper hands, small lens-eyed head, moss + vine, apron, watering can, gentle stoop. 7. Two clearly alien creatures: six-limbed three-eyed dozer on the right shelf; finned antennae-bearing glow-belly curled by a pot. 8. String lights post to post; three light sources total; back near-black. 9. Foreground pots/foliage overlap the base at both flanks. 10. Greens dark and desaturated, never chroma; no magenta in art.</pre>
+</section>
+
+<!-- ============ SLABS ============ -->
+<section data-tab="slabs">
+<button class="copy">Copy slabs</button>
+<pre>Generate exactly THREE PNG images. This instruction is standalone and complete: no previous context exists. Read it all, then verify the final checklist before delivering each file.
+
+== WHAT THESE ARE ==
+
+Three horizontal SEPARATOR BANDS for a 2D pixel-art game: the structural ceiling/floor slabs that appear between the levels of an underground market. They render as thin repeating strips across the full screen width, so they must tile horizontally and stay QUIET: they are background rhythm, not attractions.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn on a 256 x 64 grid, upscaled 3x with nearest neighbor. Every visible art pixel is a 3x3 block. No detail smaller than one block.
+
+== CANVAS ==
+
+- Each file: exactly 768 x 192 px. Fully OPAQUE. No green, no magenta, no transparency.
+- All three share the same base: a dark structural slab of patched metal beams, nearly black-blue (#101020 range), with a slightly lighter top edge line and a near-black bottom edge line.
+
+== TILEABILITY (critical) ==
+
+Each image repeats side by side across the screen. Rules:
+- The left and right edge zones (outer 64 px each side) contain ONLY plain slab surface: no feature, no fixture, no stain may touch them. Their texture must be calm and tonally matched so the wrap seam disappears.
+- SPARSENESS: at most TWO small features in the whole tile, both placed OFF-CENTER at different heights, so the repetition pattern does not read as a rhythm of identical marks.
+- No long element may imply continuation across the boundary (no pipe or cable that reaches the edges - every run starts and ends inside the tile, entering/exiting through the slab itself via flanges or holes).
+
+== THE THREE FILES ==
+
+1. `slab-pipes.png` - WATER PIPES: two rusted horizontal water pipes of different diameters mounted on the slab with brackets, each pipe emerging from a flanged hole in the slab and disappearing into another (never touching the tile edges). One small valve wheel on the thicker pipe, off-center left. One dark drip stain under a leaky joint, off-center right. That is ALL.
+2. `slab-cables-a.png` - CABLE BUNDLE: one fat bundle of 4-5 cables sagging gently between two mounting cleats, zip-tied at two points, entering and leaving through grommet holes in the slab. One small junction box with a single tiny amber LED dot, off-center right. That is ALL.
+3. `slab-cables-b.png` - LOOSE CABLES: three thin individual cables crossing each other in shallow sags, one hanging slightly lower with a coiled loop taped up, plus one dangling cable end with a taped tip, off-center left. No boxes, no lights. That is ALL.
+
+== STYLE ==
+
+Chunky 16-bit pixel art: flat colors, one 3x3-block near-black outline on pipes/cables, exactly 3 tones per material, ~14 colors per tile. Palette: black-blue and gunmetal slab, rusted brown-red pipes, dark cable rubber in two muted hues (dusty teal, worn maroon), tiny amber LED as the only bright pixel in the whole set. No anti-aliasing, no gradients, no texture noise: the slab surface is 2-3 large flat patches per tile, nothing more.
+
+== PROHIBITED ==
+
+Features touching the outer 64 px edge zones. More than two features per tile. Elements implying continuation across the tile boundary. Bright colors or glows beyond the single LED. Text of any kind. Green or magenta pixels. Gradients, noise, fine detail.
+
+== FINAL SELF-CHECK (per file) ==
+
+1. 768 x 192, fully opaque, pixel-grid look.
+2. Outer 64 px on both sides: plain calm slab only.
+3. At most two features, off-center, at different heights; pipe/cable runs start AND end inside the tile.
+4. Repeating the image side by side shows no visible seam and no obvious rhythm.
+5. ~14 flat colors, 3-tone materials, zero gradients.</pre>
+</section>
+
+<!-- ============ PROPS ============ -->
+<section data-tab="props">
+<button class="copy">Copy props</button>
+<pre>Generate exactly SEVEN PNG images. This instruction is standalone and complete: no previous context exists. Read it all, then verify the final checklist before delivering each file.
+
+== WHAT THESE ARE ==
+
+Small bridge props for a 2D pixel-art underground market: the clutter that ties merchant stalls to the architecture around them. Each is ONE isolated sprite on a flat backing, composited by the game between and around stalls. They are supporting cast: quiet, dark, readable.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn at one-third size and upscaled 3x with nearest neighbor. Every visible art pixel is a 3x3 block. Nothing finer exists.
+
+== SHARED RULES ==
+
+- Backing: flat pure GREEN #00ff00 filling everything that is not the prop. No green tones inside the art (any green becomes teal). Content keeps 12+ px clear of every canvas edge.
+- Camera: frontal oblique top-down, LOW (~12 degrees): vertical faces straight-on; any visible top surface is a thin sliver one-fifth as tall as wide; round tops are 0.2-ratio ellipses. Shadows fall straight down.
+- Style: chunky 16-bit pixel art, flat colors, near-black outlines, exactly 3 tones per material, ~12 colors per prop, no gradients, no noise, no anti-aliasing.
+- Palette: gunmetal, black-blue, rusted browns, dark cable rubber in dusty teal and worn maroon, ONE small warm or cyan light per prop at most.
+- Everything is aged salvage: dents, rust, tape, grime. Nothing clean.
+
+== THE SEVEN FILES ==
+
+1. `prop-floor-cable.png` (canvas 768 x 160): a fat power cable lying ON the floor, running left to right in lazy slack curves, taped at two points, both ends terminating in dark wall plugs. Drawn from the low camera: the cable is a flat ribbon on the ground plane, nearly horizontal, with a thin straight-down contact shadow.
+2. `prop-floor-cable-short.png` (canvas 384 x 128): a shorter floor cable with one coiled loop mid-run, one end in a plug, the other disappearing under a taped rubber mat edge.
+3. `prop-puddle.png` (canvas 384 x 128): a shallow dark puddle on the ground, drawn as a flat 0.2-ratio shape (five times wider than tall), its surface a near-black mirror with two thin broken reflection streaks: one vapor-pink, one cyan. No light source of its own.
+4. `prop-trash-drift.png` (canvas 320 x 192): a small drift of garbage collected against an unseen wall base: two crumpled paper balls, a crushed can, a torn poster corner, one noodle cup on its side. Low, quiet, off-center composition.
+5. `prop-worn-mat.png` (canvas 448 x 96): a flat rubber floor mat worn by foot traffic, drawn per the low camera (a thin 0.2-ratio parallelogram-free band), edges curled at one corner, tread pattern nearly rubbed away at the center.
+6. `prop-power-drop.png` (canvas 192 x 768): a VERTICAL power line dropping from above: a dark cable descending straight down with two sag points where it is stapled to an unseen surface, ending in a junction box with a single tiny amber LED and a short whip of three thinner cables splaying out at the bottom. Top end runs off the top edge margin (this prop is allowed to touch ONLY the top canvas edge).
+7. `prop-bunting.png` (canvas 768 x 224): a string of small triangular market flags sagging in one gentle arc between two off-canvas anchor points (the string is allowed to touch ONLY the left and right canvas edges). Flags in faded dusty colors (maroon, teal, cream, violet), two flags torn, one missing leaving a bare knot.
+
+== PROHIBITED ==
+
+Bright cheerful colors. More than one light source per prop. Text of any kind. Green or chroma-adjacent tones in the art. Isometric views, ellipses taller than 0.25 ratio, top-down tabletop looks. Backgrounds, floors, walls or environment baked into the prop (except the specified shadows). Watermarks.
+
+== FINAL SELF-CHECK (per file) ==
+
+1. Exact canvas size, flat #00ff00 backing, 12+ px margins (except the single allowed edge contact for files 6 and 7).
+2. 3x-upscaled pixel look, ~12 colors, 3-tone materials, dark outlines.
+3. Low-camera read: ground props are thin and wide, round tops 0.2 sliver ellipses.
+4. Aged, dark, quiet: supporting cast, not attractions.</pre>
+</section>
+
+<!-- ============ STAIRS-MOBILE ============ -->
+<section data-tab="stairs-mobile">
+<button class="copy">Copy stairs-mobile</button>
+<pre>Generate exactly ONE PNG image. This instruction is standalone and complete: no previous context exists.
+
+== WHAT THIS IS ==
+
+A production sprite for a 2D pixel-art underground market: a SPIRAL STAIRCASE column that spans TWO stacked market floors on mobile layouts. It has three access points: an exit at the top floor, an exit HALFWAY down (the landing between the two floors), and an exit at the bottom floor. The page composes two shop levels beside it.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn at one-third size, upscaled 3x nearest neighbor. Every art pixel is a 3x3 block; nothing finer.
+
+== CANVAS AND UNITS ==
+
+- Canvas: exactly 480 x 2400 px. 1 unit (u) = 8 px (60 x 300 u).
+- Background: flat pure GREEN #00ff00 everywhere the structure is not. No green tones inside the art (greenish metals become teal).
+- A standing adult human is 70 u = 560 px tall; every door/exit must clear that with margin.
+
+== THE STRUCTURE ==
+
+A salvaged cast-iron SPIRAL staircase wrapped around a central column, seen dead frontal (no isometric rotation). The camera is LOW (~12 degrees): each visible tread is a thin sliver one-fifth as tall as wide; the spiral reads through the alternation of front-facing treads (full) and rear treads (partially hidden behind the column).
+- CENTRAL COLUMN: a riveted iron pipe, 6 u thick, running the full canvas height, rust blooms, one welded repair collar.
+- TREADS: chunky pie-slice steps winding around the column, dark gunmetal with worn front edges, a thin safety rail spiraling alongside (simple pipe rail, broken at one point with a taped splice).
+- TOP EXIT (y 0-560 px): the staircase emerges through an open iron floor-hatch frame; the topmost treads land on a small platform with a straight cut at the canvas top edge (this end is allowed to touch the top edge: the floor above continues there).
+- MIDDLE EXIT (centered near y 1200): a landing platform interrupting the spiral: a flat rectangular deck (thin sliver top per the camera), a pipe gate, and an open doorway arch facing LEFT with a caged amber bulb above it. A human-sized opening (72+ u tall).
+- BOTTOM EXIT (y 1840-2400): the spiral ends on a ground platform with a final wide step and a second open doorway arch facing LEFT, matching the middle one, with its own caged bulb. The structure's base touches the ground line at y 2384, with a flat cast-shadow strip below it (y 2384-2400).
+- The RIGHT side of the canvas (x 400-480) stays clear green at every row except where treads swing through: the sprite mounts flush against the screen's right edge, so its right silhouette must be the spiral's natural curve, no scaffolding.
+
+== STYLE / LIGHT / AGE ==
+
+Chunky 16-bit pixel art: flat colors, near-black outlines, exactly 3 tones per material, ~16 colors total. Everything salvage: rust, dents, taped repairs, grime. Dark ambience: the two caged amber bulbs at the exits are the only light sources, each a small flat halo with a tight pool on its platform; treads between exits fall into gloom.
+
+== PROHIBITED ==
+
+Isometric or rotated views. Elliptical treads taller than 0.25 ratio. Clean or modern architecture. Text. Green tones in the art. Environment, walls or floors beyond the described platforms. Watermarks.
+
+== FINAL SELF-CHECK ==
+
+1. 480 x 2400, flat #00ff00, pixel-grid look.
+2. Spiral reads frontal around a full-height riveted column; treads are thin 0.2 slivers.
+3. Three access points: top hatch (touching top edge), middle landing with LEFT-facing doorway near y 1200, bottom platform with LEFT-facing doorway at the ground line y 2384.
+4. Two amber caged bulbs only; gloom between.
+5. ~16 colors, 3-tone materials, no gradients, no noise.</pre>
+</section>
+
+<!-- ============ WAYFINDING ============ -->
+<section data-tab="wayfinding">
+<button class="copy">Copy wayfinding</button>
+<pre>Generate exactly TWO PNG images. This instruction is standalone and complete: no previous context exists.
+
+== WHAT THESE ARE ==
+
+Two small wall-mounted NEON WAYFINDING SIGNS for a 2D pixel-art underground market: they hang perpendicular from the walls (blade-sign style) and point visitors between floors. One points UP, one points DOWN.
+
+== PIXEL GRID (absolute rule) ==
+
+Authored-at-low-resolution look: drawn at one-third size, upscaled 3x nearest neighbor. Every art pixel is a 3x3 block; nothing finer.
+
+== SHARED SPEC ==
+
+- Canvas: exactly 256 x 384 px each. Background: flat pure GREEN #00ff00. No green tones inside the art. Content clear of every canvas edge by 12+ px EXCEPT the mounting bracket, which touches the LEFT canvas edge (the sign mounts on a wall to its left).
+- Structure: a rusted metal bracket arm bolted to the wall (left edge), holding a rectangular blade sign of dark patched metal, hanging from two short chains, tilted 2-3 degrees.
+- On the blade: a large NEON ARROW as bent glass tubing on the dark plate: bright tube core with 1-2 flat halo bands. No text, no letters: the arrow is the message.
+- A thin power cable runs from the sign up along the bracket.
+- Style: chunky 16-bit pixel art, flat colors, near-black outlines, 3 tones per material, ~12 colors, no gradients, no anti-aliasing. All salvage: rust, dents, one taped chain link.
+- Camera: dead frontal, low ~12 degrees: the bracket's top face is a thin sliver; nothing rounder than 0.2-ratio ellipses.
+
+== FILE 1: `sign-up.png` ==
+
+The neon arrow points UP. Tube color: NEON PINK (hot pink core, magenta-pink halo). One tube segment near the arrowhead is dark (dead segment) but the arrow stays readable.
+
+== FILE 2: `sign-down.png` ==
+
+The neon arrow points DOWN. Tube color: NEON CYAN (white-cyan core, cyan halo). Fully lit, with a faint drip of condensation drawn under the plate's bottom edge.
+
+== PROHIBITED ==
+
+Text or letters of any kind. Green tones. Gradients, glow blurs that soften edges. Isometric views. Environment or wall baked in (only the bracket implies the wall). Watermarks.
+
+== FINAL SELF-CHECK (each file) ==
+
+1. 256 x 384, flat #00ff00, bracket touching only the left edge.
+2. Blade sign on chains, tilted 2-3 degrees, arrow reads instantly (UP pink / DOWN cyan).
+3. Chunky pixel look, ~12 colors, flat halo bands, zero gradients.</pre>
+</section>
+
+<script>
+  const tabs = ['travel', 'games', 'manual', 'uses', 'console', 'talks', 'papers', 'projects', 'slabs', 'props', 'stairs-mobile', 'wayfinding'];
+  const nav = document.getElementById('tabs');
+  const sections = [...document.querySelectorAll('section')];
+  for (const t of tabs) {
+    const b = document.createElement('button');
+    b.textContent = t;
+    b.addEventListener('click', () => activate(t));
+    nav.appendChild(b);
+  }
+  function activate(t) {
+    sections.forEach((s) => s.classList.toggle('active', s.dataset.tab === t));
+    [...nav.children].forEach((b) => b.classList.toggle('active', b.textContent === t));
+  }
+  activate('travel');
+  document.querySelectorAll('.copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(btn.nextElementSibling.textContent);
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => (btn.textContent = orig), 1500);
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,435 @@
+{
+  "$schema": "./manifest.schema.json",
+  "version": 1,
+  "assetRoot": "../../public/images/bazaar3/assets",
+  "reportPath": "./reports/console.json",
+  "defaults": {
+    "alpha": {
+      "mode": "binary",
+      "requireChannel": true,
+      "requireTransparent": true,
+      "requireOpaque": true
+    },
+    "palette": {
+      "maxColors": 40,
+      "minAlpha": 1,
+      "includeAlpha": false
+    },
+    "pixelBlock": {
+      "size": 3,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 960,
+        "height": 1263
+      },
+      "ignoreFullyTransparent": true
+    },
+    "forbiddenColors": [
+      {
+        "hex": "#00ff00",
+        "tolerance": 12,
+        "maxPixels": 0,
+        "minAlpha": 1
+      },
+      {
+        "hex": "#ff00ff",
+        "tolerance": 12,
+        "maxPixels": 0,
+        "minAlpha": 1
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "console.master",
+      "file": "stalls/console/console-master-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "sha256": "4c3babed50e59ffdb0ca2a5b2aa87d03729ca29e1de5aab4ff3fa57e61c2d5b0",
+      "checks": {
+        "palette": {
+          "maxColors": 15,
+          "exactColors": 15,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.static-clean",
+      "file": "stalls/console/console-static-clean-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "sha256": "086955888d37b948519d929a8e5bee3919ef04df31879055a9071398b9b8bd47",
+      "checks": {
+        "palette": {
+          "maxColors": 15,
+          "exactColors": 15,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.rear",
+      "file": "stalls/console/console-rear-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "static-layer",
+      "sha256": "d69b989edaeca0c9750d044a6503a40a5cb074481c2d0711489e93c70c31622e",
+      "checks": {
+        "palette": {
+          "maxColors": 15,
+          "exactColors": 15,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.front",
+      "file": "stalls/console/console-front-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "static-layer",
+      "sha256": "f1d86a0df6c6b538084ce8cd1ea9fee9f239166f7253dbc64ca3540a194b5b92"
+    },
+    {
+      "id": "console.keeper.i1",
+      "file": "stalls/console/console-keeper-i1-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "console.keeper.i2",
+      "file": "stalls/console/console-keeper-i2-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "console.keeper.h1",
+      "file": "stalls/console/console-keeper-h1-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "console.keeper.h2",
+      "file": "stalls/console/console-keeper-h2-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "console.keeper.h3",
+      "file": "stalls/console/console-keeper-h3-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "console.effect.i1",
+      "file": "stalls/console/console-effect-i1-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel",
+      "checks": {
+        "alpha": {
+          "mode": "binary",
+          "requireChannel": true,
+          "requireTransparent": true,
+          "requireOpaque": false
+        }
+      }
+    },
+    {
+      "id": "console.effect.i2",
+      "file": "stalls/console/console-effect-i2-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel",
+      "checks": {
+        "alpha": {
+          "mode": "binary",
+          "requireChannel": true,
+          "requireTransparent": true,
+          "requireOpaque": false
+        }
+      }
+    },
+    {
+      "id": "console.effect.h1",
+      "file": "stalls/console/console-effect-h1-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel",
+      "checks": {
+        "alpha": {
+          "mode": "binary",
+          "requireChannel": true,
+          "requireTransparent": true,
+          "requireOpaque": false
+        }
+      }
+    },
+    {
+      "id": "console.effect.h2",
+      "file": "stalls/console/console-effect-h2-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel",
+      "checks": {
+        "alpha": {
+          "mode": "binary",
+          "requireChannel": true,
+          "requireTransparent": true,
+          "requireOpaque": false
+        }
+      }
+    },
+    {
+      "id": "console.effect.h3",
+      "file": "stalls/console/console-effect-h3-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel",
+      "checks": {
+        "alpha": {
+          "mode": "binary",
+          "requireChannel": true,
+          "requireTransparent": true,
+          "requireOpaque": false
+        }
+      }
+    },
+    {
+      "id": "console.composite.i1",
+      "file": "stalls/console/console-composite-i1-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 15,
+          "exactColors": 15,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.composite.i2",
+      "file": "stalls/console/console-composite-i2-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 15,
+          "exactColors": 15,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.composite.h1",
+      "file": "stalls/console/console-composite-h1-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 15,
+          "exactColors": 15,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.composite.h2",
+      "file": "stalls/console/console-composite-h2-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 15,
+          "exactColors": 15,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.composite.h3",
+      "file": "stalls/console/console-composite-h3-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 15,
+          "exactColors": 15,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.mask.repair",
+      "file": "stalls/console/console-repair-mask-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "motion-mask",
+      "sha256": "9477662f7832a4ed67d7c09a5c5a7e0f230e5a526dad6730df0ad699a308a411",
+      "checks": {
+        "palette": {
+          "maxColors": 1,
+          "exactColors": 1,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.mask.character",
+      "file": "stalls/console/console-character-mask-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "motion-mask",
+      "sha256": "5661cb67a24c59154a0b5ca9f387364dc7974e3728c8c68c31170f95fbfd891a",
+      "checks": {
+        "palette": {
+          "maxColors": 1,
+          "exactColors": 1,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "console.mask.motion",
+      "file": "stalls/console/console-motion-mask-v1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "motion-mask",
+      "sha256": "ea0abc57f7d0007924d59e91222a9e11f1aeae8c789a39e29a810dc2487f98ef",
+      "checks": {
+        "palette": {
+          "maxColors": 1,
+          "exactColors": 1,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    }
+  ],
+  "paletteFamilies": [
+    {
+      "id": "console.production",
+      "reference": "console.master",
+      "mode": "subset",
+      "members": [
+        "console.master",
+        "console.static-clean",
+        "console.rear",
+        "console.front",
+        "console.keeper.i1",
+        "console.keeper.i2",
+        "console.keeper.h1",
+        "console.keeper.h2",
+        "console.keeper.h3",
+        "console.effect.i1",
+        "console.effect.i2",
+        "console.effect.h1",
+        "console.effect.h2",
+        "console.effect.h3",
+        "console.composite.i1",
+        "console.composite.i2",
+        "console.composite.h1",
+        "console.composite.h2",
+        "console.composite.h3"
+      ],
+      "maxUnionColors": 15
+    }
+  ],
+  "animations": [
+    {
+      "id": "console.keeper",
+      "frames": [
+        "console.keeper.i1",
+        "console.keeper.i2",
+        "console.keeper.h1",
+        "console.keeper.h2",
+        "console.keeper.h3"
+      ],
+      "rootAnchor": {
+        "x": 474,
+        "y": 1035,
+        "lockRadius": 2,
+        "requireOpaque": true,
+        "excludeFromMotionMask": true,
+        "description": "Opaque hidden pelvis registration. Its 5x5 lock patch is byte-identical and outside all authored motion."
+      },
+      "lockedRegions": [
+        {
+          "id": "seated-torso-and-pelvis",
+          "x": 432,
+          "y": 810,
+          "width": 84,
+          "height": 228,
+          "requireOpaque": true,
+          "excludeFromMotionMask": true,
+          "description": "A 28x76 authored-pixel rectangle: all 19,152 output pixels remain opaque and byte-identical while Ed stays seated."
+        }
+      ],
+      "allowedMotionMask": {
+        "asset": "console.mask.motion",
+        "threshold": 255
+      },
+      "staticLayers": ["console.rear", "console.front"]
+    },
+    {
+      "id": "console.composite",
+      "frames": [
+        "console.composite.i1",
+        "console.composite.i2",
+        "console.composite.h1",
+        "console.composite.h2",
+        "console.composite.h3"
+      ],
+      "rootAnchor": {
+        "x": 474,
+        "y": 1035,
+        "lockRadius": 2,
+        "requireOpaque": true,
+        "excludeFromMotionMask": true,
+        "description": "The same opaque 5x5 hidden pelvis registration in every fully composited frame."
+      },
+      "lockedRegions": [
+        {
+          "id": "seated-torso-and-pelvis",
+          "x": 432,
+          "y": 810,
+          "width": 84,
+          "height": 228,
+          "requireOpaque": true,
+          "excludeFromMotionMask": true,
+          "description": "The same byte-locked seated-body rectangle in the fully composited frames."
+        }
+      ],
+      "allowedMotionMask": {
+        "asset": "console.mask.motion",
+        "threshold": 255
+      },
+      "staticLayers": ["console.rear", "console.front"]
+    }
+  ]
+}

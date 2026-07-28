@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "id": "bazaar3-manual-camera-lock-v1",
+  "canvas": {
+    "width": 960,
+    "height": 1264
+  },
+  "authoredPixelScale": 3,
+  "artifacts": {
+    "annotatedGuide": "scripts/bazaar3/manual-camera/artifacts/manual-camera-guide-960x1264.png",
+    "imageGenGuide": "scripts/bazaar3/manual-camera/artifacts/manual-camera-generation-guide-960x1264.png"
+  },
+  "intendedUse": "Attach the text-free imageGenGuide beside Uses and the approved Manual identity reference. Preserve this exact camera/layout; redesign only the robot and tenant-specific contents. Keep the annotatedGuide for human review.",
+  "geometry": {
+    "safeArt": {
+      "x": 54,
+      "y": 42,
+      "width": 852,
+      "height": 1172
+    },
+    "overheadBeam": {
+      "x": 72,
+      "y": 72,
+      "width": 816,
+      "height": 104
+    },
+    "leftUpright": {
+      "x": 72,
+      "y": 128,
+      "width": 62,
+      "height": 940
+    },
+    "rightUpright": {
+      "x": 826,
+      "y": 128,
+      "width": 62,
+      "height": 940
+    },
+    "rearWall": {
+      "x": 134,
+      "y": 176,
+      "width": 692,
+      "height": 618
+    },
+    "rearToolBand": {
+      "x": 156,
+      "y": 296,
+      "width": 648,
+      "height": 42
+    },
+    "robotRearAisle": {
+      "x": 268,
+      "y": 326,
+      "width": 424,
+      "height": 482
+    },
+    "robotTorsoKeepClear": {
+      "x": 330,
+      "y": 390,
+      "width": 300,
+      "height": 292
+    },
+    "counterTop": {
+      "x": 108,
+      "y": 776,
+      "width": 744,
+      "height": 48
+    },
+    "counterFront": {
+      "x": 108,
+      "y": 824,
+      "width": 744,
+      "height": 222
+    },
+    "counterOcclusion": {
+      "x": 266,
+      "y": 776,
+      "width": 428,
+      "height": 102
+    },
+    "floorBand": {
+      "x": 72,
+      "y": 1046,
+      "width": 816,
+      "height": 122
+    },
+    "trench": {
+      "x": 72,
+      "y": 1124,
+      "width": 816,
+      "height": 54
+    },
+    "frontLip": {
+      "x": 54,
+      "y": 1178,
+      "width": 852,
+      "height": 36
+    }
+  },
+  "cameraRules": {
+    "projection": "frontal-oblique parallel projection",
+    "authority": "public/images/bazaar3/assets/stalls/uses/frames/idle-1.png",
+    "verticals": {
+      "targetDegrees": 90,
+      "toleranceDegrees": 3.5,
+      "rule": "All architectural uprights stay vertical and parallel."
+    },
+    "horizontals": {
+      "targetDegrees": 0,
+      "toleranceDegrees": 3.5,
+      "rule": "Counter, beams, shelves, wall bands, floor lips, and trench stay horizontal and parallel."
+    },
+    "shallowTopBands": {
+      "maximumVisualDepthPx": 48,
+      "rule": "Only shallow compressed top bands are visible. Never draw deep tabletops or floor planes."
+    },
+    "perspective": {
+      "vanishingPoint": false,
+      "convergence": false,
+      "rotation": false,
+      "rule": "No receding side walls, converging shelves, perspective floor tiles, or rotated stall."
+    }
+  },
+  "robotRules": {
+    "placement": "rear aisle behind the counter",
+    "floats": true,
+    "attachedToCounter": false,
+    "standingOnCounter": false,
+    "bodyCenter": {
+      "x": 480,
+      "y": 540
+    },
+    "bodyEnvelope": {
+      "x": 330,
+      "y": 390,
+      "width": 300,
+      "height": 292
+    },
+    "counterOccludesLowerAssembly": true,
+    "minimumVisibleAirGapAboveCounterPx": 34,
+    "note": "The robot occupies the room behind the counter. The counter crosses in front of its lower thruster/arms; it is never perched on the countertop."
+  },
+  "analysisRegions": {
+    "counter": {
+      "x": 82,
+      "y": 736,
+      "width": 796,
+      "height": 330
+    },
+    "leftFrame": {
+      "x": 40,
+      "y": 82,
+      "width": 170,
+      "height": 1000
+    },
+    "rightFrame": {
+      "x": 750,
+      "y": 82,
+      "width": 170,
+      "height": 1000
+    },
+    "topArchitecture": {
+      "x": 54,
+      "y": 42,
+      "width": 852,
+      "height": 330
+    },
+    "rearArchitecture": {
+      "x": 112,
+      "y": 174,
+      "width": 736,
+      "height": 596
+    },
+    "floorTrench": {
+      "x": 42,
+      "y": 1020,
+      "width": 876,
+      "height": 220
+    },
+    "robotExclusion": {
+      "x": 246,
+      "y": 304,
+      "width": 468,
+      "height": 468
+    }
+  },
+  "absoluteProhibitions": [
+    "No vanishing point.",
+    "No converging floor, shelf, counter, wall, or ceiling lines.",
+    "No rotated counter.",
+    "No deep trapezoid tabletop.",
+    "No visible side-wall perspective box.",
+    "No robot attached to, standing on, or emerging from the counter.",
+    "No counter or environment movement between animation frames."
+  ]
+}

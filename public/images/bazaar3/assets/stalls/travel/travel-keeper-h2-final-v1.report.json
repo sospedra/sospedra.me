@@ -1,0 +1,16 @@
+{
+  "base": "/Users/sospedra/labs/sospedra.me/public/images/bazaar3/assets/stalls/travel/travel-keeper-i1-final-v1.png",
+  "candidate": "/Users/sospedra/labs/sospedra.me/public/images/bazaar3/assets/stalls/travel/travel-keeper-h2-palette-v1.png",
+  "mask": "/Users/sospedra/labs/sospedra.me/public/images/bazaar3/assets/stalls/travel/masks/motion-hover-2.png",
+  "output": "/Users/sospedra/labs/sospedra.me/public/images/bazaar3/assets/stalls/travel/travel-keeper-h2-final-v1.png",
+  "allowedPixels": 10934,
+  "changedInside": 3218,
+  "rejectedCandidateChangesOutsideMask": 405,
+  "logicalBbox": {
+    "x": 102,
+    "y": 196,
+    "width": 105,
+    "height": 89
+  },
+  "invariant": "Every output RGBA byte outside the opaque motion mask is copied from base."
+}

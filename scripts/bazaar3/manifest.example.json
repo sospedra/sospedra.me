@@ -1,0 +1,222 @@
+{
+  "$schema": "./manifest.schema.json",
+  "version": 1,
+  "assetRoot": "../../public/images/bazaar3/assets",
+  "reportPath": "./reports/projects-golden-slice.json",
+  "defaults": {
+    "alpha": {
+      "mode": "binary",
+      "requireChannel": true,
+      "requireTransparent": true,
+      "requireOpaque": true
+    },
+    "palette": {
+      "maxColors": 40,
+      "minAlpha": 1,
+      "includeAlpha": false
+    },
+    "pixelBlock": {
+      "size": 3,
+      "ignoreFullyTransparent": true
+    },
+    "forbiddenColors": [
+      {
+        "hex": "#00ff00",
+        "tolerance": 12,
+        "maxPixels": 0,
+        "minAlpha": 1
+      },
+      {
+        "hex": "#ff00ff",
+        "tolerance": 0,
+        "maxPixels": 0,
+        "minAlpha": 1
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "projects.desktop.rear",
+      "file": "stalls/projects/desktop/rear.png",
+      "width": 960,
+      "height": 1264,
+      "role": "static-layer",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "checks": {
+        "pixelBlock": {
+          "size": 3,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 1263
+          },
+          "ignoreFullyTransparent": true
+        }
+      }
+    },
+    {
+      "id": "projects.desktop.front",
+      "file": "stalls/projects/desktop/front.png",
+      "width": 960,
+      "height": 1264,
+      "role": "static-layer",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "checks": {
+        "pixelBlock": {
+          "size": 3,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 1263
+          },
+          "ignoreFullyTransparent": true
+        }
+      }
+    },
+    {
+      "id": "projects.desktop.idle-1",
+      "file": "stalls/projects/desktop/keeper-idle-1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel",
+      "checks": {
+        "pixelBlock": {
+          "size": 3,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 1263
+          },
+          "ignoreFullyTransparent": true
+        }
+      }
+    },
+    {
+      "id": "projects.desktop.idle-2",
+      "file": "stalls/projects/desktop/keeper-idle-2.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel",
+      "checks": {
+        "pixelBlock": {
+          "size": 3,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 1263
+          },
+          "ignoreFullyTransparent": true
+        }
+      }
+    },
+    {
+      "id": "projects.desktop.hover-1",
+      "file": "stalls/projects/desktop/keeper-hover-1.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel",
+      "checks": {
+        "pixelBlock": {
+          "size": 3,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 1263
+          },
+          "ignoreFullyTransparent": true
+        }
+      }
+    },
+    {
+      "id": "projects.desktop.hover-2",
+      "file": "stalls/projects/desktop/keeper-hover-2.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel",
+      "checks": {
+        "pixelBlock": {
+          "size": 3,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 1263
+          },
+          "ignoreFullyTransparent": true
+        }
+      }
+    },
+    {
+      "id": "projects.desktop.hover-3",
+      "file": "stalls/projects/desktop/keeper-hover-3.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel",
+      "checks": {
+        "pixelBlock": {
+          "size": 3,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 1263
+          },
+          "ignoreFullyTransparent": true
+        }
+      }
+    },
+    {
+      "id": "projects.desktop.motion-mask",
+      "file": "stalls/projects/desktop/keeper-motion-mask.png",
+      "width": 960,
+      "height": 1264,
+      "role": "motion-mask",
+      "checks": {
+        "palette": {
+          "maxColors": 1,
+          "minAlpha": 1,
+          "includeAlpha": false
+        },
+        "pixelBlock": {
+          "size": 3,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 960,
+            "height": 1263
+          },
+          "ignoreFullyTransparent": true
+        }
+      }
+    }
+  ],
+  "animations": [
+    {
+      "id": "projects.desktop.keeper",
+      "frames": [
+        "projects.desktop.idle-1",
+        "projects.desktop.idle-2",
+        "projects.desktop.hover-1",
+        "projects.desktop.hover-2",
+        "projects.desktop.hover-3"
+      ],
+      "rootAnchor": {
+        "x": 480,
+        "y": 1167,
+        "lockRadius": 3,
+        "requireOpaque": true,
+        "description": "Robot foot/contact root; this 7x7 patch is byte-locked across all five cels."
+      },
+      "allowedMotionMask": {
+        "asset": "projects.desktop.motion-mask",
+        "threshold": 255
+      },
+      "staticLayers": ["projects.desktop.rear", "projects.desktop.front"]
+    }
+  ]
+}

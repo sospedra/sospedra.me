@@ -1,0 +1,282 @@
+{
+  "$schema": "./manifest.schema.json",
+  "version": 1,
+  "assetRoot": "../../public/images/bazaar3/assets",
+  "reportPath": "./reports/projects.json",
+  "defaults": {
+    "alpha": {
+      "mode": "binary",
+      "requireChannel": true,
+      "requireTransparent": true,
+      "requireOpaque": true
+    },
+    "palette": {
+      "maxColors": 40,
+      "minAlpha": 1,
+      "includeAlpha": false
+    },
+    "pixelBlock": {
+      "size": 3,
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 960,
+        "height": 1263
+      },
+      "ignoreFullyTransparent": true
+    },
+    "forbiddenColors": [
+      {
+        "hex": "#00ff00",
+        "tolerance": 12,
+        "maxPixels": 0,
+        "minAlpha": 1
+      },
+      {
+        "hex": "#ff00ff",
+        "tolerance": 12,
+        "maxPixels": 0,
+        "minAlpha": 1
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "projects.rear",
+      "file": "stalls/projects/frames/i1/rear.png",
+      "width": 960,
+      "height": 1264,
+      "role": "static-layer",
+      "sha256": "b6e20add98346a1f355cf741f7c87b1851fd75fb91a9d585c147ab2bc4b8fd23"
+    },
+    {
+      "id": "projects.front",
+      "file": "stalls/projects/frames/i1/front.png",
+      "width": 960,
+      "height": 1264,
+      "role": "static-layer",
+      "sha256": "5cd8690ea1a81537316f74c36c970d467863aadffa7e64314a223149fc3d63e4"
+    },
+    {
+      "id": "projects.keeper.i1",
+      "file": "stalls/projects/frames/i1/keeper.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "projects.keeper.i2",
+      "file": "stalls/projects/frames/i2/keeper.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "projects.keeper.h1",
+      "file": "stalls/projects/frames/h1/keeper.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "projects.keeper.h2",
+      "file": "stalls/projects/frames/h2/keeper.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "projects.keeper.h3",
+      "file": "stalls/projects/frames/h3/keeper.png",
+      "width": 960,
+      "height": 1264,
+      "role": "animation-cel"
+    },
+    {
+      "id": "projects.effect.i1",
+      "file": "stalls/projects/frames/i1/effect.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel"
+    },
+    {
+      "id": "projects.effect.i2",
+      "file": "stalls/projects/frames/i2/effect.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel"
+    },
+    {
+      "id": "projects.effect.h1",
+      "file": "stalls/projects/frames/h1/effect.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel"
+    },
+    {
+      "id": "projects.effect.h2",
+      "file": "stalls/projects/frames/h2/effect.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel"
+    },
+    {
+      "id": "projects.effect.h3",
+      "file": "stalls/projects/frames/h3/effect.png",
+      "width": 960,
+      "height": 1264,
+      "role": "effect-cel"
+    },
+    {
+      "id": "projects.composite.i1",
+      "file": "stalls/projects/frames/i1/composite.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 40,
+          "exactColors": 40,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "projects.composite.i2",
+      "file": "stalls/projects/frames/i2/composite.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 40,
+          "exactColors": 40,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "projects.composite.h1",
+      "file": "stalls/projects/frames/h1/composite.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 40,
+          "exactColors": 40,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "projects.composite.h2",
+      "file": "stalls/projects/frames/h2/composite.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 40,
+          "exactColors": 40,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "projects.composite.h3",
+      "file": "stalls/projects/frames/h3/composite.png",
+      "width": 960,
+      "height": 1264,
+      "role": "reference",
+      "checks": {
+        "palette": {
+          "maxColors": 40,
+          "exactColors": 40,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "projects.mask.keeper-union",
+      "file": "stalls/projects/masks/keeper-motion-union-3x.png",
+      "width": 960,
+      "height": 1264,
+      "role": "motion-mask",
+      "checks": {
+        "palette": {
+          "maxColors": 1,
+          "exactColors": 1,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    },
+    {
+      "id": "projects.mask.effect-union",
+      "file": "stalls/projects/masks/effect-motion-union-3x.png",
+      "width": 960,
+      "height": 1264,
+      "role": "motion-mask",
+      "checks": {
+        "palette": {
+          "maxColors": 1,
+          "exactColors": 1,
+          "minAlpha": 1,
+          "includeAlpha": false
+        }
+      }
+    }
+  ],
+  "animations": [
+    {
+      "id": "projects.keeper",
+      "frames": [
+        "projects.keeper.i1",
+        "projects.keeper.i2",
+        "projects.keeper.h1",
+        "projects.keeper.h2",
+        "projects.keeper.h3"
+      ],
+      "rootAnchor": {
+        "x": 505,
+        "y": 700,
+        "lockRadius": 16,
+        "requireOpaque": true,
+        "description": "Byte-locked 33x33 output-pixel / 11x11 authored-pixel apron patch; all 1,089 pixels are opaque, unchanged, and excluded from every keeper motion region."
+      },
+      "allowedMotionMask": {
+        "asset": "projects.mask.keeper-union",
+        "threshold": 255
+      },
+      "staticLayers": ["projects.rear", "projects.front"]
+    },
+    {
+      "id": "projects.effect",
+      "frames": [
+        "projects.effect.i1",
+        "projects.effect.i2",
+        "projects.effect.h1",
+        "projects.effect.h2",
+        "projects.effect.h3"
+      ],
+      "rootAnchor": {
+        "x": 10,
+        "y": 10,
+        "lockRadius": 3,
+        "requireOpaque": false,
+        "description": "Transparent byte-lock used only to register isolated effect canvases; the character's opaque torso lock is enforced by projects.keeper."
+      },
+      "allowedMotionMask": {
+        "asset": "projects.mask.effect-union",
+        "threshold": 255
+      },
+      "staticLayers": ["projects.rear", "projects.front"]
+    }
+  ]
+}

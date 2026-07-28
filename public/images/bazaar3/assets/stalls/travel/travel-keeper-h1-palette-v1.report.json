@@ -1,0 +1,11 @@
+{
+  "input": "/Users/sospedra/labs/sospedra.me/public/images/bazaar3/assets/stalls/travel/travel-keeper-h1-prepared-v1.png",
+  "paletteSource": "/Users/sospedra/labs/sospedra.me/public/images/bazaar3/assets/stalls/travel/travel-static-v1.png",
+  "output": "/Users/sospedra/labs/sospedra.me/public/images/bazaar3/assets/stalls/travel/travel-keeper-h1-palette-v1.png",
+  "width": 960,
+  "height": 1264,
+  "paletteColors": 16,
+  "sourceColorsMapped": 24,
+  "changedPixels": 52677,
+  "invariant": "Every opaque output color is an exact member of the accepted master palette."
+}
