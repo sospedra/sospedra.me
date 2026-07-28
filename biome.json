@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!next-env.d.ts", "!**/*.svg"]
+    "includes": ["**", "!next-env.d.ts", "!**/*.svg", "!public/vendor"]
   },
   "formatter": {
     "indentStyle": "space"

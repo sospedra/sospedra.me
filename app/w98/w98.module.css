@@ -1,0 +1,1111 @@
+@reference "../../service/style/global.css";
+
+/* Windows 98 desktop and application chrome. */
+
+.frame {
+  --win-face: #c0c0c0;
+  --win-light: #ffffff;
+  --win-mid: #808080;
+  --win-shadow: #404040;
+  --win-dark: #000000;
+  --win-title: #000080;
+  --win-ink: #000000;
+  --desktop: #008080;
+  --taskbar-h: 2.75rem;
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  max-width: none;
+  overflow: hidden;
+  padding: 0;
+  background: var(--desktop);
+  color: var(--win-ink);
+  font-family: "MS Sans Serif", Tahoma, Geneva, Arial, sans-serif;
+}
+
+.desktop {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    linear-gradient(rgb(255 255 255 / 1%) 50%, rgb(0 0 0 / 1%) 50%),
+    var(--desktop);
+  background-size: 100% 2px;
+}
+
+.desktopWorkArea {
+  position: absolute;
+  inset: 0 0 var(--taskbar-h);
+  overflow: hidden;
+}
+
+.desktopIcons {
+  position: absolute;
+  z-index: 2;
+  top: max(0.85rem, var(--safe-area-top));
+  left: 0.65rem;
+  display: grid;
+  width: 5.4rem;
+  gap: 1rem;
+}
+
+.desktopShortcut {
+  display: flex;
+  width: 5.4rem;
+  min-height: 4.5rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  border: 0;
+  background: transparent;
+  color: white;
+  font-family: inherit;
+  font-size: 0.7rem;
+  line-height: 1.1;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: 1px 1px 0 #000;
+  cursor: default;
+  touch-action: manipulation;
+}
+
+.desktopShortcut:focus-visible {
+  outline: 1px dotted white;
+  outline-offset: -2px;
+}
+
+/* selection reads as a soft circular halo, not a hard W98 rectangle */
+.desktopShortcut[data-selected="true"] {
+  background: radial-gradient(
+    circle closest-side at 50% 42%,
+    rgb(0 0 128 / 60%),
+    rgb(0 0 128 / 32%) 58%,
+    transparent 100%
+  );
+}
+
+.desktopShortcut:focus-visible > span:last-child,
+.desktopShortcut:hover > span:last-child,
+.desktopShortcut[data-selected="true"] > span:last-child {
+  background: var(--win-title);
+}
+
+.computerIcon,
+.recycleIcon,
+.minesIcon,
+.paintIcon,
+.winampIcon {
+  position: relative;
+  display: block;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex: 0 0 auto;
+  filter: drop-shadow(1px 1px 0 rgb(0 0 0 / 65%));
+}
+
+.minesIcon,
+.paintIcon,
+.winampIcon {
+  width: 2rem;
+  height: 2rem;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 2rem 2rem;
+  image-rendering: pixelated;
+}
+
+.computerIcon::before {
+  content: "";
+  position: absolute;
+  top: 0.05rem;
+  left: 0.25rem;
+  width: 1.85rem;
+  height: 1.42rem;
+  border: 2px solid #111;
+  background: linear-gradient(135deg, #89d8d8, #247d9c);
+  box-shadow:
+    inset 2px 2px 0 white,
+    inset -2px -2px 0 var(--win-mid),
+    0 0 0 2px var(--win-face);
+}
+
+.computerIcon::after {
+  content: "";
+  position: absolute;
+  bottom: 0.05rem;
+  left: 0.05rem;
+  width: 2.25rem;
+  height: 0.55rem;
+  border: 1px solid #111;
+  background: var(--win-face);
+  box-shadow:
+    inset 1px 1px 0 white,
+    inset -1px -1px 0 var(--win-shadow);
+}
+
+.recycleIcon::before {
+  content: "";
+  position: absolute;
+  top: 0.35rem;
+  left: 0.55rem;
+  width: 1.25rem;
+  height: 1.75rem;
+  border: 2px solid #f5f5f5;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 0.18rem,
+      #459bc1 0.18rem 0.3rem
+    ),
+    #d6f3fa;
+  box-shadow:
+    1px 1px 0 #133d59,
+    inset 0 0 0 1px #5a9fbb;
+  transform: perspective(2rem) rotateX(-5deg);
+}
+
+.recycleIcon::after {
+  content: "";
+  position: absolute;
+  top: 0.12rem;
+  left: 0.38rem;
+  width: 1.6rem;
+  height: 0.36rem;
+  border: 1px solid #17465e;
+  background: #c7e9f3;
+  box-shadow: inset 1px 1px 0 white;
+}
+
+.minesIcon {
+  background-image: url("/images/w98/minesweeper-32x32.png");
+}
+
+.paintIcon {
+  background-image: url("/images/w98/paint-32x32.png");
+}
+
+.winampIcon {
+  background-image: url("/images/w98/winamp-32x32.png");
+}
+
+.programArea {
+  position: absolute;
+  z-index: 4;
+  inset: clamp(1rem, 6vh, 3.5rem) clamp(0.75rem, 7vw, 6rem)
+    clamp(0.75rem, 4vh, 2rem) clamp(6.2rem, 18vw, 14rem);
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  max-width: 48rem;
+  max-height: 38rem;
+}
+
+.paintArea {
+  position: absolute;
+  z-index: 5;
+  inset: clamp(1rem, 4vh, 2.5rem) clamp(0.75rem, 4vw, 3rem)
+    clamp(0.75rem, 3vh, 1.5rem) clamp(6.2rem, 14vw, 11rem);
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  max-width: 72rem;
+  max-height: 52rem;
+}
+
+.winampArea {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  display: grid;
+  overflow: hidden;
+  place-items: center;
+  pointer-events: none;
+}
+
+.programArea[data-active="true"],
+.paintArea[data-active="true"],
+.winampArea[data-active="true"] {
+  z-index: 12;
+}
+
+.programArea[data-hidden="true"],
+.paintArea[data-hidden="true"],
+.winampArea[data-hidden="true"] {
+  display: none;
+}
+
+.winampArea [data-calibration-kind="panel"] {
+  pointer-events: auto;
+}
+
+.window,
+.paintWindow,
+.helpWindow {
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  box-shadow:
+    inset 1px 1px 0 var(--win-face),
+    inset -1px -1px 0 var(--win-shadow),
+    0.35rem 0.35rem 0 rgb(0 0 0 / 28%);
+  color: var(--win-ink);
+}
+
+.window {
+  display: flex;
+  max-width: 100%;
+  max-height: 100%;
+  flex-direction: column;
+  margin: auto;
+  overflow: hidden;
+}
+
+.paintWindow {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  margin: auto;
+  overflow: hidden;
+}
+
+.titlebar {
+  display: flex;
+  min-height: 1.35rem;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 2px;
+  padding: 2px;
+  background: var(--win-title);
+  touch-action: none;
+  user-select: none;
+}
+
+.titlebar strong {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: white;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.programArea[data-active="false"] .titlebar,
+.paintArea[data-active="false"] .titlebar {
+  background: var(--win-mid);
+}
+
+.appIcon,
+.paintAppIcon,
+.winampAppIcon {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 1rem 1rem;
+  image-rendering: pixelated;
+}
+
+.appIcon {
+  background-image: url("/images/w98/minesweeper-16x16.png");
+}
+
+.paintAppIcon {
+  background-image: url("/images/w98/paint-16x16.png");
+}
+
+.winampAppIcon {
+  background-image: url("/images/w98/winamp-16x16.png");
+}
+
+.windowControls {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2px;
+}
+
+.windowControls > button,
+.windowControls > span {
+  display: grid;
+  width: 1.05rem;
+  height: 1rem;
+  place-items: center;
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  color: #000;
+  font-family: Arial, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 0.7;
+}
+
+.windowControls > button {
+  padding: 0;
+}
+
+.windowControls > button:active {
+  border-top-color: var(--win-dark);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-dark);
+}
+
+.windowControls > button:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.menubar {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  gap: 0.1rem;
+  margin: 0 2px;
+  padding: 0.05rem 0.16rem 0.12rem;
+  background: var(--win-face);
+}
+
+.menuSlot {
+  position: relative;
+}
+
+.menuTrigger {
+  min-height: 1.55rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--win-ink);
+  font-family: inherit;
+  font-size: 0.74rem;
+}
+
+.menuTrigger:hover,
+.menuTrigger:focus-visible,
+.menuTrigger[aria-expanded="true"] {
+  border-color: var(--win-light) var(--win-shadow) var(--win-shadow)
+    var(--win-light);
+  background: var(--win-face);
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+.menuBackdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.menu {
+  position: absolute;
+  z-index: 31;
+  top: 100%;
+  left: 0;
+  display: flex;
+  min-width: 13rem;
+  flex-direction: column;
+  padding: 2px;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  box-shadow: 3px 3px 0 rgb(0 0 0 / 35%);
+}
+
+.menu hr {
+  width: 100%;
+  height: 2px;
+  margin: 2px 0;
+  border: 0;
+  border-top: 1px solid var(--win-mid);
+  border-bottom: 1px solid var(--win-light);
+}
+
+.menuItem {
+  display: flex;
+  min-height: 1.55rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.16rem 0.45rem;
+  border: 0;
+  background: transparent;
+  color: var(--win-ink);
+  font-family: inherit;
+  font-size: 0.74rem;
+  text-align: left;
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
+.menuItem:hover,
+.menuItem:focus-visible {
+  background: var(--win-title);
+  color: white;
+  outline: 0;
+}
+
+.menu kbd {
+  font-family: "Courier New", monospace;
+  font-size: 0.68rem;
+}
+
+.menuNote {
+  opacity: 0.66;
+  font-size: 0.68rem;
+}
+
+.check {
+  display: inline-block;
+  width: 1rem;
+}
+
+.paintFrame {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  margin: 0 2px;
+  overflow: hidden;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+  background: white;
+}
+
+.paintIframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  border: 0;
+  background: white;
+}
+
+.paintStatus {
+  display: flex;
+  min-height: 1.55rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 2px;
+  padding: 0.1rem 0.35rem;
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+  font-size: 0.66rem;
+}
+
+.paintStatus a {
+  color: #000080;
+  white-space: nowrap;
+}
+
+.paintStatus a:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: 1px;
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  padding: 0.45rem;
+  padding-top: 0.2rem;
+}
+
+.hud {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.38rem;
+  padding: 0.32rem 0.42rem;
+  border-width: 3px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+  background: var(--win-face);
+}
+
+.lcd {
+  min-width: 3.6ch;
+  padding: 0.08rem 0.18rem;
+  border: 1px inset var(--win-mid);
+  background: #070707;
+  color: #ff1818;
+  font-family: "Courier New", monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-align: right;
+  text-shadow: 0 0 0.32rem rgb(255 0 0 / 72%);
+}
+
+.face {
+  display: grid;
+  width: 2.45rem;
+  height: 2.45rem;
+  place-items: center;
+  padding: 0;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-shadow);
+  border-bottom-color: var(--win-shadow);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  color: #000;
+  font-family: Arial, sans-serif;
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+.face:active {
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+  transform: translate(1px, 1px);
+}
+
+.face:focus-visible,
+.modeSwitch button:focus-visible,
+.okButton:focus-visible,
+.startButton:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+.boardScroll {
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.board {
+  display: grid;
+  width: fit-content;
+  grid-template-columns: repeat(var(--cols, 9), var(--cell, 2rem));
+  border-width: 3px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+  background: var(--win-face);
+  touch-action: manipulation;
+}
+
+.cell {
+  display: grid;
+  width: var(--cell, 2rem);
+  height: var(--cell, 2rem);
+  place-items: center;
+  padding: 0;
+  background: var(--win-face);
+  color: var(--win-ink);
+  font-family: Arial, sans-serif;
+  font-size: calc(var(--cell, 2rem) * 0.58);
+  font-weight: 900;
+  line-height: 1;
+  user-select: none;
+}
+
+.cell:focus-visible {
+  position: relative;
+  z-index: 10;
+  outline: 2px dotted #000;
+  outline-offset: -4px;
+}
+
+.cell[data-variant="hidden"] {
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-mid);
+  border-bottom-color: var(--win-mid);
+  border-left-color: var(--win-light);
+  font-size: calc(var(--cell, 2rem) * 0.58);
+}
+
+.board[data-mode="flag"] .cell[data-variant="hidden"] {
+  cursor: cell;
+}
+
+.board[data-status="idle"] .cell[data-variant="hidden"]:active,
+.board[data-status="playing"] .cell[data-variant="hidden"]:active {
+  border-width: 1px;
+  border-color: var(--win-mid);
+}
+
+.cell[data-variant="revealed"],
+.cell[data-variant="boom"],
+.cell[data-variant="wrong"] {
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-left-color: var(--win-mid);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.cell[data-variant="boom"] {
+  background: #ff0000;
+}
+
+.cell[data-variant="wrong"] {
+  position: relative;
+}
+
+.cell[data-variant="wrong"]::after {
+  content: "×";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #ff0000;
+  font-size: calc(var(--cell, 2rem) * 0.8);
+  font-weight: 900;
+}
+
+.board[data-status="won"] .cell,
+.board[data-status="lost"] .cell {
+  pointer-events: none;
+}
+
+.cell[data-adjacent="1"] {
+  color: #0000ff;
+}
+
+.cell[data-adjacent="2"] {
+  color: #008000;
+}
+
+.cell[data-adjacent="3"] {
+  color: #ff0000;
+}
+
+.cell[data-adjacent="4"] {
+  color: #000080;
+}
+
+.cell[data-adjacent="5"] {
+  color: #800000;
+}
+
+.cell[data-adjacent="6"] {
+  color: #008080;
+}
+
+.cell[data-adjacent="7"] {
+  color: #000000;
+}
+
+.cell[data-adjacent="8"] {
+  color: #808080;
+}
+
+.statusBar {
+  display: flex;
+  min-height: 2rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.38rem;
+  padding-left: 0.35rem;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+  color: #202020;
+  font-size: 0.68rem;
+}
+
+.statusBar[data-status="lost"] > span {
+  color: #a00000;
+  font-weight: 700;
+}
+
+.statusBar[data-status="won"] > span {
+  color: #005b00;
+  font-weight: 700;
+}
+
+.modeSwitch {
+  display: flex;
+  flex: 0 0 auto;
+  min-inline-size: 0;
+  gap: 2px;
+  margin: 0;
+  padding: 2px;
+  border: 0;
+}
+
+.modeSwitch button {
+  min-height: 1.55rem;
+  padding: 0.15rem 0.5rem;
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-shadow);
+  border-bottom-color: var(--win-shadow);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  color: #000;
+  font-family: inherit;
+  font-size: 0.66rem;
+}
+
+.modeSwitch button[aria-pressed="true"] {
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+  background:
+    radial-gradient(#fff 0.6px, transparent 0.8px) 0 0 / 3px 3px,
+    #d6d6d6;
+  font-weight: 700;
+}
+
+.helpWindow {
+  position: absolute;
+  z-index: 40;
+  top: clamp(1.25rem, 12vh, 5rem);
+  left: 50%;
+  width: min(23rem, calc(100% - 2rem));
+  transform: translateX(-50%);
+}
+
+.helpBody {
+  display: flex;
+  flex-direction: column;
+  padding: 0.6rem 0.85rem 0.8rem;
+  font-size: 0.74rem;
+}
+
+.helpBody ul {
+  margin: 0 0 0.75rem;
+  padding-left: 1.15rem;
+  list-style-type: square;
+}
+
+.helpBody li {
+  padding-block: 0.12rem;
+}
+
+.helpBody kbd {
+  padding: 0 0.2rem;
+  border: 1px solid var(--win-ink);
+  font-family: "Courier New", monospace;
+  font-size: 0.7rem;
+}
+
+.okButton {
+  min-width: 5rem;
+  min-height: 1.75rem;
+  align-self: center;
+  padding: 0.12rem 1rem;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-shadow);
+  border-bottom-color: var(--win-shadow);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  color: var(--win-ink);
+  font-family: inherit;
+}
+
+.okButton:active {
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+}
+
+.taskbar {
+  position: absolute;
+  z-index: 50;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  height: var(--taskbar-h);
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.25rem max(0.2rem, var(--safe-area-bottom));
+  border-top: 2px solid var(--win-light);
+  background: var(--win-face);
+  box-shadow: inset 0 1px 0 var(--win-face);
+}
+
+.startButton,
+.taskButton,
+.tray {
+  display: inline-flex;
+  min-height: 2.05rem;
+  align-items: center;
+  border-width: 2px;
+  border-style: solid;
+  background: var(--win-face);
+  color: #000;
+  font-family: inherit;
+  font-size: 0.74rem;
+  text-decoration: none;
+}
+
+.startButton {
+  gap: 0.3rem;
+  padding: 0.12rem 0.52rem 0.12rem 0.3rem;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-shadow);
+  border-bottom-color: var(--win-shadow);
+  border-left-color: var(--win-light);
+}
+
+.startButton:active {
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+}
+
+.winMark {
+  display: grid;
+  width: 1.25rem;
+  height: 1.15rem;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1px;
+  transform: skewY(-7deg);
+}
+
+.winMark i:nth-child(1) {
+  background: #e33c26;
+}
+
+.winMark i:nth-child(2) {
+  background: #3a91cf;
+}
+
+.winMark i:nth-child(3) {
+  background: #34a744;
+}
+
+.winMark i:nth-child(4) {
+  background: #f4c431;
+}
+
+.taskDivider {
+  width: 3px;
+  height: 1.9rem;
+  border-right: 1px solid var(--win-light);
+  border-left: 1px solid var(--win-mid);
+}
+
+.taskButton {
+  width: min(14rem, 32vw);
+  gap: 0.35rem;
+  padding: 0.15rem 0.5rem;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-shadow);
+  border-bottom-color: var(--win-shadow);
+  border-left-color: var(--win-light);
+  overflow: hidden;
+  font-weight: 700;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskButton[data-active="true"] {
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+  background:
+    radial-gradient(#fff 0.6px, transparent 0.8px) 0 0 / 3px 3px,
+    #d6d6d6;
+}
+
+.taskButton:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+.taskSpacer {
+  min-width: 0;
+  flex: 1;
+}
+
+.tray {
+  gap: 0.65rem;
+  padding: 0.15rem 0.55rem;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+  white-space: nowrap;
+}
+
+@media (max-width: 47.99rem) {
+  .programArea,
+  .paintArea {
+    inset: clamp(4.75rem, 12vh, 6.25rem) 0.45rem 0.45rem;
+    max-width: none;
+    max-height: none;
+  }
+
+  .desktopIcons {
+    top: 0.45rem;
+    left: 0.25rem;
+    right: 0.25rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    width: auto;
+    gap: 0.25rem;
+  }
+
+  .desktopShortcut {
+    width: auto;
+    min-height: 4.2rem;
+    font-size: 0.62rem;
+  }
+
+  .window,
+  .paintWindow {
+    margin-block: auto;
+  }
+
+  .statusBar {
+    min-height: 2.45rem;
+  }
+
+  .statusBar > span {
+    max-width: 7.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .modeSwitch button,
+  .face,
+  .okButton,
+  .startButton {
+    min-height: 2.75rem;
+  }
+
+  .modeSwitch button {
+    padding-inline: 0.65rem;
+  }
+
+  .taskButton {
+    width: min(10rem, 35vw);
+  }
+
+  .tray span {
+    display: none;
+  }
+}
+
+@media (max-width: 25rem) {
+  .tray {
+    padding-inline: 0.35rem;
+  }
+
+  .taskButton {
+    display: none;
+  }
+
+  .statusBar > span {
+    display: none;
+  }
+
+  .statusBar {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-height: 35rem) {
+  .desktopIcons {
+    display: none;
+  }
+
+  .programArea,
+  .paintArea {
+    inset: 0.35rem;
+  }
+
+  .statusBar > span {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .window,
+  .paintWindow {
+    animation: window-open 180ms steps(2, end) both;
+  }
+
+  .face {
+    transition: transform 70ms steps(1, end);
+  }
+}
+
+@keyframes window-open {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .window,
+  .paintWindow,
+  .face {
+    animation: none;
+    transition: none;
+  }
+}
