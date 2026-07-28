@@ -1,0 +1,128 @@
+.overlay {
+  position: absolute;
+  z-index: 1000;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.minorLine,
+.majorLine,
+.stageBoundary,
+.panelOutline,
+.hitboxOutline,
+.crosshair,
+.crosshairPoint {
+  vector-effect: non-scaling-stroke;
+}
+
+.minorLine {
+  fill: none;
+  stroke: rgb(53 221 255 / 18%);
+  stroke-width: 0.6;
+}
+
+.majorLine {
+  fill: none;
+  stroke: rgb(53 221 255 / 54%);
+  stroke-width: 1;
+}
+
+.stageBoundary {
+  fill: none;
+  stroke: #35ddff;
+  stroke-width: 2;
+}
+
+.axisLabels,
+.markerLabel,
+.pointerLabel,
+.pointerDetail {
+  font-family: var(--font-code), ui-monospace, monospace;
+}
+
+.axisLabels {
+  fill: #c8f7ff;
+  font-size: 12px;
+  paint-order: stroke fill;
+  stroke: rgb(0 5 8 / 92%);
+  stroke-linejoin: round;
+  stroke-width: 3px;
+}
+
+.panelOutline {
+  fill: rgb(53 221 255 / 3%);
+  stroke: #35ddff;
+  stroke-dasharray: 8 5;
+  stroke-width: 1.5;
+}
+
+.hitboxOutline {
+  fill: rgb(255 53 151 / 9%);
+  stroke: #ff3597;
+  stroke-width: 1.5;
+}
+
+.panelChip,
+.hitboxChip,
+.pointerChip {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1;
+}
+
+.panelChip {
+  fill: rgb(0 22 28 / 92%);
+  stroke: #35ddff;
+}
+
+.hitboxChip {
+  fill: rgb(30 0 16 / 92%);
+  stroke: #ff3597;
+}
+
+.markerLabel {
+  fill: #fff;
+  font-size: 11px;
+}
+
+.crosshair {
+  stroke: #fff;
+  stroke-dasharray: 4 4;
+  stroke-width: 1;
+}
+
+.crosshairPoint {
+  fill: #030303;
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
+.pointerChip {
+  fill: rgb(2 5 6 / 95%);
+  stroke: #fff;
+}
+
+.pointerLabel {
+  fill: #fff;
+  font-size: 12px;
+}
+
+.pointerDetail {
+  fill: #ff8dc3;
+  font-size: 11px;
+}
+
+@media (max-width: 47.99rem) {
+  .overlay {
+    display: none;
+  }
+}
