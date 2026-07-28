@@ -41,15 +41,15 @@ const Egg: FC<{
       </div>
       <div aria-hidden='true' className={css.message}>
         <span className={css.eyebrow}>SYS://OVERRIDE · CHANNEL 30</span>
-        <strong data-text='KONAMI SIGNAL'>KONAMI SIGNAL</strong>
-        <span className={css.confirm}>ACCEPTED · ANOMALY LOGGED</span>
+        <strong data-text='ATTACK DETECTED'>ATTACK DETECTED</strong>
+        <span className={css.confirm}>INTRUSION TRACED · ANOMALY LOGGED</span>
         <span className={css.progress}>
           <i />
         </span>
         <small>REALITY BUFFER WILL SELF-RESTORE</small>
       </div>
       <span className='sr-only'>
-        Konami code accepted. System override active and anomaly logged.
+        Konami code accepted. Attack detected and anomaly logged.
       </span>
     </div>
   )

@@ -11,6 +11,7 @@ const SpriteCity: React.FunctionComponent = () => {
         imageSrcSet='/images/street-home.webp?v=crisp-1 1x, /images/street-home@2x.webp?v=crisp-1 2x'
       />
       <link rel='preload' as='image' href='/images/bridge.svg' />
+      <span aria-hidden='true' className={css.skyglow} />
       <span aria-hidden='true' className={css.dusk} />
       <figure aria-hidden='true' className={css.city}>
         <span className={css.horizon} />

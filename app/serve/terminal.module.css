@@ -133,7 +133,6 @@
   animation: flicker 5s steps(1) infinite;
   overscroll-behavior: contain;
   padding: clamp(0.7rem, 2vw, 1.2rem) clamp(0.9rem, 3vw, 1.8rem) 0.8rem;
-  scrollbar-width: none;
 }
 
 @keyframes flicker {

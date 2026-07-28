@@ -190,7 +190,7 @@
 
 :global(html[data-system-override="konami"] #vbody) {
   transform-origin: center;
-  animation: system-jolt 150ms steps(2, end) infinite;
+  animation: system-glitch 460ms steps(1, end) infinite;
 }
 
 @keyframes override-field {
@@ -281,16 +281,32 @@
   }
 }
 
-@keyframes system-jolt {
+/* hard-cut shears alternating direction: the frame tears in zigzags */
+@keyframes system-glitch {
   0%,
   100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) skewX(0deg);
   }
-  30% {
-    transform: translate3d(-0.18rem, 0.05rem, 0);
+  10% {
+    transform: translate3d(-1.4%, 0.2%, 0) skewX(-3.5deg);
   }
-  65% {
-    transform: translate3d(0.14rem, -0.04rem, 0);
+  22% {
+    transform: translate3d(1.8%, -0.25%, 0) skewX(4deg);
+  }
+  34% {
+    transform: translate3d(-2.4%, 0, 0) skewX(-5.5deg) scaleY(1.02);
+  }
+  46% {
+    transform: translate3d(1.1%, 0.4%, 0) skewX(2.5deg);
+  }
+  58% {
+    transform: translate3d(-0.6%, -0.5%, 0) skewX(-1.5deg) scaleY(0.985);
+  }
+  72% {
+    transform: translate3d(2.6%, 0.2%, 0) skewX(6deg);
+  }
+  86% {
+    transform: translate3d(-1.2%, 0, 0) skewX(-4deg);
   }
 }
 

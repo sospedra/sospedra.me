@@ -106,8 +106,34 @@ const clear = (ctx: Ctx) => {
   ctx.fillStyle = INK
 }
 
-const drawChrome = (ctx: Ctx, score: number) => {
+type FrameOptions = {
+  statusIcons?: boolean
+}
+
+const drawStatusIcons = (ctx: Ctx, level: number) => {
+  // Four one-bit reception bars and a five-pixel battery sit in the real
+  // six-row Nokia status strip. They are opt-in so the current route remains
+  // byte-for-byte faithful while the V2 handset can expose more game state.
+  for (let bar = 0; bar < 4; bar++) {
+    ctx.fillRect(54 + bar * 2, 4 - bar, 1, bar + 1)
+  }
+  ctx.fillRect(64, 0, 7, 1)
+  ctx.fillRect(64, 4, 7, 1)
+  ctx.fillRect(64, 0, 1, 5)
+  ctx.fillRect(70, 0, 1, 5)
+  ctx.fillRect(71, 1, 1, 3)
+  ctx.fillRect(65, 1, 4, 3)
+  drawText(ctx, `L${level}`, { x: 76, y: 0 })
+}
+
+const drawChrome = (
+  ctx: Ctx,
+  score: number,
+  level: number,
+  options: FrameOptions,
+) => {
   drawText(ctx, String(score).padStart(4, '0'), { x: 1, y: 0 })
+  if (options.statusIcons) drawStatusIcons(ctx, level)
   ctx.fillRect(0, FIELD_Y, LCD_W, 1)
   ctx.fillRect(0, LCD_H - 1, LCD_W, 1)
   ctx.fillRect(0, FIELD_Y, 1, LCD_H - FIELD_Y)
@@ -171,8 +197,8 @@ const drawTops = (ctx: Ctx, state: GameState) => {
   drawCentered(ctx, 'PRESS 5', { y: 38 })
 }
 
-const drawGame = (ctx: Ctx, state: GameState) => {
-  drawChrome(ctx, state.score)
+const drawGame = (ctx: Ctx, state: GameState, options: FrameOptions) => {
+  drawChrome(ctx, state.score, state.level, options)
   drawBoard(ctx, state)
   if (state.phase === 'paused') drawDialog(ctx, ['PAUSED'])
   if (state.phase === 'over') {
@@ -181,7 +207,11 @@ const drawGame = (ctx: Ctx, state: GameState) => {
   }
 }
 
-export const drawFrame = (ctx: Ctx, state: GameState) => {
+export const drawFrame = (
+  ctx: Ctx,
+  state: GameState,
+  options: FrameOptions = {},
+) => {
   clear(ctx)
   switch (state.phase) {
     case 'menu':
@@ -193,6 +223,6 @@ export const drawFrame = (ctx: Ctx, state: GameState) => {
     case 'running':
     case 'paused':
     case 'over':
-      return drawGame(ctx, state)
+      return drawGame(ctx, state, options)
   }
 }

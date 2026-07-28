@@ -274,14 +274,7 @@
 
 .hotspot:active,
 .hotspot.down {
-  background: radial-gradient(
-    closest-side,
-    rgb(9 12 30 / 45%),
-    rgb(9 12 30 / 12%)
-  );
-  box-shadow:
-    inset 0 3px 10px rgb(0 0 0 / 55%),
-    0 0 0.65rem rgb(164 205 3 / 28%);
+  background: radial-gradient(closest-side, rgb(164 205 3 / 20%), transparent);
 }
 
 .hotspot:focus-visible {

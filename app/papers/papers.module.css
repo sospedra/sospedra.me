@@ -158,11 +158,15 @@
   color: var(--row-color, var(--color-signal-cyan));
 }
 
-/* teletext cursor: full invert on the row */
+/* teletext cursor, softened: a row-color wash instead of the full invert */
 .rows a:hover,
 .rows a:focus-visible {
-  background: var(--row-color, var(--color-signal-cyan));
-  color: var(--color-bg-void, #0e141b);
+  background: color-mix(
+    in oklab,
+    var(--row-color, var(--color-signal-cyan)) 16%,
+    transparent
+  );
+  color: var(--color-text-strong, #fff);
   outline: none;
 }
 

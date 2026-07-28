@@ -129,7 +129,7 @@ export default function AboutView(props: { years: number }) {
 
               <ul>
                 <li>
-                  <Link className={neonCss.neon} url='/serve?e=talks'>
+                  <Link className={neonCss.neon} url='/videoclub'>
                     Public speaker
                   </Link>
                 </li>

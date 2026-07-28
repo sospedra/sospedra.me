@@ -327,7 +327,11 @@ const commonPrefix = (values: string[]) =>
 const finishMatch = (match: string) =>
   match.endsWith('/') ? match : `${match} `
 
-const argMatches = (ctx: ShellContext, token: string): string[] => {
+const argMatches = (
+  ctx: ShellContext,
+  token: string,
+  directoriesOnly = false,
+): string[] => {
   const cut = token.lastIndexOf('/') + 1
   const base = token.slice(0, cut)
   const stem = token.slice(cut).toLowerCase()
@@ -337,20 +341,36 @@ const argMatches = (ctx: ShellContext, token: string): string[] => {
   if (!scope || scope.kind === 'file') return []
 
   const { dirs, files } = entriesAt(ctx.paths, scope.segments)
-  const codes = base ? [] : ctx.links.map(codeOf)
+  const codes = base || directoriesOnly ? [] : ctx.links.map(codeOf)
   return [
     ...dirs.map((dir) => `${base}${dir}/`),
-    ...files.map((file) => base + file),
+    ...(directoriesOnly ? [] : files.map((file) => base + file)),
     ...codes,
   ].filter((candidate) => candidate.slice(cut).toLowerCase().startsWith(stem))
 }
 
-export const complete = (ctx: ShellContext, input: string): Completion => {
+export type CompletionOptions = {
+  directoryOnlyCommands?: readonly string[]
+  extraCommandNames?: readonly string[]
+}
+
+export const complete = (
+  ctx: ShellContext,
+  input: string,
+  options: CompletionOptions = {},
+): Completion => {
   const head = input.slice(0, input.lastIndexOf(' ') + 1)
   const token = input.slice(head.length)
+  const commandName = head.trim().split(' ')[0]?.toLowerCase() ?? ''
   const matches = head
-    ? argMatches(ctx, token)
-    : COMMAND_NAMES.filter((name) => name.startsWith(token.toLowerCase()))
+    ? argMatches(
+        ctx,
+        token,
+        options.directoryOnlyCommands?.includes(commandName),
+      )
+    : [...new Set([...COMMAND_NAMES, ...(options.extraCommandNames ?? [])])]
+        .sort()
+        .filter((name) => name.startsWith(token.toLowerCase()))
 
   if (matches.length === 0) return { value: input, options: [] }
   if (matches.length === 1) {

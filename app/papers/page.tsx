@@ -72,12 +72,19 @@ function BroadcastRow(props: { paper: Paper; index: number }) {
     <li>
       <Link
         url={`/papers/${props.paper.slug}` as Route}
+        className={glitchCss.legacyTrigger}
         data-arrow-item=''
         prefetchOnFocus={false}
       >
         <div className={css.rowLine}>
           <span className={css.pg}>P{FIRST_ROW_PAGE + props.index}</span>
-          <h2 className={css.rowTitle}>{props.paper.title}</h2>
+          <h2
+            aria-label={props.paper.title}
+            data-text={props.paper.title}
+            className={`${css.rowTitle} ${glitchCss.legacyGlitch}`}
+          >
+            {props.paper.title}
+          </h2>
           <span className={css.leader} aria-hidden='true' />
           <span className={css.rowMeta}>
             <PizzaTime paper={props.paper} /> · {stamp(props.paper.createdAt)}
@@ -124,7 +131,7 @@ export default async function PapersPage() {
 
           <Link
             url={`/papers/${headline.slug}` as Route}
-            className={css.headline}
+            className={`${css.headline} ${glitchCss.trigger}`}
             data-arrow-item=''
             prefetchOnFocus={false}
           >
@@ -140,7 +147,11 @@ export default async function PapersPage() {
                 <PizzaTime paper={headline} /> · {stamp(headline.createdAt)}
               </span>
             </p>
-            <h2 data-text={headline.title} className={glitchCss.glitch}>
+            <h2
+              aria-label={headline.title}
+              data-text={headline.title}
+              className={glitchCss.glitch}
+            >
               {headline.title}
             </h2>
             <p className={css.headlineExcerpt}>{headline.excerpt}</p>

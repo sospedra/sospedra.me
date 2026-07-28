@@ -15,6 +15,33 @@ const CHANNELS = [
   { id: 'static', label: 'RETURN VECTOR', intensity: '0.35s' },
 ] as const
 
+const LIQUID_LAYER_TIMINGS = [
+  { delay: '0s', duration: '25s' },
+  { delay: '0.15s', duration: '15.9s' },
+  { delay: '0.53s', duration: '26.4s' },
+  { delay: '0.45s', duration: '17.8s' },
+  { delay: '1.6s', duration: '19.2s' },
+  { delay: '1.6s', duration: '29.2s' },
+  { delay: '1.6s', duration: '20.2s' },
+] as const
+
+const HOME_LINK_WORDS = ['Take', 'me', 'to', 'a', 'safe', 'place'] as const
+
+type LiquidLayerStyle = React.CSSProperties & {
+  '--liquid-delay': string
+  '--liquid-duration': string
+}
+
+const HomeLinkLabel = () => (
+  <span className={css.homeLinkLabel}>
+    {HOME_LINK_WORDS.map((word) => (
+      <span className={css.homeLinkWord} key={word}>
+        {word}
+      </span>
+    ))}
+  </span>
+)
+
 type NavigatorWithConnection = Navigator & {
   connection?: { saveData?: boolean }
 }
@@ -26,8 +53,6 @@ type WindowWithOptionalIdle = {
     options?: IdleRequestOptions,
   ) => number
 }
-
-const padChannel = (index: number) => String(index + 1).padStart(2, '0')
 
 const Component404: React.FC = () => {
   const [channelIndex, setChannelIndex] = useState(0)
@@ -111,11 +136,9 @@ const Component404: React.FC = () => {
         <p className={css.messageCode}>404</p>
       </div>
 
-      <div className={css.statusPanel} role='status' aria-live='polite'>
-        <span className={css.signal} aria-hidden='true' />
-        <span>CH {padChannel(channelIndex)}/04</span>
-        <strong>{channel.label}</strong>
-      </div>
+      <p className='sr-only' role='status' aria-live='polite'>
+        Channel {channelIndex + 1} of 4: {channel.label}
+      </p>
 
       <div className={css.tunerConsole}>
         <button
@@ -148,17 +171,6 @@ const Component404: React.FC = () => {
             {locked ? 'HOME VECTOR LOCKED' : 'TUNE ▼'}
           </span>
         </button>
-
-        <p className={css.instructions}>
-          {locked ? (
-            'Signal acquired / returning home'
-          ) : (
-            <>
-              Tap / Enter / Space: next <span aria-hidden='true'>·</span>{' '}
-              Arrows: tune
-            </>
-          )}
-        </p>
       </div>
 
       {warmIndex !== null && (
@@ -180,9 +192,35 @@ const Component404: React.FC = () => {
         </video>
       )}
 
-      <nav aria-label='Recovery routes' className={css.nav}>
-        <Link url='/'>Take me to a safe place</Link>
-        <Link url='/serve'>I was looking for a static asset</Link>
+      <nav aria-label='Recovery route' className={css.nav}>
+        <Link
+          aria-label='Take me to a safe place'
+          className={css.homeLink}
+          url='/'
+        >
+          <span aria-hidden='true' className={css.homeLinkClip}>
+            <span className={css.homeLiquidScene}>
+              <span className={css.homeLiquidLight} />
+              {LIQUID_LAYER_TIMINGS.map(({ delay, duration }) => (
+                <span
+                  className={css.homeLiquidLayer}
+                  key={`${delay}-${duration}`}
+                  style={
+                    {
+                      '--liquid-delay': delay,
+                      '--liquid-duration': duration,
+                    } as LiquidLayerStyle
+                  }
+                />
+              ))}
+              <span className={css.homeLiquidBase} />
+              <span className={css.homeLiquidSurface} />
+            </span>
+            <span className={css.homeLinkText}>
+              <HomeLinkLabel />
+            </span>
+          </span>
+        </Link>
       </nav>
     </div>
   )

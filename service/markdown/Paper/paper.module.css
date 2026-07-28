@@ -292,22 +292,6 @@
   @apply underline;
 }
 
-@media (hover: hover) {
-  .markdown pre::-webkit-scrollbar-track {
-    @apply rounded-full;
-  }
-
-  .markdown pre::-webkit-scrollbar {
-    @apply h-3;
-  }
-
-  .markdown pre::-webkit-scrollbar-thumb {
-    @apply rounded-full;
-    background-color: #c6c6c6;
-    border: 4px solid #212121;
-  }
-}
-
 @media (min-width: 768px) {
   .markdown pre {
     @apply p-4;

@@ -1,10 +1,76 @@
 import css from './about.module.css'
 
+const GHOST_SOLID_AREAS = [
+  'top0',
+  'top1',
+  'top2',
+  'top3',
+  'top4',
+  'st0',
+  'st1',
+  'st2',
+  'st3',
+  'st4',
+  'st5',
+] as const
+
+const GHOST_FEET = [
+  { area: 'an1', phase: 0 },
+  { area: 'an2', phase: 1 },
+  { area: 'an3', phase: 1 },
+  { area: 'an4', phase: 1 },
+  { area: 'an6', phase: 0 },
+  { area: 'an7', phase: 0 },
+  { area: 'an8', phase: 0 },
+  { area: 'an9', phase: 1 },
+  { area: 'an10', phase: 1 },
+  { area: 'an11', phase: 0 },
+  { area: 'an12', phase: 0 },
+  { area: 'an13', phase: 0 },
+  { area: 'an15', phase: 1 },
+  { area: 'an16', phase: 1 },
+  { area: 'an17', phase: 1 },
+  { area: 'an18', phase: 0 },
+] as const
+
+// Adapted from BlackisPlay's MIT-licensed Uiverse Pac-Man Ghost Loader.
+// Full notice: THIRD_PARTY_NOTICES.md.
+function PixelGhost() {
+  return (
+    <span aria-hidden='true' className={css.pixelGhost}>
+      <span className={css.pixelGhostBody}>
+        <span className={css.pixelGhostEye} />
+        <span className={`${css.pixelGhostEye} ${css.pixelGhostEyeRight}`} />
+        <span className={css.pixelGhostPupil} />
+        <span
+          className={`${css.pixelGhostPupil} ${css.pixelGhostPupilRight}`}
+        />
+        {GHOST_SOLID_AREAS.map((area) => (
+          <span
+            className={css.pixelGhostSolid}
+            key={area}
+            style={{ gridArea: area }}
+          />
+        ))}
+        {GHOST_FEET.map(({ area, phase }) => (
+          <span
+            className={phase === 0 ? css.pixelGhostFootA : css.pixelGhostFootB}
+            key={area}
+            style={{ gridArea: area }}
+          />
+        ))}
+      </span>
+      <span className={css.pixelGhostShadow} />
+    </span>
+  )
+}
+
 export default function VaporFooter() {
   return (
     <div className={css.vapor} aria-hidden='true'>
       <span className={css.vaporSun} />
       <span className={css.vaporGrid} />
+      <PixelGhost />
       <svg
         aria-hidden='true'
         className={css.vaporScene}

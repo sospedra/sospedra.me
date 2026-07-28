@@ -51,6 +51,238 @@
   text-align: right;
 }
 
+.sectionIndex {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 0.45rem;
+  padding: 0.55rem 0.65rem 0.65rem;
+  border: 2px solid var(--manual-ink);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 7px,
+      rgb(32 35 30 / 3%) 7px 8px
+    ),
+    rgb(255 255 255 / 7%);
+  box-shadow:
+    inset 0 0 0 3px rgb(32 35 30 / 5%),
+    4px 4px 0 rgb(32 35 30 / 16%);
+  color: var(--manual-ink);
+}
+
+.indexLegend {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-inline: 0.1rem;
+  font-family: var(--font-code, monospace);
+  text-transform: uppercase;
+}
+
+.indexLegend strong {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+}
+
+.indexLegend span {
+  color: var(--manual-ink-muted);
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-align: right;
+}
+
+.sectionIndex ol {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sectionIndex li {
+  min-width: 0;
+  margin: 0 -1px -1px 0;
+}
+
+.sectionIndex button,
+.sectionIndex a {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 100%;
+  min-height: 44px;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.55rem;
+  border: 1px solid var(--manual-rule);
+  background: transparent;
+  color: var(--manual-ink);
+  font-family: var(--font-code, monospace);
+  text-align: left;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.sectionIndex button {
+  appearance: none;
+  cursor: pointer;
+}
+
+.sectionIndex :is(button, a) b {
+  color: var(--manual-calibration);
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+}
+
+.sectionIndex :is(button, a) span {
+  overflow: hidden;
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sectionIndex :is(button, a):hover {
+  background: rgb(0 111 118 / 8%);
+}
+
+.sectionIndex :is(button, a):focus-visible {
+  z-index: 2;
+  outline: 2px solid var(--manual-calibration);
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 4px var(--manual-paper-raised);
+}
+
+.indexHome {
+  grid-column: span 2;
+}
+
+.sectionIndex .indexHome a {
+  overflow: visible;
+}
+
+.sectionIndex .indexHome a::before {
+  position: absolute;
+  z-index: -1;
+  inset: 19% 0.35rem 17% 0.2rem;
+  background:
+    linear-gradient(
+      93deg,
+      transparent 0 1%,
+      rgb(255 227 0 / 72%) 3% 96%,
+      transparent 99%
+    ),
+    linear-gradient(
+      -2deg,
+      transparent 0 14%,
+      rgb(255 238 66 / 48%) 20% 80%,
+      transparent 87%
+    );
+  clip-path: polygon(1% 15%, 99% 4%, 97% 84%, 2% 98%);
+  content: "";
+  mix-blend-mode: multiply;
+  transform: rotate(-0.7deg);
+}
+
+.sectionIndex .indexHome b {
+  color: var(--manual-ink);
+}
+
+/*
+ * Blueprint callouts adapt barisdogansutcu's MIT-licensed anatomy button:
+ * https://uiverse.io/barisdogansutcu/proud-lion-79
+ */
+.sectionIndex .blueprintExit {
+  transition:
+    background-color var(--motion-micro, 160ms) ease,
+    border-color var(--motion-micro, 160ms) ease,
+    transform var(--motion-micro, 160ms) var(--ease-signal, ease);
+}
+
+.blueprintExitNotes {
+  position: absolute;
+  z-index: 2;
+  top: -0.875rem;
+  left: -0.75rem;
+  width: 15rem;
+  height: 4.875rem;
+  overflow: visible;
+  color: var(--manual-pen, #1d4f8a);
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.14);
+  transform-origin: 2.8rem 2.25rem;
+  transition:
+    opacity var(--motion-micro, 160ms) ease,
+    transform 220ms var(--ease-signal, ease),
+    visibility 220ms linear;
+  visibility: hidden;
+}
+
+.blueprintExitNotes path,
+.blueprintExitNotes rect,
+.blueprintExitNotes circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: square;
+  stroke-linejoin: round;
+  stroke-width: 1.25;
+  vector-effect: non-scaling-stroke;
+}
+
+.blueprintExitNotes rect {
+  fill: rgb(29 79 138 / 8%);
+  stroke-dasharray: 2.5 2;
+}
+
+.blueprintExitNotes circle {
+  fill: currentColor;
+}
+
+.blueprintExitNotes text {
+  fill: currentColor;
+  font: 800 8px / 1 var(--font-code, monospace);
+  letter-spacing: 0.08em;
+  paint-order: stroke;
+  stroke: var(--manual-paper-raised, #e4dec6);
+  stroke-linejoin: round;
+  stroke-width: 2.5px;
+}
+
+.blueprintExit:is(:focus-visible, :active) .blueprintExitNotes {
+  opacity: 1;
+  transform: scale(1);
+  visibility: visible;
+}
+
+.sectionIndex .blueprintExit:active {
+  border-color: var(--manual-pen, #1d4f8a);
+  background-color: rgb(29 79 138 / 14%);
+  transform: translateY(1px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .blueprintExit:hover .blueprintExitNotes {
+    opacity: 1;
+    transform: scale(1);
+    visibility: visible;
+  }
+
+  .sectionIndex .blueprintExit:hover {
+    border-color: rgb(29 79 138 / 54%);
+    background-color: rgb(29 79 138 / 7%);
+  }
+}
+
+.frame :global([data-manual-page]) {
+  scroll-margin-top: 1rem;
+}
+
 .cover {
   --manual-paper: #ddd6bd;
 }
@@ -360,59 +592,6 @@
   text-transform: uppercase;
 }
 
-.setupIllustrations {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.commissionPlate {
-  position: relative;
-}
-
-.secondaryDiagrams {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-
-.homeDiagram {
-  display: block;
-  min-width: 0;
-  color: inherit;
-  text-decoration: none;
-  transition: filter var(--motion-micro, 160ms) ease;
-}
-
-/* Filter only: a transform here nudges the figure and reads as layout shift. */
-.homeDiagram:hover,
-.homeDiagram:active,
-.homeDiagram:focus-visible {
-  filter: saturate(1.25) contrast(1.06) brightness(1.03);
-}
-
-/* The previous owner ran a highlighter over the go-back figure. */
-.homeDiagram figcaption {
-  background: linear-gradient(
-    97deg,
-    transparent 1%,
-    rgb(255 227 0 / 34%) 3% 98%,
-    transparent 99.5%
-  );
-}
-
-/* a-prefixed to outrank .figure figcaption strong from the diagram module */
-a.homeDiagram figcaption strong {
-  padding-inline: 0.25rem 0.5rem;
-  background: linear-gradient(
-    99deg,
-    transparent 2%,
-    rgb(255 227 0 / 85%) 6% 95%,
-    transparent 98%
-  );
-  color: var(--manual-ink);
-}
-
-.penStart,
 .penData,
 .penScope {
   position: absolute;
@@ -427,14 +606,6 @@ a.homeDiagram figcaption strong {
   pointer-events: none;
   text-transform: none;
   user-select: none;
-}
-
-.penStart {
-  top: 1.1rem;
-  left: 1.4rem;
-  padding: 0.2rem 0.4rem 0.35rem;
-  border-bottom: 2px solid currentColor;
-  transform: rotate(-5deg);
 }
 
 .penData {
@@ -581,23 +752,85 @@ a.homeDiagram figcaption strong {
   text-transform: uppercase;
 }
 
-.commissioningGrid ol {
+.commissioningChecklist {
   display: grid;
-  gap: 0.4rem;
+  gap: 0.2rem;
   margin: 0;
-  padding-left: 1.4rem;
-  list-style: decimal;
+  padding: 0;
+  list-style: none;
 }
 
-.commissioningGrid li {
-  padding-left: 0.25rem;
+.commissioningCheck {
+  position: relative;
+  min-width: 0;
+}
+
+.commissioningInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.commissioningLabel {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.1rem 0.35rem 0.1rem 0;
+  cursor: pointer;
   font-size: clamp(0.76rem, 1.75vw, 0.88rem);
   line-height: 1.4;
+  user-select: none;
 }
 
-.commissioningGrid li::marker {
-  color: var(--manual-ink-muted);
-  font: 800 0.72rem / 1 var(--font-code, monospace);
+.commissioningGlyph {
+  flex: 0 0 2.8rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  overflow: visible;
+}
+
+.commissioningBox,
+.commissioningMark {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.commissioningBox {
+  stroke: var(--manual-ink);
+  stroke-width: 1.8;
+}
+
+.commissioningMark {
+  opacity: 0;
+  stroke: var(--manual-pen);
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+  transition:
+    stroke-dashoffset 500ms ease,
+    opacity 80ms linear;
+}
+
+.commissioningInput:checked + .commissioningLabel .commissioningMark {
+  opacity: 1;
+  stroke-dashoffset: 0;
+}
+
+.commissioningInput:focus-visible + .commissioningLabel {
+  outline: 2px solid var(--manual-calibration);
+  outline-offset: 2px;
+}
+
+.commissioningLabel:hover .commissioningBox {
+  stroke: var(--manual-calibration);
 }
 
 .serviceBulletin {
@@ -761,7 +994,6 @@ a.homeDiagram figcaption strong {
     max-width: 44ch;
   }
 
-  .secondaryDiagrams,
   .commissioningGrid {
     grid-template-columns: 1fr;
   }
@@ -774,12 +1006,25 @@ a.homeDiagram figcaption strong {
     border-top: 1px solid rgb(151 52 82 / 46%);
     border-left: 0;
   }
+
+  .sectionIndex {
+    padding-inline: 0.5rem;
+  }
+
+  .sectionIndex ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 519px) {
   .frame {
     padding-right: max(0.65rem, env(safe-area-inset-right));
     padding-left: max(0.65rem, env(safe-area-inset-left));
+  }
+
+  .blueprintTargetNote,
+  .blueprintDestinationNote {
+    display: none;
   }
 
   .manualNav p {
@@ -824,12 +1069,6 @@ a.homeDiagram figcaption strong {
     grid-template-columns: 3.2rem 1fr;
   }
 
-  .penStart {
-    top: 0.5rem;
-    left: 0.55rem;
-    font-size: 0.7rem;
-  }
-
   .penData,
   .penScope {
     display: none;
@@ -854,10 +1093,28 @@ a.homeDiagram figcaption strong {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .sectionIndex .blueprintExit,
+  .blueprintExitNotes {
+    transition: none;
+  }
+
+  .commissioningMark {
+    transition: none;
+  }
+
   .trace path {
     animation: none;
     stroke-dashoffset: 0;
   }
+}
+
+:global(.fx-quiet) .blueprintExit,
+:global(.fx-quiet) .blueprintExitNotes {
+  transition: none;
+}
+
+:global(.fx-quiet) .commissioningMark {
+  transition: none;
 }
 
 :global(.fx-quiet) .trace path {

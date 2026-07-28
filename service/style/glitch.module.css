@@ -1,47 +1,211 @@
 @reference "../../service/style/global.css";
 
+/*
+ * Glitch motion adapted from "Button by harsh_8704":
+ * https://uiverse.io/harsh_8704/clever-swan-13
+ *
+ * Copyright - 2026 harsh_8704 (Harsh Shinde)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+.trigger,
+.legacyTrigger {
+  --glitch-cyan: var(--color-signal-cyan, #00ffff);
+  --glitch-pink: var(--color-signal-pink-hot, #ff00ff);
+}
+
 .glitch {
-  @apply relative inline-block text-cyan-400;
+  position: relative;
+  display: inline-block;
+  transform-origin: center;
+  transition:
+    color 150ms ease,
+    text-shadow 150ms ease;
 }
 
-.glitch:hover {
-  @apply text-white;
-  animation: underline-animation 1s;
-  animation-delay: 1s;
-  animation-iteration-count: infinite;
-}
-
-.glitch:hover:before,
-.glitch:hover:after {
-  @apply text-white;
-  text-decoration: underline;
-  text-decoration-style: dashed;
-  text-decoration-color: rgba(255, 255, 255, 0.8);
-  content: attr(data-text);
+.glitch::before,
+.glitch::after {
   position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  content: attr(data-text);
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center;
+  transition: opacity 150ms ease;
+}
+
+.glitch::before {
+  color: var(--glitch-cyan);
+  clip-path: polygon(0 20%, 100% 20%, 100% 50%, 0 50%);
+  transform: translate(-0.22em, -0.1em) scale(1.02) skew(-3deg);
+}
+
+.glitch::after {
+  color: var(--glitch-pink);
+  clip-path: polygon(0 50%, 100% 50%, 100% 80%, 0 80%);
+  transform: translate(0.22em, 0.1em) scale(1.02) skew(3deg);
+}
+
+.trigger:hover .glitch,
+.trigger:focus-visible .glitch,
+.trigger:active .glitch {
+  color: var(--color-text-strong, #fff);
+  text-shadow:
+    0 0 10px rgb(255 255 255 / 20%),
+    0 0 18px rgb(109 247 234 / 28%),
+    0 0 24px rgb(255 79 216 / 22%);
+  animation: title-glitch 420ms steps(2, end) infinite;
+  will-change: transform;
+}
+
+.trigger:hover .glitch::before,
+.trigger:focus-visible .glitch::before,
+.trigger:active .glitch::before {
+  opacity: 0.75;
+  animation: title-glitch-cyan 520ms steps(2, end) infinite;
+  will-change: clip-path, transform;
+}
+
+.trigger:hover .glitch::after,
+.trigger:focus-visible .glitch::after,
+.trigger:active .glitch::after {
+  opacity: 0.75;
+  animation: title-glitch-pink 520ms steps(2, end) infinite;
+  will-change: clip-path, transform;
+}
+
+@keyframes title-glitch {
+  0%,
+  100% {
+    transform: translate(0) scale(1.01);
+  }
+
+  25% {
+    transform: translate(-0.14em, 0.07em) scale(1.03) skew(-1deg);
+  }
+
+  50% {
+    transform: translate(0.14em, -0.07em) scale(1.02) skew(1deg);
+  }
+
+  75% {
+    transform: translate(-0.18em, -0.07em) scale(1.01) skew(-0.5deg);
+  }
+}
+
+@keyframes title-glitch-cyan {
+  0%,
+  100% {
+    clip-path: polygon(0 20%, 100% 20%, 100% 50%, 0 50%);
+    transform: translate(-0.22em, -0.1em) scale(1.02) skew(-3deg);
+  }
+
+  25% {
+    clip-path: polygon(0 30%, 100% 30%, 100% 60%, 0 60%);
+    transform: translate(0.22em, 0.1em) scale(1.05) skew(3deg);
+  }
+
+  50% {
+    clip-path: polygon(0 10%, 100% 10%, 100% 40%, 0 40%);
+    transform: translate(-0.16em, 0.06em) scale(0.99) skew(-2deg);
+  }
+
+  75% {
+    clip-path: polygon(0 40%, 100% 40%, 100% 70%, 0 70%);
+    transform: translate(0.16em, -0.06em) scale(1.06) skew(2deg);
+  }
+}
+
+@keyframes title-glitch-pink {
+  0%,
+  100% {
+    clip-path: polygon(0 50%, 100% 50%, 100% 80%, 0 80%);
+    transform: translate(0.22em, 0.1em) scale(1.02) skew(3deg);
+  }
+
+  25% {
+    clip-path: polygon(0 60%, 100% 60%, 100% 90%, 0 90%);
+    transform: translate(-0.22em, -0.1em) scale(1.05) skew(-3deg);
+  }
+
+  50% {
+    clip-path: polygon(0 40%, 100% 40%, 100% 70%, 0 70%);
+    transform: translate(0.16em, -0.06em) scale(0.99) skew(2deg);
+  }
+
+  75% {
+    clip-path: polygon(0 70%, 100% 70%, 100% 100%, 0 100%);
+    transform: translate(-0.16em, 0.06em) scale(1.06) skew(-2deg);
+  }
+}
+
+.legacyGlitch {
+  position: relative;
+  display: inline-block;
+}
+
+.legacyGlitch::before {
+  left: 2px;
+  text-shadow: -2px 0 var(--glitch-pink);
+  animation-name: legacy-glitch-1;
+}
+
+.legacyGlitch::after {
+  left: -1px;
+  text-shadow: -2px 0 var(--glitch-cyan);
+  animation-name: legacy-glitch-2;
+}
+
+.legacyTrigger:hover .legacyGlitch,
+.legacyTrigger:focus-visible .legacyGlitch,
+.legacyTrigger:active .legacyGlitch {
+  color: var(--color-text-strong, #fff);
+  animation: legacy-underline 1s 1s infinite;
+}
+
+.legacyTrigger:hover .legacyGlitch::before,
+.legacyTrigger:hover .legacyGlitch::after,
+.legacyTrigger:focus-visible .legacyGlitch::before,
+.legacyTrigger:focus-visible .legacyGlitch::after,
+.legacyTrigger:active .legacyGlitch::before,
+.legacyTrigger:active .legacyGlitch::after {
+  position: absolute;
+  top: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  top: 0;
+  color: var(--color-text-strong, #fff);
+  text-decoration: underline;
+  text-decoration-color: rgb(255 255 255 / 80%);
+  text-decoration-style: dashed;
+  content: attr(data-text);
   animation-duration: 2s;
-  animation-timing-function: linear;
-  animation-delay: 0s;
   animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  pointer-events: none;
 }
 
-.glitch:before {
-  left: 2px;
-  text-shadow: -2px 0 var(--pink);
-  animation-name: glitch-animation-1;
-}
-
-.glitch:after {
-  left: -1px;
-  text-shadow: -2px 0 var(--cyan);
-  animation-name: glitch-animation-2;
-}
-
-@keyframes glitch-animation-1 {
+@keyframes legacy-glitch-1 {
   0% {
     clip: rect(145px, 999px, 10px, 0);
   }
@@ -131,7 +295,7 @@
   }
 }
 
-@keyframes glitch-animation-2 {
+@keyframes legacy-glitch-2 {
   0% {
     clip: rect(13px, 999px, 79px, 0);
   }
@@ -217,9 +381,58 @@
   }
 }
 
-@keyframes underline-animation {
+@keyframes legacy-underline {
   100% {
+    text-decoration-line: underline;
+    text-decoration-style: dashed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glitch,
+  .glitch::before,
+  .glitch::after {
+    transition: none;
+  }
+
+  .trigger:hover .glitch,
+  .trigger:focus-visible .glitch,
+  .trigger:active .glitch {
+    animation: none;
+    transform: none;
+  }
+
+  .trigger:hover .glitch::before,
+  .trigger:focus-visible .glitch::before,
+  .trigger:active .glitch::before {
+    animation: none;
+    opacity: 0.55;
+    transform: translate(-0.08em);
+  }
+
+  .trigger:hover .glitch::after,
+  .trigger:focus-visible .glitch::after,
+  .trigger:active .glitch::after {
+    animation: none;
+    opacity: 0.55;
+    transform: translate(0.08em);
+  }
+
+  .legacyTrigger:hover .legacyGlitch,
+  .legacyTrigger:focus-visible .legacyGlitch,
+  .legacyTrigger:active .legacyGlitch {
     text-decoration: underline;
     text-decoration-style: dashed;
+    animation: none;
+  }
+
+  .legacyTrigger:hover .legacyGlitch::before,
+  .legacyTrigger:hover .legacyGlitch::after,
+  .legacyTrigger:focus-visible .legacyGlitch::before,
+  .legacyTrigger:focus-visible .legacyGlitch::after,
+  .legacyTrigger:active .legacyGlitch::before,
+  .legacyTrigger:active .legacyGlitch::after {
+    content: none;
+    animation: none;
   }
 }

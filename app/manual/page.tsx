@@ -1,13 +1,13 @@
 import Link, { LinkBack } from 'components/Link'
 import Page from 'components/Manual/Page'
 import Piece from 'components/Manual/Piece'
-import SetupDiagram from 'components/Manual/SetupDiagram'
 import Step from 'components/Manual/Step'
 import VerificationStamp from 'components/Manual/VerificationStamp'
 import Shell from 'components/Shell'
 import SpriteBust from 'components/Sprite/Bust'
 import SpriteManual from 'components/Sprite/Manual'
 import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
 import { MANUAL_DESC } from 'service/descriptions'
 import css from './manual.module.css'
 import ManualKeys from './manual-keys'
@@ -16,6 +16,45 @@ export const metadata: Metadata = {
   title: 'Manual of instructions',
   description: MANUAL_DESC,
   alternates: { canonical: '/manual' },
+}
+
+function CommissioningCheck({
+  children,
+  id,
+}: {
+  children: ReactNode
+  id: string
+}) {
+  return (
+    <li className={css.commissioningCheck}>
+      <input className={css.commissioningInput} id={id} type='checkbox' />
+      <label className={css.commissioningLabel} htmlFor={id}>
+        <svg
+          className={css.commissioningGlyph}
+          width='45'
+          height='45'
+          viewBox='0 0 95 95'
+          aria-hidden='true'
+        >
+          <rect
+            className={css.commissioningBox}
+            x='30'
+            y='20'
+            width='50'
+            height='50'
+          />
+          <g transform='translate(0,-952.36222)'>
+            {/* Scribble adapted from PriyanshuGupta28's MIT-licensed checkbox. */}
+            <path
+              className={css.commissioningMark}
+              d='m 56,963 c -102,122 6,9 7,9 17,-5 -66,69 -38,52 122,-77 -7,14 18,4 29,-11 45,-43 23,-4'
+            />
+          </g>
+        </svg>
+        <span>{children}</span>
+      </label>
+    </li>
+  )
 }
 
 export default function ManualPage() {
@@ -27,7 +66,6 @@ export default function ManualPage() {
         </Link>
         <p>SECTOR 04.1 / RS-19911201-11 / READ PROTOCOL / [ ] FLIP SHEETS</p>
       </nav>
-      <ManualKeys />
 
       {/* react 19 hoists resource links, next/head dies with the app router */}
       <link rel='preload' as='image' href='/sospedra.png' />
@@ -113,59 +151,27 @@ export default function ManualPage() {
           </div>
         </header>
 
-        <div className={css.setupIllustrations}>
-          <div className={css.commissionPlate}>
-            <SetupDiagram
-              variant='commission'
-              number='01'
-              title='Commissioning the unit'
-              caption='Insert the objective, connect context and verify the ethical interlock.'
-            />
-            <span className={css.penStart} aria-hidden='true'>
-              start here ↘
-            </span>
-          </div>
-          <div className={css.secondaryDiagrams}>
-            <SetupDiagram
-              variant='channel'
-              number='02'
-              title='Connect the channel'
-              caption='Transmit asynchronously unless latency blocks the work.'
-            />
-            <Link
-              url='/'
-              className={css.homeDiagram}
-              aria-label='Follow the recovery diagram and return home'
-            >
-              <SetupDiagram
-                variant='recovery'
-                number='03'
-                title='Recover to home'
-                caption='If the route fails, return to HOME and re-establish the objective.'
-              />
-            </Link>
-          </div>
-        </div>
+        <ManualKeys />
 
         <div className={css.commissioningGrid}>
           <section>
             <h3>1.1 Before commissioning</h3>
-            <ol>
-              <li>
+            <ul className={css.commissioningChecklist}>
+              <CommissioningCheck id='manual-check-assumptions'>
                 Remove assumptions, stale requirements and meeting residue.
-              </li>
-              <li>
+              </CommissioningCheck>
+              <CommissioningCheck id='manual-check-objective'>
                 Supply one clear objective and the evidence needed to act.
-              </li>
-              <li>
+              </CommissioningCheck>
+              <CommissioningCheck id='manual-check-mode'>
                 Select <b>SPEED</b> or <b>PRECISION</b>. Do not force both
                 without reducing scope.
-              </li>
-              <li>
+              </CommissioningCheck>
+              <CommissioningCheck id='manual-check-honour'>
                 Confirm the honour interlock is engaged before applying
                 workload.
-              </li>
-            </ol>
+              </CommissioningCheck>
+            </ul>
           </section>
           <aside className={css.serviceBulletin}>
             <p>

@@ -120,6 +120,8 @@
 html {
   min-height: 100%;
   background: var(--color-bg-void);
+  scrollbar-color: auto;
+  scrollbar-width: auto;
 }
 
 body {
@@ -147,19 +149,9 @@ html,
   color: var(--color-bg-void);
 }
 
-html[data-scroll-behavior][data-scroll-behavior]
-  :where(
-    a,
-    button,
-    input,
-    textarea,
-    select,
-    summary,
-    [tabindex]
-  ):focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 4px;
-  box-shadow: var(--shadow-focus);
+html[data-scroll-behavior][data-scroll-behavior] :focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 html[data-scroll-behavior][data-scroll-behavior] .site-main:focus {

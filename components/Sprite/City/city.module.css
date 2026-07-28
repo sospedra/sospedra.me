@@ -6,10 +6,50 @@
  * The bazaar bridge deck starts exactly there and runs to the world's edge.
  */
 .city,
-.dusk {
+.dusk,
+.skyglow {
   --street: clamp(20rem, 54vh, 38rem);
   --tile: calc(var(--street) * (1659 / 650));
   --city-end: clamp(var(--tile), round(nearest, 278vw, var(--tile)), 400vw);
+}
+
+/*
+ * Light pollution from the far metropolis: soft domes rising behind the
+ * street's roofline. Sits under the buildings, shows between the towers.
+ */
+.skyglow {
+  position: absolute;
+  z-index: 0;
+  bottom: calc(var(--street) * 0.72);
+  left: -100vw;
+
+  /* the town ends and the bridge starts at world city-end - 100vw: the
+     glow dies with the last buildings and never reaches the deck */
+  width: var(--city-end);
+  height: 34vh;
+  mask-image: linear-gradient(90deg, #000 calc(100% - 60vw), transparent);
+  pointer-events: none;
+  transform-origin: bottom center;
+  animation: skyglow-breath 12s ease-in-out infinite alternate;
+  background:
+    radial-gradient(
+      ellipse 140vw 26vh at 32vw 100%,
+      rgb(255 79 216 / 13%),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 90vw 18vh at 74vw 100%,
+      rgb(109 247 234 / 10%),
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 55vw 10vh at 55vw 100%,
+      rgb(255 210 150 / 7%),
+      transparent 70%
+    ),
+    linear-gradient(0deg, rgb(233 79 216 / 6%), transparent 60%);
+  background-repeat: repeat-x;
+  background-size: 100vw 100%;
 }
 
 .city {
@@ -36,6 +76,18 @@
   left: calc(-140vw + var(--city-end));
   background: linear-gradient(90deg, transparent, rgb(8 12 28 / 92%) 90vw);
   pointer-events: none;
+}
+
+/* The metropolis breathes: the dome swells from the roofline and settles */
+@keyframes skyglow-breath {
+  from {
+    opacity: 0.82;
+    transform: scaleY(1);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1.035);
+  }
 }
 
 .city > span {
@@ -151,8 +203,14 @@
 
 @media (max-width: 48rem) {
   .city,
-  .dusk {
+  .dusk,
+  .skyglow {
     --street: min(53vh, 29rem);
+  }
+
+  /* narrow towns: keep the fade off the resting frame */
+  .skyglow {
+    mask-image: linear-gradient(90deg, #000 calc(100% - 35vw), transparent);
   }
 
   .roadway {
@@ -171,11 +229,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .atmosphere {
+  .atmosphere,
+  .skyglow {
     animation: none;
   }
 }
 
-:global(.fx-quiet) .atmosphere {
+:global(.fx-quiet) .atmosphere,
+:global(.fx-quiet) .skyglow {
   animation: none;
 }
