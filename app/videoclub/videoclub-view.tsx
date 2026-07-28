@@ -9,9 +9,9 @@ import { useEffect, useReducer, useRef, useState } from 'react'
 import { type Trap, useHotkeys } from 'service/hotkeys'
 import { useTheme } from 'service/theme'
 import { createDeckAudio } from './deck-audio'
-import css from './talks.module.css'
 import { runTapeSwap } from './tape-swap'
 import { TAPES, type Tape } from './tapes'
+import css from './videoclub.module.css'
 
 const WARM_MS = 1100
 const SWITCH_MS = 480
@@ -151,7 +151,7 @@ function DeckKey(props: {
   )
 }
 
-export default function TalksView() {
+export default function VideoclubView() {
   const [state, dispatch] = useReducer(reducer, {
     status: 'off',
     tape: 0,
@@ -171,6 +171,8 @@ export default function TalksView() {
   const { fxMode, osReducedMotion } = useTheme()
 
   const tape = TAPES[state.tape]
+  const incomingTape = state.incoming === null ? null : TAPES[state.incoming]
+  const activeTape = incomingTape ?? tape
   const powered = state.status !== 'off'
   const lit = powered && !(state.status === 'inserting' && state.cold)
   const quiet = fxMode === 'quiet' || osReducedMotion
@@ -223,6 +225,14 @@ export default function TalksView() {
     }
     video.play().catch(() => dispatch({ type: 'toggle' }))
   }, [state.status])
+
+  // detached media elements keep playing audio until GC; the key remount
+  // swaps elements under the ref, so re-capture per tape
+  // biome-ignore lint/correctness/useExhaustiveDependencies(tape.id): the dep drives the re-capture
+  useEffect(() => {
+    const video = videoRef.current
+    return () => video?.pause()
+  }, [tape.id])
 
   useEffect(() => {
     const video = videoRef.current
@@ -278,7 +288,7 @@ export default function TalksView() {
   }
 
   const insertTape = (index: number) => {
-    if (index === state.tape) return
+    if (index === state.tape || state.status === 'inserting') return
     setClock('0:00:00')
     flash(formatChannel(index))
     dispatch({ type: 'insert', tape: index })
@@ -310,8 +320,8 @@ export default function TalksView() {
     : 'Power on the television'
 
   return (
-    <Shell canonical='/talks' className={css.frame}>
-      <nav className={css.rail} aria-label='Talks navigation'>
+    <Shell canonical='/videoclub' className={css.frame}>
+      <nav className={css.rail} aria-label='Videoclub navigation'>
         <Link url='/' className={css.backLink}>
           <LinkBack>Home</LinkBack>
         </Link>
@@ -330,11 +340,7 @@ export default function TalksView() {
               {/* biome-ignore lint/a11y/useMediaCaption: no caption tracks exist for these recordings */}
               <video
                 key={tape.id}
-                ref={(element) => {
-                  videoRef.current = element
-                  // detached media elements keep playing audio until GC
-                  return () => element?.pause()
-                }}
+                ref={videoRef}
                 className={css.film}
                 src={tape.src}
                 preload='metadata'
@@ -354,7 +360,7 @@ export default function TalksView() {
               <div className={css.glass} aria-hidden='true' />
             </div>
             <span className={css.screenBadge} aria-hidden='true'>
-              SOSPEDRA
+              SOSPESONIC
             </span>
             <div className={css.osd} aria-hidden='true'>
               <span className={css.osdStatus}>{OSD_STATUS[state.status]}</span>
@@ -382,10 +388,11 @@ export default function TalksView() {
                 ref={slotRef}
                 className={css.slot}
                 data-open={state.status === 'inserting'}
+                aria-busy={state.status === 'inserting'}
               >
                 <i className={css.flap} aria-hidden='true' />
                 <span className={css.sticker}>
-                  {tape.title} · {tape.venue} · {tape.lang}
+                  {activeTape.title} · {activeTape.venue} · {activeTape.lang}
                 </span>
               </div>
               <div className={css.grille} aria-hidden='true' />
@@ -491,6 +498,7 @@ export default function TalksView() {
                 type='button'
                 className={css.vhs}
                 style={pile}
+                disabled={state.status === 'inserting'}
                 onClick={() => insertTape(index)}
                 aria-label={`Insert ${item.title}, ${item.venue}`}
               >
@@ -519,6 +527,12 @@ export default function TalksView() {
         <div
           ref={ghostRef}
           className={cn(css.vhs, css.ghost)}
+          style={
+            {
+              '--drift': DRIFT[state.incoming % DRIFT.length],
+              '--tip': TIP[state.incoming % TIP.length],
+            } as CSSProperties
+          }
           aria-hidden='true'
         >
           <SpineBar index={state.incoming} tape={TAPES[state.incoming]} />
@@ -527,7 +541,7 @@ export default function TalksView() {
 
       <p className='sr-only' aria-live='polite'>
         {lit
-          ? `${OSD_STATUS[state.status]} — ${tape.title}, ${tape.venue}`
+          ? `${OSD_STATUS[state.status]} — ${activeTape.title}, ${activeTape.venue}`
           : 'Television off'}
       </p>
     </Shell>
