@@ -5,3 +5,30 @@ node_modules
 .env
 .env.local
 *.tsbuildinfo
+/work/raw-data/
+.env*
+
+# image-generation scratch
+/tmp/
+/output/
+/cf.jar
+/sub-blocked.bin
+/scene-*.png
+/street-ref.png
+/street-master-ref.png
+/public/images/bazaar2/assets/street2/*copy*.png
+
+# bazaar3 authoring byproducts, regenerate with pnpm bazaar3:assets
+/BAZAAR3_TAKEOVER/
+/scripts/bazaar3/sources/
+/scripts/bazaar3/reports/
+/scripts/bazaar3/manual-camera/candidates/
+/scripts/bazaar3/manual-camera/reports/
+/public/images/bazaar3/sources/
+/public/images/bazaar3/master-tests/
+/public/images/bazaar3/masters-review/
+/public/images/bazaar3/hybrid-floor-test/
+/public/bazaar3-integration-test/
+/public/bazaar3-art-bible.html
+/public/bazaar3-hybrid-floor-test.html
+/public/bazaar3-projects-integration-test.html
