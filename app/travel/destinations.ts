@@ -3,6 +3,7 @@ export type Region = 'americas' | 'europe' | 'africa' | 'asia'
 export type Destination = {
   code: string
   name: string
+  log: string
   country: string
   region: Region
   lat: number
@@ -40,13 +41,14 @@ const COUNTRY_FLAG_PALETTES: Record<string, FlagPalette> = {
 }
 
 export const flagPaletteOf = (country: string): FlagPalette =>
-  COUNTRY_FLAG_PALETTES[country] ?? ['#6df7ea', '#ff4fd8']
+  COUNTRY_FLAG_PALETTES[country] ?? ['#62d6c3', '#e2622b']
 
-export const REGIONS: { id: Region; label: string }[] = [
-  { id: 'americas', label: 'Americas' },
-  { id: 'europe', label: 'Europe' },
-  { id: 'africa', label: 'Africa' },
-  { id: 'asia', label: 'Asia' },
+// each region is a station on the signalscope band
+export const REGIONS: { id: Region; label: string; freq: string }[] = [
+  { id: 'americas', label: 'Americas', freq: '12.7' },
+  { id: 'europe', label: 'Europe', freq: '45.3' },
+  { id: 'africa', label: 'Africa', freq: '88.1' },
+  { id: 'asia', label: 'Asia', freq: '103.9' },
 ]
 
 // ISO country code to regional-indicator emoji
@@ -56,6 +58,7 @@ export const flagOf = (country: string): string =>
 export const HOME: Destination = {
   code: 'CAT',
   name: 'Catalunya',
+  log: 'home is the signal the scope always finds again.',
   country: 'ES',
   region: 'europe',
   lat: 41.39,
@@ -67,6 +70,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'LAX',
     name: 'Los Angeles',
+    log: 'perfect light, impossible distances.',
     country: 'US',
     region: 'americas',
     lat: 34.05,
@@ -75,6 +79,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'CHI',
     name: 'Chicago',
+    log: 'forgave the wind for the architecture.',
     country: 'US',
     region: 'americas',
     lat: 41.88,
@@ -83,6 +88,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'MIA',
     name: 'Miami',
+    log: 'pastel walls, absolutely no indoor voice.',
     country: 'US',
     region: 'americas',
     lat: 25.76,
@@ -91,6 +97,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'SDQ',
     name: 'Santo Domingo',
+    log: 'the streets kept better time than me.',
     country: 'DO',
     region: 'americas',
     lat: 18.47,
@@ -99,6 +106,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'LON',
     name: 'London',
+    log: 'four seasons before lunch.',
     country: 'GB',
     region: 'europe',
     lat: 51.51,
@@ -107,6 +115,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'EDI',
     name: 'Edinburgh',
+    log: 'every wrong turn found a castle.',
     country: 'GB',
     region: 'europe',
     lat: 55.95,
@@ -115,6 +124,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'MAD',
     name: 'Spain',
+    log: 'no itinerary survives lunch.',
     country: 'ES',
     region: 'europe',
     lat: 40.42,
@@ -124,6 +134,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'FNC',
     name: 'Madeira',
+    log: 'the mountains forgot when to stop growing.',
     country: 'PT',
     region: 'europe',
     lat: 32.65,
@@ -132,6 +143,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'LIS',
     name: 'Lisbon',
+    log: 'every shortcut was another hill.',
     country: 'PT',
     region: 'europe',
     lat: 38.72,
@@ -140,6 +152,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'PAR',
     name: 'Paris',
+    log: 'beautiful enough to survive the queues.',
     country: 'FR',
     region: 'europe',
     lat: 48.86,
@@ -148,6 +161,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'BER',
     name: 'Berlin',
+    log: 'concrete outside, weirdness underneath.',
     country: 'DE',
     region: 'europe',
     lat: 52.52,
@@ -156,6 +170,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'HAM',
     name: 'Hamburg',
+    log: 'the weather got into everything. Even the sandwiches.',
     country: 'DE',
     region: 'europe',
     lat: 53.55,
@@ -164,6 +179,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'AMS',
     name: 'Amsterdam',
+    log: 'bicycles with moral superiority.',
     country: 'NL',
     region: 'europe',
     lat: 52.37,
@@ -172,6 +188,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'TOS',
     name: 'Tromsø',
+    log: 'the sky ignored bedtime.',
     country: 'NO',
     region: 'europe',
     lat: 69.65,
@@ -180,6 +197,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'STO',
     name: 'Stockholm',
+    log: 'even the metro outdressed me.',
     country: 'SE',
     region: 'europe',
     lat: 59.33,
@@ -188,6 +206,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'VIE',
     name: 'Vienna',
+    log: 'coffee with a chain of command.',
     country: 'AT',
     region: 'europe',
     lat: 48.21,
@@ -196,6 +215,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'ROM',
     name: 'Roma',
+    log: 'two thousand years old, still double-parked.',
     country: 'IT',
     region: 'europe',
     lat: 41.9,
@@ -204,6 +224,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'TRN',
     name: 'Torino',
+    log: 'arcades, espresso, no reason to rush.',
     country: 'IT',
     region: 'europe',
     lat: 45.07,
@@ -212,6 +233,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'BUD',
     name: 'Budapest',
+    log: 'beautiful above, hot water below.',
     country: 'HU',
     region: 'europe',
     lat: 47.5,
@@ -220,6 +242,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'AND',
     name: 'Andorra',
+    log: 'tiny country, aggressively large mountains.',
     country: 'AD',
     region: 'europe',
     lat: 42.51,
@@ -228,6 +251,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'RAK',
     name: 'Marrakesh',
+    log: 'the spices knew the way.',
     country: 'MA',
     region: 'africa',
     lat: 31.63,
@@ -236,6 +260,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'SEU',
     name: 'Serengeti',
+    log: 'the horizon did the talking.',
     country: 'TZ',
     region: 'africa',
     lat: -2.33,
@@ -244,6 +269,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'ZNZ',
     name: 'Zanzibar',
+    log: 'the ocean was showing off. Fair.',
     country: 'TZ',
     region: 'africa',
     lat: -6.16,
@@ -252,6 +278,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'OSA',
     name: 'Osaka',
+    log: 'ate my body weight in takoyaki.',
     country: 'JP',
     region: 'asia',
     lat: 34.69,
@@ -260,6 +287,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'KYO',
     name: 'Kyoto',
+    log: 'made quiet look carefully designed.',
     country: 'JP',
     region: 'asia',
     lat: 35.01,
@@ -268,6 +296,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'TYO',
     name: 'Tokyo',
+    log: 'everything worked. Even the mysteries.',
     country: 'JP',
     region: 'asia',
     lat: 35.68,
@@ -276,6 +305,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'HIJ',
     name: 'Hiroshima',
+    log: 'a city that asks for your full attention.',
     country: 'JP',
     region: 'asia',
     lat: 34.39,
@@ -284,6 +314,7 @@ export const DESTINATIONS: Destination[] = [
   {
     code: 'TAK',
     name: 'Takayama',
+    log: 'nowhere urgent to be.',
     country: 'JP',
     region: 'asia',
     lat: 36.14,

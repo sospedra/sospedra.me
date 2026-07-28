@@ -1,7 +1,7 @@
 import createGlobe from 'cobe'
 import { clamp } from 'es-toolkit'
 import type React from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   DESTINATIONS,
   type Destination,
@@ -9,6 +9,7 @@ import {
   HOME,
   type Visitor,
 } from './destinations'
+import { type LunarOrbitPoint, lunarOrbitAtVisit } from './lunar-position'
 
 const TAU = Math.PI * 2
 const EASE = 0.08
@@ -29,10 +30,13 @@ const MOMENTUM_MAX = 0.0028
 const MOMENTUM_STALE_MS = 90
 // vertical drag tilts, never rolls over the poles
 const TILT_LIMIT = 1.35
+export const TRAVEL_PITCH_MAX = (TILT_LIMIT * 180) / Math.PI
 
 const MARKER_ELEVATION = 0.018
 const ROUTE_ARC_HEIGHT = 0.34
 const ROUTE_VIEW_BIAS = 0.2
+const LUNAR_DISPLAY_RADIUS = 1.08
+const LUNAR_SVG_SIZE = 1000
 // Cobe draws markers at the sphere radius plus the configured elevation.
 // Sharing the constant keeps HTML reticles and hit testing on the WebGL dot.
 const CHIP_RADIUS = 0.8 + MARKER_ELEVATION
@@ -44,18 +48,53 @@ const TAP_SLOP_COARSE = 8
 const DESKTOP_MAP_SAMPLES = 16000
 const TABLET_MAP_SAMPLES = 12000
 const MOBILE_MAP_SAMPLES = 8000
+const TARGET_FRAME_MS = 1000 / 60
+const FRAME_EARLY_TOLERANCE_MS = 0.25
+const LUNAR_ORBIT_SAMPLES = 48
+const LUNAR_ORBIT_FRAME_STEP = 2
+const HOVER_FRAME_STEP = 6
+const ZOOM_UI_INTERVAL_MS = 1000 / 30
+const MAX_GLOBE_BACKING_PIXELS = 900_000
+const MIN_RENDER_PIXEL_RATIO = 0.75
 
 type Vec3 = [number, number, number]
+type ViewRotation = {
+  cosP: number
+  cosT: number
+  sinP: number
+  sinT: number
+}
+type CanvasBounds = { height: number; left: number; top: number; width: number }
 type PointerPoint = { x: number; y: number }
 type DragSample = PointerPoint & { time: number }
 type AngularVelocity = { phi: number; theta: number }
 export type TravelGlobeStatus = 'loading' | 'ready' | 'unavailable'
 
-const BASE_COLOR: Vec3 = [0.14, 0.34, 0.39]
-const GLOW_COLOR: Vec3 = [0.024, 0.1, 0.125]
-const DOT_PINK: Vec3 = [1, 0.3, 0.76]
-const DOT_PHOSPHOR: Vec3 = [0.43, 0.97, 0.92]
-const DOT_VISITOR: Vec3 = [1, 1, 1]
+type TravelGlobeColorway = 'classic' | 'signalscope'
+type TravelGlobePalette = {
+  base: Vec3
+  glow: Vec3
+  signal: Vec3
+  visitor: Vec3
+  visitorFallback: Vec3
+}
+
+const GLOBE_PALETTES: Record<TravelGlobeColorway, TravelGlobePalette> = {
+  classic: {
+    base: [0.14, 0.34, 0.39],
+    glow: [0.024, 0.1, 0.125],
+    signal: [1, 0.3, 0.76],
+    visitor: [1, 1, 1],
+    visitorFallback: [0.43, 0.97, 0.92],
+  },
+  signalscope: {
+    base: [0.1, 0.34, 0.31],
+    glow: [0.018, 0.085, 0.12],
+    signal: [0.32, 0.7, 0.86],
+    visitor: [0.75, 0.98, 0.82],
+    visitorFallback: [0.35, 0.88, 0.68],
+  },
+}
 
 const toAngles = (spot: Destination): [number, number] => [
   Math.PI - ((spot.lon * Math.PI) / 180 - Math.PI / 2),
@@ -74,12 +113,15 @@ const toUnitVector = (lat: number, lon: number): Vec3 => {
   ]
 }
 
+const viewRotation = (phi: number, theta: number): ViewRotation => ({
+  cosT: Math.cos(theta),
+  sinT: Math.sin(theta),
+  cosP: Math.cos(phi),
+  sinP: Math.sin(phi),
+})
+
 // cobe's own view rotation, x/y are clip offsets, z faces the viewer
-const rotate = (vec: Vec3, phi: number, theta: number): Vec3 => {
-  const cosT = Math.cos(theta)
-  const sinT = Math.sin(theta)
-  const cosP = Math.cos(phi)
-  const sinP = Math.sin(phi)
+const rotate = (vec: Vec3, { cosP, cosT, sinP, sinT }: ViewRotation): Vec3 => {
   return [
     cosP * vec[0] + sinP * vec[2],
     sinP * sinT * vec[0] + cosT * vec[1] - cosP * sinT * vec[2],
@@ -87,13 +129,37 @@ const rotate = (vec: Vec3, phi: number, theta: number): Vec3 => {
   ]
 }
 
-type GlobeView = { phi: number; theta: number; zoom: number }
+type GlobeView = {
+  phi: number
+  theta: number
+  zoom: number
+  aspect?: number
+}
 
-const projectDestination = (vec: Vec3, view: GlobeView) => {
-  const [x, y, z] = rotate(vec, view.phi, view.theta)
+const projectDestination = (
+  vec: Vec3,
+  view: GlobeView,
+  rotation: ViewRotation,
+) => {
+  const [x, y, z] = rotate(vec, rotation)
+  const aspect = view.aspect ?? 1
   return {
-    x: (CHIP_RADIUS * x * view.zoom + 1) * 0.5,
+    x: ((CHIP_RADIUS * x * view.zoom) / aspect + 1) * 0.5,
     y: (1 - CHIP_RADIUS * y * view.zoom) * 0.5,
+    z,
+  }
+}
+
+const projectLunarPoint = (
+  point: LunarOrbitPoint,
+  view: GlobeView,
+  rotation: ViewRotation,
+) => {
+  const [x, y, z] = rotate(point.vector, rotation)
+  const radius = LUNAR_DISPLAY_RADIUS * point.distanceRatio
+  return {
+    x: (radius * x * view.zoom + 1) * 0.5,
+    y: (1 - radius * y * view.zoom) * 0.5,
     z,
   }
 }
@@ -164,8 +230,11 @@ const stepAngle = (current: number, target: number, ease: number): number => {
   return current - (TAU - forward) * ease
 }
 
-const clampZoom = (zoom: number): number =>
-  clamp(zoom, TRAVEL_ZOOM_MIN, TRAVEL_ZOOM_MAX)
+const viewLongitude = (phi: number): number =>
+  (((270 - (phi * 180) / Math.PI) % 360) + 360) % 360
+
+const clampZoom = (zoom: number, maxZoom = TRAVEL_ZOOM_MAX): number =>
+  clamp(zoom, TRAVEL_ZOOM_MIN, maxZoom)
 
 const clampTheta = (theta: number): number =>
   clamp(theta, -TILT_LIMIT, TILT_LIMIT)
@@ -180,6 +249,20 @@ const mapSamplesForSize = (size: number): number => {
   if (size <= 480) return MOBILE_MAP_SAMPLES
   if (size <= 800) return TABLET_MAP_SAMPLES
   return DESKTOP_MAP_SAMPLES
+}
+
+const renderPixelRatioForSize = (
+  size: { height: number; width: number },
+  pixelRatioCap: number,
+): number => {
+  const deviceRatio = Math.min(window.devicePixelRatio || 1, pixelRatioCap)
+  const pixelBudgetRatio = Math.sqrt(
+    MAX_GLOBE_BACKING_PIXELS / (size.width * size.height),
+  )
+  return Math.min(
+    deviceRatio,
+    Math.max(MIN_RENDER_PIXEL_RATIO, pixelBudgetRatio),
+  )
 }
 
 const supportsWebGL = (): boolean => {
@@ -211,26 +294,34 @@ const hexToVec = (hex: string): Vec3 => {
   ]
 }
 
-const visitorMarkers = (visitor: Visitor | null) => {
+const visitorMarkers = (
+  visitor: Visitor | null,
+  palette: TravelGlobePalette,
+  scale = 1,
+) => {
   if (!visitor) return []
   const location = [visitor.lat, visitor.lon] as [number, number]
   const visitorColor = visitor.country
     ? hexToVec(flagPaletteOf(visitor.country)[0])
-    : DOT_PHOSPHOR
+    : palette.visitorFallback
   return [
-    { location, size: 0.055, color: DOT_VISITOR },
-    { location, size: 0.028, color: visitorColor },
+    { location, size: 0.055 * scale, color: palette.visitor },
+    { location, size: 0.028 * scale, color: visitorColor },
   ]
 }
 
-const buildMarkers = (tracked: Destination, visitor: Visitor | null) => [
+const buildMarkers = (
+  tracked: Destination,
+  visitor: Visitor | null,
+  palette: TravelGlobePalette,
+  visitorScale = 1,
+) => [
   ...DESTINATIONS.flatMap((spot) => {
     const location = [spot.lat, spot.lon] as [number, number]
     const [primary, secondary] = flagPaletteOf(spot.country).map(hexToVec)
     const activeScale = spot.code === tracked.code ? 1.5 : 1
     return [
       {
-        id: spot.code,
         location,
         size: 0.023 * activeScale,
         color: secondary,
@@ -238,25 +329,43 @@ const buildMarkers = (tracked: Destination, visitor: Visitor | null) => [
       { location, size: 0.01 * activeScale, color: primary },
     ]
   }),
-  ...visitorMarkers(visitor),
+  ...visitorMarkers(visitor, palette, visitorScale),
 ]
 
-const buildArcs = (tracked: Destination) =>
+const buildArcs = (tracked: Destination, palette: TravelGlobePalette) =>
   tracked.home
     ? []
     : [
         {
           from: [HOME.lat, HOME.lon] as [number, number],
           to: [tracked.lat, tracked.lon] as [number, number],
-          color: DOT_PINK,
+          color: palette.signal,
         },
       ]
+
+type TravelMoonLayerRefs = {
+  body: React.RefObject<SVGGElement | null>
+  label: React.RefObject<SVGTextElement | null>
+  orbit?: React.RefObject<SVGPathElement | null>
+  svg: React.RefObject<SVGSVGElement | null>
+}
+
+export type TravelMoonRefs = {
+  back: TravelMoonLayerRefs
+  front: TravelMoonLayerRefs
+}
 
 type TravelGlobeOptions = {
   tracked: Destination
   quiet: boolean
   visitor: Visitor | null
   onSelect: (spot: Destination) => void
+  manualZoomMax?: number
+  canvasFit?: 'square' | 'viewport'
+  visitorMarkerScale?: number
+  colorway?: TravelGlobeColorway
+  devicePixelRatioCap?: number
+  moon?: TravelMoonRefs
 }
 
 export function useTravelGlobe({
@@ -264,12 +373,26 @@ export function useTravelGlobe({
   quiet,
   visitor,
   onSelect,
+  manualZoomMax = TRAVEL_ZOOM_MAX,
+  canvasFit = 'square',
+  visitorMarkerScale = 1,
+  colorway = 'classic',
+  devicePixelRatioCap = 2,
+  moon,
 }: TravelGlobeOptions) {
+  const resolvedZoomMax = Math.max(TRAVEL_ZOOM_MIN, manualZoomMax)
+  const resolvedPixelRatioCap = Math.max(1, devicePixelRatioCap)
+  const palette = GLOBE_PALETTES[colorway]
   const initialFrameRef = useRef(routeFrameFor(tracked))
   const [status, setStatus] = useState<TravelGlobeStatus>('loading')
   const [zoomLevel, setZoomLevel] = useState(initialFrameRef.current.zoom)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const canvasRectRef = useRef<CanvasBounds | null>(null)
   const globeRef = useRef<ReturnType<typeof createGlobe> | null>(null)
+  const orbitControlRef = useRef<HTMLDivElement>(null)
+  const orbitKnobRef = useRef<HTMLSpanElement>(null)
+  const pitchControlRef = useRef<HTMLDivElement>(null)
+  const pitchKnobRef = useRef<HTMLSpanElement>(null)
   const focusRef = useRef(initialFrameRef.current.focus)
   const phiRef = useRef(focusRef.current[0])
   const thetaRef = useRef(focusRef.current[1])
@@ -283,6 +406,8 @@ export function useTravelGlobe({
   const velocityRef = useRef<AngularVelocity>({ phi: 0, theta: 0 })
   const zoomRef = useRef(initialFrameRef.current.zoom)
   const zoomTargetRef = useRef(initialFrameRef.current.zoom)
+  const zoomUiValueRef = useRef(initialFrameRef.current.zoom)
+  const zoomUiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pointersRef = useRef(new Map<number, PointerPoint>())
   const pinchRef = useRef<{ dist: number; zoom: number } | null>(null)
   const pressRef = useRef<{
@@ -296,8 +421,38 @@ export function useTravelGlobe({
   const hoverFrameRef = useRef<number | null>(null)
   const hoverPointRef = useRef<PointerPoint | null>(null)
   const refreshHoverRef = useRef<(() => void) | null>(null)
-  const initialMarkersRef = useRef(buildMarkers(tracked, visitor))
-  const initialArcsRef = useRef(buildArcs(tracked))
+  const moonRef = useRef(moon)
+  const compassRef = useRef<HTMLSpanElement>(null)
+  const compassHeadingRef = useRef<HTMLOutputElement>(null)
+  const compassLatitudeRef = useRef<HTMLOutputElement>(null)
+  const compassReadoutRef = useRef({ heading: -1, latitude: Number.NaN })
+  const dialControlCountRef = useRef(0)
+  const dialIdleUntilRef = useRef(0)
+  const initialLongitude = viewLongitude(focusRef.current[0])
+  const orbitKnobStateRef = useRef({
+    angle: -initialLongitude,
+    raw: initialLongitude,
+  })
+  const initialMarkersRef = useRef(
+    buildMarkers(tracked, visitor, palette, visitorMarkerScale),
+  )
+  const initialArcsRef = useRef(buildArcs(tracked, palette))
+  const publishZoomLevel = useCallback((next: number, immediate = false) => {
+    zoomUiValueRef.current = next
+    if (immediate) {
+      if (zoomUiTimerRef.current !== null) {
+        clearTimeout(zoomUiTimerRef.current)
+        zoomUiTimerRef.current = null
+      }
+      setZoomLevel(next)
+      return
+    }
+    if (zoomUiTimerRef.current !== null) return
+    zoomUiTimerRef.current = setTimeout(() => {
+      zoomUiTimerRef.current = null
+      setZoomLevel(zoomUiValueRef.current)
+    }, ZOOM_UI_INTERVAL_MS)
+  }, [])
 
   useEffect(() => {
     onSelectRef.current = onSelect
@@ -312,12 +467,21 @@ export function useTravelGlobe({
     const frame = routeFrameFor(tracked)
     focusRef.current = frame.focus
     zoomTargetRef.current = frame.zoom
-    setZoomLevel(frame.zoom)
+    publishZoomLevel(frame.zoom, true)
     velocityRef.current = { phi: 0, theta: 0 }
     const isInitialHome = !hasAppliedTrackedRef.current && tracked.home
     focusTimeRef.current = isInitialHome ? 0 : FOCUS_DURATION_MS
     hasAppliedTrackedRef.current = true
-  }, [tracked])
+  }, [publishZoomLevel, tracked])
+
+  useEffect(
+    () => () => {
+      if (zoomUiTimerRef.current !== null) {
+        clearTimeout(zoomUiTimerRef.current)
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -329,43 +493,119 @@ export function useTravelGlobe({
       return
     }
 
-    const size = canvas.offsetWidth || 600
-    let pendingSize: number | null = null
+    // The original scope stays square. Comparison surfaces may opt into the
+    // full monitor rectangle so close zoom can use its spare horizontal room.
+    const viewport = canvas.parentElement ?? canvas
+    const measureCanvasBounds = () => {
+      const rect = canvas.getBoundingClientRect()
+      canvasRectRef.current = {
+        left: rect.left + window.scrollX,
+        top: rect.top + window.scrollY,
+        width: rect.width,
+        height: rect.height,
+      }
+    }
+    const fitCanvas = (box: { width: number; height: number }) => {
+      const width = Math.floor(box.width)
+      const height = Math.floor(box.height)
+      if (canvasFit === 'viewport') return { width, height }
+      const side = Math.min(width, height)
+      return { width: side, height: side }
+    }
+    const applyCanvasSize = (size: { width: number; height: number }) => {
+      canvas.style.width = `${size.width}px`
+      canvas.style.height = `${size.height}px`
+      const lunarSide = Math.min(size.width, size.height)
+      for (const layer of [moonRef.current?.back, moonRef.current?.front]) {
+        const svg = layer?.svg.current
+        if (!svg) continue
+        svg.style.width = `${lunarSide}px`
+        svg.style.height = `${lunarSide}px`
+      }
+    }
+    let renderSize = fitCanvas(viewport.getBoundingClientRect())
+    if (renderSize.width <= 0 || renderSize.height <= 0) {
+      renderSize = { width: 600, height: 600 }
+    }
+    applyCanvasSize(renderSize)
+    let pendingSize: { width: number; height: number } | null = null
     const observer = new ResizeObserver(([entry]) => {
-      if (entry.contentRect.width > 0) pendingSize = entry.contentRect.width
+      const next = fitCanvas(entry.contentRect)
+      if (
+        next.width <= 0 ||
+        next.height <= 0 ||
+        (next.width === renderSize.width && next.height === renderSize.height)
+      )
+        return
+      applyCanvasSize(next)
+      renderSize = next
+      pendingSize = next
+      measureCanvasBounds()
     })
-    observer.observe(canvas)
+    observer.observe(viewport)
 
+    const renderPixelRatio = renderPixelRatioForSize(
+      renderSize,
+      resolvedPixelRatioCap,
+    )
+    const stylesBeforeGlobe = new Set(
+      document.head.querySelectorAll<HTMLStyleElement>('style'),
+    )
     let globe: ReturnType<typeof createGlobe>
     try {
       globe = createGlobe(canvas, {
-        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
-        width: size,
-        height: size,
+        devicePixelRatio: renderPixelRatio,
+        width: renderSize.width,
+        height: renderSize.height,
         phi: phiRef.current,
         theta: thetaRef.current,
         dark: 1,
         diffuse: 1.68,
-        mapSamples: mapSamplesForSize(size),
+        mapSamples: mapSamplesForSize(
+          Math.min(renderSize.width, renderSize.height),
+        ),
         mapBrightness: 9,
         mapBaseBrightness: 0.018,
-        baseColor: BASE_COLOR,
-        markerColor: DOT_PINK,
-        glowColor: GLOW_COLOR,
+        baseColor: palette.base,
+        markerColor: palette.signal,
+        glowColor: palette.glow,
         markers: initialMarkersRef.current,
         arcs: initialArcsRef.current,
-        arcColor: DOT_PINK,
+        arcColor: palette.signal,
         arcWidth: 0.76,
         arcHeight: ROUTE_ARC_HEIGHT,
         markerElevation: MARKER_ELEVATION,
+        context: {
+          antialias: true,
+          desynchronized: true,
+          powerPreference: 'high-performance',
+        },
       })
     } catch {
       observer.disconnect()
       setStatus('unavailable')
       return
     }
+
+    // Cobe 2.0.1 maintains CSS anchors for optional marker IDs. This globe
+    // does not use IDs, so leaving its empty style node connected would force
+    // a global style invalidation on every update.
+    for (const style of document.head.querySelectorAll<HTMLStyleElement>(
+      'style',
+    )) {
+      if (
+        !stylesBeforeGlobe.has(style) &&
+        style.textContent?.trim() === ':root{}'
+      ) {
+        style.remove()
+      }
+    }
+
     globeRef.current = globe
+    measureCanvasBounds()
     canvas.dataset.ready = 'true'
+    canvas.dataset.renderMode = canvasFit
+    canvas.dataset.renderPixelRatio = renderPixelRatio.toFixed(2)
     setStatus('ready')
 
     // React's root wheel listener is passive, so preventDefault needs a
@@ -374,11 +614,12 @@ export function useTravelGlobe({
       if (event.ctrlKey || event.metaKey) return
       const nextZoom = clampZoom(
         zoomTargetRef.current * Math.exp(-event.deltaY * WHEEL_ZOOM_RATE),
+        resolvedZoomMax,
       )
       if (nextZoom === zoomTargetRef.current) return
       event.preventDefault()
       zoomTargetRef.current = nextZoom
-      setZoomLevel(nextZoom)
+      publishZoomLevel(nextZoom)
     }
     canvas.addEventListener('wheel', onWheel, { passive: false })
 
@@ -387,7 +628,13 @@ export function useTravelGlobe({
     const stepFrame = (now: number) => {
       const elapsed = clamp(now - lastFrameTime, 1, 32)
       lastFrameTime = now
-      if (grabRef.current !== null || pinchRef.current) return
+      if (
+        grabRef.current !== null ||
+        pinchRef.current ||
+        dialControlCountRef.current > 0 ||
+        now < dialIdleUntilRef.current
+      )
+        return
 
       const [targetPhi, targetTheta] = focusRef.current
       const frameFactor = elapsed / (1000 / 60)
@@ -428,29 +675,201 @@ export function useTravelGlobe({
     const shouldRender = () =>
       isIntersecting && isPageVisible && contextAvailable
 
+    const hasLunarOrbit = Boolean(
+      moonRef.current?.back.orbit?.current ||
+        moonRef.current?.front.orbit?.current,
+    )
+    const lunarVisit = lunarOrbitAtVisit(
+      new Date(),
+      hasLunarOrbit ? LUNAR_ORBIT_SAMPLES : 1,
+    )
+    for (const layer of [moonRef.current?.back, moonRef.current?.front]) {
+      const svg = layer?.svg.current
+      if (!svg) continue
+      svg.dataset.observedAt = lunarVisit.observedAt
+      svg.dataset.sublunarLatitude = lunarVisit.sublunarLatitude.toFixed(4)
+      svg.dataset.sublunarLongitude = lunarVisit.sublunarLongitude.toFixed(4)
+      svg.dataset.distanceKm = lunarVisit.distanceKm.toFixed(0)
+    }
+
+    let moonIsFront: boolean | null = null
+    let moonLabelOnLeft: boolean | null = null
+    const updateMoon = (view: GlobeView, updateOrbit: boolean) => {
+      const back = moonRef.current?.back
+      const front = moonRef.current?.front
+      if (!back || !front) return
+      const rotation = viewRotation(view.phi, view.theta)
+
+      if (hasLunarOrbit && updateOrbit) {
+        let backPath = ''
+        let frontPath = ''
+        let previous: { front: boolean; x: number; y: number } | undefined
+
+        for (const point of lunarVisit.orbit) {
+          const projected = projectLunarPoint(point, view, rotation)
+          const next = {
+            front: projected.z >= 0,
+            x: projected.x * LUNAR_SVG_SIZE,
+            y: projected.y * LUNAR_SVG_SIZE,
+          }
+          const coordinate = `${next.x.toFixed(1)} ${next.y.toFixed(1)}`
+
+          if (!previous) {
+            if (next.front) frontPath = `M ${coordinate}`
+            else backPath = `M ${coordinate}`
+            previous = next
+            continue
+          }
+
+          if (previous.front === next.front) {
+            if (next.front) frontPath += ` L ${coordinate}`
+            else backPath += ` L ${coordinate}`
+          } else {
+            const previousCoordinate = `${previous.x.toFixed(1)} ${previous.y.toFixed(1)}`
+            if (previous.front) {
+              frontPath += ` L ${coordinate}`
+              backPath += ` M ${previousCoordinate} L ${coordinate}`
+            } else {
+              backPath += ` L ${coordinate}`
+              frontPath += ` M ${previousCoordinate} L ${coordinate}`
+            }
+          }
+          previous = next
+        }
+
+        back.orbit?.current?.setAttribute('d', backPath)
+        front.orbit?.current?.setAttribute('d', frontPath)
+      }
+
+      const current = projectLunarPoint(lunarVisit.current, view, rotation)
+      const isFront = current.z >= 0
+      const labelOnLeft = current.x > 0.5
+      if (moonLabelOnLeft !== labelOnLeft) {
+        for (const layer of [back, front]) {
+          const label = layer.label.current
+          if (!label) continue
+          label.setAttribute('x', labelOnLeft ? '-12' : '12')
+          label.setAttribute('text-anchor', labelOnLeft ? 'end' : 'start')
+        }
+        moonLabelOnLeft = labelOnLeft
+      }
+      const body = isFront ? front.body.current : back.body.current
+      const transform = `translate(${(current.x * LUNAR_SVG_SIZE).toFixed(
+        1,
+      )} ${(current.y * LUNAR_SVG_SIZE).toFixed(
+        1,
+      )}) scale(${view.zoom.toFixed(3)})`
+      body?.setAttribute('transform', transform)
+      if (moonIsFront !== isFront) {
+        body?.setAttribute('opacity', '1')
+        const hiddenBody = isFront ? back.body.current : front.body.current
+        hiddenBody?.setAttribute('opacity', '0')
+        moonIsFront = isFront
+      }
+    }
+
+    const updateCompass = (view: GlobeView) => {
+      const card = compassRef.current
+      if (!card) return
+
+      const longitude = viewLongitude(view.phi)
+      const latitude = clamp((view.theta * 180) / Math.PI, -90, 90)
+      card.style.transform = `rotate(${(-longitude).toFixed(2)}deg)`
+
+      const orbitKnob = orbitKnobStateRef.current
+      const longitudeDelta = ((longitude - orbitKnob.raw + 540) % 360) - 180
+      orbitKnob.angle -= longitudeDelta
+      orbitKnob.raw = longitude
+      orbitKnobRef.current?.style.setProperty(
+        '--range-angle',
+        `${orbitKnob.angle.toFixed(2)}deg`,
+      )
+      pitchKnobRef.current?.style.setProperty(
+        '--range-angle',
+        `${(-latitude).toFixed(2)}deg`,
+      )
+
+      const heading = Math.round(longitude) % 360
+      const roundedLatitude = Math.round(latitude)
+      const previous = compassReadoutRef.current
+      if (heading !== previous.heading) {
+        compassHeadingRef.current?.replaceChildren(
+          `${String(heading).padStart(3, '0')}°`,
+        )
+        orbitControlRef.current?.setAttribute('aria-valuenow', String(heading))
+        orbitControlRef.current?.setAttribute(
+          'aria-valuetext',
+          `${String(heading).padStart(3, '0')} degrees heading`,
+        )
+        previous.heading = heading
+      }
+      if (roundedLatitude !== previous.latitude) {
+        const sign = roundedLatitude >= 0 ? '+' : '−'
+        compassLatitudeRef.current?.replaceChildren(
+          `${sign}${String(Math.abs(roundedLatitude)).padStart(2, '0')}°`,
+        )
+        pitchControlRef.current?.setAttribute(
+          'aria-valuenow',
+          String(roundedLatitude),
+        )
+        pitchControlRef.current?.setAttribute(
+          'aria-valuetext',
+          roundedLatitude === 0
+            ? '0 degrees, equator'
+            : `${Math.abs(roundedLatitude)} degrees ${
+                roundedLatitude > 0 ? 'north' : 'south'
+              }`,
+        )
+        previous.latitude = roundedLatitude
+      }
+    }
+
     let hoverTick = 0
+    let lunarFrame = 0
+    let lastRenderTime = performance.now() - TARGET_FRAME_MS
     const tick = (now: number) => {
       frame = null
       if (!shouldRender()) return
+      const renderElapsed = now - lastRenderTime
+      if (renderElapsed < TARGET_FRAME_MS - FRAME_EARLY_TOLERANCE_MS) {
+        frame = requestAnimationFrame(tick)
+        return
+      }
+      lastRenderTime =
+        renderElapsed < TARGET_FRAME_MS
+          ? now
+          : now - (renderElapsed % TARGET_FRAME_MS)
       stepFrame(now)
       const zoomEase = quietRef.current ? 1 : ZOOM_EASE
       zoomRef.current += (zoomTargetRef.current - zoomRef.current) * zoomEase
+      const didResize = pendingSize !== null
       const resize =
         pendingSize === null
           ? {}
           : {
-              width: pendingSize,
-              height: pendingSize,
-              mapSamples: mapSamplesForSize(pendingSize),
+              width: pendingSize.width,
+              height: pendingSize.height,
+              mapSamples: mapSamplesForSize(
+                Math.min(pendingSize.width, pendingSize.height),
+              ),
             }
       pendingSize = null
       const phi = phiRef.current + dragRef.current
       const theta = thetaRef.current + tiltRef.current
-      globe.update({ phi, theta, scale: zoomRef.current, ...resize })
-      hoverTick = (hoverTick + 1) % 3
-      if (hoverTick === 0 && pointersRef.current.size === 0) {
-        refreshHoverRef.current?.()
+      const view = {
+        phi,
+        theta,
+        zoom: zoomRef.current,
+        aspect: renderSize.width / renderSize.height,
       }
+      hoverTick = (hoverTick + 1) % HOVER_FRAME_STEP
+      if (hoverTick === 0) {
+        if (pointersRef.current.size === 0) refreshHoverRef.current?.()
+      }
+      globe.update({ phi, theta, scale: view.zoom, ...resize })
+      updateCompass(view)
+      updateMoon(view, didResize || lunarFrame % LUNAR_ORBIT_FRAME_STEP === 0)
+      lunarFrame = (lunarFrame + 1) % LUNAR_ORBIT_FRAME_STEP
       frame = requestAnimationFrame(tick)
     }
 
@@ -496,17 +915,26 @@ export function useTravelGlobe({
       cancelHoverFrame(hoverFrameRef)
       delete canvas.dataset.ready
       delete canvas.dataset.hovered
+      delete canvas.dataset.renderMode
+      delete canvas.dataset.renderPixelRatio
+      canvasRectRef.current = null
       globe.destroy()
       globeRef.current = null
     }
-  }, [])
+  }, [
+    canvasFit,
+    palette,
+    publishZoomLevel,
+    resolvedPixelRatioCap,
+    resolvedZoomMax,
+  ])
 
   useEffect(() => {
     globeRef.current?.update({
-      markers: buildMarkers(tracked, visitor),
-      arcs: buildArcs(tracked),
+      markers: buildMarkers(tracked, visitor, palette, visitorMarkerScale),
+      arcs: buildArcs(tracked, palette),
     })
-  }, [tracked, visitor])
+  }, [palette, tracked, visitor, visitorMarkerScale])
 
   const setHoveredSpot = (spot: Destination | null) => {
     if (hoveredRef.current?.code === spot?.code) return
@@ -524,15 +952,24 @@ export function useTravelGlobe({
   ): Destination | null => {
     const canvas = canvasRef.current
     if (!canvas || status !== 'ready') return null
-    const rect = canvas.getBoundingClientRect()
-    const localX = clientX - rect.left
-    const localY = clientY - rect.top
+    const rect = canvasRectRef.current
+    const fallbackRect = rect ? null : canvas.getBoundingClientRect()
+    const bounds = rect ?? {
+      left: (fallbackRect?.left ?? 0) + window.scrollX,
+      top: (fallbackRect?.top ?? 0) + window.scrollY,
+      width: fallbackRect?.width ?? 0,
+      height: fallbackRect?.height ?? 0,
+    }
+    const localX = clientX + window.scrollX - bounds.left
+    const localY = clientY + window.scrollY - bounds.top
     const hitRadius = coarse ? HIT_RADIUS_COARSE : HIT_RADIUS_FINE
     const view = {
       phi: phiRef.current + dragRef.current,
       theta: thetaRef.current + tiltRef.current,
       zoom: zoomRef.current,
+      aspect: bounds.width / bounds.height,
     }
+    const rotation = viewRotation(view.phi, view.theta)
     let nearest: Destination | null = null
     let nearestDistance = hitRadius
     let nearestDepth = Number.NEGATIVE_INFINITY
@@ -541,10 +978,10 @@ export function useTravelGlobe({
     for (const spot of DESTINATIONS) {
       const vec = VECTORS.get(spot.code)
       if (!vec) continue
-      const { x, y, z } = projectDestination(vec, view)
+      const { x, y, z } = projectDestination(vec, view, rotation)
       if (z < CHIP_HIDE_Z) continue
-      const markerX = x * rect.width
-      const markerY = y * rect.height
+      const markerX = x * bounds.width
+      const markerY = y * bounds.height
       const distance = Math.hypot(markerX - localX, markerY - localY)
       const nearTie = Math.abs(distance - nearestDistance) <= 0.75
       const beatsNearest =
@@ -731,26 +1168,96 @@ export function useTravelGlobe({
   }
 
   const applyZoom = (value: number) => {
-    const nextZoom = clampZoom(value)
+    const nextZoom = clampZoom(value, resolvedZoomMax)
     zoomTargetRef.current = nextZoom
-    setZoomLevel(nextZoom)
+    publishZoomLevel(nextZoom)
+  }
+
+  const orbitBy = (knobDelta: number) => {
+    if (
+      !Number.isFinite(knobDelta) ||
+      Math.abs(knobDelta) < 0.001 ||
+      pointersRef.current.size > 0
+    )
+      return
+    focusTimeRef.current = 0
+    velocityRef.current = { phi: 0, theta: 0 }
+    phiRef.current =
+      (((phiRef.current + (knobDelta * Math.PI) / 180) % TAU) + TAU) % TAU
+    dialIdleUntilRef.current = performance.now() + 220
+  }
+
+  const orbitTo = (heading: number) => {
+    if (!Number.isFinite(heading) || pointersRef.current.size > 0) return
+    const normalized = ((heading % 360) + 360) % 360
+    focusTimeRef.current = 0
+    velocityRef.current = { phi: 0, theta: 0 }
+    phiRef.current = (((270 - normalized) * Math.PI) / 180 + TAU) % TAU
+    dialIdleUntilRef.current = performance.now() + 220
+  }
+
+  const pitchBy = (knobDelta: number) => {
+    if (
+      !Number.isFinite(knobDelta) ||
+      Math.abs(knobDelta) < 0.001 ||
+      pointersRef.current.size > 0
+    )
+      return
+    focusTimeRef.current = 0
+    velocityRef.current = { phi: 0, theta: 0 }
+    thetaRef.current = clampTheta(
+      thetaRef.current - (knobDelta * Math.PI) / 180,
+    )
+    dialIdleUntilRef.current = performance.now() + 220
+  }
+
+  const pitchTo = (latitude: number) => {
+    if (!Number.isFinite(latitude) || pointersRef.current.size > 0) return
+    focusTimeRef.current = 0
+    velocityRef.current = { phi: 0, theta: 0 }
+    thetaRef.current = clampTheta((latitude * Math.PI) / 180)
+    dialIdleUntilRef.current = performance.now() + 220
+  }
+
+  const setDialControlActive = (active: boolean) => {
+    dialControlCountRef.current = Math.max(
+      0,
+      dialControlCountRef.current + (active ? 1 : -1),
+    )
+    velocityRef.current = { phi: 0, theta: 0 }
+    if (dialControlCountRef.current > 0) {
+      focusTimeRef.current = 0
+      dialIdleUntilRef.current = Number.POSITIVE_INFINITY
+      return
+    }
+    dialIdleUntilRef.current = performance.now() + 220
   }
 
   const zoomIn = () => applyZoom(zoomTargetRef.current * ZOOM_STEP)
   const zoomOut = () => applyZoom(zoomTargetRef.current / ZOOM_STEP)
-  const setZoom = applyZoom
 
   return {
     status,
     zoomLevel,
     canvasRef,
+    orbitControlRef,
+    orbitKnobRef,
+    pitchControlRef,
+    pitchKnobRef,
+    compassRef,
+    compassHeadingRef,
+    compassLatitudeRef,
     onPointerDown,
     onPointerMove,
     onPointerUp,
     onPointerCancel,
     onPointerLeave,
+    orbitBy,
+    orbitTo,
+    pitchBy,
+    pitchTo,
+    setDialControlActive,
     zoomIn,
     zoomOut,
-    setZoom,
   }
 }

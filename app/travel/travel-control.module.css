@@ -4,20 +4,45 @@
   width: 100%;
   height: 100dvh;
   overflow: hidden;
-  background: #03080b;
+  background: #080a14;
 }
 
+/* Two materials: deep-space indigo behind the scope, dark timber for the
+   handmade cockpit panels. Signals are campfire orange and nomai teal. */
 .frame {
-  --travel-bg: #03080b;
-  --travel-panel: #09151a;
-  --travel-panel-raised: #102229;
-  --travel-line: rgb(109 247 234 / 20%);
-  --travel-line-strong: rgb(109 247 234 / 42%);
-  --travel-cyan: var(--color-signal-cyan, #6df7ea);
-  --travel-pink: var(--color-signal-pink-hot, #ff4fd8);
-  --travel-yellow: var(--color-signal-yellow, #ffea00);
-  --travel-paper: #c1cbbf;
-  --travel-ink: #eaf6f1;
+  --travel-bg: #0b0f1e;
+  --travel-timber: #1d150e;
+  --travel-timber-deep: #16100b;
+  --travel-line: rgb(255 161 74 / 18%);
+  --travel-line-strong: rgb(255 161 74 / 40%);
+  --travel-campfire: #ffa14a;
+  --travel-ember: #e2622b;
+  --travel-teal: #62d6c3;
+  --travel-supernova: #cfe8ff;
+  --travel-paper: #e8d6b0;
+  --travel-ink: #f2e9d8;
+  --travel-pencil: #aaa096;
+  --travel-rivets:
+    radial-gradient(
+      circle 1.4px at 7px 7px,
+      rgb(255 200 140 / 22%) 98%,
+      transparent
+    ),
+    radial-gradient(
+      circle 1.4px at calc(100% - 7px) 7px,
+      rgb(255 200 140 / 22%) 98%,
+      transparent
+    ),
+    radial-gradient(
+      circle 1.4px at 7px calc(100% - 7px),
+      rgb(255 200 140 / 22%) 98%,
+      transparent
+    ),
+    radial-gradient(
+      circle 1.4px at calc(100% - 7px) calc(100% - 7px),
+      rgb(255 200 140 / 22%) 98%,
+      transparent
+    );
   --instrument-width: clamp(12rem, 15vw, 13rem);
   --manifest-width: clamp(17.5rem, 23vw, 20rem);
   width: 100%;
@@ -26,11 +51,13 @@
   overflow: hidden;
   color: var(--travel-ink);
   background:
-    linear-gradient(rgb(109 247 234 / 2%) 1px, transparent 1px) 0 0 / 100% 4px,
+    linear-gradient(rgb(255 161 74 / 2.5%) 1px, transparent 1px) 0 0 / 100% 4px,
     var(--travel-bg);
 }
 
 .console {
+  position: relative;
+  isolation: isolate;
   display: grid;
   width: 100%;
   height: 100%;
@@ -39,18 +66,20 @@
     var(--instrument-width)
     minmax(0, 1fr)
     var(--manifest-width);
-  grid-template-rows: 4.25rem minmax(0, 1fr) 1.4rem;
+  grid-template-rows: 8rem minmax(0, 1fr) 1.4rem;
   grid-template-areas:
     "header header header"
     "workspace workspace locations"
     "instructions instructions locations";
   overflow: hidden;
   border: 1px solid var(--travel-line-strong);
-  background: #050c10;
+  background: #0a0d1a;
   box-shadow: inset 0 0 4rem rgb(0 0 0 / 42%);
 }
 
 .overheadPanel {
+  position: relative;
+  z-index: 20;
   display: grid;
   min-width: 0;
   grid-area: header;
@@ -59,13 +88,15 @@
     minmax(0, 1fr)
     var(--manifest-width);
   align-items: stretch;
+  overflow: visible;
   border-bottom: 1px solid var(--travel-line-strong);
-  background: #0a171c;
+  background: var(--travel-timber);
 }
 
 .utilityRail {
   display: grid;
   min-width: 0;
+  place-items: center;
   align-content: center;
   gap: 0.1rem;
   padding: 0.35rem 0.75rem;
@@ -81,7 +112,7 @@
 
 .utilityRail p {
   overflow: hidden;
-  color: var(--travel-cyan);
+  color: var(--travel-campfire);
   font: 700 0.55rem / 1.2 var(--font-code, monospace);
   letter-spacing: 0.09em;
   white-space: nowrap;
@@ -104,25 +135,27 @@
 
 .stationIdentity p {
   overflow: hidden;
-  color: var(--travel-pink);
+  color: var(--travel-ember);
   font: 800 0.54rem / 1 var(--font-code, monospace);
   letter-spacing: 0.14em;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
+/* thin wide-tracked caps, the logotype treatment */
 .stationIdentity h1 {
   overflow: hidden;
   color: var(--travel-ink);
-  font: 500 clamp(1.4rem, 2.2vw, 2rem) / 1 var(--font-display, sans-serif);
-  letter-spacing: -0.02em;
+  font: 400 clamp(1.05rem, 1.7vw, 1.45rem) / 1.15 var(--font-body, sans-serif);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .stationIdentity span {
   overflow: hidden;
-  color: rgb(234 246 241 / 52%);
+  color: rgb(242 233 216 / 52%);
   font-size: 0.62rem;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -135,7 +168,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   margin: 0;
   border-left: 1px solid var(--travel-line);
-  background: #061014;
+  background: var(--travel-timber-deep);
   font-family: var(--font-code, monospace);
 }
 
@@ -160,20 +193,20 @@
 }
 
 .missionStats dt {
-  color: rgb(234 246 241 / 44%);
+  color: rgb(242 233 216 / 44%);
   font-size: 0.5rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .missionStats dd {
-  color: var(--travel-cyan);
+  color: var(--travel-campfire);
   font-size: 0.92rem;
   font-weight: 900;
 }
 
 .missionStats div:last-child dd {
-  color: var(--travel-yellow);
+  color: var(--travel-teal);
 }
 
 .annunciators {
@@ -192,8 +225,8 @@
     "starboard scope";
   overflow: hidden;
   background:
-    radial-gradient(circle at 54% 46%, rgb(23 91 103 / 12%), transparent 48%),
-    #050d11;
+    radial-gradient(circle at 54% 46%, rgb(140 74 26 / 10%), transparent 48%),
+    #090d1a;
 }
 
 .instrumentWing {
@@ -205,7 +238,8 @@
   padding: 0.55rem;
   overflow: hidden;
   border-right: 1px solid var(--travel-line);
-  background: #0b1a20;
+  background-color: var(--travel-timber);
+  background-image: var(--travel-rivets);
   font-family: var(--font-code, monospace);
 }
 
@@ -226,7 +260,7 @@
   min-width: 0;
   align-items: center;
   gap: 0.45rem;
-  color: var(--travel-cyan);
+  color: var(--travel-campfire);
   font-size: 0.55rem;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -238,7 +272,7 @@
   height: 1.5rem;
   flex: 0 0 auto;
   place-items: center;
-  background: var(--travel-cyan);
+  background: var(--travel-campfire);
   color: #071012;
   font-weight: 900;
 }
@@ -269,14 +303,14 @@
 
 .compassMeta {
   overflow: hidden;
-  color: rgb(234 246 241 / 48%);
+  color: rgb(242 233 216 / 48%);
   font-size: 0.48rem;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .bearingValue {
-  color: var(--travel-cyan);
+  color: var(--travel-campfire);
   font-size: 1rem;
   letter-spacing: 0.06em;
 }
@@ -287,64 +321,19 @@
   aspect-ratio: 1;
   border: 1px solid var(--travel-line-strong);
   border-radius: 50%;
-  background:
-    repeating-conic-gradient(
-      from -1deg,
-      rgb(109 247 234 / 28%) 0 1deg,
-      transparent 1deg 15deg
-    ),
-    radial-gradient(
-      circle,
-      transparent 0 42%,
-      rgb(109 247 234 / 11%) 43% 44%,
-      transparent 45%
-    ),
-    #061216;
+  background: radial-gradient(circle at 38% 30%, #2d241a, #0d0b08 72%);
   box-shadow: inset 0 0 1.3rem rgb(0 0 0 / 75%);
 }
 
 .compassRose::before,
 .compassRose::after {
-  position: absolute;
-  background: rgb(109 247 234 / 24%);
-  content: "";
+  content: none;
 }
 
-.compassRose::before {
-  top: 50%;
-  right: 12%;
-  left: 12%;
-  height: 1px;
-}
-
-.compassRose::after {
-  top: 12%;
-  bottom: 12%;
-  left: 50%;
-  width: 1px;
-}
-
-.compassRose i {
-  position: absolute;
-  z-index: 2;
-  top: 14%;
-  bottom: 50%;
-  left: calc(50% - 1px);
-  width: 2px;
-  background: var(--travel-pink);
-  box-shadow: 0 0 0.45rem var(--travel-pink);
-  transform: rotate(var(--bearing));
-  transform-origin: 50% 100%;
-  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.north,
-.east,
-.south,
-.west {
+.north {
   position: absolute;
   z-index: 3;
-  color: rgb(234 246 241 / 52%);
+  color: rgb(242 233 216 / 52%);
   font-size: 0.42rem;
 }
 
@@ -354,42 +343,24 @@
   transform: translateX(-50%);
 }
 
-.east {
-  top: 50%;
-  right: 0.25rem;
-  transform: translateY(-50%);
-}
-
-.south {
-  bottom: 0.2rem;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.west {
-  top: 50%;
-  left: 0.25rem;
-  transform: translateY(-50%);
-}
-
 .contactSolution {
   display: grid;
   min-width: 0;
   gap: 0.35rem;
   padding: 0.45rem;
-  border: 1px solid rgb(255 79 216 / 38%);
-  background: #081217;
-  box-shadow: inset 0.2rem 0 0 rgb(255 79 216 / 18%);
+  border: 1px solid rgb(226 98 43 / 38%);
+  background: #140e08;
+  box-shadow: inset 0.2rem 0 0 rgb(226 98 43 / 18%);
 }
 
 .contactSolution > header {
   justify-content: space-between;
-  color: rgb(234 246 241 / 48%);
+  color: rgb(242 233 216 / 48%);
   font-size: 0.48rem;
 }
 
 .solutionState {
-  color: var(--travel-pink);
+  color: var(--travel-ember);
   font-size: inherit;
 }
 
@@ -411,7 +382,7 @@
 }
 
 .solutionIdentity em {
-  color: var(--travel-yellow);
+  color: var(--travel-teal);
   font-size: 0.62rem;
   font-style: normal;
   font-weight: 900;
@@ -449,16 +420,30 @@
 
 .contactSolution dt,
 .modeBank dt {
-  color: rgb(234 246 241 / 42%);
+  color: rgb(242 233 216 / 42%);
   font-size: 0.46rem;
   text-transform: uppercase;
 }
 
 .contactSolution dd,
 .modeBank dd {
-  color: var(--travel-cyan);
+  color: var(--travel-campfire);
   font-size: 0.55rem;
   font-weight: 800;
+}
+
+.logNote {
+  margin: 0.1rem 0 0;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgb(170 160 150 / 16%);
+  color: var(--travel-pencil);
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.68rem;
+  font-style: italic;
+  line-height: 1.24;
+  text-wrap: balance;
+  transform: rotate(-0.5deg);
+  transform-origin: left center;
 }
 
 .modeBank {
@@ -499,24 +484,24 @@
 }
 
 .uplinkPanel strong {
-  color: var(--travel-cyan);
+  color: var(--travel-campfire);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
 .uplinkPanel span {
-  color: rgb(234 246 241 / 44%);
+  color: rgb(242 233 216 / 44%);
 }
 
 .uplinkPanel p {
-  color: var(--travel-yellow);
+  color: var(--travel-teal);
 }
 
 .uplinkPanel button {
   min-height: 2.75rem;
   border: 1px solid var(--travel-line-strong);
-  background: #071216;
-  color: var(--travel-cyan);
+  background: #150f0a;
+  color: var(--travel-campfire);
   font: 800 0.55rem / 1 var(--font-code, monospace);
 }
 
@@ -531,31 +516,33 @@
   overflow: hidden;
   container-type: inline-size;
   background:
-    radial-gradient(circle at 50% 48%, rgb(19 72 80 / 13%), transparent 55%),
-    #050d11;
+    radial-gradient(circle at 50% 48%, rgb(140 74 26 / 9%), transparent 55%),
+    radial-gradient(1px 1px at 22px 34px, rgb(213 226 255 / 30%), transparent) 0
+    0 / 170px 170px,
+    radial-gradient(1px 1px at 88px 121px, rgb(242 233 216 / 22%), transparent)
+    0 0 / 190px 190px,
+    radial-gradient(1px 1px at 141px 63px, rgb(213 226 255 / 17%), transparent)
+    0 0 / 230px 230px,
+    #070b16;
 }
 
 .scopeHeader {
   display: flex;
   min-width: 0;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 0.8rem;
   padding: 0 0.35rem 0.35rem;
   border-bottom: 1px solid var(--travel-line);
-  color: var(--travel-pink);
+  color: var(--travel-ember);
   font: 800 0.58rem / 1 var(--font-code, monospace);
   letter-spacing: 0.08em;
-}
-
-.scopeHeader > span {
-  flex: 0 0 auto;
 }
 
 .scopeHeader > div {
   display: grid;
   min-width: 0;
-  justify-items: end;
+  justify-items: start;
   gap: 0.14rem;
 }
 
@@ -568,12 +555,12 @@
 }
 
 .scopeHeader strong {
-  color: var(--travel-cyan);
+  color: var(--travel-campfire);
   font-size: 0.64rem;
 }
 
 .scopeHeader small {
-  color: rgb(234 246 241 / 48%);
+  color: rgb(242 233 216 / 48%);
   font-size: 0.5rem;
   letter-spacing: 0.03em;
 }
@@ -581,24 +568,23 @@
 .viewport {
   position: relative;
   display: grid;
-  width: auto;
-  height: min(100%, 100cqi);
-  min-width: 0;
-  min-height: 0;
-  max-width: 100%;
-  max-height: 100%;
-  aspect-ratio: 1;
-  place-self: center;
-  overflow: visible;
-  filter: drop-shadow(0 1.25rem 2rem rgb(0 0 0 / 55%));
-}
-
-.canvas {
-  display: block;
+  place-items: center;
   width: 100%;
   height: 100%;
   min-width: 0;
   min-height: 0;
+  overflow: visible;
+  filter: drop-shadow(0 1.25rem 2rem rgb(0 0 0 / 55%));
+}
+
+/* Cobe adds a full-bleed wrapper. The canvas follows the complete monitor
+   rectangle so deep zoom can use its horizontal room without clipping. */
+.canvas {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  margin: auto;
+  display: block;
   cursor: grab;
   opacity: 0;
   touch-action: none;
@@ -619,11 +605,12 @@
 
 .scopeFallback {
   position: absolute;
+  z-index: 3;
   inset: 20%;
   display: none;
   place-content: center;
   gap: 0.35rem;
-  color: var(--travel-cyan);
+  color: var(--travel-campfire);
   font: 700 0.62rem / 1.4 var(--font-code, monospace);
   text-align: center;
 }
@@ -640,8 +627,8 @@
   margin: 0;
   padding: 0.35rem 0.55rem;
   border: 1px solid var(--travel-line);
-  background: #061014;
-  color: var(--travel-cyan);
+  background: var(--travel-timber-deep);
+  color: var(--travel-campfire);
   font: 700 0.56rem / 1 var(--font-code, monospace);
   letter-spacing: 0.03em;
 }
@@ -654,12 +641,12 @@
 
 .readoutKey,
 .readoutCoords {
-  color: rgb(234 246 241 / 46%);
+  color: rgb(242 233 216 / 46%);
 }
 
 .readoutRange {
   margin-left: auto;
-  color: var(--travel-yellow);
+  color: var(--travel-teal);
 }
 
 .blink {
@@ -686,7 +673,7 @@
 }
 
 .telegraph > span {
-  color: rgb(234 246 241 / 44%);
+  color: rgb(242 233 216 / 44%);
   font-size: 0.46rem;
 }
 
@@ -695,14 +682,14 @@
   min-width: 0;
   height: 100%;
   min-height: 4rem;
-  accent-color: var(--travel-yellow);
+  accent-color: var(--travel-teal);
   direction: rtl;
   writing-mode: vertical-lr;
 }
 
 .telegraph output {
   grid-column: 1;
-  color: var(--travel-yellow);
+  color: var(--travel-teal);
   font: 800 0.58rem / 1 var(--font-code, monospace);
   text-align: center;
 }
@@ -727,8 +714,8 @@
 .zoomControls button {
   min-height: 2.75rem;
   border: 1px solid var(--travel-line-strong);
-  background: #071216;
-  color: var(--travel-cyan);
+  background: #150f0a;
+  color: var(--travel-campfire);
   font: 800 1rem / 1 var(--font-code, monospace);
 }
 
@@ -737,18 +724,18 @@
   justify-items: center;
   gap: 0.15rem;
   padding: 0.4rem;
-  border: 1px solid rgb(234 246 241 / 8%);
-  background: #061014;
+  border: 1px solid rgb(242 233 216 / 8%);
+  background: var(--travel-timber-deep);
 }
 
 .commModule small,
 .commModule span {
-  color: rgb(234 246 241 / 42%);
+  color: rgb(242 233 216 / 42%);
   font-size: 0.45rem;
 }
 
 .commModule strong {
-  color: var(--travel-yellow);
+  color: var(--travel-teal);
   font-size: 0.92rem;
   letter-spacing: 0.12em;
 }
@@ -757,7 +744,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.25rem;
-  color: rgb(234 246 241 / 42%);
+  color: rgb(242 233 216 / 42%);
   font-size: 0.44rem;
   text-align: center;
 }
@@ -768,14 +755,14 @@
   height: 0.38rem;
   margin: 0 auto 0.25rem;
   border-radius: 50%;
-  background: var(--travel-cyan);
-  box-shadow: 0 0 0.42rem var(--travel-cyan);
+  background: var(--travel-campfire);
+  box-shadow: 0 0 0.42rem var(--travel-campfire);
   content: "";
 }
 
 .signalBank span:last-child::before {
-  background: var(--travel-yellow);
-  box-shadow: 0 0 0.42rem var(--travel-yellow);
+  background: var(--travel-teal);
+  box-shadow: 0 0 0.42rem var(--travel-teal);
 }
 
 .manifest {
@@ -789,7 +776,8 @@
   padding: 0.55rem;
   overflow: hidden;
   border-left: 1px solid var(--travel-line-strong);
-  background: #060d11;
+  background-color: #1a130c;
+  background-image: var(--travel-rivets);
   font-family: var(--font-code, monospace);
 }
 
@@ -815,7 +803,7 @@
 
 .manifestHeader p {
   overflow: hidden;
-  color: rgb(234 246 241 / 34%);
+  color: rgb(242 233 216 / 34%);
   font-size: 0.45rem;
   letter-spacing: 0.08em;
   white-space: nowrap;
@@ -823,7 +811,7 @@
 }
 
 .manifestHeader h2 {
-  color: var(--travel-cyan);
+  color: var(--travel-campfire);
   font-size: 0.94rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -833,15 +821,15 @@
 .manifestHeader > span {
   flex: 0 0 auto;
   padding: 0.3rem 0.35rem;
-  border: 1px solid var(--travel-pink);
-  color: var(--travel-pink);
+  border: 1px solid var(--travel-ember);
+  color: var(--travel-ember);
   font-size: 0.48rem;
   font-weight: 900;
   white-space: nowrap;
 }
 
 .manifestMeta {
-  color: rgb(234 246 241 / 56%);
+  color: rgb(242 233 216 / 56%);
   font-size: 0.58rem;
   line-height: 1.3;
 }
@@ -850,13 +838,14 @@
   display: grid;
   min-width: 0;
   min-height: 0;
-  grid-template-rows: 2.75rem minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 0.4rem;
 }
 
+/* the signalscope: a frequency band with a needle, stations beneath */
 .sectorTabs {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: auto 2.75rem;
   gap: 0.2rem;
   margin: 0;
   padding: 0;
@@ -871,54 +860,116 @@
   clip-path: inset(50%);
 }
 
-.sectorTabs button {
+.dialBand {
+  position: relative;
+  height: 1.35rem;
+  overflow: hidden;
+  border: 1px solid rgb(226 98 43 / 20%);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 161 74 / 22%) 0 1px,
+      transparent 1px 9px
+    )
+    50% 100% / calc(100% - 8px) 0.32rem no-repeat,
+    #0f0b06;
+}
+
+.waveform {
+  position: absolute;
+  inset: 0.12rem 4px 0.36rem;
+  width: calc(100% - 8px);
+  height: auto;
+}
+
+.waveform path {
+  fill: none;
+  stroke: var(--travel-teal);
+  stroke-opacity: 0.55;
+  stroke-width: 1.1;
+  stroke-dasharray: 3 2;
+  animation: travel-tune 7s linear infinite;
+}
+
+@keyframes travel-tune {
+  to {
+    stroke-dashoffset: -60;
+  }
+}
+
+.needle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc((var(--station, 0) + 0.5) * 25%);
+  width: 2px;
+  background: var(--travel-campfire);
+  box-shadow: 0 0 0.4rem var(--travel-campfire);
+  transition: left 380ms var(--ease-signal, ease);
+}
+
+.stations {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.2rem;
+}
+
+.stations button {
   display: grid;
   min-width: 0;
   min-height: 2.75rem;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 0.2rem;
+  grid-template-areas:
+    "freq"
+    "label";
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 0.2rem 0.25rem;
   padding: 0.25rem 0.3rem;
-  border: 1px solid rgb(255 79 216 / 20%);
-  background: #050b0e;
-  color: rgb(234 246 241 / 58%);
+  border: 1px solid rgb(226 98 43 / 20%);
+  background: #120d08;
+  color: rgb(242 233 216 / 58%);
   font: 700 0.48rem / 1 var(--font-code, monospace);
+  text-align: left;
   text-transform: uppercase;
 }
 
-.sectorTabs button b {
-  display: none;
+.stations button b {
+  grid-area: freq;
+  color: rgb(255 161 74 / 62%);
+  font-size: 0.44rem;
 }
 
-.sectorTabs button span {
+.stations button span {
   overflow: hidden;
+  grid-area: label;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.sectorTabs button small {
-  color: rgb(234 246 241 / 38%);
-  font-size: 0.42rem;
+.stations button[aria-pressed="true"] {
+  border-color: var(--travel-campfire);
+  color: var(--travel-campfire);
+  box-shadow: inset 0 -2px 0 var(--travel-campfire);
 }
 
-.sectorTabs button[aria-pressed="true"] {
-  border-color: var(--travel-cyan);
-  color: var(--travel-cyan);
-  box-shadow: inset 0 -2px 0 var(--travel-cyan);
+.stations button[aria-pressed="true"] b {
+  color: var(--travel-campfire);
 }
 
 .stripViewport {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  border: 1px solid rgb(234 246 241 / 7%);
-  background: #020608;
+  border: 1px solid rgb(242 233 216 / 7%);
+  background: #0f0b06;
 }
 
 .stripViewport ol {
   display: grid;
+  height: 100%;
   min-width: 0;
-  min-height: 100%;
+  min-height: 0;
   grid-auto-rows: minmax(3.45rem, auto);
   align-content: start;
   gap: 2px;
@@ -928,14 +979,13 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   list-style: none;
-  scrollbar-color: var(--travel-cyan) #071014;
-  scrollbar-width: thin;
 }
 
 .stripViewport li {
   min-width: 0;
 }
 
+/* ship-log entries: parchment photos with a rough white frame */
 .contact {
   display: grid;
   width: 100%;
@@ -945,29 +995,42 @@
   gap: 0.45rem;
   align-items: center;
   padding: 0.42rem 0.5rem;
-  border: 0;
-  border-left: 3px solid transparent;
+  border: 2px solid #f4ecd9;
+  border-left-width: 3px;
   background: var(--travel-paper);
-  color: #16201d;
+  color: #3b2d1c;
   font-family: var(--font-code, monospace);
   text-align: left;
+  box-shadow: inset 0 0 0 1px rgb(59 45 28 / 16%);
   transition:
     background-color 130ms ease,
     transform 130ms ease;
 }
 
+.stripViewport li:nth-child(odd) .contact {
+  transform: rotate(-0.3deg);
+}
+
+.stripViewport li:nth-child(even) .contact {
+  transform: rotate(0.25deg);
+}
+
 .contact:hover {
-  background: #d6ded2;
+  background: #f0e2c2;
+  transform: rotate(0deg);
 }
 
 .contact[aria-pressed="true"] {
-  border-left-color: var(--travel-pink);
-  background: #d3d9cb;
-  box-shadow: inset 0 0 0 2px var(--travel-pink);
+  border-left-color: var(--travel-ember);
+  background: #f2e4c4;
+  box-shadow:
+    inset 0 0 0 2px var(--travel-ember),
+    0 0 0.55rem rgb(226 98 43 / 30%);
+  transform: rotate(0deg);
 }
 
 .contactIndex {
-  color: #59645f;
+  color: #8a7451;
   font-size: 0.5rem;
 }
 
@@ -989,8 +1052,8 @@
 .name em {
   margin-left: 0.25rem;
   padding: 0.06rem 0.16rem;
-  background: #6d7b72;
-  color: #f1f3e8;
+  background: #7a5a33;
+  color: #f4ecd9;
   font-size: 0.4rem;
   font-style: normal;
 }
@@ -998,7 +1061,7 @@
 .coords,
 .contactRange span:last-child {
   overflow: hidden;
-  color: #5e6863;
+  color: #8a7451;
   font-size: 0.48rem;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1010,7 +1073,7 @@
 }
 
 .code {
-  color: #9a315e;
+  color: #b5490f;
   font-size: 0.6rem;
   font-weight: 900;
 }
@@ -1022,7 +1085,7 @@
   gap: 0.6rem;
   padding-right: 7.25rem;
   border-top: 1px solid var(--travel-line);
-  color: rgb(234 246 241 / 42%);
+  color: rgb(242 233 216 / 42%);
   font-size: 0.42rem;
   white-space: nowrap;
 }
@@ -1041,7 +1104,7 @@
   gap: 1.3rem;
   overflow: hidden;
   border-top: 1px solid var(--travel-line);
-  color: rgb(234 246 241 / 32%);
+  color: rgb(242 233 216 / 32%);
   font: 700 0.44rem / 1 var(--font-code, monospace);
   letter-spacing: 0.08em;
   white-space: nowrap;
@@ -1050,10 +1113,165 @@
 .backLink:focus-visible,
 .uplinkPanel button:focus-visible,
 .zoomControls button:focus-visible,
-.sectorTabs button:focus-visible,
+.stations button:focus-visible,
 .contact:focus-visible {
-  outline: 2px solid var(--travel-yellow);
+  outline: 2px solid var(--travel-supernova);
   outline-offset: -2px;
+}
+
+/* A compressed but astronomically oriented Earth–Moon orbit. The globe loop
+   owns path geometry so camera motion and eased zoom stay perfectly coupled. */
+.lunarLayer {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.lunarLayerBack {
+  z-index: 0;
+}
+
+.lunarLayerFront {
+  z-index: 2;
+}
+
+.lunarOrbitPath {
+  fill: none;
+  stroke: var(--travel-campfire);
+  stroke-dasharray: 5 7;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.lunarLayerBack .lunarOrbitPath {
+  opacity: 0.07;
+}
+
+.lunarLayerFront .lunarOrbitPath {
+  opacity: 0.16;
+}
+
+.attlerock {
+  filter: drop-shadow(0 0 0.35rem rgb(207 232 255 / 32%));
+}
+
+.lunarLayerBack .attlerock {
+  filter: brightness(0.62) drop-shadow(0 0 0.25rem rgb(207 232 255 / 18%));
+}
+
+.moonCrater {
+  fill: rgb(30 36 33 / 38%);
+}
+
+/* the loop sun ages via inline custom properties from the view */
+.loopMeter {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.35rem;
+  color: rgb(242 233 216 / 55%);
+}
+
+.sun {
+  width: 0.58rem;
+  height: 0.58rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 40% 38%,
+    var(--sun-core, #ffe9b0) 0 36%,
+    var(--sun-edge, #ff9a3c) 78%,
+    transparent 80%
+  );
+  box-shadow: 0 0 0.5rem var(--sun-edge, #ff9a3c);
+  transform: scale(var(--sun-scale, 1));
+}
+
+/* an unseen campfire, low beside the cockpit */
+.firelight {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 76% 58% at 42% 112%,
+    #ffb05d 0%,
+    #e76d32 38%,
+    transparent 76%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.022;
+  animation: travel-firelight 10.7s ease-in-out infinite;
+  pointer-events: none;
+  transform: translate3d(-0.4%, 0.35%, 0) scale(1.012);
+  transform-origin: 42% 100%;
+}
+
+@keyframes travel-firelight {
+  0%,
+  100% {
+    opacity: 0.022;
+    transform: translate3d(-0.4%, 0.35%, 0) scale(1.012);
+  }
+
+  14% {
+    opacity: 0.029;
+    transform: translate3d(0.15%, 0, 0) scale(1.018);
+  }
+
+  37% {
+    opacity: 0.024;
+    transform: translate3d(-0.1%, 0.2%, 0) scale(1.009);
+  }
+
+  58% {
+    opacity: 0.03;
+    transform: translate3d(0.35%, -0.15%, 0) scale(1.021);
+  }
+
+  73% {
+    opacity: 0.021;
+    transform: translate3d(-0.25%, 0.25%, 0) scale(1.014);
+  }
+
+  91% {
+    opacity: 0.027;
+    transform: translate3d(0.2%, 0.1%, 0) scale(1.017);
+  }
+}
+
+/* twenty-two minutes later */
+.supernova {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 46%,
+    #f4faff 0 16%,
+    #bfe0ff 36%,
+    rgb(9 16 34 / 94%) 78%
+  );
+  animation: travel-supernova 1.8s var(--ease-signal, ease-out) forwards;
+  pointer-events: none;
+}
+
+@keyframes travel-supernova {
+  0% {
+    opacity: 0;
+  }
+
+  16% {
+    opacity: 1;
+  }
+
+  58% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 @media (max-width: 1120px) and (min-width: 900px) {
@@ -1088,7 +1306,7 @@
 
   .console {
     grid-template-columns: 1fr;
-    grid-template-rows: 4.5rem minmax(0, 1fr) 10.75rem;
+    grid-template-rows: 5.25rem minmax(0, 1fr) 10.75rem;
     grid-template-areas:
       "header"
       "workspace"
@@ -1117,7 +1335,8 @@
   }
 
   .stationIdentity h1 {
-    font-size: 1.25rem;
+    font-size: 0.92rem;
+    letter-spacing: 0.16em;
   }
 
   .missionStats div:nth-child(2) {
@@ -1222,21 +1441,17 @@
   }
 
   .contactSolution dl {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .contactSolution dl div:first-child {
     display: none;
   }
 
-  .contactSolution dl div {
-    display: grid;
-    gap: 0.08rem;
-  }
-
-  .contactSolution dt,
-  .contactSolution dd {
-    font-size: 0.46rem;
+  .logNote {
+    display: -webkit-box;
+    overflow: hidden;
+    padding-top: 0.22rem;
+    font-size: 0.59rem;
+    line-height: 1.18;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .telegraph {
@@ -1295,8 +1510,23 @@
     display: contents;
   }
 
-  .sectorTabs button {
+  .sectorTabs {
+    grid-template-rows: 2.75rem;
+    gap: 0;
+  }
+
+  .dialBand {
+    display: none;
+  }
+
+  .stations button {
+    grid-template-areas: "label";
+    grid-template-columns: minmax(0, 1fr);
     font-size: 0.48rem;
+  }
+
+  .stations button b {
+    display: none;
   }
 
   .stripViewport ol {
@@ -1341,37 +1571,5192 @@
   .missionStats div {
     justify-items: center;
   }
-
-  .scopeHeader > span {
-    max-width: 9.5rem;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
 }
 
 @media (max-height: 700px) and (max-width: 899px) {
   .console {
-    grid-template-rows: 4.2rem minmax(0, 1fr) 9.5rem;
+    grid-template-rows: 5rem minmax(0, 1fr) 9.5rem;
   }
 
   .panorama {
     grid-template-rows: minmax(0, 1fr) 5.35rem;
   }
 
-  .contactSolution dl {
-    display: none;
+  .logNote {
+    -webkit-line-clamp: 1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .canvas,
   .contact,
-  .compassRose i {
+  .needle {
     transition: none;
   }
 
-  .blink {
+  .blink,
+  .waveform path,
+  .firelight {
     animation: none;
+  }
+
+  .firelight {
+    opacity: 0.026;
+    transform: none;
+  }
+}
+
+:global(.fx-quiet) .needle {
+  transition: none;
+}
+
+:global(.fx-quiet) .waveform path,
+:global(.fx-quiet) .firelight {
+  animation: none;
+}
+
+:global(.fx-quiet) .firelight {
+  opacity: 0.026;
+  transform: none;
+}
+
+/* V2 MATERIAL STUDY
+   The bridge keeps one upper-left light source: warm highlights land on the
+   top/left edge, while every lower/right edge falls into a crisp shadow. */
+.frame {
+  --v2-px: 4px;
+  --v2-brass-light: #d9ad63;
+  --v2-brass-mid: #8b642e;
+  --v2-brass-dark: #34200d;
+  --v2-wood-layers:
+    radial-gradient(
+      ellipse 30px 9px at 18% 28%,
+      transparent 0 36%,
+      rgb(24 10 4 / 72%) 38% 48%,
+      rgb(211 132 57 / 16%) 50% 57%,
+      transparent 59%
+    ),
+    radial-gradient(
+      ellipse 22px 7px at 77% 68%,
+      transparent 0 34%,
+      rgb(21 9 4 / 64%) 37% 47%,
+      rgb(219 144 67 / 13%) 50% 57%,
+      transparent 60%
+    ),
+    repeating-linear-gradient(
+      92deg,
+      rgb(255 205 133 / 6%) 0 2px,
+      transparent 2px 11px,
+      rgb(1 0 0 / 17%) 11px 13px,
+      transparent 13px 29px
+    ),
+    repeating-linear-gradient(
+      87deg,
+      transparent 0 18px,
+      rgb(223 139 63 / 7%) 18px 21px,
+      transparent 21px 42px,
+      rgb(0 0 0 / 18%) 42px 44px
+    ),
+    linear-gradient(135deg, rgb(255 190 103 / 9%), transparent 31%),
+    linear-gradient(94deg, #291a0e 0%, #1d120a 46%, #160d08 100%);
+  --v2-brushed-brass:
+    repeating-linear-gradient(
+      0deg,
+      rgb(255 247 213 / 8%) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(
+      135deg,
+      #261708 0%,
+      #9d7438 13%,
+      #4b3217 31%,
+      #c09652 48%,
+      #543718 54%,
+      #241608 100%
+    );
+  background:
+    radial-gradient(
+      ellipse 54% 42% at 38% 102%,
+      rgb(205 87 31 / 10%),
+      transparent 72%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(98 214 195 / 2%) 0 1px,
+      transparent 1px 4px
+    ),
+    var(--travel-bg);
+}
+
+.console {
+  border: 2px solid #6f522b;
+  box-shadow:
+    inset var(--v2-px) var(--v2-px) 0 rgb(223 175 103 / 11%),
+    inset calc(var(--v2-px) * -1) calc(var(--v2-px) * -1) 0 rgb(0 0 0 / 42%),
+    inset 0 0 4rem rgb(0 0 0 / 48%);
+}
+
+.overheadPanel,
+.instrumentWing,
+.manifest {
+  background-color: #20140a;
+  background-image: var(--travel-rivets), var(--v2-wood-layers);
+  background-blend-mode:
+    normal, normal, multiply, soft-light, soft-light, normal, normal;
+  box-shadow:
+    inset 0 var(--v2-px) 0 rgb(255 205 133 / 7%),
+    inset calc(var(--v2-px) * -1) 0 0 rgb(0 0 0 / 28%);
+}
+
+.overheadPanel {
+  border-bottom: var(--v2-px) solid #100904;
+  box-shadow:
+    inset 0 2px 0 rgb(255 211 151 / 12%),
+    inset 0 -2px 0 #5d3b1a,
+    0 var(--v2-px) 0 rgb(0 0 0 / 44%);
+}
+
+.utilityRail,
+.missionStats {
+  background-color: rgb(19 12 6 / 72%);
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 232 182 / 4%) 0 1px,
+      transparent 1px 5px
+    ),
+    linear-gradient(145deg, rgb(194 139 68 / 10%), transparent 36%);
+  box-shadow:
+    inset 2px 0 rgb(218 168 91 / 8%),
+    inset -2px -2px rgb(0 0 0 / 38%);
+  backdrop-filter: blur(1px);
+}
+
+.stationIdentity h1 {
+  text-shadow:
+    -1px -1px 0 rgb(255 255 255 / 6%),
+    2px 2px 0 #0f0905;
+}
+
+.instrumentWing {
+  border-right-color: #4d351b;
+}
+
+.instrumentWing > header > span,
+.manifestHeader > span {
+  border: 1px solid #d0a05a;
+  background-color: var(--v2-brass-mid);
+  background-image: var(--v2-brushed-brass);
+  color: #160d05;
+  text-shadow: 0 1px rgb(255 225 166 / 25%);
+  box-shadow:
+    inset 2px 2px 0 rgb(255 226 166 / 26%),
+    inset -2px -2px 0 #2a1909,
+    0 2px 0 rgb(0 0 0 / 55%);
+}
+
+.compassRose {
+  border: var(--v2-px) solid var(--v2-brass-mid);
+  outline: 1px solid #211307;
+  background:
+    repeating-conic-gradient(
+      from -1deg,
+      rgb(255 183 87 / 32%) 0 1deg,
+      transparent 1deg 15deg
+    ),
+    radial-gradient(
+      circle,
+      transparent 0 41%,
+      rgb(255 168 76 / 14%) 42% 44%,
+      transparent 45%
+    ),
+    radial-gradient(circle at 36% 28%, #2a1a0c 0, #100905 64%, #050302 100%);
+  box-shadow:
+    inset 3px 3px 0 rgb(255 226 166 / 14%),
+    inset -3px -3px 0 #050302,
+    0 0 0 2px #3d2a15,
+    0 var(--v2-px) 0 rgb(0 0 0 / 42%);
+}
+
+.contactSolution,
+.modeBank,
+.telegraph,
+.commModule {
+  border-color: #50381c;
+  background-color: #110b06;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgb(255 220 157 / 3%) 0 1px,
+      transparent 1px 4px
+    ),
+    linear-gradient(145deg, rgb(173 117 52 / 10%), transparent 38%);
+  box-shadow:
+    inset 2px 2px 0 rgb(255 215 145 / 7%),
+    inset -2px -2px 0 rgb(0 0 0 / 50%);
+}
+
+.stage {
+  border-inline: var(--v2-px) solid #3c2b18;
+  background:
+    radial-gradient(circle at 50% 48%, rgb(98 214 195 / 6%), transparent 54%),
+    radial-gradient(1px 1px at 22px 34px, rgb(213 226 255 / 34%), transparent) 0
+    0 / 170px 170px,
+    radial-gradient(1px 1px at 88px 121px, rgb(242 233 216 / 22%), transparent)
+    0 0 / 190px 190px,
+    radial-gradient(1px 1px at 141px 63px, rgb(213 226 255 / 17%), transparent)
+    0 0 / 230px 230px,
+    linear-gradient(145deg, #0b1320 0%, #050914 56%, #02040a 100%);
+  box-shadow:
+    inset var(--v2-px) 0 0 rgb(218 168 91 / 8%),
+    inset calc(var(--v2-px) * -1) 0 0 rgb(0 0 0 / 62%);
+}
+
+.scopeHeader {
+  border-bottom: 2px solid #4d351b;
+  text-shadow: 0 0 0.5rem rgb(226 98 43 / 36%);
+}
+
+.viewport {
+  isolation: isolate;
+  filter: drop-shadow(0 1.25rem 2rem rgb(0 0 0 / 62%));
+}
+
+/* This SVG is always present. Once Cobe is ready only its glass, brass rim
+   and reticles remain above WebGL; without WebGL it is the complete scope. */
+.scopeBackdrop {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 0 14px rgb(98 214 195 / 14%))
+    drop-shadow(0 14px 10px rgb(0 0 0 / 56%));
+}
+
+.scopeOuterRim {
+  fill: none;
+  stroke: var(--v2-brass-mid);
+  stroke-width: 36px;
+  filter: drop-shadow(-3px -3px 0 rgb(225 184 111 / 36%))
+    drop-shadow(4px 4px 0 rgb(20 11 4 / 84%));
+}
+
+.scopeInnerRim {
+  fill: none;
+  stroke: #21170d;
+  stroke-width: 18px;
+  filter: drop-shadow(-2px -2px 0 rgb(223 170 91 / 24%))
+    drop-shadow(3px 3px 0 #030201);
+}
+
+.scopeEarth {
+  stroke: #74d8c8;
+  stroke-opacity: 0.34;
+  stroke-width: 2px;
+  transition: opacity 180ms steps(2, end);
+}
+
+.scopeMap {
+  fill: none;
+  stroke: rgb(98 214 195 / 18%);
+  stroke-width: 2px;
+  transition: opacity 180ms steps(2, end);
+}
+
+.scopeLand {
+  fill: rgb(180 103 48 / 34%);
+  stroke: rgb(255 161 74 / 42%);
+  stroke-width: 2px;
+}
+
+.scopeRoute {
+  stroke: var(--travel-ember);
+  stroke-dasharray: 8 6;
+  stroke-width: 3px;
+}
+
+.backdropSignal {
+  fill: var(--travel-campfire);
+  stroke: #fff2cc;
+  stroke-width: 1px;
+  filter: drop-shadow(0 0 6px var(--travel-campfire));
+}
+
+.backdropSignalActive {
+  fill: var(--travel-teal);
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 3px #f4ffff) drop-shadow(0 0 10px var(--travel-teal));
+}
+
+.scopeTarget {
+  fill: none;
+  stroke: var(--travel-teal);
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 5px rgb(98 214 195 / 72%));
+}
+
+.scopeSweep {
+  fill: rgb(98 214 195 / 6%);
+  stroke: rgb(98 214 195 / 18%);
+  stroke-width: 2px;
+  transform-box: fill-box;
+  transform-origin: left bottom;
+  animation: v2-scope-sweep 7s steps(28, end) infinite;
+}
+
+.scopeGlass {
+  fill-opacity: 0.52;
+  stroke: rgb(216 255 248 / 24%);
+  stroke-width: 3px;
+}
+
+.scopeReflection {
+  fill: rgb(234 255 252 / 7%);
+  mix-blend-mode: screen;
+}
+
+.scopeTicks {
+  fill: none;
+  stroke: #e6bc75;
+  stroke-width: 8px;
+  filter: drop-shadow(2px 2px 0 #140b03);
+}
+
+.viewport:has(.canvas[data-ready="true"]) .scopeEarth,
+.viewport:has(.canvas[data-ready="true"]) .scopeMap {
+  opacity: 0;
+}
+
+@keyframes v2-scope-sweep {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.scopeFallback {
+  z-index: 4;
+  align-self: end;
+  justify-self: center;
+  inset: auto auto 12%;
+  min-width: min(18rem, 78%);
+  padding: calc(var(--v2-px) * 2);
+  border: 2px solid rgb(98 214 195 / 36%);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgb(98 214 195 / 5%) 0 1px,
+      transparent 1px 4px
+    ),
+    rgb(3 10 13 / 82%);
+  box-shadow:
+    inset 2px 2px rgb(206 255 247 / 7%),
+    inset -2px -2px rgb(0 0 0 / 54%),
+    0 0 1rem rgb(98 214 195 / 8%);
+  backdrop-filter: blur(2px);
+}
+
+.readout {
+  border: 2px solid #594020;
+  background-color: #151009;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgb(255 225 170 / 4%) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(135deg, rgb(181 125 58 / 10%), transparent 44%);
+  box-shadow:
+    inset 2px 2px 0 rgb(255 218 151 / 8%),
+    inset -2px -2px 0 rgb(0 0 0 / 58%);
+}
+
+.uplinkPanel button,
+.zoomControls button,
+.stations button {
+  border: 2px solid #725127;
+  background-color: #36220e;
+  background-image: var(--v2-brushed-brass);
+  color: #ffd08b;
+  text-shadow: 1px 1px #160b03;
+  box-shadow:
+    inset 2px 2px 0 rgb(255 224 160 / 20%),
+    inset -2px -2px 0 #1a0e04,
+    0 var(--v2-px) 0 #080402;
+  transition:
+    transform 80ms steps(2, end),
+    box-shadow 80ms steps(2, end);
+}
+
+.uplinkPanel button:active:not(:disabled),
+.zoomControls button:active,
+.stations button:active {
+  box-shadow:
+    inset 2px 2px var(--v2-px) rgb(0 0 0 / 64%),
+    inset -1px -1px 0 rgb(255 222 155 / 8%);
+  transform: translateY(var(--v2-px));
+}
+
+.stations button[aria-pressed="true"] {
+  border-color: #f2bd68;
+  background-color: #6f471c;
+  color: #ffe0a8;
+  box-shadow:
+    inset 2px 2px 0 rgb(255 232 184 / 28%),
+    inset -2px -2px 0 #2b1707,
+    0 var(--v2-px) 0 #090502,
+    0 0 0.65rem rgb(255 161 74 / 15%);
+}
+
+.dialBand,
+.stripViewport {
+  border: 2px solid #4a3218;
+  box-shadow:
+    inset 2px 2px 0 rgb(255 213 143 / 6%),
+    inset -2px -2px 0 rgb(0 0 0 / 58%);
+}
+
+.stripViewport ol {
+  gap: var(--v2-px);
+  padding: var(--v2-px);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(207 152 76 / 3%) 0 1px,
+      transparent 1px 5px
+    ),
+    #0b0704;
+}
+
+/* Paper stays sharp: fiber and worn edges replace fractional rotations. */
+.contact,
+.stripViewport li:nth-child(odd) .contact,
+.stripViewport li:nth-child(even) .contact {
+  position: relative;
+  isolation: isolate;
+  border-color: #f8edcf;
+  background-color: #e3cc9b;
+  background-image:
+    radial-gradient(
+      circle at 12% 18%,
+      rgb(113 72 32 / 7%) 0 1px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 78% 71%,
+      rgb(255 255 255 / 22%) 0 1px,
+      transparent 2px
+    ),
+    repeating-conic-gradient(
+      from 90deg at 1px 1px,
+      rgb(74 47 21 / 5%) 0 25%,
+      transparent 0 100%
+    ),
+    linear-gradient(135deg, rgb(255 252 223 / 44%), transparent 38%),
+    linear-gradient(to bottom, #ead6a9, #d7bd88);
+  background-size:
+    29px 23px,
+    37px 31px,
+    4px 4px,
+    auto,
+    auto;
+  box-shadow:
+    inset 2px 2px 0 rgb(255 255 238 / 64%),
+    inset -2px -2px 0 rgb(96 59 23 / 24%),
+    0 var(--v2-px) 0 rgb(5 3 1 / 48%);
+  transform: none;
+  transition:
+    transform 90ms steps(2, end),
+    filter 90ms steps(2, end);
+}
+
+.contact::after {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(68 42 18 / 28%) 0 2px,
+      transparent 2px 17px
+    )
+    0 0 / 100% 2px no-repeat,
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 11px,
+      rgb(255 252 226 / 50%) 11px 14px,
+      transparent 14px 23px
+    )
+    0 100% / 100% 2px no-repeat;
+  content: "";
+  mix-blend-mode: multiply;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.contact:hover {
+  background-color: #ead8af;
+  filter: brightness(1.03);
+  transform: translateY(calc(var(--v2-px) * -0.5));
+}
+
+.contact:active {
+  box-shadow:
+    inset var(--v2-px) var(--v2-px) 0 rgb(72 42 16 / 22%),
+    inset calc(var(--v2-px) * -0.5) calc(var(--v2-px) * -0.5) 0
+    rgb(255 255 234 / 42%);
+  transform: translateY(calc(var(--v2-px) * 0.5));
+}
+
+.contact[aria-pressed="true"] {
+  border-left-color: var(--travel-ember);
+  background-color: #efdbb0;
+  box-shadow:
+    inset var(--v2-px) 0 0 var(--travel-ember),
+    inset 2px 2px 0 rgb(255 255 238 / 62%),
+    inset -2px -2px 0 rgb(96 59 23 / 22%),
+    0 var(--v2-px) 0 rgb(5 3 1 / 48%),
+    0 0 0.65rem rgb(226 98 43 / 22%);
+  transform: none;
+}
+
+.contact:focus-visible {
+  outline-offset: calc(var(--v2-px) * -1);
+}
+
+.backLink:focus-visible,
+.uplinkPanel button:focus-visible,
+.zoomControls button:focus-visible,
+.stations button:focus-visible,
+.contact:focus-visible {
+  outline: var(--v2-px) solid #eaffff;
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 var(--v2-px) #174c48,
+    0 0 0 calc(var(--v2-px) * 2) rgb(98 214 195 / 34%);
+}
+
+@media (max-width: 899px) {
+  .overheadPanel {
+    grid-template-columns: 5rem minmax(0, 1fr) 5.5rem;
+  }
+
+  .stationIdentity h1 {
+    overflow: visible;
+    font-size: clamp(0.86rem, 3.2vw, 1.05rem);
+    letter-spacing: 0.1em;
+    text-overflow: clip;
+  }
+
+  .missionStats {
+    grid-template-columns: 1fr;
+  }
+
+  .missionStats div,
+  .missionStats div:nth-child(2) {
+    display: none;
+  }
+
+  .missionStats div:last-child {
+    display: grid;
+  }
+
+  .stage {
+    border-inline: 0;
+    border-bottom: var(--v2-px) solid #3c2b18;
+  }
+
+  .scopeFallback {
+    bottom: 7%;
+    min-width: min(15rem, 72%);
+    font-size: 0.52rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .overheadPanel {
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+  }
+
+  .missionStats {
+    display: none;
+  }
+
+  .stationIdentity {
+    padding-right: 0.35rem;
+  }
+
+  .stationIdentity p {
+    font-size: 0.44rem;
+    letter-spacing: 0.07em;
+  }
+
+  .stationIdentity h1 {
+    font-size: 0.88rem;
+    letter-spacing: 0.08em;
+  }
+
+  .scopeFallback span {
+    display: none;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .utilityRail,
+  .missionStats {
+    background-color: #160e08;
+  }
+
+  .scopeFallback {
+    background-color: #030a0d;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scopeEarth,
+  .scopeMap,
+  .uplinkPanel button,
+  .zoomControls button,
+  .stations button,
+  .contact {
+    transition: none;
+  }
+
+  .scopeSweep {
+    animation: none;
+    opacity: 0.45;
+  }
+}
+
+:global(.fx-quiet) .scopeSweep {
+  animation: none;
+  opacity: 0.45;
+}
+
+/* V2 FIELD COCKPIT
+   Outer Wilds direction: repaired instruments, not a polished observatory.
+   Grain belongs to the objects being handled; light stays local to displays. */
+.frame {
+  --v2-px: 4px;
+  --cockpit-soot: #0b0d0c;
+  --cockpit-rubber: #1b1d1a;
+  --cockpit-metal: #64665f;
+  --cockpit-metal-light: #7f8178;
+  --cockpit-metal-dark: #3b3e38;
+  --cockpit-ivory: #ada99b;
+  --cockpit-olive: #5a5e55;
+  --cockpit-wood: #403229;
+  --cockpit-wood-dark: #261f1a;
+  --cockpit-screen: #091515;
+  --cockpit-orange: #c67b45;
+  --cockpit-cyan: #78aaa2;
+  --cockpit-paper: #d5c6a5;
+  --cockpit-type-engraving: 0.56rem;
+  --cockpit-type-label: 0.64rem;
+  --cockpit-type-value: 0.72rem;
+  --cockpit-type-body: 0.75rem;
+  --cockpit-grain:
+    repeating-conic-gradient(
+      from 21deg at 2px 2px,
+      rgb(255 255 255 / 3%) 0 24deg,
+      transparent 24deg 56deg,
+      rgb(0 0 0 / 4%) 56deg 82deg,
+      transparent 82deg 120deg
+    )
+    0 0 / 5px 5px;
+  --cockpit-scratches: repeating-linear-gradient(
+    96deg,
+    transparent 0 21px,
+    rgb(255 255 255 / 3%) 21px 22px,
+    transparent 22px 47px,
+    rgb(0 0 0 / 5%) 47px 48px
+  );
+  --cockpit-wood-grain:
+    radial-gradient(
+      ellipse 32px 8px at 18% 31%,
+      transparent 0 36%,
+      rgb(20 10 6 / 45%) 38% 48%,
+      transparent 50%
+    ),
+    repeating-linear-gradient(
+      91deg,
+      rgb(232 171 111 / 5%) 0 1px,
+      transparent 1px 9px,
+      rgb(14 7 4 / 14%) 9px 11px,
+      transparent 11px 31px
+    ),
+    linear-gradient(94deg, #46362c, #352a23 58%, #261f1a);
+  --v2-wood-layers: var(--cockpit-wood-grain);
+  --v2-brushed-brass:
+    var(--cockpit-grain),
+    linear-gradient(
+      145deg,
+      var(--cockpit-metal-light),
+      var(--cockpit-metal) 45%,
+      var(--cockpit-metal-dark)
+    );
+  --travel-line: rgb(202 196 169 / 15%);
+  --travel-line-strong: rgb(202 196 169 / 32%);
+  --travel-campfire: var(--cockpit-orange);
+  --travel-ember: #aa6840;
+  --travel-teal: var(--cockpit-cyan);
+  --travel-paper: var(--cockpit-paper);
+  background:
+    var(--cockpit-grain), linear-gradient(180deg, #121615, var(--cockpit-soot));
+}
+
+.console {
+  border: 2px solid #282b27;
+  background: #0b0e0e;
+  box-shadow:
+    inset 2px 2px 0 rgb(255 255 255 / 3%),
+    inset -2px -2px 0 rgb(0 0 0 / 54%);
+}
+
+.overheadPanel {
+  border-bottom: var(--v2-px) solid #242620;
+  background:
+    linear-gradient(
+      96deg,
+      transparent 0 25%,
+      rgb(225 218 190 / 14%) 25.08% 25.18%,
+      transparent 25.28% 63%,
+      rgb(27 29 25 / 27%) 63.08% 63.24%,
+      transparent 63.34%
+    ),
+    radial-gradient(
+      ellipse 10rem 1.1rem at 42% 92%,
+      rgb(34 35 31 / 23%),
+      transparent 72%
+    ),
+    linear-gradient(
+      96deg,
+      rgb(184 182 163 / 15%) 0 9%,
+      transparent 9.5% 12%,
+      rgb(184 182 163 / 11%) 12.5% 63%,
+      transparent 63.5% 66%,
+      rgb(184 182 163 / 10%) 66.5% 100%
+    ),
+    linear-gradient(
+      103deg,
+      transparent 0 17%,
+      rgb(37 39 34 / 42%) 17.2% 17.6%,
+      transparent 17.8% 82%,
+      rgb(225 216 184 / 13%) 82.2% 82.5%,
+      transparent 82.7%
+    ),
+    var(--cockpit-scratches), var(--cockpit-grain),
+    linear-gradient(
+      160deg,
+      var(--cockpit-metal-light),
+      var(--cockpit-metal) 54%,
+      #4a4d47
+    );
+  background-blend-mode:
+    normal, multiply, normal, normal, normal, soft-light, normal;
+  background-position:
+    0 0,
+    0 0,
+    62% 82%,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+  background-repeat: no-repeat;
+  background-size:
+    100% 100%,
+    100% 100%,
+    8.2rem 1.05rem,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%;
+  box-shadow:
+    inset 0 2px rgb(255 255 255 / 11%),
+    inset 0 -2px rgb(0 0 0 / 40%),
+    0 var(--v2-px) 0 rgb(0 0 0 / 42%);
+}
+
+.utilityRail,
+.missionStats {
+  border-color: #2c302b;
+  background-color: #2a2e29;
+  background-image:
+    var(--cockpit-grain), linear-gradient(160deg, #454941, #20241f);
+  box-shadow:
+    inset 2px 2px rgb(255 255 255 / 5%),
+    inset -2px -2px rgb(0 0 0 / 42%);
+  backdrop-filter: none;
+}
+
+.backLink {
+  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  width: 8.2rem;
+  min-width: 8.2rem;
+  min-height: 7.45rem;
+  max-width: 100%;
+  grid-template-columns: 3.6rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.6rem;
+  overflow: hidden;
+  padding: 0.34rem 0.5rem 0.38rem 0.4rem;
+  border: 1px solid #20231f;
+  border-radius: 0.36rem;
+  background:
+    radial-gradient(
+      circle at 0.28rem 0.28rem,
+      #070807 0 0.08rem,
+      #77786e 0.09rem 0.15rem,
+      transparent 0.16rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.28rem) 0.28rem,
+      #070807 0 0.08rem,
+      #77786e 0.09rem 0.15rem,
+      transparent 0.16rem
+    ),
+    radial-gradient(
+      circle at 0.28rem calc(100% - 0.28rem),
+      #070807 0 0.08rem,
+      #686a61 0.09rem 0.15rem,
+      transparent 0.16rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.28rem) calc(100% - 0.28rem),
+      #070807 0 0.08rem,
+      #686a61 0.09rem 0.15rem,
+      transparent 0.16rem
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #343832, #151815 70%);
+  box-shadow:
+    inset 0.32rem 0.3rem 0.48rem rgb(0 0 0 / 68%),
+    inset -0.1rem -0.1rem rgb(230 224 199 / 7%),
+    0 1px rgb(255 255 255 / 6%),
+    0 0.24rem 0.3rem rgb(0 0 0 / 38%);
+  perspective: 43.75rem;
+  text-decoration: none;
+  transform: none;
+  transition: none;
+}
+
+.powerRocker {
+  position: relative;
+  display: block;
+  width: 3.6rem;
+  height: 7.05rem;
+  overflow: visible;
+  box-sizing: border-box;
+  padding: 0.46rem;
+  border: 1px solid #030403;
+  border-radius: 0.24rem;
+  background: #050605;
+  box-shadow:
+    0 0 0.34rem 0.08rem rgb(0 0 0 / 38%),
+    0 0 1px 2px #050605,
+    inset 0 2px 2px -2px rgb(255 255 255 / 70%),
+    inset 0 0 2px 0.28rem #47434c,
+    inset 0 0 2px 0.45rem #050505,
+    0 1px rgb(255 255 255 / 5%);
+  perspective: 43.75rem;
+}
+
+.powerRockerFace {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  background: linear-gradient(
+    #980000 0%,
+    #6f0000 30%,
+    #6f0000 70%,
+    #980000 100%
+  );
+  box-shadow:
+    0 -0.44rem 0.88rem rgb(255 24 24 / 56%),
+    0 -0.2rem 0.34rem rgb(255 65 35 / 34%);
+  transform: translateZ(0.44rem) rotateX(25deg);
+  transform-origin: center center -0.44rem;
+  transform-style: preserve-3d;
+  transition:
+    transform 220ms cubic-bezier(1, 0, 1, 1),
+    box-shadow 220ms cubic-bezier(1, 0, 1, 1);
+}
+
+.powerRockerFace::before,
+.powerRockerFace::after {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 0.88rem;
+  content: "";
+  pointer-events: none;
+}
+
+.powerRockerFace::before {
+  top: 0;
+  background:
+    linear-gradient(
+      rgb(255 255 255 / 80%) 10%,
+      rgb(255 255 255 / 30%) 30%,
+      #650000 75%,
+      #320000
+    )
+    50% 50% / 97% 97%,
+    #b10000;
+  transform: rotateX(-90deg);
+  transform-origin: top;
+}
+
+.powerRockerFace::after {
+  bottom: 0;
+  background: linear-gradient(#650000, #320000);
+  transform: translateY(0.88rem) rotateX(-90deg);
+  transform-origin: top;
+  box-shadow:
+    0 0.88rem 0.15rem #000,
+    0 1.35rem 0.35rem rgb(0 0 0 / 50%);
+}
+
+.powerRockerFace > i {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.powerLight {
+  background: radial-gradient(#ffc97e, #ff1818 40%, transparent 70%);
+  opacity: 1;
+}
+
+.powerDots {
+  background: radial-gradient(transparent 30%, rgb(101 0 0 / 70%) 70%);
+  background-size: 0.22rem 0.22rem;
+}
+
+.powerCharacters {
+  opacity: 0.84;
+}
+
+.powerCharacters::before,
+.powerCharacters::after {
+  position: absolute;
+  left: 50%;
+  box-sizing: border-box;
+  content: "";
+  transform: translateX(-50%);
+}
+
+.powerCharacters::before {
+  top: 10%;
+  width: 0.14rem;
+  height: 20%;
+  background: #fff;
+}
+
+.powerCharacters::after {
+  bottom: 10%;
+  width: clamp(0.7rem, 40%, 0.92rem);
+  aspect-ratio: 1;
+  border: 0.13rem solid #fff;
+  border-radius: 50%;
+}
+
+.powerShine {
+  background:
+    linear-gradient(#fff, transparent 3%) 50% 50% / 97% 97%,
+    linear-gradient(
+      rgb(255 255 255 / 50%),
+      transparent 50%,
+      transparent 80%,
+      rgb(255 255 255 / 50%)
+    )
+    50% 50% / 97% 97%;
+  background-repeat: no-repeat;
+  opacity: 1;
+  transition: opacity 220ms cubic-bezier(1, 0, 1, 1);
+}
+
+.powerShadow {
+  background: linear-gradient(transparent 70%, rgb(0 0 0 / 80%));
+  opacity: 0;
+  transition: opacity 220ms cubic-bezier(1, 0, 1, 1);
+}
+
+.powerLabel {
+  min-width: 0;
+  justify-self: center;
+  color: #f0d45a;
+  font: 900 0.76rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.13em;
+  text-shadow:
+    0 -1px #100f08,
+    0 1px rgb(255 242 151 / 16%);
+  text-transform: uppercase;
+  transform: rotate(180deg);
+  writing-mode: vertical-rl;
+}
+
+.backLink:active .powerRockerFace {
+  box-shadow: none;
+  filter: brightness(0.88);
+  transform: translateZ(0.44rem) rotateX(-25deg);
+}
+
+.backLink:active .powerLight {
+  animation: none;
+  opacity: 0;
+}
+
+.backLink:active .powerShine {
+  opacity: 0.3;
+}
+
+.backLink:active .powerShadow {
+  opacity: 1;
+}
+
+.backLink:active .powerLabel {
+  color: #ffe57a;
+  text-shadow:
+    0 -1px #100f08,
+    0 0 0.38rem rgb(255 205 55 / 28%);
+}
+
+.stationIdentity {
+  border-inline: 1px solid rgb(30 32 28 / 34%);
+}
+
+.stationIdentity h1 {
+  color: #e3dec9;
+  font-family: var(--font-body, sans-serif);
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-shadow: none;
+}
+
+.stationIdentity p {
+  color: #512a19;
+}
+
+.stationIdentity span {
+  color: rgb(25 27 23 / 72%);
+}
+
+.missionStats dt {
+  color: rgb(222 218 197 / 45%);
+}
+
+.missionStats dd,
+.missionStats div:last-child dd {
+  color: #d7c875;
+  text-shadow: none;
+}
+
+.panorama {
+  background:
+    var(--cockpit-grain), linear-gradient(155deg, #20231f, #0c0f0e 64%);
+}
+
+.instrumentWing {
+  position: relative;
+  border-color: #242721;
+  background:
+    linear-gradient(
+      93deg,
+      rgb(225 220 196 / 16%) 0 0.08rem,
+      transparent 0.14rem 96%,
+      rgb(24 25 22 / 28%) 96.2% 100%
+    ),
+    radial-gradient(
+      ellipse 4.8rem 0.8rem at 72% 13%,
+      rgb(34 35 30 / 23%),
+      transparent 74%
+    ),
+    var(--travel-rivets), var(--cockpit-scratches), var(--cockpit-grain),
+    linear-gradient(
+      145deg,
+      var(--cockpit-metal-light),
+      #53564f 58%,
+      var(--cockpit-metal-dark)
+    );
+  background-blend-mode: normal, normal, soft-light, normal;
+  box-shadow:
+    inset 2px 0 rgb(255 255 255 / 7%),
+    inset -2px 0 rgb(0 0 0 / 35%);
+}
+
+.starboardWing {
+  background:
+    linear-gradient(
+      178deg,
+      transparent 0 68%,
+      rgb(87 92 80 / 46%) 68.2% 77.6%,
+      rgb(147 147 125 / 24%) 77.7% 78%,
+      rgb(34 38 32 / 36%) 78.1% 78.8%,
+      transparent 79%
+    ),
+    linear-gradient(
+      92deg,
+      transparent 0 14%,
+      rgb(123 126 108 / 26%) 14.2% 42%,
+      transparent 42.3%
+    ),
+    var(--travel-rivets),
+    repeating-linear-gradient(
+      4deg,
+      transparent 0 19px,
+      rgb(19 22 17 / 10%) 19px 21px,
+      transparent 21px 41px
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #6a6d64, #494d46 62%, #30342f);
+}
+
+.instrumentWing > header {
+  min-height: 1.7rem;
+  padding-right: 0.25rem;
+  border-bottom: 1px solid rgb(23 25 21 / 36%);
+  color: #dad1ad;
+  text-shadow: none;
+}
+
+.instrumentWing > header > span,
+.manifestHeader > span {
+  border: 1px solid #302f29;
+  background:
+    var(--cockpit-grain), linear-gradient(145deg, #c0bda9, #86877c 65%, #55584f);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 22%),
+    inset -2px -2px rgb(0 0 0 / 24%),
+    0 2px 0 rgb(0 0 0 / 34%);
+  color: #25261f;
+  text-shadow: none;
+}
+
+.compassModule {
+  grid-template-columns: minmax(5.2rem, 6.4rem) minmax(0, 1fr);
+  gap: 0.7rem;
+  border-bottom-color: rgb(30 32 27 / 44%);
+}
+
+.compassRose {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: var(--v2-px) solid #454942;
+  outline: 2px solid #1f211d;
+  background:
+    var(--cockpit-grain),
+    radial-gradient(circle at 35% 28%, #28302d, #101514 68%, #070909);
+  box-shadow:
+    inset 2px 2px rgb(255 255 255 / 7%),
+    inset -3px -3px rgb(0 0 0 / 52%),
+    0 0 0 0.22rem #262a25,
+    0 0.28rem 0 #171a17,
+    0 0.42rem 0.45rem rgb(0 0 0 / 42%);
+}
+
+.compassRose::before {
+  position: absolute;
+  z-index: 4;
+  inset: 0.28rem;
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgb(255 255 255 / 7%), transparent 38%);
+  content: "";
+  pointer-events: none;
+}
+
+.compassRose::after {
+  content: none;
+}
+
+.compassCard {
+  position: absolute;
+  z-index: 1;
+  inset: 0.48rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 30%, #26322f, #0d1514 72%);
+  box-shadow:
+    inset 0.1rem 0.1rem 0.24rem rgb(255 255 255 / 6%),
+    inset -0.16rem -0.18rem 0.28rem rgb(0 0 0 / 52%);
+  transform: rotate(-2deg);
+  transform-origin: center;
+  will-change: transform;
+}
+
+.compassNeedle {
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  left: 50%;
+  width: 0.72rem;
+  background: linear-gradient(to bottom, #d28b50 0 49%, #8faea5 51% 100%);
+  clip-path: polygon(50% 0, 100% 44%, 64% 50%, 50% 100%, 36% 50%, 0 44%);
+  filter: drop-shadow(0 2px 1px rgb(0 0 0 / 55%));
+  transform: translateX(-50%);
+}
+
+.compassCardHub {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  width: 0.58rem;
+  aspect-ratio: 1;
+  border: 1px solid #121512;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #b2a878, #3b4139 68%);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 18%),
+    0 2px 2px rgb(0 0 0 / 52%);
+  transform: translate(-50%, -50%);
+}
+
+.compassLubber {
+  position: absolute;
+  z-index: 5;
+  top: 0.14rem;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-right: 0.22rem solid transparent;
+  border-left: 0.22rem solid transparent;
+  border-top: 0.55rem solid #d28b50;
+  filter: drop-shadow(0 1px #3b281a);
+  transform: translateX(-50%);
+}
+
+.north {
+  top: 0.1rem;
+  color: #e3d79f;
+  font-size: var(--cockpit-type-label);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 1px #060807;
+}
+
+.bearingValue {
+  display: block;
+  color: #d8c778;
+  font-size: 1.08rem;
+  text-shadow: none;
+}
+
+.compassMeta {
+  color: rgb(226 220 194 / 68%);
+  font-size: var(--cockpit-type-label);
+  letter-spacing: 0.04em;
+}
+
+.compassMeta output {
+  color: #91b8ae;
+  font-family: var(--font-code, monospace);
+  font-size: inherit;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.contactSolution {
+  border: var(--v2-px) solid var(--cockpit-rubber);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(116 190 180 / 3%) 0 1px,
+      transparent 1px 4px
+    ),
+    var(--cockpit-grain),
+    linear-gradient(145deg, #102425, var(--cockpit-screen) 60%, #030708);
+  box-shadow:
+    inset 0 0 0 1px rgb(177 219 203 / 7%),
+    inset 0 0 1.2rem rgb(0 0 0 / 42%),
+    0 2px 0 rgb(255 255 255 / 6%);
+}
+
+.contactSolution > header,
+.contactSolution dt {
+  color: rgb(173 207 193 / 55%);
+}
+
+.solutionIdentity strong,
+.solutionIdentity em,
+.contactSolution dd {
+  color: #b8d0a1;
+  text-shadow: none;
+}
+
+.solutionState {
+  color: #d88a50;
+}
+
+.logNote {
+  border-top-color: rgb(177 219 203 / 12%);
+  color: #a8b4a6;
+  transform: none;
+}
+
+.modeBank {
+  border: 1px solid #373a34;
+  background: var(--cockpit-grain), linear-gradient(145deg, #88877a, #5f625a);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 14%),
+    inset -2px -2px rgb(0 0 0 / 26%);
+}
+
+.modeBank div + div {
+  border-left-color: rgb(37 39 34 / 34%);
+}
+
+.modeBank dt {
+  color: rgb(29 31 27 / 56%);
+}
+
+.modeBank dd {
+  color: #2d3029;
+  text-shadow: none;
+}
+
+.uplinkPanel {
+  padding: 0.4rem;
+  border: 1px solid #363932;
+  background: var(--cockpit-grain), linear-gradient(145deg, #555950, #333730);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 8%),
+    inset -2px -2px rgb(0 0 0 / 34%);
+}
+
+.uplinkPanel strong {
+  color: #ded4ad;
+}
+
+.uplinkPanel span {
+  color: rgb(225 220 199 / 50%);
+}
+
+.uplinkPanel button {
+  border: 1px solid #1e211d;
+  border-bottom: var(--v2-px) solid #1a1c19;
+  background:
+    var(--cockpit-grain), linear-gradient(145deg, #b5b19d, #7d7c70 65%, #54574f);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 23%),
+    inset -2px -2px rgb(0 0 0 / 23%),
+    0 var(--v2-px) 0 #171916;
+  color: #282a24;
+  text-shadow: 0 1px rgb(255 255 255 / 18%);
+}
+
+.uplinkPanel button:active:not(:disabled) {
+  border-bottom-width: 1px;
+  box-shadow: inset 2px 2px var(--v2-px) rgb(0 0 0 / 28%);
+  transform: translateY(3px);
+}
+
+.stage {
+  grid-template-rows: 2.25rem minmax(0, 1fr);
+  gap: 0.3rem;
+  padding: 0.45rem;
+  border-inline: var(--v2-px) solid #252823;
+  background:
+    linear-gradient(
+      104deg,
+      transparent 0 24%,
+      rgb(35 38 33 / 20%) 24.2% 24.6%,
+      transparent 24.8%
+    ),
+    var(--cockpit-scratches), var(--cockpit-grain),
+    linear-gradient(
+      145deg,
+      var(--cockpit-metal-light),
+      #50534d 62%,
+      var(--cockpit-metal-dark)
+    );
+  box-shadow:
+    inset 2px 0 rgb(255 255 255 / 6%),
+    inset -2px 0 rgb(0 0 0 / 38%);
+}
+
+.scopeHeader {
+  padding-inline: 0.45rem;
+  border: 1px solid #252822;
+  background: var(--cockpit-grain), linear-gradient(145deg, #4d524a, #2c302b);
+  color: #d7cdaa;
+  text-shadow: none;
+}
+
+.scopeHeader strong {
+  color: #d7c875;
+}
+
+.scopeHeader small {
+  color: rgb(222 219 200 / 48%);
+}
+
+.scopeMachine {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0.4rem;
+  padding: 0.45rem;
+  border: 2px solid #272a25;
+  border-radius: 0.58rem;
+  background:
+    var(--cockpit-grain),
+    linear-gradient(
+      145deg,
+      var(--cockpit-ivory),
+      #85877f 54%,
+      var(--cockpit-metal-dark)
+    );
+  box-shadow:
+    inset 2px 2px rgb(255 255 255 / 13%),
+    inset -3px -3px rgb(0 0 0 / 30%),
+    0 var(--v2-px) 0 #2a2d28,
+    0 0.58rem 0 #181a17,
+    0.32rem 0.72rem 0.85rem rgb(0 0 0 / 34%);
+  transform: translateY(-0.12rem);
+}
+
+.scopeMachine::before {
+  position: absolute;
+  z-index: 20;
+  inset: 0.16rem;
+  border: 1px solid rgb(243 238 214 / 10%);
+  border-right-color: rgb(15 17 15 / 28%);
+  border-bottom-color: rgb(15 17 15 / 38%);
+  border-radius: 0.42rem;
+  box-shadow:
+    inset 0.18rem 0.16rem 0.3rem rgb(255 255 255 / 4%),
+    inset -0.24rem -0.22rem 0.34rem rgb(0 0 0 / 15%);
+  content: "";
+  pointer-events: none;
+}
+
+.cabinBrace {
+  position: absolute;
+  z-index: 10;
+  top: 2.4rem;
+  bottom: 5.4rem;
+  left: -0.35rem;
+  width: 0.72rem;
+  border: 1px solid #23170f;
+  background:
+    repeating-linear-gradient(
+      176deg,
+      rgb(255 224 160 / 11%) 0 1px,
+      transparent 1px 5px,
+      rgb(33 17 9 / 18%) 5px 7px
+    ),
+    linear-gradient(90deg, #382a21, #70533b 37%, #4c392d 68%, #27201b);
+  box-shadow:
+    inset 1px 0 rgb(239 184 111 / 18%),
+    inset -2px 0 rgb(19 10 6 / 42%),
+    3px 4px 0 rgb(0 0 0 / 18%);
+  pointer-events: none;
+  transform: rotate(-0.8deg);
+}
+
+.cabinBrace i {
+  position: absolute;
+  right: -0.16rem;
+  left: -0.16rem;
+  height: 0.46rem;
+  border-block: 1px solid #302014;
+  background: repeating-linear-gradient(
+    90deg,
+    #3f2d20 0 2px,
+    #866441 2px 4px,
+    #b09061 4px 5px,
+    #5c402a 5px 7px
+  );
+  box-shadow: 0 2px 0 rgb(0 0 0 / 24%);
+  transform: skewY(-7deg);
+}
+
+.cabinBrace i:first-child {
+  top: 12%;
+}
+
+.cabinBrace i:nth-child(2) {
+  top: 49%;
+  border-color: #3a372e;
+  background:
+    repeating-linear-gradient(
+      88deg,
+      rgb(222 216 185 / 15%) 0 1px,
+      transparent 1px 4px
+    ),
+    linear-gradient(180deg, #77786e, #454940 58%, #292c27);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 13%),
+    0 2px 0 rgb(0 0 0 / 34%);
+}
+
+.cabinBrace i:last-child {
+  bottom: 11%;
+}
+
+.scopeBezel {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  padding: 0.45rem;
+  border: var(--v2-px) solid #252823;
+  border-radius: 0.48rem;
+  background:
+    radial-gradient(
+      circle at 0.48rem 0.48rem,
+      #1b1d19 0 0.11rem,
+      #a6a394 0.12rem 0.19rem,
+      transparent 0.2rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.48rem) 0.48rem,
+      #1b1d19 0 0.11rem,
+      #a6a394 0.12rem 0.19rem,
+      transparent 0.2rem
+    ),
+    radial-gradient(
+      circle at 0.48rem calc(100% - 0.48rem),
+      #1b1d19 0 0.11rem,
+      #a6a394 0.12rem 0.19rem,
+      transparent 0.2rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.48rem) calc(100% - 0.48rem),
+      #1b1d19 0 0.11rem,
+      #a6a394 0.12rem 0.19rem,
+      transparent 0.2rem
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #555950, #30342f);
+  box-shadow:
+    inset 2px 2px rgb(255 255 255 / 9%),
+    inset -3px -3px rgb(0 0 0 / 45%),
+    0 0.16rem 0 #171916,
+    0 0.24rem 0.32rem rgb(0 0 0 / 26%);
+}
+
+.scopeBezel::after {
+  position: absolute;
+  z-index: 13;
+  top: 0.45rem;
+  left: 50%;
+  padding: 0.18rem 0.48rem;
+  border: 1px solid #262821;
+  background: var(--cockpit-grain), linear-gradient(145deg, #d0c9a9, #8f8c78);
+  box-shadow: 0 2px 0 rgb(0 0 0 / 24%);
+  color: #34352d;
+  content: "MFD–05 / SIGNALSCOPE";
+  font: 800 0.46rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  transform: translate(-50%, -35%) rotate(-0.4deg);
+  white-space: nowrap;
+}
+
+.screenWell {
+  --well-depth: clamp(1rem, 1.2vw, 1.4rem);
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  contain: paint;
+  border: 1px solid #171a16;
+  border-radius: 1rem / 0.72rem;
+  background: #050704;
+  box-shadow:
+    inset 1px 1px 0 rgb(226 228 210 / 8%),
+    inset -1px -1px 0 rgb(0 0 0 / 78%),
+    0 1px 0 rgb(216 213 190 / 5%);
+}
+
+.screenWell::after {
+  position: absolute;
+  z-index: 11;
+  inset: calc(var(--well-depth) - 2px);
+  border: 2px solid #050704;
+  border-radius: 0.46rem;
+  box-shadow:
+    0 0 0 1px rgb(214 211 190 / 7%),
+    0 0 0.4rem rgb(0 0 0 / 72%);
+  content: "";
+  pointer-events: none;
+}
+
+.screenWalls {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.screenWalls i {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.screenWalls i[data-side="top"] {
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--well-depth);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    calc(100% - var(--well-depth)) 100%,
+    var(--well-depth) 100%
+  );
+  background:
+    var(--cockpit-grain),
+    linear-gradient(to bottom, #555a51, #30352f 58%, #111410);
+  box-shadow:
+    inset 0 1px rgb(237 236 217 / 12%),
+    inset 0 -1px rgb(0 0 0 / 68%);
+}
+
+.screenWalls i[data-side="right"] {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--well-depth);
+  clip-path: polygon(
+    100% 0,
+    100% 100%,
+    0 calc(100% - var(--well-depth)),
+    0 var(--well-depth)
+  );
+  background:
+    var(--cockpit-grain),
+    linear-gradient(to right, #090b09, #20241f 72%, #31352f);
+  box-shadow:
+    inset 1px 0 rgb(0 0 0 / 70%),
+    inset -1px 0 rgb(220 219 197 / 6%);
+}
+
+.screenWalls i[data-side="bottom"] {
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: var(--well-depth);
+  clip-path: polygon(
+    var(--well-depth) 0,
+    calc(100% - var(--well-depth)) 0,
+    100% 100%,
+    0 100%
+  );
+  background:
+    var(--cockpit-grain),
+    linear-gradient(to bottom, #080a08, #1d211c 72%, #292d27);
+  box-shadow:
+    inset 0 1px rgb(0 0 0 / 78%),
+    inset 0 -1px rgb(214 211 190 / 6%);
+}
+
+.screenWalls i[data-side="left"] {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--well-depth);
+  clip-path: polygon(
+    0 0,
+    100% var(--well-depth),
+    100% calc(100% - var(--well-depth)),
+    0 100%
+  );
+  background: var(--cockpit-grain), linear-gradient(to right, #42473f, #181b17);
+  box-shadow:
+    inset 1px 0 rgb(235 233 212 / 9%),
+    inset -1px 0 rgb(0 0 0 / 72%);
+}
+
+.visitorSticker {
+  position: relative;
+  z-index: 1;
+  align-self: start;
+  justify-self: center;
+  display: grid;
+  width: min(8.4rem, calc(100% - 1rem));
+  aspect-ratio: 1;
+  box-sizing: border-box;
+  align-content: start;
+  gap: 0.32rem;
+  padding: 0.9rem 0.72rem 0.72rem;
+  border: 1px solid rgb(91 71 30 / 14%);
+  border-radius: 1px;
+  background:
+    radial-gradient(
+      circle at 18% 24%,
+      rgb(81 55 27 / 10%) 0 1px,
+      transparent 1.5px
+    )
+    0 0 / 17px 13px,
+    repeating-conic-gradient(
+      from 32deg at 1px 1px,
+      rgb(84 62 30 / 4%) 0 25%,
+      transparent 0 100%
+    )
+    0 0 / 4px 4px,
+    linear-gradient(145deg, #e6d88e, #c8b86f);
+  box-shadow:
+    inset 1px 1px rgb(255 252 206 / 48%),
+    inset -2px -2px rgb(87 67 27 / 14%),
+    4px 5px 0 rgb(0 0 0 / 27%);
+  color: #4a3d29;
+  pointer-events: none;
+  transform: rotate(-1.35deg);
+}
+
+.visitorSticker:is(button) {
+  appearance: none;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+  pointer-events: auto;
+}
+
+.visitorSticker:is(button)::before,
+.visitorSticker:is(button)::after {
+  pointer-events: none;
+}
+
+.visitorSticker[aria-disabled="true"] {
+  cursor: progress;
+}
+
+@media (hover: hover) {
+  .visitorSticker:is(button):not([aria-disabled="true"]):hover {
+    filter: brightness(1.04);
+    transform: translateY(-1px) rotate(-1.35deg);
+  }
+}
+
+.visitorSticker:is(button):not([aria-disabled="true"]):active {
+  box-shadow:
+    inset 2px 2px 3px rgb(87 67 27 / 16%),
+    inset -1px -1px rgb(255 252 206 / 32%),
+    2px 2px 0 rgb(0 0 0 / 24%);
+  transform: translateY(2px) rotate(-0.6deg);
+}
+
+.visitorSticker::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 0.48rem;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(77 64 37 / 7%) 0 1px,
+      transparent 1px 4px
+    ),
+    rgb(172 151 82 / 17%);
+  box-shadow: inset 0 -1px rgb(93 72 32 / 7%);
+  content: "";
+}
+
+.visitorSticker::after {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 0.9rem;
+  aspect-ratio: 1;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  background: linear-gradient(135deg, transparent 48%, #b8a65f 50%);
+  box-shadow: -2px -2px 2px rgb(72 53 20 / 8%);
+  content: "";
+}
+
+.visitorSticker span {
+  font: 700 0.38rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.08em;
+  opacity: 0.6;
+}
+
+.visitorSticker strong {
+  font: 700 italic 0.78rem / 1.08 var(--font-body, sans-serif);
+  text-wrap: balance;
+}
+
+.visitorSticker small {
+  font: 700 0.42rem / 1.2 var(--font-code, monospace);
+  opacity: 0.7;
+}
+
+.visitorStickerAction {
+  display: block;
+  align-self: end;
+  padding-top: 0.15rem;
+  border-top: 1px solid rgb(74 61 41 / 18%);
+  font: 900 0.45rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.05em;
+}
+
+.viewport {
+  position: relative;
+  z-index: 1;
+  grid-area: 1 / 1;
+  contain: layout paint;
+  overflow: hidden;
+  border: 0.45rem solid var(--cockpit-rubber);
+  border-radius: 1rem / 0.7rem;
+  outline: 1px solid rgb(225 220 199 / 7%);
+  outline-offset: 2px;
+  background:
+    radial-gradient(ellipse at 50% 48%, #0a2534, #02080d 76%), #02070a;
+  box-shadow:
+    -0.28rem -0.3rem 0.35rem rgb(4 5 4 / 72%),
+    0.12rem 0.14rem 0 rgb(214 211 190 / 9%),
+    inset 0.16rem 0.18rem 0.26rem rgb(0 0 0 / 78%),
+    inset -0.08rem -0.08rem 0 rgb(211 226 207 / 5%),
+    inset 0 0 0 1px rgb(211 226 207 / 7%),
+    inset 0 0 2.4rem rgb(0 0 0 / 62%);
+  filter: none;
+}
+
+.viewport::before {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  background:
+    repeating-conic-gradient(
+      from 12deg at 2px 2px,
+      rgb(222 235 213 / 4%) 0 22deg,
+      transparent 22deg 61deg,
+      rgb(0 0 0 / 5%) 61deg 88deg,
+      transparent 88deg 120deg
+    )
+    0 0 / 4px 4px,
+    repeating-linear-gradient(
+      0deg,
+      rgb(198 218 204 / 2.5%) 0 1px,
+      transparent 1px 4px
+    );
+  content: "";
+  mix-blend-mode: normal;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.viewport::after {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  background: linear-gradient(
+    112deg,
+    transparent 0 17%,
+    rgb(235 241 218 / 3%) 17.2% 22%,
+    transparent 22.2%
+  );
+  box-shadow:
+    inset 1px 1px 0 rgb(231 236 217 / 5%),
+    inset -2px -2px 0 rgb(0 0 0 / 36%);
+  content: "";
+  pointer-events: none;
+}
+
+.scopeBackdrop,
+.canvas,
+.lunarLayer {
+  transform: none;
+  transform-origin: center;
+}
+
+.canvas {
+  contain: strict;
+  filter: none;
+  transition-duration: 120ms;
+}
+
+.scopeBackdrop {
+  filter: none;
+}
+
+.viewport:has(.canvas[data-ready="true"]) .scopeBackdrop {
+  opacity: 0;
+}
+
+.scopeOuterRim,
+.scopeInnerRim,
+.scopeTicks {
+  display: none;
+}
+
+.scopeEarth {
+  stroke: none;
+}
+
+.scopeMap {
+  stroke: rgb(106 175 179 / 20%);
+  stroke-width: 2px;
+}
+
+.scopeLand {
+  fill: rgb(59 121 99 / 36%);
+  stroke: rgb(116 188 171 / 48%);
+}
+
+.scopeRoute {
+  stroke: #61aed0;
+  stroke-dasharray: 5 7;
+  stroke-width: 2px;
+}
+
+.backdropSignal {
+  fill: #64b592;
+  stroke: #b8e8da;
+  stroke-width: 1px;
+  filter: none;
+}
+
+.backdropSignalActive {
+  fill: #70b9e5;
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 2px rgb(112 185 229 / 60%));
+}
+
+.visitorScopePoint {
+  fill: none;
+  stroke: #d8edc5;
+  stroke-width: 2px;
+}
+
+.visitorScopePoint circle:first-child {
+  fill: rgb(69 139 119 / 18%);
+  stroke: #6fc1a8;
+}
+
+.visitorScopePoint circle:nth-child(2) {
+  fill: #d8edc5;
+  stroke: #296e79;
+  stroke-width: 3px;
+}
+
+.scopeTarget {
+  stroke: #70b9e5;
+  stroke-width: 2px;
+  filter: none;
+}
+
+.scopeSweep {
+  fill: rgb(98 183 192 / 3%);
+  stroke: rgb(98 183 192 / 9%);
+  animation: none;
+  opacity: 0.34;
+}
+
+.scopeGlass {
+  fill-opacity: 0.18;
+  stroke: none;
+}
+
+.scopeReflection {
+  fill: rgb(234 240 216 / 2%);
+  mix-blend-mode: normal;
+}
+
+.scopeFallback {
+  z-index: 9;
+  inset: auto auto 8%;
+  min-width: min(18rem, 78%);
+  padding: 0.55rem;
+  border: 2px solid #333a34;
+  background: var(--cockpit-grain), rgb(8 18 18 / 92%);
+  box-shadow:
+    inset 1px 1px rgb(218 229 208 / 5%),
+    inset -2px -2px rgb(0 0 0 / 50%);
+  color: #c4ba89;
+  backdrop-filter: none;
+}
+
+.scopeControlDeck {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  border: 2px solid #272a25;
+  border-radius: 0.34rem;
+  background:
+    var(--cockpit-grain), linear-gradient(145deg, #5d6059, #333630 62%, #242722);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 8%),
+    inset -2px -2px rgb(0 0 0 / 38%),
+    0 0.2rem 0 #1c1f1b,
+    0 0.34rem 0.38rem rgb(0 0 0 / 25%);
+}
+
+.readout {
+  min-height: 2.55rem;
+  border: var(--v2-px) solid var(--cockpit-rubber);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(125 192 178 / 3%) 0 1px,
+      transparent 1px 4px
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #102222, #061011);
+  box-shadow:
+    inset 0 0 0 1px rgb(179 210 194 / 5%),
+    inset 0 0 0.8rem rgb(0 0 0 / 42%);
+  color: #b6c99f;
+  text-shadow: none;
+}
+
+.readoutKey,
+.readoutCoords {
+  color: rgb(183 201 175 / 52%);
+}
+
+.readoutRange {
+  color: #cfbd70;
+}
+
+.rangeAssembly {
+  display: grid;
+  min-width: min(25rem, 36vw);
+  grid-template-columns: minmax(8rem, 1fr) auto auto;
+  align-items: stretch;
+  gap: 0.3rem;
+}
+
+.rangeDial {
+  position: relative;
+  display: grid;
+  min-width: 8.75rem;
+  min-height: 3.3rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 0.18rem;
+  margin: 0;
+  padding: 0.16rem 0.26rem;
+  border: 1px solid #232620;
+  background:
+    radial-gradient(
+      circle at 0.34rem 0.34rem,
+      #24251f 0 0.07rem,
+      #b4ad91 0.08rem 0.13rem,
+      transparent 0.14rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.34rem) calc(100% - 0.34rem),
+      #24251f 0 0.07rem,
+      #8d8a75 0.08rem 0.13rem,
+      transparent 0.14rem
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #aaa690, #6d7067);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 17%),
+    inset -2px -2px rgb(0 0 0 / 26%),
+    0 2px 0 rgb(0 0 0 / 20%);
+  user-select: none;
+}
+
+.axisDial {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  place-items: center;
+}
+
+.axisDial::after {
+  position: absolute;
+  z-index: 6;
+  top: 0.18rem;
+  left: 50%;
+  width: 0.3rem;
+  height: 0.1rem;
+  border: 1px solid #342d18;
+  border-radius: 50%;
+  background: #b49a39;
+  box-shadow: 0 0 0.22rem rgb(229 194 72 / 42%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.axisDial:has(.rangeDialInput:focus-visible)::after {
+  opacity: 1;
+}
+
+.axisDial + .axisDial {
+  border-left: 1px solid rgb(36 38 32 / 34%);
+}
+
+.rangeDialLimit {
+  position: absolute;
+  z-index: 5;
+  bottom: 0.16rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #35372f;
+  font: 900 0.34rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 1px rgb(238 232 205 / 24%),
+    0 -1px rgb(0 0 0 / 62%);
+  text-transform: uppercase;
+}
+
+.rangeDialLimit[data-side="left"] {
+  left: 0.16rem;
+}
+
+.rangeDialLimit[data-side="right"] {
+  right: 0.16rem;
+}
+
+.rangeDialWell {
+  position: relative;
+  display: grid;
+  width: 3.45rem;
+  height: 3.45rem;
+  place-items: center;
+  perspective: 12rem;
+}
+
+.rangeDialInput {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  opacity: 0;
+  touch-action: none;
+}
+
+.rangeDialInput[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+.rangeKnob {
+  --range-angle: 0deg;
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 3.3rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid #252720;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #0d0f0d 0 53%,
+    #1a1c18 54% 61%,
+    #c3b99a 62% 66%,
+    #686960 67% 75%,
+    #272a24 76% 100%
+  );
+  box-shadow:
+    inset 0.22rem 0.2rem 0.3rem rgb(0 0 0 / 62%),
+    inset -0.08rem -0.08rem rgb(236 229 199 / 11%),
+    0 0.16rem 0 #1b1d19,
+    0 0.3rem 0.36rem rgb(0 0 0 / 38%);
+  transition: filter 100ms linear;
+}
+
+.rangeKnob::before,
+.rangeKnob::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0.05rem;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+  -webkit-mask: radial-gradient(
+    circle,
+    transparent 0 71%,
+    #000 72% 78%,
+    transparent 79%
+  );
+  mask: radial-gradient(
+    circle,
+    transparent 0 71%,
+    #000 72% 78%,
+    transparent 79%
+  );
+}
+
+.rangeKnob::before {
+  background: repeating-conic-gradient(
+    from -135deg,
+    #e0d5ac 0 1.3deg,
+    transparent 1.3deg 15deg
+  );
+  opacity: 0.58;
+}
+
+.rangeKnob::after {
+  background: conic-gradient(
+    from -2deg,
+    #d79543 0 4deg,
+    transparent 4deg 360deg
+  );
+  filter: drop-shadow(0 0 1px rgb(218 149 70 / 50%));
+}
+
+.rangeKnobShaft {
+  position: absolute;
+  z-index: 1;
+  width: 2.28rem;
+  aspect-ratio: 1;
+  border: 1px solid #171915;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(from 2deg, #54574f 0 5deg, #2f322c 5deg 10deg),
+    #383b35;
+  box-shadow:
+    inset 0.12rem 0.08rem rgb(255 255 255 / 10%),
+    inset -0.18rem -0.16rem 0.24rem rgb(0 0 0 / 44%),
+    0 0.3rem 0 #141612,
+    0 0.46rem 0.42rem rgb(0 0 0 / 48%);
+  transform: translateY(0.08rem);
+  transition:
+    transform 90ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 90ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.rangeKnobFace {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 2.16rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid #0d0f0d;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 32% 25%,
+      rgb(233 229 198 / 34%) 0 0.11rem,
+      transparent 0.13rem
+    ),
+    radial-gradient(circle at 50% 46%, transparent 0 36%, rgb(0 0 0 / 24%) 68%),
+    repeating-conic-gradient(from 4deg, #3a3c34 0 6deg, #242721 6deg 12deg);
+  box-shadow:
+    inset 0.18rem 0.15rem 0.2rem rgb(255 255 255 / 13%),
+    inset -0.25rem -0.24rem 0.3rem rgb(0 0 0 / 58%),
+    0 0.14rem 0 #20231e,
+    0 0.24rem 0.24rem rgb(0 0 0 / 42%);
+  transform: translateY(-0.16rem) rotate(var(--range-angle));
+  transition: transform 70ms linear;
+  will-change: transform;
+}
+
+.rangeKnobFace::after {
+  width: 0.34rem;
+  aspect-ratio: 1;
+  border: 1px solid #10120f;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #6e7166, #20231f 72%);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 11%),
+    0 1px 1px rgb(0 0 0 / 38%);
+  content: "";
+}
+
+.rangeKnobFace i {
+  position: absolute;
+  top: 0.13rem;
+  left: 50%;
+  width: 0.18rem;
+  height: 0.6rem;
+  border: 1px solid #6a411f;
+  border-radius: 0.08rem;
+  background: linear-gradient(90deg, #8a5525, #e2a153 52%, #7b491f);
+  box-shadow:
+    0 0 0 1px rgb(25 23 18 / 28%),
+    0 0 3px rgb(226 155 75 / 38%);
+  transform: translateX(-50%);
+}
+
+.rangeDialInput:hover + .rangeKnob {
+  filter: brightness(1.08);
+}
+
+.zoomControls {
+  position: relative;
+  display: grid;
+  min-width: 6.25rem;
+  grid-template-columns: repeat(2, minmax(2.75rem, 1fr));
+  align-items: stretch;
+  gap: 0.34rem;
+  padding: 0.2rem 0.24rem 0.3rem;
+  border: 1px solid #1e211c;
+  background:
+    radial-gradient(
+      circle at 0.32rem 0.32rem,
+      #181a16 0 0.07rem,
+      #8d8a78 0.08rem 0.13rem,
+      transparent 0.14rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.32rem) calc(100% - 0.32rem),
+      #181a16 0 0.07rem,
+      #8d8a78 0.08rem 0.13rem,
+      transparent 0.14rem
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #6e7168, #3c4039);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 8%),
+    inset -2px -2px rgb(0 0 0 / 38%),
+    0 2px 0 rgb(0 0 0 / 25%);
+}
+
+.zoomControls button {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  place-items: center;
+  border: 2px solid #3c382d;
+  border-top-color: #e5dabb;
+  border-left-color: #b8af96;
+  border-right-color: #3f3b31;
+  border-bottom-color: #292821;
+  border-radius: 3px 3px 5px 5px;
+  background:
+    radial-gradient(
+      circle at 79% 18%,
+      rgb(73 66 49 / 52%) 0 0.12rem,
+      rgb(239 224 187 / 24%) 0.13rem 0.17rem,
+      transparent 0.18rem
+    ),
+    repeating-linear-gradient(
+      172deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px,
+      rgb(53 45 34 / 7%) 5px 6px
+    ),
+    linear-gradient(145deg, #ded3b4 0 18%, #a79e86 19% 66%, #746d5c 67%);
+  box-shadow:
+    inset 2px 2px rgb(255 255 255 / 28%),
+    inset -3px -3px rgb(28 27 23 / 30%),
+    0 4px 0 #494538,
+    0 6px 0 #171914,
+    0 7px 5px rgb(0 0 0 / 36%);
+  color: #292b25;
+  font-size: 1.08rem;
+  text-shadow:
+    0 1px rgb(255 255 255 / 30%),
+    1px 2px rgb(33 31 26 / 18%);
+  transform: translateY(-2px);
+  transition:
+    transform 80ms steps(2, end),
+    box-shadow 80ms steps(2, end),
+    filter 80ms linear;
+}
+
+.zoomControls button::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0.18rem;
+  border-top: 1px solid rgb(255 248 217 / 28%);
+  border-left: 1px solid rgb(255 248 217 / 16%);
+  border-radius: 2px;
+  content: "";
+  pointer-events: none;
+}
+
+.zoomControls button:last-child {
+  background:
+    radial-gradient(
+      circle at 79% 18%,
+      rgb(75 54 24 / 60%) 0 0.12rem,
+      rgb(247 221 150 / 25%) 0.13rem 0.17rem,
+      transparent 0.18rem
+    ),
+    repeating-linear-gradient(
+      172deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px,
+      rgb(60 40 18 / 8%) 5px 6px
+    ),
+    linear-gradient(145deg, #d4b963 0 18%, #9b813f 19% 66%, #65542f 67%);
+  border-top-color: #e9d290;
+  border-left-color: #baa15d;
+  border-right-color: #483c27;
+  border-bottom-color: #2d271c;
+  box-shadow:
+    inset 2px 2px rgb(255 245 194 / 24%),
+    inset -3px -3px rgb(51 38 19 / 34%),
+    0 4px 0 #4e422b,
+    0 6px 0 #171914,
+    0 7px 5px rgb(0 0 0 / 36%);
+  color: #2b281f;
+}
+
+.zoomControls button:active:not(:disabled) {
+  filter: brightness(0.92);
+  box-shadow:
+    inset 3px 3px 5px rgb(0 0 0 / 28%),
+    inset -1px -1px rgb(255 255 255 / 12%),
+    0 1px 0 #272820,
+    0 2px 2px rgb(0 0 0 / 28%);
+  transform: translateY(4px);
+}
+
+.zoomControls button:last-child:active:not(:disabled) {
+  box-shadow:
+    inset 3px 3px 5px rgb(48 35 17 / 34%),
+    inset -1px -1px rgb(255 245 194 / 12%),
+    0 1px 0 #272820,
+    0 2px 2px rgb(0 0 0 / 28%);
+}
+
+.zoomControls button:disabled {
+  cursor: not-allowed;
+  filter: saturate(0.35) brightness(0.72);
+  box-shadow:
+    inset 2px 2px 4px rgb(0 0 0 / 22%),
+    inset -1px -1px rgb(255 255 255 / 9%),
+    0 1px 0 #272820;
+  transform: translateY(3px);
+}
+
+/* The key well stays fixed. Only the cap travels, so the press reads as
+   physical depth instead of a shadow being swapped underneath one flat box. */
+.zoomControls button,
+.zoomControls button:last-child {
+  overflow: visible;
+  padding: 0.18rem;
+  border: 1px solid #1b1e1a;
+  border-radius: 0.35rem;
+  background: linear-gradient(145deg, #242722, #3b3e37 58%, #191b18);
+  box-shadow:
+    inset 0.2rem 0.2rem 0.28rem rgb(0 0 0 / 52%),
+    inset -0.06rem -0.06rem rgb(230 224 199 / 8%),
+    0 1px rgb(255 255 255 / 6%);
+  transform: none;
+}
+
+.zoomControls button::before {
+  z-index: 0;
+  inset: 0.14rem;
+  border: 1px solid rgb(7 8 7 / 78%);
+  border-radius: 0.24rem;
+  background: #171916;
+  box-shadow:
+    inset 0.16rem 0.16rem 0.24rem rgb(0 0 0 / 58%),
+    inset -1px -1px rgb(255 255 255 / 5%);
+}
+
+.zoomKeyFace {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-height: 2.36rem;
+  place-items: center;
+  border: 1px solid;
+  border-color: #e0d7be #57544b #34332d #bcb5a2;
+  border-radius: 0.24rem 0.24rem 0.34rem 0.34rem;
+  background:
+    radial-gradient(
+      circle at 76% 18%,
+      rgb(71 65 51 / 42%) 0 0.11rem,
+      rgb(239 228 199 / 24%) 0.12rem 0.16rem,
+      transparent 0.17rem
+    ),
+    repeating-linear-gradient(
+      172deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px,
+      rgb(53 45 34 / 6%) 5px 6px
+    ),
+    linear-gradient(145deg, #d8cfb8 0 18%, #a6a191 19% 66%, #716e64 67%);
+  box-shadow:
+    inset 0.14rem 0.12rem rgb(255 255 255 / 22%),
+    inset -0.18rem -0.16rem rgb(28 27 23 / 28%),
+    0 0.32rem 0 #4a483f,
+    0 0.46rem 0.38rem rgb(0 0 0 / 38%);
+  color: #292b26;
+  font-size: 1.08rem;
+  text-shadow:
+    0 1px rgb(255 255 255 / 28%),
+    1px 2px rgb(33 31 26 / 17%);
+  transform: translateY(-0.18rem) rotateX(4deg);
+  transform-origin: center bottom;
+  transition:
+    transform 95ms cubic-bezier(0.2, 0.82, 0.24, 1),
+    box-shadow 95ms cubic-bezier(0.2, 0.82, 0.24, 1),
+    filter 95ms linear;
+}
+
+.zoomControls button:last-child .zoomKeyFace {
+  border-color: #d9c58f #62573e #383226 #ad9d70;
+  background:
+    radial-gradient(
+      circle at 76% 18%,
+      rgb(79 60 32 / 46%) 0 0.11rem,
+      rgb(235 215 164 / 22%) 0.12rem 0.16rem,
+      transparent 0.17rem
+    ),
+    repeating-linear-gradient(
+      172deg,
+      rgb(255 255 255 / 4%) 0 1px,
+      transparent 1px 5px,
+      rgb(60 40 18 / 7%) 5px 6px
+    ),
+    linear-gradient(145deg, #c9b57e 0 18%, #968459 19% 66%, #625942 67%);
+  box-shadow:
+    inset 0.14rem 0.12rem rgb(255 244 210 / 19%),
+    inset -0.18rem -0.16rem rgb(44 35 22 / 30%),
+    0 0.32rem 0 #4a4233,
+    0 0.46rem 0.38rem rgb(0 0 0 / 38%);
+}
+
+.zoomControls button:active:not(:disabled),
+.zoomControls button:last-child:active:not(:disabled) {
+  filter: none;
+  box-shadow:
+    inset 0.2rem 0.2rem 0.28rem rgb(0 0 0 / 52%),
+    inset -0.06rem -0.06rem rgb(230 224 199 / 8%),
+    0 1px rgb(255 255 255 / 6%);
+  transform: none;
+}
+
+.zoomControls button:active:not(:disabled) .zoomKeyFace,
+.zoomControls button[data-pressed="true"]:not(:disabled) .zoomKeyFace {
+  filter: brightness(0.93);
+  box-shadow:
+    inset 0.2rem 0.2rem 0.26rem rgb(0 0 0 / 28%),
+    inset -0.06rem -0.06rem rgb(255 255 255 / 9%),
+    0 0.05rem 0 #3a3932;
+  transform: translateY(0.22rem) rotateX(0);
+}
+
+.zoomControls button:disabled {
+  filter: saturate(0.45) brightness(0.72);
+  box-shadow:
+    inset 0.2rem 0.2rem 0.28rem rgb(0 0 0 / 52%),
+    inset -0.06rem -0.06rem rgb(230 224 199 / 6%);
+  transform: none;
+}
+
+.zoomControls button:disabled .zoomKeyFace {
+  box-shadow:
+    inset 0.14rem 0.12rem rgb(255 255 255 / 16%),
+    inset -0.18rem -0.16rem rgb(28 27 23 / 24%),
+    0 0.32rem 0 #3f3d36,
+    0 0.46rem 0.3rem rgb(0 0 0 / 28%);
+  transform: translateY(-0.18rem) rotateX(4deg);
+}
+
+.auxCluster {
+  display: grid;
+  min-width: 8.35rem;
+  grid-template-columns: 2.95rem minmax(4.7rem, 1fr);
+  align-items: center;
+  gap: 0.24rem;
+  padding: 0.18rem;
+  border: 1px solid #20231e;
+  background:
+    radial-gradient(
+      circle at 0.38rem 0.38rem,
+      #151713 0 0.09rem,
+      #8c8c7d 0.1rem 0.16rem,
+      transparent 0.17rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.38rem) calc(100% - 0.38rem),
+      #151713 0 0.09rem,
+      #8c8c7d 0.1rem 0.16rem,
+      transparent 0.17rem
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #8e8c7e, #555a52);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 10%),
+    inset -2px -2px rgb(0 0 0 / 28%);
+}
+
+.analogGauge {
+  position: relative;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  overflow: hidden;
+  border: 0.22rem solid #3b3328;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 50% 53%,
+      transparent 0 51%,
+      rgb(46 42 34 / 64%) 52% 55%,
+      transparent 56%
+    ),
+    repeating-conic-gradient(
+      from 218deg,
+      #49443a 0 2deg,
+      transparent 2deg 16deg
+    ),
+    radial-gradient(circle at 36% 26%, #eee2bc, #b6aa89 58%, #6e6656 76%);
+  box-shadow:
+    inset 0 0 0 1px rgb(245 236 203 / 28%),
+    inset 0 0 0.35rem rgb(32 25 18 / 42%),
+    0 2px 0 rgb(0 0 0 / 28%);
+}
+
+.analogGauge::after {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 0.3rem;
+  height: 0.3rem;
+  border: 1px solid #342a20;
+  border-radius: 50%;
+  background: #716047;
+  box-shadow: inset 1px 1px rgb(255 255 255 / 18%);
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.analogGauge i {
+  position: absolute;
+  z-index: 2;
+  top: calc(50% - 1px);
+  left: 50%;
+  width: 0.88rem;
+  height: 2px;
+  background: #9e442c;
+  box-shadow: 0 1px rgb(50 26 20 / 36%);
+  transform: rotate(-53deg);
+  transform-origin: left center;
+}
+
+.analogGauge span {
+  position: absolute;
+  z-index: 4;
+  bottom: 0.32rem;
+  color: #4a4135;
+  font: 800 0.32rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.1em;
+}
+
+.signalBank {
+  min-width: 5rem;
+  align-content: center;
+  margin: 0;
+  padding: 0.3rem;
+  border: 1px solid #20231e;
+  background: var(--cockpit-grain), #30342e;
+}
+
+.signalBank span {
+  color: rgb(220 215 191 / 47%);
+  font-size: 0.38rem;
+}
+
+.signalBank span::before {
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 2px solid #151713;
+  background: #436f68;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 8%);
+}
+
+.signalBank span:nth-child(2)::before {
+  background: #426987;
+}
+
+.signalBank span:last-child::before {
+  background: #69956f;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
+}
+
+.commModule {
+  align-self: start;
+  justify-items: stretch;
+  padding: 0.5rem;
+  border: var(--v2-px) solid #22251f;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(119 190 177 / 3%) 0 1px,
+      transparent 1px 4px
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #102222, #050d0e);
+  box-shadow:
+    inset 0 0 0 1px rgb(183 211 195 / 5%),
+    inset 0 0 1rem rgb(0 0 0 / 44%);
+}
+
+.commModule small,
+.commModule span {
+  color: rgb(176 203 188 / 48%);
+}
+
+.commModule strong {
+  color: #b8c99a;
+  text-shadow: none;
+}
+
+.cableRun {
+  position: relative;
+  min-height: 4.5rem;
+  overflow: hidden;
+  border: 1px solid #2d3029;
+  background:
+    radial-gradient(circle, #151713 0 2px, transparent 2.5px) 0.5rem 0.5rem /
+    calc(100% - 1rem) calc(100% - 1rem) no-repeat,
+    var(--cockpit-grain),
+    linear-gradient(145deg, #5e6455, #343a31);
+  box-shadow:
+    inset 2px 2px rgb(255 255 255 / 5%),
+    inset -2px -2px rgb(0 0 0 / 32%);
+}
+
+.cableRun i {
+  position: absolute;
+  left: -16%;
+  width: 132%;
+  height: 2.8rem;
+  border: 3px solid #3b2720;
+  border-top: 0;
+  border-radius: 0 0 50% 50%;
+  transform: rotate(-5deg);
+}
+
+.cableRun i:nth-child(1) {
+  top: -0.65rem;
+  border-color: #3e2920;
+}
+
+.cableRun i:nth-child(2) {
+  top: 0.05rem;
+  border-color: #7a5c32;
+  transform: rotate(3deg) scaleX(0.92);
+}
+
+.cableRun i:nth-child(3) {
+  top: 0.75rem;
+  border-color: #354b43;
+  transform: rotate(-2deg) scaleX(0.86);
+}
+
+.cableRun span {
+  position: absolute;
+  right: 0.35rem;
+  bottom: 0.3rem;
+  padding: 0.18rem 0.3rem;
+  border: 1px solid rgb(39 40 34 / 42%);
+  background: #b5aa80;
+  color: #35352d;
+  font-size: 0.4rem;
+  transform: rotate(-1deg);
+}
+
+.manifest {
+  border-left: var(--v2-px) solid #201611;
+  background-color: var(--cockpit-wood);
+  background-image: var(--travel-rivets), var(--cockpit-wood-grain);
+  background-blend-mode: normal, normal, normal, normal;
+  box-shadow:
+    inset 2px 0 rgb(239 184 122 / 7%),
+    inset -3px 0 rgb(0 0 0 / 35%);
+}
+
+.manifest::after {
+  position: absolute;
+  right: 0.72rem;
+  bottom: 0.72rem;
+  width: 6.2rem;
+  padding: 0.28rem 0.32rem 0.24rem;
+  border: 1px solid rgb(37 35 28 / 54%);
+  background:
+    linear-gradient(
+      92deg,
+      transparent 0 11%,
+      rgb(59 57 46 / 13%) 11.5% 12%,
+      transparent 12.5%
+    ),
+    var(--cockpit-grain), #b2ac87;
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 16%),
+    0 2px 0 rgb(0 0 0 / 23%);
+  color: rgb(48 48 39 / 84%);
+  content: "FIELD PATCH  /  03–B";
+  font: 800 0.47rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.07em;
+  pointer-events: none;
+  text-align: center;
+  transform: rotate(-1.1deg);
+}
+
+.manifestHeader {
+  border-bottom-color: rgb(29 17 11 / 44%);
+}
+
+.manifestHeader h2 {
+  color: #ddd2ab;
+  text-shadow: none;
+}
+
+.manifestHeader p,
+.manifestMeta {
+  color: rgb(226 209 181 / 47%);
+}
+
+.manifestHeader > span {
+  background: var(--cockpit-grain), linear-gradient(145deg, #c2b995, #817d6b);
+  color: #322f27;
+}
+
+.dialBand {
+  border: 2px solid #1b1d19;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(198 202 179 / 18%) 0 1px,
+      transparent 1px 9px
+    )
+    50% 100% / calc(100% - 8px) 0.32rem no-repeat,
+    var(--cockpit-grain),
+    #121715;
+  box-shadow:
+    inset 0 0.2rem 0.45rem rgb(0 0 0 / 48%),
+    0 1px rgb(255 255 255 / 5%);
+}
+
+.waveform path {
+  stroke: #7f9e8f;
+  stroke-opacity: 0.52;
+  animation: none;
+}
+
+.needle {
+  width: 2px;
+  background: #c36c3b;
+  box-shadow: none;
+}
+
+.sectorTabs {
+  grid-template-rows: auto auto;
+  gap: 0.34rem;
+}
+
+.stations {
+  --station-travel: 6px;
+  gap: 0.42rem;
+  padding: 0.52rem 0.46rem 0.62rem;
+  overflow: visible;
+  border: 1px solid #262820;
+  background: var(--cockpit-grain), linear-gradient(145deg, #9b9888, #66685f);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 13%),
+    inset -2px -2px rgb(0 0 0 / 24%);
+  perspective: 18rem;
+}
+
+.stations button {
+  --switch-front-a: #7d7f76;
+  --switch-front-b: #50534d;
+  --switch-depth-a: #555850;
+  --switch-depth-b: #30332e;
+  appearance: none;
+  position: relative;
+  isolation: isolate;
+  display: block;
+  min-height: 3.1rem;
+  margin: 0;
+  padding: 0 4px calc(var(--station-travel) + 4px);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+  color: #e0d9bf;
+  transform: none;
+}
+
+.stations button:nth-child(2) {
+  --switch-front-a: #7d796f;
+  --switch-front-b: #514f49;
+  --switch-depth-a: #57534c;
+  --switch-depth-b: #322f2b;
+}
+
+.stations button:nth-child(3) {
+  --switch-front-a: #757b74;
+  --switch-front-b: #4c524d;
+  --switch-depth-a: #505750;
+  --switch-depth-b: #2d332f;
+}
+
+.stations button:nth-child(4) {
+  --switch-front-a: #79777a;
+  --switch-front-b: #4f4d50;
+  --switch-depth-a: #555255;
+  --switch-depth-b: #312f31;
+}
+
+.stations button > .stationTop {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-height: 2.55rem;
+  grid-template-areas:
+    "freq"
+    "label";
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 0.2rem 0.25rem;
+  padding: 0.32rem 0.42rem;
+  overflow: visible;
+  grid-area: auto;
+  color: inherit;
+  text-align: left;
+  transform: translateY(-0.16rem) rotateX(3deg);
+  transform-origin: center bottom;
+  transform-style: preserve-3d;
+  transition: transform 120ms cubic-bezier(0.2, 0.82, 0.24, 1);
+  user-select: none;
+  white-space: normal;
+}
+
+.stations button > .stationTop::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border: 1px solid #292b25;
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(
+      174deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px
+    ),
+    var(--cockpit-grain),
+    linear-gradient(145deg, var(--switch-front-a), var(--switch-front-b));
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 16%),
+    inset -2px -2px rgb(0 0 0 / 26%),
+    0 1px 2px rgb(255 255 255 / 10%);
+  content: "";
+  pointer-events: none;
+  transition:
+    inset 110ms steps(3, end),
+    border-radius 110ms steps(3, end);
+}
+
+.stations button > .stationBottom {
+  position: absolute;
+  z-index: 1;
+  bottom: 4px;
+  left: 4px;
+  display: block;
+  width: calc(100% - 8px);
+  height: calc(100% - 12px);
+  box-sizing: content-box;
+  padding-top: var(--station-travel);
+  overflow: hidden;
+  grid-area: auto;
+  border-radius: 7px / 11px 11px 7px 7px;
+  background:
+    radial-gradient(
+      4px 8px at 4px calc(100% - 7px),
+      rgb(255 255 255 / 16%),
+      transparent
+    ),
+    radial-gradient(
+      4px 8px at calc(100% - 4px) calc(100% - 7px),
+      rgb(255 255 255 / 14%),
+      transparent
+    ),
+    radial-gradient(14px at -3px 0, rgb(255 255 255 / 20%), transparent),
+    radial-gradient(
+      14px at calc(100% + 3px) 0,
+      rgb(255 255 255 / 17%),
+      transparent
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 4%) 0 1px,
+      transparent 1px 5px
+    ),
+    linear-gradient(180deg, var(--switch-depth-a), var(--switch-depth-b));
+  box-shadow:
+    0 2px 3px rgb(0 0 0 / 48%),
+    inset 0 -2px 3px 2px rgb(0 0 0 / 32%);
+  pointer-events: none;
+  transition:
+    padding-top 110ms steps(3, end),
+    border-radius 110ms steps(3, end);
+  white-space: normal;
+}
+
+.stations button > .stationBase {
+  position: absolute;
+  z-index: 0;
+  top: 3px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: calc(100% - 4px);
+  overflow: hidden;
+  grid-area: auto;
+  border-radius: 9px;
+  background: var(--cockpit-grain), rgb(28 30 27 / 58%);
+  box-shadow:
+    0 1px 1px rgb(255 255 255 / 42%),
+    inset 0 2px 2px rgb(0 0 0 / 36%);
+  pointer-events: none;
+  white-space: normal;
+}
+
+.stations button .stationTop > b {
+  grid-area: freq;
+}
+
+.stations button .stationLabel {
+  overflow: hidden;
+  grid-area: label;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.stations button .stationTop > i {
+  position: absolute;
+  z-index: 2;
+  top: 0.34rem;
+  right: 0.3rem;
+  width: 0.42rem;
+  height: 0.42rem;
+  border: 2px solid #22231e;
+  border-radius: 50%;
+  background: #392c23;
+  box-shadow: inset 1px 1px rgb(255 255 255 / 7%);
+}
+
+.stations button[aria-pressed="true"] {
+  border: 0;
+  background: transparent;
+  background-image: none;
+  color: #f1e4b7;
+  box-shadow: none;
+  transform: none;
+}
+
+.stations button:active {
+  box-shadow: none;
+  transform: none;
+}
+
+.stations button:active .stationTop,
+.stations button[aria-pressed="true"] .stationTop {
+  transform: translateY(var(--station-travel)) rotateX(-2deg);
+}
+
+.stations button:active .stationTop::after {
+  inset-inline: -2px;
+  border-radius: 5px;
+}
+
+.stations button[aria-pressed="true"] .stationTop::after {
+  inset-inline: -2px;
+  border-color: #5c4328;
+  border-radius: 5px;
+  background:
+    linear-gradient(rgb(190 119 57 / 18%), rgb(190 119 57 / 18%)),
+    repeating-linear-gradient(
+      174deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px
+    ),
+    var(--cockpit-grain),
+    linear-gradient(145deg, var(--switch-front-a), var(--switch-front-b));
+}
+
+.stations button:active .stationBottom,
+.stations button[aria-pressed="true"] .stationBottom {
+  padding-top: 0;
+  border-radius: 8px 8px 7px 7px / 7px;
+}
+
+.stations button[aria-pressed="true"] .stationTop > i {
+  background: #d58448;
+  box-shadow: inset 0 0 0 1px rgb(255 238 181 / 30%);
+}
+
+.stations button[aria-pressed="true"] .stationTop > b {
+  color: #f0c277;
+}
+
+.stripViewport {
+  margin-top: 0.62rem;
+  border: 2px solid #22241f;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(0 0 0 / 24%),
+      transparent 10% 90%,
+      rgb(0 0 0 / 22%)
+    ),
+    var(--cockpit-grain), #44473f;
+  box-shadow:
+    inset 0.35rem 0.25rem 0.7rem rgb(0 0 0 / 38%),
+    inset -0.2rem -0.25rem 0.55rem rgb(0 0 0 / 30%);
+}
+
+.stripViewport ol {
+  grid-auto-rows: minmax(4.5rem, auto);
+  gap: var(--v2-px);
+  padding: var(--v2-px);
+  background: transparent;
+}
+
+.contact,
+.stripViewport li:nth-child(odd) .contact,
+.stripViewport li:nth-child(even) .contact {
+  position: relative;
+  overflow: visible;
+  border: 1px solid #b9a77f;
+  border-left: 3px solid #89734d;
+  background-color: var(--cockpit-paper);
+  background-image:
+    radial-gradient(
+      circle at 13% 21%,
+      rgb(82 56 29 / 8%) 0 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle at 79% 68%,
+      rgb(255 255 255 / 20%) 0 1px,
+      transparent 1.5px
+    ),
+    repeating-conic-gradient(
+      from 45deg at 1px 1px,
+      rgb(73 49 25 / 4%) 0 25%,
+      transparent 0 100%
+    ),
+    linear-gradient(145deg, rgb(255 251 219 / 30%), transparent 32%),
+    linear-gradient(180deg, #decda8, #c9b58d);
+  background-size:
+    31px 23px,
+    37px 29px,
+    4px 4px,
+    auto,
+    auto;
+  box-shadow:
+    inset 1px 1px rgb(255 255 239 / 46%),
+    inset -2px -2px rgb(87 58 28 / 15%),
+    0 2px 0 rgb(0 0 0 / 28%);
+  transform: none;
+}
+
+.contact::before {
+  position: absolute;
+  z-index: 2;
+  top: -0.24rem;
+  left: 16%;
+  width: 2.5rem;
+  height: 0.5rem;
+  border-inline: 1px solid rgb(64 50 32 / 14%);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(86 67 39 / 8%) 0 1px,
+      transparent 1px 4px
+    ),
+    rgb(205 187 139 / 82%);
+  box-shadow: 0 1px rgb(255 255 255 / 16%);
+  content: "";
+  pointer-events: none;
+  transform: rotate(-1.3deg);
+}
+
+.stripViewport li:nth-child(3n + 2) .contact::before {
+  left: auto;
+  right: 18%;
+  background-color: rgb(165 183 150 / 82%);
+  transform: rotate(1deg);
+}
+
+.stripViewport li:nth-child(3n) .contact::before {
+  left: 42%;
+  background-color: rgb(190 151 112 / 84%);
+  transform: rotate(-0.4deg);
+}
+
+.contact::after {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(73 48 24 / 22%) 0 2px,
+      transparent 2px 19px
+    )
+    0 0 / 100% 1px no-repeat,
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 13px,
+      rgb(255 252 225 / 35%) 13px 16px,
+      transparent 16px 27px
+    )
+    0 100% / 100% 2px no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.42;
+}
+
+.cityPin {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.cityPinHead {
+  --pin-size: 1.55rem;
+  --pin-safe-inset: 1.38rem;
+  position: absolute;
+  top: clamp(
+    var(--pin-safe-inset),
+    var(--pin-y, 50%),
+    calc(100% - var(--pin-safe-inset))
+  );
+  left: clamp(
+    var(--pin-safe-inset),
+    var(--pin-x, 50%),
+    calc(100% - var(--pin-safe-inset))
+  );
+  width: var(--pin-size);
+  aspect-ratio: 1;
+  background: url("/images/travel/city-pushpin.png") center / contain no-repeat;
+  filter: drop-shadow(0.05rem 0.08rem 0 rgb(255 241 220 / 16%))
+    drop-shadow(0.14rem 0.24rem 0.1rem rgb(48 22 12 / 58%))
+    drop-shadow(0.24rem 0.38rem 0.22rem rgb(38 16 8 / 27%));
+  transform: translate(-50%, -50%) rotate(var(--pin-rotate, 0deg));
+  transform-origin: center;
+  animation: cityPinLand 210ms cubic-bezier(0.18, 0.82, 0.3, 1.16) both;
+}
+
+@keyframes cityPinLand {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.72)
+      rotate(calc(var(--pin-rotate, 0deg) - 12deg));
+  }
+  72% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.04)
+      rotate(calc(var(--pin-rotate, 0deg) + 2deg));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--pin-rotate, 0deg));
+  }
+}
+
+.contact:hover {
+  background-color: #dfcda8;
+  filter: none;
+  transform: translateY(-1px);
+}
+
+.contact:active {
+  box-shadow:
+    inset 2px 2px var(--v2-px) rgb(74 49 24 / 18%),
+    inset -1px -1px rgb(255 255 235 / 32%);
+  transform: translateY(2px);
+}
+
+.contact[aria-pressed="true"] {
+  border-color: #b9a77f;
+  border-left-color: #89734d;
+  background-color: var(--cockpit-paper);
+  box-shadow:
+    inset 1px 1px rgb(255 255 239 / 42%),
+    inset -2px -2px rgb(87 58 28 / 14%),
+    0 2px 0 rgb(0 0 0 / 28%);
+}
+
+.contactNote {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #75654d;
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.48rem;
+  font-style: italic;
+  line-height: 1.15;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.code {
+  color: #9f4424;
+}
+
+.scopeInstructions {
+  border-top-color: #252823;
+  background: var(--cockpit-grain), #262a25;
+  color: rgb(218 213 190 / 42%);
+}
+
+.lunarLayerBack .lunarOrbitPath,
+.lunarLayerFront .lunarOrbitPath {
+  stroke: #8faea5;
+  stroke-dasharray: 3 8;
+  stroke-linecap: round;
+  stroke-width: 1.2px;
+}
+
+.lunarLayerBack .lunarOrbitPath {
+  opacity: 0.12;
+}
+
+.lunarLayerFront .lunarOrbitPath {
+  opacity: 0.34;
+}
+
+.attlerock,
+.lunarLayerBack .attlerock {
+  filter: drop-shadow(0 0 0.28rem rgb(217 229 211 / 28%));
+}
+
+.lunarLayerBack .attlerock {
+  filter: brightness(0.68) drop-shadow(0 0 0.2rem rgb(217 229 211 / 16%));
+}
+
+.moonLabel {
+  fill: #dfd8b8;
+  stroke: #07100f;
+  stroke-linejoin: round;
+  stroke-width: 4px;
+  font: 800 32px / 1 var(--font-code, monospace);
+  letter-spacing: 3px;
+  paint-order: stroke fill;
+}
+
+.lunarLayerBack .moonLabel {
+  opacity: 0.58;
+}
+
+.sun {
+  box-shadow: none;
+}
+
+.firelight,
+:global(.fx-quiet) .firelight {
+  animation: none;
+  mix-blend-mode: normal;
+  opacity: 0.006;
+  transform: none;
+}
+
+.travelShell .console .backLink:focus-visible,
+.travelShell .console .uplinkPanel button:focus-visible,
+.travelShell .console .visitorSticker:is(button):focus-visible,
+.travelShell .console .contact:focus-visible {
+  outline: 3px solid #e9e1b7;
+  outline-offset: 2px;
+}
+
+.travelShell .console .backLink:focus-visible {
+  box-shadow:
+    inset 0.22rem 0.2rem 0.32rem rgb(0 0 0 / 62%),
+    inset -0.08rem -0.08rem rgb(230 224 199 / 7%),
+    0 1px rgb(255 255 255 / 6%),
+    0 0.16rem 0.2rem rgb(0 0 0 / 32%);
+}
+
+.travelShell .console .visitorSticker:is(button):focus-visible {
+  outline-offset: -4px;
+}
+
+.travelShell .console .zoomControls button:focus-visible {
+  outline: 3px solid #e9e1b7;
+  outline-offset: 3px;
+}
+
+.travelShell .console .stations button:focus-visible {
+  outline: 3px solid #e9e1b7;
+  outline-offset: 4px;
+}
+
+@media (max-width: 899px) {
+  .travelShell {
+    padding: var(--safe-area-top) var(--safe-area-right) var(--safe-area-bottom)
+      var(--safe-area-left);
+  }
+
+  .console {
+    grid-template-rows: 5.25rem minmax(0, 1fr) 14.5rem;
+  }
+
+  .backLink {
+    width: 100%;
+    min-width: 0;
+    min-height: 4.55rem;
+    grid-template-columns: 1.3rem minmax(0, 1fr);
+    gap: 0.28rem;
+    padding: 0.2rem 0.24rem;
+  }
+
+  .powerRocker {
+    width: 1.3rem;
+    height: 3.2rem;
+  }
+
+  .powerLabel {
+    font-size: 0.5rem;
+  }
+
+  .overheadPanel {
+    grid-template-columns: 5rem minmax(0, 1fr) 5.5rem;
+  }
+
+  .stationIdentity h1 {
+    overflow: visible;
+    font-size: clamp(0.86rem, 3.2vw, 1.05rem);
+    letter-spacing: 0.08em;
+    text-overflow: clip;
+  }
+
+  .stationIdentity p {
+    color: #d3b797;
+  }
+
+  .stationIdentity span {
+    color: rgb(225 220 199 / 48%);
+  }
+
+  .missionStats {
+    grid-template-columns: 1fr;
+  }
+
+  .missionStats div,
+  .missionStats div:nth-child(2) {
+    display: none;
+  }
+
+  .missionStats div:last-child {
+    display: grid;
+  }
+
+  .panorama {
+    grid-template-rows: minmax(0, 1fr) 6.75rem;
+  }
+
+  .stage {
+    grid-template-rows: 2rem minmax(0, 1fr);
+    padding: 0.3rem;
+    border-inline: 0;
+    border-bottom: var(--v2-px) solid #252823;
+  }
+
+  .scopeMachine {
+    gap: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  .scopeBezel {
+    padding: 0.28rem;
+    border-width: 2px;
+  }
+
+  .scopeBezel::after {
+    top: 0.22rem;
+    padding: 0.13rem 0.32rem;
+    font-size: 0.38rem;
+  }
+
+  .screenWell {
+    --well-depth: 0.72rem;
+
+    border-radius: 0.68rem / 0.5rem;
+  }
+
+  .screenWell::after {
+    border-radius: 0.3rem;
+  }
+
+  .visitorSticker {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: center;
+    width: min(4rem, calc(100% - 0.4rem));
+    gap: 0.14rem;
+    padding: 0.48rem 0.34rem 0.32rem;
+    transform: rotate(-1deg);
+  }
+
+  .visitorSticker::before {
+    height: 0.28rem;
+  }
+
+  .visitorSticker span {
+    display: none;
+  }
+
+  .visitorSticker strong {
+    font-size: 0.58rem;
+  }
+
+  .visitorSticker small {
+    font-size: 0.4rem;
+  }
+
+  .visitorStickerAction {
+    font-size: 0.38rem;
+  }
+
+  .viewport {
+    border-width: 0.3rem;
+    border-radius: 0.65rem / 0.45rem;
+    outline-offset: 0;
+    box-shadow:
+      -0.12rem -0.13rem 0.18rem rgb(4 5 4 / 68%),
+      0.06rem 0.07rem 0 rgb(214 211 190 / 7%),
+      inset 0.1rem 0.11rem 0.18rem rgb(0 0 0 / 74%),
+      inset -0.05rem -0.05rem 0 rgb(211 226 207 / 4%),
+      inset 0 0 0 1px rgb(211 226 207 / 6%),
+      inset 0 0 1.7rem rgb(0 0 0 / 58%);
+  }
+
+  .scopeBackdrop,
+  .canvas,
+  .lunarLayer {
+    transform: none;
+  }
+
+  .scopeControlDeck {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0.25rem;
+  }
+
+  .readout {
+    min-height: 2rem;
+    padding: 0.24rem 0.38rem;
+    font-size: 0.5rem;
+  }
+
+  .readoutCoords,
+  .readoutKey {
+    display: none;
+  }
+
+  .rangeAssembly {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .rangeDial {
+    grid-column: 1;
+    grid-row: 1;
+    min-height: 2.75rem;
+  }
+
+  .zoomControls {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .auxCluster {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .instrumentWing {
+    border-top: 1px solid #252823;
+  }
+
+  .portWing {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .starboardWing {
+    grid-template-columns:
+      minmax(0, 1fr)
+      clamp(4.5rem, 24vw, 6rem);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .starboardWing > header {
+    grid-column: 1 / -1;
+  }
+
+  .commModule {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: stretch;
+    padding: 0.3rem;
+  }
+
+  .cableRun {
+    grid-column: 2;
+    grid-row: 2;
+    min-height: 0;
+  }
+
+  .cableRun span {
+    display: none;
+  }
+
+  .contactSolution {
+    padding: 0.3rem;
+  }
+
+  .manifest {
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 0.3rem;
+    padding: 0.4rem;
+    border-top: var(--v2-px) solid #201611;
+    border-left: 0;
+  }
+
+  .sectorTabs {
+    min-height: 0;
+    grid-template-rows: auto;
+    gap: 0;
+  }
+
+  .stations {
+    --station-travel: 5px;
+    gap: 0.3rem;
+    padding: 0.46rem 0.4rem 0.56rem;
+  }
+
+  .stripViewport {
+    margin-top: 0;
+  }
+
+  .stripViewport ol {
+    grid-auto-columns: 9.5rem;
+  }
+
+  .contact {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding: 0.36rem 0.42rem;
+  }
+
+  .contactNote {
+    font-size: 0.5rem;
+    -webkit-line-clamp: 2;
+  }
+
+  .scopeFallback {
+    bottom: 6%;
+    min-width: min(15rem, 72%);
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 540px) {
+  .screenWell {
+    --well-depth: 0.58rem;
+  }
+
+  .visitorSticker {
+    width: min(4rem, calc(100% - 0.3rem));
+    gap: 0.11rem;
+    padding: 0.45rem 0.32rem 0.3rem;
+    transform: rotate(-0.8deg);
+  }
+
+  .visitorSticker strong {
+    font-size: 0.55rem;
+  }
+
+  .visitorSticker small {
+    font-size: 0.38rem;
+  }
+
+  .rangeAssembly {
+    grid-template-columns: minmax(0, 1fr) auto 2.8rem;
+  }
+
+  .rangeDial {
+    min-width: 7.75rem;
+  }
+
+  .signalBank {
+    display: none;
+  }
+
+  .auxCluster {
+    min-width: 0;
+    grid-template-columns: 1fr;
+    padding: 0.1rem;
+  }
+
+  .analogGauge {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .zoomControls {
+    min-width: 6.25rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .overheadPanel {
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+  }
+
+  .missionStats {
+    display: none;
+  }
+
+  .stationIdentity {
+    padding-right: 0.35rem;
+  }
+
+  .stationIdentity p {
+    color: #d3b797;
+    font-size: 0.48rem;
+    letter-spacing: 0.05em;
+  }
+
+  .stationIdentity h1 {
+    font-size: 0.9rem;
+  }
+
+  .scopeHeader {
+    font-size: 0.54rem;
+  }
+
+  .scopeFallback span {
+    display: none;
+  }
+
+  .stripViewport ol {
+    grid-auto-columns: 10rem;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 650px) and (max-width: 899px) {
+  .console {
+    grid-template-columns:
+      minmax(0, 1fr)
+      clamp(14rem, 34vw, 18rem);
+    grid-template-rows: 5rem minmax(0, 1fr);
+    grid-template-areas:
+      "header header"
+      "workspace locations";
+  }
+
+  .panorama {
+    grid-template-rows: minmax(0, 1fr) 3.75rem;
+  }
+
+  .scopeHeader {
+    display: none;
+  }
+
+  .stage {
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .scopeControlDeck {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .rangeAssembly {
+    min-width: 0;
+    grid-template-columns: minmax(3.25rem, auto) auto;
+  }
+
+  .auxCluster {
+    display: none;
+  }
+
+  .instrumentWing {
+    gap: 0;
+    padding-block: 0.25rem;
+  }
+
+  .instrumentWing > header {
+    display: none;
+  }
+
+  .portWing,
+  .starboardWing {
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .starboardWing {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .visitorSticker {
+    grid-column: 1;
+    grid-row: 1;
+    width: min(2.9rem, calc(100% - 0.25rem));
+    padding: 0.36rem 0.25rem 0.22rem;
+  }
+
+  .visitorSticker small {
+    display: none;
+  }
+
+  .visitorSticker strong {
+    font-size: 0.48rem;
+  }
+
+  .signalBank {
+    display: none;
+  }
+
+  .readout {
+    min-height: 1.8rem;
+  }
+
+  .manifest {
+    grid-template-rows: auto auto minmax(0, 1fr);
+    border-top: 0;
+    border-left: var(--v2-px) solid #201611;
+  }
+
+  .stations {
+    --station-travel: 4px;
+    padding-block: 0.38rem 0.46rem;
+  }
+
+  .stripViewport ol {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-columns: auto;
+    grid-auto-flow: row;
+    grid-auto-rows: minmax(4.35rem, auto);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-type: block proximity;
+  }
+
+  .contact {
+    min-height: 4.35rem;
+    scroll-snap-align: start;
+  }
+
+  .cableRun {
+    display: none;
+  }
+}
+
+@media (max-height: 700px) and (max-width: 649px) {
+  .screenWell {
+    --well-depth: 0.52rem;
+  }
+
+  .console {
+    grid-template-rows: 5rem minmax(0, 1fr) 12rem;
+  }
+
+  .panorama {
+    grid-template-rows: minmax(0, 1fr) 3.75rem;
+  }
+
+  .scopeHeader,
+  .cableRun {
+    display: none;
+  }
+
+  .manifestMeta,
+  .dialBand {
+    display: none;
+  }
+
+  .manifest {
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .sectorTabs {
+    grid-template-rows: auto;
+    gap: 0;
+  }
+
+  .stations {
+    --station-travel: 4px;
+    padding-block: 0.34rem 0.42rem;
+  }
+
+  .stripViewport {
+    margin-top: 0;
+  }
+
+  .visitorSticker {
+    grid-column: 1;
+    grid-row: 1;
+    width: min(2.9rem, calc(100% - 0.25rem));
+    padding: 0.36rem 0.25rem 0.22rem;
+  }
+
+  .visitorSticker span,
+  .visitorSticker small {
+    display: none;
+  }
+
+  .stage {
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .scopeControlDeck {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.2rem;
+    padding: 0.2rem;
+  }
+
+  .readout {
+    display: flex;
+    min-height: 2.75rem;
+    gap: 0.35rem;
+    padding: 0.24rem 0.32rem;
+    font-size: 0.48rem;
+  }
+
+  .blink {
+    display: none;
+  }
+
+  .rangeAssembly {
+    min-width: 0;
+    grid-template-columns: minmax(7.75rem, 1fr) auto;
+  }
+
+  .auxCluster {
+    display: none;
+  }
+
+  .zoomControls {
+    display: grid;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .rangeDial {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 7.75rem;
+  }
+
+  .instrumentWing {
+    gap: 0;
+    padding-block: 0.25rem;
+  }
+
+  .instrumentWing > header {
+    display: none;
+  }
+
+  .portWing,
+  .starboardWing {
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .starboardWing {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 700px) and (max-width: 649px) {
+  .console {
+    grid-template-columns:
+      minmax(0, 1fr)
+      clamp(13rem, 40vw, 15rem);
+    grid-template-rows: 4.75rem minmax(0, 1fr);
+    grid-template-areas:
+      "header header"
+      "workspace locations";
+  }
+
+  .panorama {
+    grid-template-rows: minmax(0, 1fr) 3.5rem;
+  }
+
+  .manifest {
+    border-top: 0;
+    border-left: var(--v2-px) solid #201611;
+  }
+
+  .stripViewport ol {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-columns: auto;
+    grid-auto-flow: row;
+    grid-auto-rows: minmax(4rem, auto);
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-type: block proximity;
+  }
+
+  .contact {
+    min-height: 4rem;
+    scroll-snap-align: start;
+  }
+
+  .visitorSticker {
+    width: min(2.75rem, calc(100% - 0.2rem));
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .rangeDialInput {
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .zoomControls button,
+  .stations button,
+  .contact {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgb(233 225 183 / 22%);
+  }
+
+  .contact:hover {
+    background-color: var(--cockpit-paper);
+    filter: none;
+    transform: none;
+  }
+
+  .contact[aria-pressed="true"]:hover {
+    background-color: #dfcba2;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .utilityRail,
+  .missionStats,
+  .scopeFallback {
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvas,
+  .rangeKnob,
+  .rangeKnobShaft,
+  .rangeKnobFace,
+  .powerRockerFace,
+  .zoomKeyFace,
+  .uplinkPanel button,
+  .zoomControls button,
+  .stations button,
+  .stations button > .stationTop,
+  .stations button > .stationBottom,
+  .cityPin,
+  .contact {
+    transition: none;
+  }
+
+  .cityPinHead {
+    animation: none;
+  }
+}
+
+:global(.fx-quiet) .scopeSweep {
+  animation: none;
+  opacity: 0.34;
+}
+
+/* Compact, not microscopic. Information uses a four-step instrument ramp;
+   only genuinely decorative engravings remain below the label size. */
+.stationIdentity p {
+  color: #f8eacc;
+}
+
+.stationIdentity h1 {
+  color: #fff3d5;
+}
+
+.missionStats dt {
+  color: #c9c4ad;
+}
+
+.utilityRail p,
+.manifestHeader p,
+.manifestHeader > span,
+.scopeBezel::after,
+.signalBank span,
+.scopeInstructions,
+.cableRun span {
+  font-size: var(--cockpit-type-engraving);
+}
+
+.stationIdentity p,
+.missionStats dt,
+.instrumentWing > header,
+.compassMeta,
+.contactSolution > header,
+.contactSolution dt,
+.modeBank dt,
+.scopeHeader,
+.scopeHeader small,
+.contactIndex,
+.coords,
+.contactRange span:last-child,
+.visitorSticker span,
+.visitorSticker small,
+.visitorStickerAction,
+.commModule small,
+.commModule span {
+  font-size: var(--cockpit-type-label);
+}
+
+.stationIdentity span,
+.scopeHeader strong,
+.readout,
+.contactSolution dd,
+.modeBank dd,
+.stations button,
+.stations button b,
+.code {
+  font-size: var(--cockpit-type-value);
+}
+
+.manifestMeta,
+.logNote,
+.contactNote,
+.name {
+  font-size: var(--cockpit-type-body);
+}
+
+@media (max-width: 899px) {
+  .compassModule {
+    display: grid;
+    grid-template-columns: 3.9rem minmax(0, 1fr);
+    gap: 0.45rem;
+    align-items: center;
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .compassRose {
+    width: 3.75rem;
+    justify-self: center;
+  }
+
+  .compassModule p {
+    gap: 0.06rem;
+  }
+
+  .bearingValue {
+    font-size: 0.9rem;
+  }
+
+  .compassMeta {
+    font-size: var(--cockpit-type-engraving);
+  }
+
+  .contactSolution {
+    display: none;
+  }
+
+  .backLink {
+    padding: 0.2rem 0.24rem;
+  }
+
+  .powerLabel {
+    font-size: 0.48rem;
+  }
+
+  .stationIdentity p,
+  .missionStats dt,
+  .instrumentWing > header,
+  .scopeHeader,
+  .readout {
+    font-size: var(--cockpit-type-label);
+  }
+
+  .visitorSticker strong {
+    font-size: var(--cockpit-type-label);
+  }
+
+  .visitorSticker small,
+  .visitorStickerAction {
+    font-size: var(--cockpit-type-engraving);
+  }
+}
+
+@media (max-width: 359px), (max-width: 899px) and (max-height: 620px) {
+  .compassModule {
+    grid-template-columns: 3.35rem minmax(0, 1fr);
+  }
+
+  .compassRose {
+    width: 3.2rem;
+  }
+
+  .compassNeedle {
+    width: 0.58rem;
+  }
+}
+
+/* Local radio: one real stream, housed in the same green signalscope glass.
+   The trace maps confirmed transport bitrate. Remote audio never enters Web
+   Audio, preserving stations that do not expose CORS headers. */
+.portWing {
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.starboardWing {
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.radioLed {
+  width: 0.64rem;
+  height: 0.64rem;
+  flex: 0 0 auto;
+  margin-left: auto;
+  border: 1px solid #26352e;
+  border-radius: 50%;
+  background: #8bd7a2;
+  box-shadow:
+    inset 0 0 0 1px rgb(245 255 222 / 28%),
+    0 0 0.16rem #9de8ad,
+    0 0 0.48rem rgb(120 220 151 / 70%);
+  animation: radio-led-blink 1.1s steps(1, end) infinite;
+}
+
+@keyframes radio-led-blink {
+  0%,
+  42% {
+    background: #a4efb0;
+    box-shadow:
+      inset 0 0 0 1px rgb(245 255 222 / 32%),
+      0 0 0.18rem #a9f0b7,
+      0 0 0.55rem rgb(120 220 151 / 78%);
+  }
+
+  43%,
+  100% {
+    background: #345843;
+    box-shadow: inset 0 0 0 1px rgb(245 255 222 / 8%);
+  }
+}
+
+.radioHint {
+  overflow: hidden;
+  margin: -0.18rem 0 -0.12rem;
+  color: rgb(226 220 198 / 62%);
+  font: 700 var(--cockpit-type-label) / 1.15 var(--font-code, monospace);
+  letter-spacing: 0.015em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.radioModule {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: minmax(5.5rem, 1fr) auto;
+  gap: 0.5rem;
+  padding: 0.42rem;
+  border: var(--v2-px) solid #252823;
+  border-radius: 0.28rem;
+  background:
+    radial-gradient(
+      circle at 0.38rem 0.38rem,
+      #171a16 0 0.08rem,
+      #8f8d80 0.09rem 0.15rem,
+      transparent 0.16rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.38rem) 0.38rem,
+      #171a16 0 0.08rem,
+      #8f8d80 0.09rem 0.15rem,
+      transparent 0.16rem
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #555950, #30342f);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 8%),
+    inset -2px -2px rgb(0 0 0 / 38%),
+    0 0.18rem 0 #1a1c18,
+    0 0.28rem 0.36rem rgb(0 0 0 / 28%);
+}
+
+.radioScreen {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  align-content: start;
+  gap: 0.25rem;
+  overflow: hidden;
+  padding: 0.55rem 0.55rem 2.2rem;
+  border: 0.22rem solid #20241f;
+  border-radius: 0.34rem;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(109 190 174 / 3%) 0 1px,
+      transparent 1px 4px
+    ),
+    radial-gradient(circle at 45% 38%, #17302e, #071211 72%);
+  box-shadow:
+    inset 0.12rem 0.12rem 0.24rem rgb(0 0 0 / 72%),
+    inset -0.08rem -0.08rem rgb(189 219 198 / 4%),
+    inset 0 0 1.4rem rgb(0 0 0 / 52%),
+    0 1px rgb(229 225 203 / 7%);
+  font-family: var(--font-code, monospace);
+  text-shadow: 0 0 0.35rem rgb(151 211 178 / 24%);
+}
+
+.radioScreen > span,
+.radioScreen > small,
+.radioScreen > strong {
+  overflow: hidden;
+  min-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.radioScreen > span {
+  color: rgb(173 207 193 / 58%);
+  font-size: var(--cockpit-type-label);
+  letter-spacing: 0.04em;
+}
+
+.radioScreen > strong {
+  color: #c5d6a9;
+  font-size: clamp(0.66rem, 0.92vw, 0.82rem);
+  line-height: 1.15;
+}
+
+.radioScreen > small {
+  color: #d18d58;
+  font-size: var(--cockpit-type-label);
+  letter-spacing: 0.02em;
+}
+
+.radioModule[data-state="error"] .radioScreen > small {
+  color: #ef7d62;
+}
+
+.radioScope {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.44rem;
+  left: 0.5rem;
+  height: 1.22rem;
+  border-block: 1px solid rgb(162 205 185 / 10%);
+}
+
+.radioScope svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.34;
+}
+
+.radioScope path {
+  fill: none;
+  stroke: #82b9a7;
+  stroke-linecap: round;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.radioScope > span {
+  position: absolute;
+  z-index: 1;
+  top: -0.08rem;
+  right: 0;
+  padding: 0.06rem 0.14rem;
+  background: #071211;
+  color: rgb(177 210 192 / 70%);
+  font: 800 var(--cockpit-type-engraving) / 1 var(--font-code, monospace);
+  letter-spacing: 0.03em;
+}
+
+.radioScope i {
+  position: absolute;
+  top: -0.16rem;
+  bottom: -0.16rem;
+  left: var(--radio-position, 0%);
+  width: 1px;
+  background: #d89254;
+  box-shadow:
+    0 0 0.3rem rgb(216 146 84 / 64%),
+    0 0 0 1px rgb(43 21 12 / 52%);
+  transform: translateX(-50%);
+  transition: left 320ms var(--ease-signal, ease);
+}
+
+.radioModule[data-state="playing"] .radioScope svg {
+  animation: radio-signal-breathe 1.8s ease-in-out infinite;
+}
+
+@keyframes radio-signal-breathe {
+  50% {
+    opacity: 0.68;
+  }
+}
+
+.radioControls {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  gap: 0.42rem;
+}
+
+.radioPower,
+.radioPresets button {
+  position: relative;
+  min-height: 2.75rem;
+  border: 1px solid #272923;
+  border-bottom-width: 0.22rem;
+  border-radius: 0.16rem;
+  background:
+    var(--cockpit-grain), linear-gradient(145deg, #b8b39d, #7a7a6e 64%, #4d5149);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 22%),
+    inset -2px -2px rgb(0 0 0 / 24%),
+    0 0.18rem 0 #171916,
+    0 0.24rem 0.28rem rgb(0 0 0 / 24%);
+  color: #292b25;
+  font: 900 var(--cockpit-type-label) / 1 var(--font-code, monospace);
+  text-shadow: 0 1px rgb(255 255 255 / 18%);
+}
+
+.radioPower {
+  color: #4b281c;
+  letter-spacing: 0.05em;
+}
+
+.radioPower[aria-pressed="true"] {
+  color: #742c1e;
+}
+
+.radioPower[aria-pressed="true"]::after {
+  position: absolute;
+  top: 0.32rem;
+  right: 0.32rem;
+  width: 0.38rem;
+  height: 0.38rem;
+  border: 1px solid #3a2118;
+  border-radius: 50%;
+  background: #d8643d;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 232 195 / 18%),
+    0 0 0.35rem rgb(218 81 45 / 62%);
+  content: "";
+}
+
+.radioPower:active,
+.radioPresets button:active {
+  border-bottom-width: 1px;
+  box-shadow:
+    inset 2px 2px 0.22rem rgb(0 0 0 / 32%),
+    0 0.05rem 0 #171916;
+  transform: translateY(0.16rem);
+}
+
+.radioPresets {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(var(--radio-preset-count, 3), minmax(0, 1fr));
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.radioPresets button {
+  display: grid;
+  min-width: 0;
+  place-items: center;
+  padding: 0.24rem 0.08rem;
+}
+
+.radioPresets button span {
+  font-size: var(--cockpit-type-engraving);
+}
+
+.radioPresets button i {
+  width: 0.42rem;
+  height: 0.42rem;
+  border: 1px solid #30342d;
+  border-radius: 50%;
+  background: #38443d;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 7%);
+}
+
+.radioPresets button[aria-pressed="true"] i {
+  background: #c48a4e;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 240 199 / 18%),
+    0 0 0.32rem rgb(216 146 84 / 58%);
+}
+
+.travelShell .console .radioPower:focus-visible,
+.travelShell .console .radioPresets button:focus-visible {
+  z-index: 2;
+  outline: 3px solid #e9e1b7;
+  outline-offset: 2px;
+}
+
+@media (max-width: 899px) {
+  .panorama {
+    grid-template-rows: minmax(0, 1fr) 10rem;
+  }
+
+  .portWing {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .portWing > header {
+    grid-column: 1 / -1;
+  }
+
+  .portWing .compassModule {
+    display: grid;
+    grid-column: 1;
+    grid-row: 2;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+  }
+
+  .portWing .compassModule p {
+    display: none;
+  }
+
+  .portWing .compassRose {
+    width: 3.45rem;
+  }
+
+  .portWing .contactSolution {
+    display: grid;
+    grid-column: 2;
+    grid-row: 2;
+    align-content: center;
+    gap: 0.18rem;
+    padding: 0.28rem 0.34rem;
+  }
+
+  .portWing .contactSolution > header {
+    display: none;
+  }
+
+  .portWing .solutionIdentity {
+    gap: 0.24rem;
+  }
+
+  .portWing .solutionIdentity strong {
+    font-size: var(--cockpit-type-value);
+  }
+
+  .portWing .contactSolution dl {
+    display: grid;
+    gap: 0.08rem;
+  }
+
+  .portWing .contactSolution dl div:first-child,
+  .portWing .contactSolution dl div:nth-child(2) {
+    display: none;
+  }
+
+  .starboardWing {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .radioModule {
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0.3rem;
+    padding: 0.28rem;
+  }
+
+  .radioScreen {
+    gap: 0.12rem;
+    padding: 0.3rem 0.38rem 1rem;
+    border-width: 0.16rem;
+  }
+
+  .radioScreen > span {
+    display: none;
+  }
+
+  .radioScreen > strong {
+    font-size: var(--cockpit-type-value);
+  }
+
+  .radioScope {
+    right: 0.35rem;
+    bottom: 0.22rem;
+    left: 0.35rem;
+    height: 0.8rem;
+  }
+
+  .radioControls {
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: 0.24rem;
+  }
+
+  .radioPower,
+  .radioPresets button {
+    min-height: 2.75rem;
+  }
+}
+
+@media (max-width: 899px) and (max-height: 620px) {
+  .panorama {
+    grid-template-rows: minmax(0, 1fr) 6.5rem;
+  }
+
+  .radioScreen > small,
+  .radioScope,
+  .portWing .contactSolution dl {
+    display: none;
+  }
+
+  .radioModule {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .radioControls {
+    grid-template-columns: 2.9rem minmax(5.4rem, 1fr);
+  }
+}
+
+@media (min-width: 900px) and (max-height: 640px) {
+  .radioModule {
+    grid-template-rows: minmax(3.5rem, 1fr) auto;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 650px) and (max-width: 899px) {
+  .console {
+    grid-template-rows: 5.25rem minmax(0, 1fr);
+  }
+
+  .starboardWing > header {
+    display: flex;
+  }
+}
+
+@media (max-height: 700px) and (max-width: 649px) {
+  .console {
+    grid-template-rows: 5.25rem minmax(0, 1fr) 12rem;
+  }
+
+  .starboardWing > header {
+    display: flex;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 700px) and (max-width: 649px) {
+  .console {
+    grid-template-rows: 5.25rem minmax(0, 1fr);
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .radioPower,
+  .radioPresets button {
+    min-height: 2.75rem;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgb(233 225 183 / 22%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radioScope i,
+  .radioPower,
+  .radioPresets button {
+    transition: none;
+  }
+
+  .radioModule[data-state="playing"] .radioScope svg {
+    animation: none;
+    opacity: 0.58;
+  }
+
+  .radioLed {
+    animation: none;
+  }
+}
+
+:global(.fx-quiet) .radioModule[data-state="playing"] .radioScope svg {
+  animation: none;
+  opacity: 0.58;
+}
+
+:global(.fx-quiet) .radioLed {
+  animation: none;
+}
+
+/* A loose paper note ignores the dashboard grid and hangs over the scope.
+   The curled corner and low crease adapt the physical treatment from the
+   supplied Post-it reference without importing its font or runtime. */
+.headerStickyNote {
+  position: absolute;
+  z-index: 40;
+  top: 0.42rem;
+  right: calc(var(--manifest-width) + clamp(0.7rem, 1.2vw, 1.4rem));
+  display: grid;
+  width: clamp(8rem, 9vw, 9.75rem);
+  aspect-ratio: 1.04 / 1;
+  box-sizing: border-box;
+  align-content: start;
+  gap: 0.3rem;
+  overflow: hidden;
+  margin: 0;
+  padding: 0.9rem 0.78rem 0.78rem;
+  border: 1px solid rgb(92 75 34 / 18%);
+  border-radius: 0 0 0 1.3rem / 1.8rem;
+  appearance: none;
+  background:
+    repeating-linear-gradient(
+      87deg,
+      rgb(88 71 31 / 2.5%) 0 1px,
+      transparent 1px 5px
+    ),
+    linear-gradient(153deg, #f5edab, #e5da8c 66%, #c9b970);
+  box-shadow:
+    inset 0 -2.35rem 2.3rem rgb(68 54 24 / 17%),
+    inset 0 1.2rem 0.8rem rgb(102 81 34 / 12%),
+    0 0.34rem 0.42rem 0.2rem rgb(0 0 0 / 30%);
+  color: #332d36;
+  cursor: pointer;
+  font-family: var(--font-body, sans-serif);
+  text-align: left;
+  transform: rotate(-2.1deg);
+  transform-origin: 72% 0;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.headerStickyNote::before {
+  position: absolute;
+  z-index: 2;
+  bottom: 0;
+  left: 0;
+  width: 1.2rem;
+  height: 1.45rem;
+  background: #e1d486;
+  box-shadow:
+    0.18rem -0.12rem 0.55rem rgb(67 52 22 / 20%),
+    inset 0.85rem -0.8rem 0.8rem rgb(67 52 22 / 25%);
+  content: "";
+  transform: skewX(25deg);
+}
+
+.headerStickyNote::after {
+  position: absolute;
+  bottom: -0.12rem;
+  left: 11%;
+  width: 76%;
+  height: 1rem;
+  border-top: 2px solid rgb(51 45 54 / 42%);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.headerStickyNote:disabled {
+  cursor: progress;
+}
+
+@media (hover: hover) {
+  .headerStickyNote:not(:disabled):hover {
+    filter: brightness(1.025);
+  }
+}
+
+.headerStickyNote:not(:disabled):active {
+  box-shadow:
+    inset 0 -2.1rem 2rem rgb(68 54 24 / 20%),
+    inset 0 1.15rem 0.8rem rgb(102 81 34 / 14%),
+    0 0.14rem 0.2rem 0.08rem rgb(0 0 0 / 27%);
+  transform: translateY(0.16rem) rotate(-1.2deg);
+}
+
+.travelShell .console .headerStickyNote:focus-visible {
+  outline: 3px solid #fff1a6;
+  outline-offset: 3px;
+}
+
+.headerStickyLabel {
+  font: 800 var(--cockpit-type-label) / 1 var(--font-code, monospace);
+  letter-spacing: 0.09em;
+  opacity: 0.58;
+}
+
+.headerStickyNote strong {
+  font-size: clamp(0.72rem, 0.84vw, 0.84rem);
+  font-style: italic;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.headerStickyNote small {
+  font: 700 var(--cockpit-type-label) / 1.18 var(--font-code, monospace);
+  opacity: 0.72;
+}
+
+.headerStickyAction {
+  display: block;
+  align-self: end;
+  padding-top: 0.22rem;
+  border-top: 1px solid rgb(52 44 28 / 20%);
+  font: 900 var(--cockpit-type-label) / 1 var(--font-code, monospace);
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 899px) {
+  .scopeHeader small {
+    display: block;
+  }
+
+  .headerStickyNote {
+    top: 0.32rem;
+    right: calc(5.5rem + 0.45rem);
+    width: 7rem;
+    gap: 0.16rem;
+    padding: 0.58rem 0.48rem 0.45rem;
+    border-radius: 0 0 0 0.9rem / 1.2rem;
+    transform: rotate(-1.8deg);
+  }
+
+  .headerStickyLabel {
+    display: none;
+  }
+
+  .headerStickyNote strong {
+    font-size: 0.62rem;
+  }
+
+  .headerStickyNote small,
+  .headerStickyAction {
+    font-size: 0.46rem;
+  }
+}
+
+@media (max-width: 899px) and (max-height: 620px) {
+  .headerStickyNote {
+    width: 5.5rem;
+    padding: 0.5rem 0.4rem 0.38rem;
+  }
+
+  .headerStickyNote small {
+    display: none;
+  }
+
+  .headerStickyNote strong {
+    font-size: 0.56rem;
+  }
+
+  .headerStickyAction {
+    font-size: 0.42rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .headerStickyNote {
+    right: 0.38rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .headerStickyNote {
+    right: 0.32rem;
+    width: 5.5rem;
+    padding: 0.5rem 0.4rem 0.38rem;
+  }
+
+  .headerStickyNote small {
+    display: none;
+  }
+
+  .headerStickyNote strong {
+    font-size: 0.56rem;
+  }
+
+  .headerStickyAction {
+    font-size: 0.42rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headerStickyNote {
+    transition: none;
+  }
+}
+
+/* The console exists only while powered. The rocker therefore rests in the
+   checked/ON geometry from the supplied Nawsome switch and rocks toward OFF
+   only for the brief active press before navigation removes the console. */
+@media (max-width: 899px) {
+  .console {
+    grid-template-rows: 7.55rem minmax(0, 1fr) 14.5rem;
+  }
+
+  .overheadPanel {
+    grid-template-columns: 7.1rem minmax(0, 1fr) 5.5rem;
+  }
+
+  .utilityRail {
+    padding: 0.22rem 0.3rem;
+  }
+
+  .backLink {
+    width: 100%;
+    min-width: 0;
+    min-height: 7.15rem;
+    grid-template-columns: 2.8rem minmax(0, 1fr);
+    gap: 0.32rem;
+    padding: 0.25rem 0.28rem;
+  }
+
+  .powerRocker {
+    width: 2.8rem;
+    height: 6.6rem;
+    padding: 0.38rem;
+  }
+
+  .powerLabel {
+    font-size: 0.58rem;
+  }
+
+  .manifest::after {
+    content: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .overheadPanel {
+    grid-template-columns: 6.75rem minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 899px) and (max-height: 620px) {
+  .console {
+    grid-template-rows: 7rem minmax(0, 1fr) 12rem;
+  }
+
+  .backLink {
+    min-height: 6.7rem;
+  }
+
+  .powerRocker {
+    width: 2.65rem;
+    height: 6.45rem;
+    padding: 0.34rem;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 620px) and (max-width: 649px) {
+  .console {
+    grid-template-rows: 7rem minmax(0, 1fr);
+  }
+}
+
+:global(.fx-quiet) .powerLight {
+  animation: none;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .powerLight {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* FIELD WEAR
+   These are isolated traces of repair and handling, not an all-over grime
+   filter. Bright edges are exposed undercoat; the paired dark edge gives each
+   scratch enough depth to survive real viewport scaling. */
+.headerWear {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.headerWear i {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+.headerWear i[data-wear="scratch-a"] {
+  top: 1.15rem;
+  left: 36%;
+  width: 7.6rem;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #bcbbaa 8% 82%, transparent);
+  box-shadow: 0 1px 0 #292b27;
+  opacity: 0.78;
+  transform: rotate(-4deg);
+}
+
+.headerWear i[data-wear="scratch-a"]::before,
+.headerWear i[data-wear="scratch-a"]::after,
+.headerWear i[data-wear="scratch-b"]::before {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #aaa99b 9% 84%, transparent);
+  box-shadow: 0 1px 0 rgb(38 40 36 / 86%);
+  content: "";
+}
+
+.headerWear i[data-wear="scratch-a"]::before {
+  top: 0.46rem;
+  left: 1.1rem;
+  width: 4.8rem;
+  transform: rotate(5deg);
+}
+
+.headerWear i[data-wear="scratch-a"]::after {
+  top: 0.82rem;
+  left: 4.2rem;
+  width: 2.7rem;
+  transform: rotate(-2deg);
+}
+
+.headerWear i[data-wear="scratch-b"] {
+  top: 5.85rem;
+  left: 66%;
+  width: 5.2rem;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #262824 9% 68%,
+    #bbb9a7 70% 86%,
+    transparent
+  );
+  opacity: 0.72;
+  transform: rotate(2.4deg);
+}
+
+.headerWear i[data-wear="scratch-b"]::before {
+  top: 0.34rem;
+  left: -1.4rem;
+  width: 3.6rem;
+  transform: rotate(-5deg);
+}
+
+.headerWear i[data-wear="decal-ghost"] {
+  top: 2.75rem;
+  left: 51%;
+  width: 9.4rem;
+  height: 2.35rem;
+  border: 1px solid rgb(40 42 37 / 48%);
+  background:
+    linear-gradient(
+      94deg,
+      rgb(202 198 177 / 23%) 0 8%,
+      transparent 8.5% 15%,
+      rgb(202 198 177 / 16%) 15.5% 62%,
+      transparent 62.5% 67%,
+      rgb(202 198 177 / 19%) 67.5% 100%
+    ),
+    repeating-linear-gradient(
+      176deg,
+      transparent 0 5px,
+      rgb(33 35 31 / 21%) 6px 7px,
+      transparent 8px 13px
+    );
+  box-shadow:
+    inset 0 0 0 1px rgb(224 219 194 / 11%),
+    0 1px 0 rgb(224 219 194 / 10%);
+  clip-path: polygon(0 8%, 7% 0, 100% 5%, 96% 38%, 100% 71%, 92% 100%, 3% 94%);
+  opacity: 0.76;
+  transform: rotate(-1.2deg);
+}
+
+.portWing::after,
+.starboardWing::after {
+  position: absolute;
+  z-index: 3;
+  width: 0.28rem;
+  background: linear-gradient(
+    to bottom,
+    transparent 0 6%,
+    #aaa998 6.5% 13%,
+    #292b27 13.5% 16%,
+    transparent 16.5% 34%,
+    #77786d 34.5% 40%,
+    #b7b5a2 40.5% 44%,
+    transparent 44.5% 68%,
+    #2c2e2a 68.5% 74%,
+    #a3a18f 74.5% 87%,
+    transparent 87.5%
+  );
+  clip-path: polygon(
+    18% 0,
+    100% 3%,
+    74% 17%,
+    100% 36%,
+    66% 51%,
+    100% 69%,
+    58% 83%,
+    88% 100%,
+    0 96%,
+    23% 72%,
+    0 54%,
+    30% 33%,
+    0 14%
+  );
+  content: "";
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.portWing::after {
+  top: 19%;
+  right: 0;
+  height: 6.2rem;
+}
+
+.starboardWing::after {
+  top: 53%;
+  left: 0;
+  height: 4.8rem;
+}
+
+@media (max-width: 1199px) {
+  .headerWear i[data-wear="decal-ghost"] {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .headerWear {
+    display: none;
   }
 }

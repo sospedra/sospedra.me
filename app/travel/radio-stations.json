@@ -1,0 +1,1742 @@
+[
+  {
+    "destinationCode": "LAX",
+    "stationUuid": "c76686ca-a8b9-4db9-9839-1470c9599623",
+    "station": "102.7 KIIS FM",
+    "city": "Los Angeles",
+    "country": "United States",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://stream.revma.ihrhls.com/zc185",
+    "format": "AAC",
+    "bitrateKbps": null,
+    "homepage": "https://kiisfm.iheart.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:06.325Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "LAX",
+    "stationUuid": "a722ad53-b10d-4087-85d8-5fabe061f758",
+    "station": "The Independent FM",
+    "city": "Los Angeles",
+    "country": "United States",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://listen.radioking.com/radio/293701/stream/340084",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "homepage": "https://www.radioking.com/radio/the-independent-fm-1",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:06.697Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "LAX",
+    "stationUuid": "0653bfab-cb60-44e9-9511-d89b993c48f9",
+    "station": "Non-Stop Oldies",
+    "city": "Los Angeles",
+    "country": "United States",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://ais-sa2.cdnstream1.com/2383_128.mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "http://www.nonstopoldies.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:07.703Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "CHI",
+    "stationUuid": "3e5220ca-65d0-4410-b274-7ab30f0ac8e7",
+    "station": "WLS 94.7-FM Chicago, IL",
+    "city": "Chicago",
+    "country": "United States",
+    "latitude": 41.87887391867155,
+    "longitude": -87.63593852519989,
+    "streamUrl": "https://playerservices.streamtheworld.com/api/livestream-redirect/WLSFM.mp3",
+    "format": "MP3",
+    "bitrateKbps": 80,
+    "homepage": "http://www.947wls.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:09.390Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "CHI",
+    "stationUuid": "3d84e338-1226-401e-8184-401b91f81b10",
+    "station": "WFMT Classical AAC 256",
+    "city": "Chicago",
+    "country": "United States",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://wfmt.streamguys1.com/main-source",
+    "format": "AAC",
+    "bitrateKbps": 258,
+    "homepage": "https://www.wfmt.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:10.950Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "CHI",
+    "stationUuid": "19d879ef-2bb5-4281-989d-46e578e7ae40",
+    "station": "107.5 WGCI",
+    "city": "Chicago",
+    "country": "United States",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://stream.revma.ihrhls.com/zc841",
+    "format": "AAC",
+    "bitrateKbps": null,
+    "homepage": "https://wgci.iheart.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:11.463Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "MIA",
+    "stationUuid": "5613bc2e-254f-4ead-ad5a-419d9fd0d89d",
+    "station": "Tu 94.9",
+    "city": "Miami",
+    "country": "United States",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://stream.revma.ihrhls.com/zc577",
+    "format": "AAC",
+    "bitrateKbps": null,
+    "homepage": "https://tu949fm.iheart.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:12.067Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "MIA",
+    "stationUuid": "12a8828d-8350-4b10-bc04-22770a41188d",
+    "station": "Revolution 93.5",
+    "city": "Miami",
+    "country": "United States",
+    "latitude": 25.848016032838323,
+    "longitude": -80.17886638641357,
+    "streamUrl": "https://centova87.shoutcastservices.com/proxy/revolution935/stream",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.google.com/url?sa=t&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwj1yd_XzJKDAxUrk4kEHehEDzIQFnoECA0QAQ&url=https%3A%2F%2Fwww.revolution935.com%2F&usg=AOvVaw3AuU1XL-Nq5ZSMh9C5HbYu&opi=89978449",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:14.031Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "MIA",
+    "stationUuid": "dba1b7bc-6b92-409c-a543-8b42eec25636",
+    "station": "100 Hip Hop and RNB FM (Official)",
+    "city": "Miami",
+    "country": "United States",
+    "latitude": 27.246817909034835,
+    "longitude": -81.77259920463693,
+    "streamUrl": "https://streaming.shoutcast.com/100-hip-hop-and-rnb-fm",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://uk.radio.net/s/100hiphopandrnb",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:15.173Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "SDQ",
+    "stationUuid": "9736541a-14a6-4a36-a904-9f7d82412416",
+    "station": "Z101",
+    "city": "Santo Domingo",
+    "country": "Dominican Republic",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://streaming.z101digital.com/z101",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://z101digital.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "SDQ",
+    "stationUuid": "d46cbf35-8828-452f-9498-8c7838064644",
+    "station": "Top Salsa Radio",
+    "city": "Santo Domingo",
+    "country": "Dominican Republic",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://radio.dominiserver.com/proxy/topsalsaradio?mp=/stream",
+    "format": "AAC",
+    "bitrateKbps": 128,
+    "homepage": "https://latina104.net/top-salsa-radio/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:15.994Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aacp",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "SDQ",
+    "stationUuid": "25bf9ae3-16f1-4ffa-8651-b67e1ba22d64",
+    "station": "Top Urbano",
+    "city": "Santo Domingo",
+    "country": "Dominican Republic",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://radio.dominiserver.com/proxy/topurbano?mp=/stream",
+    "format": "AAC",
+    "bitrateKbps": 128,
+    "homepage": "https://latina104.net/top-urbano",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:16.289Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aacp",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "LON",
+    "stationUuid": "80d74009-e473-4454-9602-139b88485ba5",
+    "station": "Capital FM London",
+    "city": "London",
+    "country": "United Kingdom",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://media-ssl.musicradio.com/CapitalMP3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.capitalfm.com/london/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:12:01.504Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "LON",
+    "stationUuid": "9608ade8-0601-11e8-ae97-52543be04c81",
+    "station": "Heart London 106.2",
+    "city": "London",
+    "country": "United Kingdom",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://media-ssl.musicradio.com/HeartLondonMP3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.heart.co.uk/london/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:12:01.720Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "LON",
+    "stationUuid": "a3dbc189-d23e-4308-803f-5aad26432b8c",
+    "station": "NTS Radio 1",
+    "city": "London",
+    "country": "United Kingdom",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://stream-relay-geo.ntslive.net/stream",
+    "format": "MP3",
+    "bitrateKbps": 256,
+    "homepage": "https://www.nts.live/1",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:12:01.787Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "EDI",
+    "stationUuid": "57c21dab-3c40-4ca6-b49b-8755bd7a3dcd",
+    "station": "EHFM",
+    "city": "Edinburgh",
+    "country": "United Kingdom",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://ehfm.out.airtime.pro/ehfm_a",
+    "format": "MP3",
+    "bitrateKbps": 192,
+    "homepage": "https://www.ehfm.live/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:20.655Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "EDI",
+    "stationUuid": "de34afcd-c217-4114-a264-cd67a7176561",
+    "station": "Edge 1",
+    "city": "Edinburgh",
+    "country": "United Kingdom",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://stream.aiir.com/8dhvgxm1kbvuv",
+    "format": "MP3",
+    "bitrateKbps": null,
+    "homepage": "https://edgeradio.co.uk/edge1",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:19.626Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "EDI",
+    "stationUuid": "065a9594-4b93-4dad-a65b-cdb55adf9f0f",
+    "station": "Radio ENRG",
+    "city": "Edinburgh",
+    "country": "United Kingdom",
+    "latitude": 55.9333656,
+    "longitude": -3.2140493,
+    "streamUrl": "https://edge.mixlr.com/channel/xssdg",
+    "format": "MP3",
+    "bitrateKbps": null,
+    "homepage": "https://radioenrg.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:21.511Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mp3",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "MAD",
+    "stationUuid": "18ad8ae6-019d-4782-8faa-fb348d9fcae0",
+    "station": "LOS40",
+    "city": "Madrid",
+    "country": "Spain",
+    "latitude": 40.419291805837446,
+    "longitude": -3.693069219589234,
+    "streamUrl": "https://20103.live.streamtheworld.com/LOS40_SC",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://los40.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "MAD",
+    "stationUuid": "07dbb40c-f3a8-4f45-925d-c16ef08c7293",
+    "station": "Radio Marca Madrid",
+    "city": "Spain",
+    "country": "Spain",
+    "latitude": 40.419291805837446,
+    "longitude": -3.693069219589234,
+    "streamUrl": "https://playerservices.streamtheworld.com/api/livestream-redirect/RADIOMARCA_NACIONAL_SC",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.marca.com/radio.html",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:23.391Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "MAD",
+    "stationUuid": "743889d5-5472-4e9f-ac61-5f0f04e7efa8",
+    "station": "KISS FM",
+    "city": "Spain",
+    "country": "Spain",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://bbkissfm.kissfmradio.cires21.com/bbkissfm.mp3",
+    "format": "MP3",
+    "bitrateKbps": 56,
+    "homepage": "https://www.kissfm.es/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:43:37.096Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "CAT",
+    "stationUuid": "38a33fc0-be05-4c98-8c6a-ba3869575bc1",
+    "station": "RAC1",
+    "city": "Catalunya",
+    "country": "Spain",
+    "latitude": 41.39269184456459,
+    "longitude": 2.145745754241944,
+    "streamUrl": "https://playerservices.streamtheworld.com/api/livestream-redirect/RAC_1.mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.rac1.cat/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:27.713Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "CAT",
+    "stationUuid": "2087b4c4-820a-4545-9bd7-eaf28792f44a",
+    "station": "Catalunya Ràdio",
+    "city": "Catalunya",
+    "country": "Spain",
+    "latitude": 41.39269184456459,
+    "longitude": 2.145745754241944,
+    "streamUrl": "https://shoutcast.ccma.cat/ccma/catalunyaradioHD.mp3",
+    "format": "AAC",
+    "bitrateKbps": 56,
+    "homepage": "https://www.3cat.cat/catradio/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "CAT",
+    "stationUuid": "69bc7084-523c-11ea-be63-52543be04c81",
+    "station": "Catalunya Informació (Catinfo)",
+    "city": "Catalunya",
+    "country": "Spain",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://shoutcast.ccma.cat/ccma/catalunyainformacioHD.mp3",
+    "format": "AAC",
+    "bitrateKbps": 56,
+    "homepage": "https://www.catradio.cat/catinfo",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:28.799Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "FNC",
+    "stationUuid": "29489790-0b8a-47d7-9b9d-630ebd9934fd",
+    "station": "Antena 1 Madeira (Portugal)",
+    "city": "Madeira",
+    "country": "Portugal",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://streaming-live.rtp.pt/liveradio/antena1madeira80a/playlist.m3u8",
+    "format": "HLS",
+    "bitrateKbps": 182,
+    "homepage": "https://www.rtp.pt/play/direto/antena1madeira",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:29.012Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "application/vnd.apple.mpegurl",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "FNC",
+    "stationUuid": "070c21d8-f919-4c30-aac3-63de93a0d579",
+    "station": "Antena 3 Madeira (Portugal)",
+    "city": "Madeira",
+    "country": "Portugal",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://streaming-live.rtp.pt/liveradio/antena3madeira80a/playlist.m3u8",
+    "format": "HLS",
+    "bitrateKbps": 166,
+    "homepage": "https://www.rtp.pt/play/direto/antena3madeira",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:29.041Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "application/vnd.apple.mpegurl",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "FNC",
+    "stationUuid": "25847e5e-2769-478a-9bb3-a9ae9b8a0a9e",
+    "station": "Rádio Festival Madeira (98.4 FM)",
+    "city": "Madeira",
+    "country": "Portugal",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://audio.serv.pt/8012/stream.mp3",
+    "format": "MP3",
+    "bitrateKbps": 192,
+    "homepage": "https://rfestival.pt/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:29.591Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "LIS",
+    "stationUuid": "fd6b0dc7-1684-4677-8a63-0c28d988c4b0",
+    "station": "Antena 1 (Portugal)",
+    "city": "Lisbon",
+    "country": "Portugal",
+    "latitude": 38.71886720793689,
+    "longitude": -9.097023010253908,
+    "streamUrl": "https://radiocast.rtp.pt/antena180a.mp3",
+    "format": "MP3",
+    "bitrateKbps": 80,
+    "homepage": "https://www.rtp.pt/play/direto/antena1",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:46:26.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "LIS",
+    "stationUuid": null,
+    "station": "RDP Africa (Portugal)",
+    "city": "Lisbon",
+    "country": "Portugal",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://radiocast.rtp.pt/rdpafrica80a.mp3",
+    "format": "MP3",
+    "bitrateKbps": 80,
+    "homepage": "https://www.rtp.pt/play/direto/rdpafrica",
+    "directorySource": "Official station website",
+    "verifiedAt": "2026-07-27T17:46:26.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "LIS",
+    "stationUuid": "2b501db4-e4b6-4106-9670-9875536f70f1",
+    "station": "Rádio Comercial",
+    "city": "Lisbon",
+    "country": "Portugal",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://stream-hls.bauermedia.pt/comercial.aac/playlist.m3u8",
+    "format": "HLS",
+    "bitrateKbps": 128,
+    "homepage": "https://radiocomercial.pt/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:30.410Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "application/vnd.apple.mpegurl",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "PAR",
+    "stationUuid": "0b80555f-eb5c-4fce-94d2-109eec7bee6b",
+    "station": "France Inter",
+    "city": "Paris",
+    "country": "France",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://icecast.radiofrance.fr/franceinter-hifi.aac",
+    "format": "AAC",
+    "bitrateKbps": 192,
+    "homepage": "https://www.radiofrance.fr/franceinter",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "PAR",
+    "stationUuid": "797a1245-f5b0-4a8c-a450-2d74c3defa6e",
+    "station": "RADIO NOVA",
+    "city": "Paris",
+    "country": "France",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://novazz.ice.infomaniak.ch/novazz-128.mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.nova.fr/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:31.639Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "PAR",
+    "stationUuid": "2dcf08e1-215c-41cc-b413-1c0103b327f9",
+    "station": "BFM Avec RMC",
+    "city": "Paris",
+    "country": "France",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://audio.bfmtv.com/rmcradio_128.mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://rmc.bfmtv.com/en-direct/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:32.951Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "BER",
+    "stationUuid": "1c3e8be2-5b14-4933-bad3-87cbc227cba4",
+    "station": "Deutschlandfunk | DLF | MP3 128k",
+    "city": "Berlin",
+    "country": "Germany",
+    "latitude": 52.4802578,
+    "longitude": 13.3347639,
+    "streamUrl": "https://st01.sslstream.dlf.de/dlf/01/128/mp3/stream.mp3?aggregator=web",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.deutschlandfunk.de/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:34.527Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "BER",
+    "stationUuid": "10f16cf6-bc45-4b67-8f17-9758f249a61a",
+    "station": "Deutschlandfunk Kultur | DLF | MP3 128k",
+    "city": "Berlin",
+    "country": "Germany",
+    "latitude": 52.4802578,
+    "longitude": 13.3347639,
+    "streamUrl": "https://st02.sslstream.dlf.de/dlf/02/128/mp3/stream.mp3?aggregator=web",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.deutschlandfunkkultur.de/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:35.241Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "BER",
+    "stationUuid": "0e8da368-6917-11e8-b15b-52543be04c81",
+    "station": "Electro Swing Revolution",
+    "city": "Berlin",
+    "country": "Germany",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://streamer.radio.co/s2c3cc784b/listen",
+    "format": "MP3",
+    "bitrateKbps": 192,
+    "homepage": "https://www.electroswing-radio.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:35.963Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "HAM",
+    "stationUuid": null,
+    "station": "NDR 90,3",
+    "city": "Hamburg",
+    "country": "Germany",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://icecast.ndr.de/ndr/ndr903/hamburg/mp3/128/stream.mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.ndr.de/903",
+    "directorySource": "Official station website",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "HAM",
+    "stationUuid": "efcd88c5-cd6f-11e8-a54a-52543be04c81",
+    "station": "ByteFM (192k)",
+    "city": "Hamburg",
+    "country": "Germany",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://bytefm.cast.addradio.de/bytefm/main/high/stream",
+    "format": "MP3",
+    "bitrateKbps": 192,
+    "homepage": "https://www.byte.fm/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:38.478Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "HAM",
+    "stationUuid": "eac50ec2-a5ec-4600-a863-3116f40bcc41",
+    "station": "N-JOY",
+    "city": null,
+    "country": "Germany",
+    "latitude": null,
+    "longitude": null,
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.n-joy.de/",
+    "directorySource": "Radio Browser",
+    "streamUrl": "https://icecast.ndr.de/ndr/njoy/live/mp3/128/stream.mp3",
+    "verifiedAt": "2026-07-27T17:43:06.831Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "AMS",
+    "stationUuid": "c0357737-c4b3-4237-b8e9-1b14db02c157",
+    "station": "Qmusic",
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://icecast-qmusicnl-cdp.triple-it.nl/Qmusic_nl_live.mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "http://www.qmusic.nl/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:41.722Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "AMS",
+    "stationUuid": "005636e9-2142-497b-8f51-606d536fb18a",
+    "station": "NPO Radio 2",
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "latitude": 52.35211857272093,
+    "longitude": 4.833984375000001,
+    "streamUrl": "https://icecast.omroep.nl/radio2-bb-aac",
+    "format": "AAC",
+    "bitrateKbps": 64,
+    "homepage": "https://www.nporadio2.nl/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "AMS",
+    "stationUuid": "a2690cef-0049-4fc0-96af-de5dc76e2ac2",
+    "station": "Amsterdam Funk Channel (AFC)",
+    "city": "Amsterdam",
+    "country": "Netherlands",
+    "latitude": 52.35211857272093,
+    "longitude": 4.833984375000001,
+    "streamUrl": "https://stream.afc.fm/",
+    "format": "MP3",
+    "bitrateKbps": 192,
+    "homepage": "https://www.afc.fm/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:40.473Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TOS",
+    "stationUuid": "603e9db3-89e6-4b4c-adfe-a52f216c412b",
+    "station": "NRK P1 Troms (Høy kvalitet AAC)",
+    "city": "Tromsø",
+    "country": "Norway",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/p1_dk3_aac_h",
+    "format": "AAC",
+    "bitrateKbps": 159,
+    "homepage": "https://lyd.nrk.no/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:44.076Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aacp",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TOS",
+    "stationUuid": "5e6bd2c0-b52a-4208-ad37-a305886c8c62",
+    "station": "Radio Tromsø Hits",
+    "city": "Tromsø",
+    "country": "Norway",
+    "latitude": 69.66677544264633,
+    "longitude": 18.94248962402344,
+    "streamUrl": "https://stream.rthits.no/rthits192",
+    "format": "MP3",
+    "bitrateKbps": 192,
+    "homepage": "https://radiotromso.no/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:42.705Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TOS",
+    "stationUuid": "d228d5ee-3867-492f-a9ca-2adbe7815da3",
+    "station": "NRK Sápmi",
+    "city": "Tromsø",
+    "country": "Norway",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://cdn0-47115-liveicecast0.dna.contentdelivery.net/sapmi_mp3_h",
+    "format": "MP3",
+    "bitrateKbps": 192,
+    "homepage": "https://radio.nrk.no/direkte/sapmi",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:44.859Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "STO",
+    "stationUuid": "0d3a2fd0-4c71-46ee-8700-2686fb699307",
+    "station": "RIX FM 106,7",
+    "city": "Stockholm",
+    "country": "Sweden",
+    "latitude": 59.309904959381754,
+    "longitude": 18.059187233448032,
+    "streamUrl": "https://fm01-ice.stream.khz.se/fm01_mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.ilikeradio.se/rixfm",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:46.995Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "STO",
+    "stationUuid": "0772676d-9fe4-4945-b63f-3e88e5aeb374",
+    "station": "Mix Megapol 104,3",
+    "city": "Stockholm",
+    "country": "Sweden",
+    "latitude": 59.32715197400692,
+    "longitude": 18.015351891517643,
+    "streamUrl": "https://live-bauerse-fm.sharp-stream.com/mixmegapol_instream_se_mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://radioplay.se/mixmegapol",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:48.495Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "STO",
+    "stationUuid": "b30f805d-8402-4555-b182-dcf5fa0820da",
+    "station": "STAR FM 107,1",
+    "city": "Stockholm",
+    "country": "Sweden",
+    "latitude": 59.30989674547619,
+    "longitude": 18.059165775775913,
+    "streamUrl": "https://fm05-ice.stream.khz.se/fm05_mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.ilikeradio.se/starfm",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:50.586Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "VIE",
+    "stationUuid": "e723f7f8-0db1-4bc5-a64c-64d8377f9f9a",
+    "station": "ORF Hitradio Ö3 | HQ",
+    "city": "Vienna",
+    "country": "Austria",
+    "latitude": 48.1776994,
+    "longitude": 16.2877707,
+    "streamUrl": "https://orf-live.ors-shoutcast.at/oe3-q2a",
+    "format": "MP3",
+    "bitrateKbps": 192,
+    "homepage": "http://oe3.orf.at/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:52.437Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "VIE",
+    "stationUuid": null,
+    "station": "Radio Wien",
+    "city": "Vienna",
+    "country": "Austria",
+    "latitude": 48.1776994,
+    "longitude": 16.2877707,
+    "streamUrl": "https://orf-live.ors-shoutcast.at/wie-q1a",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://wien.orf.at/",
+    "directorySource": "Official station website",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "VIE",
+    "stationUuid": "206f93c5-5f3c-4ba1-82c2-19a42582fcc2",
+    "station": "FM4 | ORF",
+    "city": "Vienna",
+    "country": "Austria",
+    "latitude": 48.1776994,
+    "longitude": 16.2877707,
+    "streamUrl": "https://orf-live.ors-shoutcast.at/fm4-q1a",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://fm4.orf.at/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:50.968Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "ROM",
+    "stationUuid": "7bd0a378-7d60-4363-8699-764af50f30c7",
+    "station": "Rai Radio 1",
+    "city": "Roma",
+    "country": "Italy",
+    "latitude": 41.89775226574357,
+    "longitude": 12.49160796403885,
+    "streamUrl": "https://icecdn-19d24861e90342cc8decb03c24c8a419.msvdn.net/icecastRelay/S16355530/Q4zh3NTu28Rx/icecast",
+    "format": "MP3",
+    "bitrateKbps": 256,
+    "homepage": null,
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "ROM",
+    "stationUuid": "fbe60456-15e8-4db4-a1f1-4ce77b7aaecc",
+    "station": "Radio Capital",
+    "city": "Roma",
+    "country": "Italy",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://4c4b867c89244861ac216426883d1ad0.msvdn.net/radiocapital/radiocapital/master_ma.m3u8",
+    "format": "HLS",
+    "bitrateKbps": 122,
+    "homepage": "https://www.capital.it/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:54.129Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "application/vnd.apple.mpegurl",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "ROM",
+    "stationUuid": "32c1aa82-c639-4c73-9236-948bbda511d7",
+    "station": "Radio Manà Manà Sport Roma",
+    "city": "Roma",
+    "country": "Italy",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://stream10.xdevel.com/audio2s975363-2142/stream/icecast.audio",
+    "format": "AAC",
+    "bitrateKbps": null,
+    "homepage": "https://www.manamanasportroma.it/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:52.890Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TRN",
+    "stationUuid": null,
+    "station": "Radio GRP",
+    "city": "Torino",
+    "country": "Italy",
+    "latitude": 45.073093,
+    "longitude": 7.625348,
+    "streamUrl": "https://stream5.xdevel.com/audio0s976619-1386/stream/icecast.audio",
+    "format": "AAC",
+    "bitrateKbps": null,
+    "homepage": "https://radiogrp.it/",
+    "directorySource": "Official station website",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aacp",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TRN",
+    "stationUuid": "69aff725-522c-11e9-a4d7-52543be04c81",
+    "station": "Radio Bianconera",
+    "city": "Torino",
+    "country": "Italy",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://stream.tmwradio.com/bianconera.aac",
+    "format": "AAC",
+    "bitrateKbps": 64,
+    "homepage": "http://www.radiobianconera.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:55.482Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aacp",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TRN",
+    "stationUuid": "9febcbf6-990d-4c98-9645-58707b092945",
+    "station": "Radio Dreamland",
+    "city": "Torino",
+    "country": "Italy",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://dreamsiteradiocp3.com/proxy/dreamland?mp=/stream",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "http://www.radiodreamland.it/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:56.317Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "BUD",
+    "stationUuid": "98b22cd2-0ec8-4bb1-a5f6-f168de7548b5",
+    "station": "Retro Rádió",
+    "city": "Budapest",
+    "country": "Hungary",
+    "latitude": 47.4888558,
+    "longitude": 19.0335664,
+    "streamUrl": "https://icast.connectmedia.hu/5001/live.mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "http://www.retroradio.hu/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:56.928Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "BUD",
+    "stationUuid": "9e077bed-f46f-4506-8237-c26be0538fdc",
+    "station": "Klubrádió 95,3",
+    "city": "Budapest",
+    "country": "Hungary",
+    "latitude": 47.486028093177474,
+    "longitude": 19.055786132812504,
+    "streamUrl": "https://a7.asurahosting.com:8160/radio.mp3",
+    "format": "MP3",
+    "bitrateKbps": 96,
+    "homepage": "https://www.klubradio.hu/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:57.174Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "BUD",
+    "stationUuid": "48acbf47-f731-4c22-91b2-385d2fbb76c9",
+    "station": "Kossuth Rádió",
+    "city": "Budapest",
+    "country": "Hungary",
+    "latitude": 47.4888558,
+    "longitude": 19.0335664,
+    "streamUrl": "https://mr-stream.connectmedia.hu/4736/mr1.mp3",
+    "format": "MP3",
+    "bitrateKbps": 64,
+    "homepage": "https://mediaklikk.hu/kossuth/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "AND",
+    "stationUuid": null,
+    "station": "Ràdio Nacional d'Andorra",
+    "city": "Andorra",
+    "country": "Andorra",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://livesg.rtva.hiway.media/restreamer/rtva_client/gpu-f-c0-7/restreamer/outgest/578e48f3-c654-4638-948a-be990c90807b/manifest.m3u8?t=",
+    "format": "HLS",
+    "bitrateKbps": null,
+    "homepage": "https://www.rtva.ad/en-directe/rna",
+    "directorySource": "Official station website",
+    "verifiedAt": "2026-07-27T17:38:58.052Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "application/vnd.apple.mpegurl",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "AND",
+    "stationUuid": null,
+    "station": "Andorra Música",
+    "city": "Andorra",
+    "country": "Andorra",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://livesg.rtva.hiway.media/restreamer/rtva_client/gpu-g-c0-3/restreamer/outgest/e2b4dcb0-7ae3-4335-992a-23ba82e529b3/manifest.m3u8?t=",
+    "format": "HLS",
+    "bitrateKbps": null,
+    "homepage": "https://www.rtva.ad/en-directe/am",
+    "directorySource": "Official station website",
+    "verifiedAt": "2026-07-27T17:38:58.106Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "application/vnd.apple.mpegurl",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "AND",
+    "stationUuid": null,
+    "station": "Ràdio SER Principat d'Andorra",
+    "city": "Andorra",
+    "country": "Andorra",
+    "latitude": null,
+    "longitude": null,
+    "format": "MP3",
+    "bitrateKbps": 96,
+    "homepage": "https://cadenaser.com/radio-ser-principat-d-andorra/",
+    "directorySource": "Official station website",
+    "streamUrl": "https://20103.live.streamtheworld.com/SER_ANDORRA.mp3",
+    "verifiedAt": "2026-07-27T17:42:04.977Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "RAK",
+    "stationUuid": "6df8b651-cc31-44ed-bdbe-c602f85b707e",
+    "station": "Marrakechplus",
+    "city": "Marrakesh",
+    "country": "Morocco",
+    "latitude": 31.63199963400534,
+    "longitude": -7.98858404159546,
+    "streamUrl": "https://cast5.my-control-panel.com/proxy/marrakec/stream",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://webradio.marrakechplus.ma/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:58.603Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "RAK",
+    "stationUuid": "4e98fd49-4a3b-4b9a-b9ad-ec28914a3951",
+    "station": "Ness Radio",
+    "city": "Marrakesh",
+    "country": "Morocco",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://radio.nessradio.net:8212/nessradio-hd",
+    "format": "MP3",
+    "bitrateKbps": 256,
+    "homepage": "https://nessradio.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:58.980Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "RAK",
+    "stationUuid": "239e89a7-62a1-4c5c-b9a1-132dae7a3ac8",
+    "station": "MEDI 1 RADIO",
+    "city": null,
+    "country": "Morocco",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://cdn.live.easybroadcast.io/live/83_medi1radio-maghreb_8s9i4bn/playlist.m3u8",
+    "format": "HLS",
+    "bitrateKbps": 192,
+    "homepage": "https://radiolive.ma/station/medi-1-radio/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:38:59.336Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "application/vnd.apple.mpegurl",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "SEU",
+    "stationUuid": "6127891e-b89d-4424-9e3f-7723b875465e",
+    "station": "East Africa Radio FM",
+    "city": null,
+    "country": "Tanzania",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://eatv.radioca.st/stream",
+    "format": "MP3",
+    "bitrateKbps": 64,
+    "homepage": "https://www.eastafricaradio.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:00.033Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "SEU",
+    "stationUuid": "a8051d12-4186-4b72-8345-5a8091499a5b",
+    "station": "Radio One Stereo",
+    "city": null,
+    "country": "Tanzania",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://radioonetanzania.radioca.st/stream",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.radio1.co.tz/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:00.700Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "SEU",
+    "stationUuid": "7ed9b9a3-8420-4999-a62a-54d9cf41d4fe",
+    "station": "Capital Radio",
+    "city": null,
+    "country": "Tanzania",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://capitalradio.radioca.st/stream",
+    "format": "MP3",
+    "bitrateKbps": 64,
+    "homepage": "https://www.capitalradio.co.tz/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:01.352Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "ZNZ",
+    "stationUuid": null,
+    "station": "Zenj FM",
+    "city": "Zanzibar",
+    "country": "Tanzania",
+    "latitude": -6.16,
+    "longitude": 39.19,
+    "streamUrl": "https://radiotadio.co.tz/zenji-fm-stream",
+    "format": "OGG",
+    "bitrateKbps": 128,
+    "homepage": "https://radiotadio.co.tz/zenjfm/",
+    "directorySource": "Official station website",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/ogg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "ZNZ",
+    "stationUuid": null,
+    "station": "TAMU FM",
+    "city": "Zanzibar",
+    "country": "Tanzania",
+    "latitude": -6.16,
+    "longitude": 39.19,
+    "streamUrl": "https://stream.zeno.fm/dcomssbgoumtv",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.tamufm.com/",
+    "directorySource": "Official station website",
+    "verifiedAt": "2026-07-27T18:23:33.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "ZNZ",
+    "stationUuid": null,
+    "station": "AM24 Radio",
+    "city": "Zanzibar",
+    "country": "Tanzania",
+    "latitude": -6.16,
+    "longitude": 39.19,
+    "streamUrl": "https://cast1.asurahosting.com/proxy/livefm/live",
+    "format": "MP3",
+    "bitrateKbps": 96,
+    "homepage": null,
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:20:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "OSA",
+    "stationUuid": "1bca74bf-82e7-4631-87b6-1e96be3bae43",
+    "station": "SOUND UP STATION NFRS",
+    "city": "Osaka",
+    "country": "Japan",
+    "latitude": 34.6391674026098,
+    "longitude": 135.50172060728076,
+    "streamUrl": "https://stream2.rcast.net/70945",
+    "format": "MP3",
+    "bitrateKbps": 96,
+    "homepage": "https://www.nfrsradio.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:04.981Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "OSA",
+    "stationUuid": "57cf528a-02be-4805-a510-6d05bb0ff996",
+    "station": "REPLAY NEWS - 日本語 5分ごとのニュースラジオ",
+    "city": "Osaka",
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://replaynewsja.ice.infomaniak.ch/replaynewsja-128.mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://www.replaynews.net/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:04.307Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "OSA",
+    "stationUuid": "ee614813-177f-4b83-ae6a-5e5b22d440d1",
+    "station": "AshiyaRadio〜アシヤ・ラヂヲ〜",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "format": "AAC",
+    "bitrateKbps": 192,
+    "homepage": "https://ashiya.radio/",
+    "directorySource": "Radio Browser",
+    "streamUrl": "https://s3.radio.co/sc8d895604/listen",
+    "verifiedAt": "2026-07-27T17:42:04.645Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/aac",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "KYO",
+    "stationUuid": "30b09043-9b67-43d7-b9c6-b4401e5cb636",
+    "station": "BOX : Japan City Pop - 日本のシティポップ",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "format": "MP3",
+    "bitrateKbps": null,
+    "homepage": "https://boxradio.net/",
+    "directorySource": "Radio Browser",
+    "streamUrl": "https://boxradio-edge-00.streamafrica.net/jpopchill",
+    "verifiedAt": "2026-07-27T17:42:04.860Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "KYO",
+    "stationUuid": "9d4aa07b-f080-4d6c-87e8-15c080c72dd2",
+    "station": "Miku Radio",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "homepage": "https://miku.fm/public/miku",
+    "directorySource": "Radio Browser",
+    "streamUrl": "https://miku.fm/listen/miku/mp3-320",
+    "verifiedAt": "2026-07-27T17:42:05.168Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "KYO",
+    "stationUuid": "7b85cb6b-ebb8-11e8-a471-52543be04c81",
+    "station": "R/a/dio",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "format": "MP3",
+    "bitrateKbps": null,
+    "homepage": "http://r-a-d.io/",
+    "directorySource": "Radio Browser",
+    "streamUrl": "https://relay0.r-a-d.io/main.mp3",
+    "verifiedAt": "2026-07-27T17:42:04.718Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TYO",
+    "stationUuid": "fad42bb6-2865-4854-94a7-96152e881800",
+    "station": "FM世田谷",
+    "city": "Tokyo",
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://fmsetagaya834.out.airtime.pro/fmsetagaya834_a",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://fmsetagaya.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:12:02.549Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TYO",
+    "stationUuid": "1909f412-f4d4-4edd-9ea2-50a288183ba0",
+    "station": "OTTAVA",
+    "city": "Tokyo",
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://ottava2.out.airtime.pro/ottava2_a",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://ottava.jp/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:12:03.445Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TYO",
+    "stationUuid": "fdffc27f-a096-4be8-b3bf-2c51a943a1d1",
+    "station": "五反野FM 89.2",
+    "city": "Tokyo",
+    "country": "Japan",
+    "latitude": 35.765196631213904,
+    "longitude": 139.80937242507937,
+    "streamUrl": "https://radio.gotanno.love/",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://stcat.com/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T18:12:04.053Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "HIJ",
+    "stationUuid": "12ac30d1-1900-4edc-baef-7c027232ee64",
+    "station": "J-Rock PowerPlay",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://kathy.torontocast.com:3340/stream",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://asiadreamradio.torontocast.stream/stations/en/index.html",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:14.214Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "HIJ",
+    "stationUuid": "e698b1df-bd9c-4084-9c21-22a452b27664",
+    "station": "Listen.moe J-Pop (MP3)",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://listen.moe/fallback",
+    "format": "MP3",
+    "bitrateKbps": 256,
+    "homepage": "https://listen.moe/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:14.546Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "HIJ",
+    "stationUuid": "248a7684-7e28-4912-9812-efefc2bba2e1",
+    "station": "Gensokyo Radio",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://stream.gensokyoradio.net/3/",
+    "format": "MP3",
+    "bitrateKbps": 256,
+    "homepage": "https://gensokyoradio.net/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:15.580Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TAK",
+    "stationUuid": "37d1f4fb-0812-432d-af30-e91ca28ae05c",
+    "station": "Big B Radio - Jpop",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://antares.dribbcast.com/proxy/jpop?mp=/s",
+    "format": "MP3",
+    "bitrateKbps": 192,
+    "homepage": "https://bigbradio.net/jpop",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:16.011Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TAK",
+    "stationUuid": "e4f7dac4-db05-446d-9282-d79a56ce7327",
+    "station": "Jazz Sakura",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://kathy.torontocast.com:3330/;",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://asiadreamradio.torontocast.stream/stations/en/index.html",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:16.275Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "destinationCode": "TAK",
+    "stationUuid": "3ab8903d-117f-4f25-802e-d048dcdd0675",
+    "station": "OnlyHits Japan",
+    "city": null,
+    "country": "Japan",
+    "latitude": null,
+    "longitude": null,
+    "streamUrl": "https://delivery.onlyhitsradio.net/japan",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "homepage": "https://j.onlyhit.us/",
+    "directorySource": "Radio Browser",
+    "verifiedAt": "2026-07-27T17:39:19.029Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  }
+]
