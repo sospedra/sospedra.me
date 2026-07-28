@@ -102,15 +102,11 @@ const STALLS: Record<StallId, StallSpec> = {
   },
   games: {
     label: 'games',
-    href: '/g-snake',
+    href: '/games',
     tint: '#4a90d9',
     desktopSize: [88, 120],
-    desc: 'Two arcade cabinets, no coins needed.',
-    links: [
-      { label: 'g-snake', href: '/g-snake' },
-      { label: 'g-mines', href: '/g-mines' },
-      { label: 'rubiks', href: '/rubiks' },
-    ],
+    desc: 'Six game files, no coins needed.',
+    links: [{ label: 'browse the archive', href: '/games' }],
   },
   travel: {
     label: 'travel',
@@ -156,11 +152,11 @@ const STALLS: Record<StallId, StallSpec> = {
   },
   talks: {
     label: 'talks',
-    href: '/talks',
+    href: '/videoclub',
     tint: '#e0a040',
     desktopSize: [86, 110],
     desc: TALKS_DESC,
-    links: [{ label: 'play the tapes', href: '/talks' }],
+    links: [{ label: 'play the tapes', href: '/videoclub' }],
   },
   papers: {
     label: 'papers',

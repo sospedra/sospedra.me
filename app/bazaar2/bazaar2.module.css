@@ -4,7 +4,8 @@
   --alley-gap: 5svh;
   /* market meter: derived from the 1248px frame so floors never overflow;
      3 stalls (270u) + gaps + stairs = ~10.5m of content per floor */
-  --mkt-w: min(100vw, 1248px);
+  --mkt-w: min(100vw, calc(1248px + 10svh));
+  --stairs-w: max(calc(var(--mkt-m) * 1.272), 9vw);
   /* outer edges of the two random buildings, for the fg silhouettes */
   --padl-left: calc(
     var(--street-margin) +
@@ -15,7 +16,7 @@
   --padr-right: calc(
     var(--street-margin) -
     var(--street-shift) +
-    10svh -
+    17svh -
     86.4svh
   );
   --mkt-m: min(calc(var(--mkt-w) / 11), 16.5svh);
@@ -44,6 +45,12 @@
   .scene {
     --m: min(10svh, 13vw);
     --hs: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .scene {
+    --stairs-w: max(calc(var(--mkt-m) * 1.7), 15svh);
   }
 }
 
@@ -91,6 +98,17 @@
   background: url("/images/bazaar2/assets/street2/bg.png") left bottom repeat-x;
   background-size: auto 96%;
   image-rendering: pixelated;
+}
+
+/* the lone red tower: the tallest silhouette, appears exactly once */
+.sTower {
+  position: absolute;
+  left: 50vw;
+  translate: -50% 0;
+  bottom: 76svh;
+  height: 26svh;
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* street-level light haze: the bottom of the skyline glows */
@@ -160,7 +178,7 @@
 .sPadR {
   position: absolute;
   /* left edge = CD right edge - 1svh; pad width 56svh * 0.8764 = 49.1svh */
-  right: calc(var(--street-margin) - var(--street-shift) + 3svh - 86.4svh);
+  right: calc(var(--street-margin) - var(--street-shift) + 7svh - 86.4svh);
   bottom: 11svh;
   height: 98.6svh;
   z-index: 3;
@@ -186,6 +204,31 @@
   height: 46svh;
   aspect-ratio: 1113 / 776;
   z-index: 2;
+}
+
+/* the neighboring block shades only the right-hand wall; the building
+   alpha keeps the wash off its cutouts, and the rooftop stays untouched */
+.sCDWrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent 24%,
+    rgb(0 0 0 / 0.1) 38%,
+    rgb(0 0 0 / 0.24) 60%,
+    rgb(0 0 0 / 0.42) 80%,
+    rgb(0 0 0 / 0.64) 100%
+  );
+  clip-path: inset(13% 0 0);
+  -webkit-mask:
+    url("/images/bazaar2/assets/street2/building-cd.png") center / 100% 100%
+    no-repeat;
+  mask:
+    url("/images/bazaar2/assets/street2/building-cd.png") center / 100% 100%
+    no-repeat;
 }
 
 .sCDImg {
@@ -666,12 +709,22 @@
 /* pipes slab between floors, bazaar1 style */
 .slab {
   position: relative;
-  z-index: 3;
+  /* above even the dim-filter stacking contexts of the floors */
+  z-index: 6;
   height: calc(var(--mkt-m) * 0.75);
   margin: calc(var(--mkt-m) * -0.25) 0;
-  background-repeat: repeat-x;
-  background-size: auto 100%;
+  /* layer 1: the single featured element, once, grid-aligned two tiles in;
+     layer 2: the plain tile repeating (tile width = 4x band height) */
+  background-repeat: no-repeat, repeat-x;
+  background-size:
+    auto 100%,
+    auto 100%;
+  background-position:
+    calc(var(--mkt-m) * 6) bottom,
+    left bottom;
   image-rendering: pixelated;
+  /* the separator is nearer than the floors: soft focus while passing */
+  filter: brightness(0.55) blur(2px);
   box-shadow:
     0 10px 24px rgb(0 0 0 / 0.55),
     0 -10px 24px rgb(0 0 0 / 0.55);
@@ -729,6 +782,60 @@
   overflow: visible; /* dialogs pop past the floor edge */
 }
 
+/* signs hang from the floor above: up follows the stairs, down opposes it */
+.wayfindingRail {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: min(100%, 1024px);
+  height: calc(var(--mkt-m) * 1.8);
+  z-index: 4;
+  pointer-events: none;
+}
+
+.wayfindingSign {
+  position: absolute;
+  top: 0;
+  width: clamp(64px, calc(var(--mkt-m) * 0.9), 104px);
+  padding: 0;
+  border: 0;
+  background: none;
+  line-height: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.wayfindingSign img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.wayfindingSign:focus-visible {
+  outline: 2px solid #37f7e0;
+  outline-offset: 2px;
+}
+
+.wayfindingLeft {
+  left: 0;
+}
+
+.wayfindingRight {
+  right: 0;
+}
+
+/* on wide screens the signs live in the gutters beyond the 1024px rail */
+@media (min-width: 1024px) {
+  .wayfindingLeft {
+    translate: -65% 0;
+  }
+
+  .wayfindingRight {
+    translate: 65% 0;
+  }
+}
+
 /* everything on a market floor lives in a centered 1248px frame */
 .mktFrame {
   position: absolute;
@@ -737,6 +844,7 @@
   left: 50%;
   translate: -50% 0;
   width: min(100%, 1248px);
+  z-index: 2;
 }
 
 @media (max-width: 700px) {
@@ -754,12 +862,50 @@
   background-position: left bottom;
   background-size: auto 100%;
   image-rendering: pixelated;
-  filter: brightness(0.72);
+  filter: brightness(0.6);
+}
+
+/* the walkable band recedes: darker at its far (top) edge */
+.mktGroundShade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 22%;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.5),
+    rgb(0 0 0 / 0.15) 55%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.prop {
+  position: absolute;
+  width: auto;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+/* beyond the frame the market falls into darkness */
+.floorMkt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0.62),
+    transparent calc((100vw - var(--mkt-w)) / 2),
+    transparent calc(100vw - (100vw - var(--mkt-w)) / 2),
+    rgb(0 0 0 / 0.62)
+  );
 }
 
 .mktRow {
   position: absolute;
-  inset: auto 0 calc(var(--mkt-m) * 0.65) 0;
+  inset: auto 0 calc(var(--mkt-m) * 0.65 - 4svh) 0;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -770,16 +916,22 @@
 /* stairs sit at the viewport edge; the row only dodges the part of the
    stairs lane that intrudes into the centered frame */
 .floorMkt[data-stairs="left"] .mktRow {
-  left: max(0px, calc(var(--mkt-m) * 1.272 - (100vw - var(--mkt-w)) / 2));
+  left: max(
+    0px,
+    calc(max(var(--mkt-m) * 1.272, 9vw) - (100vw - var(--mkt-w)) / 2)
+  );
 }
 
 .floorMkt[data-stairs="right"] .mktRow {
-  right: max(0px, calc(var(--mkt-m) * 1.272 - (100vw - var(--mkt-w)) / 2));
+  right: max(
+    0px,
+    calc(max(var(--mkt-m) * 1.272, 9vw) - (100vw - var(--mkt-w)) / 2)
+  );
 }
 
 .stairs {
   align-self: stretch;
-  width: calc(var(--mkt-m) * 1.272);
+  width: var(--stairs-w);
   flex: 0 0 auto;
   line-height: 0;
 }
@@ -802,7 +954,9 @@
   right: 0;
 }
 
-.stairs img {
+.stairsColumn {
+  position: relative;
+  display: block;
   width: 100%;
   height: 100%;
 }
@@ -822,6 +976,7 @@
 }
 
 .mGridR .stairs {
+  position: relative;
   grid-column: 2;
   grid-row: 1 / 3;
   width: auto;
@@ -833,18 +988,171 @@
 }
 
 .mGridL .stairs {
+  position: relative;
   grid-column: 1;
   grid-row: 1 / 3;
   width: auto;
   align-self: stretch;
 }
 
+/*
+ * Mobile is one continuous stairwell with two occupied landings. The divider
+ * and landing remain children of the stair lane. Their shared 2:1 source
+ * canvas renders at half viewport scale, so its deck meets the floor tile
+ * without per-floor nudges.
+ */
+.mobileFloorSplit {
+  position: absolute;
+  top: 50%;
+  width: 100vw;
+  height: 25vw;
+  translate: 0 -60%;
+  pointer-events: none;
+}
+
+.mGridR .mobileFloorSplit {
+  right: 0;
+}
+
+.mGridL .mobileFloorSplit {
+  left: 0;
+}
+
+.mobileFloorSplitTile {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 7;
+  background-image: url("/images/bazaar2/assets/stairs-mobile-divider.png");
+  background-repeat: repeat-x;
+  background-position: center;
+  background-size: 50vw 25vw;
+}
+
+.mGridL .mobileFloorSplitTile {
+  background-position: 20vw center;
+}
+
+.mGridR .mobileFloorSplitTile {
+  background-position: -20vw center;
+}
+
+.mobileFloorSplitPlatform {
+  position: absolute;
+  top: 0;
+  z-index: 8;
+  width: 50vw;
+  height: 25vw;
+  translate: 0 -3svh;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.mGridR .mobileFloorSplitPlatform {
+  right: -5vw;
+  transform: scaleX(-1);
+  transform-origin: right center;
+}
+
+.mGridL .mobileFloorSplitPlatform {
+  left: -5vw;
+  transform: none;
+  transform-origin: left center;
+}
+
+.mGridR .stairsColumn,
+.mGridL .stairsColumn {
+  position: absolute;
+  top: 0;
+  z-index: 6;
+  width: 40vw;
+  height: 95svh;
+}
+
+.mGridL .stairsColumn {
+  left: 0;
+  transform: none;
+}
+
+.mGridR .stairsColumn {
+  right: 0;
+  transform: scaleX(-1);
+}
+
 /* ---------- stalls ---------- */
 .stallWrap {
   position: relative;
+  z-index: 2;
   flex: 0 0 auto;
   width: calc(var(--mkt-m) * var(--stall-w) / 32);
   height: calc(var(--mkt-m) * var(--stall-h) / 32);
+  isolation: isolate;
+}
+
+/* contact shadow: grounds the place on the walkable band */
+.stallWrap::after {
+  content: "";
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  bottom: -1.6svh;
+  height: 3.2svh;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(0 0 0 / 0.55),
+    transparent 68%
+  );
+  pointer-events: none;
+}
+
+/* living air: faint dust motes drifting up through the stall's light */
+.motes {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(
+      circle 2px at 12% 80%,
+      rgb(255 220 160 / 0.8),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 1px at 34% 55%,
+      rgb(255 240 210 / 0.7),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 2px at 57% 88%,
+      rgb(200 230 255 / 0.5),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 1px at 79% 62%,
+      rgb(255 230 180 / 0.65),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 2px at 92% 74%,
+      rgb(255 220 160 / 0.5),
+      transparent 100%
+    );
+  background-size: 62% 190%;
+  background-repeat: repeat;
+  animation: moteFloat 18s linear infinite;
+}
+
+@keyframes moteFloat {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 -200%;
+  }
 }
 
 @media (max-width: 700px) {
@@ -865,6 +1173,197 @@
   inset: 0;
   display: block;
   line-height: 0;
+}
+
+/* fine vertical registration per place */
+.stallWrap[data-stall="uses"],
+.stallWrap[data-stall="games"] {
+  translate: 0 -4svh;
+}
+
+/* vertical layout instructions use the overlay grid: 1u = 1svh */
+.stallWrap[data-stall="console"] {
+  translate: 0; /* 2u up from the previous +2u position */
+}
+
+.stallWrap[data-stall="travel"],
+.stallWrap[data-stall="projects"],
+.stallWrap[data-stall="manual"],
+.stallWrap[data-stall="talks"] {
+  translate: 0 -2svh;
+}
+
+/* full-stall cel animation: all poses share one generated clean plate */
+.fullStallFrames {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fullStallBase {
+  opacity: 1;
+}
+
+.fullStallIdleSecond {
+  opacity: 0;
+  animation-duration: var(--full-stall-idle-duration);
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+  animation-delay: var(--full-stall-idle-delay);
+}
+
+.stallWrap[data-stall="uses"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 4.5s;
+  --full-stall-idle-delay: -0.45s;
+
+  animation-name: fullStallIdleAccent;
+}
+
+.stallWrap[data-stall="papers"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 2.6s;
+  --full-stall-idle-delay: -0.65s;
+
+  animation-name: fullStallIdleFlicker;
+}
+
+.stallWrap[data-stall="games"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 0.8s;
+  --full-stall-idle-delay: -0.12s;
+
+  animation-name: fullStallIdleEven;
+}
+
+.stallWrap[data-stall="talks"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 5s;
+  --full-stall-idle-delay: -1.5s;
+
+  animation-name: fullStallIdleBlink;
+}
+
+.stallWrap[data-stall="manual"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 1.4s;
+  --full-stall-idle-delay: -0.21s;
+
+  animation-name: fullStallIdleEven;
+}
+
+@keyframes fullStallIdleAccent {
+  0%,
+  86.99%,
+  94%,
+  100% {
+    opacity: 0;
+  }
+  87%,
+  93.99% {
+    opacity: 1;
+  }
+}
+
+@keyframes fullStallIdleFlicker {
+  0%,
+  67.99%,
+  73%,
+  81.99%,
+  84%,
+  100% {
+    opacity: 0;
+  }
+  68%,
+  72.99%,
+  82%,
+  83.99% {
+    opacity: 1;
+  }
+}
+
+@keyframes fullStallIdleEven {
+  0%,
+  49.99%,
+  100% {
+    opacity: 0;
+  }
+  50%,
+  99.99% {
+    opacity: 1;
+  }
+}
+
+@keyframes fullStallIdleBlink {
+  0%,
+  89.99%,
+  95%,
+  100% {
+    opacity: 0;
+  }
+  90%,
+  94.99% {
+    opacity: 1;
+  }
+}
+
+.fullStallHoverFrame {
+  opacity: 0;
+}
+
+.stallWrap:hover .fullStallIdleSecond,
+.stallWrap:focus-within .fullStallIdleSecond,
+.stallWrap.dialogOpen .fullStallIdleSecond {
+  animation: none;
+  opacity: 0;
+}
+
+.stallWrap:hover .fullStallHoverFirst,
+.stallWrap:focus-within .fullStallHoverFirst,
+.stallWrap.dialogOpen .fullStallHoverFirst {
+  animation: fullStallHoverFirst 0.6s steps(1, end) both;
+}
+
+.stallWrap:hover .fullStallHoverMiddle,
+.stallWrap:focus-within .fullStallHoverMiddle,
+.stallWrap.dialogOpen .fullStallHoverMiddle {
+  animation: fullStallHoverMiddle 0.6s steps(1, end) both;
+}
+
+.stallWrap:hover .fullStallHoverLast,
+.stallWrap:focus-within .fullStallHoverLast,
+.stallWrap.dialogOpen .fullStallHoverLast {
+  animation: fullStallHoverLast 0.6s steps(1, end) both;
+}
+
+@keyframes fullStallHoverFirst {
+  0%,
+  33.32% {
+    opacity: 1;
+  }
+  33.33%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fullStallHoverMiddle {
+  0%,
+  33.32%,
+  66.66%,
+  100% {
+    opacity: 0;
+  }
+  33.33%,
+  66.65% {
+    opacity: 1;
+  }
+}
+
+@keyframes fullStallHoverLast {
+  0%,
+  66.65% {
+    opacity: 0;
+  }
+  66.66%,
+  100% {
+    opacity: 1;
+  }
 }
 
 /* very subtle interior idle: the stall bg breathes light */
@@ -1081,16 +1580,13 @@
   }
 }
 
-/* ---------- FFIX dialog: bottom of the screen, never over the stall ---------- */
+/* ---------- FFIX dialog: a popover bubble anchored to its stall ---------- */
 .dialog {
   position: fixed;
-  bottom: calc(var(--m) * 0.35);
-  left: 50%;
-  translate: -50% 0;
+  translate: -50% calc(-100% - 14px);
   width: max-content;
-  max-width: min(440px, 86vw);
-  z-index: 30;
-  display: none;
+  max-width: min(300px, 76vw);
+  z-index: 2147483000;
   padding: 10px 12px;
   border: 2px solid #f2f2f2;
   border-radius: 8px;
@@ -1113,14 +1609,141 @@
   text-transform: none;
 }
 
-.stallWrap:hover .dialog,
-.stallWrap:focus-within .dialog,
-.dialogOpen .dialog {
-  display: block;
+/* keep the stall and its bubble in one continuous hover target */
+.dialog::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 16px;
+}
+
+/* speech tail pointing at the stall below */
+.dialog::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  translate: -50% 0;
+  border: 7px solid transparent;
+  border-top-color: #f2f2f2;
+}
+
+.gamesDialogs {
+  --dialog-shift-x: 0px;
+  --dialog-shift-y: 0px;
+
+  position: fixed;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(300px, calc(100vw - 16px));
+  box-sizing: border-box;
+  pointer-events: auto;
+  translate: calc(-50% + var(--dialog-shift-x))
+    calc(-100% - 14px + var(--dialog-shift-y));
+}
+
+/* one continuous hover bridge for the full conversation */
+.gamesDialogs::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 16px;
+}
+
+.dialog.gamesDialog {
+  position: relative;
+  width: fit-content;
+  max-width: 82%;
+  box-sizing: border-box;
+  translate: none;
+  overflow-wrap: anywhere;
+}
+
+/* the wrapper owns the bridge; each turn only owns its visible bubble */
+.dialog.gamesDialog::before {
+  display: none;
+}
+
+.gamesDialogSister {
+  align-self: flex-start;
+}
+
+.gamesDialogBrother {
+  align-self: flex-end;
+}
+
+/* alternate the tails toward the two siblings below */
+.gamesDialogSister::after {
+  left: 18%;
+}
+
+.gamesDialogBrother::after {
+  left: 82%;
+}
+
+.gamesDialogPending {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* the open stall paints above its market-row siblings */
+.stallWrap:hover,
+.stallWrap:focus-within,
+.dialogOpen {
+  z-index: 5;
+}
+
+@media (max-width: 700px) {
+  .dialog {
+    max-width: min(240px, 62vw);
+  }
 }
 
 .dialogDesc {
+  position: relative;
   margin: 0 0 8px;
+  white-space: pre-line;
+}
+
+.dialogDescSolo {
+  margin-bottom: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.typeMeasure {
+  visibility: hidden;
+}
+
+.typeText {
+  position: absolute;
+  inset: 0;
+}
+
+.typeCursor {
+  animation: typeCursor 0.24s steps(1, end) infinite;
+}
+
+@keyframes typeCursor {
+  50% {
+    opacity: 0;
+  }
 }
 
 .dialogLinks {
@@ -1130,16 +1753,43 @@
 }
 
 .dialogLinks a {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  width: max-content;
+  max-width: 100%;
   color: #ffe9a8;
   text-decoration: none;
 }
 
 .dialogLinks a::before {
   content: "\25B8 ";
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.linkTypeMeasure,
+.linkTypeText {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.linkTypeMeasure {
+  visibility: hidden;
+}
+
+.dialogLinkPending::before,
+.dialogLinkPending .linkTypeText {
+  visibility: hidden;
 }
 
 .dialogLinks a:hover {
   color: #ffffff;
+}
+
+.dialogLinks a:focus-visible {
+  outline: 1px solid #ffe9a8;
+  outline-offset: 2px;
 }
 
 /* ---------- hud ---------- */
@@ -1171,8 +1821,20 @@
   .scene *::before,
   .scene *::after {
     /* last block in the file: source order beats the animation classes above */
-    /* last block in the file: source order beats the animation classes above */
     animation: none;
     transition: none;
+  }
+
+  .scene .stallWrap .fullStallIdleSecond,
+  .scene .stallWrap .fullStallHoverFrame {
+    animation: none;
+    opacity: 0;
+  }
+
+  .scene .stallWrap:hover .fullStallHoverLast,
+  .scene .stallWrap:focus-within .fullStallHoverLast,
+  .scene .stallWrap.dialogOpen .fullStallHoverLast {
+    animation: none;
+    opacity: 1;
   }
 }
