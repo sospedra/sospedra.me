@@ -1,0 +1,1653 @@
+@reference "../../service/style/global.css";
+
+.shell {
+  background: #070b10;
+}
+
+.frame {
+  --camera-ivory: #e5dfd4;
+  --camera-ivory-high: #fbf8f1;
+  --camera-ivory-mid: #c8c1b6;
+  --camera-seam: #7d776f;
+  --camera-charcoal: #171a1f;
+  --camera-black: #05070a;
+  --camera-cyan: var(--color-signal-cyan, #6df7ea);
+  --camera-pink: var(--color-signal-pink-hot, #ff4fd8);
+  --camera-yellow: var(--color-signal-yellow, #ffea00);
+  --camera-paper: #f2ecde;
+  --camera-ink: #17151b;
+  --camera-muted: #8c969d;
+  --camera-fast: 140ms;
+  --camera-medium: 360ms;
+  --camera-print: 980ms;
+  --camera-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  position: relative;
+  min-height: 100dvh;
+  isolation: isolate;
+  overflow: hidden;
+  padding: calc(var(--safe-area-top) + clamp(0.75rem, 2vw, 1.25rem))
+    max(var(--space-page-inline), var(--safe-area-right))
+    calc(var(--safe-area-bottom) + clamp(1.5rem, 4vw, 3rem))
+    max(var(--space-page-inline), var(--safe-area-left));
+  background:
+    linear-gradient(rgb(255 255 255 / 1.5%) 1px, transparent 1px) 0 0 / 100% 4px,
+    radial-gradient(circle at 72% 45%, rgb(109 247 234 / 9%), transparent 23rem),
+    radial-gradient(circle at 24% 82%, rgb(255 79 216 / 9%), transparent 22rem),
+    linear-gradient(145deg, #0c141d, #05080c 62%, #0c0711);
+  color: var(--color-text, #fff);
+}
+
+.frame::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+  content: "";
+  mix-blend-mode: soft-light;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.frame::after {
+  position: fixed;
+  z-index: -1;
+  right: -15vw;
+  bottom: -13rem;
+  width: min(64rem, 90vw);
+  height: 26rem;
+  border: 1px solid rgb(109 247 234 / 7%);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 5rem,
+      rgb(109 247 234 / 4%) 5rem calc(5rem + 1px)
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 4rem,
+      rgb(109 247 234 / 4%) 4rem calc(4rem + 1px)
+    );
+  content: "";
+  opacity: 0.5;
+  pointer-events: none;
+  transform: perspective(26rem) rotateX(64deg) rotateZ(-7deg);
+}
+
+.rail {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  width: min(100%, 76rem);
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 auto;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--color-line, rgb(109 247 234 / 28%));
+}
+
+.homeLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+
+.telemetry {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  color: var(--camera-muted);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.telemetry span:first-child {
+  color: var(--camera-cyan);
+}
+
+.telemetry span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.telemetry span:last-child::before {
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: transparent;
+  content: "";
+}
+
+.telemetry span[data-active="true"] {
+  color: var(--camera-cyan);
+}
+
+.telemetry span[data-active="true"]::before {
+  background: var(--camera-cyan);
+  box-shadow: 0 0 0.75rem var(--camera-cyan);
+}
+
+.workspace {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: min(100%, 76rem);
+  min-height: calc(100dvh - 5rem - var(--safe-area-top));
+  align-items: center;
+  margin: 0 auto;
+  grid-template-columns: minmax(15rem, 0.72fr) minmax(20rem, 1.28fr);
+  gap: clamp(1rem, 4vw, 5.5rem);
+}
+
+.intro {
+  position: relative;
+  z-index: 5;
+  align-self: center;
+  padding-block: clamp(2rem, 7vh, 5rem);
+}
+
+.eyebrow {
+  margin: 0 0 0.85rem;
+  color: var(--camera-pink);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.intro h1 {
+  margin: 0;
+  color: var(--color-text-strong, #fff);
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 8vw, 6.7rem);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.82;
+  text-shadow:
+    -0.03em 0 var(--camera-pink),
+    0.035em 0 var(--camera-cyan),
+    0 0 1.3rem rgb(109 247 234 / 20%);
+}
+
+.lede {
+  max-width: 30rem;
+  margin: 1.5rem 0 0;
+  color: var(--color-text, rgb(255 255 255 / 88%));
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  line-height: 1.6;
+}
+
+.privacy {
+  display: grid;
+  max-width: 31rem;
+  align-items: flex-start;
+  margin-top: 1.4rem;
+  padding: 0.85rem 0.9rem;
+  border: 1px solid rgb(109 247 234 / 18%);
+  background: rgb(10 18 25 / 72%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 3%);
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+}
+
+.privacy p {
+  margin: 0;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.privacy strong {
+  color: var(--camera-cyan);
+  font-weight: 400;
+}
+
+.privacyLed {
+  width: 0.48rem;
+  height: 0.48rem;
+  margin-top: 0.25rem;
+  border-radius: 50%;
+  background: var(--camera-cyan);
+  box-shadow: 0 0 0.75rem rgb(109 247 234 / 75%);
+}
+
+.instructions {
+  display: grid;
+  max-width: 30rem;
+  margin: 1.6rem 0 0;
+  border-top: 1px solid rgb(255 255 255 / 10%);
+}
+
+.instructions div {
+  display: grid;
+  align-items: center;
+  padding-block: 0.55rem;
+  border-bottom: 1px solid rgb(255 255 255 / 7%);
+  grid-template-columns: 2.25rem 1fr;
+}
+
+.instructions dt,
+.instructions dd {
+  margin: 0;
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+.instructions dt {
+  color: var(--camera-pink);
+}
+
+.instructions dd {
+  color: var(--camera-muted);
+}
+
+.booth {
+  min-width: 0;
+  padding-block: clamp(1.5rem, 4vh, 3rem);
+}
+
+.machine {
+  position: relative;
+  width: 570px;
+  height: 500px;
+  margin-inline: auto;
+  perspective: 1200px;
+  transition: height var(--camera-medium) ease;
+}
+
+.machine[data-print-state="printing"],
+.machine[data-print-state="ready"] {
+  height: 775px;
+}
+
+.cameraRig {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 570px;
+  height: 775px;
+  transform-origin: top left;
+}
+
+/*
+ * Camera anatomy and surface treatment ported from Sarah Fossheim's
+ * CSS Polaroid Camera: https://fossheim.io/writing/posts/css-polaroid-camera/
+ */
+.camera {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 570px;
+  height: 470px;
+  filter: drop-shadow(0 1.6rem 1.7rem rgb(0 0 0 / 44%));
+  transform: translate3d(0, 0, 0);
+  transform-style: preserve-3d;
+  transition: transform var(--camera-medium) var(--camera-elastic);
+}
+
+.machine[data-print-state="printing"] .camera {
+  animation: camera-kick 520ms var(--camera-elastic) both;
+}
+
+.cameraTop {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 540px;
+  height: 320px;
+  margin-inline: auto;
+  border-radius: 35px 35px 0 0;
+  background-image:
+    linear-gradient(
+      90deg,
+      rgb(243 243 243 / 75%),
+      rgb(243 243 243 / 0%) 15% 85%,
+      rgb(243 243 243 / 75%)
+    ),
+    linear-gradient(#fefefe, #f9f7f8),
+    linear-gradient(#ddd9da, #e2dedf, #eae8eb, #f3f1f4);
+  background-repeat: no-repeat;
+  background-size:
+    100%,
+    100% 3px,
+    100%;
+  box-shadow:
+    -1px 1px 2px 3px rgb(249 247 248 / 85%) inset,
+    4px 0 0 #c9c5c4,
+    -3px 0 0 #f4f1f1,
+    0 7px 0 #c4c0bf,
+    0 12px 14px rgb(63 54 52 / 22%);
+}
+
+.cameraBottom {
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  display: block;
+  width: 570px;
+  height: 165px;
+  border-radius: 11px 11px 30px 30px;
+  background-image:
+    radial-gradient(#e1dfe2 60%, transparent 60%),
+    radial-gradient(#e1dfe2 60%, transparent 60%),
+    linear-gradient(90deg, #e1dfe2, #eae8eb),
+    linear-gradient(90deg, #eae8eb, #e1dfe2),
+    linear-gradient(90deg, #85817e, rgb(47 43 43 / 0%) 5% 95%, #696461),
+    linear-gradient(#4e4a49, #100c0d),
+    linear-gradient(#312f32, #2a2a27, #363233);
+  background-position:
+    160px -26px,
+    360px -26px,
+    top right,
+    top left,
+    top left,
+    bottom left,
+    bottom left;
+  background-repeat: no-repeat;
+  background-size:
+    50px 60px,
+    50px 60px,
+    185px 30px,
+    185px 30px,
+    100% 100%,
+    100% 20px,
+    100% 100%;
+  box-shadow: -1px 3px 2px 0 rgb(249 247 248 / 65%) inset;
+}
+
+.flash {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width: 90px;
+  height: 160px;
+  border-radius: 15px;
+  background-image:
+    linear-gradient(#edecea, #f6f6f8),
+    linear-gradient(
+      90deg,
+      rgb(247 246 244 / 0%) 3%,
+      rgb(247 246 244 / 50%) 3% 6%,
+      rgb(247 246 244 / 0%) 6% 11%,
+      rgb(247 246 244 / 50%) 12% 15%,
+      rgb(247 246 244 / 0%) 15% 21%,
+      rgb(247 246 244 / 50%) 21% 23%,
+      rgb(247 246 244 / 0%) 23% 24%,
+      rgb(247 246 244 / 50%) 24% 25%,
+      rgb(247 246 244 / 0%) 25% 27%,
+      rgb(247 246 244 / 50%) 27% 28%,
+      rgb(247 246 244 / 0%) 28% 31%,
+      rgb(247 246 244 / 50%) 31% 33%,
+      rgb(247 246 244 / 0%) 33% 35%,
+      rgb(247 246 244 / 50%) 35% 37%,
+      rgb(247 246 244 / 0%) 37% 39%,
+      rgb(247 246 244 / 50%) 39% 41%,
+      rgb(247 246 244 / 0%) 41% 43%,
+      rgb(247 246 244 / 50%) 43% 45%,
+      rgb(247 246 244 / 0%) 45% 48%,
+      rgb(247 246 244 / 50%) 48% 50%,
+      rgb(247 246 244 / 0%) 50% 55%,
+      rgb(247 246 244 / 50%) 55% 57%,
+      rgb(247 246 244 / 0%) 57% 59%,
+      rgb(247 246 244 / 50%) 59% 60%,
+      rgb(247 246 244 / 0%) 60% 61%,
+      rgb(247 246 244 / 50%) 61% 62%,
+      rgb(247 246 244 / 0%) 62% 64%,
+      rgb(247 246 244 / 50%) 64% 66%,
+      rgb(247 246 244 / 0%) 66% 69%,
+      rgb(247 246 244 / 50%) 69% 71%,
+      rgb(247 246 244 / 0%) 71% 75%,
+      rgb(247 246 244 / 50%) 75% 77%,
+      rgb(247 246 244 / 0%) 77% 79%,
+      rgb(247 246 244 / 50%) 79% 80%,
+      rgb(247 246 244 / 0%) 80% 81%,
+      rgb(247 246 244 / 50%) 81% 82%,
+      rgb(247 246 244 / 0%) 82% 84%,
+      rgb(247 246 244 / 50%) 84% 86%,
+      rgb(247 246 244 / 0%) 86% 89%,
+      rgb(247 246 244 / 50%) 89% 91%,
+      rgb(247 246 244 / 0%) 81% 95%
+    ),
+    linear-gradient(
+      90deg,
+      rgb(186 184 185 / 10%),
+      rgb(247 246 244 / 65%),
+      rgb(186 184 185 / 10%)
+    ),
+    linear-gradient(
+      90deg,
+      rgb(186 184 185 / 10%),
+      rgb(247 246 244 / 65%),
+      rgb(186 184 185 / 10%)
+    ),
+    linear-gradient(#e3deda 15%, #afaaa6 25% 35%, transparent 45%),
+    linear-gradient(
+      #f0efed 10%,
+      #b0aba7 20%,
+      #403c3b 40%,
+      #2f2b2a 43%,
+      #292524 45% 55%,
+      #696562 65% 75%,
+      #c2bfba 82% 86%,
+      #dedad7 90% 93%,
+      #c9c6c1 94% 96%,
+      #fffefa 98%
+    ),
+    linear-gradient(#34332f, #3e3a38);
+  background-position:
+    24px top,
+    25px top,
+    22px top,
+    64px top,
+    center,
+    center,
+    center;
+  background-repeat:
+    no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat;
+  background-size:
+    42px 20px,
+    42px 100%,
+    3px 100%,
+    3px 100%,
+    100% 3px,
+    100%,
+    100%;
+  box-shadow:
+    -1px -1px 1px #bdb8b5,
+    -1.5px -2.1px 0.5px #24201d,
+    -4px 4px 3px 3px #f4f0ef,
+    -5px 8px 8px #aba6aa,
+    0.25px 1px 1px 5px #3e3a38 inset,
+    0 -6px 1px 1px #f6f6f8 inset;
+}
+
+.shutterFlash {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border-radius: inherit;
+  background: white;
+  box-shadow: 0 0 42px 22px rgb(255 255 255 / 88%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.machine[data-print-state="printing"] .shutterFlash {
+  animation: shutter-flash 460ms ease-out both;
+}
+
+.timer,
+.sensor,
+.power {
+  position: absolute;
+  width: 23px;
+  height: 23px;
+  border-radius: 20px;
+}
+
+.timer {
+  top: 35px;
+  left: 135px;
+  background-image: radial-gradient(#e8e4e5, #dedad9);
+  box-shadow:
+    0 0.5px 1px 0.5px #605c5b,
+    1px 1px 1px #fffbfc inset;
+}
+
+.sensor {
+  top: 70px;
+  left: 135px;
+  background-image:
+    radial-gradient(#080607, transparent 50%),
+    radial-gradient(
+      #0b090a,
+      #211f20,
+      #131112,
+      #383637,
+      #100e0f,
+      #383637,
+      #100e0f
+    );
+  background-position:
+    -6px -3px,
+    center;
+  background-repeat: no-repeat;
+  background-size: 60%, 100%;
+  box-shadow:
+    0 0.5px 1px 0.75px #fffbfc,
+    0 -1px 1px #635f5e;
+}
+
+.power {
+  top: 195px;
+  right: 150px;
+  width: 28px;
+  height: 28px;
+  background-image: radial-gradient(
+    #000 30%,
+    #252525,
+    #171717,
+    #020001,
+    #242223,
+    #383637
+  );
+  box-shadow:
+    0 0.5px 1px 0.75px #c6c1c0,
+    0 -0.5px 0.5px 0.25px #1a1819,
+    -5px -8px 8px 1px rgb(86 82 82 / 40%);
+}
+
+.viewfinder {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 110px;
+  height: 110px;
+  border-radius: 20px;
+  background-color: #1b1a18;
+  box-shadow:
+    0.5px 0.5px 1px 1.5px #f1edee,
+    1.5px 1px 1px 1px #3b3535 inset,
+    2px 2px 1px 1px #9f9e9c inset,
+    -0.5px -2px 1.5px #9b9a98 inset,
+    1px 1.5px 0.5px 1px #fbf7f8;
+}
+
+.viewfinderGlass {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 75px;
+  height: 75px;
+  overflow: hidden;
+  border-radius: 20px;
+  background-color: white;
+  background-image:
+    radial-gradient(rgb(236 234 237 / 30%) 50%, transparent 60%),
+    radial-gradient(rgb(193 189 186 / 30%) 50%, transparent 60%),
+    radial-gradient(#5b5758 45%, #302c2d, #131112);
+  background-position:
+    -3px -7px,
+    bottom -8px left -3px,
+    center;
+  background-repeat: no-repeat;
+  background-size:
+    106% 32%,
+    106% 25%,
+    100%;
+  box-shadow:
+    0 0 1px 0 #010000 inset,
+    0 0 1px 1px #393836 inset,
+    0 0 2px 2px #010000 inset,
+    0 0 2px 4px #393836 inset,
+    0 0 1.5px 4.5px #010000 inset,
+    -0.5px -1px 1px #5f5e5c,
+    0.25px 2px 2px #464543;
+}
+
+.viewfinderGlass video {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+.viewfinderReflection {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      145deg,
+      rgb(255 255 255 / 25%),
+      transparent 24% 68%,
+      rgb(109 247 234 / 10%)
+    ),
+    radial-gradient(ellipse at 48% 7%, rgb(255 255 255 / 20%), transparent 42%);
+  box-shadow:
+    0 0 1px 1px #393836 inset,
+    0 0 2px 4px #010000 inset;
+  pointer-events: none;
+}
+
+.viewfinderBack {
+  position: absolute;
+  z-index: 3;
+  top: 19px;
+  left: 18px;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 0.5px solid rgb(9 7 5 / 75%);
+  border-radius: 10px;
+  background-image: linear-gradient(#eceaed, #e2e0e1);
+  box-shadow:
+    0.5px 2px 2px 0 #5e5b56,
+    0 1px 3px 0 #cac4c5,
+    -4px 0 5px 0 rgb(9 7 5 / 75%),
+    1px 1px 1px 1px #f1ecf0 inset,
+    1.5px 1.5px 1px 1px #d1d0ce inset;
+  color: #3d3938;
+  font-family: var(--font-code);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+}
+
+.lens {
+  position: absolute;
+  top: 15px;
+  right: 0;
+  left: 0;
+  display: block;
+  width: 210px;
+  height: 210px;
+  margin-inline: auto;
+  border-radius: 105px;
+  background-color: black;
+  background-image:
+    radial-gradient(transparent, #000),
+    radial-gradient(rgb(51 53 54 / 40%), transparent),
+    radial-gradient(
+      #2a282b 0% 27%,
+      #070508 27.5% 28%,
+      #4e4c4f 28.5% 28.6%,
+      #2a282b 28.7% 29.3%,
+      #070508 29.5% 29.8%,
+      #4e4c4f 30% 30.5%,
+      #2a282b 30.5% 32.5%,
+      #070508 33% 33.5%,
+      #4e4c4f 34% 34.5%,
+      #2a282b 34.5% 36.5%,
+      #070508 37% 37.5%,
+      #3d3b40 38% 38.5%,
+      #908e91 39% 39.5%,
+      #3d3b40 40% 40.5%,
+      #908e91 41% 41.5%,
+      #3d3b40 42% 42.5%,
+      #908e91 43% 43.5%,
+      #3d3b40 44% 44.5%,
+      #908e91 45% 45.5%,
+      #3d3b40 46% 46.5%,
+      #908e91 47% 47.5%,
+      #3d3b40 48% 48.5%,
+      #908e91 49% 49.5%,
+      #3d3b40 50% 50.5%,
+      #908e91 51% 51.5%,
+      #3d3b40 52% 52.5%,
+      #908e91 53% 54%,
+      #241e1e 54.5% 57%,
+      #131114 57% 59%,
+      #3c3a3d 59% 60%,
+      #241e1e 60%
+    );
+  background-position:
+    bottom -100px left,
+    top -120px right 10px,
+    center;
+  background-repeat: no-repeat;
+  background-size:
+    350px 350px,
+    350px 350px,
+    100%;
+  box-shadow: 15px 55px 60px 5px #767072;
+}
+
+.lensGlass {
+  position: absolute;
+  top: 70px;
+  right: 0;
+  left: 0;
+  display: block;
+  width: 70px;
+  height: 70px;
+  margin-inline: auto;
+  border-radius: 40px;
+  background-image:
+    radial-gradient(rgb(119 109 80 / 85%), transparent 40%),
+    radial-gradient(
+      rgb(51 180 105 / 25%) 13%,
+      rgb(119 159 59 / 20%) 53% 70%,
+      rgb(119 159 59 / 0%) 68%
+    ),
+    radial-gradient(
+      rgb(51 180 105 / 25%) 23%,
+      rgb(51 180 105 / 20%) 53% 70%,
+      rgb(51 180 105 / 0%) 68%
+    ),
+    radial-gradient(#2c1f28, #241921 55%, #080609 70%);
+  background-position:
+    center -10px,
+    -30px -48px,
+    -30px 55px,
+    center;
+  background-repeat: no-repeat;
+  background-size:
+    100%,
+    190% 100%,
+    190% 100%,
+    100%;
+}
+
+.shutter {
+  position: absolute;
+  z-index: 4;
+  bottom: 14.5px;
+  left: 9.5px;
+  display: block;
+  width: 88px;
+  height: 88px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.shutterWell {
+  position: absolute;
+  inset: 10px;
+  display: block;
+  border: 1px solid #8d8782;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 34% 26%,
+      rgb(255 255 255 / 72%) 0 4%,
+      transparent 5% 100%
+    ),
+    radial-gradient(circle, #f4f0ed 0 60%, #b9b3ae 72%, #77716d 100%);
+  box-shadow:
+    inset 4px 4px 7px rgb(255 255 255 / 62%),
+    inset -5px -6px 8px rgb(74 66 61 / 27%),
+    0 4px 0 #8d8782,
+    1px 9px 12px rgb(68 51 47 / 31%);
+}
+
+.shutterStem {
+  position: absolute;
+  z-index: 1;
+  top: 7px;
+  left: 9px;
+  display: block;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #5b110d;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #9a2118, #5c130e);
+  box-shadow:
+    0 8px 0 #54100c,
+    0 11px 9px rgb(71 20 15 / 42%);
+  transform: translateY(-3px) rotateX(5deg);
+  transform-origin: center bottom;
+  transition:
+    transform 95ms cubic-bezier(0.2, 0.82, 0.24, 1),
+    box-shadow 95ms cubic-bezier(0.2, 0.82, 0.24, 1),
+    filter 95ms linear;
+}
+
+.shutterCap {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border: 1px solid #68130e;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 34% 25%,
+      rgb(255 221 205 / 70%) 0 7%,
+      transparent 8% 22%
+    ),
+    radial-gradient(circle at 45% 40%, #ed5a30 0 30%, #ce2819 62%, #85170f);
+  box-shadow:
+    inset 4px 4px 6px rgb(255 199 169 / 38%),
+    inset -5px -6px 8px rgb(77 8 5 / 36%),
+    0 1px 0 rgb(255 240 224 / 23%);
+}
+
+.shutter:hover:not(:disabled) .shutterStem {
+  filter: brightness(1.1) saturate(1.05);
+  transform: translateY(-5px) rotateX(5deg);
+}
+
+.shutter:active:not(:disabled) .shutterStem {
+  box-shadow:
+    0 1px 0 #54100c,
+    0 3px 4px rgb(71 20 15 / 32%);
+  filter: brightness(0.93);
+  transform: translateY(5px) rotateX(0);
+}
+
+.shutter:focus-visible {
+  outline: 3px solid var(--camera-yellow);
+  outline-offset: 2px;
+  box-shadow: var(--shadow-focus);
+}
+
+.shutter:disabled {
+  cursor: not-allowed;
+}
+
+.shutter:disabled .shutterStem {
+  box-shadow:
+    0 3px 0 #4f403b,
+    0 5px 5px rgb(55 44 40 / 28%);
+  filter: grayscale(0.62) saturate(0.48);
+  opacity: 0.72;
+  transform: translateY(2px) rotateX(1deg);
+}
+
+.topToggleContainer {
+  position: absolute;
+  top: 145px;
+  right: 50px;
+  width: 50px;
+  height: 22px;
+  border-radius: 20px;
+  background-image: linear-gradient(#6f3b05 10%, #a45f05 46%, #d18a12);
+  box-shadow:
+    2px 3px 5px rgb(96 47 4 / 64%) inset,
+    -1px -1px 1px rgb(255 224 158 / 28%) inset,
+    0.5px 1px 0.75px 0.25px #fce9d8;
+}
+
+.topToggle {
+  position: absolute;
+  top: -3px;
+  right: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  margin-inline: auto;
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      circle at 34% 25%,
+      rgb(255 255 214 / 80%) 0 7%,
+      transparent 8% 100%
+    ),
+    radial-gradient(circle at 45% 40%, #ffd839, #edac05 66%, #9a5d02);
+  box-shadow:
+    2px 2px 3px rgb(255 244 154 / 48%) inset,
+    -3px -4px 4px rgb(118 65 0 / 32%) inset,
+    0 5px 0 #945800,
+    0 8px 7px rgb(95 45 0 / 48%);
+}
+
+.topToggle::after {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 2px;
+  height: 7px;
+  border-radius: 2px;
+  background: #825006;
+  box-shadow: 1px 0 rgb(255 239 133 / 38%);
+  content: "";
+  transform: translateX(-50%);
+}
+
+.cameraTitle,
+.cameraType {
+  display: none;
+}
+
+.printer {
+  display: block;
+  width: 470px;
+  height: 40px;
+  margin-top: 60px;
+  margin-inline: auto;
+  border-radius: 3px;
+  background-image:
+    linear-gradient(90deg, #474548 90%, #343233 90%),
+    linear-gradient(90deg, #0e090d 10%, #4a4849 10%),
+    linear-gradient(
+      #4c4a4d 4%,
+      #161214 9% 20%,
+      #484445 30% 55%,
+      #1a1617 80% 93%,
+      #b0afad 99%
+    );
+  background-position:
+    top left,
+    top right;
+  background-repeat: no-repeat;
+  background-size:
+    8px 100%,
+    8px 100%,
+    100% 100%;
+}
+
+.bottomToggleContainer {
+  position: absolute;
+  right: 0;
+  left: 0;
+  display: block;
+  width: 135px;
+  height: 35px;
+  margin-inline: auto;
+  border-radius: 0 0 10px 10px;
+  background-image:
+    radial-gradient(#353334, #4c4849 40%, transparent 70%),
+    radial-gradient(#29272a, #464445 40%, transparent 70%),
+    linear-gradient(#8b8786 10%, #5e5a5b 20% 65%, #969291);
+  background-position:
+    top -25px left -40px,
+    top -15px right -35px,
+    top right;
+  background-repeat: no-repeat;
+  background-size:
+    70px 70px,
+    70px 70px,
+    100% 100%;
+}
+
+.bottomToggle {
+  position: absolute;
+  top: 6px;
+  right: 0;
+  left: 0;
+  display: block;
+  width: 100px;
+  height: 20px;
+  margin-inline: auto;
+  border: 0.5px solid #141011;
+  border-radius: 10px;
+  background-image: linear-gradient(#747371 2%, #525055 2%, #565152, #535250);
+}
+
+.toggleHandle {
+  position: absolute;
+  top: -5px;
+  right: -1px;
+  display: block;
+  width: 25px;
+  height: 25px;
+  border: 0.5px solid rgb(133 129 128 / 15%);
+  border-radius: 10px;
+  background:
+    repeating-conic-gradient(
+      from 4deg,
+      rgb(255 255 255 / 9%) 0 5deg,
+      transparent 5deg 12deg
+    ),
+    radial-gradient(circle at 35% 28%, #767274, #403d3d 68%, #211f20);
+  box-shadow:
+    2px 2px 3px rgb(255 255 255 / 12%) inset,
+    -3px -3px 4px rgb(0 0 0 / 40%) inset,
+    0 6px 0 #262325,
+    0 9px 8px rgb(15 13 14 / 58%);
+}
+
+.rainbow {
+  position: absolute;
+  top: 100px;
+  left: 80px;
+  display: block;
+  width: 40px;
+  height: 46px;
+  background-image: linear-gradient(
+    #1d160f 5%,
+    #0e9ee0 5% 14%,
+    #1f211a 14% 19%,
+    #0eae4f 19% 32%,
+    #2b2106 32% 37%,
+    #ffb404 37% 50%,
+    #2a1303 50% 55%,
+    #fe8204 55% 68%,
+    #292313 68% 80%,
+    #e02d28 80%
+  );
+}
+
+.labels {
+  pointer-events: none;
+}
+
+.logo {
+  margin-top: 8px;
+  color: #cdccc8;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.cameraShadow {
+  position: absolute;
+  z-index: 0;
+  top: 420px;
+  left: 50%;
+  width: 480px;
+  height: 45px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgb(0 0 0 / 56%), transparent 70%);
+  filter: blur(0.45rem);
+  transform: translateX(-50%);
+  transition:
+    width var(--camera-medium) ease,
+    opacity var(--camera-medium) ease;
+}
+
+.machine[data-print-state="printing"] .cameraShadow {
+  width: 530px;
+  opacity: 0.6;
+}
+
+.print {
+  position: absolute;
+  z-index: 2;
+  top: 325px;
+  left: 50%;
+  width: 240px;
+  aspect-ratio: 0.82;
+  margin: 0;
+  padding: 18px 18px 31px;
+  background:
+    linear-gradient(
+      105deg,
+      transparent 38%,
+      rgb(255 255 255 / 35%),
+      transparent 62%
+    ),
+    linear-gradient(145deg, #fffdf5, var(--camera-paper) 70%);
+  box-shadow:
+    0 1.3rem 1.5rem rgb(0 0 0 / 35%),
+    inset 0 0 0 1px rgb(70 59 52 / 12%);
+  color: var(--camera-ink);
+  transform: translate3d(-50%, -34%, -2rem);
+  transform-origin: 50% 0;
+}
+
+.machine[data-print-state="printing"] .print {
+  animation: print-eject var(--camera-print) var(--camera-elastic) both;
+}
+
+.machine[data-print-state="ready"] .print {
+  transform: translate3d(-50%, 50%, 0) rotate(-1.8deg);
+}
+
+.photoSurface {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: #17121e;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 18%);
+}
+
+.photoSurface img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+.photoSurface::after {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(105deg, rgb(109 247 234 / 8%), transparent 42%),
+    linear-gradient(0deg, rgb(255 79 216 / 8%), transparent 52%);
+  content: "";
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.developWash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 68% 22%, rgb(255 234 0 / 55%), transparent 22%),
+    linear-gradient(145deg, #081c25, #8d0d72 46%, #23142c);
+  mix-blend-mode: color;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.machine[data-print-state="printing"] .developWash {
+  animation: photo-develop 1.35s ease-out both;
+}
+
+.print figcaption {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 6%;
+  font-family: var(--font-code);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.print figcaption span {
+  color: #783360;
+  text-transform: uppercase;
+}
+
+.print figcaption time {
+  color: #615a56;
+}
+
+.controlDeck {
+  position: relative;
+  z-index: 20;
+  display: grid;
+  width: min(100%, 35rem);
+  min-height: 5.5rem;
+  align-items: start;
+  margin: -1.5rem auto 0;
+}
+
+.liveStatus {
+  min-height: 1.4rem;
+  margin: 0;
+  color: var(--camera-muted);
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.errorPanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid rgb(255 79 216 / 32%);
+  background: rgb(27 12 26 / 84%);
+}
+
+.errorPanel p {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.errorPanel button,
+.photoActions button,
+.photoActions a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--camera-cyan);
+  border-radius: 0;
+  background: transparent;
+  color: var(--camera-cyan);
+  font-family: var(--font-code);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition:
+    background var(--camera-fast) ease,
+    color var(--camera-fast) ease,
+    box-shadow var(--camera-fast) ease;
+  white-space: nowrap;
+}
+
+.errorPanel button:hover,
+.photoActions button:hover,
+.photoActions a:hover {
+  background: var(--camera-cyan);
+  color: var(--camera-black);
+}
+
+.errorPanel button:focus-visible,
+.photoActions button:focus-visible,
+.photoActions a:focus-visible {
+  outline: 0.18rem solid var(--camera-yellow);
+  outline-offset: 0.18rem;
+  box-shadow: var(--shadow-focus);
+}
+
+.photoActions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.photoActions button {
+  border-color: rgb(255 255 255 / 28%);
+  color: var(--color-text);
+}
+
+.photoActions button:hover {
+  border-color: var(--color-text-strong);
+  background: var(--color-text-strong);
+  color: var(--camera-black);
+}
+
+.photoActions a {
+  border-color: var(--camera-pink);
+  color: var(--camera-pink);
+}
+
+.photoActions a:hover {
+  background: var(--camera-pink);
+  color: var(--camera-black);
+}
+
+.errorPanel .deckButton,
+.photoActions .deckButton {
+  position: relative;
+  isolation: isolate;
+  min-width: 8rem;
+  min-height: 48px;
+  padding: 5px 6px 9px;
+  overflow: visible;
+  border: 1px solid #071111;
+  border-radius: 0.3rem;
+  background: linear-gradient(145deg, #1b2627, #071011);
+  box-shadow:
+    3px 3px 5px rgb(0 0 0 / 58%) inset,
+    -1px -1px rgb(134 205 193 / 10%) inset,
+    0 1px rgb(255 255 255 / 5%);
+  color: var(--camera-cyan);
+  transition: none;
+}
+
+.controlDeck .deckButton > span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 100%;
+  min-height: 34px;
+  place-items: center;
+  padding-inline: 0.72rem;
+  border: 1px solid;
+  border-color: #93d8ce #2f6e69 #164642 #68b8ae;
+  border-radius: 0.2rem 0.2rem 0.28rem 0.28rem;
+  background:
+    linear-gradient(
+      150deg,
+      rgb(255 255 255 / 18%),
+      transparent 24% 68%,
+      rgb(0 0 0 / 20%)
+    ),
+    linear-gradient(145deg, #67bfb4, #377f78 62%, #22534f);
+  box-shadow:
+    2px 2px 2px rgb(226 255 249 / 19%) inset,
+    -3px -3px 3px rgb(2 30 27 / 28%) inset,
+    0 5px 0 #17453f,
+    0 8px 7px rgb(0 0 0 / 38%);
+  color: #071412;
+  text-shadow: 0 1px rgb(224 255 247 / 25%);
+  transform: translateY(-3px) rotateX(3deg);
+  transform-origin: center bottom;
+  transition:
+    transform 95ms cubic-bezier(0.2, 0.82, 0.24, 1),
+    box-shadow 95ms cubic-bezier(0.2, 0.82, 0.24, 1),
+    filter 95ms linear;
+}
+
+.photoActions .deckButton[data-tone="neutral"] > span {
+  border-color: #eee9df #686462 #3b3938 #bdb8af;
+  background:
+    linear-gradient(
+      150deg,
+      rgb(255 255 255 / 22%),
+      transparent 24% 68%,
+      rgb(0 0 0 / 18%)
+    ),
+    linear-gradient(145deg, #d9d4cc, #938f8b 62%, #605d5b);
+  box-shadow:
+    2px 2px 2px rgb(255 255 255 / 23%) inset,
+    -3px -3px 3px rgb(36 33 31 / 28%) inset,
+    0 5px 0 #4f4c4a,
+    0 8px 7px rgb(0 0 0 / 38%);
+  color: #171615;
+}
+
+.photoActions .deckButton[data-tone="pink"] > span {
+  border-color: #f3a8d7 #8b3f6c #4f2140 #ce78ac;
+  background:
+    linear-gradient(
+      150deg,
+      rgb(255 255 255 / 20%),
+      transparent 24% 68%,
+      rgb(0 0 0 / 18%)
+    ),
+    linear-gradient(145deg, #dc79b6, #a0437c 62%, #69264f);
+  box-shadow:
+    2px 2px 2px rgb(255 231 246 / 22%) inset,
+    -3px -3px 3px rgb(55 7 37 / 28%) inset,
+    0 5px 0 #5d2247,
+    0 8px 7px rgb(0 0 0 / 38%);
+  color: #170a12;
+}
+
+.errorPanel .deckButton:hover,
+.photoActions .deckButton:hover {
+  background: linear-gradient(145deg, #1b2627, #071011);
+  color: inherit;
+}
+
+.deckButton:hover > span {
+  filter: brightness(1.08);
+  transform: translateY(-4px) rotateX(3deg);
+}
+
+.deckButton:active > span {
+  box-shadow:
+    2px 2px 4px rgb(0 0 0 / 26%) inset,
+    -1px -1px rgb(255 255 255 / 8%) inset,
+    0 1px 0 #17453f;
+  filter: brightness(0.94);
+  transform: translateY(4px) rotateX(0);
+}
+
+.frame .controlDeck .deckButton:focus-visible {
+  outline: 3px solid var(--camera-yellow);
+  outline-offset: 3px;
+}
+
+.captureCanvas {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes camera-kick {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  24% {
+    transform: translate3d(0, 0.45rem, -1rem) scale(0.985);
+  }
+  58% {
+    transform: translate3d(0, -0.75rem, 1.2rem) rotateX(1.6deg);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes shutter-flash {
+  0% {
+    opacity: 1;
+    transform: scale(0.15);
+  }
+  42% {
+    opacity: 0.86;
+    transform: scale(1.35);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+@keyframes print-eject {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -34%, -2rem);
+  }
+  18% {
+    opacity: 1;
+  }
+  72% {
+    transform: translate3d(-50%, 57%, 0) rotate(2.6deg);
+  }
+  86% {
+    transform: translate3d(-50%, 46%, 0) rotate(-2.7deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(-50%, 50%, 0) rotate(-1.8deg);
+  }
+}
+
+@keyframes photo-develop {
+  0%,
+  30% {
+    filter: saturate(0.1) contrast(0.8);
+    opacity: 0.96;
+  }
+  70% {
+    filter: saturate(0.7) contrast(0.95);
+    opacity: 0.36;
+  }
+  100% {
+    filter: none;
+    opacity: 0;
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .machine[data-camera-state="ready"]:not([data-print-state="printing"]):hover
+    .camera {
+    transform: translate3d(0, -0.32rem, 1rem) rotateX(1deg);
+  }
+}
+
+@media (max-width: 1100px) and (min-width: 821px) {
+  .machine {
+    width: 467.4px;
+    height: 410px;
+  }
+
+  .machine[data-print-state="printing"],
+  .machine[data-print-state="ready"] {
+    height: 635.5px;
+  }
+
+  .cameraRig {
+    transform: scale(0.82);
+  }
+}
+
+@media (max-width: 820px) {
+  .frame {
+    overflow: visible;
+  }
+
+  .workspace {
+    min-height: auto;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .intro {
+    max-width: 38rem;
+    padding-block: 2rem 0.5rem;
+  }
+
+  .intro h1 {
+    font-size: clamp(3.6rem, 18vw, 6rem);
+  }
+
+  .lede {
+    margin-top: 1.15rem;
+  }
+
+  .instructions {
+    display: none;
+  }
+
+  .booth {
+    padding-block: 0.5rem 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .machine {
+    width: 456px;
+    height: 400px;
+  }
+
+  .machine[data-print-state="printing"],
+  .machine[data-print-state="ready"] {
+    height: 620px;
+  }
+
+  .cameraRig {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 520px) {
+  .frame {
+    padding-right: max(0.75rem, var(--safe-area-right));
+    padding-left: max(0.75rem, var(--safe-area-left));
+  }
+
+  .telemetry {
+    font-size: 0.62rem;
+  }
+
+  .privacy {
+    padding: 0.7rem;
+  }
+
+  .machine {
+    width: 370.5px;
+    height: 325px;
+  }
+
+  .machine[data-print-state="printing"],
+  .machine[data-print-state="ready"] {
+    height: 503.75px;
+  }
+
+  .cameraRig {
+    transform: scale(0.65);
+  }
+
+  .controlDeck {
+    margin-top: 0.5rem;
+  }
+
+  .errorPanel {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .photoActions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 400px) {
+  .machine {
+    width: 330.6px;
+    height: 290px;
+  }
+
+  .machine[data-print-state="printing"],
+  .machine[data-print-state="ready"] {
+    height: 449.5px;
+  }
+
+  .cameraRig {
+    transform: scale(0.58);
+  }
+}
+
+@media (max-width: 340px) {
+  .machine {
+    width: 285px;
+    height: 250px;
+  }
+
+  .machine[data-print-state="printing"],
+  .machine[data-print-state="ready"] {
+    height: 387.5px;
+  }
+
+  .cameraRig {
+    transform: scale(0.5);
+  }
+}
+
+@media (max-height: 720px) and (min-width: 821px) {
+  .workspace {
+    align-items: start;
+  }
+
+  .intro,
+  .booth {
+    padding-top: 1.5rem;
+  }
+
+  .machine {
+    width: 410.4px;
+    height: 360px;
+  }
+
+  .machine[data-print-state="printing"],
+  .machine[data-print-state="ready"] {
+    height: 558px;
+  }
+
+  .cameraRig {
+    transform: scale(0.72);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .machine,
+  .camera,
+  .shutter,
+  .shutterStem,
+  .cameraShadow,
+  .developWash,
+  .print,
+  .controlDeck .deckButton > span {
+    animation: none;
+    transition: none;
+  }
+
+  .machine[data-print-state="printing"] .print,
+  .machine[data-print-state="ready"] .print {
+    opacity: 1;
+    transform: translate3d(-50%, 50%, 0);
+  }
+}
+
+:global(.fx-quiet) .machine,
+:global(.fx-quiet) .camera,
+:global(.fx-quiet) .shutter,
+:global(.fx-quiet) .shutterStem,
+:global(.fx-quiet) .cameraShadow,
+:global(.fx-quiet) .developWash,
+:global(.fx-quiet) .print,
+:global(.fx-quiet) .controlDeck .deckButton > span {
+  animation: none;
+  transition: none;
+}
+
+:global(.fx-quiet) .machine[data-print-state="printing"] .print,
+:global(.fx-quiet) .machine[data-print-state="ready"] .print {
+  opacity: 1;
+  transform: translate3d(-50%, 50%, 0);
+}

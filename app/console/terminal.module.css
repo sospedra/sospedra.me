@@ -1,0 +1,1040 @@
+.page {
+  --crt: #ffb000;
+  --crt-dim: rgb(255 176 0 / 66%);
+  --crt-file: rgb(212 130 44 / 74%);
+  --crt-faint: rgb(255 176 0 / 20%);
+  --crt-hot: #ffe9c2;
+  --crt-bg: #0a0500;
+  --crt-ink: #1c0e00;
+  display: flex;
+  height: 100dvh;
+  padding: clamp(0.5rem, 2vw, 1.25rem);
+  background: #050403;
+}
+
+.crt {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  flex: 1;
+  flex-direction: column;
+  border-radius: clamp(0.9rem, 2.2vw, 1.75rem);
+  animation: crt-on 700ms var(--ease-signal, ease-out) both;
+  background: radial-gradient(
+    130% 130% at 50% 40%,
+    #1c0f02 0%,
+    #0b0600 52%,
+    #040200 100%
+  );
+  box-shadow:
+    inset 0 0 7rem rgb(0 0 0 / 82%),
+    0 0 2.5rem rgb(0 0 0 / 70%);
+  color: var(--crt);
+  font-family: var(--font-display, monospace);
+  font-size: clamp(0.88rem, 0.66rem + 0.6vw, 1.12rem);
+  line-height: 1.3;
+
+  /* faint phosphor halo, not a bloom */
+  text-shadow: 0 0 1px rgb(255 176 60 / 40%);
+}
+
+/* the tube flashes awake: a scanline expands into the full raster */
+@keyframes crt-on {
+  0% {
+    transform: scaleY(0.004);
+    filter: brightness(6);
+  }
+  55% {
+    transform: scaleY(1.02);
+    filter: brightness(2.1);
+  }
+  100% {
+    transform: none;
+    filter: none;
+  }
+}
+
+/* scanlines: kept light, the glow does the heavy lifting */
+.crt::before {
+  position: absolute;
+  z-index: 6;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgb(0 0 0 / 16%) 0 1px,
+    transparent 1px 3px
+  );
+  content: "";
+  pointer-events: none;
+}
+
+/* glass glare up top, curvature vignette on the edges */
+.crt::after {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgb(255 235 200 / 5%), transparent 45%),
+    radial-gradient(
+      140% 140% at 50% 50%,
+      transparent 56%,
+      rgb(0 0 0 / 55%) 100%
+    );
+  content: "";
+  pointer-events: none;
+}
+
+/* the cool-retro-term hot center: an amber wash screen-blended over the tube */
+.blend {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  background: radial-gradient(
+    60% 48% at 50% 42%,
+    rgb(255 150 40 / 8%),
+    rgb(255 110 10 / 3%) 55%,
+    transparent 76%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* the beam repaints the frame top to bottom: a whisper of a bright edge */
+.raster {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  left: 0;
+  height: 26%;
+  animation: raster 6.5s linear infinite;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgb(255 210 150 / 2%) 88%,
+    rgb(255 235 200 / 3.5%) 98%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+@keyframes raster {
+  from {
+    top: -26%;
+  }
+  to {
+    top: 110%;
+  }
+}
+
+.scroll {
+  z-index: 1;
+  overflow: hidden auto;
+  flex: 1;
+  animation: flicker 5s steps(1) infinite;
+  overscroll-behavior: contain;
+  padding: clamp(0.7rem, 2vw, 1.2rem) clamp(0.9rem, 3vw, 1.8rem) 0.8rem;
+}
+
+@keyframes flicker {
+  7% {
+    opacity: 0.94;
+  }
+  9% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0.97;
+  }
+  40% {
+    opacity: 1;
+  }
+  71% {
+    opacity: 0.95;
+  }
+  73% {
+    opacity: 1;
+  }
+}
+
+.entry {
+  margin: 0;
+}
+
+.line {
+  margin: 0;
+  min-height: 1.3em;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.dim {
+  color: var(--crt-dim);
+}
+
+.bright {
+  color: var(--crt-hot);
+  text-shadow: 0 0 2px rgb(255 220 160 / 55%);
+}
+
+.error {
+  color: #ffdca6;
+}
+
+.error::before {
+  content: "✗ ";
+}
+
+.promptLabel {
+  color: var(--crt-hot);
+  white-space: pre;
+}
+
+.block {
+  margin: 0 0 0.25em;
+}
+
+/* ---- interactive file tree: branch geometry adapted to the amber CRT ---- */
+
+.treePanel {
+  width: min(100%, 38rem);
+  margin: 0.4rem 0 0.65rem;
+  padding: 0.65rem;
+  border: 1px solid var(--crt-faint);
+  border-radius: 0.3rem;
+  animation: tree-reveal 240ms var(--ease-signal, ease-out) both;
+  background:
+    linear-gradient(90deg, rgb(255 176 0 / 3%), transparent 22%),
+    rgb(10 5 0 / 68%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 233 194 / 2%),
+    0 0 1rem rgb(255 132 0 / 3%);
+}
+
+@keyframes tree-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+}
+
+.treeHeader,
+.treeFooter {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  color: var(--crt-dim);
+  font-size: 0.72em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.treeHeader {
+  padding: 0 0.35rem 0.45rem;
+  border-bottom: 1px solid var(--crt-faint);
+}
+
+.treeFooter {
+  padding: 0.5rem 0.35rem 0;
+  border-top: 1px solid var(--crt-faint);
+}
+
+.treeList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.treeRootBranches,
+.treeChildrenClip {
+  margin-left: 0.72rem;
+  padding-left: 0.72rem;
+  border-left: 1px solid var(--crt-faint);
+}
+
+.treeRootBranches {
+  margin-bottom: 0.45rem;
+}
+
+.treeItem {
+  position: relative;
+  margin-top: 0.16rem;
+}
+
+.treeRootBranches > .treeList > .treeItem::before,
+.treeChildrenClip > .treeList > .treeItem::before {
+  position: absolute;
+  top: 1rem;
+  left: -0.72rem;
+  width: 0.72rem;
+  height: 1px;
+  background: var(--crt-faint);
+  content: "";
+}
+
+.treeRow {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 2rem;
+  align-items: center;
+  gap: 0.52rem;
+  padding: 0.22rem 0.42rem;
+  border: 0;
+  border-radius: 0.18rem;
+  background: transparent;
+  color: var(--crt);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  text-shadow: inherit;
+}
+
+.treeFolderRow {
+  cursor: pointer;
+}
+
+.treeFileRow {
+  color: var(--crt-dim);
+}
+
+.treeRootRow {
+  margin-top: 0.32rem;
+  color: var(--crt-hot);
+}
+
+.treeFolderRow:hover,
+.treeFolderRow:focus-visible,
+.treeFileRow:hover,
+.treeFileRow:focus-visible {
+  background: var(--crt);
+  color: var(--crt-ink);
+  outline: none;
+  text-shadow: none;
+}
+
+.treeFolderRow:focus-visible,
+.treeFileRow:focus-visible {
+  box-shadow: 0 0 0 2px var(--crt-hot);
+}
+
+.page .crt .treeFolderRow:focus-visible,
+.page .crt .treeFileRow:focus-visible {
+  outline: 2px solid var(--crt-hot);
+  outline-offset: -2px;
+  box-shadow: 0 0 0 2px var(--crt-ink);
+}
+
+.treeIcon {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 1.7;
+}
+
+.treeName {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.treeCount {
+  margin-left: auto;
+  color: var(--crt-dim);
+  font-size: 0.72em;
+  font-variant-numeric: tabular-nums;
+}
+
+.treeFolderRow:hover .treeCount,
+.treeFolderRow:focus-visible .treeCount {
+  color: inherit;
+}
+
+.treeChildrenShell {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease-in-out;
+}
+
+.treeChildrenShell[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.treeChildrenClip {
+  overflow: hidden;
+}
+
+/* ---- boot intro: the eye scans in, then the post log ---- */
+
+.intro {
+  margin-bottom: 0.25em;
+}
+
+.eyeLine {
+  margin: 0;
+  color: var(--crt-hot);
+  font-family: "DejaVu Sans Mono", "Menlo", "Cascadia Mono", monospace;
+  font-size: clamp(0.5rem, 0.3rem + 0.9vw, 0.9rem);
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 0 3px rgb(255 200 120 / 45%);
+  white-space: pre;
+}
+
+/* ---- animation stage ---- */
+
+.animStage {
+  z-index: 3;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.animArt {
+  margin: 0;
+  color: var(--crt-hot);
+  font-size: clamp(1rem, 0.7rem + 1.4vw, 1.8rem);
+  line-height: 1.15;
+  text-align: left;
+  text-shadow: 0 0 4px rgb(255 200 120 / 45%);
+  white-space: pre;
+}
+
+/* ---- autoplay gate: shown only when the browser blocks the boot sound ---- */
+
+.gate {
+  z-index: 8;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  padding: 2rem;
+  border: 0;
+  background: none;
+  color: var(--crt);
+  font: inherit;
+  text-shadow: inherit;
+}
+
+.gateEye {
+  color: var(--crt-hot);
+  font-family: "DejaVu Sans Mono", "Menlo", "Cascadia Mono", monospace;
+  font-size: clamp(0.5rem, 0.3rem + 0.9vw, 0.9rem);
+  line-height: 1;
+  text-shadow: 0 0 3px rgb(255 200 120 / 45%);
+  white-space: pre;
+}
+
+.gatePrompt {
+  animation: blink 1.1s step-end infinite;
+  color: var(--crt-hot);
+  font-size: clamp(1rem, 0.8rem + 0.9vw, 1.5rem);
+  letter-spacing: 0.22em;
+  text-shadow: 0 0 4px rgb(255 210 140 / 55%);
+}
+
+.gateHint {
+  color: var(--crt-dim);
+  font-size: 0.8em;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.grid {
+  display: grid;
+  margin: 0;
+  gap: 0 2ch;
+  grid-template-columns: repeat(auto-fill, minmax(min(17ch, 100%), 1fr));
+}
+
+.dirItem,
+.fileItem {
+  overflow: hidden;
+  padding: 0 0.2em;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  text-shadow: inherit;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* folders are the hot bright amber, files the dim brown-amber */
+.dirItem {
+  color: var(--crt-hot);
+}
+
+.fileItem {
+  color: var(--crt-file);
+}
+
+.dirItem:hover,
+.fileItem:hover,
+.dirItem:focus-visible,
+.fileItem:focus-visible {
+  background: var(--crt);
+  color: var(--crt-ink);
+  text-shadow: none;
+}
+
+.helpRow {
+  display: grid;
+  gap: 0 1.5ch;
+  grid-template-columns: minmax(10ch, 18ch) 1fr;
+}
+
+.linkRow {
+  display: grid;
+  align-items: baseline;
+  gap: 0 1.5ch;
+  grid-template-columns: 7ch minmax(12ch, 30ch) minmax(0, 1fr);
+}
+
+.linkRow .fileItem {
+  white-space: normal;
+}
+
+.promptRow {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  padding-top: 0.15em;
+  padding-bottom: 0.5rem;
+}
+
+.echo {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.cursor {
+  animation: blink 1.06s step-end infinite;
+  color: var(--crt);
+  text-shadow: 0 0 3px rgb(255 190 110 / 55%);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  caret-color: transparent;
+  color: transparent;
+  font: inherit;
+
+  /* ios refuses to zoom-jump when the focused control is 16px+ */
+  font-size: 16px;
+}
+
+.page .crt .promptRow .input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* keyboard focus lives on the invisible input: the tube itself answers */
+.crt:focus-within {
+  box-shadow:
+    inset 0 0 7rem rgb(0 0 0 / 80%),
+    inset 0 0 1.6rem rgb(255 150 20 / 9%),
+    0 0 2.5rem rgb(0 0 0 / 70%);
+}
+
+.crt ::selection {
+  background: var(--crt);
+  color: var(--crt-ink);
+}
+
+/* ---- hackertyper ---- */
+
+.hackerFeed {
+  margin: 0;
+  font: inherit;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.granted {
+  position: absolute;
+  z-index: 8;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  padding: 0.8em 1.6em;
+  border: 4px double var(--crt);
+  animation: blink 0.9s step-end infinite;
+  background: rgb(23 12 2 / 88%);
+  color: var(--crt-hot);
+  font-size: clamp(1.2rem, 4vw, 2.2rem);
+  letter-spacing: 0.3em;
+  text-shadow: 0 0 4px rgb(255 210 140 / 55%);
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+/* ---- keybar ---- */
+
+.keybar {
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem clamp(1rem, 4vw, 2.5rem)
+    max(0.6rem, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--crt-faint);
+  color: var(--crt-dim);
+  font-size: 0.82em;
+  gap: 0.4rem 1.4rem;
+  letter-spacing: 0.08em;
+}
+
+.fkeys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.3rem;
+}
+
+.fkeys button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-shadow: inherit;
+  text-transform: uppercase;
+}
+
+.fkeys button:hover {
+  color: var(--crt);
+}
+
+.fkeys b {
+  color: var(--crt);
+  font-weight: 400;
+}
+
+.plates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+}
+
+.plate {
+  padding: 0.15em 0.55em;
+  border: 1px solid var(--crt-faint);
+  font-size: 0.85em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.plate i {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  margin-right: 0.45em;
+  animation: blink 2.4s step-end infinite;
+  background: var(--crt);
+  box-shadow: 0 0 3px var(--crt);
+}
+
+.plateButton {
+  color: var(--crt-dim);
+  font: inherit;
+  letter-spacing: 0.12em;
+  text-shadow: inherit;
+  text-transform: uppercase;
+}
+
+.plateButton[aria-pressed="true"] {
+  border-color: var(--crt);
+  color: var(--crt-hot);
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 0.35rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(16ch, 100%), 1fr));
+  }
+
+  .linkRow {
+    margin-bottom: 0.4em;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .linkRow[aria-hidden] {
+    display: none;
+  }
+
+  .plates {
+    display: none;
+  }
+
+  .treePanel {
+    width: 100%;
+    padding: 0.45rem;
+  }
+
+  .treeRow {
+    min-height: 2.75rem;
+  }
+}
+
+/* ── V2 physical terminal enclosure ─────────────────────────
+   The inherited terminal behavior stays intact; this layer makes the raster
+   read as glass mounted inside an institutional steel/ABS machine. */
+
+.page {
+  --machine-steel: #353731;
+  --machine-steel-light: #55574e;
+  --machine-steel-dark: #171914;
+  --machine-seam: #090a08;
+  --machine-label: #b7b59e;
+  align-items: stretch;
+  justify-content: center;
+  background: #050403;
+}
+
+.machine {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  overflow: hidden;
+  width: min(100%, 94rem);
+  min-width: 0;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  padding: clamp(1rem, 2.1vw, 1.6rem) clamp(0.85rem, 2.2vw, 1.8rem)
+    clamp(0.7rem, 1.5vw, 1.05rem);
+  border: 1px solid #060705;
+  border-radius: clamp(0.8rem, 2vw, 1.45rem);
+  background:
+    repeating-linear-gradient(
+      88deg,
+      transparent 0 11px,
+      rgb(255 255 255 / 2%) 11px 12px,
+      transparent 12px 23px
+    ),
+    radial-gradient(130% 24% at 50% 0%, rgb(255 255 255 / 18%), transparent 62%),
+    linear-gradient(
+      145deg,
+      var(--machine-steel-light),
+      var(--machine-steel) 42%,
+      var(--machine-steel-dark)
+    );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 25%),
+    inset 0 -0.45rem 1rem rgb(0 0 0 / 45%),
+    inset 0 0 0 0.3rem rgb(0 0 0 / 16%),
+    0 0.45rem 0 #080907,
+    0 1.5rem 3.2rem rgb(0 0 0 / 72%);
+}
+
+/* top service rail: four fasteners and two banks of punched vents */
+.machine::before {
+  position: absolute;
+  z-index: 2;
+  top: 0.42rem;
+  right: 0.75rem;
+  left: 0.75rem;
+  height: 0.48rem;
+  border-block: 1px solid rgb(0 0 0 / 55%);
+  background:
+    radial-gradient(
+      circle at 0.3rem 50%,
+      #111 0 0.1rem,
+      #85877d 0.11rem 0.16rem,
+      transparent 0.17rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.3rem) 50%,
+      #111 0 0.1rem,
+      #85877d 0.11rem 0.16rem,
+      transparent 0.17rem
+    ),
+    repeating-linear-gradient(90deg, #0b0d0a 0 0.5rem, #494b43 0.5rem 0.75rem)
+    12% 50% / 22% 0.22rem no-repeat,
+    repeating-linear-gradient(90deg, #0b0d0a 0 0.5rem, #494b43 0.5rem 0.75rem)
+    88% 50% / 22% 0.22rem no-repeat;
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 8%),
+    0 1px rgb(255 255 255 / 8%);
+  content: "";
+  pointer-events: none;
+}
+
+.machine::after {
+  position: absolute;
+  z-index: -1;
+  right: 5%;
+  bottom: -0.7rem;
+  left: 5%;
+  height: 1.1rem;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 70%);
+  content: "";
+  filter: blur(0.55rem);
+  pointer-events: none;
+}
+
+.bootPilot {
+  position: absolute;
+  z-index: 8;
+  top: 0.43rem;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  padding: 0.08rem 0.5rem;
+  border-inline: 1px solid rgb(0 0 0 / 50%);
+  background: #262820;
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 8%),
+    0 1px rgb(255 255 255 / 7%);
+  color: rgb(210 207 178 / 52%);
+  font: 500 0.52rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.16em;
+  text-shadow: 0 1px #000;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.bootPilot i {
+  width: 0.42rem;
+  height: 0.42rem;
+  border: 1px solid #080905;
+  border-radius: 50%;
+  background: #4c2c12;
+  box-shadow: inset 0 0 0.15rem #000;
+}
+
+.bootPilot[data-active="true"] {
+  color: #d8cda9;
+}
+
+.bootPilot[data-active="true"] i {
+  animation: v2-pilot 1.2s steps(2, jump-none) infinite;
+  background: var(--crt);
+  box-shadow:
+    inset 0 0 0.12rem #fff1c4,
+    0 0 0.35rem rgb(255 176 0 / 75%),
+    0 0 0.9rem rgb(255 176 0 / 20%);
+}
+
+@keyframes v2-pilot {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.crt {
+  min-height: 0;
+  border: clamp(0.38rem, 0.8vw, 0.62rem) solid #10120e;
+  border-radius: clamp(0.75rem, 1.6vw, 1.2rem);
+  outline: 1px solid rgb(180 183 165 / 27%);
+  outline-offset: -1px;
+  box-shadow:
+    inset 0 0 7rem rgb(0 0 0 / 82%),
+    inset 0 0 0 1px rgb(255 229 184 / 5%),
+    0 0.32rem 0 #080905,
+    0 0.65rem 1.1rem rgb(0 0 0 / 72%);
+}
+
+/* amber phosphor dots plus scanlines; intentionally subtler than an RGB mask */
+.crt::before {
+  background:
+    radial-gradient(circle, rgb(255 201 112 / 5%) 0 0.45px, transparent 0.55px)
+    0 0 / 3px 3px,
+    repeating-linear-gradient(0deg, rgb(0 0 0 / 17%) 0 1px, transparent 1px 3px);
+}
+
+/* asymmetric room reflection over the existing curved-glass vignette */
+.crt::after {
+  background:
+    linear-gradient(
+      116deg,
+      transparent 0 15%,
+      rgb(255 241 216 / 4%) 15.2% 23%,
+      transparent 23.2% 100%
+    ),
+    radial-gradient(90% 35% at 18% 0%, rgb(255 246 223 / 7%), transparent 62%),
+    radial-gradient(
+      140% 140% at 50% 50%,
+      transparent 54%,
+      rgb(0 0 0 / 62%) 100%
+    );
+}
+
+.raster {
+  top: -26%;
+  animation-name: v2-raster;
+  will-change: transform;
+}
+
+@keyframes v2-raster {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(523%);
+  }
+}
+
+.machine:focus-within {
+  outline: 3px solid #ffbf45;
+  outline-offset: 0.28rem;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 25%),
+    inset 0 -0.45rem 1rem rgb(0 0 0 / 45%),
+    inset 0 0 0 0.3rem rgb(0 0 0 / 16%),
+    0 0.45rem 0 #080907,
+    0 0 0 0.4rem rgb(255 176 0 / 13%),
+    0 1.5rem 3.2rem rgb(0 0 0 / 72%);
+}
+
+/* key rail is a separate stamped panel rather than text floating on glass */
+.keybar {
+  position: relative;
+  z-index: 4;
+  margin-top: clamp(0.65rem, 1.4vw, 0.9rem);
+  padding: 0.6rem clamp(0.55rem, 1.5vw, 1rem);
+  border: 1px solid #10120e;
+  border-radius: 0.28rem 0.28rem 0.55rem 0.55rem;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 2%) 0 1px,
+      transparent 1px 6px
+    ),
+    linear-gradient(180deg, #45483f, #292c25 64%, #151713);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 15%),
+    inset 0 -0.25rem 0.55rem rgb(0 0 0 / 38%),
+    0 0.2rem 0 #0b0c09;
+  color: rgb(225 190 129 / 72%);
+}
+
+.fkeys {
+  gap: 0.4rem 0.55rem;
+}
+
+.fkeys button {
+  min-width: 5.2rem;
+  padding: 0.38rem 0.58rem;
+  border: 1px solid #0a0b09;
+  border-radius: 0.14rem;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(255 255 255 / 5%),
+      transparent 18% 82%,
+      rgb(0 0 0 / 18%)
+    ),
+    linear-gradient(180deg, #4b4e45, #292c26 75%, #181a16);
+  box-shadow:
+    inset 0 1px rgb(255 255 255 / 16%),
+    inset 0 -1px rgb(0 0 0 / 40%),
+    0 2px 0 #0b0c0a,
+    0 4px 6px rgb(0 0 0 / 42%);
+  text-align: left;
+  transform: translateY(0);
+}
+
+.fkeys button:active {
+  box-shadow:
+    inset 0 2px 3px rgb(0 0 0 / 58%),
+    0 0 0 #0b0c0a;
+  transform: translateY(2px);
+}
+
+.fkeys button:focus-visible,
+.plateButton:focus-visible,
+.gate:focus-visible {
+  outline: 3px solid #ffc45a;
+  outline-offset: 0.22rem;
+}
+
+.plate {
+  border-color: rgb(8 9 7 / 82%);
+  background: #20221d;
+  box-shadow:
+    inset 0 2px 3px rgb(0 0 0 / 60%),
+    0 1px rgb(255 255 255 / 7%);
+}
+
+@media (max-width: 640px) {
+  .machine {
+    padding: 0.92rem 0.5rem 0.5rem;
+    border-radius: 0.65rem;
+  }
+
+  .bootPilot {
+    font-size: 0.45rem;
+  }
+
+  .crt {
+    border-width: 0.32rem;
+  }
+
+  .keybar {
+    padding: 0.48rem;
+  }
+
+  .fkeys {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fkeys button {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt,
+  .scroll,
+  .raster,
+  .cursor,
+  .plate i,
+  .bootPilot i,
+  .treePanel {
+    animation: none;
+  }
+
+  .treeChildrenShell {
+    transition: none;
+  }
+
+  .crt {
+    filter: none;
+    transform: none;
+  }
+
+  .raster {
+    display: none;
+    will-change: auto;
+  }
+}
