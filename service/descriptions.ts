@@ -1,13 +1,19 @@
 export const BAZAAR_DESC = 'A neon night market of my projects and side quests'
 
+export const BUBORDLE_DESC =
+  'Heardle on a cassette deck. One mystery tape a day: play the first second, guess the song in six tries, and every miss winds the spool a little further.'
+
+export const GAME_OF_LIFE_DESC =
+  "Conway's Game of Life on an infinite midnight grid. Draw a seed, load a legendary pattern and watch simple rules turn into strange machinery."
+
 export const G_SNAKE_DESC =
   'Snake, straight from the Nokia 3310. An 84×48 green LCD, one hungry snake and a top score that never leaves your browser.'
 
 export const MANUAL_DESC =
   'How to work with Rubén Sospedra. A manual of instructions: what I value, how I look at problems, where my blind spots are, and how to earn my trust.'
 
-export const MINES_DESC =
-  'Minesweeper, the 1992 build, on a CRT that deals the field to your screen. Left click sweeps, right click flags, the smiley judges.'
+export const W98_DESC =
+  'A Windows 98 desktop in the browser. Sweep a responsive Minesweeper field, paint with JS Paint and play your library through Winamp.'
 
 export const PAPERS_DESC =
   "Papers on JavaScript, TypeScript, the web platform and the occasional politics of software. Not your usual blog: dense over long, niche over SEO chum. Words are my own. It's dangerous to go unknowing, take some pills 💊"
@@ -22,7 +28,7 @@ export const TALKS_DESC =
   'My conference talks on tape. A CRT, a VCR combo and five cassettes: finite state machines, functional programming and React Native.'
 
 export const TRAVEL_DESC =
-  'The flight log. Every destination pinned on a low-orbit globe.'
+  'The ship log. Every destination pinned on a low-orbit globe, every region a frequency on the signalscope. Twenty-two minutes to supernova.'
 
 export const USES_DESC =
   'The exact hardware and software I work with, served as a late-night ramen menu: the bowls, the broth, the toppings. Prices in verdict-yen. Highly opinionated.'

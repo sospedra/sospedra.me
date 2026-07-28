@@ -50,6 +50,21 @@ const config: NextConfig = {
   redirects: async () => [
     // the stack screen is gone but inbound links survive
     { source: '/stack', destination: '/bazaar', permanent: true },
+    // the talks screen became the videoclub; /talks/* assets stay untouched
+    { source: '/talks', destination: '/videoclub', permanent: true },
+    // the Minesweeper arcade grew into a Windows 98 desktop
+    { source: '/g-mines', destination: '/w98', permanent: true },
+    // Meridian owns one stable public URL; locale and practice live in-app
+    {
+      source: '/games/geo',
+      destination: '/meridian',
+      permanent: false,
+    },
+    {
+      source: '/:locale(en|es)/games/geo/:path*',
+      destination: '/meridian',
+      permanent: false,
+    },
     ...rewrites.map(({ source, destination }) => ({
       source,
       destination,

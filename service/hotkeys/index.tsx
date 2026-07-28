@@ -173,7 +173,7 @@ const GOTO_ROUTES: Record<string, Route> = {
   r: '/rubiks',
   u: '/uses',
   s: '/serve',
-  t: '/talks',
+  t: '/videoclub',
   v: '/travel',
 }
 
@@ -251,7 +251,10 @@ const findScrollableAncestor = (
 }
 
 export const getActiveScrollSurface = () => {
-  const root = document.getElementById('vbody')
+  // shell-less scenes (bazaar2) scroll their own <main> instead of #vbody
+  const root =
+    document.getElementById('vbody') ??
+    document.querySelector<HTMLElement>('main')
   if (!root) return null
 
   const focused = document.activeElement
@@ -329,9 +332,10 @@ export const scrollActivePage = (direction: -1 | 1) => {
   const surface = getActiveScrollSurface()
   if (!surface) return false
 
+  // responsive twins render both trees; only the displayed one has extent
   const marketScenes = Array.from(
     surface.querySelectorAll<HTMLElement>('[data-market-scene]'),
-  )
+  ).filter((scene) => scene.getBoundingClientRect().height > 0)
   if (marketScenes.length > 1) {
     return scrollSceneSequence(marketScenes, direction, surface)
   }
