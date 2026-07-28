@@ -1,4 +1,4 @@
-import { P, drawBolt } from './pixel-canvas.mjs'
+import { drawBolt, P } from './pixel-canvas.mjs'
 
 const drawWallPanels = (canvas) => {
   canvas.rect(0, 9, 416, 146, P.n2)

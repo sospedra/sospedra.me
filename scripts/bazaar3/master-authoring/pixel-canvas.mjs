@@ -245,7 +245,8 @@ export class PixelCanvas {
   text(x, y, value, color, scale = 1, spacing = 1) {
     let cursor = Math.round(x)
     for (const character of value) {
-      const glyph = FONT[character] ?? FONT[character.toUpperCase()] ?? FONT[' ']
+      const glyph =
+        FONT[character] ?? FONT[character.toUpperCase()] ?? FONT[' ']
       for (let row = 0; row < glyph.length; row += 1) {
         for (let column = 0; column < glyph[row].length; column += 1) {
           if (glyph[row][column] === '1') {
@@ -272,8 +273,20 @@ export const drawBulb = (canvas, x, y, wireColor = P.n0) => {
 
 export const drawLeafCluster = (canvas, x, y, size = 5) => {
   canvas.outlinedEllipse(x, y, size, Math.max(2, size - 2), P.g2, P.n0)
-  canvas.ellipse(x - Math.floor(size / 2), y + 1, Math.max(2, size - 2), 2, P.g3)
-  canvas.ellipse(x + Math.floor(size / 2), y - 1, Math.max(2, size - 2), 2, P.g3)
+  canvas.ellipse(
+    x - Math.floor(size / 2),
+    y + 1,
+    Math.max(2, size - 2),
+    2,
+    P.g3,
+  )
+  canvas.ellipse(
+    x + Math.floor(size / 2),
+    y - 1,
+    Math.max(2, size - 2),
+    2,
+    P.g3,
+  )
   canvas.rect(x - 1, y - Math.max(1, size - 3), 2, 2, P.g4)
 }
 

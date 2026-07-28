@@ -1,19 +1,6 @@
-import {
-  P,
-  drawBulb,
-  drawCrate,
-  drawLeafCluster,
-} from './pixel-canvas.mjs'
+import { drawBulb, drawCrate, drawLeafCluster, P } from './pixel-canvas.mjs'
 
-const drawOutlinedLine = (
-  canvas,
-  x0,
-  y0,
-  x1,
-  y1,
-  body,
-  outlineWidth = 3,
-) => {
+const drawOutlinedLine = (canvas, x0, y0, x1, y1, body, outlineWidth = 3) => {
   canvas.line(x0, y0, x1, y1, P.n0, outlineWidth)
   canvas.line(x0, y0, x1, y1, body)
 }

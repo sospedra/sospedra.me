@@ -2,7 +2,10 @@ import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import sharp from 'sharp'
-import { drawArchitectureFront, drawArchitectureRear } from './draw-architecture.mjs'
+import {
+  drawArchitectureFront,
+  drawArchitectureRear,
+} from './draw-architecture.mjs'
 import { drawGames } from './draw-games.mjs'
 import { drawProjects } from './draw-projects.mjs'
 import { drawTravel } from './draw-travel.mjs'

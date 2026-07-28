@@ -1,4 +1,4 @@
-import { P, drawBulb } from './pixel-canvas.mjs'
+import { drawBulb, P } from './pixel-canvas.mjs'
 
 const drawPlasticBin = (canvas, x, y, width, height, body, lip) => {
   canvas.outlineRect(x, y, width, height, body, P.n0)
