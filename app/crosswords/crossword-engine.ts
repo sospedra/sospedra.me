@@ -73,6 +73,7 @@ export type CrosswordAction =
       solutions: Record<number, string>
       now: number
     }
+  | { type: 'START'; now: number }
   | { type: 'PAUSE'; now: number; automatic: boolean }
   | { type: 'RESUME'; now: number }
   | { type: 'COMPLETE'; now: number }
@@ -81,7 +82,8 @@ export type CrosswordAction =
 
 const HISTORY_LIMIT = 80
 
-const blankFlags = () => Array.from({ length: 225 }, () => false)
+const blankFlags = (cellCount: number) =>
+  Array.from({ length: cellCount }, () => false)
 
 const snapshot = (state: CrosswordState): GameSnapshot => ({
   guesses: [...state.guesses],
@@ -126,13 +128,14 @@ export const createCrosswordState = (
 ): CrosswordState => {
   const selectedCell =
     puzzle.cells.find((cell) => cell.solution !== null)?.index ?? 0
+  const cellCount = puzzle.cells.length
 
   return {
-    guesses: Array.from({ length: 225 }, () => ''),
-    pencilCells: blankFlags(),
-    checkedCells: blankFlags(),
-    revealedCells: blankFlags(),
-    incorrectCells: blankFlags(),
+    guesses: Array.from({ length: cellCount }, () => ''),
+    pencilCells: blankFlags(cellCount),
+    checkedCells: blankFlags(cellCount),
+    revealedCells: blankFlags(cellCount),
+    incorrectCells: blankFlags(cellCount),
     selectedCell,
     direction: 'across',
     status: 'not-started',
@@ -241,6 +244,14 @@ export const crosswordReducer = (
         incorrectCells,
       })
     }
+    case 'START':
+      if (state.status !== 'not-started') return state
+      return {
+        ...state,
+        status: 'playing',
+        runStartedAt: action.now,
+        autoPaused: false,
+      }
     case 'PAUSE':
       if (state.status !== 'playing') return state
       return {
@@ -316,11 +327,11 @@ export const serializeCrosswordState = (
   runStartedAt: state.runStartedAt,
 })
 
-const restoreFlags = (value: unknown) => {
-  const flags = blankFlags()
+const restoreFlags = (value: unknown, cellCount: number) => {
+  const flags = blankFlags(cellCount)
   if (!Array.isArray(value)) return flags
   for (const index of value) {
-    if (Number.isInteger(index) && index >= 0 && index < 225) {
+    if (Number.isInteger(index) && index >= 0 && index < cellCount) {
       flags[index] = true
     }
   }
@@ -337,7 +348,7 @@ export const restoreCrosswordState = (
     saved.schemaVersion !== 1 ||
     saved.puzzleId !== puzzle.id ||
     !Array.isArray(saved.guesses) ||
-    saved.guesses.length !== 225
+    saved.guesses.length !== puzzle.cells.length
   ) {
     return null
   }
@@ -363,10 +374,10 @@ export const restoreCrosswordState = (
   return {
     ...createCrosswordState(puzzle),
     guesses,
-    pencilCells: restoreFlags(saved.pencilCells),
-    checkedCells: restoreFlags(saved.checkedCells),
-    revealedCells: restoreFlags(saved.revealedCells),
-    incorrectCells: restoreFlags(saved.incorrectCells),
+    pencilCells: restoreFlags(saved.pencilCells, puzzle.cells.length),
+    checkedCells: restoreFlags(saved.checkedCells, puzzle.cells.length),
+    revealedCells: restoreFlags(saved.revealedCells, puzzle.cells.length),
+    incorrectCells: restoreFlags(saved.incorrectCells, puzzle.cells.length),
     selectedCell,
     direction: saved.direction === 'down' ? 'down' : 'across',
     status,

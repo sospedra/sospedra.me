@@ -18,12 +18,17 @@ import {
   useState,
 } from 'react'
 import { playKeyClick, playTypewriterBell } from 'service/audio/key-click'
+import { useDailyCountdown } from 'service/daily-countdown'
 import { useGameInput } from 'service/hotkeys'
-import type {
-  CrosswordDirection,
-  CrosswordEntry,
-  CrosswordLocale,
-  CrosswordPuzzle,
+import {
+  type CrosswordChallengeFile,
+  type CrosswordDirection,
+  type CrosswordEntry,
+  type CrosswordLocale,
+  type CrosswordPuzzle,
+  editionFromChallenge,
+  LEGACY_EDITION,
+  puzzleForDate,
 } from './crossword-data'
 import {
   type CrosswordState,
@@ -44,7 +49,7 @@ type GameSettings = {
   highContrast: boolean
 }
 
-type SolveMode = 'guided' | 'standard' | 'expert'
+type SolveMode = 'guided' | 'standard'
 type SoundLevel = 0 | 1 | 2 | 3
 
 type DialogName = 'help' | 'complete' | null
@@ -66,28 +71,13 @@ const LOCALE_KEY = 'crossword:v1:locale'
 const PROGRESS_VERSION = 'v2'
 const MOBILE_LAYOUT_MEDIA =
   '(max-width: 52rem), (max-width: 64rem) and (max-height: 36rem)'
-const GRID_ROWS = [
-  'row-01',
-  'row-02',
-  'row-03',
-  'row-04',
-  'row-05',
-  'row-06',
-  'row-07',
-  'row-08',
-  'row-09',
-  'row-10',
-  'row-11',
-  'row-12',
-  'row-13',
-  'row-14',
-  'row-15',
-] as const
+const gridRowKeys = (height: number) =>
+  Array.from({ length: height }, (_, row) => `row-${row + 1}`)
 
 const COPY = {
   en: {
     brand: 'Crosswords',
-    edition: 'Daily / 15 × 15',
+    edition: (size: string) => `Daily / ${size}`,
     issue: 'Puzzle No. 208',
     publicationLine: 'Bilingual edition',
     languageEdition: 'English edition',
@@ -136,7 +126,6 @@ const COPY = {
     down: 'Down',
     gridInstructions:
       'Use letter keys to answer, arrows to move, Enter to change direction, and Escape to leave the grid.',
-    leaveGrid: 'Press Escape to leave the grid',
     row: 'Row',
     column: 'column',
     blank: 'Blank',
@@ -164,13 +153,11 @@ const COPY = {
     settingsTitle: 'Settings',
     solveMode: 'Solve difficulty',
     solveModeNote:
-      'Today’s 15×15 grid stays the same. Difficulty changes how much help appears beside each clue.',
+      'Today’s grid stays the same. Difficulty changes how much help appears beside each clue.',
     guidedMode: 'Guided',
-    guidedModeNote: 'Clue, answer length and first-letter hint.',
+    guidedModeNote: 'Clue and first-letter hint.',
     standardMode: 'Standard',
-    standardModeNote: 'Clue and answer length.',
-    expertMode: 'Expert',
-    expertModeNote: 'Clue only.',
+    standardModeNote: 'Clue only.',
     showTimer: 'Show timer',
     skipFilled: 'Skip filled cells',
     autoCheck: 'Auto-check letters',
@@ -208,8 +195,6 @@ const COPY = {
     timerShown: 'Timer shown.',
     timerHidden: 'Timer hidden.',
     solved: 'Solved',
-    letterCount: (count: number) =>
-      `${count} ${count === 1 ? 'letter' : 'letters'}`,
     firstLetter: (letter: string) => `starts with ${letter}`,
     helpTitle: 'Keyboard shortcuts',
     keyLetters: 'Enter a letter and move forward',
@@ -223,6 +208,8 @@ const COPY = {
     completeTitle: 'Crossword complete',
     completeNote: 'Every answer is correct.',
     solvedIn: 'Solved in',
+    nextPuzzleIn: 'Next crossword in',
+    nextPuzzleReady: 'A new crossword is out. Reload to play.',
     checksUsed: 'Checks used',
     revealsUsed: 'Reveals used',
     copyResult: 'Copy result',
@@ -238,12 +225,20 @@ const COPY = {
     clueList: 'Clues',
     switchToAcross: 'Show Across clues',
     switchToDown: 'Show Down clues',
-    gridLabel: 'English crossword, July 27, 2026, 15 by 15',
+    gridLabel: (date: string, size: string) =>
+      `English crossword, ${date}, ${size}`,
     inputLabel: 'Crossword letter input',
+    begin: 'Start',
+    startHint: 'The clock starts when you do.',
+    startedAnnouncement: 'Clock running.',
+    legendTitle: 'Grid marks',
+    legendChecked: 'Green underline: verified correct by Check.',
+    legendRevealed: 'Red underline and dot: letter revealed for you.',
+    legendIncorrect: 'Red cell: marked wrong by Check.',
   },
   es: {
-    brand: 'Crosswords',
-    edition: 'Diario / 15 × 15',
+    brand: 'Crucigrama',
+    edition: (size: string) => `Diario / ${size}`,
     issue: 'Crucigrama n.º 208',
     publicationLine: 'Edición bilingüe',
     languageEdition: 'Edición en español',
@@ -292,7 +287,6 @@ const COPY = {
     down: 'Verticales',
     gridInstructions:
       'Usa letras para responder, flechas para moverte, Intro para cambiar de dirección y Escape para salir de la cuadrícula.',
-    leaveGrid: 'Pulsa Escape para salir de la cuadrícula',
     row: 'Fila',
     column: 'columna',
     blank: 'Vacía',
@@ -320,13 +314,11 @@ const COPY = {
     settingsTitle: 'Ajustes',
     solveMode: 'Dificultad',
     solveModeNote:
-      'La cuadrícula de hoy sigue siendo de 15×15. La dificultad cambia la ayuda que aparece junto a cada pista.',
+      'La cuadrícula de hoy no cambia. La dificultad cambia la ayuda que aparece junto a cada pista.',
     guidedMode: 'Guiado',
-    guidedModeNote: 'Pista, longitud y primera letra.',
+    guidedModeNote: 'Pista y primera letra.',
     standardMode: 'Estándar',
-    standardModeNote: 'Pista y longitud de la respuesta.',
-    expertMode: 'Experto',
-    expertModeNote: 'Solo la pista.',
+    standardModeNote: 'Solo la pista.',
     showTimer: 'Mostrar cronómetro',
     skipFilled: 'Saltar casillas llenas',
     autoCheck: 'Comprobar letras automáticamente',
@@ -364,8 +356,6 @@ const COPY = {
     timerShown: 'Cronómetro visible.',
     timerHidden: 'Cronómetro oculto.',
     solved: 'Resuelta',
-    letterCount: (count: number) =>
-      `${count} ${count === 1 ? 'letra' : 'letras'}`,
     firstLetter: (letter: string) => `empieza por ${letter}`,
     helpTitle: 'Atajos de teclado',
     keyLetters: 'Escribir una letra y avanzar',
@@ -379,6 +369,8 @@ const COPY = {
     completeTitle: 'Crucigrama completado',
     completeNote: 'Todas las respuestas son correctas.',
     solvedIn: 'Resuelto en',
+    nextPuzzleIn: 'Próximo crucigrama en',
+    nextPuzzleReady: 'Hay un crucigrama nuevo. Recarga para jugar.',
     checksUsed: 'Comprobaciones',
     revealsUsed: 'Letras reveladas',
     copyResult: 'Copiar resultado',
@@ -395,8 +387,16 @@ const COPY = {
     clueList: 'Pistas',
     switchToAcross: 'Mostrar pistas horizontales',
     switchToDown: 'Mostrar pistas verticales',
-    gridLabel: 'Crucigrama en español, 27 de julio de 2026, 15 por 15',
+    gridLabel: (date: string, size: string) =>
+      `Crucigrama en español, ${date}, ${size}`,
     inputLabel: 'Entrada de letras del crucigrama',
+    begin: 'Empezar',
+    startHint: 'El cronómetro empieza contigo.',
+    startedAnnouncement: 'Cronómetro en marcha.',
+    legendTitle: 'Marcas de la cuadrícula',
+    legendChecked: 'Subrayado verde: letra verificada con Comprobar.',
+    legendRevealed: 'Subrayado rojo y punto: letra revelada.',
+    legendIncorrect: 'Casilla roja: marcada como incorrecta al comprobar.',
   },
 } as const
 
@@ -426,16 +426,54 @@ const directionLabel = (
   locale: CrosswordLocale,
 ) => COPY[locale][direction]
 
+// The grid already shows every answer's length; the only assist worth
+// offering is the first letter, and it derives from the fill for free.
 const clueAssist = (
   entry: CrosswordEntry,
   mode: SolveMode,
   locale: CrosswordLocale,
 ) => {
-  if (mode === 'expert') return null
-  const copy = COPY[locale]
-  const details = [copy.letterCount(entry.length)]
-  if (mode === 'guided') details.push(copy.firstLetter(entry.gridAnswer[0]))
-  return details.join(' · ')
+  if (mode !== 'guided') return null
+  return COPY[locale].firstLetter(entry.gridAnswer[0])
+}
+
+const NextPuzzleCountdown = ({
+  copy,
+}: {
+  copy: (typeof COPY)[CrosswordLocale]
+}) => {
+  const countdown = useDailyCountdown()
+  if (!countdown.label) return null
+  if (countdown.ready) {
+    return (
+      <button
+        type='button'
+        className={css.nextPuzzleReady}
+        onClick={() => window.location.reload()}
+      >
+        {copy.nextPuzzleReady}
+      </button>
+    )
+  }
+  return (
+    <div className={css.nextPuzzle}>
+      <p className={css.nextPuzzleReadout}>
+        <span>{copy.nextPuzzleIn}</span>
+        <strong>{countdown.label}</strong>
+      </p>
+      <span
+        className={css.nextPuzzleTrack}
+        aria-hidden='true'
+        style={
+          {
+            '--remaining': countdown.remainingFraction ?? 0,
+          } as CSSProperties
+        }
+      >
+        <span />
+      </span>
+    </div>
+  )
 }
 
 const entryFor = (
@@ -490,10 +528,16 @@ const Timer = ({
   return <>{formatTime(displayed)}</>
 }
 
-const CorrectWordSweep = ({ entry }: { entry: CrosswordEntry }) => {
+const CorrectWordSweep = ({
+  entry,
+  width,
+}: {
+  entry: CrosswordEntry
+  width: number
+}) => {
   const firstCell = entry.cells[0]
-  const row = Math.floor(firstCell / 15)
-  const column = firstCell % 15
+  const row = Math.floor(firstCell / width)
+  const column = firstCell % width
 
   return (
     <span
@@ -596,6 +640,7 @@ const ClueList = ({
   filedLabel,
   strikeSolved,
   assistFor,
+  guesses,
   progressLabel,
   progressReady,
 }: {
@@ -610,6 +655,7 @@ const ClueList = ({
   filedLabel: string
   strikeSolved: boolean
   assistFor: (entry: CrosswordEntry) => string | null
+  guesses: string[]
   progressLabel: (solved: number, total: number) => string
   progressReady: boolean
 }) => {
@@ -637,6 +683,9 @@ const ClueList = ({
           {entries.map((entry) => {
             const solved = solvedEntryIds.has(entry.id)
             const assist = assistFor(entry)
+            const mask = entry.cells
+              .map((cellIndex) => guesses[cellIndex] || '·')
+              .join('')
 
             return (
               <li key={entry.id}>
@@ -652,7 +701,13 @@ const ClueList = ({
                 >
                   <span className={css.clueNumber}>{entry.number}</span>
                   <span className={css.clueCopy}>
-                    <span className={css.clueText}>{entry.clue}</span>
+                    {entry.clue ? (
+                      <span className={css.clueText}>{entry.clue}</span>
+                    ) : (
+                      <span className={css.clueMask} aria-hidden='true'>
+                        {mask}
+                      </span>
+                    )}
                     {assist && <span className={css.clueMeta}>{assist}</span>}
                     {solved && (
                       <span className={css.srOnly}> — {solvedLabel}</span>
@@ -716,6 +771,49 @@ const ParameterKnob = ({
     </label>
   )
 }
+
+const ParameterSlider = ({
+  label,
+  max,
+  onChange,
+  tone,
+  value,
+  valueText,
+}: {
+  label: string
+  max: number
+  onChange: (value: number) => void
+  tone: 'blue' | 'ember' | 'ivory'
+  value: number
+  valueText: string
+}) => (
+  <label className={css.parameterSlider} data-tone={tone} data-stops={max + 1}>
+    <span className={css.parameterLabel}>{label}</span>
+    <span className={css.slideWell}>
+      <input
+        type='range'
+        min={0}
+        max={max}
+        step={1}
+        value={value}
+        aria-label={label}
+        aria-valuetext={valueText}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+      <span className={css.slideTrack} aria-hidden='true'>
+        <span
+          className={css.slideThumb}
+          style={
+            {
+              '--cw-slide-stop': value / Math.max(1, max),
+            } as CSSProperties
+          }
+        />
+      </span>
+    </span>
+    <output>{valueText}</output>
+  </label>
+)
 
 const DeckSwitch = ({
   active,
@@ -782,6 +880,7 @@ const ToolbarButton = ({
 function CrosswordSession({
   locale,
   puzzle,
+  hasSpanish,
   letterFontClassName,
   setLocale,
   settings,
@@ -789,6 +888,7 @@ function CrosswordSession({
 }: {
   locale: CrosswordLocale
   puzzle: CrosswordPuzzle
+  hasSpanish: boolean
   letterFontClassName: string
   setLocale: (locale: CrosswordLocale) => void
   settings: GameSettings
@@ -821,6 +921,7 @@ function CrosswordSession({
   const openerRef = useRef<HTMLElement | null>(null)
   const focusGridRef = useRef(false)
   const touchHandledRef = useRef(false)
+  const pointerDownCellRef = useRef<number | null>(null)
   const composingRef = useRef(false)
   const skipInputRef = useRef(false)
   const latestStateRef = useRef(state)
@@ -1009,6 +1110,15 @@ function CrosswordSession({
     announce(copy.restartedAnnouncement)
     window.requestAnimationFrame(() => focusCellAt(freshState.selectedCell))
   }, [announce, copy.restartedAnnouncement, focusCellAt, puzzle, save])
+
+  const startPuzzle = useCallback(() => {
+    focusGridRef.current = true
+    dispatch({ type: 'START', now: Date.now() })
+    announce(copy.startedAnnouncement)
+    window.requestAnimationFrame(() =>
+      focusCellAt(latestStateRef.current.selectedCell),
+    )
+  }, [announce, copy.startedAnnouncement, focusCellAt])
 
   const resumePuzzle = useCallback(() => {
     const mobile = window.matchMedia(MOBILE_LAYOUT_MEDIA).matches
@@ -1450,43 +1560,54 @@ function CrosswordSession({
   const eraseBackward = useCallback(() => {
     const current = latestStateRef.current
     if (current.status === 'paused' || current.status === 'complete') return
-    let index = current.selectedCell
-    let direction = current.direction
-    if (current.revealedCells[index]) {
-      const destination = advanceWithinEntry(index, -1, false)
-      focusGridRef.current = document.activeElement !== inputRef.current
+    focusGridRef.current = document.activeElement !== inputRef.current
+
+    const erasable = (index: number) =>
+      Boolean(current.guesses[index]) && !current.revealedCells[index]
+
+    // Erase in place when the selected cell holds a letter; otherwise walk
+    // one cell back per press, erasing only when the target has one. The
+    // walk must not stall on empty or revealed cells.
+    const selected = current.selectedCell
+    const target = erasable(selected)
+      ? { index: selected, direction: current.direction }
+      : advanceWithinEntry(selected, -1, false)
+    if (!erasable(target.index)) {
       dispatch({
         type: 'SELECT',
-        index: destination.index,
-        direction: destination.direction,
+        index: target.index,
+        direction: target.direction,
       })
       return
     }
-    if (!current.guesses[index]) {
-      const destination = advanceWithinEntry(index, -1, false)
-      index = destination.index
-      direction = destination.direction
-    }
-    focusGridRef.current = document.activeElement !== inputRef.current
-    if (current.guesses[index] && !current.revealedCells[index]) clickKey()
+
+    clickKey()
     dispatch({
       type: 'CLEAR',
-      index,
-      nextIndex: index,
+      index: target.index,
+      nextIndex: target.index,
       now: Date.now(),
     })
-    if (direction !== current.direction) {
-      dispatch({ type: 'SET_DIRECTION', direction })
+    if (target.direction !== current.direction) {
+      dispatch({ type: 'SET_DIRECTION', direction: target.direction })
     }
   }, [advanceWithinEntry, clickKey])
 
   const selectCell = useCallback(
-    (index: number, nativeKeyboard: boolean) => {
+    (index: number, nativeKeyboard: boolean, reclick: boolean) => {
       const current = latestStateRef.current
       const cell = puzzle.cells[index]
       if (!cell || cell.solution === null) return
       let direction = availableDirection(puzzle, index, current.direction)
-      if (index === current.selectedCell && cell.entryIds.length > 1) {
+
+      // Focus fires before click and already moves the selection, so a plain
+      // selectedCell comparison would flip direction on every fresh click.
+      // Only a click on the cell that was selected at pointerdown toggles.
+      if (
+        reclick &&
+        index === current.selectedCell &&
+        cell.entryIds.length > 1
+      ) {
         direction = current.direction === 'across' ? 'down' : 'across'
         announce(copy.directionChanged(directionLabel(direction, locale)))
       }
@@ -1502,10 +1623,11 @@ function CrosswordSession({
   const moveGeometrically = useCallback(
     (rowDelta: number, columnDelta: number) => {
       const current = latestStateRef.current
-      let row = Math.floor(current.selectedCell / 15) + rowDelta
-      let column = (current.selectedCell % 15) + columnDelta
-      while (row >= 0 && row < 15 && column >= 0 && column < 15) {
-        const index = row * 15 + column
+      const { width, height } = puzzle
+      let row = Math.floor(current.selectedCell / width) + rowDelta
+      let column = (current.selectedCell % width) + columnDelta
+      while (row >= 0 && row < height && column >= 0 && column < width) {
+        const index = row * width + column
         if (puzzle.cells[index]?.solution !== null) {
           const requested: CrosswordDirection =
             columnDelta === 0 ? 'down' : 'across'
@@ -1707,6 +1829,14 @@ function CrosswordSession({
   ).format(new Date(`${puzzle.publicationDate}T12:00:00Z`))
   const paused = state.status === 'paused'
   const complete = state.status === 'complete'
+  const showStart = hydrated && state.status === 'not-started'
+  const gridSizeLabel = `${puzzle.width}×${puzzle.height}`
+
+  useEffect(() => {
+    if (showStart) {
+      document.getElementById('crossword-start-key')?.focus()
+    }
+  }, [showStart])
   const checksUsed = state.checkedCells.some(Boolean)
   const revealsUsed = state.revealedCells.some(Boolean)
   const filingStatus = !hydrated
@@ -1716,7 +1846,7 @@ function CrosswordSession({
       : copy.clueProgress(solvedEntryIds.size, puzzle.entries.length)
 
   const shareResult = async () => {
-    const result = `${copy.brand} · ${puzzle.publicationDate} · ${locale.toUpperCase()}\n15×15 · ${formatTime(state.elapsedMs)}${revealsUsed ? ' · revealed' : ''}`
+    const result = `${copy.brand} · ${puzzle.publicationDate} · ${locale.toUpperCase()}\n${puzzle.width}×${puzzle.height} · ${formatTime(state.elapsedMs)}${revealsUsed ? ' · revealed' : ''}`
     try {
       await navigator.clipboard.writeText(result)
       announce(copy.resultCopied)
@@ -1725,13 +1855,9 @@ function CrosswordSession({
     }
   }
 
-  const solveModes = ['guided', 'standard', 'expert'] as const
+  const solveModes = ['standard', 'guided'] as const
   const scopeValues = ['cell', 'answer', 'puzzle'] as const
-  const solveModeLabels = [
-    copy.guidedMode,
-    copy.standardMode,
-    copy.expertMode,
-  ] as const
+  const solveModeLabels = [copy.standardMode, copy.guidedMode] as const
   const scopeLabels = [
     copy.cellScope,
     copy.answerScope,
@@ -1778,7 +1904,7 @@ function CrosswordSession({
       </button>
 
       <div className={css.parameterBank}>
-        <ParameterKnob
+        <ParameterSlider
           label={copy.assistControl}
           max={solveModes.length - 1}
           value={solveModes.indexOf(settings.solveMode)}
@@ -1794,7 +1920,7 @@ function CrosswordSession({
             }))
           }
         />
-        <ParameterKnob
+        <ParameterSlider
           label={copy.scopeControl}
           max={scopeValues.length - 1}
           value={scopeValues.indexOf(toolScope)}
@@ -1896,7 +2022,21 @@ function CrosswordSession({
             }
           }}
         >
-          <span aria-hidden='true'>{complete ? '↻' : paused ? '▶' : 'Ⅱ'}</span>
+          <span className={css.toolGlyph} aria-hidden='true'>
+            {complete ? (
+              <svg viewBox='0 0 16 16' aria-hidden='true'>
+                <path d='M13.2 8a5.2 5.2 0 1 1-1.5-3.7M13.2 2.6v3h-3' />
+              </svg>
+            ) : paused ? (
+              <svg viewBox='0 0 16 16' aria-hidden='true'>
+                <path d='M6 3.9v8.2l6.5-4.1L6 3.9Z' />
+              </svg>
+            ) : (
+              <svg viewBox='0 0 16 16' aria-hidden='true'>
+                <path d='M5.6 3.8v8.4M10.4 3.8v8.4' />
+              </svg>
+            )}
+          </span>
           <span>
             {complete ? copy.playAgain : paused ? copy.resume : copy.pause}
           </span>
@@ -1990,6 +2130,7 @@ function CrosswordSession({
       lang={locale}
       data-large-text={settings.largeText}
       data-high-contrast={settings.highContrast}
+      style={{ '--cw-grid-cols': puzzle.width } as CSSProperties}
     >
       <span id='crossword-pencil-hint' hidden>
         {copy.pencilHint}
@@ -2002,7 +2143,7 @@ function CrosswordSession({
       </span>
       <span id='crossword-active-clue-text' className={css.srOnly}>
         {activeEntry.number} {directionLabel(activeEntry.direction, locale)}.{' '}
-        {activeEntry.clue}
+        {activeEntry.clue ?? ''}
         {assistFor(activeEntry) ? ` — ${assistFor(activeEntry)}` : ''}
       </span>
       <header className={css.masthead}>
@@ -2013,7 +2154,7 @@ function CrosswordSession({
           </Link>
         </div>
         <div className={css.brandBlock}>
-          <p>{copy.edition}</p>
+          <p>{copy.edition(`${puzzle.width} × ${puzzle.height}`)}</p>
           <h1>
             {copy.brand}
             <span className={css.srOnly}> — {copy.dailyCrossword}</span>
@@ -2034,32 +2175,37 @@ function CrosswordSession({
             aria-label={filingStatus}
           />
         </div>
-        <fieldset className={css.localeSwitch}>
-          <legend className={css.srOnly}>{copy.language}</legend>
-          <button
-            type='button'
-            data-active={locale === 'en'}
-            aria-pressed={locale === 'en'}
-            aria-label={copy.english}
-            onClick={() => changeLocale('en')}
-          >
-            EN
-          </button>
-          <button
-            type='button'
-            data-active={locale === 'es'}
-            aria-pressed={locale === 'es'}
-            aria-label={copy.spanish}
-            onClick={() => changeLocale('es')}
-          >
-            ES
-          </button>
-        </fieldset>
+        {hasSpanish && (
+          <fieldset className={css.localeSwitch}>
+            <legend className={css.srOnly}>{copy.language}</legend>
+            <button
+              type='button'
+              data-active={locale === 'en'}
+              aria-pressed={locale === 'en'}
+              aria-label={copy.english}
+              onClick={() => changeLocale('en')}
+            >
+              EN
+            </button>
+            <button
+              type='button'
+              data-active={locale === 'es'}
+              aria-pressed={locale === 'es'}
+              aria-label={copy.spanish}
+              onClick={() => changeLocale('es')}
+            >
+              ES
+            </button>
+          </fieldset>
+        )}
       </header>
 
       <div className={css.workspace}>
         <article className={css.leadStory} aria-label={copy.dailyCrossword}>
-          <section className={css.gridRegion} aria-label={copy.gridLabel}>
+          <section
+            className={css.gridRegion}
+            aria-label={copy.gridLabel(publicationDate, gridSizeLabel)}
+          >
             <p id='crossword-grid-instructions' className={css.srOnly}>
               {copy.gridInstructions}
             </p>
@@ -2069,17 +2215,17 @@ function CrosswordSession({
                   className={css.grid}
                   // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: the WAI-ARIA grid pattern intentionally upgrades this semantic table to a composite grid
                   role='grid'
-                  aria-label={copy.gridLabel}
-                  aria-rowcount={15}
-                  aria-colcount={15}
+                  aria-label={copy.gridLabel(publicationDate, gridSizeLabel)}
+                  aria-rowcount={puzzle.height}
+                  aria-colcount={puzzle.width}
                   aria-describedby='crossword-grid-instructions'
-                  inert={paused}
+                  inert={paused || showStart}
                 >
                   <tbody>
-                    {GRID_ROWS.map((rowKey, row) => (
+                    {gridRowKeys(puzzle.height).map((rowKey, row) => (
                       <tr className={css.gridRow} key={rowKey}>
                         {puzzle.cells
-                          .slice(row * 15, row * 15 + 15)
+                          .slice(row * puzzle.width, (row + 1) * puzzle.width)
                           .map((cell) => {
                             if (cell.solution === null) {
                               return (
@@ -2164,15 +2310,25 @@ function CrosswordSession({
                                   onPointerDown={(event: PointerEvent) => {
                                     touchHandledRef.current =
                                       event.pointerType !== 'mouse'
+                                    pointerDownCellRef.current =
+                                      latestStateRef.current.selectedCell
                                   }}
                                   onPointerCancel={() => {
                                     touchHandledRef.current = false
+                                    pointerDownCellRef.current = null
                                   }}
                                   onClick={() => {
                                     const nativeKeyboard =
                                       touchHandledRef.current
                                     touchHandledRef.current = false
-                                    selectCell(cell.index, nativeKeyboard)
+                                    const reclick =
+                                      pointerDownCellRef.current === cell.index
+                                    pointerDownCellRef.current = null
+                                    selectCell(
+                                      cell.index,
+                                      nativeKeyboard,
+                                      reclick,
+                                    )
                                   }}
                                   onFocus={() => {
                                     if (state.selectedCell !== cell.index) {
@@ -2222,14 +2378,11 @@ function CrosswordSession({
                   <CorrectWordSweep
                     key={`${sweepEntry.id}-${wordSweep.run}`}
                     entry={sweepEntry}
+                    width={puzzle.width}
                   />
                 )}
               </div>
             </div>
-            <p className={css.gridEscapeHint}>
-              <kbd>Esc</kbd>{' '}
-              {copy.leaveGrid.replace(/^(Press Escape|Pulsa Escape) /, '')}
-            </p>
             {paused && (
               <div className={css.pauseCurtain}>
                 <span aria-hidden='true'>Ⅱ</span>
@@ -2238,6 +2391,25 @@ function CrosswordSession({
                 <button type='button' onClick={resumePuzzle}>
                   {copy.resume}
                 </button>
+              </div>
+            )}
+            {showStart && (
+              <div className={css.pauseCurtain}>
+                <span aria-hidden='true'>
+                  <svg viewBox='0 0 16 16' aria-hidden='true'>
+                    <path d='M6 3.9v8.2l6.5-4.1L6 3.9Z' />
+                  </svg>
+                </span>
+                <strong>{puzzle.title}</strong>
+                <p>{puzzle.storyDeck}</p>
+                <button
+                  id='crossword-start-key'
+                  type='button'
+                  onClick={startPuzzle}
+                >
+                  {copy.begin}
+                </button>
+                <p>{copy.startHint}</p>
               </div>
             )}
           </section>
@@ -2257,6 +2429,7 @@ function CrosswordSession({
             strikeSolved
             assistFor={assistFor}
             progressLabel={copy.clueProgress}
+            guesses={state.guesses}
             progressReady={hydrated}
           />
           <ClueList
@@ -2272,6 +2445,7 @@ function CrosswordSession({
             strikeSolved
             assistFor={assistFor}
             progressLabel={copy.clueProgress}
+            guesses={state.guesses}
             progressReady={hydrated}
           />
         </aside>
@@ -2313,6 +2487,7 @@ function CrosswordSession({
             strikeSolved
             assistFor={assistFor}
             progressLabel={copy.clueProgress}
+            guesses={state.guesses}
             progressReady={hydrated}
           />
         </div>
@@ -2422,6 +2597,33 @@ function CrosswordSession({
               <dd>{copy.keyEscape}</dd>
             </div>
           </dl>
+          <p>{copy.legendTitle}</p>
+          <dl className={css.markLegend}>
+            <div>
+              <dt aria-hidden='true'>
+                <span className={css.legendCell} data-kind='checked'>
+                  A
+                </span>
+              </dt>
+              <dd>{copy.legendChecked}</dd>
+            </div>
+            <div>
+              <dt aria-hidden='true'>
+                <span className={css.legendCell} data-kind='revealed'>
+                  A
+                </span>
+              </dt>
+              <dd>{copy.legendRevealed}</dd>
+            </div>
+            <div>
+              <dt aria-hidden='true'>
+                <span className={css.legendCell} data-kind='incorrect'>
+                  A
+                </span>
+              </dt>
+              <dd>{copy.legendIncorrect}</dd>
+            </div>
+          </dl>
           <button
             type='button'
             className={css.primaryDialogButton}
@@ -2460,6 +2662,7 @@ function CrosswordSession({
               <dd>{revealsUsed ? '✓' : '—'}</dd>
             </div>
           </dl>
+          <NextPuzzleCountdown copy={copy} />
           <div className={css.completionActions}>
             <button type='button' onClick={restartPuzzle}>
               {copy.playAgain}
@@ -2482,16 +2685,35 @@ function CrosswordSession({
 }
 
 export default function CrosswordsView({
-  puzzles,
+  challenges,
   letterFontClassName,
 }: {
-  puzzles: Record<CrosswordLocale, CrosswordPuzzle>
+  challenges: CrosswordChallengeFile[]
   letterFontClassName: string
 }) {
   useGameInput()
   const [locale, setLocaleState] = useState<CrosswordLocale>('en')
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS)
   const [preferencesReady, setPreferencesReady] = useState(false)
+  const [editionDate, setEditionDate] = useState<string | null>(null)
+
+  const editions = useMemo(
+    () =>
+      [LEGACY_EDITION, ...challenges.map(editionFromChallenge)].toSorted(
+        (a, b) => a.en.publicationDate.localeCompare(b.en.publicationDate),
+      ),
+    [challenges],
+  )
+
+  // Editions roll at server (UTC) midnight for everyone; SSR and the first
+  // client render both use the latest edition.
+  useEffect(() => {
+    setEditionDate(new Date().toISOString().slice(0, 10))
+  }, [])
+  const puzzles = useMemo(
+    () => puzzleForDate(editions, editionDate ?? '9999-12-31'),
+    [editions, editionDate],
+  )
 
   useEffect(() => {
     try {
@@ -2526,9 +2748,7 @@ export default function CrosswordsView({
                 ? 0
                 : DEFAULT_SETTINGS.soundLevel,
           solveMode:
-            saved.solveMode === 'guided' ||
-            saved.solveMode === 'standard' ||
-            saved.solveMode === 'expert'
+            saved.solveMode === 'guided' || saved.solveMode === 'standard'
               ? saved.solveMode
               : DEFAULT_SETTINGS.solveMode,
           largeText:
@@ -2599,6 +2819,9 @@ export default function CrosswordsView({
     setLocaleState(nextLocale)
   }
 
+  const activeLocale = puzzles.es ? locale : 'en'
+  const puzzle = activeLocale === 'es' && puzzles.es ? puzzles.es : puzzles.en
+
   return (
     <Shell
       canonical='/crosswords'
@@ -2606,9 +2829,10 @@ export default function CrosswordsView({
       className={css.page}
     >
       <CrosswordSession
-        key={puzzles[locale].id}
-        locale={locale}
-        puzzle={puzzles[locale]}
+        key={puzzle.id}
+        locale={activeLocale}
+        puzzle={puzzle}
+        hasSpanish={Boolean(puzzles.es)}
         letterFontClassName={letterFontClassName}
         setLocale={setLocale}
         settings={settings}

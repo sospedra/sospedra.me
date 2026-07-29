@@ -1,0 +1,10 @@
+{
+  "spreadTheWordlist": {
+    "dataset": "spread the word(list), uppercase + crossfire",
+    "url": "https://www.spreadthewordlist.com/",
+    "retrievedAt": "2026-07-29",
+    "license": "CC-BY-NC-SA-4.0",
+    "sha256": "765b3d2607f87a7f38bb8fe70ad0b54c33947c76323e0a841570d976bd87efdd",
+    "notes": "Constructor-scored English wordlist by Brooke Husic and collaborators. Score floor 50 applied at corpus build. Attribution required; non-commercial use only; derived corpus JSON inherits the license."
+  }
+}

@@ -10,7 +10,7 @@ export type CrosswordEntry = {
   length: number
   cells: number[]
   gridAnswer: string
-  clue: string
+  clue?: string
 }
 
 export type CrosswordCell = {
@@ -31,8 +31,8 @@ export type CrosswordPuzzle = {
   storyDeck: string
   author: string
   difficulty: 1 | 2 | 3 | 4 | 5
-  width: 15
-  height: 15
+  width: number
+  height: number
   cells: CrosswordCell[]
   entries: CrosswordEntry[]
 }
@@ -244,14 +244,28 @@ const ES_CLUES: ClueBook = {
   },
 }
 
-const buildPuzzle = (
-  locale: CrosswordLocale,
-  solution: readonly string[],
-  clues: ClueBook,
-): CrosswordPuzzle => {
+type PuzzleSource = {
+  locale: CrosswordLocale
+  publicationDate: string
+  title: string
+  storyDeck: string
+  solution: readonly string[]
+  clues?: ClueBook
+}
+
+const buildPuzzle = ({
+  locale,
+  publicationDate,
+  title,
+  storyDeck,
+  solution,
+  clues,
+}: PuzzleSource): CrosswordPuzzle => {
+  const height = solution.length
+  const width = solution[0]?.length ?? 0
   const cells: CrosswordCell[] = solution.flatMap((row, rowIndex) =>
     [...row].map((character, columnIndex) => ({
-      index: rowIndex * 15 + columnIndex,
+      index: rowIndex * width + columnIndex,
       row: rowIndex,
       column: columnIndex,
       solution: character === '#' ? null : character,
@@ -262,19 +276,19 @@ const buildPuzzle = (
   const entries: CrosswordEntry[] = []
   let nextNumber = 1
 
-  for (let row = 0; row < 15; row += 1) {
-    for (let column = 0; column < 15; column += 1) {
-      const index = row * 15 + column
+  for (let row = 0; row < height; row += 1) {
+    for (let column = 0; column < width; column += 1) {
+      const index = row * width + column
       if (cells[index]?.solution === null) continue
 
       const startsAcross =
         (column === 0 || cells[index - 1]?.solution === null) &&
-        column < 14 &&
+        column < width - 1 &&
         cells[index + 1]?.solution !== null
       const startsDown =
-        (row === 0 || cells[index - 15]?.solution === null) &&
-        row < 14 &&
-        cells[index + 15]?.solution !== null
+        (row === 0 || cells[index - width]?.solution === null) &&
+        row < height - 1 &&
+        cells[index + width]?.solution !== null
 
       if (!startsAcross && !startsDown) continue
       const number = nextNumber
@@ -284,13 +298,13 @@ const buildPuzzle = (
       const addEntry = (direction: CrosswordDirection) => {
         const path: number[] = []
         let cursor = index
-        const step = direction === 'across' ? 1 : 15
+        const step = direction === 'across' ? 1 : width
 
         while (
           cursor < cells.length &&
           cells[cursor]?.solution !== null &&
           (direction === 'down' ||
-            Math.floor(cursor / 15) === Math.floor(index / 15))
+            Math.floor(cursor / width) === Math.floor(index / width))
         ) {
           path.push(cursor)
           cursor += step
@@ -300,11 +314,6 @@ const buildPuzzle = (
           .map((cellIndex) => cells[cellIndex].solution)
           .join('')
         const id = `${number}-${direction}`
-        const clue = clues[direction][answer]
-
-        if (!clue) {
-          throw new Error(`Missing ${locale} clue for ${id}: ${answer}`)
-        }
 
         entries.push({
           id,
@@ -315,7 +324,7 @@ const buildPuzzle = (
           length: path.length,
           cells: path,
           gridAnswer: answer,
-          clue,
+          clue: clues?.[direction][answer],
         })
         for (const cellIndex of path) cells[cellIndex].entryIds.push(id)
       }
@@ -327,24 +336,90 @@ const buildPuzzle = (
 
   return {
     schemaVersion: 1,
-    id: `${locale}:2026-07-27`,
+    id: `${locale}:${publicationDate}`,
     locale,
-    publicationDate: '2026-07-27',
-    title: locale === 'en' ? 'Ink & signal' : 'Tinta y señal',
-    storyDeck:
-      locale === 'en'
-        ? 'Fifteen rows of unruly letters have agreed to cross—temporarily.'
-        : 'Quince filas de letras rebeldes han accedido a cruzarse… por ahora.',
+    publicationDate,
+    title,
+    storyDeck,
     author: 'Sospedra Studio',
     difficulty: 3,
-    width: 15,
-    height: 15,
+    width,
+    height,
     cells,
     entries,
   }
 }
 
-export const PUZZLES: Record<CrosswordLocale, CrosswordPuzzle> = {
-  en: buildPuzzle('en', EN_SOLUTION, EN_CLUES),
-  es: buildPuzzle('es', ES_SOLUTION, ES_CLUES),
+export type CrosswordEdition = {
+  en: CrosswordPuzzle
+  es?: CrosswordPuzzle
 }
+
+type ChallengePuzzle = {
+  title: string
+  storyDeck: string
+  solution: string[]
+  clues?: ClueBook
+}
+
+export type CrosswordChallengeFile = {
+  publicationDate: string
+  puzzles: { en: ChallengePuzzle; es?: ChallengePuzzle }
+}
+
+const puzzleFromChallenge = (
+  locale: CrosswordLocale,
+  publicationDate: string,
+  puzzle: ChallengePuzzle,
+): CrosswordPuzzle =>
+  buildPuzzle({
+    locale,
+    publicationDate,
+    title: puzzle.title,
+    storyDeck: puzzle.storyDeck,
+    solution: puzzle.solution,
+    clues: puzzle.clues,
+  })
+
+export const editionFromChallenge = (
+  challenge: CrosswordChallengeFile,
+): CrosswordEdition => ({
+  en: puzzleFromChallenge(
+    'en',
+    challenge.publicationDate,
+    challenge.puzzles.en,
+  ),
+  es: challenge.puzzles.es
+    ? puzzleFromChallenge('es', challenge.publicationDate, challenge.puzzles.es)
+    : undefined,
+})
+
+/* The launch edition predates the content pipeline and stays inline; every
+   later edition arrives as a challenge file passed in by the page loader. */
+export const LEGACY_EDITION: CrosswordEdition = {
+  en: buildPuzzle({
+    locale: 'en',
+    publicationDate: '2026-07-27',
+    title: 'Ink & signal',
+    storyDeck:
+      'Fifteen rows of unruly letters have agreed to cross—temporarily.',
+    solution: EN_SOLUTION,
+    clues: EN_CLUES,
+  }),
+  es: buildPuzzle({
+    locale: 'es',
+    publicationDate: '2026-07-27',
+    title: 'Tinta y señal',
+    storyDeck:
+      'Quince filas de letras rebeldes han accedido a cruzarse… por ahora.',
+    solution: ES_SOLUTION,
+    clues: ES_CLUES,
+  }),
+}
+
+export const puzzleForDate = (
+  editions: CrosswordEdition[],
+  isoDate: string,
+): CrosswordEdition =>
+  editions.findLast((edition) => edition.en.publicationDate <= isoDate) ??
+  editions[0]
