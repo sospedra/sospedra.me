@@ -1,6 +1,6 @@
 export const BAZAAR_DESC = 'A neon night market of my projects and side quests'
 
-export const BUBORDLE_DESC =
+export const BOOMBOX_DESC =
   'Heardle on a cassette deck. One mystery tape a day: play the first second, guess the song in six tries, and every miss winds the spool a little further.'
 
 export const GAME_OF_LIFE_DESC =
@@ -13,7 +13,7 @@ export const MANUAL_DESC =
   'How to work with Rubén Sospedra. A manual of instructions: what I value, how I look at problems, where my blind spots are, and how to earn my trust.'
 
 export const W98_DESC =
-  'A Windows 98 desktop in the browser. Sweep a responsive Minesweeper field, paint with JS Paint and play your library through Winamp.'
+  'A Windows 98 desktop in the browser. Sweep a responsive Minesweeper field, paint with JS Paint, play your library through Winamp and tune live disco radio in RealPlayer.'
 
 export const PAPERS_DESC =
   "Papers on JavaScript, TypeScript, the web platform and the occasional politics of software. Not your usual blog: dense over long, niche over SEO chum. Words are my own. It's dangerous to go unknowing, take some pills 💊"

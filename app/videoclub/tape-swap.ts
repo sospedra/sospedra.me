@@ -55,19 +55,15 @@ const stages = (parts: TapeSwapParts): Stage[] => {
   const computed = window.getComputedStyle(parts.source)
   const sourceTilt = Number.parseFloat(computed.getPropertyValue('--tip')) || 0
   const mouthInsetX = Math.max(8, Math.min(16, slot.width * 0.035))
-  const mouthInsetY = Math.max(5, Math.min(9, slot.height * 0.16))
   const mouthWidth = slot.width - mouthInsetX * 2
-  const mouthHeight = slot.height - mouthInsetY * 2
 
   /*
-   * Let width determine the convincing cassette size, then compress only the
-   * final few millimetres into the mouth. This reads as perspective, not as a
-   * small tape teleporting into an oversized aperture.
+   * Width picks the docking size and the scale stays uniform: a cassette
+   * never flattens, it only slides behind the flap.
    */
-  const dockScaleX = Math.min(1.16, mouthWidth / width)
-  const dockScaleY = Math.min(dockScaleX, mouthHeight / height)
-  const dockWidth = width * dockScaleX
-  const dockHeight = height * dockScaleY
+  const dockScale = Math.min(1.16, mouthWidth / width)
+  const dockWidth = width * dockScale
+  const dockHeight = height * dockScale
   const dockX = slot.left + (slot.width - dockWidth) / 2
   const dockY = slot.top + (slot.height - dockHeight) / 2
   const side = source.left > slot.left ? 1 : -1
@@ -89,23 +85,23 @@ const stages = (parts: TapeSwapParts): Stage[] => {
   const preDock: Pose = {
     x: dockX + side * Math.min(22, slot.width * 0.055),
     y: dockY + Math.min(12, slot.height * 0.22),
-    scaleX: dockScaleX * 1.018,
-    scaleY: dockScaleX * 1.018,
+    scaleX: dockScale * 1.018,
+    scaleY: dockScale * 1.018,
     tilt: side * 0.7,
   }
   const docked: Pose = {
     x: dockX,
     y: dockY,
-    scaleX: dockScaleX,
-    scaleY: dockScaleY,
+    scaleX: dockScale,
+    scaleY: dockScale,
     tilt: 0,
   }
   const swallowed: Pose = {
     ...docked,
-    x: docked.x + dockWidth * 0.045,
-    y: slot.top + slot.height / 2 - dockHeight * 0.09,
-    scaleX: dockScaleX * 0.91,
-    scaleY: dockScaleY * 0.18,
+    x: docked.x + dockWidth * 0.055,
+    y: docked.y + dockHeight * 0.055,
+    scaleX: dockScale * 0.89,
+    scaleY: dockScale * 0.89,
   }
 
   return [
@@ -178,10 +174,10 @@ const stages = (parts: TapeSwapParts): Stage[] => {
         frame(
           {
             ...docked,
-            x: docked.x + dockWidth * 0.012,
-            y: docked.y + dockHeight * 0.08,
-            scaleX: dockScaleX * 0.976,
-            scaleY: dockScaleY * 0.84,
+            x: docked.x + dockWidth * 0.025,
+            y: docked.y + dockHeight * 0.025,
+            scaleX: dockScale * 0.95,
+            scaleY: dockScale * 0.95,
           },
           0.92,
           0.36,

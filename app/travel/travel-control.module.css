@@ -2602,26 +2602,31 @@
   writing-mode: vertical-rl;
 }
 
-.backLink:active .powerRockerFace {
+.backLink:active .powerRockerFace,
+.backLink.powerOff .powerRockerFace {
   box-shadow: none;
   filter: brightness(0.88);
   transform: translateZ(0.44rem) rotateX(-25deg);
 }
 
-.backLink:active .powerLight {
+.backLink:active .powerLight,
+.backLink.powerOff .powerLight {
   animation: none;
   opacity: 0;
 }
 
-.backLink:active .powerShine {
+.backLink:active .powerShine,
+.backLink.powerOff .powerShine {
   opacity: 0.3;
 }
 
-.backLink:active .powerShadow {
+.backLink:active .powerShadow,
+.backLink.powerOff .powerShadow {
   opacity: 1;
 }
 
-.backLink:active .powerLabel {
+.backLink:active .powerLabel,
+.backLink.powerOff .powerLabel {
   color: #ffe57a;
   text-shadow:
     0 -1px #100f08,
@@ -3420,8 +3425,7 @@
   border-radius: 1rem / 0.7rem;
   outline: 1px solid rgb(225 220 199 / 7%);
   outline-offset: 2px;
-  background:
-    radial-gradient(ellipse at 50% 48%, #0a2534, #02080d 76%), #02070a;
+  background: #02070a;
   box-shadow:
     -0.28rem -0.3rem 0.35rem rgb(4 5 4 / 72%),
     0.12rem 0.14rem 0 rgb(214 211 190 / 9%),
@@ -3471,6 +3475,77 @@
     inset -2px -2px 0 rgb(0 0 0 / 36%);
   content: "";
   pointer-events: none;
+}
+
+/* CRT picture. The tube owns the lit glow, so cutting power takes the light
+   with it and leaves the viewport's dead glass behind. */
+.tube {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  isolation: isolate;
+  background: radial-gradient(ellipse at 50% 48%, #0a2534, #02080d 76%);
+  transform-origin: center;
+}
+
+.tube::after {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  background: #fff;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+}
+
+.consoleOff .tube {
+  animation: travel-crt-off 400ms 120ms forwards;
+  pointer-events: none;
+}
+
+.consoleOff .tube::after {
+  animation: travel-crt-flash 400ms 120ms forwards;
+}
+
+/* two-phase CRT power-off: the picture squashes into a bright line,
+   then the line collapses to nothing */
+@keyframes travel-crt-off {
+  0% {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: scale(1, 1);
+  }
+
+  50% {
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: scale(1, 0.004);
+  }
+
+  100% {
+    transform: scale(0, 0.004);
+  }
+}
+
+@keyframes travel-crt-flash {
+  0% {
+    opacity: 0;
+  }
+
+  45%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .consoleOff .tube {
+    animation: none;
+    opacity: 0;
+    transition: opacity 160ms ease-out;
+  }
+
+  .consoleOff .tube::after {
+    animation: none;
+  }
 }
 
 .scopeBackdrop,

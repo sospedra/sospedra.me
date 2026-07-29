@@ -10,10 +10,11 @@ import { useTheme } from 'service/theme'
 import { useTransition } from 'service/transition'
 import { GAMES, type GameId } from './catalogue'
 import css from './games.module.css'
+import { createMenuSfx, type MenuSfx } from './menu-sfx'
 
 const BOOT_DURATION_MS = 3450
 const MENU_LOAD_DURATION_MS = 2300
-const DESKTOP_COLUMNS = 6
+const DESKTOP_COLUMNS = 7
 const MOBILE_COLUMNS = 3
 type ScenePhase = 'boot' | 'loading' | 'ready'
 
@@ -83,12 +84,7 @@ function CloudField() {
           <feColorMatrix
             in='cloudNoise'
             type='matrix'
-            values='
-              0 0 0 0 0.10
-              0 0 0 0 0.27
-              0 0 0 0 0.92
-              1.55 0 0 0 -0.28
-            '
+            values='0 0 0 0 0.10 0 0 0 0 0.27 0 0 0 0 0.92 1.55 0 0 0 -0.28'
           />
           <feGaussianBlur stdDeviation='.65' />
         </filter>
@@ -473,15 +469,135 @@ function CrosswordsIcon() {
   )
 }
 
+function BoomboxIcon() {
+  return (
+    <svg
+      className={css.iconGraphic}
+      viewBox='0 0 128 128'
+      aria-hidden='true'
+      focusable='false'
+    >
+      <defs>
+        <linearGradient id='games-boombox-body' x1='0' y1='0' x2='0' y2='1'>
+          <stop stopColor='#b7c4e2' />
+          <stop offset='.5' stopColor='#55628c' />
+          <stop offset='1' stopColor='#262e4d' />
+        </linearGradient>
+        <radialGradient id='games-boombox-cone' cx='.38' cy='.32' r='.75'>
+          <stop stopColor='#4a5878' />
+          <stop offset='.7' stopColor='#10182b' />
+          <stop offset='1' stopColor='#060b16' />
+        </radialGradient>
+        <linearGradient id='games-boombox-tape' x1='0' y1='0' x2='0' y2='1'>
+          <stop stopColor='#ffd97a' />
+          <stop offset='1' stopColor='#e8933f' />
+        </linearGradient>
+      </defs>
+      <ellipse cx='64' cy='107' rx='44' ry='9' fill='rgb(4 12 22 / 25%)' />
+      <path
+        d='M104 45 119 14'
+        stroke='#c9d6ee'
+        strokeWidth='3'
+        strokeLinecap='round'
+      />
+      <circle cx='119' cy='13' r='3' fill='#ff7b92' stroke='#ffe0e7' />
+      <path
+        d='M44 43v-6c0-10 40-10 40 0v6'
+        fill='none'
+        stroke='#c9d6ee'
+        strokeWidth='5'
+        strokeLinecap='round'
+      />
+      <rect
+        x='14'
+        y='42'
+        width='100'
+        height='58'
+        rx='8'
+        fill='url(#games-boombox-body)'
+        stroke='#1c2438'
+        strokeWidth='3'
+      />
+      <path
+        d='M20 47h88'
+        stroke='rgb(255 255 255 / 30%)'
+        strokeWidth='2'
+        strokeLinecap='round'
+      />
+      <circle
+        cx='34'
+        cy='71'
+        r='16'
+        fill='url(#games-boombox-cone)'
+        stroke='#d5e0f4'
+        strokeWidth='2.5'
+      />
+      <circle
+        cx='34'
+        cy='71'
+        r='9'
+        fill='none'
+        stroke='rgb(255 255 255 / 20%)'
+        strokeWidth='1.5'
+      />
+      <circle cx='34' cy='71' r='4' fill='#38445f' stroke='#8ea0c4' />
+      <circle
+        cx='94'
+        cy='71'
+        r='16'
+        fill='url(#games-boombox-cone)'
+        stroke='#d5e0f4'
+        strokeWidth='2.5'
+      />
+      <circle
+        cx='94'
+        cy='71'
+        r='9'
+        fill='none'
+        stroke='rgb(255 255 255 / 20%)'
+        strokeWidth='1.5'
+      />
+      <circle cx='94' cy='71' r='4' fill='#38445f' stroke='#8ea0c4' />
+      <rect
+        x='53'
+        y='55'
+        width='22'
+        height='16'
+        rx='2.5'
+        fill='url(#games-boombox-tape)'
+        stroke='#1c2438'
+        strokeWidth='2.5'
+      />
+      <circle cx='59.5' cy='63' r='3' fill='#2c1f0d' stroke='#ffe9b0' />
+      <circle cx='68.5' cy='63' r='3' fill='#2c1f0d' stroke='#ffe9b0' />
+      <path d='M59.5 68h9' stroke='#6b4a17' strokeWidth='1.5' />
+      <g stroke='#1c2438'>
+        <rect x='53' y='78' width='4.2' height='6' fill='#ea718d' />
+        <rect x='58.9' y='78' width='4.2' height='6' fill='#f4d34f' />
+        <rect x='64.8' y='78' width='4.2' height='6' fill='#61d59d' />
+        <rect x='70.7' y='78' width='4.2' height='6' fill='#8275df' />
+      </g>
+      <path
+        d='M55 90h18'
+        stroke='rgb(13 20 38 / 60%)'
+        strokeWidth='3'
+        strokeLinecap='round'
+      />
+    </svg>
+  )
+}
+
 function GameIcon({ id }: { id: GameId }) {
   switch (id) {
     case 'geo':
       return <MeridianIcon />
     case 'crosswords':
       return <CrosswordsIcon />
+    case 'boombox':
+      return <BoomboxIcon />
     case 'snake':
       return <SnakeIcon />
-    case 'w98':
+    case 'mines':
       return <MinesIcon />
     case 'rubiks':
       return <RubiksIcon />
@@ -506,6 +622,19 @@ export default function GamesView() {
   const transition = useTransition()
   const { fxMode } = useTheme()
   useGameInput()
+
+  const sfx = useRef<MenuSfx | null>(null)
+  const lastTicked = useRef(0)
+  const revealPlayed = useRef(false)
+
+  const playSfx = useCallback(
+    (name: keyof MenuSfx) => {
+      if (fxMode === 'quiet') return
+      sfx.current ??= createMenuSfx()
+      sfx.current[name]()
+    },
+    [fxMode],
+  )
 
   const ready = phase === 'ready'
   const menuVisible = phase !== 'boot'
@@ -536,11 +665,31 @@ export default function GamesView() {
     return () => window.clearTimeout(timer)
   }, [phase])
 
-  const focusGame = useCallback((index: number) => {
-    const next = Math.max(0, Math.min(GAMES.length - 1, index))
-    setSelectedIndex(next)
-    links.current[next]?.focus()
-  }, [])
+  useEffect(() => {
+    if (phase !== 'ready' || revealPlayed.current) return
+    revealPlayed.current = true
+    playSfx('reveal')
+  }, [phase, playSfx])
+
+  const selectGame = useCallback(
+    (index: number) => {
+      if (lastTicked.current !== index) {
+        lastTicked.current = index
+        playSfx('tick')
+      }
+      setSelectedIndex(index)
+    },
+    [playSfx],
+  )
+
+  const focusGame = useCallback(
+    (index: number) => {
+      const next = Math.max(0, Math.min(GAMES.length - 1, index))
+      selectGame(next)
+      links.current[next]?.focus()
+    },
+    [selectGame],
+  )
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
@@ -560,6 +709,7 @@ export default function GamesView() {
           finishBoot()
           return
         }
+        playSfx('cancel')
         transition.navigateLater('/bazaar', 360)
         return
       }
@@ -604,7 +754,7 @@ export default function GamesView() {
 
     window.addEventListener('keydown', handleKeydown)
     return () => window.removeEventListener('keydown', handleKeydown)
-  }, [finishBoot, focusGame, ready, selectedIndex, transition])
+  }, [finishBoot, focusGame, playSfx, ready, selectedIndex, transition])
 
   const selected = GAMES[selectedIndex]
 
@@ -672,9 +822,10 @@ export default function GamesView() {
                   data-active={active ? 'true' : 'false'}
                   tabIndex={ready ? 0 : -1}
                   aria-label={`${game.title}. ${game.description} Controls: ${game.controls}.`}
-                  onFocus={() => setSelectedIndex(index)}
-                  onPointerEnter={() => setSelectedIndex(index)}
-                  onPointerDown={() => setSelectedIndex(index)}
+                  onFocus={() => selectGame(index)}
+                  onPointerEnter={() => selectGame(index)}
+                  onPointerDown={() => selectGame(index)}
+                  onClick={() => playSfx('confirm')}
                 >
                   <span className={css.iconStage}>
                     <span className={css.iconWrap}>
@@ -702,6 +853,7 @@ export default function GamesView() {
                 url='/bazaar'
                 className={css.controlLink}
                 aria-label='Back to the bazaar'
+                onClick={() => playSfx('cancel')}
               >
                 <span className={css.circleKey} aria-hidden='true'>
                   ○

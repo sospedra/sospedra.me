@@ -3,9 +3,9 @@ import type { Route } from 'next'
 export type GameId =
   | 'geo'
   | 'crosswords'
-  | 'bubordle'
+  | 'boombox'
   | 'snake'
-  | 'w98'
+  | 'mines'
   | 'rubiks'
   | 'life'
 
@@ -43,10 +43,10 @@ export const GAMES = [
     controls: 'Keyboard · touch',
   },
   {
-    id: 'bubordle',
+    id: 'boombox',
     code: 'B//22',
-    title: 'Bubordle',
-    href: '/bubordle',
+    title: 'Boombox',
+    href: '/boombox',
     category: 'Daily · music',
     description:
       'A mystery mixtape on a cassette deck. One second of song, six guesses, misses wind the tape further.',
@@ -63,14 +63,14 @@ export const GAMES = [
     controls: 'Arrow keys · 5 · touch',
   },
   {
-    id: 'w98',
-    code: 'W//98',
-    title: 'Windows 98',
-    href: '/w98',
-    category: 'Desktop · classic apps',
+    id: 'mines',
+    code: 'S//90',
+    title: 'Minesweeper',
+    href: '/w98?sw=mines',
+    category: 'Puzzle · logic sweep',
     description:
-      'A pocket desktop with responsive Minesweeper, open-source JS Paint and a tactile Winamp.',
-    controls: 'Pointer · touch · keyboard · audio',
+      'The desktop classic, booted straight into a Windows 98 window. Read the numbers, plant the flags, clear the field.',
+    controls: 'Pointer · touch · audio',
   },
   {
     id: 'rubiks',

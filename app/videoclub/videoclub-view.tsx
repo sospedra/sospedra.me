@@ -15,6 +15,7 @@ import css from './videoclub.module.css'
 
 const WARM_MS = 1100
 const SWITCH_MS = 480
+const COOL_MS = 400
 const SEEK_STEP = 15
 const VOLUME_STEP = 0.1
 const OSD_MS = 1800
@@ -26,6 +27,7 @@ const TIP = ['-0.5deg', '0.4deg', '-0.2deg', '0.6deg', '-0.35deg']
 
 type TvStatus =
   | 'off'
+  | 'cooling'
   | 'warming'
   | 'inserting'
   | 'switching'
@@ -52,9 +54,11 @@ type TvEvent =
 const reducer = (state: TvState, event: TvEvent): TvState => {
   switch (event.type) {
     case 'power':
-      if (state.status === 'off') return { ...state, status: 'warming' }
-      return { ...state, status: 'off', incoming: null, cold: false }
+      if (state.status === 'off' || state.status === 'cooling')
+        return { ...state, status: 'warming' }
+      return { ...state, status: 'cooling', incoming: null, cold: false }
     case 'ready':
+      if (state.status === 'cooling') return { ...state, status: 'off' }
       if (state.status !== 'warming' && state.status !== 'switching')
         return state
       return { ...state, status: 'playing' }
@@ -69,7 +73,7 @@ const reducer = (state: TvState, event: TvEvent): TvState => {
         ...state,
         status: 'inserting',
         incoming: event.tape,
-        cold: state.status === 'off',
+        cold: state.status === 'off' || state.status === 'cooling',
       }
     case 'inserted':
       if (state.status !== 'inserting' || state.incoming === null) return state
@@ -90,6 +94,7 @@ const BARS_MS = 1150
 
 const OSD_STATUS: Record<TvStatus, string> = {
   off: '',
+  cooling: '',
   warming: 'CUE UP',
   inserting: 'INSERT',
   switching: 'TRACKING',
@@ -173,14 +178,18 @@ export default function VideoclubView() {
   const tape = TAPES[state.tape]
   const incomingTape = state.incoming === null ? null : TAPES[state.incoming]
   const activeTape = incomingTape ?? tape
-  const powered = state.status !== 'off'
+  const powered = state.status !== 'off' && state.status !== 'cooling'
   const lit = powered && !(state.status === 'inserting' && state.cold)
   const quiet = fxMode === 'quiet' || osReducedMotion
 
   useEffect(() => {
-    if (state.status !== 'warming' && state.status !== 'switching') return
-    const trackingDelay = state.burst === 'bars' ? BARS_MS : SWITCH_MS
-    const delay = state.status === 'warming' ? WARM_MS : trackingDelay
+    const phaseMs: Partial<Record<TvStatus, number>> = {
+      warming: WARM_MS,
+      switching: state.burst === 'bars' ? BARS_MS : SWITCH_MS,
+      cooling: COOL_MS,
+    }
+    const delay = phaseMs[state.status]
+    if (delay === undefined) return
     const id = window.setTimeout(() => dispatch({ type: 'ready' }), delay)
     return () => window.clearTimeout(id)
   }, [state.status, state.burst])
@@ -251,11 +260,11 @@ export default function VideoclubView() {
   }
 
   const power = () => {
-    if (state.status === 'off') {
+    if (powered) {
+      audio.powerOff()
+    } else {
       audio.powerOn()
       flash(formatChannel(state.tape))
-    } else {
-      audio.powerOff()
     }
     dispatch({ type: 'power' })
   }
@@ -337,26 +346,28 @@ export default function VideoclubView() {
             data-burst={state.burst}
           >
             <div className={css.tube}>
-              {/* biome-ignore lint/a11y/useMediaCaption: no caption tracks exist for these recordings */}
-              <video
-                key={tape.id}
-                ref={videoRef}
-                className={css.film}
-                src={tape.src}
-                preload='metadata'
-                playsInline
-                onLoadedMetadata={(event) => {
-                  event.currentTarget.volume = volume
-                }}
-                onTimeUpdate={(event) =>
-                  setClock(formatCounter(event.currentTarget.currentTime))
-                }
-                onEnded={() => dispatch({ type: 'toggle' })}
-              />
-              <div className={css.noise} aria-hidden='true' />
-              <div className={css.bars} aria-hidden='true' />
-              <div className={css.bloom} aria-hidden='true' />
-              <div className={css.phosphor} aria-hidden='true' />
+              <div className={css.raster}>
+                {/* biome-ignore lint/a11y/useMediaCaption: no caption tracks exist for these recordings */}
+                <video
+                  key={tape.id}
+                  ref={videoRef}
+                  className={css.film}
+                  src={tape.src}
+                  preload='metadata'
+                  playsInline
+                  onLoadedMetadata={(event) => {
+                    event.currentTarget.volume = volume
+                  }}
+                  onTimeUpdate={(event) =>
+                    setClock(formatCounter(event.currentTarget.currentTime))
+                  }
+                  onEnded={() => dispatch({ type: 'toggle' })}
+                />
+                <div className={css.noise} aria-hidden='true' />
+                <div className={css.bars} aria-hidden='true' />
+                <div className={css.bloom} aria-hidden='true' />
+                <div className={css.phosphor} aria-hidden='true' />
+              </div>
               <div className={css.glass} aria-hidden='true' />
             </div>
             <span className={css.screenBadge} aria-hidden='true'>

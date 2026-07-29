@@ -13,6 +13,7 @@ import type {
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useHotkeys } from 'service/hotkeys'
 import { useTheme } from 'service/theme'
+import { useTransition } from 'service/transition'
 import {
   DESTINATIONS,
   type Destination,
@@ -35,6 +36,8 @@ import {
 } from './use-travel-globe'
 
 const SCENE_ZOOM_MAX = TRAVEL_ZOOM_MAX * 2
+// 120ms rocker settle + 400ms CRT collapse + a beat of dead screen
+const POWER_OFF_EXIT_MS = 850
 const CITY_PIN_LANDINGS = [
   { rotate: '-18deg', x: '0%', y: '0%' },
   { rotate: '9deg', x: '28%', y: '0%' },
@@ -602,8 +605,10 @@ export default function TravelView() {
   const [pinPoint, setPinPoint] = useState<CityPinPoint | null>(null)
   const { visitor, status: visitorStatus, locate: locateVisitor } = useVisitor()
   const { fxMode } = useTheme()
+  const transition = useTransition()
   const [travelAudio] = useState(createTravelAudio)
   const [pressedZoom, setPressedZoom] = useState<'in' | 'out' | null>(null)
+  const [poweredOff, setPoweredOff] = useState(false)
   const zoomPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const moonBackSvgRef = useRef<SVGSVGElement>(null)
   const moonBackOrbitRef = useRef<SVGPathElement>(null)
@@ -753,6 +758,14 @@ export default function TravelView() {
     }
   }, [travelAudio])
 
+  const turnOff = (event: ReactMouseEvent<HTMLAnchorElement>) => {
+    // own the exit timing: the rocker flips, the scope collapses, then we go
+    event.preventDefault()
+    if (poweredOff) return
+    setPoweredOff(true)
+    transition.navigateLater('/', POWER_OFF_EXIT_MS)
+  }
+
   const tuneTo = (region: Region) => {
     if (region === activeRegion) return
     setActiveRegion(region)
@@ -802,7 +815,7 @@ export default function TravelView() {
       shellClassName={css.travelShell}
     >
       <section
-        className={css.console}
+        className={cn(css.console, poweredOff && css.consoleOff)}
         aria-labelledby='travel-control-title'
         onPointerDownCapture={handleMechanicalPointerDown}
         onClickCapture={handleMechanicalClick}
@@ -811,8 +824,9 @@ export default function TravelView() {
           <nav className={css.utilityRail} aria-label='Console power'>
             <Link
               url='/'
-              className={css.backLink}
+              className={cn(css.backLink, poweredOff && css.powerOff)}
               aria-label='Turn off the traveler’s console and return home'
+              onClick={turnOff}
             >
               <span className={css.powerRocker} aria-hidden='true'>
                 <span className={css.powerRockerFace}>
@@ -973,121 +987,123 @@ export default function TravelView() {
                     <i data-side='left' />
                   </span>
                   <div className={css.viewport}>
-                    <svg
-                      ref={moonBackSvgRef}
-                      className={cn(css.lunarLayer, css.lunarLayerBack)}
-                      viewBox='0 0 1000 1000'
-                      aria-hidden='true'
-                    >
-                      <defs>
-                        <radialGradient
-                          id='travel-moon-back'
-                          cx='34%'
-                          cy='30%'
-                          r='72%'
-                        >
-                          <stop offset='0' stopColor='#d8ded6' />
-                          <stop offset='62%' stopColor='#79837a' />
-                          <stop offset='100%' stopColor='#4a524b' />
-                        </radialGradient>
-                      </defs>
-                      <path
-                        ref={moonBackOrbitRef}
-                        className={css.lunarOrbitPath}
-                      />
-                      <g
-                        ref={moonBackBodyRef}
-                        className={css.attlerock}
-                        opacity='0'
+                    <div className={css.tube}>
+                      <svg
+                        ref={moonBackSvgRef}
+                        className={cn(css.lunarLayer, css.lunarLayerBack)}
+                        viewBox='0 0 1000 1000'
+                        aria-hidden='true'
                       >
-                        <circle r='7.2' fill='url(#travel-moon-back)' />
-                        <circle
-                          className={css.moonCrater}
-                          cx='-2.2'
-                          cy='-1.5'
-                          r='1.35'
+                        <defs>
+                          <radialGradient
+                            id='travel-moon-back'
+                            cx='34%'
+                            cy='30%'
+                            r='72%'
+                          >
+                            <stop offset='0' stopColor='#d8ded6' />
+                            <stop offset='62%' stopColor='#79837a' />
+                            <stop offset='100%' stopColor='#4a524b' />
+                          </radialGradient>
+                        </defs>
+                        <path
+                          ref={moonBackOrbitRef}
+                          className={css.lunarOrbitPath}
                         />
-                        <circle
-                          className={css.moonCrater}
-                          cx='2.1'
-                          cy='2'
-                          r='0.9'
-                        />
-                        <text
-                          ref={moonBackLabelRef}
-                          className={css.moonLabel}
-                          x='12'
-                          y='4'
+                        <g
+                          ref={moonBackBodyRef}
+                          className={css.attlerock}
+                          opacity='0'
                         >
-                          MOON
-                        </text>
-                      </g>
-                    </svg>
-                    <canvas
-                      id='travel-globe-canvas'
-                      ref={globe.canvasRef}
-                      className={css.canvas}
-                      role='img'
-                      aria-label='Interactive world signalscope. Drag the sky, turn the dials, or choose a ship-log entry to tune a signal.'
-                      aria-describedby='scope-instructions'
-                      onPointerDown={globe.onPointerDown}
-                      onPointerMove={globe.onPointerMove}
-                      onPointerUp={globe.onPointerUp}
-                      onPointerCancel={globe.onPointerCancel}
-                      onPointerLeave={globe.onPointerLeave}
-                    >
-                      The globe fell asleep. Pick a place from the ship log.
-                    </canvas>
-                    <svg
-                      ref={moonFrontSvgRef}
-                      className={cn(css.lunarLayer, css.lunarLayerFront)}
-                      viewBox='0 0 1000 1000'
-                      aria-hidden='true'
-                    >
-                      <defs>
-                        <radialGradient
-                          id='travel-moon-front'
-                          cx='34%'
-                          cy='30%'
-                          r='72%'
-                        >
-                          <stop offset='0' stopColor='#edf1e9' />
-                          <stop offset='58%' stopColor='#919c91' />
-                          <stop offset='100%' stopColor='#525b53' />
-                        </radialGradient>
-                      </defs>
-                      <path
-                        ref={moonFrontOrbitRef}
-                        className={css.lunarOrbitPath}
-                      />
-                      <g
-                        ref={moonFrontBodyRef}
-                        className={css.attlerock}
-                        opacity='0'
+                          <circle r='7.2' fill='url(#travel-moon-back)' />
+                          <circle
+                            className={css.moonCrater}
+                            cx='-2.2'
+                            cy='-1.5'
+                            r='1.35'
+                          />
+                          <circle
+                            className={css.moonCrater}
+                            cx='2.1'
+                            cy='2'
+                            r='0.9'
+                          />
+                          <text
+                            ref={moonBackLabelRef}
+                            className={css.moonLabel}
+                            x='12'
+                            y='4'
+                          >
+                            MOON
+                          </text>
+                        </g>
+                      </svg>
+                      <canvas
+                        id='travel-globe-canvas'
+                        ref={globe.canvasRef}
+                        className={css.canvas}
+                        role='img'
+                        aria-label='Interactive world signalscope. Drag the sky, turn the dials, or choose a ship-log entry to tune a signal.'
+                        aria-describedby='scope-instructions'
+                        onPointerDown={globe.onPointerDown}
+                        onPointerMove={globe.onPointerMove}
+                        onPointerUp={globe.onPointerUp}
+                        onPointerCancel={globe.onPointerCancel}
+                        onPointerLeave={globe.onPointerLeave}
                       >
-                        <circle r='7.2' fill='url(#travel-moon-front)' />
-                        <circle
-                          className={css.moonCrater}
-                          cx='-2.2'
-                          cy='-1.5'
-                          r='1.35'
+                        The globe fell asleep. Pick a place from the ship log.
+                      </canvas>
+                      <svg
+                        ref={moonFrontSvgRef}
+                        className={cn(css.lunarLayer, css.lunarLayerFront)}
+                        viewBox='0 0 1000 1000'
+                        aria-hidden='true'
+                      >
+                        <defs>
+                          <radialGradient
+                            id='travel-moon-front'
+                            cx='34%'
+                            cy='30%'
+                            r='72%'
+                          >
+                            <stop offset='0' stopColor='#edf1e9' />
+                            <stop offset='58%' stopColor='#919c91' />
+                            <stop offset='100%' stopColor='#525b53' />
+                          </radialGradient>
+                        </defs>
+                        <path
+                          ref={moonFrontOrbitRef}
+                          className={css.lunarOrbitPath}
                         />
-                        <circle
-                          className={css.moonCrater}
-                          cx='2.1'
-                          cy='2'
-                          r='0.9'
-                        />
-                        <text
-                          ref={moonFrontLabelRef}
-                          className={css.moonLabel}
-                          x='12'
-                          y='4'
+                        <g
+                          ref={moonFrontBodyRef}
+                          className={css.attlerock}
+                          opacity='0'
                         >
-                          MOON
-                        </text>
-                      </g>
-                    </svg>
+                          <circle r='7.2' fill='url(#travel-moon-front)' />
+                          <circle
+                            className={css.moonCrater}
+                            cx='-2.2'
+                            cy='-1.5'
+                            r='1.35'
+                          />
+                          <circle
+                            className={css.moonCrater}
+                            cx='2.1'
+                            cy='2'
+                            r='0.9'
+                          />
+                          <text
+                            ref={moonFrontLabelRef}
+                            className={css.moonLabel}
+                            x='12'
+                            y='4'
+                          >
+                            MOON
+                          </text>
+                        </g>
+                      </svg>
+                    </div>
                     <div
                       className={css.scopeFallback}
                       data-visible={globe.status !== 'ready'}
