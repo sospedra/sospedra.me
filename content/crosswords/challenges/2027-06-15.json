@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-06-15",
   "publicationDate": "2027-06-15",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-06-15:2025-01-21",
-  "source": {
-    "archiveDate": "2025-01-21",
-    "author": "Matthew Stock",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Singin' in the Rain",
-      "storyDeck": "By Matthew Stock · USA Today, 2025-01-21",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-01-21",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ADS#ENDNOTE#OOH",
         "LOO#GOODWIN#NBA",

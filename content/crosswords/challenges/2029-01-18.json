@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-01-18",
   "publicationDate": "2029-01-18",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-01-18:2023-01-05",
-  "source": {
-    "archiveDate": "2023-01-05",
-    "author": "Erik Agard",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Rising Tears",
-      "storyDeck": "By Erik Agard · USA Today, 2023-01-05",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-01-05",
-      "width": 15,
-      "height": 15,
       "solution": [
         "BEDS#TUTTI#PITS",
         "RYAN#ASIAN#IDEA",

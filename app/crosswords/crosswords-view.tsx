@@ -2400,8 +2400,7 @@ function CrosswordSession({
                     <path d='M6 3.9v8.2l6.5-4.1L6 3.9Z' />
                   </svg>
                 </span>
-                <strong>{puzzle.title}</strong>
-                <p>{puzzle.storyDeck}</p>
+                <strong>{copy.brand}</strong>
                 <button
                   id='crossword-start-key'
                   type='button'
@@ -2645,7 +2644,7 @@ function CrosswordSession({
           <span>W</span>
         </div>
         <div className={css.completionBody}>
-          <span>{puzzle.title}</span>
+          <span>{copy.brand}</span>
           <h2 id='complete-title'>{copy.completeTitle}</h2>
           <p>{copy.completeNote}</p>
           <dl className={css.resultStats}>

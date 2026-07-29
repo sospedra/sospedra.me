@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-02-14",
   "publicationDate": "2029-02-14",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-02-14:2022-11-09",
-  "source": {
-    "archiveDate": "2022-11-09",
-    "author": "Zaineb Akbar",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Drop Top",
-      "storyDeck": "By Zaineb Akbar · USA Today, 2022-11-09",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-11-09",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SPARKS##MSG#HRT",
         "ARRAYS#LIMO#EAU",

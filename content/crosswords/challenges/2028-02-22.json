@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-02-22",
   "publicationDate": "2028-02-22",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-02-22:2024-03-12",
-  "source": {
-    "archiveDate": "2024-03-12",
-    "author": "Rachel Simon",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Tmi",
-      "storyDeck": "By Rachel Simon · USA Today, 2024-03-12",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-03-12",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SARA#SANG#SPAWN",
         "QUAD#OREO#CABIN",

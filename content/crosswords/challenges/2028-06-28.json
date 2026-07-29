@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-06-28",
   "publicationDate": "2028-06-28",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-06-28:2023-11-01",
-  "source": {
-    "archiveDate": "2023-11-01",
-    "author": "Brooke Husic & Nate Cardin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Workers' Rights",
-      "storyDeck": "By Brooke Husic & Nate Cardin · USA Today, 2023-11-01",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-11-01",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SNUB#TACO#IPAD#",
         "LISA#ICON#NOSE#",

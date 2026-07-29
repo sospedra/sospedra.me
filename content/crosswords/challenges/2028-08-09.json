@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-08-09",
   "publicationDate": "2028-08-09",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-08-09:2023-09-13",
-  "source": {
-    "archiveDate": "2023-09-13",
-    "author": "Jess Shulman & Amanda Rafkin / Ed. Amanda Rafkin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Peace Out",
-      "storyDeck": "By Jess Shulman & Amanda Rafkin / Ed. Amanda Rafkin · USA Today, 2023-09-13",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-09-13",
-      "width": 15,
-      "height": 15,
       "solution": [
         "CDC#AFAR#CHEEKS",
         "LOL#PLIE#HOLDIT",

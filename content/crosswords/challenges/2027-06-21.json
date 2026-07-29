@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-06-21",
   "publicationDate": "2027-06-21",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-06-21:2024-12-02",
-  "source": {
-    "archiveDate": "2024-12-02",
-    "author": "Mark Valdez & Matthew Stock",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Bed Bath & Beyond",
-      "storyDeck": "By Mark Valdez & Matthew Stock · USA Today, 2024-12-02",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-12-02",
-      "width": 15,
-      "height": 15,
       "solution": [
         "#DMS#WISP#TASTY",
         "BOOT#ATTA#SCARE",

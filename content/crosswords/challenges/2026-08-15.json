@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-08-15",
   "publicationDate": "2026-08-15",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-08-15:2026-04-11",
-  "source": {
-    "archiveDate": "2026-04-11",
-    "author": "Kiran Pandey",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "I'm So Down",
-      "storyDeck": "By Kiran Pandey · USA Today, 2026-04-11",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2026-04-11",
-      "width": 15,
-      "height": 15,
       "solution": [
         "CALC##SCAMP#ACE",
         "OVER#STUPOR#WAD",

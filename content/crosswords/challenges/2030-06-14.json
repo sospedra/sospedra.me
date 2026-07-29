@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-06-14",
   "publicationDate": "2030-06-14",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-06-14:2021-08-06",
-  "source": {
-    "archiveDate": "2021-08-06",
-    "author": "Erik Agard",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Intent",
-      "storyDeck": "By Erik Agard · USA Today, 2021-08-06",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-08-06",
-      "width": 15,
-      "height": 15,
       "solution": [
         "TRANS#ORCA##PBS",
         "MELEE#REAL#GULP",

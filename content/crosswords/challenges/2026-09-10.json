@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-09-10",
   "publicationDate": "2026-09-10",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-09-10:2026-02-26",
-  "source": {
-    "archiveDate": "2026-02-26",
-    "author": "Sally Hoelscher & Olivia Mitra Framke",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Middle School",
-      "storyDeck": "By Sally Hoelscher & Olivia Mitra Framke · USA Today, 2026-02-26",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2026-02-26",
-      "width": 15,
-      "height": 15,
       "solution": [
         "PUFFS#CHAI#AQUA",
         "AGREE#FOMO#SUMS",

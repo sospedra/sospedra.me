@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-02-18",
   "publicationDate": "2027-02-18",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-02-18:2025-08-14",
-  "source": {
-    "archiveDate": "2025-08-14",
-    "author": "Shannon Rapp & Will Eisenberg",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Light My Fire",
-      "storyDeck": "By Shannon Rapp & Will Eisenberg · USA Today, 2025-08-14",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-08-14",
-      "width": 15,
-      "height": 15,
       "solution": [
         "CATS#ERASE#COCO",
         "AGUA#RELAY#IRON",

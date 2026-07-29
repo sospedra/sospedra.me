@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-11-12",
   "publicationDate": "2028-11-12",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-11-12:2023-01-01",
-  "source": {
-    "archiveDate": "2023-01-01",
-    "author": "Erik Agard",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "1/1",
-      "storyDeck": "By Erik Agard · USA Today, 2023-01-01",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-01-01",
-      "width": 15,
-      "height": 15,
       "solution": [
         "PST##TASTETESTS",
         "OOHS#IDLENOMORE",

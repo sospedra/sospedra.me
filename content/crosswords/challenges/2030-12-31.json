@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-12-31",
   "publicationDate": "2030-12-31",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-12-31:2020-12-29",
-  "source": {
-    "archiveDate": "2020-12-29",
-    "author": "Matthew Stock",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "EAST SIDE",
-      "storyDeck": "By Matthew Stock · USA Today, 2020-12-29",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2020-12-29",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ATM#FAB#HOFSTRA",
         "BRIBERY#ANOTHER",

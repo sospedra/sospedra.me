@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-04-10",
   "publicationDate": "2029-04-10",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-04-10:2022-09-27",
-  "source": {
-    "archiveDate": "2022-09-27",
-    "author": "Enrique Henestroza Anguiano",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Among Friends",
-      "storyDeck": "By Enrique Henestroza Anguiano · USA Today, 2022-09-27",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-09-27",
-      "width": 15,
-      "height": 15,
       "solution": [
         "DISC#ALAS##CHEW",
         "INTO#SINUS#HONE",

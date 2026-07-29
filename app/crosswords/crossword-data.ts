@@ -23,14 +23,9 @@ export type CrosswordCell = {
 }
 
 export type CrosswordPuzzle = {
-  schemaVersion: 1
   id: string
   locale: CrosswordLocale
   publicationDate: string
-  title: string
-  storyDeck: string
-  author: string
-  difficulty: 1 | 2 | 3 | 4 | 5
   width: number
   height: number
   cells: CrosswordCell[]
@@ -247,8 +242,6 @@ const ES_CLUES: ClueBook = {
 type PuzzleSource = {
   locale: CrosswordLocale
   publicationDate: string
-  title: string
-  storyDeck: string
   solution: readonly string[]
   clues?: ClueBook
 }
@@ -256,8 +249,6 @@ type PuzzleSource = {
 const buildPuzzle = ({
   locale,
   publicationDate,
-  title,
-  storyDeck,
   solution,
   clues,
 }: PuzzleSource): CrosswordPuzzle => {
@@ -335,14 +326,9 @@ const buildPuzzle = ({
   }
 
   return {
-    schemaVersion: 1,
     id: `${locale}:${publicationDate}`,
     locale,
     publicationDate,
-    title,
-    storyDeck,
-    author: 'Sospedra Studio',
-    difficulty: 3,
     width,
     height,
     cells,
@@ -356,8 +342,6 @@ export type CrosswordEdition = {
 }
 
 type ChallengePuzzle = {
-  title: string
-  storyDeck: string
   solution: string[]
   clues?: ClueBook
 }
@@ -375,8 +359,6 @@ const puzzleFromChallenge = (
   buildPuzzle({
     locale,
     publicationDate,
-    title: puzzle.title,
-    storyDeck: puzzle.storyDeck,
     solution: puzzle.solution,
     clues: puzzle.clues,
   })
@@ -400,18 +382,12 @@ export const LEGACY_EDITION: CrosswordEdition = {
   en: buildPuzzle({
     locale: 'en',
     publicationDate: '2026-07-27',
-    title: 'Ink & signal',
-    storyDeck:
-      'Fifteen rows of unruly letters have agreed to cross—temporarily.',
     solution: EN_SOLUTION,
     clues: EN_CLUES,
   }),
   es: buildPuzzle({
     locale: 'es',
     publicationDate: '2026-07-27',
-    title: 'Tinta y señal',
-    storyDeck:
-      'Quince filas de letras rebeldes han accedido a cruzarse… por ahora.',
     solution: ES_SOLUTION,
     clues: ES_CLUES,
   }),

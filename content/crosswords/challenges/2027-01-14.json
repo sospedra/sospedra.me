@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-01-14",
   "publicationDate": "2027-01-14",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-01-14:2025-09-25",
-  "source": {
-    "archiveDate": "2025-09-25",
-    "author": "Sally Hoelscher & Jess Rucks",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Tail End",
-      "storyDeck": "By Sally Hoelscher & Jess Rucks · USA Today, 2025-09-25",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-09-25",
-      "width": 15,
-      "height": 15,
       "solution": [
         "TAD##ABCS##INC#",
         "ORES#SEAL#ODORS",

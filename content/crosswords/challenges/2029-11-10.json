@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-11-10",
   "publicationDate": "2029-11-10",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-11-10:2022-05-28",
-  "source": {
-    "archiveDate": "2022-05-28",
-    "author": "Brooke Husic",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Triple-Double",
-      "storyDeck": "By Brooke Husic · USA Today, 2022-05-28",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-05-28",
-      "width": 15,
-      "height": 15,
       "solution": [
         "IMO###PEA#BBQ##",
         "PLUG#RIMS#EMUS#",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-07-24",
   "publicationDate": "2028-07-24",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-07-24:2023-09-04",
-  "source": {
-    "archiveDate": "2023-09-04",
-    "author": "Olivia Mitra Framke & Sally Hoelscher / Ed. Amanda Rafkin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Heaven's Above!",
-      "storyDeck": "By Olivia Mitra Framke & Sally Hoelscher / Ed. Amanda Rafkin · USA Today, 2023-09-04",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-09-04",
-      "width": 15,
-      "height": 15,
       "solution": [
         "HAMM##OPUS#IWIN",
         "ALOE#CREPT#PEDI",

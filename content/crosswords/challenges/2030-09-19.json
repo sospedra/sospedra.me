@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-09-19",
   "publicationDate": "2030-09-19",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-09-19:2021-04-29",
-  "source": {
-    "archiveDate": "2021-04-29",
-    "author": "Brooke Husic & Amanda Rafkin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "TIE ME UP",
-      "storyDeck": "By Brooke Husic & Amanda Rafkin · USA Today, 2021-04-29",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-04-29",
-      "width": 15,
-      "height": 15,
       "solution": [
         "LGBT##CCED#ZOOM",
         "AREAS#RAVE#ELLA",

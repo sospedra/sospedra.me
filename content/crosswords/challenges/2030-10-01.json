@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-10-01",
   "publicationDate": "2030-10-01",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-10-01:2021-03-30",
-  "source": {
-    "archiveDate": "2021-03-30",
-    "author": "Paolo Pasco",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "DUALLY NOTED",
-      "storyDeck": "By Paolo Pasco · USA Today, 2021-03-30",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-03-30",
-      "width": 15,
-      "height": 15,
       "solution": [
         "BANS##DOTTY#ICE",
         "AREAS#IDAHO#NHL",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-06-01",
   "publicationDate": "2027-06-01",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-06-01:2025-02-04",
-  "source": {
-    "archiveDate": "2025-02-04",
-    "author": "Kelsey Dixon",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "That's How I Beat Shaq (Freestyle)",
-      "storyDeck": "By Kelsey Dixon · USA Today, 2025-02-04",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-02-04",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SPAT#DRAW#PETAL",
         "HAKA#INCA#ADORE",

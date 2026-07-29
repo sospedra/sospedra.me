@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-05-06",
   "publicationDate": "2030-05-06",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-05-06:2021-08-09",
-  "source": {
-    "archiveDate": "2021-08-09",
-    "author": "Mark Valdez & Brooke Husic",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Upfront Payment",
-      "storyDeck": "By Mark Valdez & Brooke Husic · USA Today, 2021-08-09",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-08-09",
-      "width": 15,
-      "height": 15,
       "solution": [
         "IMO###ACHE#STAB",
         "NAVY##IRON#ARIA",

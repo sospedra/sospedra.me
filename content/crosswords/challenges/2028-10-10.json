@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-10-10",
   "publicationDate": "2028-10-10",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-10-10:2023-07-11",
-  "source": {
-    "archiveDate": "2023-07-11",
-    "author": "Catherine Cetta / Ed. Jared Goudsmit & Amanda Rafkin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Three Inches",
-      "storyDeck": "By Catherine Cetta / Ed. Jared Goudsmit & Amanda Rafkin · USA Today, 2023-07-11",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-07-11",
-      "width": 15,
-      "height": 15,
       "solution": [
         "#SMUT#ATOM#TEMP",
         "ATONE#CANE#EVIL",

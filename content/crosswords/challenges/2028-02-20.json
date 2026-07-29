@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-02-20",
   "publicationDate": "2028-02-20",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-02-20:2024-01-07",
-  "source": {
-    "archiveDate": "2024-01-07",
-    "author": "Bruce Haight",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "See You!",
-      "storyDeck": "By Bruce Haight · USA Today, 2024-01-07",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-01-07",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SEAM##EBBS##TRI",
         "ARIAS#QUIP#TOON",

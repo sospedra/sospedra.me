@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-10-30",
   "publicationDate": "2028-10-30",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-10-30:2023-02-13",
-  "source": {
-    "archiveDate": "2023-02-13",
-    "author": "Brooke Husic",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Let's Do the Time Warp Again",
-      "storyDeck": "By Brooke Husic · USA Today, 2023-02-13",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-02-13",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ASAP#SPAS#ROAMS",
         "LILY#PACE#IKNOW",

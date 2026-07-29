@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-09-28",
   "publicationDate": "2027-09-28",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-09-28:2024-08-13",
-  "source": {
-    "archiveDate": "2024-08-13",
-    "author": "Ryan Mathiason",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Outside Hire",
-      "storyDeck": "By Ryan Mathiason · USA Today, 2024-08-13",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-08-13",
-      "width": 15,
-      "height": 15,
       "solution": [
         "DANG#SELL##PODS",
         "ACER#IDEAS#EVIL",

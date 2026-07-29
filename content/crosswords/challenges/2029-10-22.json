@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-10-22",
   "publicationDate": "2029-10-22",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-10-22:2022-02-21",
-  "source": {
-    "archiveDate": "2022-02-21",
-    "author": "Brooke Husic & Rachel Fabi",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "...",
-      "storyDeck": "By Brooke Husic & Rachel Fabi · USA Today, 2022-02-21",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-02-21",
-      "width": 15,
-      "height": 15,
       "solution": [
         "CAST#MAYO#OPAL#",
         "ARCH#IRAN#AREA#",

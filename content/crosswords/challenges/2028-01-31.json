@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-01-31",
   "publicationDate": "2028-01-31",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-01-31:2024-02-26",
-  "source": {
-    "archiveDate": "2024-02-26",
-    "author": "Billy Ouska",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Party Down",
-      "storyDeck": "By Billy Ouska · USA Today, 2024-02-26",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-02-26",
-      "width": 15,
-      "height": 15,
       "solution": [
         "BAND#MASS##UCLA",
         "IDEA#ERIC#BREED",

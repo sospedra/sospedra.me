@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-01-04",
   "publicationDate": "2028-01-04",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-01-04:2024-04-30",
-  "source": {
-    "archiveDate": "2024-04-30",
-    "author": "Jay Silverman",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Pb&J",
-      "storyDeck": "By Jay Silverman · USA Today, 2024-04-30",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-04-30",
-      "width": 15,
-      "height": 15,
       "solution": [
         "EGGS#SWAT##SLAB",
         "SOLE#COCOA#HILL",

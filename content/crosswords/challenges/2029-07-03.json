@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-07-03",
   "publicationDate": "2029-07-03",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-07-03:2022-07-05",
-  "source": {
-    "archiveDate": "2022-07-05",
-    "author": "Ada Nicolle",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Who's In",
-      "storyDeck": "By Ada Nicolle · USA Today, 2022-07-05",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-07-05",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ACORNS#OARS#HAW",
         "MANUAL#TREE#ELI",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-08-29",
   "publicationDate": "2026-08-29",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-08-29:2026-03-28",
-  "source": {
-    "archiveDate": "2026-03-28",
-    "author": "Dan Zarin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Toss It!",
-      "storyDeck": "By Dan Zarin · USA Today, 2026-03-28",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2026-03-28",
-      "width": 15,
-      "height": 15,
       "solution": [
         "CHEWS##STOW#USS",
         "NORAH#TIARA#NUT",

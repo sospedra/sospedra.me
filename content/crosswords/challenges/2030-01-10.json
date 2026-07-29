@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-01-10",
   "publicationDate": "2030-01-10",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-01-10:2022-01-06",
-  "source": {
-    "archiveDate": "2022-01-06",
-    "author": "Enrique Henestroza Anguiano",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Internet of Things",
-      "storyDeck": "By Enrique Henestroza Anguiano · USA Today, 2022-01-06",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-01-06",
-      "width": 15,
-      "height": 15,
       "solution": [
         "MADE#SASH#CLAMP",
         "ITEM#PLEA#ALLAH",

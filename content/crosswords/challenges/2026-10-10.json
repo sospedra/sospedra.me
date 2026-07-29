@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-10-10",
   "publicationDate": "2026-10-10",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-10-10:2026-02-07",
-  "source": {
-    "archiveDate": "2026-02-07",
-    "author": "Beth Rubin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Inner Chi",
-      "storyDeck": "By Beth Rubin · USA Today, 2026-02-07",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2026-02-07",
-      "width": 15,
-      "height": 15,
       "solution": [
         "PASTA#MESA#SHOT",
         "OCEAN#ALAN#LINE",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-03-08",
   "publicationDate": "2030-03-08",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-03-08:2021-11-12",
-  "source": {
-    "archiveDate": "2021-11-12",
-    "author": "Erica Hsiung Wojcik",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "LOL",
-      "storyDeck": "By Erica Hsiung Wojcik · USA Today, 2021-11-12",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-11-12",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SKEW##DJS##HELD",
         "AIDE#TRIP#METER",

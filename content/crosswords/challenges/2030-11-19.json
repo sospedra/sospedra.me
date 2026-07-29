@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-11-19",
   "publicationDate": "2030-11-19",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-11-19:2021-02-09",
-  "source": {
-    "archiveDate": "2021-02-09",
-    "author": "Rachel Fabi",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "LET THE CHIPS FALL WHERE THEY MAY",
-      "storyDeck": "By Rachel Fabi · USA Today, 2021-02-09",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-02-09",
-      "width": 15,
-      "height": 15,
       "solution": [
         "HAPPY###SABBATH",
         "ADORES#MEDIOCRE",

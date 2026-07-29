@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-06-21",
   "publicationDate": "2028-06-21",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-06-21:2023-11-08",
-  "source": {
-    "archiveDate": "2023-11-08",
-    "author": "Robyn Weintraub",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Where's the Vacuum? (Freestyle)",
-      "storyDeck": "By Robyn Weintraub · USA Today, 2023-11-08",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-11-08",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SARI#AMPS###MRS",
         "PEAR#BOOTS#LEIA",

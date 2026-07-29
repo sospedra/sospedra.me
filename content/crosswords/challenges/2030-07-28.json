@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-07-28",
   "publicationDate": "2030-07-28",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-07-28:2021-04-18",
-  "source": {
-    "archiveDate": "2021-04-18",
-    "author": "Zhouqin Burnikel",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "PLAYING TAG",
-      "storyDeck": "By Zhouqin Burnikel · USA Today, 2021-04-18",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-04-18",
-      "width": 15,
-      "height": 15,
       "solution": [
         "#SOIL#SLUGS#SIP",
         "ACHOO#TESLA#ONO",

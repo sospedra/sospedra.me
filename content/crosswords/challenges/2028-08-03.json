@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-08-03",
   "publicationDate": "2028-08-03",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-08-03:2023-10-12",
-  "source": {
-    "archiveDate": "2023-10-12",
-    "author": "Bruce Haight",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Fairy-Tale Endings",
-      "storyDeck": "By Bruce Haight · USA Today, 2023-10-12",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-10-12",
-      "width": 15,
-      "height": 15,
       "solution": [
         "RELIC##GRUB#NSA",
         "EVERY#MOORE#END",

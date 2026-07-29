@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-06-09",
   "publicationDate": "2028-06-09",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-06-09:2024-01-05",
-  "source": {
-    "archiveDate": "2024-01-05",
-    "author": "Tracy Gray",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Ny, Ny",
-      "storyDeck": "By Tracy Gray · USA Today, 2024-01-05",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-01-05",
-      "width": 15,
-      "height": 15,
       "solution": [
         "CROC#TRAM#RABBI",
         "OUCH#HONE#ATEIN",

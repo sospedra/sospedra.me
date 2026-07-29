@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-12-15",
   "publicationDate": "2027-12-15",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-12-15:2024-05-22",
-  "source": {
-    "archiveDate": "2024-05-22",
-    "author": "Madeline Kaplan",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Chow Down",
-      "storyDeck": "By Madeline Kaplan · USA Today, 2024-05-22",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-05-22",
-      "width": 15,
-      "height": 15,
       "solution": [
         "TAD#ACT#FLU#PAR",
         "AMA#SOUPIER#AMI",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-11-30",
   "publicationDate": "2030-11-30",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-11-30:2021-05-01",
-  "source": {
-    "archiveDate": "2021-05-01",
-    "author": "Evan Kalish",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "RUNNING TOTALS",
-      "storyDeck": "By Evan Kalish · USA Today, 2021-05-01",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-05-01",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ITSY#LOW##SUBS#",
         "TAPE#EMIT#ISAAC",

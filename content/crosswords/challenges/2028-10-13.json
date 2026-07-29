@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-10-13",
   "publicationDate": "2028-10-13",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-10-13:2023-08-04",
-  "source": {
-    "archiveDate": "2023-08-04",
-    "author": "Rafael Musa / Ed. Amanda Rafkin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Sunny Side up (Freestyle)",
-      "storyDeck": "By Rafael Musa / Ed. Amanda Rafkin · USA Today, 2023-08-04",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-08-04",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SMH#HEN#####DOE",
         "LIE#USES#TOPOUT",

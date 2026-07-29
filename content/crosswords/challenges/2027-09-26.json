@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-09-26",
   "publicationDate": "2027-09-26",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-09-26:2024-06-09",
-  "source": {
-    "archiveDate": "2024-06-09",
-    "author": "Aidan Deshong",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Peak Performance",
-      "storyDeck": "By Aidan Deshong · USA Today, 2024-06-09",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-06-09",
-      "width": 15,
-      "height": 15,
       "solution": [
         "MBA#SPASM###BAO",
         "ALL#TABLET#MUSK",

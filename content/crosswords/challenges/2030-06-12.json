@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-06-12",
   "publicationDate": "2030-06-12",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-06-12:2021-07-14",
-  "source": {
-    "archiveDate": "2021-07-14",
-    "author": "Zhouqin Burnikel",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "I Protest",
-      "storyDeck": "By Zhouqin Burnikel · USA Today, 2021-07-14",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-07-14",
-      "width": 15,
-      "height": 15,
       "solution": [
         "PITS##CHI#AKITA",
         "ODOR#CLAD#MIMIC",

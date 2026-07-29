@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-11-03",
   "publicationDate": "2030-11-03",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-11-03:2021-01-10",
-  "source": {
-    "archiveDate": "2021-01-10",
-    "author": "Zhouqin Burnikel",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "DOWNTOWN",
-      "storyDeck": "By Zhouqin Burnikel · USA Today, 2021-01-10",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-01-10",
-      "width": 15,
-      "height": 15,
       "solution": [
         "TSAR#CASH###GYM",
         "RENE#ALOOF#SHOO",

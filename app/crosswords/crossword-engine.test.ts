@@ -20,14 +20,9 @@ const cellAt = (index: number, solution: string | null): CrosswordCell => ({
 })
 
 const puzzle: CrosswordPuzzle = {
-  schemaVersion: 1,
   id: 'en:2026-07-29',
   locale: 'en',
   publicationDate: '2026-07-29',
-  title: 'Fixture',
-  storyDeck: 'Fixture deck',
-  author: 'Test',
-  difficulty: 3,
   width: 2,
   height: 2,
   cells: [cellAt(0, null), cellAt(1, 'A'), cellAt(2, 'B'), cellAt(3, 'C')],

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-07-15",
   "publicationDate": "2030-07-15",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-07-15:2021-05-31",
-  "source": {
-    "archiveDate": "2021-05-31",
-    "author": "Zhouqin Burnikel",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "END OF THE MONTH",
-      "storyDeck": "By Zhouqin Burnikel · USA Today, 2021-05-31",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-05-31",
-      "width": 15,
-      "height": 15,
       "solution": [
         "STAGE##DOGS#INN",
         "ARBOR#SONIC#MOO",

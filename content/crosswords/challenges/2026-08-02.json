@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-08-02",
   "publicationDate": "2026-08-02",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-08-02:2026-04-26",
-  "source": {
-    "archiveDate": "2026-04-26",
-    "author": "Sala Wanetick",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "On the Market",
-      "storyDeck": "By Sala Wanetick · USA Today, 2026-04-26",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2026-04-26",
-      "width": 15,
-      "height": 15,
       "solution": [
         "VIVA#CHIT###THO",
         "IMIN#OATH##WHEN",

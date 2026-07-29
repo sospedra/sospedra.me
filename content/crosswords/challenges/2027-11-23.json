@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-11-23",
   "publicationDate": "2027-11-23",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-11-23:2024-06-11",
-  "source": {
-    "archiveDate": "2024-06-11",
-    "author": "Agnes Davidson & Zhouqin Burnikel",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Moleskin",
-      "storyDeck": "By Agnes Davidson & Zhouqin Burnikel · USA Today, 2024-06-11",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-06-11",
-      "width": 15,
-      "height": 15,
       "solution": [
         "LAT##DOGMA#BYTE",
         "OVAL#RARER#LOOM",

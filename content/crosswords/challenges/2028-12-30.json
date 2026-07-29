@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-12-30",
   "publicationDate": "2028-12-30",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-12-30:2023-08-05",
-  "source": {
-    "archiveDate": "2023-08-05",
-    "author": "Amanda Rafkin / Ed. Amanda Rafkin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "\"Eat Up!\"",
-      "storyDeck": "By Amanda Rafkin / Ed. Amanda Rafkin · USA Today, 2023-08-05",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-08-05",
-      "width": 15,
-      "height": 15,
       "solution": [
         "IMCOOL#PFFT#TUT",
         "TOUCHE#AERO#ASA",

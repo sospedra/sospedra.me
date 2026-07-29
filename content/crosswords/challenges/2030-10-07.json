@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-10-07",
   "publicationDate": "2030-10-07",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-10-07:2021-03-08",
-  "source": {
-    "archiveDate": "2021-03-08",
-    "author": "Rasa Guarnaccia & Brooke Husic",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "LEND AN EAR",
-      "storyDeck": "By Rasa Guarnaccia & Brooke Husic · USA Today, 2021-03-08",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-03-08",
-      "width": 15,
-      "height": 15,
       "solution": [
         "#ALTO#RIFF##ZIP",
         "PROOF#AGRA##IDO",

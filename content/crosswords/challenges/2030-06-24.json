@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-06-24",
   "publicationDate": "2030-06-24",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-06-24:2021-06-21",
-  "source": {
-    "archiveDate": "2021-06-21",
-    "author": "Malaika Handa & Matthew Stock",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Pj Party",
-      "storyDeck": "By Malaika Handa & Matthew Stock · USA Today, 2021-06-21",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-06-21",
-      "width": 15,
-      "height": 15,
       "solution": [
         "UMAMI#MAHI#PATH",
         "SIMON#IRON#ASIA",

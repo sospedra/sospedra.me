@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-08-31",
   "publicationDate": "2027-08-31",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-08-31:2024-10-01",
-  "source": {
-    "archiveDate": "2024-10-01",
-    "author": "Ada Nicolle",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Full of Beans",
-      "storyDeck": "By Ada Nicolle · USA Today, 2024-10-01",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-10-01",
-      "width": 15,
-      "height": 15,
       "solution": [
         "NASA##SEC##OWLS",
         "APPS#BATON#RIOT",

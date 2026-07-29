@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-12-06",
   "publicationDate": "2028-12-06",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-12-06:2023-01-18",
-  "source": {
-    "archiveDate": "2023-01-18",
-    "author": "Rafael Musa",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "2K Calories",
-      "storyDeck": "By Rafael Musa · USA Today, 2023-01-18",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-01-18",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SODA###TASK#SEW",
         "TROT##NOSES#UTE",

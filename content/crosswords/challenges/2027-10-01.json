@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-10-01",
   "publicationDate": "2027-10-01",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-10-01:2024-09-27",
-  "source": {
-    "archiveDate": "2024-09-27",
-    "author": "Carolyn Davies Lynch & Olivia Mitra Framke",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "NATO Members",
-      "storyDeck": "By Carolyn Davies Lynch & Olivia Mitra Framke · USA Today, 2024-09-27",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-09-27",
-      "width": 15,
-      "height": 15,
       "solution": [
         "PEER##SPUD#SAGS",
         "ACMES#NANO#CURE",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-11-26",
   "publicationDate": "2026-11-26",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-11-26:2025-11-27",
-  "source": {
-    "archiveDate": "2025-11-27",
-    "author": "Olivia Mitra Framke",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Warming Up Some Leftovers",
-      "storyDeck": "By Olivia Mitra Framke · USA Today, 2025-11-27",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-11-27",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ABCS#SPCA#ABHOR",
         "SLOT#HOOP#DROVE",

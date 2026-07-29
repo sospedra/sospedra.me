@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-05-01",
   "publicationDate": "2029-05-01",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-05-01:2022-09-06",
-  "source": {
-    "archiveDate": "2022-09-06",
-    "author": "Matthew Stock & Brooke Husic",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "In a Pickle",
-      "storyDeck": "By Matthew Stock & Brooke Husic · USA Today, 2022-09-06",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-09-06",
-      "width": 15,
-      "height": 15,
       "solution": [
         "LABS#FIRMS##SHE",
         "AREA#ABOUT#ALOT",

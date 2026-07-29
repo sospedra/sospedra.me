@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-11-11",
   "publicationDate": "2027-11-11",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-11-11:2024-07-18",
-  "source": {
-    "archiveDate": "2024-07-18",
-    "author": "May Huang",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Tri-Tip",
-      "storyDeck": "By May Huang · USA Today, 2024-07-18",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-07-18",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ISSA##CAST#LINE",
         "MENSA#ALOE#ENBY",

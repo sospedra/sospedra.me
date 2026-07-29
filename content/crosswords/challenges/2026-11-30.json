@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-11-30",
   "publicationDate": "2026-11-30",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-11-30:2025-11-17",
-  "source": {
-    "archiveDate": "2025-11-17",
-    "author": "K.J. Sarr",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Something Wicked This Way Comes",
-      "storyDeck": "By K.J. Sarr · USA Today, 2025-11-17",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-11-17",
-      "width": 15,
-      "height": 15,
       "solution": [
         "MODEM##AIM#THEM",
         "ARENA#INCA#ROVE",

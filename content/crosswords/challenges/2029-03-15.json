@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-03-15",
   "publicationDate": "2029-03-15",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-03-15:2022-11-10",
-  "source": {
-    "archiveDate": "2022-11-10",
-    "author": "Scott Earl & Brooke Husic",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Fill Out",
-      "storyDeck": "By Scott Earl & Brooke Husic · USA Today, 2022-11-10",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-11-10",
-      "width": 15,
-      "height": 15,
       "solution": [
         "USPS#LOAF#ARCH#",
         "NOUN#YURI#MILES",

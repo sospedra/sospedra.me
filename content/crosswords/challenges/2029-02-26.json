@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-02-26",
   "publicationDate": "2029-02-26",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-02-26:2022-10-17",
-  "source": {
-    "archiveDate": "2022-10-17",
-    "author": "Rebecca Goldstein",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Uno!",
-      "storyDeck": "By Rebecca Goldstein · USA Today, 2022-10-17",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-10-17",
-      "width": 15,
-      "height": 15,
       "solution": [
         "#REV#PSST#PADRE",
         "#EDU#ALFA#ASNER",

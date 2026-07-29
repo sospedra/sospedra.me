@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-08-23",
   "publicationDate": "2027-08-23",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-08-23:2024-08-12",
-  "source": {
-    "archiveDate": "2024-08-12",
-    "author": "Malaika Handa",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Ab Initio",
-      "storyDeck": "By Malaika Handa · USA Today, 2024-08-12",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-08-12",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SOFT#OBS##MATCH",
         "THOU#ROAM#OHARE",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-05-31",
   "publicationDate": "2029-05-31",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-05-31:2022-08-25",
-  "source": {
-    "archiveDate": "2022-08-25",
-    "author": "Sara Cantor",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "One Plus One",
-      "storyDeck": "By Sara Cantor · USA Today, 2022-08-25",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-08-25",
-      "width": 15,
-      "height": 15,
       "solution": [
         "#ACL#TASK#LEAKY",
         "ASHE#BLUE#ANNIE",

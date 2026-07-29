@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-05-24",
   "publicationDate": "2028-05-24",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-05-24:2023-12-06",
-  "source": {
-    "archiveDate": "2023-12-06",
-    "author": "Manaal Mohammed & Brooke Husic",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Quickstarts",
-      "storyDeck": "By Manaal Mohammed & Brooke Husic · USA Today, 2023-12-06",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-12-06",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SALSA#AMC###PDF",
         "PLANB#NORM##ERA",

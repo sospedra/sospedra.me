@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-06-30",
   "publicationDate": "2028-06-30",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-06-30:2023-12-15",
-  "source": {
-    "archiveDate": "2023-12-15",
-    "author": "Steve Mossberg & Brooke Husic",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Firestarters",
-      "storyDeck": "By Steve Mossberg & Brooke Husic · USA Today, 2023-12-15",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-12-15",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SASS#SEALS#EARS",
         "HBCU#UNLIT#DIET",

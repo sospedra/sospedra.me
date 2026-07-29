@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-05-09",
   "publicationDate": "2027-05-09",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-05-09:2025-03-02",
-  "source": {
-    "archiveDate": "2025-03-02",
-    "author": "Billy Ouska",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Double Bar",
-      "storyDeck": "By Billy Ouska · USA Today, 2025-03-02",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-03-02",
-      "width": 15,
-      "height": 15,
       "solution": [
         "MINE#WHEY#PASSE",
         "IMAM#HERO#ASKED",

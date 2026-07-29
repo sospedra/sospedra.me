@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-09-12",
   "publicationDate": "2026-09-12",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-09-12:2026-03-14",
-  "source": {
-    "archiveDate": "2026-03-14",
-    "author": "Brian Callahan",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Feel-Good Movies",
-      "storyDeck": "By Brian Callahan · USA Today, 2026-03-14",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2026-03-14",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SNIPE#ABCS#VISA",
         "KORRA#LARA#EDIT",

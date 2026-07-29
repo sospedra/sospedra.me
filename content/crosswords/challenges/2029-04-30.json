@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-04-30",
   "publicationDate": "2029-04-30",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-04-30:2022-08-15",
-  "source": {
-    "archiveDate": "2022-08-15",
-    "author": "Scott Earl",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "In Good",
-      "storyDeck": "By Scott Earl · USA Today, 2022-08-15",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-08-15",
-      "width": 15,
-      "height": 15,
       "solution": [
         "PFLAG#SPEAR#APT",
         "ALAMO#KATIE#ROO",

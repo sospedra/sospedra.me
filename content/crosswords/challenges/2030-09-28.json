@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-09-28",
   "publicationDate": "2030-09-28",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-09-28:2021-07-03",
-  "source": {
-    "archiveDate": "2021-07-03",
-    "author": "Stella Zawistowski",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "A Fistful of Dollars",
-      "storyDeck": "By Stella Zawistowski · USA Today, 2021-07-03",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-07-03",
-      "width": 15,
-      "height": 15,
       "solution": [
         "TAB#ETSY###ELMS",
         "OUR#BREED#ALIEN",

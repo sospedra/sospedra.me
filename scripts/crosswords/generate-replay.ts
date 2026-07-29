@@ -14,7 +14,6 @@ import { join } from 'node:path'
 const ARCHIVE_DIR = 'content/crosswords/puzzles'
 const CHALLENGE_DIR = 'content/crosswords/challenges'
 const REPLAY_EPOCH = '2026-07-29'
-const GENERATOR_VERSION = 'replay-1.0.0'
 
 const args = process.argv.slice(2)
 const argValue = (flag: string) => {
@@ -30,8 +29,6 @@ if (!from || !/^\d{4}-\d{2}-\d{2}$/.test(from) || !Number.isInteger(days)) {
 
 type ArchivePuzzle = {
   date: string
-  title: string
-  author: string
   grid: string[]
   clues: { across: Record<string, string>; down: Record<string, string> }
 }
@@ -86,8 +83,6 @@ const parseXd = (text: string): ArchivePuzzle | null => {
 
   return {
     date: header.Date,
-    title: header.Title ?? 'Crossword',
-    author: (header.Author ?? 'Unknown').replace(/^By /i, ''),
     grid: gridRows,
     clues: { across, down },
   }
@@ -155,28 +150,12 @@ for (let offset = 0; offset < days; offset += 1) {
   if (pool.length === 0) throw new Error(`empty pool for weekday ${weekday}`)
   const puzzle = pool[weekdayCountSinceEpoch(date) % pool.length]
 
+  // Bare render minimum; provenance lives in data/crosswords, the mapping
+  // back to an archive date is the replay formula itself.
   const edition = {
-    schemaVersion: 2,
-    id: `crossword:${date}`,
     publicationDate: date,
-    generatorVersion: GENERATOR_VERSION,
-    corpusRevision: 'usatoday-archive',
-    patternSetVersion: 'usatoday-archive',
-    rulesVersion: 'cw-v2',
-    seed: `replay:${date}:${puzzle.date}`,
-    source: {
-      archiveDate: puzzle.date,
-      author: puzzle.author,
-      copyright: 'Universal Uclick / USA Today',
-    },
     puzzles: {
       en: {
-        title: puzzle.title,
-        storyDeck: `By ${puzzle.author} · USA Today, ${puzzle.date}`,
-        difficultyTier: 2,
-        pattern: `usatoday:${puzzle.date}`,
-        width: 15,
-        height: 15,
         solution: puzzle.grid,
         clues: puzzle.clues,
       },

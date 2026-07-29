@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-10-20",
   "publicationDate": "2027-10-20",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-10-20:2024-07-17",
-  "source": {
-    "archiveDate": "2024-07-17",
-    "author": "Larry Snyder",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Roll the Dice",
-      "storyDeck": "By Larry Snyder · USA Today, 2024-07-17",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-07-17",
-      "width": 15,
-      "height": 15,
       "solution": [
         "LAUGH#SAGA#PRIM",
         "ENSUE#TRAM#DADA",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-09-15",
   "publicationDate": "2028-09-15",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-09-15:2023-09-08",
-  "source": {
-    "archiveDate": "2023-09-08",
-    "author": "Darby Ratliff & Matthew Stock / Ed. Amanda Rafkin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Last Call",
-      "storyDeck": "By Darby Ratliff & Matthew Stock / Ed. Amanda Rafkin · USA Today, 2023-09-08",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-09-08",
-      "width": 15,
-      "height": 15,
       "solution": [
         "LEAP#DIFF##PARR",
         "TRIO#ERIE#GOSEE",

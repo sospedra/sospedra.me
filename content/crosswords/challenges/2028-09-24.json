@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-09-24",
   "publicationDate": "2028-09-24",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-09-24:2023-02-19",
-  "source": {
-    "archiveDate": "2023-02-19",
-    "author": "Zhouqin Burnikel",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Cutting Short",
-      "storyDeck": "By Zhouqin Burnikel · USA Today, 2023-02-19",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-02-19",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ALPS#ODDS#DISCO",
         "COOK#TORE#INPUT",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-11-21",
   "publicationDate": "2027-11-21",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-11-21:2024-04-14",
-  "source": {
-    "archiveDate": "2024-04-14",
-    "author": "Rafael Musa",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "\"Amazing to see you!\" (Freestyle)",
-      "storyDeck": "By Rafael Musa · USA Today, 2024-04-14",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-04-14",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ACHE##ETA#CECIL",
         "CROSSOVER#AGAVE",

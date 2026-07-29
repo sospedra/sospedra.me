@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-09-24",
   "publicationDate": "2030-09-24",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-09-24:2021-04-06",
-  "source": {
-    "archiveDate": "2021-04-06",
-    "author": "Enrique Henestroza Anguiano",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "SPLITTING UP",
-      "storyDeck": "By Enrique Henestroza Anguiano · USA Today, 2021-04-06",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-04-06",
-      "width": 15,
-      "height": 15,
       "solution": [
         "MITT#AMID#LODGE",
         "EDIE#BONO#SNEER",

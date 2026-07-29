@@ -9,10 +9,11 @@
  },
  "usaTodayArchive": {
   "dataset": "USA Today daily crosswords, 1995-2026, xd format (8,867 files)",
+  "url": "https://xd.saul.pw/data",
   "retrievedAt": "2026-07-29",
-  "license": "Copyright Universal Uclick / USA Today; replayed with per-puzzle attribution (author, source, original date)",
+  "license": "Copyright Universal Uclick / USA Today",
   "sha256": "17cf5f3a374c2c4e4b327da41f7ffb5612b8d2e76548b40db1b7069a75eb0c2f",
-  "notes": "sha256 is over the sorted list of per-file sha256s. All 15x15. 21 files rejected at parse (incomplete grids or duplicate answers). Raw xd archive stays out of git; daily editions in content/crosswords/challenges embed the served puzzle plus attribution."
+  "notes": "sha256 is over the sorted list of per-file sha256s. All 15x15. 21 files rejected at parse (incomplete grids or duplicate answers). Raw archive is re-downloaded on demand (content/crosswords/data.txt keeps the URL); editions in content/crosswords/challenges carry solution and clues only, and the replay formula maps each date back to its archive original."
  },
  "nytClueArchive": {
   "dataset": "NYT crossword clues and answers, 1993-2021 (nytcrosswords.csv)",

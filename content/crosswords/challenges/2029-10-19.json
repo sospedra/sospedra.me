@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-10-19",
   "publicationDate": "2029-10-19",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-10-19:2022-04-01",
-  "source": {
-    "archiveDate": "2022-04-01",
-    "author": "Erik Agard & Jasmine Lim",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Bookends",
-      "storyDeck": "By Erik Agard & Jasmine Lim · USA Today, 2022-04-01",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-04-01",
-      "width": 15,
-      "height": 15,
       "solution": [
         "DUPED###ARM#ABC",
         "USAGE##GRAY#TOO",

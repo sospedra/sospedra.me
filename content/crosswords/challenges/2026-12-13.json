@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-12-13",
   "publicationDate": "2026-12-13",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-12-13:2025-11-02",
-  "source": {
-    "archiveDate": "2025-11-02",
-    "author": "Sean Ziebarth",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "I've Been Framed!",
-      "storyDeck": "By Sean Ziebarth · USA Today, 2025-11-02",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-11-02",
-      "width": 15,
-      "height": 15,
       "solution": [
         "TART#STOUT#CHEW",
         "OREO#WORSE#LUGE",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-01-21",
   "publicationDate": "2030-01-21",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-01-21:2021-11-22",
-  "source": {
-    "archiveDate": "2021-11-22",
-    "author": "Aaron Paulsen & Brooke Husic",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Sinking Feeling",
-      "storyDeck": "By Aaron Paulsen & Brooke Husic · USA Today, 2021-11-22",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-11-22",
-      "width": 15,
-      "height": 15,
       "solution": [
         "KARMA##GLEE#YIP",
         "PLEAD##RAGA#ACE",

@@ -2,11 +2,11 @@
 
 ## USA Today crossword archive
 
-Daily editions replay puzzles from the USA Today crossword archive (1995–2026, xd format), copyright Universal Uclick / USA Today.
+Daily editions replay puzzles from the USA Today crossword archive (1995–2026, xd format via [xd.saul.pw](https://xd.saul.pw/data)), copyright Universal Uclick / USA Today.
 
 - Used for: the daily puzzle itself. `scripts/crosswords/generate-replay.ts` maps each site date to an archive puzzle of the same weekday, newest first.
-- Every edition carries attribution: constructor byline, "USA Today", and the original publication date, shown in the UI and stored in the edition's `source` block.
-- The raw xd archive stays out of git. Served editions live in `content/crosswords/challenges/`.
+- Edition files carry render data only (solution and clues). Attribution and rights live here and in `sources.lock.json`; the replay formula in the generator recovers each edition's original archive date.
+- The raw xd archive stays out of git and out of the working tree; re-download from the URL above before regenerating. Served editions live in `content/crosswords/challenges/`.
 
 ## spread the word(list)
 

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-05-07",
   "publicationDate": "2030-05-07",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-05-07:2021-08-31",
-  "source": {
-    "archiveDate": "2021-08-31",
-    "author": "Claire Rimkus",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Bedspreads",
-      "storyDeck": "By Claire Rimkus · USA Today, 2021-08-31",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-08-31",
-      "width": 15,
-      "height": 15,
       "solution": [
         "DOE##GNOME#SNAG",
         "ERAS#ROBIN#POLY",

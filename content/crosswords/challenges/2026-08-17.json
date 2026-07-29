@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-08-17",
   "publicationDate": "2026-08-17",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-08-17:2026-03-30",
-  "source": {
-    "archiveDate": "2026-03-30",
-    "author": "Li Ding",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Apres-Ski",
-      "storyDeck": "By Li Ding · USA Today, 2026-03-30",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2026-03-30",
-      "width": 15,
-      "height": 15,
       "solution": [
         "FAST#EBBS#STUB#",
         "IRON#NEAT#MANY#",

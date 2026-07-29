@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-08-31",
   "publicationDate": "2030-08-31",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-08-31:2021-08-07",
-  "source": {
-    "archiveDate": "2021-08-07",
-    "author": "Hoang-Kim Vu",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "I Before E",
-      "storyDeck": "By Hoang-Kim Vu · USA Today, 2021-08-07",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-08-07",
-      "width": 15,
-      "height": 15,
       "solution": [
         "CHASE##PREP#ITS",
         "SALES#WAIVE#NUT",

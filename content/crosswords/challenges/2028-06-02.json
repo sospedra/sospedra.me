@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-06-02",
   "publicationDate": "2028-06-02",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-06-02:2024-01-12",
-  "source": {
-    "archiveDate": "2024-01-12",
-    "author": "Catherine Cetta",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Long Division",
-      "storyDeck": "By Catherine Cetta · USA Today, 2024-01-12",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-01-12",
-      "width": 15,
-      "height": 15,
       "solution": [
         "FATAL#POW#HAND#",
         "ALOHA#UNI#EDIE#",

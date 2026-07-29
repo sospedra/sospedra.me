@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-10-18",
   "publicationDate": "2027-10-18",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-10-18:2024-06-10",
-  "source": {
-    "archiveDate": "2024-06-10",
-    "author": "Tracy Gray",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Breaking the Rules",
-      "storyDeck": "By Tracy Gray · USA Today, 2024-06-10",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-06-10",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SLAT##SHO#CHOPS",
         "PILE#SPIN#AORTA",

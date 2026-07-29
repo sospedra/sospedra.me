@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-10-27",
   "publicationDate": "2028-10-27",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-10-27:2023-07-21",
-  "source": {
-    "archiveDate": "2023-07-21",
-    "author": "Wendy L. Brandes / Ed. Amanda Rafkin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Geez",
-      "storyDeck": "By Wendy L. Brandes / Ed. Amanda Rafkin · USA Today, 2023-07-21",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-07-21",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ROGUE#SPIKE#HAM",
         "ALONE#AAHED#ODE",

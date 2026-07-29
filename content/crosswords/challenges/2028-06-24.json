@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-06-24",
   "publicationDate": "2028-06-24",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-06-24:2024-02-17",
-  "source": {
-    "archiveDate": "2024-02-17",
-    "author": "Amie Walker",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Pspspsps",
-      "storyDeck": "By Amie Walker · USA Today, 2024-02-17",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-02-17",
-      "width": 15,
-      "height": 15,
       "solution": [
         "RAMS#INNS##YALE",
         "UDON#MEOW#POLOS",

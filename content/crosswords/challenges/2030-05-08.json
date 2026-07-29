@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-05-08",
   "publicationDate": "2030-05-08",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-05-08:2021-08-18",
-  "source": {
-    "archiveDate": "2021-08-18",
-    "author": "Caitlin Reid",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Grand Openings",
-      "storyDeck": "By Caitlin Reid · USA Today, 2021-08-18",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-08-18",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SCRAP#CAKE##TWO",
         "AROMA#OCHO#SEEN",

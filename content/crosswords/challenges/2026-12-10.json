@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-12-10",
   "publicationDate": "2026-12-10",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-12-10:2025-11-06",
-  "source": {
-    "archiveDate": "2025-11-06",
-    "author": "Dan Schwartz & Will Eisenberg",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Final Fantasy",
-      "storyDeck": "By Dan Schwartz & Will Eisenberg · USA Today, 2025-11-06",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-11-06",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SASSY#PEA###GPS",
         "ELOPE#ACME#SORE",

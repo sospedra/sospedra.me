@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-01-05",
   "publicationDate": "2027-01-05",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-01-05:2025-09-16",
-  "source": {
-    "archiveDate": "2025-09-16",
-    "author": "Matthew Luter",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "And Then Some",
-      "storyDeck": "By Matthew Luter · USA Today, 2025-09-16",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2025-09-16",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SPEAR#ALAS#COB#",
         "CANDY#POLI#OPUS",

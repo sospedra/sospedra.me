@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-08-13",
   "publicationDate": "2030-08-13",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-08-13:2021-05-18",
-  "source": {
-    "archiveDate": "2021-05-18",
-    "author": "Paolo Pasco",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "IT'S ELECTRIC!",
-      "storyDeck": "By Paolo Pasco · USA Today, 2021-05-18",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-05-18",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ACRES#RIDS#FADS",
         "ROUGH#ALOT#AREA",

@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-02-24",
   "publicationDate": "2029-02-24",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-02-24:2023-02-11",
-  "source": {
-    "archiveDate": "2023-02-11",
-    "author": "Rafael Musa",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Quadmire",
-      "storyDeck": "By Rafael Musa · USA Today, 2023-02-11",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-02-11",
-      "width": 15,
-      "height": 15,
       "solution": [
         "CABS##LEFT#AMPS",
         "ARIES#IRIS#SEEK",

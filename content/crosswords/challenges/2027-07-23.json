@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-07-23",
   "publicationDate": "2027-07-23",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-07-23:2024-12-20",
-  "source": {
-    "archiveDate": "2024-12-20",
-    "author": "Jay Silverman",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Up-dating",
-      "storyDeck": "By Jay Silverman · USA Today, 2024-12-20",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-12-20",
-      "width": 15,
-      "height": 15,
       "solution": [
         "RAH#EAT##CELLAR",
         "OLE#AHA##AREOLA",

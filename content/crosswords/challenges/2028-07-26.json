@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-07-26",
   "publicationDate": "2028-07-26",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-07-26:2023-09-27",
-  "source": {
-    "archiveDate": "2023-09-27",
-    "author": "May Huang & Rafael Musa / Ed. Amanda Rafkin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Last Kiss",
-      "storyDeck": "By May Huang & Rafael Musa / Ed. Amanda Rafkin · USA Today, 2023-09-27",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-09-27",
-      "width": 15,
-      "height": 15,
       "solution": [
         "SCAR#SWAB#MEMES",
         "TADA#IOWA#ARIAL",

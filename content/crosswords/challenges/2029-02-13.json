@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2029-02-13",
   "publicationDate": "2029-02-13",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2029-02-13:2022-11-22",
-  "source": {
-    "archiveDate": "2022-11-22",
-    "author": "Rafael Musa",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Final Question",
-      "storyDeck": "By Rafael Musa · USA Today, 2022-11-22",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2022-11-22",
-      "width": 15,
-      "height": 15,
       "solution": [
         "EBBS#DECK##AFEW",
         "GORP#IDEAS#LANE",

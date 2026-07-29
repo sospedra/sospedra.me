@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-11-14",
   "publicationDate": "2028-11-14",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-11-14:2023-02-28",
-  "source": {
-    "archiveDate": "2023-02-28",
-    "author": "Nancy Serrano-Wu & Nate Cardin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Two If by Sea",
-      "storyDeck": "By Nancy Serrano-Wu & Nate Cardin · USA Today, 2023-02-28",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-02-28",
-      "width": 15,
-      "height": 15,
       "solution": [
         "DOCS#BETA#CAB##",
         "AREA#ALES#AGAVE",

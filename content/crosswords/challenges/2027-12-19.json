@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2027-12-19",
   "publicationDate": "2027-12-19",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2027-12-19:2024-03-17",
-  "source": {
-    "archiveDate": "2024-03-17",
-    "author": "Marc Raila",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Tool Time",
-      "storyDeck": "By Marc Raila · USA Today, 2024-03-17",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-03-17",
-      "width": 15,
-      "height": 15,
       "solution": [
         "DAM#ALLEY#MCRIB",
         "APE#LEONA#ERASE",

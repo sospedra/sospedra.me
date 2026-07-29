@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-09-23",
   "publicationDate": "2026-09-23",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-09-23:2026-02-18",
-  "source": {
-    "archiveDate": "2026-02-18",
-    "author": "Prasanna Keshava",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Wrong Turn",
-      "storyDeck": "By Prasanna Keshava · USA Today, 2026-02-18",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2026-02-18",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ABCS#DAME#ADVIL",
         "CLEA#ILLS#FROSE",

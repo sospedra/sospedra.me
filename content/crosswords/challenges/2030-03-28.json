@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-03-28",
   "publicationDate": "2030-03-28",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-03-28:2021-10-21",
-  "source": {
-    "archiveDate": "2021-10-21",
-    "author": "Margit Christenson",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Baked Fresh",
-      "storyDeck": "By Margit Christenson · USA Today, 2021-10-21",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-10-21",
-      "width": 15,
-      "height": 15,
       "solution": [
         "STAG#TOAD#UBERS",
         "NEMO#HALE#SORER",

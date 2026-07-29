@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2030-05-16",
   "publicationDate": "2030-05-16",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2030-05-16:2021-09-02",
-  "source": {
-    "archiveDate": "2021-09-02",
-    "author": "Neville Fogarty",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Follow the Money",
-      "storyDeck": "By Neville Fogarty · USA Today, 2021-09-02",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2021-09-02",
-      "width": 15,
-      "height": 15,
       "solution": [
         "USER##BASS#SNOW",
         "SPLIT#ALOE#TOTO",

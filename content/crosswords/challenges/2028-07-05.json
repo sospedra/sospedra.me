@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-07-05",
   "publicationDate": "2028-07-05",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-07-05:2023-10-18",
-  "source": {
-    "archiveDate": "2023-10-18",
-    "author": "Rebecca Goldstein",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "Core Memory",
-      "storyDeck": "By Rebecca Goldstein · USA Today, 2023-10-18",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-10-18",
-      "width": 15,
-      "height": 15,
       "solution": [
         "###MOSS#CHAI###",
         "##GIANT#AORTA##",

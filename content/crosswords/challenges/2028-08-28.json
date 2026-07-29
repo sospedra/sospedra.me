@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-08-28",
   "publicationDate": "2028-08-28",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-08-28:2023-07-31",
-  "source": {
-    "archiveDate": "2023-07-31",
-    "author": "Nate Cardin / Ed. Anna Gundlach",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "$4,000",
-      "storyDeck": "By Nate Cardin / Ed. Anna Gundlach · USA Today, 2023-07-31",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2023-07-31",
-      "width": 15,
-      "height": 15,
       "solution": [
         "APPS#SPARS#TART",
         "NEON#PERON#ALSO",

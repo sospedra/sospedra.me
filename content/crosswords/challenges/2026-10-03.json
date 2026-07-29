@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2026-10-03",
   "publicationDate": "2026-10-03",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2026-10-03:2026-02-14",
-  "source": {
-    "archiveDate": "2026-02-14",
-    "author": "Amanda Rafkin & Amie Walker",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "This Puzzle Is Full of Heart (Freestyle)",
-      "storyDeck": "By Amanda Rafkin & Amie Walker · USA Today, 2026-02-14",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2026-02-14",
-      "width": 15,
-      "height": 15,
       "solution": [
         "READER###TEABAG",
         "ENSURES#CREVICE",

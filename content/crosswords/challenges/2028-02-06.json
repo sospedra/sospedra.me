@@ -1,25 +1,7 @@
 {
-  "schemaVersion": 2,
-  "id": "crossword:2028-02-06",
   "publicationDate": "2028-02-06",
-  "generatorVersion": "replay-1.0.0",
-  "corpusRevision": "usatoday-archive",
-  "patternSetVersion": "usatoday-archive",
-  "rulesVersion": "cw-v2",
-  "seed": "replay:2028-02-06:2024-01-28",
-  "source": {
-    "archiveDate": "2024-01-28",
-    "author": "Nate Cardin",
-    "copyright": "Universal Uclick / USA Today"
-  },
   "puzzles": {
     "en": {
-      "title": "BCC Me",
-      "storyDeck": "By Nate Cardin · USA Today, 2024-01-28",
-      "difficultyTier": 2,
-      "pattern": "usatoday:2024-01-28",
-      "width": 15,
-      "height": 15,
       "solution": [
         "ANTSY#SPAT#EPIC",
         "ROUTE#PACE#NAVY",
