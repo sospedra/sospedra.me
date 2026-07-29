@@ -1,12 +1,12 @@
 /**
- * One-shot migration for /bubordle assets.
+ * One-shot migration for /boombox assets.
  *
- * Reads a local checkout of github.com/sospedra/buborrio (branch `bubordle`),
- * writes the shuffled song index to app/bubordle/songs.json and uploads every
- * clip and cover to the `bubordle` Vercel Blob store.
+ * Reads a local checkout of github.com/sospedra/buborrio (branch `boombox`),
+ * writes the shuffled song index to app/boombox/songs.json and uploads every
+ * clip and cover to the `boombox` Vercel Blob store.
  *
  * Usage:
- *   node --env-file=.env.local scripts/bubordle/import-assets.mjs <buborrio-checkout>
+ *   node --env-file=.env.local scripts/boombox/import-assets.mjs <buborrio-checkout>
  */
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -16,7 +16,7 @@ import { put } from '@vercel/blob'
 const SHUFFLE_SEED = 19850701
 const UPLOAD_BATCH = 8
 const ONE_YEAR_SECONDS = 31536000
-const SONGS_OUT = 'app/bubordle/songs.json'
+const SONGS_OUT = 'app/boombox/songs.json'
 
 const source = process.argv[2]
 if (!source) {
@@ -88,7 +88,7 @@ const chunk = (items, size) =>
   )
 
 const db = JSON.parse(
-  await readFile(join(source, 'public/bubordle/db.json'), 'utf8'),
+  await readFile(join(source, 'public/boombox/db.json'), 'utf8'),
 )
 const songs = seededShuffle(db, SHUFFLE_SEED).map(trimSong)
 await writeFile(SONGS_OUT, `${JSON.stringify(songs)}\n`)
@@ -97,13 +97,13 @@ console.log(`Wrote ${songs.length} songs to ${SONGS_OUT}`)
 const files = db.flatMap(({ id }) => [
   {
     contentType: 'audio/mpeg',
-    localPath: join(source, `public/bubordle/clips/${id}.mp3`),
-    pathname: `bubordle/clips/${id}.mp3`,
+    localPath: join(source, `public/boombox/clips/${id}.mp3`),
+    pathname: `boombox/clips/${id}.mp3`,
   },
   {
     contentType: 'image/jpeg',
-    localPath: join(source, `public/bubordle/covers/${id}.jpg`),
-    pathname: `bubordle/covers/${id}.jpg`,
+    localPath: join(source, `public/boombox/covers/${id}.jpg`),
+    pathname: `boombox/covers/${id}.jpg`,
   },
 ])
 

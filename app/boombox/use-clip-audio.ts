@@ -152,6 +152,15 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
     setSeconds(0)
   }, [])
 
+  /* jump the playhead without touching play state; keeps rolling if rolling */
+  const seek = useCallback((to: number) => {
+    const audio = audioRef.current
+    if (!audio) return
+    const target = Math.max(0, to)
+    audio.currentTime = target
+    setSeconds(Math.floor(target))
+  }, [])
+
   const setBand = useCallback((band: number, gainDb: number) => {
     const filter = graphRef.current?.filters[band]
     if (!filter) return
@@ -171,6 +180,7 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
     pause,
     play,
     seconds,
+    seek,
     setBand,
     setVolume,
     stop,

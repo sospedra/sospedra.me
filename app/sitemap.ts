@@ -5,7 +5,7 @@ const STATIC_ROUTES = [
   '',
   '/about',
   '/bazaar',
-  '/bubordle',
+  '/boombox',
   '/camera',
   '/console',
   '/crosswords',

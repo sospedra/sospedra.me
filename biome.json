@@ -11,7 +11,8 @@
       "!next-env.d.ts",
       "!**/*.svg",
       "!public/vendor",
-      "!app/bazaar3/references"
+      "!app/bazaar3/references",
+      "!scripts/boombox/codex-skin-reference.html"
     ]
   },
   "formatter": {

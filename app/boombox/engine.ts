@@ -24,29 +24,67 @@ export type Guess = {
 
 export type Stage = 'play' | 'won' | 'lost'
 
-export type BubordleState = {
+export type BoomboxState = {
   day: number
   guesses: Guess[]
   stage: Stage
 }
 
-export type BubordleEvent =
-  | { type: 'guess'; candidate: Song }
-  | { type: 'skip' }
+export type BoomboxEvent = { type: 'guess'; candidate: Song } | { type: 'skip' }
 
 export const MAX_GUESSES = 6
 /* Heardle's unlock ladder: seconds audible after n failed attempts */
 export const UNLOCKS = [1, 2, 4, 7, 11, 16] as const
 export const CLIP_SECONDS = 30
-/* first tape spins on launch day; local midnight so the tape flips with the player's clock */
-const EPOCH = new Date(2026, 6, 28)
+/* first tape spun on launch day; the tape flips for everyone at the same
+   instant: 02:00 on Spain's wall clock, whatever utc offset that is */
+const EPOCH_UTC = Date.UTC(2026, 6, 28)
 const DAY_MS = 86_400_000
+const FLIP_HOUR = 2
 
-const localMidnight = (date: Date) =>
-  new Date(date.getFullYear(), date.getMonth(), date.getDate())
+const SPAIN_CLOCK = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Europe/Madrid',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  hourCycle: 'h23',
+})
 
-export const dayNumber = (now: Date) =>
-  Math.round((localMidnight(now).getTime() - EPOCH.getTime()) / DAY_MS)
+const spainWallClock = (now: Date) => {
+  const parts = Object.fromEntries(
+    SPAIN_CLOCK.formatToParts(now).map((part) => [part.type, part.value]),
+  )
+  return {
+    date: Date.UTC(
+      Number(parts.year),
+      Number(parts.month) - 1,
+      Number(parts.day),
+    ),
+    hour: Number(parts.hour),
+  }
+}
+
+export const dayNumber = (now: Date) => {
+  const spain = spainWallClock(now)
+  const calendarDays = Math.round((spain.date - EPOCH_UTC) / DAY_MS)
+  return spain.hour < FLIP_HOUR ? calendarDays - 1 : calendarDays
+}
+
+/* the exact instant the next tape loads; dayNumber is a step function of
+   time, so binary-search its next step within the coming 26 hours */
+export const nextFlipAt = (now: Date): Date => {
+  const today = dayNumber(now)
+  let lo = now.getTime()
+  let hi = lo + 26 * 3_600_000
+
+  while (hi - lo > 1000) {
+    const mid = lo + Math.floor((hi - lo) / 2)
+    if (dayNumber(new Date(mid)) > today) hi = mid
+    else lo = mid
+  }
+  return new Date(Math.ceil(hi / 1000) * 1000)
+}
 
 export const songForDay = (songs: Song[], day: number): Song => {
   const index = ((day % songs.length) + songs.length) % songs.length
@@ -72,7 +110,7 @@ export const scoreGuess = (song: Song, candidate: Song): GuessScore => {
   return 'miss'
 }
 
-export const initialState = (day: number): BubordleState => ({
+export const initialState = (day: number): BoomboxState => ({
   day,
   guesses: [],
   stage: 'play',
@@ -92,10 +130,10 @@ const stageAfter = (guesses: Guess[], score: GuessScore): Stage => {
 }
 
 export const reduce = (
-  state: BubordleState,
-  event: BubordleEvent,
+  state: BoomboxState,
+  event: BoomboxEvent,
   daily: Song,
-): BubordleState => {
+): BoomboxState => {
   if (state.stage !== 'play') return state
 
   const score =
@@ -107,7 +145,7 @@ export const reduce = (
   return { ...state, guesses, stage: stageAfter(guesses, score) }
 }
 
-export const unlockedSeconds = (state: BubordleState): number => {
+export const unlockedSeconds = (state: BoomboxState): number => {
   if (state.stage !== 'play') return CLIP_SECONDS
   return UNLOCKS[state.guesses.length] ?? UNLOCKS[UNLOCKS.length - 1] ?? 16
 }
@@ -131,14 +169,14 @@ const SHARE_SYMBOLS = {
   year: '📆',
 } satisfies Record<GuessScore, string>
 
-export const shareCard = (state: BubordleState): string => {
+export const shareCard = (state: BoomboxState): string => {
   const symbols = state.guesses.map((guess) => SHARE_SYMBOLS[guess.score])
   const row = [...symbols, ...Array(MAX_GUESSES - symbols.length).fill('⬜')]
   const result = state.stage === 'won' ? `${state.guesses.length}/6` : 'X/6'
 
   return [
-    `BUBORDLE #${state.day + 1} 📼`,
+    `BOOMBOX #${state.day + 1} 📼`,
     row.join(''),
-    `${result} · sospedra.me/bubordle`,
+    `${result} · sospedra.me/boombox`,
   ].join('\n')
 }
