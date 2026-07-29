@@ -37,6 +37,20 @@ Source revision SHA-1: `4cae2c7a744a748df90b815737d4010909a8e5fd`.
 Original raster author: Emrrans. Vector author: Pduive23. The 16×16 and 32×32
 PNG derivatives were rendered with Sharp on 27 July 2026.
 
+The MS-DOS bitmap icon is a pixel recreation of the Windows 98 MS-DOS Prompt
+icon, re-drawn on the classic Windows 16-color palette and rendered with
+Sharp on 29 July 2026. "MS-DOS" and the MS-DOS logo are trademarks of
+Microsoft. The icon is a fan tribute, not an official asset.
+
+The RealPlayer bitmap icons are pixel recreations of the RealPlayer G2 icon,
+re-drawn on the classic Windows 16-color palette and rendered with Sharp on
+29 July 2026. "RealPlayer" and the Real logo are trademarks of RealNetworks.
+These icons are a fan tribute, not official assets.
+
+The game icons (meridian, crosswords, boombox, snake, rubiks, game-of-life)
+are original pixel art for this site's own games. They were drawn on the
+classic Windows 16-color palette and rendered with Sharp on 29 July 2026.
+
 The Wikimedia file page marks the simple geometric logo as public domain and
 notes that it may be protected as a trademark. The underlying work is also
 offered under the GNU Free Documentation License 1.2 or later and Creative

@@ -1,0 +1,254 @@
+[
+  {
+    "id": "atlantic",
+    "name": "Atlantic",
+    "icyName": "The Disco Paradise - Atlantic",
+    "streamUrl": "https://broadcast.miami/proxy/atlantic?mp=/stream",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "prelude",
+    "name": "Prelude",
+    "icyName": "The Disco Paradise - Prelude",
+    "streamUrl": "https://broadcast.miami/proxy/prelude?mp=/stream/;",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "casablanca",
+    "name": "Casablanca",
+    "icyName": "The Disco Paradise - Casablanca",
+    "streamUrl": "https://broadcast.miami/proxy/casablanca?mp=/stream/;",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "columbia",
+    "name": "Columbia",
+    "icyName": "The Disco Paradise - Columbia",
+    "streamUrl": "https://broadcast.miami/proxy/columbia?mp=/stream/;",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "tk-disco",
+    "name": "T.K. Disco",
+    "icyName": "The Disco Paradise - T.K. Disco",
+    "streamUrl": "https://broadcast.miami/proxy/tkdisco?mp=/stream/;",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "unidisco",
+    "name": "Unidisco",
+    "icyName": "The Disco Paradise - Unidisco",
+    "streamUrl": "https://broadcast.miami/proxy/unidisco?mp=/stream/;",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "salsoul",
+    "name": "Salsoul",
+    "icyName": "The Disco Paradise - Salsoul",
+    "streamUrl": "https://broadcast.miami/proxy/salsoul?mp=/stream/;",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "west-end",
+    "name": "West End",
+    "icyName": "The Disco Paradise - West End",
+    "streamUrl": "https://broadcast.miami/proxy/westend?mp=/stream/;",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "solar",
+    "name": "Solar",
+    "icyName": "The Disco Paradise - Solar",
+    "streamUrl": "https://broadcast.miami/proxy/solar?mp=/stream/;",
+    "format": "MP3",
+    "bitrateKbps": 320,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "eurodance",
+    "name": "Eurodance",
+    "icyName": "FFH EURODANCE",
+    "streamUrl": "https://mp3.ffh.de/ffhchannels/hqeurodance.mp3",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "millenium-dance",
+    "name": "Millenium Dance",
+    "icyName": "Vip-Radios.FM - Millenium Dance",
+    "streamUrl": "https://radio2.vip-radios.fm:18000/stream-128kmp3-MilleniumDance",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "meganight",
+    "name": "MegaNight",
+    "icyName": "meganight-radio",
+    "streamUrl": "https://a4.radioheart.ru:9042/MegaNightRadio",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "bad-beat",
+    "name": "Bad Beat",
+    "icyName": "Bad Beat Radio - Only the best Breakbeat!",
+    "streamUrl": "https://misato.ru-hoster.com:8061/badbeatradio",
+    "format": "MP3",
+    "bitrateKbps": 256,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "soulful",
+    "name": "Soulful Radio",
+    "icyName": "Soulfulradio",
+    "streamUrl": "https://streamingserver-03.com/proxy/soulfulradio?mp=/;",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "sun-cafe",
+    "name": "Sun Cafe",
+    "icyName": "Sun Radio - Cafe (Café - Soulside radio)",
+    "streamUrl": "https://radio2.vip-radios.fm:18068/stream-128kmp3-CafeSoulside",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "sun-bar",
+    "name": "Sun Bar",
+    "icyName": "Sun Radio - Bar (Bar - Soulside Radio)",
+    "streamUrl": "https://radio2.vip-radios.fm:18065/stream-128kmp3-BarSoulside",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "smooth-jazz",
+    "name": "Smooth Jazz Lounge",
+    "icyName": "Vip-Radios.FM - Smooth Jazz Lounge",
+    "streamUrl": "https://radio4.vip-radios.fm:18060/stream-128kmp3-SmoothJazzLounge",
+    "format": "MP3",
+    "bitrateKbps": 128,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  },
+  {
+    "id": "monte-carlo",
+    "name": "Radio Monte Carlo",
+    "icyName": "MSK",
+    "streamUrl": "https://montecarlo.hostingradio.ru/montecarlo128.mp3",
+    "format": "MP3",
+    "bitrateKbps": null,
+    "verifiedAt": "2026-07-28T20:57:00.000Z",
+    "verification": {
+      "httpStatus": 200,
+      "contentType": "audio/mpeg",
+      "working": true
+    }
+  }
+]

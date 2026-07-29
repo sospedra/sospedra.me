@@ -6,10 +6,17 @@ import { clamp } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useHotkeys } from 'service/hotkeys'
+import { GAMES } from '../games/catalogue'
 import MusicView, {
   type WinampPanelId,
   type WinampPanelVisibility,
 } from '../music/music-view'
+import {
+  type AppId,
+  bootApps,
+  INITIAL_DESKTOP,
+  reduceDesktop,
+} from './desktop.ts'
 import {
   type Cell,
   createGame,
@@ -19,16 +26,15 @@ import {
   minesLeft,
   reduce,
 } from './engine'
+import RealPlayerWindow from './realplayer/realplayer-view'
 import { createSweepAudio, type SweepAudio } from './sweep-audio'
 import css from './w98.module.css'
 
 const SOUND_KEY = 'g-mines-sound'
 const JSPAINT_URL = '/vendor/jspaint/index.html'
-const JSPAINT_SOURCE_URL = 'https://github.com/1j01/jspaint'
 
 type Density = 'beginner' | 'intermediate' | 'expert'
 type InputMode = 'sweep' | 'flag'
-type AppId = 'mines' | 'paint' | 'winamp'
 
 // mine density per difficulty: the grid itself is sized by the screen
 const DENSITIES = {
@@ -417,24 +423,6 @@ const useWindowDrag = (areaRef: React.RefObject<HTMLDivElement | null>) => {
 
 type WindowDrag = ReturnType<typeof useWindowDrag>
 
-type AppWindowState = {
-  open: boolean
-  minimized: boolean
-}
-
-type DesktopState = {
-  active: AppId | null
-  apps: Record<AppId, AppWindowState>
-}
-
-type DesktopAction =
-  | { type: 'launch'; app: AppId }
-  | { type: 'activate'; app: AppId }
-  | { type: 'minimize'; app: AppId }
-  | { type: 'close'; app: AppId }
-
-const APP_IDS = ['mines', 'paint', 'winamp'] as const
-
 const ALL_WINAMP_PANELS: WinampPanelVisibility = {
   equalizer: true,
   player: true,
@@ -445,71 +433,6 @@ const CLOSED_WINAMP_PANELS: WinampPanelVisibility = {
   equalizer: false,
   player: false,
   tracklist: false,
-}
-
-const INITIAL_DESKTOP: DesktopState = {
-  active: 'mines',
-  apps: {
-    mines: { open: true, minimized: false },
-    paint: { open: false, minimized: false },
-    winamp: { open: false, minimized: false },
-  },
-}
-
-const nextVisibleApp = (
-  apps: DesktopState['apps'],
-  excluding: AppId,
-): AppId | null =>
-  APP_IDS.find(
-    (app) => app !== excluding && apps[app].open && !apps[app].minimized,
-  ) ?? null
-
-const reduceDesktop = (
-  state: DesktopState,
-  action: DesktopAction,
-): DesktopState => {
-  const current = state.apps[action.app]
-  switch (action.type) {
-    case 'launch':
-      return {
-        active: action.app,
-        apps: {
-          ...state.apps,
-          [action.app]: { open: true, minimized: false },
-        },
-      }
-    case 'activate':
-      if (!current.open || current.minimized) return state
-      return { ...state, active: action.app }
-    case 'minimize': {
-      if (!current.open || current.minimized) return state
-      const apps = {
-        ...state.apps,
-        [action.app]: { ...current, minimized: true },
-      }
-      return {
-        apps,
-        active:
-          state.active === action.app
-            ? nextVisibleApp(apps, action.app)
-            : state.active,
-      }
-    }
-    case 'close': {
-      if (!current.open) return state
-      const apps = {
-        ...state.apps,
-        [action.app]: { open: false, minimized: false },
-      }
-      return {
-        apps,
-        active:
-          state.active === action.app
-            ? nextVisibleApp(apps, action.app)
-            : state.active,
-      }
-    }
-  }
 }
 
 const PaintWindow: React.FC<{
@@ -534,14 +457,11 @@ const PaintWindow: React.FC<{
     </div>
     <footer className={css.paintStatus}>
       <span>Ready</span>
-      <a href={JSPAINT_SOURCE_URL} target='_blank' rel='noopener noreferrer'>
-        JS Paint source
-      </a>
     </footer>
   </section>
 )
 
-type IconId = 'computer' | 'recycle' | 'mines' | 'paint' | 'winamp'
+type IconId = 'msdos' | 'recycle' | 'mines' | 'paint' | 'winamp' | 'realplayer'
 
 // W98 icon ritual: a mouse click only selects, the double click opens;
 // touch and keyboard activations (click detail 0) open in one go
@@ -598,6 +518,9 @@ export default function Windows98View() {
   const [density, setDensity] = useState<Density>('beginner')
   const [pressing, setPressing] = useState(false)
   const [menu, setMenu] = useState<'game' | 'help' | null>(null)
+  const [startMenu, setStartMenu] = useState<
+    'closed' | 'root' | 'programs' | 'games'
+  >('closed')
   const [isHelpOpen, setIsHelpOpen] = useState(false)
   const [inputMode, setInputMode] = useState<InputMode>('sweep')
   // lazy factory: the AudioContext itself waits for the first gesture
@@ -606,6 +529,7 @@ export default function Windows98View() {
   const workAreaRef = useRef<HTMLDivElement>(null)
   const gameDrag = useWindowDrag(workAreaRef)
   const paintDrag = useWindowDrag(workAreaRef)
+  const realDrag = useWindowDrag(workAreaRef)
   const helpDrag = useWindowDrag(workAreaRef)
   const icons = useDesktopShortcuts()
 
@@ -618,15 +542,31 @@ export default function Windows98View() {
   const minesWindow = desktop.apps.mines
   const paintWindow = desktop.apps.paint
   const winampWindow = desktop.apps.winamp
+  const realWindow = desktop.apps.realplayer
 
   const launchApp = (app: AppId) => {
     setMenu(null)
     desktopDispatch({ type: 'launch', app })
   }
 
+  useEffect(() => {
+    for (const app of bootApps(window.location.search)) {
+      desktopDispatch({ type: 'launch', app })
+    }
+  }, [])
+
   const launchWinamp = () => {
     setWinampPanels({ ...ALL_WINAMP_PANELS })
     launchApp('winamp')
+  }
+
+  const startLaunch = (app: AppId) => {
+    setStartMenu('closed')
+    if (app === 'winamp') {
+      launchWinamp()
+      return
+    }
+    launchApp(app)
   }
 
   const closeWinampPanel = (panel: WinampPanelId) => {
@@ -717,6 +657,7 @@ export default function Windows98View() {
       'Escape',
       () => {
         setMenu(null)
+        setStartMenu('closed')
         setIsHelpOpen(false)
       },
     ],
@@ -732,7 +673,7 @@ export default function Windows98View() {
         onPointerDown={icons.clear}
       >
         <h1 className='sr-only'>
-          Windows 98 desktop with Minesweeper, JS Paint, and Winamp
+          Windows 98 desktop with Minesweeper, JS Paint, Winamp, and RealPlayer
         </h1>
 
         <div className={css.desktopIcons}>
@@ -740,11 +681,11 @@ export default function Windows98View() {
             url='/console'
             className={css.desktopShortcut}
             aria-label='Open the console'
-            data-selected={icons.selected === 'computer'}
-            {...icons.press('computer')}
+            data-selected={icons.selected === 'msdos'}
+            {...icons.press('msdos')}
           >
-            <span className={css.computerIcon} aria-hidden='true' />
-            <span>My Computer</span>
+            <span className={css.msdosIcon} aria-hidden='true' />
+            <span>MS-DOS</span>
           </Link>
           <Link
             url='/recycle-bin'
@@ -785,6 +726,16 @@ export default function Windows98View() {
           >
             <span className={css.winampIcon} aria-hidden='true' />
             <span>Winamp</span>
+          </button>
+          <button
+            type='button'
+            className={css.desktopShortcut}
+            aria-label='Open RealPlayer'
+            data-selected={icons.selected === 'realplayer'}
+            {...icons.press('realplayer', () => launchApp('realplayer'))}
+          >
+            <span className={css.realplayerIcon} aria-hidden='true' />
+            <span>RealPlayer</span>
           </button>
         </div>
 
@@ -985,21 +936,212 @@ export default function Windows98View() {
             )}
           </div>
 
+          <div
+            className={css.realplayerArea}
+            data-hidden={!realWindow.open || realWindow.minimized}
+            data-active={desktop.active === 'realplayer'}
+            onPointerDownCapture={() =>
+              desktopDispatch({ type: 'activate', app: 'realplayer' })
+            }
+            onFocusCapture={() =>
+              desktopDispatch({ type: 'activate', app: 'realplayer' })
+            }
+          >
+            {realWindow.open && (
+              <RealPlayerWindow
+                dragStyle={realDrag.style}
+                dragHandle={realDrag.handle}
+                minimize={() =>
+                  desktopDispatch({ type: 'minimize', app: 'realplayer' })
+                }
+                close={() =>
+                  desktopDispatch({ type: 'close', app: 'realplayer' })
+                }
+              />
+            )}
+          </div>
+
           {isHelpOpen && (
             <HelpWindow close={() => setIsHelpOpen(false)} drag={helpDrag} />
           )}
         </div>
 
         <footer className={css.taskbar}>
-          <Link url='/' className={css.startButton} aria-label='Return home'>
-            <span className={css.winMark} aria-hidden='true'>
-              <i />
-              <i />
-              <i />
-              <i />
-            </span>
-            <strong>Start</strong>
-          </Link>
+          {startMenu !== 'closed' && (
+            <button
+              type='button'
+              className={css.menuBackdrop}
+              aria-label='Close start menu'
+              onClick={() => setStartMenu('closed')}
+            />
+          )}
+          <div className={css.menuSlot}>
+            <button
+              type='button'
+              className={css.startButton}
+              aria-haspopup='menu'
+              aria-expanded={startMenu !== 'closed'}
+              onClick={() =>
+                setStartMenu(startMenu === 'closed' ? 'root' : 'closed')
+              }
+            >
+              <span className={css.winMark} aria-hidden='true'>
+                <i />
+                <i />
+                <i />
+                <i />
+              </span>
+              <strong>Start</strong>
+            </button>
+            {startMenu !== 'closed' && (
+              <div
+                className={css.startMenu}
+                role='menu'
+                aria-label='Start menu'
+              >
+                <div className={css.menuSlot}>
+                  <button
+                    type='button'
+                    role='menuitem'
+                    className={css.menuItem}
+                    aria-haspopup='menu'
+                    aria-expanded={startMenu === 'programs'}
+                    onClick={() =>
+                      setStartMenu(
+                        startMenu === 'programs' ? 'root' : 'programs',
+                      )
+                    }
+                    onPointerEnter={() => setStartMenu('programs')}
+                  >
+                    Programs <span aria-hidden='true'>▸</span>
+                  </button>
+                  {startMenu === 'programs' && (
+                    <div
+                      className={css.programsMenu}
+                      role='menu'
+                      aria-label='Programs'
+                    >
+                      <Link
+                        url='/console'
+                        role='menuitem'
+                        className={css.programItem}
+                      >
+                        <span className={css.msdosAppIcon} aria-hidden='true' />
+                        MS-DOS
+                      </Link>
+                      <button
+                        type='button'
+                        role='menuitem'
+                        className={css.programItem}
+                        onClick={() => startLaunch('mines')}
+                      >
+                        <span className={css.appIcon} aria-hidden='true' />
+                        Minesweeper
+                      </button>
+                      <button
+                        type='button'
+                        role='menuitem'
+                        className={css.programItem}
+                        onClick={() => startLaunch('paint')}
+                      >
+                        <span className={css.paintAppIcon} aria-hidden='true' />
+                        Paint
+                      </button>
+                      <button
+                        type='button'
+                        role='menuitem'
+                        className={css.programItem}
+                        onClick={() => startLaunch('winamp')}
+                      >
+                        <span
+                          className={css.winampAppIcon}
+                          aria-hidden='true'
+                        />
+                        Winamp
+                      </button>
+                      <button
+                        type='button'
+                        role='menuitem'
+                        className={css.programItem}
+                        onClick={() => startLaunch('realplayer')}
+                      >
+                        <span
+                          className={css.realplayerAppIcon}
+                          aria-hidden='true'
+                        />
+                        RealPlayer
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <div className={css.menuSlot}>
+                  <button
+                    type='button'
+                    role='menuitem'
+                    className={css.menuItem}
+                    aria-haspopup='menu'
+                    aria-expanded={startMenu === 'games'}
+                    onClick={() =>
+                      setStartMenu(startMenu === 'games' ? 'root' : 'games')
+                    }
+                    onPointerEnter={() => setStartMenu('games')}
+                  >
+                    Games <span aria-hidden='true'>▸</span>
+                  </button>
+                  {startMenu === 'games' && (
+                    <div
+                      className={css.gamesMenu}
+                      role='menu'
+                      aria-label='Games'
+                    >
+                      {/* Minesweeper is this desktop's own app: launch it in place */}
+                      {GAMES.map((game) =>
+                        game.id === 'mines' ? (
+                          <button
+                            key={game.id}
+                            type='button'
+                            role='menuitem'
+                            className={css.programItem}
+                            onClick={() => startLaunch('mines')}
+                          >
+                            <span
+                              className={css.gameIcon}
+                              data-game={game.id}
+                              aria-hidden='true'
+                            />
+                            {game.title}
+                          </button>
+                        ) : (
+                          <Link
+                            key={game.id}
+                            url={game.href}
+                            role='menuitem'
+                            className={css.programItem}
+                          >
+                            <span
+                              className={css.gameIcon}
+                              data-game={game.id}
+                              aria-hidden='true'
+                            />
+                            {game.title}
+                          </Link>
+                        ),
+                      )}
+                    </div>
+                  )}
+                </div>
+                <hr />
+                <Link
+                  url='/'
+                  role='menuitem'
+                  className={css.shutdownItem}
+                  aria-label='Shut down and return home'
+                >
+                  Shut Down…
+                </Link>
+              </div>
+            )}
+          </div>
           <span className={css.taskDivider} aria-hidden='true' />
           {minesWindow.open && (
             <button
@@ -1040,6 +1182,22 @@ export default function Windows98View() {
               onClick={() => handleTaskButton('winamp')}
             >
               <span className={css.winampAppIcon} aria-hidden='true' /> Winamp
+            </button>
+          )}
+          {realWindow.open && (
+            <button
+              type='button'
+              className={css.taskButton}
+              data-active={
+                desktop.active === 'realplayer' && !realWindow.minimized
+              }
+              aria-pressed={
+                desktop.active === 'realplayer' && !realWindow.minimized
+              }
+              onClick={() => handleTaskButton('realplayer')}
+            >
+              <span className={css.realplayerAppIcon} aria-hidden='true' />{' '}
+              RealPlayer
             </button>
           )}
           <span className={css.taskSpacer} />
