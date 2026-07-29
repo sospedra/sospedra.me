@@ -1,0 +1,104 @@
+.page {
+  min-height: 100vh;
+  padding: 2.5rem clamp(1rem, 4vw, 3rem) 5rem;
+  background: #14182b;
+  color: #f2ecd9;
+  font-family: var(--font-body, sans-serif);
+}
+
+.header {
+  max-width: 60ch;
+  margin-bottom: 2.5rem;
+}
+
+.header h1 {
+  margin: 0 0 0.6rem;
+  font-size: 1.6rem;
+}
+
+.header p {
+  margin: 0;
+  color: #b9b2a0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.header code {
+  color: #8fd8ff;
+  font-family: var(--font-code, monospace);
+  font-size: 0.8em;
+}
+
+.tier {
+  margin-bottom: 3rem;
+}
+
+.tier h2 {
+  display: flex;
+  align-items: baseline;
+  margin: 0 0 1rem;
+  border-bottom: 1px solid rgb(255 255 255 / 14%);
+  font-size: 1rem;
+  gap: 0.6rem;
+  letter-spacing: 0.04em;
+  padding-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.tier h2 span {
+  color: #b9b2a0;
+  font-size: 0.8rem;
+}
+
+.tier[data-tier="1"] h2 {
+  color: #8ee6a2;
+}
+
+.tier[data-tier="2"] h2 {
+  color: #8fd8ff;
+}
+
+.tier[data-tier="3"] h2 {
+  color: #ffd07a;
+}
+
+.tier[data-tier="4"] h2 {
+  color: #ff9d8a;
+}
+
+.grid {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  list-style: none;
+}
+
+.card {
+  display: grid;
+  padding: 0.7rem;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 8px;
+  background: #1b2140;
+  gap: 0.35rem;
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  background: #10142a;
+}
+
+.card strong {
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
+.card span {
+  color: #b9b2a0;
+  font-family: var(--font-code, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+}

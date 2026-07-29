@@ -30,7 +30,7 @@
         "longitude": 1.52109
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/08da9a7f08508499b7f5.svg",
+        "shapeUrl": "/games/geo/assets/shapes/e6133721f927c0a0b4c4.svg",
         "flagUrl": "/games/geo/assets/flags/1914f0d751b810056fdd.svg"
       },
       "eligibility": {
@@ -40,10 +40,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -76,7 +76,7 @@
         "longitude": 54.39696
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/214b7f269332386e6073.svg",
+        "shapeUrl": "/games/geo/assets/shapes/6e38e39849f6b4200311.svg",
         "flagUrl": "/games/geo/assets/flags/3bc52a4aac7c6c68cd7c.svg"
       },
       "eligibility": {
@@ -123,7 +123,7 @@
         "longitude": 69.17233
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/059d3f42144b00c2feaf.svg",
+        "shapeUrl": "/games/geo/assets/shapes/e194d384f0d8f22e87cb.svg",
         "flagUrl": "/games/geo/assets/flags/313a7dd89f3d4bdceae6.svg"
       },
       "eligibility": {
@@ -133,10 +133,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -169,7 +169,7 @@
         "longitude": -61.84329
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3b3d0c44d633fa371f16.svg",
+        "shapeUrl": "/games/geo/assets/shapes/869eb8b897140715d5ee.svg",
         "flagUrl": "/games/geo/assets/flags/131282135f0f5cfca72e.svg"
       },
       "eligibility": {
@@ -216,7 +216,7 @@
         "longitude": 19.81866
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/7485be44f1968b849c1e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/c27d4d982b37e26148dd.svg",
         "flagUrl": "/games/geo/assets/flags/4ae4d2950f6a08528639.svg"
       },
       "eligibility": {
@@ -263,7 +263,7 @@
         "longitude": 44.5126
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/bcfb1f18b099478677b6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/a215d843fe0ffc2f0df9.svg",
         "flagUrl": "/games/geo/assets/flags/efb6cdaad5658ae5024c.svg"
       },
       "eligibility": {
@@ -310,7 +310,7 @@
         "longitude": 13.23432
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/515cbed3e3164bc650da.svg",
+        "shapeUrl": "/games/geo/assets/shapes/9c52122610c104bc8e4b.svg",
         "flagUrl": "/games/geo/assets/flags/3a4b1f9b0c95729b128e.svg"
       },
       "eligibility": {
@@ -320,10 +320,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -357,7 +357,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/8f60387b53b061f27ea7.svg",
+        "shapeUrl": "/games/geo/assets/shapes/a3723e73ebfe196b9fd5.svg",
         "flagUrl": "/games/geo/assets/flags/da39bfbe83fd35fae781.svg"
       },
       "eligibility": {
@@ -367,10 +367,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 3,
-        "map": 4
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -404,7 +404,7 @@
         "longitude": 16.37208
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/4dca2221ad168773c12f.svg",
+        "shapeUrl": "/games/geo/assets/shapes/253c39bdc03c09ce0216.svg",
         "flagUrl": "/games/geo/assets/flags/c0e5cb3c1d59fd002afd.svg"
       },
       "eligibility": {
@@ -414,10 +414,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -451,7 +451,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/80be1cdb13299002e5ab.svg",
+        "shapeUrl": "/games/geo/assets/shapes/f68e473a88a8b8b27f6e.svg",
         "flagUrl": "/games/geo/assets/flags/cbb2206c5e59a25d7922.svg"
       },
       "eligibility": {
@@ -461,10 +461,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 4,
-        "map": 4
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -498,7 +498,7 @@
         "longitude": 49.89201
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/7fc2bbe69c8ff011ea70.svg",
+        "shapeUrl": "/games/geo/assets/shapes/dcc8a0452f1d3883e2c0.svg",
         "flagUrl": "/games/geo/assets/flags/33ad245b2125c36fbf0f.svg"
       },
       "eligibility": {
@@ -508,10 +508,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -544,7 +544,7 @@
         "longitude": 18.35644
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/88f10c87a90553c29282.svg",
+        "shapeUrl": "/games/geo/assets/shapes/c30dc73c5a8a873918c3.svg",
         "flagUrl": "/games/geo/assets/flags/b321fe9b47c1cd741c61.svg"
       },
       "eligibility": {
@@ -554,10 +554,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -590,7 +590,7 @@
         "longitude": -59.62021
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/1077b45b5457561e5580.svg",
+        "shapeUrl": "/games/geo/assets/shapes/9d7e2f9c5ae32d6cf566.svg",
         "flagUrl": "/games/geo/assets/flags/46cfd88ab5ea96e75627.svg"
       },
       "eligibility": {
@@ -637,7 +637,7 @@
         "longitude": 90.40744
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a88285cb3ac24b515dfb.svg",
+        "shapeUrl": "/games/geo/assets/shapes/32ec5813dd74622d3bda.svg",
         "flagUrl": "/games/geo/assets/flags/1aabb4a772651fb9a673.svg"
       },
       "eligibility": {
@@ -647,10 +647,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -683,7 +683,7 @@
         "longitude": 4.34878
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/7c684c482c462d52770d.svg",
+        "shapeUrl": "/games/geo/assets/shapes/c34e56630c09755449cc.svg",
         "flagUrl": "/games/geo/assets/flags/d6aff6fa4c913404eafd.svg"
       },
       "eligibility": {
@@ -693,10 +693,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -730,7 +730,7 @@
         "longitude": -1.53388
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3acd2c68218b938d5162.svg",
+        "shapeUrl": "/games/geo/assets/shapes/975d268801ef422bcc59.svg",
         "flagUrl": "/games/geo/assets/flags/606b17add6a8aeb9610b.svg"
       },
       "eligibility": {
@@ -740,10 +740,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -777,7 +777,7 @@
         "longitude": 23.32415
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/ac05d2cdfd33f92f8273.svg",
+        "shapeUrl": "/games/geo/assets/shapes/bad6d6e26657b84fc1bf.svg",
         "flagUrl": "/games/geo/assets/flags/b6d979fc96dc6b46c169.svg"
       },
       "eligibility": {
@@ -787,10 +787,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -823,7 +823,7 @@
         "longitude": 50.58565
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/cc5ba91cc64fdd21fef8.svg",
+        "shapeUrl": "/games/geo/assets/shapes/2e3e47da7306f842a855.svg",
         "flagUrl": "/games/geo/assets/flags/7a519f58c9007731d70a.svg"
       },
       "eligibility": {
@@ -833,10 +833,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -870,7 +870,7 @@
         "longitude": 29.92463
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3473b9512cb4ec121f6c.svg",
+        "shapeUrl": "/games/geo/assets/shapes/6def0328a1afaf888578.svg",
         "flagUrl": "/games/geo/assets/flags/5ef1a56b4ebe90326d6d.svg"
       },
       "eligibility": {
@@ -880,10 +880,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -916,7 +916,7 @@
         "longitude": 2.60359
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/f1155b48f958d8bbe6a5.svg",
+        "shapeUrl": "/games/geo/assets/shapes/ed301da971ecfb348c4e.svg",
         "flagUrl": "/games/geo/assets/flags/0a46cbae6018acdbc4a4.svg"
       },
       "eligibility": {
@@ -926,10 +926,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -962,7 +962,7 @@
         "longitude": 114.94006
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/28d287c3663ae38ac12e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5ab384cd788792c02846.svg",
         "flagUrl": "/games/geo/assets/flags/4fc01eb8e4b3d4776d17.svg"
       },
       "eligibility": {
@@ -972,10 +972,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1008,7 +1008,7 @@
         "longitude": -65.26274
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/8c7f01ec475073200e58.svg",
+        "shapeUrl": "/games/geo/assets/shapes/7c353fe6f01cfad1f6db.svg",
         "flagUrl": "/games/geo/assets/flags/ee1075ebb655dd8252ec.svg"
       },
       "eligibility": {
@@ -1053,7 +1053,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/2741cd931420620601de.svg",
+        "shapeUrl": "/games/geo/assets/shapes/67d4cdcfc57dc26582cc.svg",
         "flagUrl": "/games/geo/assets/flags/b0a912826c3ffd728743.svg"
       },
       "eligibility": {
@@ -1063,10 +1063,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 4,
-        "capital": 4,
-        "map": 2
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1099,7 +1099,7 @@
         "longitude": -77.34306
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/9aae63606bbfb1ae49a5.svg",
+        "shapeUrl": "/games/geo/assets/shapes/3a6f98b356d24c0b769a.svg",
         "flagUrl": "/games/geo/assets/flags/1f179c39f296e5e3e062.svg"
       },
       "eligibility": {
@@ -1109,10 +1109,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1146,7 +1146,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/c9085405320a4d0ce2d0.svg",
+        "shapeUrl": "/games/geo/assets/shapes/66379b2a49c63b922de3.svg",
         "flagUrl": "/games/geo/assets/flags/05ff0d4d725835782318.svg"
       },
       "eligibility": {
@@ -1156,10 +1156,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1193,7 +1193,7 @@
         "longitude": 25.90859
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/dc3d5443b2c8f5c85495.svg",
+        "shapeUrl": "/games/geo/assets/shapes/9c9c5afefdd98ac35c12.svg",
         "flagUrl": "/games/geo/assets/flags/180bfa4e76b78fa7b52b.svg"
       },
       "eligibility": {
@@ -1240,7 +1240,7 @@
         "longitude": 27.56653
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/0e02e5dbe0cb50ae9095.svg",
+        "shapeUrl": "/games/geo/assets/shapes/de78ef27578d97a5eff3.svg",
         "flagUrl": "/games/geo/assets/flags/a1efa44ad1167d6d77ab.svg"
       },
       "eligibility": {
@@ -1287,7 +1287,7 @@
         "longitude": -88.76401
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/d6aa493e9b2e069c111a.svg",
+        "shapeUrl": "/games/geo/assets/shapes/edeec1e0f7b9052e5ff2.svg",
         "flagUrl": "/games/geo/assets/flags/9aef8f4ef9d86bf989fb.svg"
       },
       "eligibility": {
@@ -1297,10 +1297,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1334,7 +1334,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/738e75b76176d20e9bad.svg",
+        "shapeUrl": "/games/geo/assets/shapes/7d31c36b57237e6b54fc.svg",
         "flagUrl": "/games/geo/assets/flags/345ec9dac057e203f133.svg"
       },
       "eligibility": {
@@ -1344,10 +1344,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 3,
-        "capital": 2,
-        "map": 3
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1381,7 +1381,7 @@
         "longitude": 15.31357
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/776dc0fd13c7e8ce90c3.svg",
+        "shapeUrl": "/games/geo/assets/shapes/7f83c483b4efdd3be11c.svg",
         "flagUrl": "/games/geo/assets/flags/ad93c1afd68e6a7364d1.svg"
       },
       "eligibility": {
@@ -1391,10 +1391,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1427,7 +1427,7 @@
         "longitude": 18.55496
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/b15219c3d31c919dba90.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5405791c26fff2a982c9.svg",
         "flagUrl": "/games/geo/assets/flags/1b58dc2035ff0039c82e.svg"
       },
       "eligibility": {
@@ -1437,10 +1437,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1474,7 +1474,7 @@
         "longitude": 15.28318
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/0f83f319a8438e65ffd8.svg",
+        "shapeUrl": "/games/geo/assets/shapes/b2836da2d78dd6f1c8df.svg",
         "flagUrl": "/games/geo/assets/flags/628dcfc7f00ab09cc907.svg"
       },
       "eligibility": {
@@ -1484,10 +1484,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1520,7 +1520,7 @@
         "longitude": 7.44744
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/246223dd09078df988c2.svg",
+        "shapeUrl": "/games/geo/assets/shapes/4a78fb31a728bbdf195c.svg",
         "flagUrl": "/games/geo/assets/flags/ac676cd39d7032988598.svg"
       },
       "eligibility": {
@@ -1530,10 +1530,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1566,7 +1566,7 @@
         "longitude": -5.27674
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/01384c5b57fb8c33b3b8.svg",
+        "shapeUrl": "/games/geo/assets/shapes/9c31b48fd09453436d78.svg",
         "flagUrl": "/games/geo/assets/flags/4ecfea70e4e0860fdb49.svg"
       },
       "eligibility": {
@@ -1576,10 +1576,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1613,7 +1613,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/889a91b881f23f616e13.svg",
+        "shapeUrl": "/games/geo/assets/shapes/3017d35f9c91b27b6e4d.svg",
         "flagUrl": "/games/geo/assets/flags/bcf0ccdf0999a1cd8206.svg"
       },
       "eligibility": {
@@ -1623,10 +1623,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1660,7 +1660,7 @@
         "longitude": 11.51667
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/9d857047d4cf713c5daa.svg",
+        "shapeUrl": "/games/geo/assets/shapes/77da516e0544880bbca5.svg",
         "flagUrl": "/games/geo/assets/flags/c9a327dc0e355739a9f2.svg"
       },
       "eligibility": {
@@ -1670,10 +1670,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1707,7 +1707,7 @@
         "longitude": 116.39723
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/f0ccc89dd0acddffdce6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/e05bb175506dbeb611ee.svg",
         "flagUrl": "/games/geo/assets/flags/981da9bdf82d48e31691.svg"
       },
       "eligibility": {
@@ -1754,7 +1754,7 @@
         "longitude": -74.08175
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/dd3aa3e4460ed7219e98.svg",
+        "shapeUrl": "/games/geo/assets/shapes/6515767d2e0ad1a1b813.svg",
         "flagUrl": "/games/geo/assets/flags/6bab3c96c1657510c6e4.svg"
       },
       "eligibility": {
@@ -1764,10 +1764,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1801,7 +1801,7 @@
         "longitude": -84.08489
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/791c5c591733918f4d97.svg",
+        "shapeUrl": "/games/geo/assets/shapes/ae2f7b3887f69ab808c7.svg",
         "flagUrl": "/games/geo/assets/flags/4775ef01d28b8a887cde.svg"
       },
       "eligibility": {
@@ -1811,10 +1811,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1848,7 +1848,7 @@
         "longitude": -82.38304
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3979ec98f03f65a93ce7.svg",
+        "shapeUrl": "/games/geo/assets/shapes/1d85260defed5fc0a13a.svg",
         "flagUrl": "/games/geo/assets/flags/15013e0bb414c074af96.svg"
       },
       "eligibility": {
@@ -1858,10 +1858,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1894,7 +1894,7 @@
         "longitude": -23.51254
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/6cfbb8e23a43a6f82c80.svg",
+        "shapeUrl": "/games/geo/assets/shapes/a2929b97b6821dc3927b.svg",
         "flagUrl": "/games/geo/assets/flags/2fa67e0a2477306f0427.svg"
       },
       "eligibility": {
@@ -1940,7 +1940,7 @@
         "longitude": 33.35397
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/7565579b6029961e31c7.svg",
+        "shapeUrl": "/games/geo/assets/shapes/a3e737fbc8dd0256ea38.svg",
         "flagUrl": "/games/geo/assets/flags/d2ddf86c24e9d4dc4e2f.svg"
       },
       "eligibility": {
@@ -1950,10 +1950,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -1986,7 +1986,7 @@
         "longitude": 14.42076
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/1bcbd25c09769cf7a7f6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/eb1bbefbb9b3ec4c0505.svg",
         "flagUrl": "/games/geo/assets/flags/d601fcc2e5b1fd48b79d.svg"
       },
       "eligibility": {
@@ -2033,7 +2033,7 @@
         "longitude": 13.41053
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/5222e9b81bd2f6735a44.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d1c911f54f27d5a62fb7.svg",
         "flagUrl": "/games/geo/assets/flags/efd480af5a154a7651f2.svg"
       },
       "eligibility": {
@@ -2079,7 +2079,7 @@
         "longitude": 43.14503
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/efc50402c2e713748849.svg",
+        "shapeUrl": "/games/geo/assets/shapes/83303bb4ffdae6121199.svg",
         "flagUrl": "/games/geo/assets/flags/2a22d382f85cef20ba39.svg"
       },
       "eligibility": {
@@ -2126,7 +2126,7 @@
         "longitude": 12.56553
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/76f8e61c84ee41382c2b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/b66f9acd34262ee89ed9.svg",
         "flagUrl": "/games/geo/assets/flags/d2847c0bd7a1fb97977e.svg"
       },
       "eligibility": {
@@ -2136,10 +2136,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -2173,7 +2173,7 @@
         "longitude": -61.38808
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/8408483a0e33c8ba09f8.svg",
+        "shapeUrl": "/games/geo/assets/shapes/7102e0e035c44322b803.svg",
         "flagUrl": "/games/geo/assets/flags/0a4bf1a27390308c6267.svg"
       },
       "eligibility": {
@@ -2220,7 +2220,7 @@
         "longitude": -69.89232
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/2e7611a5c7564fc33ea6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/c8d77d8b087a819b9925.svg",
         "flagUrl": "/games/geo/assets/flags/02e5f5efbc60a73716f7.svg"
       },
       "eligibility": {
@@ -2267,7 +2267,7 @@
         "longitude": 3.08746
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/317d4503e026ce41e17e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/6383177a245b01a3178f.svg",
         "flagUrl": "/games/geo/assets/flags/9ea0cf93222ab7b5e7b7.svg"
       },
       "eligibility": {
@@ -2277,10 +2277,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -2314,7 +2314,7 @@
         "longitude": -78.52495
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/5618eadc5fe7b58f1879.svg",
+        "shapeUrl": "/games/geo/assets/shapes/9b13595888fd888674a7.svg",
         "flagUrl": "/games/geo/assets/flags/4472b0618e2f5e31d31d.svg"
       },
       "eligibility": {
@@ -2361,7 +2361,7 @@
         "longitude": 24.75353
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/c227374aaadb36ac651e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/bc652ac8bf47ac45089b.svg",
         "flagUrl": "/games/geo/assets/flags/25642310e287fbdc02e1.svg"
       },
       "eligibility": {
@@ -2371,10 +2371,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -2408,7 +2408,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a5302fa1ce9e78c7281e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/e5192c48053a50a8e962.svg",
         "flagUrl": "/games/geo/assets/flags/3f85d1d2bdb03692ad68.svg"
       },
       "eligibility": {
@@ -2418,10 +2418,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 3
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -2454,7 +2454,7 @@
         "longitude": 38.93184
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a1ae529d455cfcc9d74f.svg",
+        "shapeUrl": "/games/geo/assets/shapes/419080aca7040cfb0e1d.svg",
         "flagUrl": "/games/geo/assets/flags/64c98a80601fc019f9ca.svg"
       },
       "eligibility": {
@@ -2464,10 +2464,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -2501,7 +2501,7 @@
         "longitude": -3.70256
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/e011e0473eb91bde75eb.svg",
+        "shapeUrl": "/games/geo/assets/shapes/a425b6c2c229416d24de.svg",
         "flagUrl": "/games/geo/assets/flags/f9cfaff858e95f830733.svg"
       },
       "eligibility": {
@@ -2548,7 +2548,7 @@
         "longitude": 38.74689
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/89c5c40cf40e75916c51.svg",
+        "shapeUrl": "/games/geo/assets/shapes/f7bf0b73d63b5ab62fae.svg",
         "flagUrl": "/games/geo/assets/flags/43d5922fff81ae1accda.svg"
       },
       "eligibility": {
@@ -2558,10 +2558,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -2594,7 +2594,7 @@
         "longitude": 24.93545
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/7bc26e67fa923b0d50d7.svg",
+        "shapeUrl": "/games/geo/assets/shapes/b0acd6db0f9a48769536.svg",
         "flagUrl": "/games/geo/assets/flags/012edd984cf1879463c2.svg"
       },
       "eligibility": {
@@ -2604,10 +2604,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -2640,7 +2640,7 @@
         "longitude": 178.42531
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/7b43e303d79597bf6738.svg",
+        "shapeUrl": "/games/geo/assets/shapes/18bc745fc3bfb4cf4dfb.svg",
         "flagUrl": "/games/geo/assets/flags/b23cbee897c889ce2d05.svg"
       },
       "eligibility": {
@@ -2650,10 +2650,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -2686,17 +2686,15 @@
         "longitude": 158.16109
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/90848cab2d290acdff20.svg",
         "flagUrl": "/games/geo/assets/flags/23db3e9fe582cc8dd5d3.svg"
       },
       "eligibility": {
-        "shape": true,
+        "shape": false,
         "flag": true,
         "capital": true,
         "map": true
       },
       "difficulty": {
-        "shape": 4,
         "flag": 4,
         "capital": 4,
         "map": 4
@@ -2733,7 +2731,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/83df3ada53bd5cb6a99b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/f744c8a6df1fb89e6fcd.svg",
         "flagUrl": "/games/geo/assets/flags/8cdacc8d79bcf210cdca.svg"
       },
       "eligibility": {
@@ -2743,7 +2741,7 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
+        "shape": 1,
         "flag": 1,
         "capital": 1,
         "map": 1
@@ -2779,7 +2777,7 @@
         "longitude": 9.45356
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/4cda9476a82139cc7cb6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5c3b91955e4ead6b6e67.svg",
         "flagUrl": "/games/geo/assets/flags/f7b775c474b0331222ed.svg"
       },
       "eligibility": {
@@ -2789,10 +2787,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -2826,7 +2824,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/1703baa6d178ccad0912.svg",
+        "shapeUrl": "/games/geo/assets/shapes/de9edf4dc2e7ba8c3446.svg",
         "flagUrl": "/games/geo/assets/flags/c8be1e7208798a4ae692.svg"
       },
       "eligibility": {
@@ -2836,9 +2834,9 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 3,
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
         "map": 1
       },
       "status": "active",
@@ -2872,7 +2870,7 @@
         "longitude": -61.75226
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/14de121cff5b4497ec72.svg",
+        "shapeUrl": "/games/geo/assets/shapes/b69a18dc551044d7bb0e.svg",
         "flagUrl": "/games/geo/assets/flags/eecc1f130ed02b2166c6.svg"
       },
       "eligibility": {
@@ -2918,7 +2916,7 @@
         "longitude": 44.83412
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/d2d47cd4bc2e6edda8ac.svg",
+        "shapeUrl": "/games/geo/assets/shapes/b86d229cf70047c6c12b.svg",
         "flagUrl": "/games/geo/assets/flags/0280a1279c3d1d772f1e.svg"
       },
       "eligibility": {
@@ -2965,7 +2963,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/e763a2291b22ffe7daae.svg",
+        "shapeUrl": "/games/geo/assets/shapes/474eb86be202d0e20dc1.svg",
         "flagUrl": "/games/geo/assets/flags/53c55ca455293bceecfe.svg"
       },
       "eligibility": {
@@ -2975,10 +2973,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3011,7 +3009,7 @@
         "longitude": -16.57803
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/e4d4b430f7cbb0d68a0c.svg",
+        "shapeUrl": "/games/geo/assets/shapes/f43f11418866c89f8a3f.svg",
         "flagUrl": "/games/geo/assets/flags/2aa3fad4e8820fb42386.svg"
       },
       "eligibility": {
@@ -3021,10 +3019,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3057,7 +3055,7 @@
         "longitude": -13.67729
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/fc10597310e2a22e8db1.svg",
+        "shapeUrl": "/games/geo/assets/shapes/7c6beab937be21146c76.svg",
         "flagUrl": "/games/geo/assets/flags/ee01e7dd4abb0a995980.svg"
       },
       "eligibility": {
@@ -3067,10 +3065,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3104,7 +3102,7 @@
         "longitude": 10.82361
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3b50c36a9d691c094784.svg",
+        "shapeUrl": "/games/geo/assets/shapes/a8588710a9397e82943c.svg",
         "flagUrl": "/games/geo/assets/flags/61ddf0a98d1d4bf93c6e.svg"
       },
       "eligibility": {
@@ -3114,10 +3112,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3151,7 +3149,7 @@
         "longitude": 23.72784
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/31587996a98a6640c22b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/3be2b17a73ddae820092.svg",
         "flagUrl": "/games/geo/assets/flags/a184070f7678b06777be.svg"
       },
       "eligibility": {
@@ -3161,10 +3159,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3205,7 +3203,7 @@
         "longitude": -90.51327
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/817c7323b9bbec835f1d.svg",
+        "shapeUrl": "/games/geo/assets/shapes/f180fecd82fd32bbd558.svg",
         "flagUrl": "/games/geo/assets/flags/a20814d011af90ab2e80.svg"
       },
       "eligibility": {
@@ -3251,7 +3249,7 @@
         "longitude": -15.59767
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/e409780adab0cdfce186.svg",
+        "shapeUrl": "/games/geo/assets/shapes/0946b1c4e00da7b65152.svg",
         "flagUrl": "/games/geo/assets/flags/6b81a234b51ceacb4b67.svg"
       },
       "eligibility": {
@@ -3297,7 +3295,7 @@
         "longitude": -58.15527
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/59c13d057ce64d3e85a5.svg",
+        "shapeUrl": "/games/geo/assets/shapes/acc66a40939062048f26.svg",
         "flagUrl": "/games/geo/assets/flags/5bd7a7b326efd9c28c3e.svg"
       },
       "eligibility": {
@@ -3307,10 +3305,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3343,7 +3341,7 @@
         "longitude": -87.20681
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/46bf4e04c185a5957a4e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/b5d646463680e3ef39a5.svg",
         "flagUrl": "/games/geo/assets/flags/67130fa043e9d30dda76.svg"
       },
       "eligibility": {
@@ -3353,10 +3351,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3390,7 +3388,7 @@
         "longitude": 15.97798
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/338a00f84376c162aff4.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5b3c9e911cf8ce0b5596.svg",
         "flagUrl": "/games/geo/assets/flags/3c98eae5ee93f0d75e10.svg"
       },
       "eligibility": {
@@ -3400,10 +3398,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3437,7 +3435,7 @@
         "longitude": -72.33881
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/b22eb9fe2ab1afc74054.svg",
+        "shapeUrl": "/games/geo/assets/shapes/210be7cdee7b913eba4d.svg",
         "flagUrl": "/games/geo/assets/flags/d45f0285b56379b6816a.svg"
       },
       "eligibility": {
@@ -3484,7 +3482,7 @@
         "longitude": 19.04045
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/363bdfcaaf69bc8df5e6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/341b19f57db9eb55eb24.svg",
         "flagUrl": "/games/geo/assets/flags/ffc4edd580d4b9789bee.svg"
       },
       "eligibility": {
@@ -3531,7 +3529,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/007b1e6059403a2277a9.svg",
+        "shapeUrl": "/games/geo/assets/shapes/728949aecc0c5826058e.svg",
         "flagUrl": "/games/geo/assets/flags/5cd3acc4939dd7eae631.svg"
       },
       "eligibility": {
@@ -3541,8 +3539,8 @@
         "map": false
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4
+        "shape": 2,
+        "flag": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3575,7 +3573,7 @@
         "longitude": -6.24889
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3c38f6ada209d5b8b9e6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/33ac4aea70165b813205.svg",
         "flagUrl": "/games/geo/assets/flags/f82568d70bd1624ff7ce.svg"
       },
       "eligibility": {
@@ -3585,10 +3583,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3622,7 +3620,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/7dbb03078903368e2e2d.svg",
+        "shapeUrl": "/games/geo/assets/shapes/3c7cbd7ccb4d9fe3e3fc.svg",
         "flagUrl": "/games/geo/assets/flags/91185efa1a9b52cdc0e4.svg"
       },
       "eligibility": {
@@ -3632,10 +3630,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3669,7 +3667,7 @@
         "longitude": 44.40088
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/4fbc428621fc651fb679.svg",
+        "shapeUrl": "/games/geo/assets/shapes/ed4b767b96b5b02f64c6.svg",
         "flagUrl": "/games/geo/assets/flags/073b07113d582dfea58f.svg"
       },
       "eligibility": {
@@ -3679,10 +3677,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3716,7 +3714,7 @@
         "longitude": 51.42151
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/637d2d4e15ecf6909f3b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/057c86e2cb853757eeec.svg",
         "flagUrl": "/games/geo/assets/flags/cb363e09bafbff6de7c2.svg"
       },
       "eligibility": {
@@ -3726,10 +3724,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3762,7 +3760,7 @@
         "longitude": -21.89541
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/77f079f1ec5c5b42d860.svg",
+        "shapeUrl": "/games/geo/assets/shapes/34b82f496308e05012b2.svg",
         "flagUrl": "/games/geo/assets/flags/4ef2de6fb25ff5a16789.svg"
       },
       "eligibility": {
@@ -3772,10 +3770,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3809,7 +3807,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/39b4f79d5dd59f2e5527.svg",
+        "shapeUrl": "/games/geo/assets/shapes/faf87c3b3d9dff0d639f.svg",
         "flagUrl": "/games/geo/assets/flags/9fa88118818d9b64838f.svg"
       },
       "eligibility": {
@@ -3820,9 +3818,9 @@
       },
       "difficulty": {
         "shape": 1,
-        "flag": 2,
-        "capital": 2,
-        "map": 4
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3855,7 +3853,7 @@
         "longitude": -76.79358
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/96476d47f4ac4ca1a1b9.svg",
+        "shapeUrl": "/games/geo/assets/shapes/7fad983e41754bf060ab.svg",
         "flagUrl": "/games/geo/assets/flags/f837df1ac21a4c64be2c.svg"
       },
       "eligibility": {
@@ -3865,10 +3863,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3902,7 +3900,7 @@
         "longitude": 35.94503
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/dbd13ad2669cee4964fd.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d181ed0ab49a3da4aca8.svg",
         "flagUrl": "/games/geo/assets/flags/e3a570d5c50c15f4aca7.svg"
       },
       "eligibility": {
@@ -3949,7 +3947,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a028a47381b8f8df3bc8.svg",
+        "shapeUrl": "/games/geo/assets/shapes/bd7bbad7a9f5490a3ef1.svg",
         "flagUrl": "/games/geo/assets/flags/bfea80baf9989383dc4b.svg"
       },
       "eligibility": {
@@ -3962,7 +3960,7 @@
         "shape": 1,
         "flag": 1,
         "capital": 1,
-        "map": 2
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -3996,7 +3994,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a9995ffdb43b77b84aed.svg",
+        "shapeUrl": "/games/geo/assets/shapes/8b4146a28f7471d9f686.svg",
         "flagUrl": "/games/geo/assets/flags/699163d87382eb969d8a.svg"
       },
       "eligibility": {
@@ -4006,10 +4004,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -4042,7 +4040,7 @@
         "longitude": 74.59
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/fe60b831c76ad5386f2c.svg",
+        "shapeUrl": "/games/geo/assets/shapes/21b7ce1acf6ce63361b7.svg",
         "flagUrl": "/games/geo/assets/flags/b0cf3e6806af23d8712a.svg"
       },
       "eligibility": {
@@ -4052,10 +4050,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -4089,7 +4087,7 @@
         "longitude": 104.91601
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/2155c499a317d55a9a96.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5a526147224788397b71.svg",
         "flagUrl": "/games/geo/assets/flags/21a9681682a2158cab29.svg"
       },
       "eligibility": {
@@ -4099,10 +4097,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -4135,17 +4133,15 @@
         "longitude": 172.97696
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/737ed4acd32fb5588a57.svg",
         "flagUrl": "/games/geo/assets/flags/01206661587925daf1e5.svg"
       },
       "eligibility": {
-        "shape": true,
+        "shape": false,
         "flag": true,
         "capital": true,
         "map": true
       },
       "difficulty": {
-        "shape": 4,
         "flag": 4,
         "capital": 4,
         "map": 4
@@ -4182,7 +4178,7 @@
         "longitude": 43.25506
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/369a50a60826840ace11.svg",
+        "shapeUrl": "/games/geo/assets/shapes/70dd2e9f9a3be8866ab8.svg",
         "flagUrl": "/games/geo/assets/flags/81e1befbbdeab3b2a4ec.svg"
       },
       "eligibility": {
@@ -4228,7 +4224,7 @@
         "longitude": -62.72499
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a4f8ad4953038d21df35.svg",
+        "shapeUrl": "/games/geo/assets/shapes/9bc94d7aa8da50e7cfaa.svg",
         "flagUrl": "/games/geo/assets/flags/0832acb7396986c7ba99.svg"
       },
       "eligibility": {
@@ -4279,7 +4275,7 @@
         "longitude": 125.75432
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/df14ab9834e6489ae4bf.svg",
+        "shapeUrl": "/games/geo/assets/shapes/29c5bfec4587ea1a4697.svg",
         "flagUrl": "/games/geo/assets/flags/f79bc8b6502445b51fd6.svg"
       },
       "eligibility": {
@@ -4326,7 +4322,7 @@
         "longitude": 126.9784
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/e3bff0ce0efafb609a24.svg",
+        "shapeUrl": "/games/geo/assets/shapes/47951d572eea8b2332b0.svg",
         "flagUrl": "/games/geo/assets/flags/7a6cd5b51d0e2841ed8b.svg"
       },
       "eligibility": {
@@ -4373,7 +4369,7 @@
         "longitude": 47.97429
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/138c84327783c1c76ce6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d27f8e6d39eb233e2691.svg",
         "flagUrl": "/games/geo/assets/flags/172a4281fdaf4b168471.svg"
       },
       "eligibility": {
@@ -4420,7 +4416,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/df6de8576f63795f08fb.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d366eef0e6c5a92b4db3.svg",
         "flagUrl": "/games/geo/assets/flags/381b22e4c287b13e191c.svg"
       },
       "eligibility": {
@@ -4430,10 +4426,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -4467,7 +4463,7 @@
         "longitude": 102.6
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3efda8840137b23f2ba5.svg",
+        "shapeUrl": "/games/geo/assets/shapes/1c2f038887960f0458ce.svg",
         "flagUrl": "/games/geo/assets/flags/da591b989d90a90d03c7.svg"
       },
       "eligibility": {
@@ -4514,7 +4510,7 @@
         "longitude": 35.50157
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/ae7a9f7bbc2d8a76ff46.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d05607780a86a7db9077.svg",
         "flagUrl": "/games/geo/assets/flags/94b12b3f1dc43809f935.svg"
       },
       "eligibility": {
@@ -4524,10 +4520,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -4560,7 +4556,7 @@
         "longitude": -61.00614
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/8333792447f07ce78aed.svg",
+        "shapeUrl": "/games/geo/assets/shapes/ee1d34b8ccff0dd19e4d.svg",
         "flagUrl": "/games/geo/assets/flags/99645e005699eba454a0.svg"
       },
       "eligibility": {
@@ -4607,7 +4603,7 @@
         "longitude": 9.52154
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/0e728de8a108014ac0b4.svg",
+        "shapeUrl": "/games/geo/assets/shapes/31d55c2509a782adfda6.svg",
         "flagUrl": "/games/geo/assets/flags/77a33513c5288a0f2044.svg"
       },
       "eligibility": {
@@ -4653,7 +4649,7 @@
         "longitude": 79.84868
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/93fd946315aa02480272.svg",
+        "shapeUrl": "/games/geo/assets/shapes/87830445a81016b87402.svg",
         "flagUrl": "/games/geo/assets/flags/ed3eee24d19872d6adce.svg"
       },
       "eligibility": {
@@ -4698,7 +4694,7 @@
         "longitude": -10.7969
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/162ec85d6b127769dc9f.svg",
+        "shapeUrl": "/games/geo/assets/shapes/85d78d14095690d21966.svg",
         "flagUrl": "/games/geo/assets/flags/69f2ce4b9490ab3c94ca.svg"
       },
       "eligibility": {
@@ -4745,7 +4741,7 @@
         "longitude": 27.48333
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3d1a8f7f849d5dbaa961.svg",
+        "shapeUrl": "/games/geo/assets/shapes/4bed92d072a5e67aae81.svg",
         "flagUrl": "/games/geo/assets/flags/83d2e4152ef06ed39f57.svg"
       },
       "eligibility": {
@@ -4791,7 +4787,7 @@
         "longitude": 25.2798
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/fbd6415c7175658828b5.svg",
+        "shapeUrl": "/games/geo/assets/shapes/423132c78f568ab973b2.svg",
         "flagUrl": "/games/geo/assets/flags/dc0401993f6e14b3a58f.svg"
       },
       "eligibility": {
@@ -4837,7 +4833,7 @@
         "longitude": 6.13268
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/cd2040e728eeb81ea24b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d77857485189bcdf6e71.svg",
         "flagUrl": "/games/geo/assets/flags/a0a530e396ac2e2490d3.svg"
       },
       "eligibility": {
@@ -4847,10 +4843,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -4883,7 +4879,7 @@
         "longitude": 24.10589
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/fbee582882ff6821c6c7.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5d52c738d5bda4789833.svg",
         "flagUrl": "/games/geo/assets/flags/15d4e812a30208a1caab.svg"
       },
       "eligibility": {
@@ -4893,10 +4889,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -4929,7 +4925,7 @@
         "longitude": 13.18733
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/9b98e36602ff4f935760.svg",
+        "shapeUrl": "/games/geo/assets/shapes/2c98ba4fd8216115f219.svg",
         "flagUrl": "/games/geo/assets/flags/47d96b6e011cd540bdeb.svg"
       },
       "eligibility": {
@@ -4939,10 +4935,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -4975,7 +4971,7 @@
         "longitude": -6.83255
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/9c24d33e1d9bd991d59e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/179d95c3565d856ea20d.svg",
         "flagUrl": "/games/geo/assets/flags/28cfcdecf9675b0a14fb.svg"
       },
       "eligibility": {
@@ -5021,7 +5017,7 @@
         "longitude": 7.42145
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a3692782fdb519e29035.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5f1402f2566be6055432.svg",
         "flagUrl": "/games/geo/assets/flags/690c23fe64b6ac717706.svg"
       },
       "eligibility": {
@@ -5031,10 +5027,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5067,7 +5063,7 @@
         "longitude": 28.85938
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/d74e1aee6ca71be3e312.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d16af9afa42a8c26b782.svg",
         "flagUrl": "/games/geo/assets/flags/987ca12a752ec2b3594c.svg"
       },
       "eligibility": {
@@ -5114,7 +5110,7 @@
         "longitude": 19.26309
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/954c1b2116427d211454.svg",
+        "shapeUrl": "/games/geo/assets/shapes/0100717695515718736d.svg",
         "flagUrl": "/games/geo/assets/flags/d284332e23ef88ae4f1b.svg"
       },
       "eligibility": {
@@ -5124,10 +5120,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5160,7 +5156,7 @@
         "longitude": 47.53613
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/156bd27e80fd4a6e454c.svg",
+        "shapeUrl": "/games/geo/assets/shapes/a69de51f74335cf9cc66.svg",
         "flagUrl": "/games/geo/assets/flags/59246c21300e2456c0c5.svg"
       },
       "eligibility": {
@@ -5170,10 +5166,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5206,17 +5202,15 @@
         "longitude": 171.38027
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/e9026b315542f351c999.svg",
         "flagUrl": "/games/geo/assets/flags/96d7c0b917a5c064636d.svg"
       },
       "eligibility": {
-        "shape": true,
+        "shape": false,
         "flag": true,
         "capital": true,
         "map": true
       },
       "difficulty": {
-        "shape": 4,
         "flag": 4,
         "capital": 4,
         "map": 4
@@ -5252,7 +5246,7 @@
         "longitude": 21.43141
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/517ea229e4358510db39.svg",
+        "shapeUrl": "/games/geo/assets/shapes/2fe9588b2f3c5cbae52c.svg",
         "flagUrl": "/games/geo/assets/flags/22488dc890fe1e5f7a8b.svg"
       },
       "eligibility": {
@@ -5262,10 +5256,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5299,7 +5293,7 @@
         "longitude": -7.97522
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/32bc10c1b5781dbae13e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/bd2ee86bace05fef5ac2.svg",
         "flagUrl": "/games/geo/assets/flags/49e84081981f2b8ec245.svg"
       },
       "eligibility": {
@@ -5346,7 +5340,7 @@
         "longitude": 96.12972
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3ce966da7c3510cc6ca6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/73b75d17fab87653e9a2.svg",
         "flagUrl": "/games/geo/assets/flags/c0b2e23a7e202ff2ad69.svg"
       },
       "eligibility": {
@@ -5356,10 +5350,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5393,7 +5387,7 @@
         "longitude": 106.88324
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/385a8321f77a68fbb808.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5e815520a20068dd4ac1.svg",
         "flagUrl": "/games/geo/assets/flags/92d5422514f63fc10800.svg"
       },
       "eligibility": {
@@ -5403,10 +5397,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5440,7 +5434,7 @@
         "longitude": -15.9785
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/87217120ce10c1c6e2a2.svg",
+        "shapeUrl": "/games/geo/assets/shapes/026d956fc56ca4b3c469.svg",
         "flagUrl": "/games/geo/assets/flags/ea338a9f7744fb25c366.svg"
       },
       "eligibility": {
@@ -5487,7 +5481,7 @@
         "longitude": 14.5148
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/da6a948c0b2175865ab6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/04e55a5cc594739f2a68.svg",
         "flagUrl": "/games/geo/assets/flags/a2ad157eeb5f1bb92dc9.svg"
       },
       "eligibility": {
@@ -5497,10 +5491,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5533,7 +5527,7 @@
         "longitude": 57.49889
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3bc34a09552d0dd8f9c4.svg",
+        "shapeUrl": "/games/geo/assets/shapes/4d83ebb17f5e61f485e1.svg",
         "flagUrl": "/games/geo/assets/flags/51f86810118855ca9a0b.svg"
       },
       "eligibility": {
@@ -5543,10 +5537,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5579,20 +5573,18 @@
         "longitude": 73.50916
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/0785fb3d9b5f807ad123.svg",
         "flagUrl": "/games/geo/assets/flags/5546d527d669b3935bbf.svg"
       },
       "eligibility": {
-        "shape": true,
+        "shape": false,
         "flag": true,
         "capital": true,
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5625,7 +5617,7 @@
         "longitude": 33.78725
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/828bf06c13c8317db8d4.svg",
+        "shapeUrl": "/games/geo/assets/shapes/c0a9f5f9f446d960e8e9.svg",
         "flagUrl": "/games/geo/assets/flags/29a3e7057ec47f18bd8d.svg"
       },
       "eligibility": {
@@ -5635,10 +5627,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5680,7 +5672,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/e8283e76618676b879df.svg",
+        "shapeUrl": "/games/geo/assets/shapes/9bd23b8178f42d4c7770.svg",
         "flagUrl": "/games/geo/assets/flags/9dbc8ad8b35e52ce7cb6.svg"
       },
       "eligibility": {
@@ -5690,10 +5682,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5727,7 +5719,7 @@
         "longitude": 101.68653
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/b628aec0fb7d869a03bb.svg",
+        "shapeUrl": "/games/geo/assets/shapes/ceb7d222c93f7581fce3.svg",
         "flagUrl": "/games/geo/assets/flags/bb30e84a099d2d9dc286.svg"
       },
       "eligibility": {
@@ -5737,10 +5729,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5774,7 +5766,7 @@
         "longitude": 32.58322
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/f0c55e09b25d10a0d05c.svg",
+        "shapeUrl": "/games/geo/assets/shapes/7a41c87043c445f197a5.svg",
         "flagUrl": "/games/geo/assets/flags/ad91c2f8e6d6f80f19dc.svg"
       },
       "eligibility": {
@@ -5784,10 +5776,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5820,7 +5812,7 @@
         "longitude": 17.08323
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/53d7ea0a7a0a70353961.svg",
+        "shapeUrl": "/games/geo/assets/shapes/790d359e4e7141a43741.svg",
         "flagUrl": "/games/geo/assets/flags/caa43fcdebb595ebf980.svg"
       },
       "eligibility": {
@@ -5867,7 +5859,7 @@
         "longitude": 2.1098
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/03904b5f0e32bd833c2e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/6e115a7b8d0153826844.svg",
         "flagUrl": "/games/geo/assets/flags/4b91653d53f76ddaf492.svg"
       },
       "eligibility": {
@@ -5877,10 +5869,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5914,7 +5906,7 @@
         "longitude": 7.49508
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/cad283c44657a12a2f3f.svg",
+        "shapeUrl": "/games/geo/assets/shapes/f5ec20391d46ae143d0f.svg",
         "flagUrl": "/games/geo/assets/flags/b7a2a45a6499095efce4.svg"
       },
       "eligibility": {
@@ -5924,10 +5916,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -5961,7 +5953,7 @@
         "longitude": -86.2504
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/f8bdd80b20c3cd6a5da1.svg",
+        "shapeUrl": "/games/geo/assets/shapes/3e7e808bd9b141dd57bf.svg",
         "flagUrl": "/games/geo/assets/flags/b9dfe1fc2aded19b2796.svg"
       },
       "eligibility": {
@@ -6007,7 +5999,7 @@
         "longitude": 4.88969
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/1e35739ee17d58078eca.svg",
+        "shapeUrl": "/games/geo/assets/shapes/b63b7e9f6679f409641e.svg",
         "flagUrl": "/games/geo/assets/flags/8f691f17fe70894537af.svg"
       },
       "eligibility": {
@@ -6017,10 +6009,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6053,7 +6045,7 @@
         "longitude": 10.74609
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/dac18781154bde23f65f.svg",
+        "shapeUrl": "/games/geo/assets/shapes/132f431d53014f02d886.svg",
         "flagUrl": "/games/geo/assets/flags/ceea17af051dceefd575.svg"
       },
       "eligibility": {
@@ -6063,10 +6055,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6099,7 +6091,7 @@
         "longitude": 85.3206
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/fbf274e8de07394bdea7.svg",
+        "shapeUrl": "/games/geo/assets/shapes/2c24a2cf4e8f195494ed.svg",
         "flagUrl": "/games/geo/assets/flags/b84c02e2fa659d0be6fc.svg"
       },
       "eligibility": {
@@ -6145,7 +6137,7 @@
         "longitude": 166.9252
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/56145168f34ba3f31095.svg",
+        "shapeUrl": "/games/geo/assets/shapes/446d35e720508dd8644d.svg",
         "flagUrl": "/games/geo/assets/flags/f1de4b06479d454bb0a2.svg"
       },
       "eligibility": {
@@ -6192,7 +6184,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/05d71f07ec788366c358.svg",
+        "shapeUrl": "/games/geo/assets/shapes/f6f15e76f7a22e092521.svg",
         "flagUrl": "/games/geo/assets/flags/794a2c8c09796090ab74.svg"
       },
       "eligibility": {
@@ -6202,10 +6194,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6238,7 +6230,7 @@
         "longitude": 58.40778
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/6e6929e375aa44c93c77.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d82ff8aa0b913cbd5bef.svg",
         "flagUrl": "/games/geo/assets/flags/3204f5aa802cf3b2b782.svg"
       },
       "eligibility": {
@@ -6284,7 +6276,7 @@
         "longitude": -79.51973
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/c1aba2d819a27876afef.svg",
+        "shapeUrl": "/games/geo/assets/shapes/2a71cd53a84b73483b9f.svg",
         "flagUrl": "/games/geo/assets/flags/6181586e499d3bafb619.svg"
       },
       "eligibility": {
@@ -6294,10 +6286,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6331,7 +6323,7 @@
         "longitude": -77.02824
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/2856cb50c803871d611a.svg",
+        "shapeUrl": "/games/geo/assets/shapes/294ade56d4f79dd99e47.svg",
         "flagUrl": "/games/geo/assets/flags/e9dd299d453d9c173203.svg"
       },
       "eligibility": {
@@ -6377,7 +6369,7 @@
         "longitude": 147.15089
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/76d999c5709425eb3712.svg",
+        "shapeUrl": "/games/geo/assets/shapes/8b2785e47be9f3c31e03.svg",
         "flagUrl": "/games/geo/assets/flags/43e492331c192a947d9b.svg"
       },
       "eligibility": {
@@ -6387,10 +6379,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6423,7 +6415,7 @@
         "longitude": 120.9822
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/b71056cdfc9a90183281.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d36cad382b4edfa53eba.svg",
         "flagUrl": "/games/geo/assets/flags/c3bd5e08ddc5f6dbdfa8.svg"
       },
       "eligibility": {
@@ -6433,10 +6425,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6469,7 +6461,7 @@
         "longitude": 73.04329
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/07e08a895720ad96b1ca.svg",
+        "shapeUrl": "/games/geo/assets/shapes/147c48ddfc121e8c586f.svg",
         "flagUrl": "/games/geo/assets/flags/89e851c0d541d8166b29.svg"
       },
       "eligibility": {
@@ -6479,10 +6471,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6516,7 +6508,7 @@
         "longitude": 21.01178
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/46740ea43c654f001134.svg",
+        "shapeUrl": "/games/geo/assets/shapes/add957748bbf1fb806f7.svg",
         "flagUrl": "/games/geo/assets/flags/369bb3e14ee718df1ee1.svg"
       },
       "eligibility": {
@@ -6563,7 +6555,7 @@
         "longitude": 35.23388
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/5d4d3b0e5da7a848c8b7.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5868d0fad4029a261a03.svg",
         "flagUrl": "/games/geo/assets/flags/5d95ca7526bf8edd90a9.svg"
       },
       "eligibility": {
@@ -6573,8 +6565,8 @@
         "map": false
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3
+        "shape": 2,
+        "flag": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6607,7 +6599,7 @@
         "longitude": -9.1498
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/8839acd56238718c956d.svg",
+        "shapeUrl": "/games/geo/assets/shapes/4031250844a032bb77eb.svg",
         "flagUrl": "/games/geo/assets/flags/a7a2cf0b44aaaaf4f3bd.svg"
       },
       "eligibility": {
@@ -6617,10 +6609,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6654,17 +6646,15 @@
         "longitude": 134.6238
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/fd5f6b83da93da419bff.svg",
         "flagUrl": "/games/geo/assets/flags/a61ab9d94f2968304eaf.svg"
       },
       "eligibility": {
-        "shape": true,
+        "shape": false,
         "flag": true,
         "capital": true,
         "map": true
       },
       "difficulty": {
-        "shape": 4,
         "flag": 4,
         "capital": 4,
         "map": 4
@@ -6700,7 +6690,7 @@
         "longitude": -57.647
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/ba258b47f0a50a32e2f3.svg",
+        "shapeUrl": "/games/geo/assets/shapes/6b39eeee2d1d6a3df5ec.svg",
         "flagUrl": "/games/geo/assets/flags/fe0968470b7910543b23.svg"
       },
       "eligibility": {
@@ -6746,7 +6736,7 @@
         "longitude": 51.53096
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/bc0d3dd69fff12a819c8.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d1f0f173128ee0fa4a4a.svg",
         "flagUrl": "/games/geo/assets/flags/fb955ef352ff3ba1ea98.svg"
       },
       "eligibility": {
@@ -6756,10 +6746,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6793,7 +6783,7 @@
         "longitude": 26.10626
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/faf22a6cb24c9d79205c.svg",
+        "shapeUrl": "/games/geo/assets/shapes/b8cc003938032f5c0112.svg",
         "flagUrl": "/games/geo/assets/flags/17a3a747fc5e63302aaa.svg"
       },
       "eligibility": {
@@ -6840,7 +6830,7 @@
         "longitude": 20.46513
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/1d53f7d380c84ed03cf1.svg",
+        "shapeUrl": "/games/geo/assets/shapes/757ca6b01c702bc0460a.svg",
         "flagUrl": "/games/geo/assets/flags/b6e08e2eca1ec4c287e5.svg"
       },
       "eligibility": {
@@ -6850,10 +6840,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6887,7 +6877,7 @@
         "longitude": 37.61781
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/33d67fb68e0e239cd61d.svg",
+        "shapeUrl": "/games/geo/assets/shapes/236fa38ea7afed0b7d6e.svg",
         "flagUrl": "/games/geo/assets/flags/7100aaae51ff3b6a2bf0.svg"
       },
       "eligibility": {
@@ -6934,7 +6924,7 @@
         "longitude": 30.05885
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/64120b16757dadbb8899.svg",
+        "shapeUrl": "/games/geo/assets/shapes/fc255f9685fe37fec88a.svg",
         "flagUrl": "/games/geo/assets/flags/9512100aa3e8079ed378.svg"
       },
       "eligibility": {
@@ -6944,10 +6934,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -6981,7 +6971,7 @@
         "longitude": 46.72185
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/f8c056158c675f7fdfa5.svg",
+        "shapeUrl": "/games/geo/assets/shapes/10ab5c363799265c899c.svg",
         "flagUrl": "/games/geo/assets/flags/5738c8cfca5fea63587c.svg"
       },
       "eligibility": {
@@ -7027,7 +7017,7 @@
         "longitude": 159.95
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a74448217acb0c303b44.svg",
+        "shapeUrl": "/games/geo/assets/shapes/75f574edd14aa8ca92c0.svg",
         "flagUrl": "/games/geo/assets/flags/b34eabf373af639cec1d.svg"
       },
       "eligibility": {
@@ -7074,17 +7064,15 @@
         "longitude": 55.45501
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/16516d6403cd19115615.svg",
         "flagUrl": "/games/geo/assets/flags/30cdbe42a1aed2dab0b2.svg"
       },
       "eligibility": {
-        "shape": true,
+        "shape": false,
         "flag": true,
         "capital": true,
         "map": true
       },
       "difficulty": {
-        "shape": 4,
         "flag": 4,
         "capital": 4,
         "map": 4
@@ -7121,7 +7109,7 @@
         "longitude": 32.53241
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/c11946cf338e9a5e365e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/bf06ecf3e1a1bd44c08b.svg",
         "flagUrl": "/games/geo/assets/flags/25b3fa24693ccbb80991.svg"
       },
       "eligibility": {
@@ -7131,10 +7119,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -7168,7 +7156,7 @@
         "longitude": 18.06871
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/523665bc2f87835e1289.svg",
+        "shapeUrl": "/games/geo/assets/shapes/1215535872cec6081249.svg",
         "flagUrl": "/games/geo/assets/flags/b3b5071e6c1d4a0e3db8.svg"
       },
       "eligibility": {
@@ -7178,10 +7166,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 1,
+        "flag": 1,
+        "capital": 1,
+        "map": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -7215,7 +7203,7 @@
         "longitude": 103.85007
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/69da76b49b595e4974da.svg",
+        "shapeUrl": "/games/geo/assets/shapes/68364507aa7f5b1870b2.svg",
         "flagUrl": "/games/geo/assets/flags/25de9044c2e2775f7ccf.svg"
       },
       "eligibility": {
@@ -7225,10 +7213,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -7262,7 +7250,7 @@
         "longitude": 14.50513
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/4969c8ad6f94b1076426.svg",
+        "shapeUrl": "/games/geo/assets/shapes/b770fa0a018b2084ec96.svg",
         "flagUrl": "/games/geo/assets/flags/3a5e0cac44baaea6b6d8.svg"
       },
       "eligibility": {
@@ -7308,7 +7296,7 @@
         "longitude": 17.10674
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/42a86c5dd5c93df8624a.svg",
+        "shapeUrl": "/games/geo/assets/shapes/139a6c999292d1eeeec6.svg",
         "flagUrl": "/games/geo/assets/flags/578d0693bc9521433424.svg"
       },
       "eligibility": {
@@ -7354,7 +7342,7 @@
         "longitude": -13.2356
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/6ba9d009ae9bc79c2d63.svg",
+        "shapeUrl": "/games/geo/assets/shapes/bbef4be16df310a995f6.svg",
         "flagUrl": "/games/geo/assets/flags/d0c384b03a037f4eeb6c.svg"
       },
       "eligibility": {
@@ -7400,7 +7388,7 @@
         "longitude": 12.44639
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3177646ce43bb8daa62a.svg",
+        "shapeUrl": "/games/geo/assets/shapes/724ec91dc6dfec7e1ad8.svg",
         "flagUrl": "/games/geo/assets/flags/fc3388637c187533a086.svg"
       },
       "eligibility": {
@@ -7410,10 +7398,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -7447,7 +7435,7 @@
         "longitude": -17.44406
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/bebdb3bbc380bb546153.svg",
+        "shapeUrl": "/games/geo/assets/shapes/399322d29175ca139398.svg",
         "flagUrl": "/games/geo/assets/flags/6437db13c13fa5cc1b12.svg"
       },
       "eligibility": {
@@ -7494,7 +7482,7 @@
         "longitude": 45.34375
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/f2f2fb79996c67c199a1.svg",
+        "shapeUrl": "/games/geo/assets/shapes/67fe23b1a93d6e7940c4.svg",
         "flagUrl": "/games/geo/assets/flags/249e1acb87efcd0ef0f6.svg"
       },
       "eligibility": {
@@ -7540,7 +7528,7 @@
         "longitude": -55.16682
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/b67b8a862d098b6bc019.svg",
+        "shapeUrl": "/games/geo/assets/shapes/f2f43f2f1a0fff0497f2.svg",
         "flagUrl": "/games/geo/assets/flags/5194a6af4e0d8a350ba7.svg"
       },
       "eligibility": {
@@ -7586,7 +7574,7 @@
         "longitude": 31.58247
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/c38a86bc53bdd1d07177.svg",
+        "shapeUrl": "/games/geo/assets/shapes/601ce5d26f9b2a0097bc.svg",
         "flagUrl": "/games/geo/assets/flags/f7ac7017201841eee0b2.svg"
       },
       "eligibility": {
@@ -7596,10 +7584,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -7636,7 +7624,7 @@
         "longitude": 6.7299
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/95ef56a1bee16b09c7ab.svg",
+        "shapeUrl": "/games/geo/assets/shapes/78c76d78212e38778124.svg",
         "flagUrl": "/games/geo/assets/flags/880c17f94cb564b1818f.svg"
       },
       "eligibility": {
@@ -7682,7 +7670,7 @@
         "longitude": -89.18718
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/ceba806b92a0641da15e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/960f359ed380474891c7.svg",
         "flagUrl": "/games/geo/assets/flags/4c2b4e2b8bbb85d6cb97.svg"
       },
       "eligibility": {
@@ -7729,7 +7717,7 @@
         "longitude": 36.29128
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/6ad2a56d917b0da8b179.svg",
+        "shapeUrl": "/games/geo/assets/shapes/7d42af88d3795045df0e.svg",
         "flagUrl": "/games/geo/assets/flags/04c5e853ade8f2e5585a.svg"
       },
       "eligibility": {
@@ -7775,7 +7763,7 @@
         "longitude": 31.13333
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/0ec0259d728e11553c2a.svg",
+        "shapeUrl": "/games/geo/assets/shapes/1eb230d6b00fea1a5526.svg",
         "flagUrl": "/games/geo/assets/flags/5d6399c149d143306981.svg"
       },
       "eligibility": {
@@ -7822,7 +7810,7 @@
         "longitude": 15.0444
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/8cd175e680e386e2886b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/2921505ec6b8cb0d31f6.svg",
         "flagUrl": "/games/geo/assets/flags/19a278fbd88e7fa245b4.svg"
       },
       "eligibility": {
@@ -7832,10 +7820,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -7869,7 +7857,7 @@
         "longitude": 1.22154
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/09167d4fc08765204a58.svg",
+        "shapeUrl": "/games/geo/assets/shapes/ac2bf6754cd81d608c1b.svg",
         "flagUrl": "/games/geo/assets/flags/f52b955fb48669d14999.svg"
       },
       "eligibility": {
@@ -7879,10 +7867,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -7916,7 +7904,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/4206eb1d0ca9930134b4.svg",
+        "shapeUrl": "/games/geo/assets/shapes/7537ef3186779c16eab2.svg",
         "flagUrl": "/games/geo/assets/flags/329cc0d520536d6eb4b9.svg"
       },
       "eligibility": {
@@ -7926,10 +7914,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -7962,7 +7950,7 @@
         "longitude": 68.77905
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/e29b5ce7c7145391c0c8.svg",
+        "shapeUrl": "/games/geo/assets/shapes/e942fa9d158a36b0d096.svg",
         "flagUrl": "/games/geo/assets/flags/cd1afa9808833e498398.svg"
       },
       "eligibility": {
@@ -7972,10 +7960,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8013,7 +8001,7 @@
         "longitude": 125.57361
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/ee1d24c5037a50c6f09d.svg",
+        "shapeUrl": "/games/geo/assets/shapes/2fc25ba1ccca7c643e5a.svg",
         "flagUrl": "/games/geo/assets/flags/09c763aa3e5a48e20923.svg"
       },
       "eligibility": {
@@ -8059,7 +8047,7 @@
         "longitude": 58.38333
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/732469af11442a454396.svg",
+        "shapeUrl": "/games/geo/assets/shapes/24aa30c4efbdc35d5947.svg",
         "flagUrl": "/games/geo/assets/flags/378178e3d5c91c62dafd.svg"
       },
       "eligibility": {
@@ -8069,10 +8057,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 4,
+        "flag": 4,
+        "capital": 4,
+        "map": 4
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8105,7 +8093,7 @@
         "longitude": 10.16579
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/d4322654b8436372f93b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/0474faa4b0f698c80c2c.svg",
         "flagUrl": "/games/geo/assets/flags/8e0274e5762a4d5f783e.svg"
       },
       "eligibility": {
@@ -8151,17 +8139,15 @@
         "longitude": -175.20114
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3f90fedf4cfb49c253da.svg",
         "flagUrl": "/games/geo/assets/flags/b351703fccc1e08a13d2.svg"
       },
       "eligibility": {
-        "shape": true,
+        "shape": false,
         "flag": true,
         "capital": true,
         "map": true
       },
       "difficulty": {
-        "shape": 4,
         "flag": 4,
         "capital": 4,
         "map": 4
@@ -8198,7 +8184,7 @@
         "longitude": 32.85427
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/001d4b5ef2368c143b3e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/83c25503efb82b98cc4b.svg",
         "flagUrl": "/games/geo/assets/flags/256a1d6afbedb9f73156.svg"
       },
       "eligibility": {
@@ -8245,7 +8231,7 @@
         "longitude": -61.51889
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/f12bc6bc281ad5878b14.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d5f19248422d3d811559.svg",
         "flagUrl": "/games/geo/assets/flags/04c13dcd0b3690f91e75.svg"
       },
       "eligibility": {
@@ -8255,10 +8241,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8291,17 +8277,15 @@
         "longitude": 179.19417
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/8b101fa47c85aef3516a.svg",
         "flagUrl": "/games/geo/assets/flags/d94fa5f107cbacdba297.svg"
       },
       "eligibility": {
-        "shape": true,
+        "shape": false,
         "flag": true,
         "capital": true,
         "map": true
       },
       "difficulty": {
-        "shape": 4,
         "flag": 4,
         "capital": 4,
         "map": 4
@@ -8337,7 +8321,7 @@
         "longitude": 35.73947
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/2efc50d2bce5ea790994.svg",
+        "shapeUrl": "/games/geo/assets/shapes/8fe3b739c4e5534b7c42.svg",
         "flagUrl": "/games/geo/assets/flags/fd317abae009fa3629c5.svg"
       },
       "eligibility": {
@@ -8347,10 +8331,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8384,7 +8368,7 @@
         "longitude": 30.5238
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a48bc22f38c493d9d129.svg",
+        "shapeUrl": "/games/geo/assets/shapes/0371c4ae43980c349a0d.svg",
         "flagUrl": "/games/geo/assets/flags/2d869c23ebfefb2ae0a6.svg"
       },
       "eligibility": {
@@ -8431,7 +8415,7 @@
         "longitude": 32.58219
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/24e1e67365b55dca274a.svg",
+        "shapeUrl": "/games/geo/assets/shapes/62c7e65c75be9afdb2f8.svg",
         "flagUrl": "/games/geo/assets/flags/ab6aa03e1324d54ffbed.svg"
       },
       "eligibility": {
@@ -8441,10 +8425,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8482,7 +8466,7 @@
         "longitude": -77.03637
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/8139167a6927766543fd.svg",
+        "shapeUrl": "/games/geo/assets/shapes/fdfe6f95ac69204fe6c3.svg",
         "flagUrl": "/games/geo/assets/flags/e7be4240cf5798792667.svg"
       },
       "eligibility": {
@@ -8528,7 +8512,7 @@
         "longitude": -56.18816
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/be3da9f63fb6bcdda75b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/bde831af68a2aa013100.svg",
         "flagUrl": "/games/geo/assets/flags/47656c0bf4961a1f7233.svg"
       },
       "eligibility": {
@@ -8538,10 +8522,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 3,
-        "flag": 3,
-        "capital": 3,
-        "map": 3
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8575,7 +8559,7 @@
         "longitude": 69.21627
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/cc739311cdf32666a751.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5db5fe9329ea8fabf1d6.svg",
         "flagUrl": "/games/geo/assets/flags/62ce6f1073416e8d3d59.svg"
       },
       "eligibility": {
@@ -8585,10 +8569,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8621,7 +8605,7 @@
         "longitude": 12.45414
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/353b8e1a1ebbccf726ad.svg",
+        "shapeUrl": "/games/geo/assets/shapes/80ab987b653caceae12c.svg",
         "flagUrl": "/games/geo/assets/flags/e0c5f2ab3c7cc99a89c8.svg"
       },
       "eligibility": {
@@ -8631,10 +8615,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 4,
-        "capital": 4,
-        "map": 4
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8667,7 +8651,7 @@
         "longitude": -61.22742
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/64a41e43bce4489c3dd7.svg",
+        "shapeUrl": "/games/geo/assets/shapes/f5c462842c429628aab1.svg",
         "flagUrl": "/games/geo/assets/flags/4e0a86447af4924dc11f.svg"
       },
       "eligibility": {
@@ -8714,7 +8698,7 @@
         "longitude": -66.87919
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3990e2bde7ba47185195.svg",
+        "shapeUrl": "/games/geo/assets/shapes/70aceab09b12132d45fe.svg",
         "flagUrl": "/games/geo/assets/flags/5712f1c63ba0bfa25a85.svg"
       },
       "eligibility": {
@@ -8761,7 +8745,7 @@
         "longitude": 105.84117
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3956919ddf499d91342c.svg",
+        "shapeUrl": "/games/geo/assets/shapes/cce0ff44f41d8f31bd71.svg",
         "flagUrl": "/games/geo/assets/flags/2355037201315d74581a.svg"
       },
       "eligibility": {
@@ -8771,10 +8755,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 2,
+        "flag": 2,
+        "capital": 2,
+        "map": 2
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8807,7 +8791,7 @@
         "longitude": 168.31366
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/c24e2192b52b08315794.svg",
+        "shapeUrl": "/games/geo/assets/shapes/e7461cf306cf7d641c84.svg",
         "flagUrl": "/games/geo/assets/flags/57d3b67abf0e57ef73b7.svg"
       },
       "eligibility": {
@@ -8853,7 +8837,7 @@
         "longitude": -171.76666
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/3f1f011997bf99d0d617.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5e1f8b775929e2ec01c0.svg",
         "flagUrl": "/games/geo/assets/flags/6b1a7ebcce97d75020af.svg"
       },
       "eligibility": {
@@ -8900,7 +8884,7 @@
         "longitude": 44.20646
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/c1053af65e2773d6f19e.svg",
+        "shapeUrl": "/games/geo/assets/shapes/5c1144b445f7ec912076.svg",
         "flagUrl": "/games/geo/assets/flags/4ad43705cb40095dc7dd.svg"
       },
       "eligibility": {
@@ -8910,10 +8894,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 1,
-        "flag": 1,
-        "capital": 1,
-        "map": 1
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8951,7 +8935,7 @@
         }
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/a3fdbadb2746c5bd0e4b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/6da7efd2b0447d46321a.svg",
         "flagUrl": "/games/geo/assets/flags/1755a5e16f1c9f5120e4.svg"
       },
       "eligibility": {
@@ -8961,8 +8945,8 @@
         "map": false
       },
       "difficulty": {
-        "shape": 4,
-        "flag": 2
+        "shape": 1,
+        "flag": 1
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -8996,7 +8980,7 @@
         "longitude": 28.28713
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/fce565d766a573ba113b.svg",
+        "shapeUrl": "/games/geo/assets/shapes/d2663bd56d6809a6d9ac.svg",
         "flagUrl": "/games/geo/assets/flags/2753554062cd3761e53a.svg"
       },
       "eligibility": {
@@ -9006,10 +8990,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"
@@ -9043,7 +9027,7 @@
         "longitude": 31.05337
       },
       "assets": {
-        "shapeUrl": "/games/geo/assets/shapes/56392b8ff0cb419b1cf6.svg",
+        "shapeUrl": "/games/geo/assets/shapes/9183a291a2d591e39cff.svg",
         "flagUrl": "/games/geo/assets/flags/e27fcdcc882d7175cc4c.svg"
       },
       "eligibility": {
@@ -9053,10 +9037,10 @@
         "map": true
       },
       "difficulty": {
-        "shape": 2,
-        "flag": 2,
-        "capital": 2,
-        "map": 2
+        "shape": 3,
+        "flag": 3,
+        "capital": 3,
+        "map": 3
       },
       "status": "active",
       "sourceRevision": "geo-corpus-2026-07-27.2"

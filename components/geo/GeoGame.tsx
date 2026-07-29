@@ -24,7 +24,6 @@ import {
   loadGeoSettings,
   loadGeoStats,
   type MapPinAnswerResult,
-  mapRegionAlternativeFor,
   mergeCapitalAutocompleteOptions,
   OFFICIAL_COUNTRY_OPTIONS,
   personalBestFor,
@@ -63,10 +62,11 @@ import {
   useRef,
   useState,
 } from 'react'
+import { useDailyCountdown } from 'service/daily-countdown'
 import { useGameInput } from 'service/hotkeys'
 import css from './GeoGame.module.css'
 import GeoMap, { type GeoMapLabels } from './GeoMap'
-import { createGeoAudio } from './geo-audio'
+import { createGeoAudio, type GeoSound } from './geo-audio'
 
 export type GeoGameMode = 'daily' | 'practice'
 export type GeoRouteKind = 'today' | 'archive' | 'practice'
@@ -580,9 +580,7 @@ function Briefing({
   copy,
   displayRounds,
   locale,
-  mapMode,
   mode,
-  onMapModeChange,
   onPracticeRoundChange,
   onPracticeTimedChange,
   onStart,
@@ -594,9 +592,7 @@ function Briefing({
   copy: GeoMessages
   displayRounds: Round[]
   locale: GeoLocale
-  mapMode: GeoSettings['mapMode']
   mode: GeoGameMode
-  onMapModeChange: (mode: GeoSettings['mapMode']) => void
   onPracticeRoundChange: (round: PracticeRound) => void
   onPracticeTimedChange: (timed: boolean) => void
   onStart: () => void
@@ -675,38 +671,6 @@ function Briefing({
             </div>
           )}
 
-          <fieldset className={css.mapModeFieldset}>
-            <legend>{copy.mapMode}</legend>
-            <label className={css.mapModeOption}>
-              <input
-                type='radio'
-                name='geo-map-mode'
-                value='pin'
-                checked={mapMode === 'pin'}
-                onChange={() => onMapModeChange('pin')}
-              />
-              <span>
-                <strong>{copy.mapPin}</strong>
-                <small className={css.srOnly}>{copy.mapPinDescription}</small>
-              </span>
-            </label>
-            <label className={css.mapModeOption}>
-              <input
-                type='radio'
-                name='geo-map-mode'
-                value='region'
-                checked={mapMode === 'region'}
-                onChange={() => onMapModeChange('region')}
-              />
-              <span>
-                <strong>{copy.mapRegion}</strong>
-                <small className={css.srOnly}>
-                  {copy.mapRegionDescription}
-                </small>
-              </span>
-            </label>
-          </fieldset>
-
           <button type='button' className={css.primaryButton} onClick={onStart}>
             <span>{restored ? copy.resumeRun : copy.start}</span>
             <span className={css.buttonArrow} aria-hidden='true'>
@@ -759,7 +723,6 @@ function PromptArtifact({
   locale,
   mapFeedback,
   mapLabels,
-  mapMode,
   onMapCoordinateChange,
   onMapSubmit,
   question,
@@ -770,7 +733,6 @@ function PromptArtifact({
   locale: GeoLocale
   mapFeedback?: { answerCoordinate: GeoCoordinate; distanceKm: number }
   mapLabels: GeoMapLabels
-  mapMode: GeoSettings['mapMode']
   onMapCoordinateChange: (coordinate: GeoCoordinate) => void
   onMapSubmit: (coordinate: GeoCoordinate) => void
   question: NonNullable<ReturnType<typeof currentQuestion>>
@@ -809,25 +771,17 @@ function PromptArtifact({
     return null
   }
 
-  if (question.type === 'map' && mapMode === 'pin') {
-    return (
-      <GeoMap
-        locale={locale}
-        labels={mapLabels}
-        disabled={state.phase !== 'question'}
-        selectedCoordinate={selectedCoordinate}
-        onSelectedCoordinateChange={onMapCoordinateChange}
-        onSubmit={onMapSubmit}
-        feedback={mapFeedback}
-      />
-    )
-  }
-
   return (
-    <div className={css.capitalArtifact}>
-      <span>ACCESSIBLE REGION MATRIX</span>
-      <strong className={css.capitalCode}>GEO</strong>
-    </div>
+    <GeoMap
+      locale={locale}
+      labels={mapLabels}
+      prompt={question.prompt[locale]}
+      disabled={state.phase !== 'question'}
+      selectedCoordinate={selectedCoordinate}
+      onSelectedCoordinateChange={onMapCoordinateChange}
+      onSubmit={onMapSubmit}
+      feedback={mapFeedback}
+    />
   )
 }
 
@@ -841,6 +795,64 @@ const correctOptionFor = (answer: AnswerResult | null): string | null => {
   return answer.correctOptionId
 }
 
+const isPerfectAnswer = (answer: AnswerResult | null): boolean =>
+  answer?.kind === 'map-pin' && answer.distanceBand === 'within-100'
+
+type FeedbackResult = 'correct' | 'expired' | 'incorrect' | 'passed' | 'perfect'
+
+const feedbackResult = (answer: AnswerResult): FeedbackResult => {
+  if (answer.expired) return 'expired'
+  if (answer.skipped) return 'passed'
+  if (isPerfectAnswer(answer)) return 'perfect'
+  return answer.correct ? 'correct' : 'incorrect'
+}
+
+const feedbackHeadline = (answer: AnswerResult, copy: GeoMessages): string => {
+  const headlines: Record<FeedbackResult, string> = {
+    correct: copy.correct,
+    expired: copy.expired,
+    incorrect: copy.incorrect,
+    passed: copy.passed,
+    perfect: copy.perfect,
+  }
+  return headlines[feedbackResult(answer)]
+}
+
+const FEEDBACK_GLYPHS: Record<FeedbackResult, string> = {
+  correct: '✓',
+  expired: '×',
+  incorrect: '×',
+  passed: '↷',
+  perfect: '◎',
+}
+
+const FEEDBACK_ATTRS: Record<FeedbackResult, string> = {
+  correct: 'correct',
+  expired: 'incorrect',
+  incorrect: 'incorrect',
+  passed: 'pass',
+  perfect: 'perfect',
+}
+
+const feedbackDetail = (
+  answer: AnswerResult,
+  copy: GeoMessages,
+  locale: GeoLocale,
+  submittedLabel: string | undefined,
+): string => {
+  if (answer.kind === 'map-pin') {
+    if (answer.distanceKm === null) return ''
+    return copy.distanceAway.replace(
+      '{distance}',
+      new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'es-ES', {
+        maximumFractionDigits: 0,
+      }).format(answer.distanceKm),
+    )
+  }
+  if (!submittedLabel) return ''
+  return `${copy.yourAnswer}: ${submittedLabel}`
+}
+
 function FeedbackBar({
   answer,
   copy,
@@ -852,13 +864,7 @@ function FeedbackBar({
   locale: GeoLocale
   options: LocalizedOption[]
 }) {
-  const result = answer.expired
-    ? 'expired'
-    : answer.skipped
-      ? 'passed'
-      : answer.correct
-        ? 'correct'
-        : 'incorrect'
+  const result = feedbackResult(answer)
   const correctOption = options.find(
     (option) => option.id === correctOptionFor(answer),
   )
@@ -867,44 +873,21 @@ function FeedbackBar({
   )
   const submittedText =
     answer.kind === 'choice' ? answer.submittedText?.trim() : undefined
-  const detail = answer.skipped
-    ? correctOption
-      ? `${copy.correctAnswer}: ${correctOption.label[locale]}`
-      : ''
-    : answer.kind === 'map-pin' && answer.distanceKm !== null
-      ? copy.distanceAway.replace(
-          '{distance}',
-          new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'es-ES', {
-            maximumFractionDigits: 0,
-          }).format(answer.distanceKm),
-        )
-      : answer.expired
-        ? correctOption
-          ? `${copy.correctAnswer}: ${correctOption.label[locale]}`
-          : copy.expired
-        : submittedText && answer.correct
-          ? `${copy.yourAnswer}: ${submittedText}`
-          : submittedText && correctOption
-            ? `${copy.yourAnswer}: ${submittedText} · ${copy.correctAnswer}: ${correctOption.label[locale]}`
-            : correctOption
-              ? `${copy.correctAnswer}: ${correctOption.label[locale]}`
-              : (selectedOption?.label[locale] ?? '')
+  const detail = feedbackDetail(
+    answer,
+    copy,
+    locale,
+    submittedText ?? selectedOption?.label[locale],
+  )
+  const correction = answer.correct ? null : correctOption
 
   return (
     <div className={css.feedbackBar} data-result={result}>
       <span className={css.feedbackIcon} aria-hidden='true'>
-        {answer.correct ? '✓' : answer.skipped ? '↷' : '×'}
+        {FEEDBACK_GLYPHS[result]}
       </span>
       <span className={css.feedbackCopy}>
-        <strong>
-          {answer.skipped
-            ? copy.passed
-            : answer.expired
-              ? copy.expired
-              : answer.correct
-                ? copy.correct
-                : copy.incorrect}
-        </strong>
+        <strong>{feedbackHeadline(answer, copy)}</strong>
         <span>{detail}</span>
       </span>
       <span className={css.feedbackPoints}>
@@ -917,6 +900,12 @@ function FeedbackBar({
             : copy.noPoints}
         </span>
       </span>
+      {correction && (
+        <div className={css.feedbackCorrection}>
+          <span>{copy.correctAnswer}</span>
+          <strong>{correction.label[locale]}</strong>
+        </div>
+      )}
     </div>
   )
 }
@@ -1191,95 +1180,6 @@ function TextAnswerConsole({
   )
 }
 
-function RegionChoiceConsole({
-  copy,
-  locale,
-  onChoice,
-  options,
-  state,
-}: {
-  copy: GeoMessages
-  locale: GeoLocale
-  onChoice: (optionId: string) => void
-  options: LocalizedOption[]
-  state: GeoGameState
-}) {
-  const optionRefs = useRef<Array<HTMLButtonElement | null>>([])
-  const [focusedOption, setFocusedOption] = useState(0)
-  const answer = state.lastAnswer
-  const selectedOption = selectedOptionFor(answer)
-  const correctOption = correctOptionFor(answer)
-  const active = state.phase === 'question'
-
-  const moveFocus = (direction: -1 | 1) => {
-    const next = (focusedOption + direction + options.length) % options.length
-    setFocusedOption(next)
-    optionRefs.current[next]?.focus()
-  }
-
-  return (
-    <aside
-      className={css.answerConsole}
-      data-mode='region'
-      aria-label={copy.question}
-    >
-      <ol className={css.choiceList}>
-        {options.map((option, index) => {
-          const optionState =
-            state.phase !== 'feedback'
-              ? 'idle'
-              : option.id === correctOption
-                ? 'correct'
-                : option.id === selectedOption
-                  ? 'incorrect'
-                  : 'dimmed'
-          return (
-            <li key={option.id}>
-              <button
-                ref={(element) => {
-                  optionRefs.current[index] = element
-                }}
-                type='button'
-                className={css.choiceButton}
-                data-state={optionState}
-                disabled={!active}
-                tabIndex={index === focusedOption ? 0 : -1}
-                onClick={() => onChoice(option.id)}
-                onFocus={() => setFocusedOption(index)}
-                onKeyDown={(event) => {
-                  if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
-                    event.preventDefault()
-                    moveFocus(1)
-                  } else if (
-                    event.key === 'ArrowUp' ||
-                    event.key === 'ArrowLeft'
-                  ) {
-                    event.preventDefault()
-                    moveFocus(-1)
-                  }
-                }}
-              >
-                <span className={css.choiceIndex}>{index + 1}</span>
-                <span className={css.choiceLabel}>{option.label[locale]}</span>
-              </button>
-            </li>
-          )
-        })}
-      </ol>
-
-      <footer className={css.consoleFooter}>
-        <span className={css.keyHints}>
-          <kbd>1–4</kbd>
-          <span>{copy.keyNumbers}</span>
-        </span>
-        <span className={css.streakReadout}>
-          {copy.streak} <strong>×{state.currentStreak}</strong>
-        </span>
-      </footer>
-    </aside>
-  )
-}
-
 function RoundSummary({
   copy,
   locale,
@@ -1411,6 +1311,41 @@ function VisibilityPause({
   )
 }
 
+function NextGameCountdown({ copy }: { copy: GeoMessages }) {
+  const countdown = useDailyCountdown()
+  if (!countdown.label) return null
+  if (countdown.ready) {
+    return (
+      <button
+        type='button'
+        className={css.nextGameReady}
+        onClick={() => window.location.reload()}
+      >
+        {copy.nextGameReady}
+      </button>
+    )
+  }
+  return (
+    <div className={css.nextGame}>
+      <p className={css.nextGameReadout}>
+        <span>{copy.nextGameIn}</span>
+        <strong>{countdown.label}</strong>
+      </p>
+      <span
+        className={css.nextGameTrack}
+        aria-hidden='true'
+        style={
+          {
+            '--remaining': countdown.remainingFraction ?? 0,
+          } as CSSProperties
+        }
+      >
+        <span />
+      </span>
+    </div>
+  )
+}
+
 function Completion({
   copy,
   locale,
@@ -1432,7 +1367,7 @@ function Completion({
   const result = calculateRunStatistics(state.challenge, state.answers)
   const dailyStreak = calculateDailyPlayStreak(stats.runs)
   const personalBest =
-    personalBestFor(stats.runs, state.challenge.rulesVersion, state.mapMode) ??
+    personalBestFor(stats.runs, state.challenge.rulesVersion) ??
     result.totalScore
 
   useEffect(() => {
@@ -1460,6 +1395,7 @@ function Completion({
             ? `${copy.officialResult} · ${copy.returnTomorrow}`
             : copy.replayResult}
         </span>
+        {state.runKind === 'official' && <NextGameCountdown copy={copy} />}
         <div className={css.completionActions}>
           <button type='button' className={css.primaryButton} onClick={onShare}>
             <span>{copy.share}</span>
@@ -1566,7 +1502,7 @@ function GameDialogs({
     window.requestAnimationFrame(() => opener.current?.focus())
   }
 
-  const toggle = (key: 'sound' | 'reducedMotion' | 'highContrast') => {
+  const toggle = (key: 'sound' | 'reducedMotion') => {
     onSettingsChange({ ...settings, [key]: !settings[key] })
   }
 
@@ -1590,7 +1526,6 @@ function GameDialogs({
               [
                 ['sound', copy.sound],
                 ['reducedMotion', copy.reducedMotion],
-                ['highContrast', copy.highContrast],
               ] as const
             ).map(([key, label], index) => (
               <li className={css.settingRow} key={key}>
@@ -1607,39 +1542,6 @@ function GameDialogs({
               </li>
             ))}
           </ul>
-          <fieldset className={css.mapModeFieldset}>
-            <legend>{copy.mapMode}</legend>
-            <label className={css.mapModeOption}>
-              <input
-                type='radio'
-                name='geo-settings-map-mode'
-                checked={settings.mapMode === 'pin'}
-                disabled={state.phase !== 'idle'}
-                onChange={() =>
-                  onSettingsChange({ ...settings, mapMode: 'pin' })
-                }
-              />
-              <span>
-                <strong>{copy.mapPin}</strong>
-                <small>{copy.mapPinDescription}</small>
-              </span>
-            </label>
-            <label className={css.mapModeOption}>
-              <input
-                type='radio'
-                name='geo-settings-map-mode'
-                checked={settings.mapMode === 'region'}
-                disabled={state.phase !== 'idle'}
-                onChange={() =>
-                  onSettingsChange({ ...settings, mapMode: 'region' })
-                }
-              />
-              <span>
-                <strong>{copy.mapRegion}</strong>
-                <small>{copy.mapRegionDescription}</small>
-              </span>
-            </label>
-          </fieldset>
         </div>
       </Modal>
 
@@ -1660,7 +1562,6 @@ function GameDialogs({
             {[
               [['A…', 'Enter'], copy.keyAnswer],
               [['P'], copy.keyPass],
-              [['1', '2', '3', '4'], copy.keyNumbers],
               [['←', '↑', '↓', '→'], copy.keyArrows],
               [['Enter'], copy.keyEnter],
               [['+', '−'], copy.keyMapZoom],
@@ -1761,13 +1662,10 @@ function GeoSession({
   const questionAttemptKey = `${state.roundIndex}:${state.questionIndex}:${questionId}`
   const selectedCoordinate =
     marker?.attemptKey === questionAttemptKey ? marker.coordinate : null
-  const options = useMemo(() => {
-    if (!question) return []
-    if (question.type !== 'map') return question.options
-    return state.mapMode === 'region'
-      ? (mapRegionAlternativeFor(question)?.options ?? [])
-      : []
-  }, [question, state.mapMode])
+  const options = useMemo(
+    () => (question && question.type !== 'map' ? question.options : []),
+    [question],
+  )
   const autocompleteOptions = useMemo(() => {
     if (!question || question.type === 'map') return []
     const roundOptions = state.challenge.rounds
@@ -1792,8 +1690,11 @@ function GeoSession({
   }, [question, state.challenge.cityOptions, state.challenge.rounds])
   const answerPlaceholder =
     question?.type === 'capital' ? copy.typeCapital : copy.typeCountry
+  // Wrong answers keep the shared round clock ticking through feedback — the
+  // correction-reading time IS the error penalty. Correct feedback is free.
   const roundClockRunning =
-    state.phase === 'question' || state.phase === 'feedback'
+    state.phase === 'question' ||
+    (state.phase === 'feedback' && state.lastAnswer?.correct === false)
   useGameInput()
 
   const announce = useCallback((message: string) => {
@@ -1921,7 +1822,13 @@ function GeoSession({
 
   useEffect(() => {
     if (state.phase !== 'feedback') return
-    const duration = state.challenge.rules?.feedbackMs ?? 650
+    const rules = state.challenge.rules
+    const answer = state.lastAnswer
+    // Map answers carry the reveal (true pin, distance) and always hold long.
+    const holdsShort = answer?.correct && answer.kind !== 'map-pin'
+    const duration = holdsShort
+      ? (rules?.feedbackMs ?? 650)
+      : (rules?.wrongFeedbackMs ?? 2500)
     const timeout = window.setTimeout(() => {
       dispatch({
         type: 'FEEDBACK_FINISHED',
@@ -1930,7 +1837,7 @@ function GeoSession({
       })
     }, duration)
     return () => window.clearTimeout(timeout)
-  }, [state.challenge.rules?.feedbackMs, state.phase])
+  }, [state.challenge.rules, state.lastAnswer, state.phase])
 
   useEffect(() => {
     if (state.phase !== 'round-summary') return
@@ -1952,33 +1859,24 @@ function GeoSession({
     if (playedFeedbackRef.current.has(answer.answeredAt)) return
     playedFeedbackRef.current.add(answer.answeredAt)
 
-    const message = answer.skipped
-      ? copy.passed
-      : answer.expired
-        ? copy.expired
-        : answer.correct
-          ? copy.correct
-          : copy.incorrect
-    announce(message)
-    audio.play(
-      answer.skipped
-        ? 'pass'
-        : answer.expired
-          ? 'timeout'
-          : answer.correct
-            ? 'correct'
-            : 'incorrect',
+    const message = feedbackHeadline(answer, copy)
+    const correctLabel = options.find(
+      (option) => option.id === correctOptionFor(answer),
+    )?.label[locale]
+    announce(
+      answer.correct || !correctLabel
+        ? message
+        : `${message}. ${copy.correctAnswer}: ${correctLabel}`,
     )
-  }, [
-    announce,
-    audio,
-    copy.correct,
-    copy.expired,
-    copy.incorrect,
-    copy.passed,
-    state.lastAnswer,
-    state.phase,
-  ])
+    const sounds: Record<FeedbackResult, GeoSound> = {
+      correct: 'correct',
+      expired: 'timeout',
+      incorrect: 'incorrect',
+      passed: 'pass',
+      perfect: 'perfect',
+    }
+    audio.play(sounds[feedbackResult(answer)])
+  }, [announce, audio, copy, locale, options, state.lastAnswer, state.phase])
 
   useEffect(() => {
     if (
@@ -2030,7 +1928,6 @@ function GeoSession({
       answers: state.answers,
       challenge: state.challenge,
       completedAt: state.completedAt,
-      mapMode: state.mapMode,
     })
     const next = recordOfficialRun(loaded, record)
     saveGeoStats(storage, next)
@@ -2081,24 +1978,20 @@ function GeoSession({
   const submitChoice = useCallback((optionId: string) => {
     const current = stateRef.current
     const activeQuestion = currentQuestion(current)
-    if (current.phase !== 'question' || !activeQuestion) return
-    if (activeQuestion.type === 'map') {
-      dispatch({
-        type: 'SUBMIT_REGION',
-        optionId,
-        elapsedMs: questionElapsedRef.current,
-        roundElapsedMs: roundElapsedRef.current,
-        answeredAt: new Date().toISOString(),
-      })
-    } else {
-      dispatch({
-        type: 'SUBMIT_CHOICE',
-        optionId,
-        elapsedMs: questionElapsedRef.current,
-        roundElapsedMs: roundElapsedRef.current,
-        answeredAt: new Date().toISOString(),
-      })
+    if (
+      current.phase !== 'question' ||
+      !activeQuestion ||
+      activeQuestion.type === 'map'
+    ) {
+      return
     }
+    dispatch({
+      type: 'SUBMIT_CHOICE',
+      optionId,
+      elapsedMs: questionElapsedRef.current,
+      roundElapsedMs: roundElapsedRef.current,
+      answeredAt: new Date().toISOString(),
+    })
   }, [])
 
   const submitTextAnswer = useCallback(
@@ -2238,24 +2131,6 @@ function GeoSession({
         passQuestion()
         return
       }
-
-      const index = Number(event.key) - 1
-      const activeQuestion = currentQuestion(current)
-      if (
-        Number.isInteger(index) &&
-        index >= 0 &&
-        index < 4 &&
-        activeQuestion?.type === 'map' &&
-        current.mapMode === 'region'
-      ) {
-        const activeOptions =
-          mapRegionAlternativeFor(activeQuestion)?.options ?? []
-        const option = activeOptions[index]
-        if (option) {
-          event.preventDefault()
-          submitChoice(option.id)
-        }
-      }
     }
 
     window.addEventListener('keydown', handleKeyDown)
@@ -2267,7 +2142,6 @@ function GeoSession({
       challenge: state.challenge,
       answers: state.answers,
       locale,
-      mapMode: state.mapMode,
       challengeNumber: challengeSequence(state.challenge),
     })
     try {
@@ -2283,7 +2157,6 @@ function GeoSession({
       challenge: state.challenge,
       answers: state.answers,
       locale,
-      mapMode: state.mapMode,
       challengeNumber: challengeSequence(state.challenge),
     })
     if (navigator.share) {
@@ -2307,6 +2180,7 @@ function GeoSession({
     latitude: copy.latitude,
     longitude: copy.longitude,
     position: copy.position,
+    projection: copy.projectionNote,
     zoom: copy.zoom,
     selectedPoint: copy.selectedPoint,
     correctPoint: copy.correctPoint,
@@ -2344,16 +2218,11 @@ function GeoSession({
     <div
       className={css.game}
       lang={locale}
-      data-high-contrast={settings.highContrast}
       data-reduced-motion={settings.reducedMotion}
       data-phase={state.phase}
       data-feedback={
         state.phase === 'feedback' && state.lastAnswer
-          ? state.lastAnswer.skipped
-            ? 'pass'
-            : state.lastAnswer.correct
-              ? 'correct'
-              : 'incorrect'
+          ? FEEDBACK_ATTRS[feedbackResult(state.lastAnswer)]
           : undefined
       }
       data-round={
@@ -2391,11 +2260,7 @@ function GeoSession({
             copy={copy}
             displayRounds={displayRounds}
             locale={locale}
-            mapMode={settings.mapMode}
             mode={mode}
-            onMapModeChange={(mapMode) =>
-              onSettingsChange({ ...settings, mapMode })
-            }
             onPracticeRoundChange={onPracticeRoundChange}
             onPracticeTimedChange={onPracticeTimedChange}
             onStart={start}
@@ -2416,9 +2281,7 @@ function GeoSession({
         ) : (
           <div
             className={css.missionGrid}
-            data-direct-map={
-              question?.type === 'map' && state.mapMode === 'pin'
-            }
+            data-direct-map={question?.type === 'map'}
           >
             <section className={css.questionDeck}>
               {question && round && (
@@ -2480,7 +2343,6 @@ function GeoSession({
                         locale={locale}
                         mapFeedback={mapFeedback}
                         mapLabels={mapLabels}
-                        mapMode={state.mapMode}
                         onMapCoordinateChange={(coordinate) =>
                           setMarker({
                             attemptKey: questionAttemptKey,
@@ -2519,17 +2381,6 @@ function GeoSession({
                 state={state}
               />
             )}
-            {question?.type === 'map' && state.mapMode === 'region' && (
-              <RegionChoiceConsole
-                key={questionAttemptKey}
-                copy={copy}
-                locale={locale}
-                onChoice={submitChoice}
-                options={options}
-                state={state}
-              />
-            )}
-
             {state.phase === 'countdown' && (
               <Countdown
                 copy={copy}
@@ -2686,7 +2537,6 @@ export default function GeoGame({
     createGeoGameState(activeChallenge, {
       runKind: mode === 'practice' ? 'practice' : 'official',
       timed: practiceTimed,
-      mapMode: settings.mapMode,
     })
 
   return (

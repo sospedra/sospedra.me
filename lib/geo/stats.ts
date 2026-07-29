@@ -1,7 +1,6 @@
 import type {
   AnswerResult,
   DailyGeoChallenge,
-  MapMode,
   OfficialGeoRunRecord,
   PersistedGeoStats,
   RoundType,
@@ -100,12 +99,10 @@ export const createOfficialRunRecord = ({
   answers,
   challenge,
   completedAt,
-  mapMode,
 }: {
   answers: readonly AnswerResult[]
   challenge: DailyGeoChallenge
   completedAt: string
-  mapMode: MapMode
 }): OfficialGeoRunRecord => {
   const statistics = calculateRunStatistics(challenge, answers)
 
@@ -113,7 +110,6 @@ export const createOfficialRunRecord = ({
     challengeId: challenge.id,
     publicationDate: challenge.publicationDate,
     rulesVersion: challenge.rulesVersion,
-    mapMode,
     completedAt,
     totalScore: statistics.totalScore,
     correctAnswers: statistics.correctAnswers,
@@ -185,12 +181,9 @@ export const calculateDailyPlayStreak = (
 export const personalBestFor = (
   runs: readonly OfficialGeoRunRecord[],
   rulesVersion: string,
-  mapMode: MapMode,
 ) =>
   runs
-    .filter(
-      (run) => run.rulesVersion === rulesVersion && run.mapMode === mapMode,
-    )
+    .filter((run) => run.rulesVersion === rulesVersion)
     .reduce<number | null>(
       (best, run) =>
         best === null ? run.totalScore : Math.max(best, run.totalScore),

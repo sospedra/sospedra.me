@@ -4,20 +4,14 @@ import type {
   ChoiceAnswerResult,
   DailyGeoChallenge,
   GeoCoordinate,
-  MapMode,
   MapPinAnswerResult,
   MapQuestion,
-  MapRegionAnswerResult,
   PersistedGeoRun,
   Question,
   Round,
   RunKind,
 } from './model'
-import {
-  mapRegionAlternativeFor,
-  roundQuestionForAttempt,
-  roundTimeLimitMs,
-} from './model'
+import { roundQuestionForAttempt, roundTimeLimitMs } from './model'
 import { scoreChoiceAnswer, scoreMapAnswer } from './scoring'
 
 export type GeoGamePhase =
@@ -42,7 +36,6 @@ export interface GeoGameState {
    * Untimed practice keeps the finite, exhaustible deck.
    */
   timed: boolean
-  mapMode: MapMode
   phase: GeoGamePhase
   overlay: GeoGameOverlay
   countdownReason: CountdownReason | null
@@ -92,13 +85,6 @@ export type GeoGameAction =
       answeredAt: string
     }
   | {
-      type: 'SUBMIT_REGION'
-      optionId: string
-      elapsedMs: number
-      roundElapsedMs?: number
-      answeredAt: string
-    }
-  | {
       type: 'SKIP_QUESTION'
       elapsedMs: number
       roundElapsedMs?: number
@@ -134,7 +120,6 @@ export type GeoGameAction =
 export interface CreateGeoGameOptions {
   runKind?: RunKind
   timed?: boolean
-  mapMode?: MapMode
 }
 
 const isIsoDateTime = (value: string) => Number.isFinite(Date.parse(value))
@@ -151,7 +136,6 @@ export const createGeoGameState = (
   challenge,
   runKind: options.runKind ?? 'official',
   timed: options.timed ?? true,
-  mapMode: options.mapMode ?? 'pin',
   phase: 'idle',
   overlay: null,
   countdownReason: null,
@@ -381,63 +365,6 @@ const submitText = (
   return appendAnswer(state, answer)
 }
 
-const submitRegion = (
-  state: GeoGameState,
-  optionId: string,
-  elapsedMs: number,
-  roundElapsedMs: number | undefined,
-  answeredAt: string,
-) => {
-  const round = currentRound(state)
-  const question = currentQuestion(state)
-  const alternative =
-    question?.type === 'map' ? mapRegionAlternativeFor(question) : null
-  if (
-    state.phase !== 'question' ||
-    state.mapMode !== 'region' ||
-    !round ||
-    !question ||
-    question.type !== 'map' ||
-    !alternative ||
-    hasAnsweredCurrentQuestion(state) ||
-    !alternative.options.some((option) => option.id === optionId) ||
-    !isIsoDateTime(answeredAt)
-  ) {
-    return state
-  }
-
-  const clocks = answerClocks(state, round, elapsedMs, roundElapsedMs)
-  if (clocks.roundElapsedMs >= roundTimeLimitMs(round)) {
-    return expireRound(state, clocks.roundElapsedMs, answeredAt)
-  }
-  const correct = optionId === alternative.correctOptionId
-  const score = scoreChoiceAnswer({
-    correct,
-    elapsedMs: clocks.responseElapsedMs,
-    questionLimitMs: round.questionLimitMs,
-    correctStreak: state.currentStreak,
-    rules: state.challenge.rules,
-  })
-  const answer: MapRegionAnswerResult = {
-    ...answerBase(
-      state,
-      round,
-      question,
-      clocks.responseElapsedMs,
-      answeredAt,
-      clocks.roundElapsedMs,
-      score,
-      correct,
-      false,
-    ),
-    kind: 'map-region',
-    selectedOptionId: optionId,
-    correctOptionId: alternative.correctOptionId,
-  }
-
-  return appendAnswer(state, answer)
-}
-
 const submitMap = (
   state: GeoGameState,
   coordinate: GeoCoordinate,
@@ -449,7 +376,6 @@ const submitMap = (
   const question = currentQuestion(state)
   if (
     state.phase !== 'question' ||
-    state.mapMode !== 'pin' ||
     !round ||
     !question ||
     question.type !== 'map' ||
@@ -549,18 +475,6 @@ const skipQuestion = (
       kind: 'choice',
       selectedOptionId: null,
       correctOptionId: question.correctOptionId,
-    }
-    return appendAnswer(state, answer)
-  }
-
-  const alternative = mapRegionAlternativeFor(question)
-  if (state.mapMode === 'region') {
-    if (!alternative) return state
-    const answer: MapRegionAnswerResult = {
-      ...base,
-      kind: 'map-region',
-      selectedOptionId: null,
-      correctOptionId: alternative.correctOptionId,
     }
     return appendAnswer(state, answer)
   }
@@ -686,7 +600,6 @@ export const restoreGeoGameState = (
   const initial = createGeoGameState(challenge, {
     runKind: options.runKind,
     timed: options.timed,
-    mapMode: persisted.mapMode ?? 'pin',
   })
   const hasRoundClockMetadata =
     persisted.roundElapsedMs !== undefined ||
@@ -801,14 +714,6 @@ export const geoGameReducer = (
       return submitMap(
         state,
         action.coordinate,
-        action.elapsedMs,
-        action.roundElapsedMs,
-        action.answeredAt,
-      )
-    case 'SUBMIT_REGION':
-      return submitRegion(
-        state,
-        action.optionId,
         action.elapsedMs,
         action.roundElapsedMs,
         action.answeredAt,

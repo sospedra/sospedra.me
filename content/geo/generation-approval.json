@@ -3,7 +3,7 @@
   "sourceRevision": "geo-corpus-2026-07-27.2",
   "citySourceRevision": "geo-corpus-2026-07-27.2",
   "cityPolicyRevision": "geo-city-coverage-2026-07-27.1",
-  "generatorVersion": "4.1.0",
-  "rulesVersion": "geo-v6",
+  "generatorVersion": "6.0.0",
+  "rulesVersion": "geo-v7",
   "reviewBasis": "automated-source-and-policy-validation"
 }

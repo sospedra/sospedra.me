@@ -1,4 +1,10 @@
-export type GeoSound = 'correct' | 'incorrect' | 'pass' | 'start' | 'timeout'
+export type GeoSound =
+  | 'correct'
+  | 'incorrect'
+  | 'pass'
+  | 'perfect'
+  | 'start'
+  | 'timeout'
 
 type AudioGraph = {
   context: AudioContext
@@ -49,6 +55,40 @@ const CUES: Record<GeoSound, readonly Note[]> = {
       peak: 0.06,
       shape: 'square',
       to: 1180,
+    },
+  ],
+  perfect: [
+    {
+      at: 0,
+      duration: 0.06,
+      frequency: 660,
+      peak: 0.05,
+      shape: 'square',
+      to: 705,
+    },
+    {
+      at: 0.07,
+      duration: 0.06,
+      frequency: 880,
+      peak: 0.055,
+      shape: 'square',
+      to: 935,
+    },
+    {
+      at: 0.14,
+      duration: 0.07,
+      frequency: 1100,
+      peak: 0.06,
+      shape: 'square',
+      to: 1175,
+    },
+    {
+      at: 0.22,
+      duration: 0.18,
+      frequency: 1320,
+      peak: 0.065,
+      shape: 'square',
+      to: 1580,
     },
   ],
   incorrect: [

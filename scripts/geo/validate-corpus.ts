@@ -97,6 +97,10 @@ const overrides = readJson<OverrideDocument>(
   'data/geo/editorial/city-overrides.json',
 )
 const sourceLock = readJson<SourceLock>('data/geo/corpus-sources.lock.json')
+const countryDifficulty = readJson<{ shapeHolds?: string[] }>(
+  'data/geo/editorial/country-difficulty.json',
+)
+const shapeHeldCodes = new Set(countryDifficulty.shapeHolds ?? [])
 const mainSourceLock = readJson<MainSourceLock>('data/geo/sources.lock.json')
 const cityCorpus = readJson<GeneratedCityCorpus>(
   'data/geo/generated/cities.json',
@@ -333,11 +337,16 @@ for (const country of gameCorpus.countries) {
     `${country.code} has a stale source revision`,
   )
   check(
-    country.eligibility.shape &&
-      country.eligibility.flag &&
-      Boolean(country.difficulty.shape) &&
-      Boolean(country.difficulty.flag),
-    `${country.code} must have verified shape and flag gameplay metadata`,
+    country.eligibility.flag && Boolean(country.difficulty.flag),
+    `${country.code} must have verified flag gameplay metadata`,
+  )
+  check(
+    country.eligibility.shape === !shapeHeldCodes.has(country.code),
+    `${country.code} shape eligibility does not match the editorial holds`,
+  )
+  check(
+    !country.eligibility.shape || Boolean(country.difficulty.shape),
+    `${country.code} lacks shape difficulty`,
   )
   check(
     country.eligibility.capital === !reviewCodes.has(country.code) &&

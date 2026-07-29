@@ -231,6 +231,15 @@ const writeJsonAtomically = (path: string, value: unknown) => {
   renameSync(temporaryPath, outputPath)
 }
 
+interface CountryDifficultyDocument {
+  schemaVersion: number
+  revision: string
+  description: string
+  tiers: Record<string, Difficulty>
+  /** Atoll nations with no usable silhouette; held out of the shape round. */
+  shapeHolds?: string[]
+}
+
 const roster = readJson<RosterDocument>(
   'data/geo/editorial/country-roster.json',
 )
@@ -239,6 +248,9 @@ const policy = readJson<CoveragePolicy>(
 )
 const overrideDocument = readJson<CityOverrideDocument>(
   'data/geo/editorial/city-overrides.json',
+)
+const countryDifficultyDocument = readJson<CountryDifficultyDocument>(
+  'data/geo/editorial/country-difficulty.json',
 )
 const sourceLock = readJson<CorpusSourceLock>(
   'data/geo/corpus-sources.lock.json',
@@ -963,20 +975,42 @@ const main = async () => {
       primaryNaturalEarthFeature(code, naturalEarth.features),
     ]),
   )
-  const populationOrder = [...countries].sort(
-    (a, b) =>
-      (b.worldBankPopulation ?? -1) - (a.worldBankPopulation ?? -1) ||
-      compareText(a.code, b.code),
+  assert(
+    countryDifficultyDocument.schemaVersion === 1,
+    'Unsupported country-difficulty schema',
   )
-  const fallbackDifficultyByCode = new Map<string, Difficulty>(
-    populationOrder.map((country, index) => [
-      country.code,
-      Math.min(
-        4,
-        Math.floor((index * 4) / populationOrder.length) + 1,
-      ) as Difficulty,
-    ]),
+  assert(
+    countryDifficultyDocument.revision.trim().length > 0,
+    'Country-difficulty table must declare a revision',
   )
+  const editorialTierEntries = Object.entries(countryDifficultyDocument.tiers)
+  const rosterCodes = new Set(countries.map((country) => country.code))
+  for (const [code, tier] of editorialTierEntries) {
+    assert(
+      rosterCodes.has(code),
+      `Country-difficulty table tiers unknown country ${code}`,
+    )
+    assert(
+      tier === 1 || tier === 2 || tier === 3 || tier === 4,
+      `${code} has an invalid editorial difficulty tier`,
+    )
+  }
+  const editorialDifficultyByCode = new Map<string, Difficulty>(
+    editorialTierEntries,
+  )
+  for (const country of countries) {
+    assert(
+      editorialDifficultyByCode.has(country.code),
+      `${country.code} is missing from the country-difficulty table`,
+    )
+  }
+  const shapeHeldCodes = new Set(countryDifficultyDocument.shapeHolds ?? [])
+  for (const code of shapeHeldCodes) {
+    assert(
+      rosterCodes.has(code),
+      `Country-difficulty shape hold references unknown country ${code}`,
+    )
+  }
   const capitalReviewCodes = new Set(
     overrideDocument.reviewQueue
       .filter((review) => review.topic.includes('capital'))
@@ -994,9 +1028,9 @@ const main = async () => {
     const cityCapital = cityById.get(capitalIds[0] as number)
     assert(cityCapital, `${country.code} canonical capital is missing`)
     const countryWikidataId = validSourceName(feature?.properties.WIKIDATAID)
-    const fallbackDifficulty =
-      fallbackDifficultyByCode.get(country.code) ??
-      fail(`${country.code} has no fallback difficulty`)
+    const editorialDifficulty =
+      editorialDifficultyByCode.get(country.code) ??
+      fail(`${country.code} has no editorial difficulty`)
     const shapeEligible = hasRobustCountryGeometry(feature)
     const flagEligible = existsSync(
       pathFromRoot(
@@ -1004,12 +1038,15 @@ const main = async () => {
       ),
     )
     const capitalEligible = !capitalReviewCodes.has(country.code)
-    const eligibility = existing?.eligibility ?? {
+    const baseEligibility = existing?.eligibility ?? {
       shape: shapeEligible,
       flag: flagEligible,
       capital: capitalEligible,
       map: capitalEligible,
     }
+    const eligibility = shapeHeldCodes.has(country.code)
+      ? { ...baseEligibility, shape: false }
+      : baseEligibility
     assert(
       !eligibility.shape || shapeEligible,
       `${country.code} cannot be shape-eligible without robust Natural Earth geometry`,
@@ -1019,15 +1056,14 @@ const main = async () => {
       `${country.code} cannot be flag-eligible without a flag-icons asset`,
     )
 
-    const fallbackDifficulties: CountryDifficulty = {
-      ...(eligibility.shape ? { shape: fallbackDifficulty } : {}),
-      ...(eligibility.flag ? { flag: fallbackDifficulty } : {}),
-      ...(eligibility.capital ? { capital: fallbackDifficulty } : {}),
-      ...(eligibility.map ? { map: fallbackDifficulty } : {}),
+    // The editorial recognizability table is the single difficulty source;
+    // legacy per-country reviews keep names and eligibility only.
+    const difficulty: CountryDifficulty = {
+      ...(eligibility.shape ? { shape: editorialDifficulty } : {}),
+      ...(eligibility.flag ? { flag: editorialDifficulty } : {}),
+      ...(eligibility.capital ? { capital: editorialDifficulty } : {}),
+      ...(eligibility.map ? { map: editorialDifficulty } : {}),
     }
-    const difficulty: CountryDifficulty = existing
-      ? { ...fallbackDifficulties, ...existing.difficulty }
-      : fallbackDifficulties
     const naturalEarthNames = [
       feature?.properties.NAME_EN,
       feature?.properties.NAME_ES,

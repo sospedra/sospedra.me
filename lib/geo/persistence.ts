@@ -5,7 +5,6 @@ import type {
   GeoChallengeRules,
   GeoSettings,
   MapDistanceBand,
-  MapMode,
   OfficialGeoRunRecord,
   PersistedGeoRun,
   PersistedGeoStats,
@@ -13,11 +12,7 @@ import type {
   Round,
   RoundType,
 } from './model'
-import {
-  mapRegionAlternativeFor,
-  roundQuestionForAttempt,
-  roundTimeLimitMs,
-} from './model'
+import { roundQuestionForAttempt, roundTimeLimitMs } from './model'
 import type { GeoGameState } from './reducer'
 import {
   mapBaseScoreForDistance,
@@ -35,8 +30,6 @@ export const DEFAULT_GEO_SETTINGS: GeoSettings = {
   schemaVersion: 1,
   sound: true,
   reducedMotion: false,
-  highContrast: false,
-  mapMode: 'pin',
 }
 
 export const EMPTY_GEO_STATS: PersistedGeoStats = {
@@ -97,9 +90,6 @@ const isRoundType = (value: unknown): value is RoundType =>
   value === 'capital' ||
   value === 'map'
 
-const isMapMode = (value: unknown): value is MapMode =>
-  value === 'pin' || value === 'region'
-
 const isMapDistanceBand = (value: unknown): value is MapDistanceBand =>
   value === 'within-100' ||
   value === 'within-300' ||
@@ -148,14 +138,6 @@ export const isAnswerResult = (value: unknown): value is AnswerResult => {
       isNonEmptyString(value.correctOptionId) &&
       (value.submittedText === undefined ||
         isNonEmptyString(value.submittedText))
-    )
-  }
-
-  if (value.kind === 'map-region') {
-    return (
-      (value.selectedOptionId === null ||
-        isNonEmptyString(value.selectedOptionId)) &&
-      isNonEmptyString(value.correctOptionId)
     )
   }
 
@@ -217,9 +199,7 @@ const parseGeoSettings = (value: unknown): GeoSettings | null => {
     !isRecord(value) ||
     value.schemaVersion !== 1 ||
     typeof value.sound !== 'boolean' ||
-    typeof value.reducedMotion !== 'boolean' ||
-    typeof value.highContrast !== 'boolean' ||
-    !isMapMode(value.mapMode)
+    typeof value.reducedMotion !== 'boolean'
   ) {
     return null
   }
@@ -228,8 +208,6 @@ const parseGeoSettings = (value: unknown): GeoSettings | null => {
     schemaVersion: 1,
     sound: value.sound,
     reducedMotion: value.reducedMotion,
-    highContrast: value.highContrast,
-    mapMode: value.mapMode,
   }
 }
 
@@ -260,7 +238,6 @@ const parseOfficialRunRecord = (
     !isNonEmptyString(value.challengeId) ||
     !isIsoDate(value.publicationDate) ||
     !isNonEmptyString(value.rulesVersion) ||
-    !isMapMode(value.mapMode) ||
     !isIsoDateTime(value.completedAt) ||
     !isNonNegativeInteger(value.totalScore) ||
     !isNonNegativeInteger(value.correctAnswers) ||
@@ -275,7 +252,6 @@ const parseOfficialRunRecord = (
     challengeId: value.challengeId,
     publicationDate: value.publicationDate,
     rulesVersion: value.rulesVersion,
-    mapMode: value.mapMode,
     completedAt: value.completedAt,
     totalScore: value.totalScore,
     correctAnswers: value.correctAnswers,
@@ -388,38 +364,6 @@ const choiceAnswerMatches = (
   return answer.correctOptionId === question.correctOptionId
 }
 
-const regionAnswerMatches = (
-  answer: AnswerResult,
-  question: Extract<Question, { type: 'map' }>,
-) => {
-  const alternative = mapRegionAlternativeFor(question)
-  if (answer.kind !== 'map-region' || !alternative) return false
-
-  const correct = answer.selectedOptionId === alternative.correctOptionId
-  if (answer.skipped) {
-    if (
-      answer.selectedOptionId !== null ||
-      answer.correct ||
-      answer.expired ||
-      answer.score !== 0
-    ) {
-      return false
-    }
-  } else if (answer.expired) {
-    if (answer.selectedOptionId !== null || answer.correct) return false
-  } else if (
-    answer.selectedOptionId === null ||
-    !alternative.options.some(
-      (option) => option.id === answer.selectedOptionId,
-    ) ||
-    answer.correct !== correct
-  ) {
-    return false
-  }
-
-  return answer.correctOptionId === alternative.correctOptionId
-}
-
 const pinAnswerMatches = (
   answer: AnswerResult,
   question: Extract<Question, { type: 'map' }>,
@@ -510,7 +454,6 @@ const answerMatchesQuestion = (
   answer: AnswerResult,
   question: Question,
   round: Round,
-  mapMode: MapMode,
   rules?: GeoChallengeRules,
 ) => {
   if (
@@ -542,7 +485,6 @@ const answerMatchesQuestion = (
   }
 
   if (question.type !== 'map') return choiceAnswerMatches(answer, question)
-  if (mapMode === 'region') return regionAnswerMatches(answer, question)
   return pinAnswerMatches(answer, question, rules)
 }
 
@@ -565,7 +507,6 @@ export const validatePersistedGeoRun = (
     !isNonNegativeInteger(value.bestStreak) ||
     !isIsoDateTime(value.startedAt) ||
     (value.completedAt !== undefined && !isIsoDateTime(value.completedAt)) ||
-    (value.mapMode !== undefined && !isMapMode(value.mapMode)) ||
     (value.questionElapsedMs !== undefined &&
       !isFiniteNonNegative(value.questionElapsedMs)) ||
     (value.roundElapsedMs !== undefined &&
@@ -580,7 +521,6 @@ export const validatePersistedGeoRun = (
   }
 
   const candidate = value as unknown as PersistedGeoRun
-  const mapMode = candidate.mapMode ?? 'pin'
   const questions = challengeQuestions(challenge)
   const answers = candidate.answers
   const legacyTimerRecord =
@@ -638,7 +578,6 @@ export const validatePersistedGeoRun = (
         answer,
         expectedQuestion,
         entry.round,
-        mapMode,
         challenge.rules,
       )
     ) {
@@ -790,7 +729,6 @@ export const validatePersistedGeoRun = (
     bestStreak: candidate.bestStreak,
     startedAt: candidate.startedAt,
     completedAt: normalizedCompletedAt,
-    mapMode,
     questionElapsedMs: normalizedQuestionElapsedMs,
     roundElapsedMs: normalizedRoundElapsedMs,
     roundComplete: normalizedRoundComplete,
@@ -834,7 +772,6 @@ export const serializeGeoRun = (
     bestStreak: state.bestStreak,
     startedAt: state.startedAt,
     completedAt: state.completedAt ?? undefined,
-    mapMode: state.mapMode,
     questionElapsedMs: state.questionElapsedMs,
     roundElapsedMs: state.roundElapsedMs,
     roundComplete,

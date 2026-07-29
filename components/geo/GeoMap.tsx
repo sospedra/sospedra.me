@@ -1,5 +1,10 @@
 'use client'
 
+import {
+  EQUAL_EARTH_ASPECT,
+  equalEarthForward,
+  equalEarthInverse,
+} from 'lib/geo/equal-earth'
 import type { GeoCoordinate } from 'lib/geo/model'
 import {
   type KeyboardEvent,
@@ -13,21 +18,57 @@ import {
 import css from './GeoGame.module.css'
 
 const MAP_WIDTH = 1000
-const MAP_HEIGHT = 500
+const MAP_HEIGHT = MAP_WIDTH / EQUAL_EARTH_ASPECT
 const MIN_ZOOM = 1
 const MAX_ZOOM = 4
 const KEYBOARD_STEP_DEGREES = 2
 const KEYBOARD_LARGE_STEP_DEGREES = 10
 const ANNOUNCEMENT_DELAY_MS = 220
+const GRATICULE_STEP_DEGREES = 5
 
-const LONGITUDES = Array.from(
-  { length: 11 },
-  (_, index) => ((index + 1) * MAP_WIDTH) / 12,
-)
-const LATITUDES = Array.from(
-  { length: 5 },
-  (_, index) => ((index + 1) * MAP_HEIGHT) / 6,
-)
+const projectToMap = (longitude: number, latitude: number) => {
+  const point = equalEarthForward(longitude, latitude)
+  return { x: point.x * MAP_WIDTH, y: point.y * MAP_HEIGHT }
+}
+
+const graticulePath = (points: readonly GeoCoordinate[]): string =>
+  points
+    .map(({ longitude, latitude }, index) => {
+      const point = projectToMap(longitude, latitude)
+      return `${index === 0 ? 'M' : 'L'}${point.x.toFixed(2)} ${point.y.toFixed(2)}`
+    })
+    .join('')
+
+const degreeRange = (from: number, to: number): number[] =>
+  Array.from(
+    { length: Math.floor((to - from) / GRATICULE_STEP_DEGREES) + 1 },
+    (_, index) => from + index * GRATICULE_STEP_DEGREES,
+  )
+
+const meridianPath = (longitude: number): string =>
+  graticulePath(
+    degreeRange(-90, 90).map((latitude) => ({ latitude, longitude })),
+  )
+
+const parallelPath = (latitude: number): string =>
+  graticulePath(
+    degreeRange(-180, 180).map((longitude) => ({ latitude, longitude })),
+  )
+
+const GRATICULE_MERIDIANS = [
+  -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150,
+].map((longitude) => ({ id: longitude, d: meridianPath(longitude) }))
+const GRATICULE_PARALLELS = [-60, -30, 30, 60].map((latitude) => ({
+  id: latitude,
+  d: parallelPath(latitude),
+}))
+const EQUATOR_PATH = parallelPath(0)
+const WORLD_OUTLINE_PATH = `${graticulePath([
+  ...degreeRange(-90, 90).map((latitude) => ({ latitude, longitude: -180 })),
+  ...degreeRange(-90, 90)
+    .toReversed()
+    .map((latitude) => ({ latitude, longitude: 180 })),
+])}Z`
 
 export type Coordinate = GeoCoordinate
 
@@ -52,6 +93,7 @@ export type GeoMapLabels = {
   latitude: string
   longitude: string
   position: string
+  projection: string
   zoom: string
   selectedPoint: string
   correctPoint: string
@@ -68,6 +110,8 @@ export type GeoMapFeedback = {
 export type GeoMapProps = {
   locale: 'en' | 'es'
   labels: GeoMapLabels
+  /** Rendered as a banner over the map so the target stays readable. */
+  prompt?: string
   disabled?: boolean
   selectedCoordinate?: Coordinate | null
   onSelectedCoordinateChange: (coordinate: Coordinate) => void
@@ -132,15 +176,19 @@ const normalizeViewport = (viewport: Viewport): Viewport => {
 const coordinateToWorldPoint = ({
   latitude,
   longitude,
-}: Coordinate): WorldPoint => ({
-  x: ((clamp(longitude, -180, 180) + 180) / 360) * MAP_WIDTH,
-  y: ((90 - clamp(latitude, -90, 90)) / 180) * MAP_HEIGHT,
-})
+}: Coordinate): WorldPoint =>
+  projectToMap(clamp(longitude, -180, 180), clamp(latitude, -90, 90))
 
-const worldPointToCoordinate = ({ x, y }: WorldPoint): Coordinate => ({
-  latitude: clamp(90 - (y / MAP_HEIGHT) * 180, -90, 90),
-  longitude: clamp((x / MAP_WIDTH) * 360 - 180, -180, 180),
-})
+const worldPointToCoordinate = ({ x, y }: WorldPoint): Coordinate => {
+  const coordinate = equalEarthInverse({
+    x: clamp(x / MAP_WIDTH, 0, 1),
+    y: clamp(y / MAP_HEIGHT, 0, 1),
+  })
+  return {
+    latitude: clamp(coordinate.latitude, -90, 90),
+    longitude: clamp(coordinate.longitude, -180, 180),
+  }
+}
 
 const roundCoordinate = (coordinate: Coordinate): Coordinate => ({
   latitude: Math.round(coordinate.latitude * 100_000) / 100_000,
@@ -199,25 +247,34 @@ const broadRegion = ({ latitude, longitude }: Coordinate): RegionKey => {
   return 'ocean'
 }
 
-const connectionSegments = (from: WorldPoint, to: WorldPoint) => {
-  if (Math.abs(from.x - to.x) <= MAP_WIDTH / 2) {
+const wrappedWorldPoint = (
+  coordinate: Coordinate,
+  direction: 1 | -1,
+): WorldPoint =>
+  projectToMap(coordinate.longitude + 360 * direction, coordinate.latitude)
+
+const connectionSegments = (selected: Coordinate, answer: Coordinate) => {
+  const from = coordinateToWorldPoint(selected)
+  const to = coordinateToWorldPoint(answer)
+  if (Math.abs(selected.longitude - answer.longitude) <= 180) {
     return [{ from, to }]
   }
 
-  return from.x < to.x
+  return selected.longitude < answer.longitude
     ? [
-        { from, to: { ...to, x: to.x - MAP_WIDTH } },
-        { from: { ...from, x: from.x + MAP_WIDTH }, to },
+        { from, to: wrappedWorldPoint(answer, -1) },
+        { from: wrappedWorldPoint(selected, 1), to },
       ]
     : [
-        { from, to: { ...to, x: to.x + MAP_WIDTH } },
-        { from: { ...from, x: from.x - MAP_WIDTH }, to },
+        { from, to: wrappedWorldPoint(answer, 1) },
+        { from: wrappedWorldPoint(selected, -1), to },
       ]
 }
 
 export default function GeoMap({
   locale,
   labels,
+  prompt,
   disabled = false,
   selectedCoordinate,
   onSelectedCoordinateChange,
@@ -246,8 +303,8 @@ export default function GeoMap({
     ? coordinateToWorldPoint(feedback.answerCoordinate)
     : null
   const segments =
-    selectedPoint && answerPoint
-      ? connectionSegments(selectedPoint, answerPoint)
+    selected && feedback
+      ? connectionSegments(selected, feedback.answerCoordinate)
       : []
 
   const numberFormatter = useMemo(
@@ -494,6 +551,12 @@ export default function GeoMap({
       </p>
 
       <div className={css.mapStage}>
+        {prompt && (
+          <p className={css.mapPromptBanner} aria-hidden='true'>
+            {prompt}
+          </p>
+        )}
+        <span className={css.mapProjectionTag}>{labels.projection}</span>
         <svg
           ref={svgRef}
           className={css.mapCanvas}
@@ -517,11 +580,7 @@ export default function GeoMap({
           <title>{labels.map}</title>
           <desc>{labels.instructions}</desc>
 
-          <rect
-            className={css.mapOcean}
-            width={MAP_WIDTH}
-            height={MAP_HEIGHT}
-          />
+          <path className={css.mapOcean} d={WORLD_OUTLINE_PATH} />
           <image
             className={css.mapLand}
             href='/games/geo/assets/map/world-map.svg'
@@ -531,25 +590,13 @@ export default function GeoMap({
           />
 
           <g className={css.mapGrid}>
-            {LONGITUDES.map((x) => (
-              <line
-                key={`longitude-${x}`}
-                x1={x}
-                y1={0}
-                x2={x}
-                y2={MAP_HEIGHT}
-              />
+            {GRATICULE_MERIDIANS.map((meridian) => (
+              <path key={`meridian-${meridian.id}`} d={meridian.d} />
             ))}
-            {LATITUDES.map((y) => (
-              <line key={`latitude-${y}`} x1={0} y1={y} x2={MAP_WIDTH} y2={y} />
+            {GRATICULE_PARALLELS.map((parallel) => (
+              <path key={`parallel-${parallel.id}`} d={parallel.d} />
             ))}
-            <line
-              className={css.mapEquator}
-              x1={0}
-              y1={MAP_HEIGHT / 2}
-              x2={MAP_WIDTH}
-              y2={MAP_HEIGHT / 2}
-            />
+            <path className={css.mapEquator} d={EQUATOR_PATH} />
           </g>
 
           {segments.length > 0 && (

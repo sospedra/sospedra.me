@@ -58,12 +58,6 @@ type CityCorpus = {
   cities: City[]
 }
 
-type MapRegions = {
-  schemaVersion: number
-  regions: Record<string, LocalizedText>
-  countryRegions: Record<string, string>
-}
-
 type MapTarget = {
   id: string
   country: Country
@@ -99,8 +93,6 @@ type MapQuestion = {
     latitude: number
     longitude: number
   }
-  regionOptions: Option[]
-  correctRegionOptionId: string
 }
 
 type Question = ChoiceQuestion | MapQuestion
@@ -117,12 +109,8 @@ const SCRIPT_DIRECTORY = dirname(fileURLToPath(import.meta.url))
 const REPOSITORY_ROOT = resolve(SCRIPT_DIRECTORY, '../..')
 const CORPUS_PATH = join(REPOSITORY_ROOT, 'data/geo/generated/countries.json')
 const CITIES_PATH = join(REPOSITORY_ROOT, 'data/geo/generated/cities.json')
-const MAP_REGIONS_PATH = join(
-  REPOSITORY_ROOT,
-  'data/geo/editorial/map-regions.json',
-)
-const GENERATOR_VERSION = '4.1.0'
-const RULES_VERSION = 'geo-v6'
+const GENERATOR_VERSION = '6.0.0'
+const RULES_VERSION = 'geo-v7'
 const ROUND_TYPES: RoundType[] = ['shape', 'flag', 'capital', 'map']
 const DIFFICULTIES: Difficulty[] = [1, 2, 3, 4]
 const ROUND_LIMIT_MS = 60_000
@@ -131,52 +119,6 @@ const QUESTION_LIMITS: Record<RoundType, number> = {
   flag: 10_000,
   capital: 10_000,
   map: 15_000,
-}
-const DERIVED_REGION_LABELS: Record<string, LocalizedText> = {
-  africa: { en: 'Africa', es: 'África' },
-  asia: { en: 'Asia', es: 'Asia' },
-  europe: { en: 'Europe', es: 'Europa' },
-  'eastern-europe': { en: 'Eastern Europe', es: 'Europa oriental' },
-  'western-asia': { en: 'Western Asia', es: 'Asia occidental' },
-  'central-america': { en: 'Central America', es: 'América Central' },
-  caribbean: { en: 'Caribbean', es: 'Caribe' },
-  'middle-africa': { en: 'Central Africa', es: 'África central' },
-  'southern-africa': { en: 'Southern Africa', es: 'África austral' },
-  melanesia: { en: 'Melanesia', es: 'Melanesia' },
-  micronesia: { en: 'Micronesia', es: 'Micronesia' },
-  polynesia: { en: 'Polynesia', es: 'Polinesia' },
-}
-const SUBREGION_REGION_IDS: Record<string, string> = {
-  'australia and new zealand': 'oceania',
-  caribbean: 'caribbean',
-  'central america': 'central-america',
-  'central asia': 'central-asia',
-  'eastern africa': 'east-africa',
-  'eastern asia': 'east-asia',
-  'eastern europe': 'eastern-europe',
-  melanesia: 'melanesia',
-  micronesia: 'micronesia',
-  'middle africa': 'middle-africa',
-  'northern africa': 'north-africa',
-  'northern america': 'north-america',
-  'northern europe': 'northern-europe',
-  polynesia: 'polynesia',
-  'south america': 'south-america',
-  'south eastern asia': 'southeast-asia',
-  'southern africa': 'southern-africa',
-  'southern asia': 'south-asia',
-  'southern europe': 'southern-europe',
-  'western africa': 'west-africa',
-  'western asia': 'western-asia',
-  'western europe': 'western-europe',
-}
-const CONTINENT_REGION_IDS: Record<string, string> = {
-  AF: 'africa',
-  AS: 'asia',
-  EU: 'europe',
-  NA: 'north-america',
-  OC: 'oceania',
-  SA: 'south-america',
 }
 
 const readJson = <Value>(path: string): Value =>
@@ -219,6 +161,10 @@ const capitalOption = (country: Country): Option => ({
   label: country.capital.names,
 })
 
+/* "Washington D.C." already ends the sentence; adding another dot reads wrong */
+const withSentencePeriod = (name: string): string =>
+  name.endsWith('.') ? name : `${name}.`
+
 const optionLabelsAreUnique = (options: Option[]): boolean =>
   (['en', 'es'] as Locale[]).every(
     (locale) =>
@@ -240,17 +186,18 @@ const corpus = readJson<CountryCorpus>(CORPUS_PATH)
 const cityCorpus = existsSync(CITIES_PATH)
   ? readJson<CityCorpus>(CITIES_PATH)
   : null
-const mapRegions = readJson<MapRegions>(MAP_REGIONS_PATH)
-const regionLabels = {
-  ...DERIVED_REGION_LABELS,
-  ...mapRegions.regions,
-}
 assert(cityCorpus, 'The retained city corpus is required')
 assert(cityCorpus.schemaVersion === 1, 'Unsupported city-corpus schema')
 
-const countryByCode = new Map(
-  corpus.countries.map((country) => [country.code, country]),
-)
+const capitalCityByCountry = new Map<string, City>()
+for (const city of cityCorpus.cities) {
+  if (!city.isCapital) continue
+  assert(
+    !capitalCityByCountry.has(city.countryCode),
+    `${city.countryCode} retains more than one capital city`,
+  )
+  capitalCityByCountry.set(city.countryCode, city)
+}
 
 const cliDate = process.argv.find(
   (argument, index) => index > 1 && !argument.startsWith('--'),
@@ -274,9 +221,7 @@ const challengePath = join(
   'content/geo/challenges',
   `${publicationDate}.json`,
 )
-const sourceSeedRevision = cityCorpus
-  ? `${corpus.sourceRevision}:${cityCorpus.sourceRevision}:${cityCorpus.policyRevision}`
-  : `${corpus.sourceRevision}:capital-fallback`
+const sourceSeedRevision = `${corpus.sourceRevision}:${cityCorpus.sourceRevision}:${cityCorpus.policyRevision}`
 const seed = hash(
   `geo:${publicationDate}:${GENERATOR_VERSION}:${sourceSeedRevision}:${RULES_VERSION}`,
 )
@@ -296,28 +241,6 @@ const countriesForRound = (roundType: RoundType): Country[] => {
   )
   assert(countries.length >= 4, `${roundType} needs at least four countries`)
   return countries
-}
-
-const normalizedRegionKey = (value: string): string =>
-  value
-    .normalize('NFKD')
-    .replace(/\p{M}/gu, '')
-    .toLocaleLowerCase('en')
-    .replace(/[^a-z]+/gu, ' ')
-    .trim()
-
-const regionIdForCountry = (country: Country): string => {
-  const explicitRegionId = mapRegions.countryRegions[country.code]
-  if (explicitRegionId) return explicitRegionId
-  const subregionId =
-    SUBREGION_REGION_IDS[normalizedRegionKey(country.subregion)]
-  if (subregionId) return subregionId
-  const continentId = CONTINENT_REGION_IDS[country.continent]
-  assert(
-    continentId,
-    `${country.code} has no region mapping for ${country.subregion}`,
-  )
-  return continentId
 }
 
 const distractorCountries = (
@@ -453,127 +376,55 @@ const makeChoiceQuestion = (
   }
 }
 
-const makeMapQuestion = (
-  target: MapTarget,
-  questionIndex: number,
-): MapQuestion => {
-  const { country, difficulty } = target
-  const questionId = `map-${target.id}`
-  const correctRegionId = regionIdForCountry(country)
-  const correctRegion = regionLabels[correctRegionId]
-  assert(correctRegion, `${country.code} references unknown region`)
-  const distractorRegionIds = sortByHash(
-    Object.keys(regionLabels).filter(
-      (regionId) => regionId !== correctRegionId,
-    ),
-    (regionId) => regionId,
-    `${seed}:${questionId}:regions`,
-  ).slice(0, 3)
-  const correctOption = {
-    id: `region-${correctRegionId}`,
-    label: correctRegion,
-  }
-  const regionOptions = optionAt(
-    correctOption,
-    distractorRegionIds.map((regionId) => ({
-      id: `region-${regionId}`,
-      label: regionLabels[regionId],
-    })),
-    questionIndex % 4,
-  )
-  assert(
-    optionLabelsAreUnique(regionOptions),
-    `${questionId} has ambiguous region labels`,
-  )
+const makeMapQuestion = (target: MapTarget): MapQuestion => ({
+  id: `map-${target.id}`,
+  type: 'map',
+  countryCode: target.country.code,
+  difficulty: target.difficulty,
+  prompt: {
+    en: `Locate ${withSentencePeriod(target.names.en)}`,
+    es: `Localiza ${withSentencePeriod(target.names.es)}`,
+  },
+  answerCoordinate: {
+    latitude: target.latitude,
+    longitude: target.longitude,
+  },
+})
 
-  return {
-    id: questionId,
-    type: 'map',
-    countryCode: country.code,
-    difficulty,
-    prompt: {
-      en: `Locate ${target.names.en}.`,
-      es: `Localiza ${target.names.es}.`,
-    },
-    answerCoordinate: {
-      latitude: target.latitude,
-      longitude: target.longitude,
-    },
-    regionOptions,
-    correctRegionOptionId: correctOption.id,
-  }
-}
-
+/**
+ * The map round locates capitals only. The wider retained-city corpus still
+ * feeds the capital-round autocomplete lexicon. Locating a capital means
+ * locating its country, so the prompt inherits the country map difficulty.
+ */
 const mapTargetsForRound = (countries: Country[]): MapTarget[] => {
-  if (!cityCorpus) {
-    return countries.map((country) => ({
-      id: `${country.code.toLocaleLowerCase('en')}-capital`,
-      country,
-      names: country.capital.names,
-      latitude: country.capital.latitude,
-      longitude: country.capital.longitude,
-      difficulty: country.difficulty.map as Difficulty,
-    }))
-  }
-
-  const eligibleCountryCodes = new Set(countries.map((country) => country.code))
-  const seenGeonamesIds = new Set<number>()
-  const targets = DIFFICULTIES.flatMap((difficulty) =>
-    sortByHash(
-      cityCorpus.cities
-        .filter(
-          (city) =>
-            eligibleCountryCodes.has(city.countryCode) &&
-            city.difficulty === difficulty,
-        )
-        .map((city): MapTarget => {
-          assert(
-            city.sourceRevision === cityCorpus.sourceRevision,
-            `City ${city.geonamesId} uses a stale source revision`,
-          )
-          assert(
-            !seenGeonamesIds.has(city.geonamesId),
-            `City corpus repeats GeoNames ID ${city.geonamesId}`,
-          )
-          seenGeonamesIds.add(city.geonamesId)
-          const country = countryByCode.get(city.countryCode)
-          assert(country, `City ${city.geonamesId} references unknown country`)
-          assert(
-            Number.isFinite(city.latitude) &&
-              city.latitude >= -90 &&
-              city.latitude <= 90,
-            `City ${city.geonamesId} has invalid latitude`,
-          )
-          assert(
-            Number.isFinite(city.longitude) &&
-              city.longitude >= -180 &&
-              city.longitude <= 180,
-            `City ${city.geonamesId} has invalid longitude`,
-          )
-          return {
-            id: `${city.countryCode.toLocaleLowerCase('en')}-${city.geonamesId}`,
-            country,
-            names: city.names,
-            latitude: city.latitude,
-            longitude: city.longitude,
-            difficulty: city.difficulty,
-          }
-        }),
-      (target) => target.id,
-      `${seed}:source-order:map-city:${difficulty}`,
-    ),
-  )
-
-  const coveredCountryCodes = new Set(
-    targets.map((target) => target.country.code),
-  )
-  for (const country of countries) {
+  const targets = countries.map((country): MapTarget => {
+    const capital = capitalCityByCountry.get(country.code)
+    assert(capital, `${country.code} has no retained capital city`)
     assert(
-      coveredCountryCodes.has(country.code),
-      `City corpus has no retained map location for ${country.code}`,
+      capital.sourceRevision === cityCorpus.sourceRevision,
+      `Capital ${capital.geonamesId} uses a stale source revision`,
     )
-  }
-  assert(targets.length >= 4, 'Map round needs at least four retained cities')
+    assert(
+      Number.isFinite(capital.latitude) &&
+        capital.latitude >= -90 &&
+        capital.latitude <= 90 &&
+        Number.isFinite(capital.longitude) &&
+        capital.longitude >= -180 &&
+        capital.longitude <= 180,
+      `Capital ${capital.geonamesId} has invalid coordinates`,
+    )
+    const difficulty = country.difficulty.map
+    assert(difficulty, `${country.code} lacks map difficulty`)
+    return {
+      id: `${country.code.toLocaleLowerCase('en')}-${capital.geonamesId}`,
+      country,
+      names: capital.names,
+      latitude: capital.latitude,
+      longitude: capital.longitude,
+      difficulty,
+    }
+  })
+  assert(targets.length >= 4, 'Map round needs at least four capital targets')
   return targets
 }
 
@@ -631,6 +482,7 @@ const challenge = {
       { maxKm: 20040, score: 0 },
     ],
     feedbackMs: 500,
+    wrongFeedbackMs: 2500,
     roundSummaryMs: 3000,
   },
   rounds,

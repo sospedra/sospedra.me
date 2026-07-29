@@ -3,7 +3,6 @@ import type {
   DailyGeoChallenge,
   Locale,
   MapDistanceBand,
-  MapMode,
   RoundType,
 } from './model'
 import { calculateRunStatistics } from './stats'
@@ -28,11 +27,6 @@ const TITLES: Record<Locale, string> = {
   es: 'GEO DIARIO',
 }
 
-const MAP_MODE_LABELS: Record<Locale, Record<MapMode, string>> = {
-  en: { pin: 'PIN', region: 'REGION' },
-  es: { pin: 'PUNTO', region: 'REGIÓN' },
-}
-
 const MAP_SYMBOLS: Record<MapDistanceBand, string> = {
   'within-100': '🎯',
   'within-300': '🟢',
@@ -46,15 +40,9 @@ const MAP_SYMBOLS: Record<MapDistanceBand, string> = {
 export const mapDistanceBandShareSymbol = (band: MapDistanceBand) =>
   MAP_SYMBOLS[band]
 
-const answerSymbol = (
-  roundType: RoundType,
-  answer: AnswerResult | undefined,
-  mapMode: MapMode,
-) => {
+const answerSymbol = (roundType: RoundType, answer?: AnswerResult) => {
   if (!answer) return '⬛'
-  if (roundType !== 'map' || mapMode === 'region') {
-    return answer.correct ? '🟩' : '⬛'
-  }
+  if (roundType !== 'map') return answer.correct ? '🟩' : '⬛'
   if (answer.kind !== 'map-pin') return '⬛'
   return mapDistanceBandShareSymbol(answer.distanceBand)
 }
@@ -63,7 +51,6 @@ export interface ShareCardInput {
   challenge: DailyGeoChallenge
   answers: readonly AnswerResult[]
   locale: Locale
-  mapMode: MapMode
   challengeNumber?: number
 }
 
@@ -72,7 +59,6 @@ export const formatGeoShareCard = ({
   challenge,
   challengeNumber,
   locale,
-  mapMode,
 }: ShareCardInput) => {
   const identifier =
     challengeNumber ?? challenge.sequence ?? challenge.publicationDate
@@ -84,7 +70,7 @@ export const formatGeoShareCard = ({
     const label = ROUND_LABELS[locale][round.type].padEnd(labelWidth + 2)
     const symbols = answers
       .filter((answer) => answer.roundId === round.id)
-      .map((answer) => answerSymbol(round.type, answer, mapMode))
+      .map((answer) => answerSymbol(round.type, answer))
       .join('')
     return `${label}${symbols || '—'}`
   })
@@ -96,6 +82,6 @@ export const formatGeoShareCard = ({
   return [
     `${TITLES[locale]} ${issue} 🌍`,
     ...roundLines,
-    `${statistics.correctAnswers}/${statistics.totalQuestions} · ${formattedScore} · ${MAP_MODE_LABELS[locale][mapMode]}`,
+    `${statistics.correctAnswers}/${statistics.totalQuestions} · ${formattedScore}`,
   ].join('\n')
 }

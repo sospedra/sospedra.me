@@ -37,8 +37,6 @@ type Question = {
     latitude: number
     longitude: number
   }
-  regionOptions?: Option[]
-  correctRegionOptionId?: string
 }
 
 type Round = {
@@ -63,6 +61,7 @@ type Challenge = {
     streak: { step: number; cap: number }
     mapBands: { maxKm: number; score: number }[]
     feedbackMs: number
+    wrongFeedbackMs: number
     roundSummaryMs: number
   }
   rounds: Round[]
@@ -184,12 +183,6 @@ type CorpusSourceLock = {
   }
 }
 
-type MapRegions = {
-  schemaVersion: number
-  regions: Record<string, LocalizedText>
-  countryRegions: Record<string, string>
-}
-
 type CityOverrides = {
   schemaVersion: number
   reviewQueue: { countryCode: string; topic: string; reason: string }[]
@@ -224,60 +217,10 @@ const corpusSourceLockPath = join(
   REPOSITORY_ROOT,
   'data/geo/corpus-sources.lock.json',
 )
-const mapRegionsPath = join(
-  REPOSITORY_ROOT,
-  'data/geo/editorial/map-regions.json',
-)
 const cityOverridesPath = join(
   REPOSITORY_ROOT,
   'data/geo/editorial/city-overrides.json',
 )
-const DERIVED_REGION_LABELS: Record<string, LocalizedText> = {
-  africa: { en: 'Africa', es: 'África' },
-  asia: { en: 'Asia', es: 'Asia' },
-  europe: { en: 'Europe', es: 'Europa' },
-  'eastern-europe': { en: 'Eastern Europe', es: 'Europa oriental' },
-  'western-asia': { en: 'Western Asia', es: 'Asia occidental' },
-  'central-america': { en: 'Central America', es: 'América Central' },
-  caribbean: { en: 'Caribbean', es: 'Caribe' },
-  'middle-africa': { en: 'Central Africa', es: 'África central' },
-  'southern-africa': { en: 'Southern Africa', es: 'África austral' },
-  melanesia: { en: 'Melanesia', es: 'Melanesia' },
-  micronesia: { en: 'Micronesia', es: 'Micronesia' },
-  polynesia: { en: 'Polynesia', es: 'Polinesia' },
-}
-const SUBREGION_REGION_IDS: Record<string, string> = {
-  'australia and new zealand': 'oceania',
-  caribbean: 'caribbean',
-  'central america': 'central-america',
-  'central asia': 'central-asia',
-  'eastern africa': 'east-africa',
-  'eastern asia': 'east-asia',
-  'eastern europe': 'eastern-europe',
-  melanesia: 'melanesia',
-  micronesia: 'micronesia',
-  'middle africa': 'middle-africa',
-  'northern africa': 'north-africa',
-  'northern america': 'north-america',
-  'northern europe': 'northern-europe',
-  polynesia: 'polynesia',
-  'south america': 'south-america',
-  'south eastern asia': 'southeast-asia',
-  'southern africa': 'southern-africa',
-  'southern asia': 'south-asia',
-  'southern europe': 'southern-europe',
-  'western africa': 'west-africa',
-  'western asia': 'western-asia',
-  'western europe': 'western-europe',
-}
-const CONTINENT_REGION_IDS: Record<string, string> = {
-  AF: 'africa',
-  AS: 'asia',
-  EU: 'europe',
-  NA: 'north-america',
-  OC: 'oceania',
-  SA: 'south-america',
-}
 const ROUND_LIMIT_MS = 60_000
 const MAX_CHALLENGE_GZIP_BYTES = 300 * 1024
 
@@ -325,14 +268,6 @@ const validateLockedFile = (
 
 const normalizedLabel = (value: string): string =>
   value.normalize('NFC').trim().toLocaleLowerCase('en')
-
-const normalizedRegionKey = (value: string): string =>
-  value
-    .normalize('NFKD')
-    .replace(/\p{M}/gu, '')
-    .toLocaleLowerCase('en')
-    .replace(/[^a-z]+/gu, ' ')
-    .trim()
 
 const isLocalizedText = (value: LocalizedText | undefined): boolean =>
   typeof value?.en === 'string' &&
@@ -424,7 +359,6 @@ let manifest: AssetManifest
 let approval: GenerationApproval
 let sourceLock: SourceLock
 let corpusSourceLock: CorpusSourceLock
-let mapRegions: MapRegions
 let cityOverrides: CityOverrides
 
 try {
@@ -435,7 +369,6 @@ try {
   approval = readJson<GenerationApproval>(approvalPath)
   sourceLock = readJson<SourceLock>(sourceLockPath)
   corpusSourceLock = readJson<CorpusSourceLock>(corpusSourceLockPath)
-  mapRegions = readJson<MapRegions>(mapRegionsPath)
   cityOverrides = readJson<CityOverrides>(cityOverridesPath)
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error))
@@ -547,14 +480,6 @@ const eligibleMapCities = cityCorpus.cities.filter((city) =>
 const eligibleMapCityIds = new Set(
   eligibleMapCities.map((city) => city.geonamesId),
 )
-const regionLabels = {
-  ...DERIVED_REGION_LABELS,
-  ...mapRegions.regions,
-}
-const regionIdForCountry = (country: Country): string | undefined =>
-  mapRegions.countryRegions[country.code] ??
-  SUBREGION_REGION_IDS[normalizedRegionKey(country.subregion)] ??
-  CONTINENT_REGION_IDS[country.continent]
 
 check(challenge.schemaVersion === 1, 'Challenge schemaVersion must be 1')
 check(
@@ -635,14 +560,10 @@ for (const city of cityCorpus.cities) {
 }
 for (const country of eligibleMapCountries.values()) {
   check(
-    eligibleMapCities.some((city) => city.countryCode === country.code),
-    `${country.code} has no retained map city`,
-  )
-  const regionId = regionIdForCountry(country)
-  check(Boolean(regionId), `${country.code} has no accessible map region`)
-  check(
-    Boolean(regionId && regionLabels[regionId]),
-    `${country.code} map region has no EN/ES label`,
+    eligibleMapCities.some(
+      (city) => city.isCapital && city.countryCode === country.code,
+    ),
+    `${country.code} has no retained capital city`,
   )
 }
 for (const country of corpus.countries) {
@@ -791,6 +712,10 @@ check(
 )
 check(challenge.rules.feedbackMs === 500, 'Feedback duration must be 500 ms')
 check(
+  challenge.rules.wrongFeedbackMs === 2500,
+  'Wrong-answer feedback duration must be 2500 ms',
+)
+check(
   challenge.rules.roundSummaryMs === 3000,
   'Round-summary duration must be 3000 ms',
 )
@@ -815,8 +740,7 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
   const expectedType = expectedRoundTypes[roundIndex]
   const expectedCountries =
     eligibleCountriesByRound.get(expectedType) ?? new Map<string, Country>()
-  const expectedQuestionCount =
-    expectedType === 'map' ? eligibleMapCities.length : expectedCountries.size
+  const expectedQuestionCount = expectedCountries.size
   check(
     round.type === expectedType,
     `Round ${roundIndex + 1} must be ${expectedType}`,
@@ -862,12 +786,10 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
     previousDifficulty = question.difficulty
     seenDifficulties.add(question.difficulty)
     check(isLocalizedText(question.prompt), `${label} lacks an EN/ES prompt`)
-    if (question.type !== 'map') {
-      check(
-        !roundAnswerCountryCodes.has(question.countryCode),
-        `${round.type} repeats answer country ${question.countryCode}`,
-      )
-    }
+    check(
+      !roundAnswerCountryCodes.has(question.countryCode),
+      `${round.type} repeats answer country ${question.countryCode}`,
+    )
     roundAnswerCountryCodes.add(question.countryCode)
     distinctAnswerCountryCodes.add(question.countryCode)
 
@@ -885,16 +807,14 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
       country.eligibility[round.type],
       `${question.countryCode} is not eligible for ${round.type}`,
     )
-    if (question.type !== 'map') {
-      check(
-        expectedCountries.has(question.countryCode),
-        `${label} is outside the eligible ${round.type} corpus`,
-      )
-      check(
-        country.difficulty[round.type] === question.difficulty,
-        `${question.countryCode} difficulty differs from the corpus`,
-      )
-    }
+    check(
+      expectedCountries.has(question.countryCode),
+      `${label} is outside the eligible ${round.type} corpus`,
+    )
+    check(
+      country.difficulty[round.type] === question.difficulty,
+      `${question.countryCode} difficulty differs from the corpus`,
+    )
     continentCounts.set(
       country.continent,
       (continentCounts.get(country.continent) ?? 0) + 1,
@@ -937,80 +857,19 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
           city.countryCode === question.countryCode,
           `${label} city belongs to ${city.countryCode}`,
         )
-        check(
-          city.difficulty === question.difficulty,
-          `${label} difficulty differs from the city corpus`,
-        )
+        check(city.isCapital, `${label} must locate a capital city`)
         check(
           Math.abs((coordinate?.latitude ?? 999) - city.latitude) < 0.000001 &&
             Math.abs((coordinate?.longitude ?? 999) - city.longitude) <
               0.000001,
           `${label} coordinates differ from the city corpus`,
         )
+        const sentenceName = (name: string) =>
+          name.endsWith('.') ? name : `${name}.`
         check(
-          question.prompt.en === `Locate ${city.names.en}.` &&
-            question.prompt.es === `Localiza ${city.names.es}.`,
-          `${label} prompt differs from the city corpus`,
-        )
-      }
-      const regionOptions = question.regionOptions ?? []
-      const expectedRegionId = regionIdForCountry(country)
-      const expectedRegion = expectedRegionId
-        ? regionLabels[expectedRegionId]
-        : undefined
-      const expectedCorrectRegionOptionId = `region-${expectedRegionId}`
-      check(
-        regionOptions.length === 4,
-        `${label} must include four accessible region options`,
-      )
-      check(
-        question.correctRegionOptionId === expectedCorrectRegionOptionId,
-        `${label} correct region differs from the map-region policy`,
-      )
-      for (const option of regionOptions) {
-        check(
-          isLocalizedText(option.label),
-          `${label} region option ${option.id} lacks EN/ES labels`,
-        )
-        const region = regionLabels[option.id.replace(/^region-/u, '')]
-        check(
-          Boolean(region),
-          `${label} references unknown region ${option.id}`,
-        )
-        if (region) {
-          check(
-            option.label.en === region.en && option.label.es === region.es,
-            `${label} region option ${option.id} has stale labels`,
-          )
-        }
-      }
-      const correctRegionOption = regionOptions.find(
-        (option) => option.id === question.correctRegionOptionId,
-      )
-      check(
-        Boolean(correctRegionOption),
-        `${label} correct region option is missing`,
-      )
-      if (correctRegionOption && expectedRegion) {
-        check(
-          correctRegionOption.label.en === expectedRegion.en &&
-            correctRegionOption.label.es === expectedRegion.es,
-          `${label} correct region labels differ from the map-region policy`,
-        )
-      }
-      check(
-        new Set(regionOptions.map(({ id }) => id)).size ===
-          regionOptions.length,
-        `${label} has duplicate region option IDs`,
-      )
-      for (const locale of ['en', 'es'] as const) {
-        check(
-          new Set(
-            regionOptions.map(({ label: optionLabel }) =>
-              normalizedLabel(optionLabel[locale]),
-            ),
-          ).size === regionOptions.length,
-          `${label} has duplicate ${locale} region labels`,
+          question.prompt.en === `Locate ${sentenceName(city.names.en)}` &&
+            question.prompt.es === `Localiza ${sentenceName(city.names.es)}`,
+          `${label} prompt differs from the capital corpus`,
         )
       }
       continue
@@ -1136,20 +995,24 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
 
 const expectedQuestionCount = expectedRoundTypes.reduce(
   (total, roundType) =>
-    total +
-    (roundType === 'map'
-      ? eligibleMapCities.length
-      : (eligibleCountriesByRound.get(roundType)?.size ?? 0)),
+    total + (eligibleCountriesByRound.get(roundType)?.size ?? 0),
   0,
 )
 check(
   questionIds.size === expectedQuestionCount,
   `Challenge must contain ${expectedQuestionCount} unique question IDs`,
 )
+const expectedCapitalCityIds = new Set(
+  eligibleMapCities
+    .filter((city) => city.isCapital)
+    .map((city) => city.geonamesId),
+)
 check(
-  generatedMapCityIds.size === eligibleMapCityIds.size &&
-    [...eligibleMapCityIds].every((cityId) => generatedMapCityIds.has(cityId)),
-  'Map round must contain every retained city for eligible countries',
+  generatedMapCityIds.size === expectedCapitalCityIds.size &&
+    [...expectedCapitalCityIds].every((cityId) =>
+      generatedMapCityIds.has(cityId),
+    ),
+  'Map round must locate every eligible capital exactly once',
 )
 const activeCountryCodes = new Set(
   corpus.countries
@@ -1192,18 +1055,14 @@ try {
     'Runtime sections must use completely disjoint country sets',
   )
   check(
-    runtimeChallenge.rounds.every((round) => {
-      const firstThreeTiers = round.questions
-        .slice(0, 3)
-        .map((question) => Math.min(4, Number(question.difficulty)))
-      return (
-        firstThreeTiers.length === 3 &&
-        (firstThreeTiers[0] === 1 || firstThreeTiers[0] === 2) &&
-        firstThreeTiers[1] === 3 &&
-        firstThreeTiers[2] === 4
-      )
-    }),
-    'Runtime sections must reach full difficulty on question three',
+    runtimeChallenge.rounds.every((round) =>
+      round.questions.every(
+        (question, index) =>
+          index === 0 ||
+          question.difficulty >= round.questions[index - 1].difficulty,
+      ),
+    ),
+    'Runtime sections must play as an ascending difficulty ramp',
   )
 } catch (error) {
   const reason = error instanceof Error ? error.message : String(error)
@@ -1252,8 +1111,8 @@ if (!mapPath || !existsSync(mapPath)) {
   )
   check(mapBytes.length <= 150 * 1024, 'World map exceeds 150 KB')
   check(
-    manifest.map.projection === 'Equirectangular',
-    'World-map projection must be documented as Equirectangular',
+    manifest.map.projection === 'EqualEarth',
+    'World-map projection must be documented as EqualEarth',
   )
   const mapSource = mapBytes.toString('utf8')
   const mapTagNames = [

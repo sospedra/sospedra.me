@@ -5,7 +5,6 @@ export type Locale = 'en' | 'es'
 export type ISOAlpha2 = string
 export type Difficulty = 1 | 2 | 3 | 4
 export type RoundType = 'shape' | 'flag' | 'capital' | 'map'
-export type MapMode = 'pin' | 'region'
 export type RunKind = 'official' | 'practice'
 
 export type LocalizedText = Record<Locale, string>
@@ -82,11 +81,6 @@ export interface ChoiceQuestion {
   correctOptionId: string
 }
 
-export interface MapRegionAlternative {
-  options: LocalizedOption[]
-  correctOptionId: string
-}
-
 export interface MapQuestion {
   id: string
   type: 'map'
@@ -94,26 +88,6 @@ export interface MapQuestion {
   difficulty: Difficulty
   prompt: LocalizedPrompt
   answerCoordinate: GeoCoordinate
-  regionOptions?: LocalizedOption[]
-  correctRegionOptionId?: string
-  /**
-   * Equivalent nested representation accepted for generated packs that keep
-   * the alternative self-contained.
-   */
-  regionAlternative?: MapRegionAlternative
-}
-
-export const mapRegionAlternativeFor = (
-  question: MapQuestion,
-): MapRegionAlternative | null => {
-  if (question.regionAlternative) return question.regionAlternative
-  if (question.regionOptions && question.correctRegionOptionId) {
-    return {
-      options: question.regionOptions,
-      correctOptionId: question.correctRegionOptionId,
-    }
-  }
-  return null
 }
 
 export type Question = ChoiceQuestion | MapQuestion
@@ -138,9 +112,9 @@ export const roundTimeLimitMs = (round: Round) =>
 
 /**
  * Maps an unbounded timed-round attempt cursor back onto the finite country
- * deck. The first pass preserves the seeded opener → 3 → 4 ramp exactly.
- * Later passes rotate only the hard tail, so difficulty never drops after
- * attempt three and no country can cross section boundaries.
+ * deck. The first pass preserves the seeded ascending ramp exactly. Later
+ * passes rotate only the tail beyond the two openers, so recycled play never
+ * restarts from the easiest prompts and no country crosses section boundaries.
  */
 export const roundQuestionIndexForAttempt = (
   round: Round,
@@ -190,6 +164,11 @@ export interface GeoChallengeRules {
     score: number
   }[]
   feedbackMs: number
+  /**
+   * Missed answers hold the feedback phase longer so the correction reads.
+   * Optional so pre-geo-v7 packs stay loadable.
+   */
+  wrongFeedbackMs?: number
   roundSummaryMs: number
 }
 
@@ -276,16 +255,7 @@ export interface MapPinAnswerResult extends AnswerResultBase {
   distanceBand: MapDistanceBand
 }
 
-export interface MapRegionAnswerResult extends AnswerResultBase {
-  kind: 'map-region'
-  selectedOptionId: string | null
-  correctOptionId: string
-}
-
-export type AnswerResult =
-  | ChoiceAnswerResult
-  | MapPinAnswerResult
-  | MapRegionAnswerResult
+export type AnswerResult = ChoiceAnswerResult | MapPinAnswerResult
 
 export interface PersistedGeoRun {
   schemaVersion: 1
@@ -300,7 +270,6 @@ export interface PersistedGeoRun {
   bestStreak: number
   startedAt: string
   completedAt?: string
-  mapMode?: MapMode
   /**
    * Elapsed response time for the active prompt.
    */
@@ -326,15 +295,12 @@ export interface GeoSettings {
   schemaVersion: 1
   sound: boolean
   reducedMotion: boolean
-  highContrast: boolean
-  mapMode: MapMode
 }
 
 export interface OfficialGeoRunRecord {
   challengeId: string
   publicationDate: string
   rulesVersion: string
-  mapMode: MapMode
   completedAt: string
   totalScore: number
   correctAnswers: number
