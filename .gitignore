@@ -6,6 +6,8 @@ node_modules
 .env.local
 *.tsbuildinfo
 /work/raw-data/
+# raw USA Today xd archive; served content lives in content/crosswords/challenges
+/content/crosswords/puzzles/
 .env*
 
 # image-generation scratch

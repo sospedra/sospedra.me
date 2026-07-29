@@ -1,11 +1,14 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 
-/* Source: spread the word(list), spreadthewordlist.com, CC BY-NC-SA 4.0.
-   Format is WORD;SCORE with the maintainers' own quality scale where 50 is
-   the publishable floor. English only for now. */
+/* Sources: spread the word(list) for candidate quality (score 50 floor) and
+   the licensed NYT clue archive for coverage and usage counts. A word joins
+   the corpus only when both agree, so every fill is fully cluable and the
+   score carries 28 years of real usage gradient. */
 const RAW = 'work/raw-data/spreadthewordlist.dict'
+const NYT_CLUES = 'work/raw-data/nyt-clues.json'
+const NYT_USAGE = 'data/crosswords/generated/nyt-usage.json'
 const OUT = 'data/crosswords/generated/corpus-en.json'
-export const CORPUS_REVISION = 'crossword-corpus-stw-2026-07-29.1'
+export const CORPUS_REVISION = 'crossword-corpus-stw-nyt-2026-07-29.1'
 
 const SCORE_FLOOR = 50
 const GRID_WORD = /^[A-Z]{3,13}$/
@@ -21,6 +24,17 @@ const BANNED = new Set([
   'SLAVER',
 ])
 
+const cluable = new Set(
+  Object.keys(JSON.parse(readFileSync(NYT_CLUES, 'utf8'))),
+)
+const usage = JSON.parse(readFileSync(NYT_USAGE, 'utf8')) as Record<
+  string,
+  number
+>
+
+const usageScore = (grid: string) =>
+  Math.min(95, 30 + Math.round(12 * Math.log2((usage[grid] ?? 0) + 1)))
+
 const lines = readFileSync(RAW, 'utf8').trim().split('\n')
 const byGrid = new Map<
   string,
@@ -35,10 +49,11 @@ for (const line of lines) {
     GRID_WORD.test(grid) &&
     Number.isFinite(score) &&
     score >= SCORE_FLOOR &&
+    cluable.has(grid) &&
     !BANNED.has(grid) &&
     !byGrid.has(grid)
   if (!usable) continue
-  byGrid.set(grid, { grid, length: grid.length, score })
+  byGrid.set(grid, { grid, length: grid.length, score: usageScore(grid) })
 }
 
 const words = [...byGrid.values()]

@@ -1,16 +1,24 @@
 # Bilingual Daily Crossword — Content and Publication Specification
 
-**Revision 2, 2026-07-29.** The game dropped definition clues by design
-decision. The hint is the word's first letter, derived from the fill. Every
-clue-authoring section below is superseded by section 7 as rewritten. This
-deleted the LLM clue harness, its gates, its review load, and the largest
-cost in the original plan.
+**Revision 3, 2026-07-29.** The daily is now a replay of the USA Today
+crossword archive (8,867 puzzles, 1995–2026, all 15×15, Universal Uclick
+copyright, attributed per edition). `scripts/crosswords/generate-replay.ts`
+maps each site date to an archive puzzle of the same weekday, newest first:
+`pool[floor(daysSince(2026-07-29) / 7) % pool.length]`. Weekday pools run
+570–1,536 deep, so no repeat inside eleven years. Definition clues returned
+with the archive. Sections 4–7 (corpus, patterns, generator, clue authoring)
+describe the deterministic 13×13 generator; that path is retired from the
+daily and kept as a future practice mode. Sections 8+ (publication, cron,
+archive routes, stats) still apply.
 
-**Status:** In implementation, kernel proven
-**Grid:** 13×13, American convention
-**Locales:** English (`en`) and Spanish (`es`), one puzzle each per day
+**Revision 2, 2026-07-29.** The game dropped definition clues by design
+decision, superseded by revision 3: archive clues ship as-is.
+
+**Status:** Replay in production content, cron publish pending
+**Grid:** 15×15, American convention, from the archive
+**Locales:** English (`en`); Spanish optional in the schema
 **Cadence:** One shared publication date per UTC calendar day
-**Batch horizon:** 365 days generated, reviewed, and committed ahead
+**Batch horizon:** 365 days generated and committed ahead
 **Publication:** Vercel cron triggers a deploy hook. The build validates and publishes static output.
 **Sibling spec:** the geography challenge spec. This document fills the crossword pipeline that spec assumed.
 

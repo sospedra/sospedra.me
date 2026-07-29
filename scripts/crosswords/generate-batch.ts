@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import {
   existsSync,
   mkdirSync,
@@ -10,7 +11,8 @@ import { fillPattern, renderGrid } from './fill-grid'
 
 type Corpus = { revision: string; words: { grid: string; score: number }[] }
 
-const GENERATOR_VERSION = '0.3.0'
+const GENERATOR_VERSION = '0.4.0'
+const NYT_CLUES = 'work/raw-data/nyt-clues.json'
 const RULES_VERSION = 'cw-v2'
 const PATTERN_SET_VERSION = 'pattern-set-13.2'
 const PATTERN_DIR = 'data/crosswords/editorial/patterns/13'
@@ -46,6 +48,22 @@ const dayNumber = (iso: string) =>
 const corpus: Corpus = JSON.parse(
   readFileSync('data/crosswords/generated/corpus-en.json', 'utf8'),
 )
+
+/* Licensed NYT clue variants per answer; selection is seeded, so the whole
+   edition remains deterministic. */
+const clueVariants = JSON.parse(readFileSync(NYT_CLUES, 'utf8')) as Record<
+  string,
+  string[]
+>
+
+const pickClue = (seed: string, answer: string) => {
+  const variants = clueVariants[answer]
+  if (!variants || variants.length === 0) {
+    throw new Error(`no clue variants for ${answer}`)
+  }
+  const hash = createHash('sha256').update(`clue:${seed}:${answer}`).digest()
+  return variants[hash.readUInt32BE(0) % variants.length]
+}
 
 const patterns = readdirSync(PATTERN_DIR)
   .filter((file) => file.endsWith('.json'))
@@ -131,6 +149,16 @@ const generateDay = (date: string) => {
   if (!solved) throw new Error(`${date}: all retries exhausted`)
 
   const gridRows = renderGrid(solved.pattern.rows, solved.result.grid)
+  const clueSeed = `crossword:${date}:${GENERATOR_VERSION}`
+  const clues: Record<'across' | 'down', Record<string, string>> = {
+    across: {},
+    down: {},
+  }
+  for (const [slotId, answer] of solved.result.answers) {
+    const side = slotId.startsWith('A') ? 'across' : 'down'
+    clues[side][answer] = pickClue(clueSeed, answer)
+  }
+
   const edition = {
     schemaVersion: 2,
     id: `crossword:${date}`,
@@ -149,6 +177,7 @@ const generateDay = (date: string) => {
         width: 13,
         height: 13,
         solution: gridRows,
+        clues,
       },
     },
   }

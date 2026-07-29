@@ -1,10 +1,24 @@
 {
-  "spreadTheWordlist": {
-    "dataset": "spread the word(list), uppercase + crossfire",
-    "url": "https://www.spreadthewordlist.com/",
-    "retrievedAt": "2026-07-29",
-    "license": "CC-BY-NC-SA-4.0",
-    "sha256": "765b3d2607f87a7f38bb8fe70ad0b54c33947c76323e0a841570d976bd87efdd",
-    "notes": "Constructor-scored English wordlist by Brooke Husic and collaborators. Score floor 50 applied at corpus build. Attribution required; non-commercial use only; derived corpus JSON inherits the license."
-  }
+ "spreadTheWordlist": {
+  "dataset": "spread the word(list), uppercase + crossfire",
+  "url": "https://www.spreadthewordlist.com/",
+  "retrievedAt": "2026-07-29",
+  "license": "CC-BY-NC-SA-4.0",
+  "sha256": "765b3d2607f87a7f38bb8fe70ad0b54c33947c76323e0a841570d976bd87efdd",
+  "notes": "Constructor-scored English wordlist by Brooke Husic and collaborators. Score floor 50 applied at corpus build. Attribution required; non-commercial use only; derived corpus JSON inherits the license."
+ },
+ "usaTodayArchive": {
+  "dataset": "USA Today daily crosswords, 1995-2026, xd format (8,867 files)",
+  "retrievedAt": "2026-07-29",
+  "license": "Copyright Universal Uclick / USA Today; replayed with per-puzzle attribution (author, source, original date)",
+  "sha256": "17cf5f3a374c2c4e4b327da41f7ffb5612b8d2e76548b40db1b7069a75eb0c2f",
+  "notes": "sha256 is over the sorted list of per-file sha256s. All 15x15. 21 files rejected at parse (incomplete grids or duplicate answers). Raw xd archive stays out of git; daily editions in content/crosswords/challenges embed the served puzzle plus attribution."
+ },
+ "nytClueArchive": {
+  "dataset": "NYT crossword clues and answers, 1993-2021 (nytcrosswords.csv)",
+  "retrievedAt": "2026-07-29",
+  "license": "NYT content license held by site owner; clue text reproduced under that license",
+  "sha256": "0ea4f164eefcbd830084664439fc80954bdcd55755ce717f22c3e6cb5e444f4e",
+  "notes": "781,573 clues, 63,314 answers, 10,207 puzzles. Self-referential clues (cross-references, theme and circled-square mentions) filtered at import. Raw CSV and full lookup stay out of git; usage counts in nyt-usage.json."
+ }
 }
