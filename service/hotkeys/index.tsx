@@ -172,7 +172,7 @@ const GOTO_ROUTES: Record<string, Route> = {
   m: '/manual',
   r: '/rubiks',
   u: '/uses',
-  s: '/serve',
+  c: '/console',
   t: '/videoclub',
   v: '/travel',
 }

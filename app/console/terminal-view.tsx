@@ -21,7 +21,7 @@ import {
   resolvePath,
   runCommand,
   type Tone,
-} from '../serve/shell'
+} from './shell'
 import css from './terminal.module.css'
 import { TreeView } from './tree-view'
 
@@ -202,7 +202,7 @@ const ROUTE_COMMANDS = [
   { command: 'tapes', label: 'Tapes', href: '/videoclub' },
   { command: 'uses', label: 'Uses', href: '/uses' },
   { command: 'manual', label: 'Manual', href: '/manual' },
-  { command: 'snake', label: 'Snake', href: '/g-snake' },
+  { command: 'snake', label: 'Snake', href: '/snake' },
   { command: 'cube', label: 'Cube', href: '/rubiks' },
 ] as const
 

@@ -126,11 +126,11 @@ const STALLS: Record<StallId, StallSpec> = {
   },
   serve: {
     label: 'serve',
-    href: '/serve',
+    href: '/console',
     tint: '#a8b04a',
     desktopSize: [88, 124],
     desc: SERVE_DESC,
-    links: [{ label: 'open the archive', href: '/serve' }],
+    links: [{ label: 'open the archive', href: '/console' }],
   },
   projects: {
     label: 'projects',

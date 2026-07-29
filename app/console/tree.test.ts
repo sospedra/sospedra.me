@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { complete } from '../serve/shell.ts'
+import { complete } from './shell.ts'
 import { buildFileTree } from './tree.ts'
 
 const paths = [

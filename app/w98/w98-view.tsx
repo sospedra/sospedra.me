@@ -1,16 +1,16 @@
 'use client'
 
 import Link from 'components/Link'
+import MusicView, {
+  type WinampPanelId,
+  type WinampPanelVisibility,
+} from 'components/music/music-view'
 import Shell from 'components/Shell'
 import { clamp } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useHotkeys } from 'service/hotkeys'
 import { GAMES } from '../games/catalogue'
-import MusicView, {
-  type WinampPanelId,
-  type WinampPanelVisibility,
-} from '../music/music-view'
 import {
   type AppId,
   bootApps,

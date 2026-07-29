@@ -1,5 +1,14 @@
 # Bilingual Daily Crossword — Content and Publication Specification
 
+**Revision 4, 2026-07-29.** Spanish is live. The daily `es` puzzle streams
+from the eldiario.es feed (`backend.smartgames.media/api/game/crossword/last`,
+PuzTrip, 13×13, clued). `app/crosswords/eldiario.ts` fetches inside the same
+ISR window as the challenge loader, validates the payload (rectangular board,
+A–Z/Ñ alphabet, full clue coverage), and merges it into the shipped edition
+whose `publicationDate` matches the feed's. No committed `es` content and no
+cron: a failed or mismatched fetch degrades that date to English-only and the
+locale toggle hides itself. The generator sections below stay retired.
+
 **Revision 3, 2026-07-29.** The daily is now a replay of the USA Today
 crossword archive (8,867 puzzles, 1995–2026, all 15×15, Universal Uclick
 copyright; provenance in `data/crosswords/`). Edition files carry the render
@@ -21,7 +30,7 @@ decision, superseded by revision 3: archive clues ship as-is.
 
 **Status:** Replay content and ISR rollover shipped
 **Grid:** 15×15, American convention, from the archive
-**Locales:** English (`en`); Spanish optional in the schema
+**Locales:** English (`en`) from the committed archive; Spanish (`es`) merged at runtime from the eldiario.es feed
 **Cadence:** One shared publication date per UTC calendar day
 **Batch horizon:** through 2030-12-31, generated and committed ahead
 **Publication:** ISR. The page revalidates hourly and expires daily; no cron, no deploy hook.

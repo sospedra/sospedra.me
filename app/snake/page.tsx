@@ -5,7 +5,7 @@ import SnakeView from './snake-view'
 export const metadata: Metadata = {
   title: 'Snake',
   description: G_SNAKE_DESC,
-  alternates: { canonical: '/g-snake' },
+  alternates: { canonical: '/snake' },
 }
 
 export default function GSnakePage() {

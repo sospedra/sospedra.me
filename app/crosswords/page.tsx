@@ -5,6 +5,11 @@ import { cacheLife } from 'next/cache'
 import { Courier_Prime } from 'next/font/google'
 import type { CrosswordChallengeFile } from './crossword-data'
 import CrosswordsView from './crosswords-view'
+import {
+  fetchSpanishDaily,
+  type SpanishDailyChallenge,
+  withSpanishPuzzle,
+} from './eldiario'
 
 const courierPrime = Courier_Prime({
   subsets: ['latin'],
@@ -46,11 +51,23 @@ async function loadRecentChallenges(): Promise<CrosswordChallengeFile[]> {
   )
 }
 
+/* The eldiario feed publishes one Spanish 13×13 per day. A failed fetch or
+   a date outside the shipped window degrades that day to English-only. */
+async function loadSpanishDaily(): Promise<SpanishDailyChallenge | null> {
+  'use cache'
+  cacheLife('hours')
+  return fetchSpanishDaily()
+}
+
 export default async function CrosswordsPage() {
-  const challenges = await loadRecentChallenges()
+  const [challenges, spanish] = await Promise.all([
+    loadRecentChallenges(),
+    loadSpanishDaily(),
+  ])
+  const editions = spanish ? withSpanishPuzzle(challenges, spanish) : challenges
   return (
     <CrosswordsView
-      challenges={challenges}
+      challenges={editions}
       letterFontClassName={courierPrime.className}
     />
   )

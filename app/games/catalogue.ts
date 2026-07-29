@@ -56,7 +56,7 @@ export const GAMES = [
     id: 'snake',
     code: 'N//33',
     title: 'Snake',
-    href: '/g-snake',
+    href: '/snake',
     category: 'Arcade · high score',
     description:
       'Nokia-spec reflexes on an 84 × 48 LCD. Eat, grow and stay off your own tail.',

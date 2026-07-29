@@ -145,7 +145,7 @@ const useMoveKeys = (dispatch: Dispatch) => {
       })
     }
 
-    // capture phase, like g-snake: face letters stay on the cube even
+    // capture phase, like snake: face letters stay on the cube even
     // before the global traps check the game input claim
     window.addEventListener('keydown', onKeyDown, { capture: true })
     return () => {

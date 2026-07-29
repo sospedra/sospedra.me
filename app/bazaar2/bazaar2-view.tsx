@@ -219,12 +219,12 @@ const STALLS: Record<Stall2Id, StallSpec> = {
   },
   games: {
     label: 'games',
-    href: '/g-snake',
+    href: '/snake',
     tint: '#4a90d9',
     desktopSize: [82, 96],
     desc: GAMES_CONVERSATION.map((turn) => turn.text).join('\n'),
     links: [
-      { label: 'g-snake', href: '/g-snake' },
+      { label: 'snake', href: '/snake' },
       { label: 'w98', href: '/w98' },
       { label: 'rubiks', href: '/rubiks' },
     ],
@@ -247,11 +247,11 @@ const STALLS: Record<Stall2Id, StallSpec> = {
   },
   console: {
     label: 'console',
-    href: '/serve',
+    href: '/console',
     tint: '#a8b04a',
     desktopSize: [74, 96],
     desc: CONSOLE_DIALOG,
-    links: [{ label: 'open the archive', href: '/serve' }],
+    links: [{ label: 'open the archive', href: '/console' }],
   },
   projects: {
     label: 'projects',

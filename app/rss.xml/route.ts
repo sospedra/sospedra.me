@@ -37,7 +37,7 @@ const createRSS = (papers: Paper[]) => `<?xml version="1.0" encoding="UTF-8"?>
   <title>Rubén Sospedra papers</title>
   <link>https://sospedra.me/rss.xml</link>
 </image>
-<description><![CDATA[Highly curated content about JavaScript, web development, TypeScript, the Internet, patterns and, in general, technology. Not your usual blog. Favour valuable content over long and boring SEO-focused posts. Words are my own. It's dangerous to go unknowing, take some pills 💊]]></description>
+<description><![CDATA[Highly curated content about JavaScript, clients development, the Internet, and occasionally, philosophy. Not your usual blog. Favour valuable content over long and boring SEO-focused posts. Words are my own. It's dangerous to go unknowing, take some pills 💊]]></description>
 <language>en-us</language>
 <copyright>Copyright ${new Date().getFullYear()} Rubén Sospedra. The contents of this feed are available for non-commercial use only.</copyright>
 <atom:link href="https://sospedra.me/rss.xml" rel="self" type="application/rss+xml" />

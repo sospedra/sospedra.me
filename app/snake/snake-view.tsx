@@ -16,12 +16,12 @@ import {
   reduce,
   stepMsFor,
 } from './engine'
-import css from './g-snake.module.css'
 import { drawFrame, LCD_H, LCD_W } from './lcd'
+import css from './snake.module.css'
 import { play, transitionSound } from './sound'
 
-const TOP_KEY = 'g-snake-top'
-const LEVEL_KEY = 'g-snake-level'
+const TOP_KEY = 'snake-top'
+const LEVEL_KEY = 'snake-level'
 
 const HUD_PHASE: Record<Phase, string> = {
   menu: 'menu',
@@ -335,7 +335,7 @@ export default function SnakeView() {
   return (
     <Shell
       className={`relative w-full px-4 text-white ${css.page}`}
-      canonical='/g-snake'
+      canonical='/snake'
     >
       {/* the escaped snake: one-bit mural crawling the wall behind the phone */}
       <svg

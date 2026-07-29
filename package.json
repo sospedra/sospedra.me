@@ -23,7 +23,7 @@
     "lint": "biome check .",
     "prepare": "husky",
     "start": "next start",
-    "test": "node --test app/console/tree.test.ts app/crosswords/crossword-engine.test.ts app/snake/engine.test.ts app/game-of-life/life-audio.test.ts components/music/audio-graph.test.ts app/rubiks/engine.test.ts app/travel/destinations.test.ts app/travel/lunar-position.test.ts app/w98/desktop.test.ts app/w98/realplayer/tuner.test.ts app/w98/realplayer/tuner-controller.test.ts service/daily-countdown.test.ts && tsx --test app/travel/radio-stations.test.ts && tsc && biome check .",
+    "test": "node --test app/console/tree.test.ts app/crosswords/crossword-engine.test.ts app/crosswords/eldiario.test.ts app/snake/engine.test.ts app/game-of-life/life-audio.test.ts components/music/audio-graph.test.ts app/rubiks/engine.test.ts app/travel/destinations.test.ts app/travel/lunar-position.test.ts app/w98/desktop.test.ts app/w98/realplayer/tuner.test.ts app/w98/realplayer/tuner-controller.test.ts service/daily-countdown.test.ts && tsx --test app/travel/radio-stations.test.ts && tsc && biome check .",
     "travel:radio:validate": "node scripts/travel/verify-radio-streams.ts",
     "travel:radio:verify": "node scripts/travel/verify-radio-streams.ts --live",
     "w98:radio:validate": "node scripts/w98/verify-realplayer-streams.ts",

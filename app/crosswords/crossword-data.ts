@@ -341,7 +341,7 @@ export type CrosswordEdition = {
   es?: CrosswordPuzzle
 }
 
-type ChallengePuzzle = {
+export type ChallengePuzzle = {
   solution: string[]
   clues?: ClueBook
 }

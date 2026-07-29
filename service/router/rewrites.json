@@ -1,7 +1,7 @@
 [
   {
     "destination": "https://open.spotify.com/playlist/26NYRcXPyIVrItOtlJ5ahO",
-    "title": "✨ Soul mirror on Spotify",
+    "title": "\u2728 Soul mirror on Spotify",
     "source": "/r/rjpr",
     "listed": true
   },
@@ -12,19 +12,19 @@
     "listed": false
   },
   {
-    "destination": "/serve",
+    "destination": "/console",
     "source": "/r/:id"
   },
   {
-    "destination": "/serve",
+    "destination": "/console",
     "source": "/rewrite/:id"
   },
   {
-    "destination": "/serve",
+    "destination": "/console",
     "source": "/rewrite"
   },
   {
-    "destination": "/serve",
+    "destination": "/console",
     "source": "/s"
   }
 ]
