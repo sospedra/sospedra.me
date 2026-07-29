@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buildCityAutocompleteOptions } from '../../lib/geo/city-options.ts'
@@ -503,6 +503,8 @@ if (checkOnly) {
     `Deterministic challenge matches ${relative(REPOSITORY_ROOT, challengePath)}`,
   )
 } else {
+  // Challenges are build artifacts now; a fresh checkout has no directory.
+  mkdirSync(dirname(challengePath), { recursive: true })
   writeFileSync(challengePath, output)
   console.log(`Generated ${relative(REPOSITORY_ROOT, challengePath)}`)
 }

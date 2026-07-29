@@ -4,7 +4,7 @@ import type { NextConfig } from 'next'
 import { listStaticFiles } from './service/io'
 import rewrites from './service/router/rewrites.json'
 
-// /serve renders from this snapshot: tracing public/** into its
+// /console renders from this snapshot: tracing public/** into its
 // revalidation function blew Vercel's 250mb limit (public is 533mb)
 writeFileSync(
   './service/io/static-files.json',
@@ -42,6 +42,8 @@ const config: NextConfig = {
   // cache revalidation re-runs fs reads at runtime, and the tracer
   // cannot follow dynamic process.cwd() paths into the function bundle
   outputFileTracingIncludes: {
+    '/crosswords': ['./content/crosswords/challenges/**'],
+    '/meridian': ['./content/geo/challenges/**'],
     '/papers': ['./content/papers/**'],
     '/papers/[slug]': ['./content/papers/**'],
     '/rss.xml': ['./content/papers/**'],
@@ -54,6 +56,8 @@ const config: NextConfig = {
     { source: '/talks', destination: '/videoclub', permanent: true },
     // the Minesweeper arcade grew into a Windows 98 desktop
     { source: '/g-mines', destination: '/w98', permanent: true },
+    // the serve archive listing became the console terminal
+    { source: '/serve', destination: '/console', permanent: true },
     // Meridian owns one stable public URL; locale and practice live in-app
     {
       source: '/games/geo',

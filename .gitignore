@@ -8,6 +8,8 @@ node_modules
 /work/raw-data/
 # raw USA Today xd archive; served content lives in content/crosswords/challenges
 /content/crosswords/puzzles/
+# meridian challenges are deterministic build artifacts, prebuild regenerates them
+/content/geo/challenges/
 .env*
 
 # image-generation scratch

@@ -1,6 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { Metadata } from 'next'
+import { cacheLife } from 'next/cache'
 import { Courier_Prime } from 'next/font/google'
 import type { CrosswordChallengeFile } from './crossword-data'
 import CrosswordsView from './crosswords-view'
@@ -22,18 +23,19 @@ export const metadata: Metadata = {
 
 const CHALLENGES_DIR = join(process.cwd(), 'content/crosswords/challenges')
 
-/* The daily rebuild re-runs this at build time. The newest editions ride
-   along and the client picks by its own calendar, so no date input is needed
-   here and the result caches statically. */
+/* Revalidation slides the window forward daily; no cron, no rebuild. The
+   client picks by its own calendar from the shipped editions. Correctness
+   needs expire (1 day) <= the horizon (+1 day) below. */
 async function loadRecentChallenges(): Promise<CrosswordChallengeFile[]> {
   'use cache'
+  cacheLife('hours')
 
   const files = (await readdir(CHALLENGES_DIR))
     .filter((file) => file.endsWith('.json'))
     .sort()
 
-  // The batch pre-generates months ahead; ship only editions up to the
-  // build date plus one day so the newest published one is today's.
+  // The archive pre-generates years ahead; ship only editions up to the
+  // render date plus one day so the newest published one is tomorrow's.
   const horizon = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10)
   const published = files.filter((file) => file.slice(0, 10) <= horizon)
   const picked = (published.length > 0 ? published : files).slice(-5)

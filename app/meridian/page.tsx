@@ -1,4 +1,4 @@
-import { CURRENT_GEO_CHALLENGE } from 'lib/geo/challenges'
+import { loadCurrentGeoChallenge } from 'lib/geo/challenges'
 import type { Metadata } from 'next'
 import MeridianGame from './meridian-game'
 
@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/meridian' },
 }
 
-export default function MeridianPage() {
-  return <MeridianGame challenge={CURRENT_GEO_CHALLENGE} />
+export default async function MeridianPage() {
+  const challenge = await loadCurrentGeoChallenge()
+  return <MeridianGame challenge={challenge} />
 }

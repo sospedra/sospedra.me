@@ -1,5 +1,6 @@
-import { readdirSync, readFileSync } from 'node:fs'
+import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { cacheLife } from 'next/cache'
 import type { DailyGeoChallenge } from './model'
 import {
   latestPublicationDateOnOrBefore,
@@ -9,48 +10,34 @@ import {
 const challengeDirectory = join(process.cwd(), 'content/geo/challenges')
 const challengeFilenamePattern = /^\d{4}-\d{2}-\d{2}\.json$/u
 
-const readChallenge = (filename: string): DailyGeoChallenge =>
-  JSON.parse(
-    readFileSync(join(challengeDirectory, filename), 'utf8'),
-  ) as DailyGeoChallenge
+/* Revalidation re-picks the newest published edition, so rollover needs no
+   cron and no rebuild. Correctness needs cache expire (1 day) <= the window
+   prebuild generates ahead (14 days). */
+export async function loadCurrentGeoChallenge(): Promise<DailyGeoChallenge> {
+  'use cache'
+  cacheLife('hours')
 
-export const GEO_CHALLENGES = readdirSync(challengeDirectory)
-  .filter((filename) => challengeFilenamePattern.test(filename))
-  .sort()
-  .map(readChallenge)
-
-if (GEO_CHALLENGES.length === 0) {
-  throw new Error('Meridian challenge inventory is empty')
-}
-
-export const GEO_CHALLENGE_DATES = GEO_CHALLENGES.map(
-  (item) => item.publicationDate,
-)
-
-export const getGeoChallenge = (publicationDate: string) =>
-  GEO_CHALLENGES.find((item) => item.publicationDate === publicationDate) ??
-  null
-
-export const GEO_PUBLICATION_DATE = resolveGeoPublicationDate(
-  process.env.MERIDIAN_PUBLICATION_DATE,
-)
-
-// A server started before UTC midnight outlives its generated edition; serve
-// the newest earlier one instead of crashing the route until regeneration.
-const currentDate = latestPublicationDateOnOrBefore(
-  GEO_CHALLENGE_DATES,
-  GEO_PUBLICATION_DATE,
-)
-const currentChallenge = currentDate ? getGeoChallenge(currentDate) : null
-if (!currentChallenge) {
-  throw new Error(
-    `No Meridian challenge on or before ${GEO_PUBLICATION_DATE}. Run "pnpm geo:generate ${GEO_PUBLICATION_DATE}" before building.`,
+  const dates = (await readdir(challengeDirectory))
+    .filter((filename) => challengeFilenamePattern.test(filename))
+    .map((filename) => filename.slice(0, 10))
+    .sort()
+  const today = resolveGeoPublicationDate(
+    process.env.MERIDIAN_PUBLICATION_DATE,
   )
-}
-if (currentChallenge.publicationDate !== GEO_PUBLICATION_DATE) {
-  console.warn(
-    `Meridian is serving the ${currentChallenge.publicationDate} edition for ${GEO_PUBLICATION_DATE}. Run "pnpm geo:generate ${GEO_PUBLICATION_DATE}" to refresh it.`,
+  const current = latestPublicationDateOnOrBefore(dates, today)
+  if (!current) {
+    throw new Error(
+      `No Meridian challenge on or before ${today}. Run "pnpm geo:generate ${today}" first.`,
+    )
+  }
+  if (current !== today) {
+    console.warn(
+      `Meridian is serving the ${current} edition for ${today}. Regenerate the window to refresh it.`,
+    )
+  }
+  const raw = await readFile(
+    join(challengeDirectory, `${current}.json`),
+    'utf8',
   )
+  return JSON.parse(raw) as DailyGeoChallenge
 }
-
-export const CURRENT_GEO_CHALLENGE = currentChallenge
