@@ -66,5 +66,33 @@ renders final poses statically. The papers hologram flicker wraps the
 char frames in a group div because animating the imgs would fight the
 opacity frame-switching.
 
-The console stall ships STATIC by design (the r20 master, no layers) —
-a reminder that the architecture is per-stall opt-in, not a religion.
+## The implant technique (named here for good: region-shift idle)
+
+The idle trick that reads as life without breaking ground contact:
+IMPLANT a sub-region shift into a copy of the rest frame. For a head
+bob: copy char-f1, shift ONLY the head region (everything above the
+neck line) down 1 px, leave the body planted. The 1 px overlap at the
+neck swallows the seam; the 1 px void at the hair top reveals plate
+(dark wall, invisible). Zero new colors, zero diffusion, feet never
+move. The failed alternative is the whole-layer bob: it detaches the
+feet and the character floats. Same family as r17's palette-snap
+dimming and cyan-tear reveals: deterministic pixel surgery on a copy,
+never a regeneration.
+
+## The console rebuild (2026-08-01, the architecture reapplied)
+
+The static r20 console master got its layers back in one session using
+this playbook end to end: lens-anchored two-stage extraction (the
+scoped goggle-lens hex is the only sage in the stall = the seed; grow
+skin/hair/tee within a head-anchored region; dark pixels join only
+inside head and shorts boxes and only if not blue-leaning — cool darks
+are racks and cables; largest component + lens-bearing components
+survive; interior holes fill by outside-flood), nearest-side inpaint
+for the plate, byte-identity assert (0 repairs), head-implant idle,
+dense-run screen detection for the CRT static roll, and two parallel
+4-leg chained pose runs on the fenced isolate. Winner: chain B (peace
+sign). Opaque ratios 0.91-0.94 across all eight frames, no flags.
+
+The console stall shipped STATIC first (the r20 master, no layers) —
+the architecture is per-stall opt-in, and layers returned only when
+the master was final.
