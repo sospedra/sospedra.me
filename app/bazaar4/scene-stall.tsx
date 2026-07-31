@@ -15,7 +15,7 @@ const layerZ = (layer: StallLayer) =>
   layer.role === 'plate' ? 0 : layer.zorder
 
 const restFile = (layer: StallLayer): string => {
-  if (layer.role === 'plate') return 'plate-key.png'
+  if (layer.role === 'plate') return layer.file ?? 'plate-key.png'
   if (layer.role === 'effect') return layer.frames[0].file
   if (layer.role === 'prop') return layer.rest
   return layer.idle[0].file
@@ -23,7 +23,7 @@ const restFile = (layer: StallLayer): string => {
 
 /** every frame a layer can show; all are mounted once and opacity-flipped */
 const layerFiles = (layer: StallLayer): string[] => {
-  if (layer.role === 'plate') return ['plate-key.png']
+  if (layer.role === 'plate') return [layer.file ?? 'plate-key.png']
   if (layer.role === 'effect') {
     const hover = Array.isArray(layer.hover)
       ? layer.hover

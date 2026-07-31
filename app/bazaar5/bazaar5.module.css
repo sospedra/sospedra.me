@@ -1,0 +1,304 @@
+/* bazaar5 — the LAYOUT_HANDOFF system, ported from public/bz4-layout-proto.html.
+   Street level + stall internals + dialogs + editor chrome come from
+   bazaar4.module.css (imported by the view); THIS file owns only the
+   validated layout: su law, regimes A/B, mobile SM floors. */
+
+.scene {
+  /* THE knob: px per sim unit at the cap */
+  --su-cap: 0.9;
+  --vstar: 1690; /* keep in sync with the regime-A media query */
+  /* S soft crop ramp, 1200 -> 700: reclaimed width grows stalls */
+  --shift: clamp(0px, (1200px - 100vw) * 0.132, 66px);
+  --su: min(
+    calc(var(--su-cap) * 1px),
+    calc((100vw + var(--shift)) * var(--su-cap) / var(--vstar))
+  );
+  --s-w: calc(var(--su) * 324);
+  --floor-h: calc(var(--su) * 597);
+  --sm-h: 75svh;
+  --sm-ar: 0.464; /* measured: arch/sm.png trim 705x1518 */
+  --sm-split: 0.497; /* measured deck walk line, row 755 of 1518 */
+  --mfloor-h: min(var(--sm-h), 100svh);
+  --sm-w: calc(var(--mfloor-h) * var(--sm-ar));
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow-y: auto;
+  overflow-x: clip;
+  background: var(--color-bg-void);
+  color: #d6dbe6;
+  image-rendering: pixelated;
+}
+
+.scene img {
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+.mobileTree {
+  display: none;
+}
+
+/* the street keeps bazaar4's own variable context: it is its own animal.
+   The wrapper carries bazaar4's .scene class for the vars; these overrides
+   turn off its scroll shell so it nests inside bazaar5's scroller. */
+.scene .streetHost {
+  height: 100svh;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+@media (max-width: 699px) {
+  .desktopTree {
+    display: none;
+  }
+  .mobileTree {
+    display: block;
+  }
+}
+
+/* ---------- desktop market floors: regime B (full bleed) by default ---------- */
+
+.floor {
+  --wf: url("/images/bazaar4/arch/wf-tile.png");
+  --ml: 0px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: var(--floor-h);
+  /* n+1 equal gaps, trailing gap included via padding on the stall side */
+  --g: calc(
+    (100vw + var(--shift) - var(--s-w) - var(--su) * var(--sum)) /
+    (var(--n) + 1)
+  );
+  column-gap: var(--g);
+  padding-right: var(--g);
+  background-image: var(--wf);
+  background-size: calc(var(--su) * 300) calc(var(--su) * 597);
+  background-repeat: repeat-x;
+  background-position: left bottom;
+}
+
+/* per-floor WF variants */
+.floor[data-market-index="1"] {
+  --wf: url("/images/bazaar4/arch/wf-min-b2.png");
+}
+
+.floor[data-market-index="2"] {
+  --wf: url("/images/bazaar4/arch/wf-min-b2.png");
+}
+
+.floor .stairs {
+  margin-left: calc(-1 * var(--shift));
+}
+
+.floorR {
+  padding-right: 0;
+  padding-left: var(--g);
+}
+
+.floorR .stairs {
+  margin-left: 0;
+  margin-right: calc(-1 * var(--shift));
+}
+
+.band {
+  display: contents;
+}
+
+/* z law: wf 0 · stairs 1 · props 2+ · stalls 3 · glows 4+ · seps 5 */
+.stairs {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  width: var(--s-w);
+  height: 110%; /* test: +10% vertical stretch, bottom stays pinned */
+  background:
+    url("/images/bazaar4/arch/stairs.png") center / 100% 100% no-repeat;
+  image-rendering: pixelated;
+}
+
+/* the base art faces right-placement; mirror when the stairs sit left */
+.floor:not(.floorR) .stairs {
+  transform: scaleX(-1);
+}
+
+/* regime A: the 1400px container exists, S hangs outside it */
+@media (min-width: 1690px) {
+  .floor,
+  .floorR {
+    --gc: calc((1400px - var(--su) * var(--sum)) / (var(--n) + 1));
+    --group: calc(var(--s-w) + var(--gc) + 1400px);
+    /* centered group; pins the container edge first, S crops on its own side */
+    --ml: min(calc((100vw - var(--group)) / 2), calc(100vw - var(--group)));
+    width: max-content;
+    column-gap: var(--gc);
+    padding: 0;
+    margin-left: var(--ml);
+    background-image: none;
+    isolation: isolate;
+  }
+  .floorR {
+    --ml: max(calc((100vw - var(--group)) / 2), 0px);
+  }
+  /* the floor box is max-content; the WF wall still spans the viewport */
+  .floor::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    bottom: 0;
+    left: calc(-1 * var(--ml));
+    width: 100vw;
+    background-image: var(--wf);
+    background-size: calc(var(--su) * 300) calc(var(--su) * 597);
+    background-repeat: repeat-x;
+    background-position: left bottom;
+  }
+  .band {
+    display: flex;
+    align-items: flex-end;
+    column-gap: var(--gc);
+    padding-inline: var(--gc);
+    width: 1400px;
+    height: 100%;
+  }
+}
+
+/* the riveted h-beam band between floors, nearer than the floors */
+.sep {
+  position: relative;
+  z-index: 5;
+  height: calc(var(--su) * 225);
+  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-size: calc(var(--su) * 120) calc(var(--su) * 225);
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  image-rendering: pixelated;
+  filter: brightness(0.7) blur(1.5px);
+  box-shadow:
+    0 10px 24px rgb(0 0 0 / 0.55),
+    0 -10px 24px rgb(0 0 0 / 0.55);
+}
+
+.bottomPad {
+  height: 24svh;
+  background: #000;
+}
+
+/* ---------- stall boxes: the proto's .a, carrying bazaar4 internals ---------- */
+
+.stallWrap {
+  position: relative;
+  z-index: 3;
+  flex: none;
+  width: calc(var(--su) * var(--w));
+  height: calc(var(--su) * var(--h));
+  isolation: isolate;
+}
+
+/* contact shadow, the one stall effect that stays */
+.stallWrap::after {
+  content: "";
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  bottom: calc(var(--su) * -14);
+  height: calc(var(--su) * 28);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(0 0 0 / 0.5),
+    transparent 68%
+  );
+  pointer-events: none;
+}
+
+/* ---------- mobile: one floor = one SM spanning two stories ---------- */
+
+.mfloor {
+  background-image: url("/images/bazaar4/arch/wf-tile.png");
+  background-size: calc(var(--mfloor-h) * 0.5 / 597 * 300)
+    calc(var(--mfloor-h) * 0.5);
+  background-repeat: repeat;
+  background-position: left bottom;
+  --mg: 4vw; /* the floor's gap knob: every _ in both stories */
+  --slot-min: 62vw;
+  --a-cap: calc(var(--mfloor-h) * 0.48 * var(--armin));
+  --slot-target: min(var(--slot-min), var(--a-cap));
+  --shift-ramp: calc((700px - 100vw) * 0.8);
+  --shift-demand: calc(
+    var(--slot-target) -
+    (100vw - var(--sm-w) - 2 * var(--mg))
+  );
+  --shift-m: clamp(
+    0px,
+    max(var(--shift-ramp), var(--shift-demand)),
+    calc(var(--sm-w) / 2)
+  );
+  --slot: calc(100vw - var(--sm-w) + var(--shift-m) - 2 * var(--mg));
+  position: relative;
+  display: flex;
+  height: var(--mfloor-h);
+}
+
+.sm {
+  flex: none;
+  width: var(--sm-w);
+  height: 100%;
+  margin-left: calc(-1 * var(--shift-m));
+  background: url("/images/bazaar4/arch/sm.png") center / 100% 100% no-repeat;
+  image-rendering: pixelated;
+}
+
+.mfloorR .sm {
+  margin-left: 0;
+  margin-right: calc(-1 * var(--shift-m));
+  transform: scaleX(-1); /* exits face the stalls */
+}
+
+.stack {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  /* stories split at the SM art's measured platform line */
+  grid-template-rows: calc(var(--sm-split, 0.5) * 100%) 1fr;
+}
+
+.storyRow {
+  display: flex;
+  align-items: flex-end;
+  min-height: 0;
+}
+
+@media (max-width: 699px) {
+  .stallWrap {
+    /* one shared width per floor: all four gaps equal by construction */
+    width: min(var(--slot), var(--a-cap));
+    height: auto;
+    aspect-ratio: var(--ar);
+    margin-inline: auto;
+  }
+}
+
+.sepM {
+  height: 4svh;
+  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-size: auto 100%;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  image-rendering: pixelated;
+  filter: brightness(0.7) blur(1px);
+}
+
+/* ---------- hitbox debug ---------- */
+
+[data-hitbox] .stallWrap {
+  outline: 2px dashed rgb(75 210 225 / 0.8);
+  outline-offset: -2px;
+}
+
+[data-hitbox] .stairs,
+[data-hitbox] .sm {
+  outline: 2px dashed rgb(224 160 64 / 0.8);
+  outline-offset: -2px;
+}

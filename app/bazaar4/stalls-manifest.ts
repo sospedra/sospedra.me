@@ -3,7 +3,7 @@
 export type FxFrame = { file: string; ms: number }
 
 export type StallLayer =
-  | { id: string; role: 'plate' }
+  | { id: string; role: 'plate'; file?: string }
   | {
       id: string
       role: 'effect'
@@ -115,15 +115,15 @@ export const STALL_SCENES = {
   },
   console: {
     layers: [
-      { id: 'plate', role: 'plate' },
+      { id: 'plate', role: 'plate', file: 'plate2-key.png' },
       {
-        id: 'fx-static',
+        id: 'fx-crt',
         role: 'effect',
         zorder: 1,
         frames: [
-          { file: 'fx-static-f1.png', ms: 120 },
-          { file: 'fx-static-f2.png', ms: 120 },
-          { file: 'fx-static-f3.png', ms: 120 },
+          { file: 'fx2-crt-f1.png', ms: 220 },
+          { file: 'fx2-crt-f2.png', ms: 220 },
+          { file: 'fx2-crt-f3.png', ms: 220 },
         ],
       },
       {
@@ -131,19 +131,19 @@ export const STALL_SCENES = {
         role: 'char',
         zorder: 2,
         idle: [
-          { file: 'char-f1.png', ms: 1800 },
-          { file: 'char-f2.png', ms: 200 },
-          { file: 'char-f3.png', ms: 200 },
+          { file: 'char2-f1.png', ms: 1800 },
+          { file: 'char2-f2.png', ms: 200 },
+          { file: 'char2-f3.png', ms: 200 },
         ],
         hover: [
-          { file: 'char-h1.png', ms: 150 },
-          { file: 'char-h2.png', ms: 150 },
-          { file: 'char-h3.png', ms: 150 },
-          { file: 'char-h4.png', ms: 0 },
+          { file: 'char2-h1.png', ms: 150 },
+          { file: 'char2-h2.png', ms: 150 },
+          { file: 'char2-h3.png', ms: 150 },
+          { file: 'char2-h4.png', ms: 0 },
         ],
       },
     ],
-    rect: { left: 377, top: 37, width: 781, height: 926 },
+    rect: { left: 0, top: 0, width: 974, height: 1061 },
   },
   talks: {
     layers: [
@@ -324,10 +324,10 @@ export const SIM_DIMS = {
     dispH: 500,
   },
   console: {
-    artW: 773,
-    artH: 918,
-    dispW: 438,
-    dispH: 520,
+    artW: 974,
+    artH: 1061,
+    dispW: 459,
+    dispH: 500,
   },
   talks: {
     artW: 680,

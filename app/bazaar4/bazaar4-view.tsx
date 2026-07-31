@@ -38,6 +38,17 @@ const STALL_TUNE: Partial<Record<Bazaar4StallId, number>> = {
   manual: 1.019,
 }
 
+/* the r20 console master renders as a single static image: no r17 layers */
+const STATIC_STALLS: Partial<
+  Record<Bazaar4StallId, { src: string; w: number; h: number }>
+> = {
+  console: {
+    src: '/images/bazaar4/console/static-master.png',
+    w: 459,
+    h: 500,
+  },
+}
+
 /* sim units for one stall box: r17 rect at the r15 contract scale,
    times the editor-approved tune factor */
 const simSize = (id: Bazaar4StallId) => {
@@ -743,6 +754,7 @@ function Stall({ id }: { id: Bazaar4StallId }) {
     onMouseEnter: () => sfx.stall(SFX_ID[id]),
     onKeyDown: focusDialogOnTab,
   }
+  const staticStall = STATIC_STALLS[id]
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: coordinates hover and focus state for the child link and its portalled dialog
     <div
@@ -751,9 +763,11 @@ function Stall({ id }: { id: Bazaar4StallId }) {
       style={
         {
           '--tint': spec.tint,
-          '--ar': scene.rect.width / scene.rect.height,
-          '--sw': simSize(id).w,
-          '--sh': simSize(id).h,
+          '--ar': staticStall
+            ? staticStall.w / staticStall.h
+            : scene.rect.width / scene.rect.height,
+          '--sw': staticStall ? staticStall.w : simSize(id).w,
+          '--sh': staticStall ? staticStall.h : simSize(id).h,
         } as React.CSSProperties
       }
       data-stall={id}
@@ -775,7 +789,13 @@ function Stall({ id }: { id: Bazaar4StallId }) {
       }}
     >
       <Link {...stallProps} url={spec.href}>
-        <SceneStall id={id} active={active} />
+        {staticStall ? (
+          <div className={styles.sceneStack} aria-hidden>
+            <img src={staticStall.src} alt='' draggable={false} />
+          </div>
+        ) : (
+          <SceneStall id={id} active={active} />
+        )}
         <div className={styles.glowWash} />
       </Link>
       {id === 'games' ? (
