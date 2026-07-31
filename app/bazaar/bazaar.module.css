@@ -1,30 +1,33 @@
+/* bazaar5 — the LAYOUT_HANDOFF system, ported from public/bz4-layout-proto.html.
+   Street level + stall internals + dialogs + editor chrome come from
+   bazaar4.module.css (imported by the view); THIS file owns only the
+   validated layout: su law, regimes A/B, mobile SM floors. */
+
 .scene {
-  /* 1 in-game meter; --hs doubles sprite scale on mobile (human gold standard) */
-  --m: min(20svh, 10.2vw);
-  --hs: 1;
+  /* THE knob: px per sim unit at the cap */
+  --su-cap: 0.9;
+  --vstar: 1690; /* keep in sync with the regime-A media query */
+  /* S soft crop ramp, 1200 -> 700: reclaimed width grows stalls */
+  --shift: clamp(0px, (1200px - 100vw) * 0.132, 66px);
+  --su: min(
+    calc(var(--su-cap) * 1px),
+    calc((100vw + var(--shift)) * var(--su-cap) / var(--vstar))
+  );
+  --s-w: calc(var(--su) * 324);
+  --floor-h: calc(var(--su) * 597);
+  --sm-h: 75svh;
+  --sm-ar: 0.464; /* measured: arch/sm.png trim 705x1518 */
+  --sm-split: 0.497; /* measured deck walk line, row 755 of 1518 */
+  --mfloor-h: min(var(--sm-h), 100svh);
+  --sm-w: calc(var(--mfloor-h) * var(--sm-ar));
   position: relative;
   width: 100%;
   height: 100svh;
   overflow-y: auto;
   overflow-x: clip;
-  scroll-snap-type: y proximity;
-  scroll-behavior: smooth;
-  background: #0b0e14;
+  background: var(--color-bg-void);
   color: #d6dbe6;
-}
-
-/* mandatory snap traps touch scrolling: short swipes bounce back */
-@media (pointer: fine) {
-  .scene {
-    scroll-snap-type: y mandatory;
-  }
-}
-
-@media (max-width: 700px) {
-  .scene {
-    --m: min(10svh, 13vw);
-    --hs: 2;
-  }
+  image-rendering: pixelated;
 }
 
 .scene img {
@@ -32,18 +35,20 @@
   user-select: none;
 }
 
-.floor {
-  position: relative;
-  height: 100svh;
-  scroll-snap-align: start;
-  overflow: hidden;
-}
-
 .mobileTree {
   display: none;
 }
 
-@media (max-width: 700px) {
+/* the street keeps bazaar4's own variable context: it is its own animal.
+   The wrapper carries bazaar4's .scene class for the vars; these overrides
+   turn off its scroll shell so it nests inside bazaar5's scroller. */
+.scene .streetHost {
+  height: 100svh;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+@media (max-width: 699px) {
   .desktopTree {
     display: none;
   }
@@ -52,965 +57,248 @@
   }
 }
 
-/* ---------- shared layers ---------- */
-.fill {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
+/* ---------- desktop market floors: regime B (full bleed) by default ---------- */
 
-.cover {
-  object-fit: cover;
-  object-position: center bottom;
-}
-
-.tile {
-  position: absolute;
-  inset: 0;
+.floor {
+  --wf: url("/images/bazaar4/arch/wf-tile.png");
+  --ml: 0px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  height: var(--floor-h);
+  /* n+1 equal gaps, trailing gap included via padding on the stall side */
+  --g: calc(
+    (100vw + var(--shift) - var(--s-w) - var(--su) * var(--sum)) /
+    (var(--n) + 1)
+  );
+  column-gap: var(--g);
+  padding-right: var(--g);
+  background-image: var(--wf);
+  background-size: calc(var(--su) * 300) calc(var(--su) * 597);
   background-repeat: repeat-x;
   background-position: left bottom;
-  background-size: auto 100%;
-  image-rendering: pixelated;
 }
 
-/* mkt-depth: soften the haze layer */
-.tile + .tile {
-  opacity: 0.55;
+/* per-floor WF variants */
+.floor[data-market-index="1"] {
+  --wf: url("/images/bazaar4/arch/wf-min-b2.png");
 }
 
-/* ---------- frame cycling ---------- */
-.cycle {
-  display: grid;
-  line-height: 0;
+.floor[data-market-index="2"] {
+  --wf: url("/images/bazaar4/arch/wf-min-b2.png");
 }
 
-.cycle > img {
-  grid-area: 1 / 1;
-  animation: 1.4s steps(1, end) infinite;
+.floor .stairs {
+  margin-left: calc(-1 * var(--shift));
 }
 
-.n2 > img {
-  animation-name: slot2;
-}
-.n2 > img:nth-child(2) {
-  animation-delay: -0.7s;
+.floorR {
+  padding-right: 0;
+  padding-left: var(--g);
 }
 
-.n3 > img {
-  animation-name: slot3;
-  animation-duration: 1.8s;
-}
-.n3 > img:nth-child(2) {
-  animation-delay: -1.2s;
-}
-.n3 > img:nth-child(3) {
-  animation-delay: -0.6s;
+.floorR .stairs {
+  margin-left: 0;
+  margin-right: calc(-1 * var(--shift));
 }
 
-@keyframes slot2 {
-  0% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
+.band {
+  display: contents;
 }
 
-@keyframes slot3 {
-  0% {
-    opacity: 1;
-  }
-  33.4%,
-  100% {
-    opacity: 0;
-  }
-}
-
-/* ---------- floor 1: the street ---------- */
-.bgFull {
-  z-index: 0;
-}
-
-.bgBand {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 65svh;
-  background-repeat: repeat-x;
-  background-position: left bottom;
-  background-size: auto 100%;
-  image-rendering: pixelated;
-}
-
-.ground {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: calc(var(--m) * 0.75);
-}
-
-.mktGround {
-  height: calc(var(--m) * 1.3);
-  background-repeat: repeat-x;
-  background-position: left bottom;
-  background-size: auto 100%;
-  image-rendering: pixelated;
+/* z law: wf 0 · stairs 1 · props 2+ · stalls 3 · glows 4+ · seps 5 */
+.stairs {
+  position: relative;
   z-index: 1;
+  flex: none;
+  width: var(--s-w);
+  height: 110%; /* test: +10% vertical stretch, bottom stays pinned */
+  background:
+    url("/images/bazaar4/arch/stairs.png") center / 100% 100% no-repeat;
+  image-rendering: pixelated;
 }
 
-.streetScene {
-  position: absolute;
-  left: 50%;
-  bottom: calc(var(--m) * 0.75);
-  height: 70svh;
-  aspect-ratio: 267 / 127;
-  translate: -50% 0;
-  line-height: 0;
-  z-index: 1;
-}
-
-.streetScene > img {
-  width: 100%;
-  height: 100%;
-}
-
-@media (max-width: 700px) {
-  .streetScene {
-    width: 100vw;
-    height: auto;
-    aspect-ratio: 160 / 185;
-  }
-}
-
-/* distant traffic on the band */
-.carLane {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.car {
-  position: absolute;
-  bottom: 26svh;
-  left: 0;
-  animation: drive 26s linear infinite;
-}
-
-.car img {
-  height: calc(var(--m) * 0.5);
-  width: auto;
-}
-
-.carBack {
-  bottom: 29svh;
-  animation-name: driveBack;
-  animation-duration: 34s;
-  animation-delay: -12s;
-  opacity: 0.75;
-}
-
-.carBack img {
-  height: calc(var(--m) * 0.38);
+/* the base art faces right-placement; mirror when the stairs sit left */
+.floor:not(.floorR) .stairs {
   transform: scaleX(-1);
 }
 
-@keyframes drive {
-  from {
-    transform: translateX(-8vw);
+/* regime A: the 1400px container exists, S hangs outside it */
+@media (min-width: 1690px) {
+  .floor,
+  .floorR {
+    --gc: calc((1400px - var(--su) * var(--sum)) / (var(--n) + 1));
+    --group: calc(var(--s-w) + var(--gc) + 1400px);
+    /* centered group; pins the container edge first, S crops on its own side */
+    --ml: min(calc((100vw - var(--group)) / 2), calc(100vw - var(--group)));
+    width: max-content;
+    column-gap: var(--gc);
+    padding: 0;
+    margin-left: var(--ml);
+    background-image: none;
+    isolation: isolate;
   }
-  to {
-    transform: translateX(108vw);
+  .floorR {
+    --ml: max(calc((100vw - var(--group)) / 2), 0px);
   }
-}
-
-@keyframes driveBack {
-  from {
-    transform: translateX(108vw);
+  /* the floor box is max-content; the WF wall still spans the viewport */
+  .floor::before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    bottom: 0;
+    left: calc(-1 * var(--ml));
+    width: 100vw;
+    background-image: var(--wf);
+    background-size: calc(var(--su) * 300) calc(var(--su) * 597);
+    background-repeat: repeat-x;
+    background-position: left bottom;
   }
-  to {
-    transform: translateX(-8vw);
-  }
-}
-
-/* ---------- street furniture ---------- */
-.busLink {
-  position: absolute;
-  left: 3.75%;
-  top: 47.24%;
-  width: 21.72%;
-  height: 52.76%;
-  display: block;
-  border: 0;
-}
-
-.door {
-  position: absolute;
-  left: 67.04%;
-  top: 47.24%;
-  width: 11.99%;
-  height: 52.76%;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  line-height: 0;
-}
-
-.busLink::after,
-.door::after {
-  content: "";
-  position: absolute;
-  inset: -8%;
-  background: radial-gradient(
-    ellipse at 50% 60%,
-    rgba(255, 210, 122, 0.32),
-    transparent 72%
-  );
-  mix-blend-mode: screen;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.busLink:hover::after,
-.busLink:focus-visible::after,
-.door:hover::after,
-.door:focus-visible::after {
-  opacity: 1;
-}
-
-.doorFrame {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-}
-
-.doorFrame:nth-child(1) {
-  opacity: 1;
-}
-
-.door:hover .doorFrame:nth-child(1),
-.door:focus-visible .doorFrame:nth-child(1) {
-  animation: seqOut 0.24s steps(1, end) forwards;
-}
-
-.door:hover .doorFrame:nth-child(2),
-.door:focus-visible .doorFrame:nth-child(2) {
-  animation: seqMid 0.24s steps(1, end) forwards;
-}
-
-.door:hover .doorFrame:nth-child(3),
-.door:focus-visible .doorFrame:nth-child(3) {
-  animation: seqEnd 0.24s steps(1, end) forwards;
-}
-
-.sign {
-  position: absolute;
-  left: 64.61%;
-  top: 34.65%;
-  width: 16.85%;
-  line-height: 0;
-}
-
-.streetScene[data-bp="mobile"] .busLink {
-  left: 0.63%;
-  top: 63.78%;
-  width: 36.25%;
-  height: 36.22%;
-}
-
-.streetScene[data-bp="mobile"] .door {
-  left: 72.5%;
-  top: 63.78%;
-  width: 20%;
-  height: 36.22%;
-}
-
-.streetScene[data-bp="mobile"] .sign {
-  left: 68.44%;
-  top: 55.14%;
-  width: 28.13%;
-}
-
-.sign > img {
-  width: 100%;
-  height: auto;
-  animation: signFlicker 4.5s steps(1, end) infinite;
-}
-
-.signText {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-lazer84);
-  font-style: italic;
-  font-size: calc(var(--m) * 0.28);
-  line-height: 1;
-  color: #7ef1e1;
-  text-shadow:
-    0 0 6px #00a895,
-    0 0 18px #00a895;
-  animation: signFlicker 4.5s steps(1, end) infinite;
-  pointer-events: none;
-}
-
-@keyframes signFlicker {
-  0%,
-  6% {
-    opacity: 0.4;
-  }
-  8%,
-  52% {
-    opacity: 1;
-  }
-  54% {
-    opacity: 0.3;
-  }
-  56%,
-  100% {
-    opacity: 1;
+  .band {
+    display: flex;
+    align-items: flex-end;
+    column-gap: var(--gc);
+    padding-inline: var(--gc);
+    width: 1400px;
+    height: 100%;
   }
 }
 
-/* ---------- livingness ---------- */
-.propImg {
-  position: absolute;
-  image-rendering: pixelated;
-  user-select: none;
-  z-index: 1;
-}
-
-.pLamp {
-  left: 21%;
-  top: 26%;
-  width: calc(var(--m) * 0.75);
-}
-
-.pCrow {
-  right: 16%;
-  top: 2%;
-  width: calc(var(--m) * 0.5);
-}
-
-.pVent {
-  position: absolute;
-  left: 36%;
-  bottom: calc(var(--m) * 0.9);
-  z-index: 1;
-}
-
-.pVent img {
-  width: calc(var(--m) * 1);
-  height: auto;
-}
-
-.pPuddle {
-  position: absolute;
-  left: 7%;
-  bottom: calc(var(--m) * 0.2);
-  z-index: 1;
-}
-
-.pPuddle img {
-  width: calc(var(--m) * 1.5);
-  height: auto;
-}
-
-.rat {
-  position: absolute;
-  bottom: calc(var(--m) * 0.2);
-  left: 0;
-  z-index: 2;
-  animation: ratRun 17s linear infinite;
-}
-
-.rat img {
-  width: calc(var(--m) * 0.5);
-  height: auto;
-}
-
-@keyframes ratRun {
-  0% {
-    transform: translateX(-15vw);
-  }
-  55%,
-  100% {
-    transform: translateX(112vw);
-  }
-}
-
-.pBlink {
-  position: absolute;
-  top: 7%;
-  right: 12%;
-}
-
-.pBlink img {
-  width: calc(var(--m) * 0.25);
-  height: auto;
-}
-
-.pGlitch {
-  position: absolute;
-  top: 13%;
-  left: 26%;
-}
-
-.pGlitch img {
-  width: calc(var(--m) * 3);
-  height: auto;
-}
-
-/* ---------- market floors ---------- */
-.mktGround {
-  height: calc(var(--m) * 1.5);
-  z-index: 1;
-}
-
-.ledge {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: calc(50% - var(--m) * 0.25);
-  height: calc(var(--m) * 0.5);
+/* the riveted h-beam band between floors, nearer than the floors */
+.sep {
+  position: relative;
+  z-index: 5;
+  height: calc(var(--su) * 225);
+  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-size: calc(var(--su) * 120) calc(var(--su) * 225);
   background-repeat: repeat-x;
   background-position: left bottom;
-  background-size: auto 100%;
   image-rendering: pixelated;
-  z-index: 1;
+  filter: brightness(0.7) blur(1.5px);
+  box-shadow:
+    0 10px 24px rgb(0 0 0 / 0.55),
+    0 -10px 24px rgb(0 0 0 / 0.55);
 }
 
-.mktRow {
-  position: absolute;
-  inset: auto 0 calc(var(--m) * 1.45) 0;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: calc(var(--m) * 0.1);
-  z-index: 2;
+.bottomPad {
+  height: 24svh;
+  background: #000;
 }
 
-.stairs {
-  align-self: stretch;
-  width: calc(var(--m) * 1.25);
-  flex: 0 0 auto;
-  line-height: 0;
-}
+/* ---------- stall boxes: the proto's .a, carrying bazaar4 internals ---------- */
 
-.stairsL,
-.stairsR {
-  position: absolute;
-  top: 0;
-  bottom: calc(var(--m) * 1.05);
-  z-index: 2;
-}
-
-.stairsL {
-  left: 0;
-}
-
-.stairsR {
-  right: 0;
-}
-
-.stairs img {
-  width: 100%;
-  height: 100%;
-}
-
-.pStrip {
-  top: 0;
-  left: 50%;
-  translate: -50% 0;
-  width: calc(var(--m) * 3 * var(--hs));
-  z-index: 2;
-}
-
-.pSideL {
-  left: calc(var(--m) * 0.3);
-  bottom: calc(var(--m) * 0.6);
-  width: calc(var(--m) * 0.9 * var(--hs));
-}
-
-.pSideR {
-  right: calc(var(--m) * 0.3);
-  bottom: calc(var(--m) * 0.6);
-  width: calc(var(--m) * 0.7 * var(--hs));
-}
-
-.mGridR,
-.mGridL {
-  position: absolute;
-  inset: 0 0 calc(var(--m) * 1.45) 0;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  align-items: end;
-  z-index: 2;
-}
-
-.mGridR {
-  grid-template-columns: minmax(0, 1fr) 24vw;
-}
-
-.mGridR .stairs {
-  grid-column: 2;
-  grid-row: 1 / 3;
-  width: auto;
-  align-self: stretch;
-}
-
-.mGridL {
-  grid-template-columns: 24vw minmax(0, 1fr);
-}
-
-.mGridL .stairs {
-  grid-column: 1;
-  grid-row: 1 / 3;
-  width: auto;
-  align-self: stretch;
-}
-
-/* ---------- stalls ---------- */
 .stallWrap {
   position: relative;
-  flex: 0 0 auto;
-  width: calc(var(--m) * var(--stall-w) / 32);
-  height: calc(var(--m) * var(--stall-h) / 32);
-}
-
-@media (max-width: 700px) {
-  .stallWrap {
-    width: auto;
-    height: 43svh;
-  }
-}
-
-.mGridL .stallWrap {
-  grid-column: 2;
-}
-
-.stall {
-  position: absolute;
-  inset: 0;
-  display: block;
-  line-height: 0;
-}
-
-/* very subtle interior idle: the stall bg breathes light */
-.interior {
-  animation: interiorIdle 7s steps(1, end) infinite;
-}
-
-.stallWrap:hover .interior,
-.stallWrap:focus-within .interior {
-  animation: none;
-}
-
-@keyframes interiorIdle {
-  0%,
-  100% {
-    filter: brightness(1);
-  }
-  44% {
-    filter: brightness(1.05);
-  }
-  91% {
-    filter: brightness(0.96);
-  }
-}
-
-/* hover illumination: same pixels, brighter */
-.stallWrap:hover img,
-.stallWrap:focus-within img {
-  filter: brightness(1.35) saturate(1.4);
-}
-
-.glowWash {
-  position: absolute;
-  inset: 0;
   z-index: 3;
+  flex: none;
+  width: calc(var(--su) * var(--w));
+  height: calc(var(--su) * var(--h));
+  isolation: isolate;
+}
+
+/* contact shadow, the one stall effect that stays */
+.stallWrap::after {
+  content: "";
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  bottom: calc(var(--su) * -14);
+  height: calc(var(--su) * 28);
   background: radial-gradient(
-    ellipse at 50% 45%,
-    color-mix(in srgb, var(--tint) 34%, transparent),
-    transparent 72%
+    ellipse at 50% 50%,
+    rgb(0 0 0 / 0.5),
+    transparent 68%
   );
-  mix-blend-mode: screen;
-  opacity: 0;
   pointer-events: none;
 }
 
-.stallWrap:hover .glowWash,
-.stallWrap:focus-within .glowWash {
-  opacity: 1;
-}
+/* ---------- mobile: one floor = one SM spanning two stories ---------- */
 
-/* keeper: behind the front, feet behind the counter band */
-.keeper {
-  position: absolute;
-  left: 50%;
-  translate: -50% 0;
-  bottom: 6%;
-  z-index: 1;
-}
-
-.keeper img {
-  height: calc(var(--m) * 2.2 * var(--hs));
-  width: auto;
-}
-
-.keeperIdle {
-  display: grid;
-}
-
-.keeperIdle img {
-  grid-area: 1 / 1;
-  animation: slot2 1.4s steps(1, end) infinite;
-}
-
-.keeperIdle img:nth-child(2) {
-  animation-delay: -0.7s;
-}
-
-.keeperHover {
-  display: none;
-}
-
-.keeperHover img {
-  grid-area: 1 / 1;
-  opacity: 0;
-}
-
-.stallWrap:hover .keeperIdle,
-.stallWrap:focus-within .keeperIdle {
-  display: none;
-}
-
-.stallWrap:hover .keeperHover,
-.stallWrap:focus-within .keeperHover {
-  display: grid;
-}
-
-/* greeting plays once, holds the last frame */
-.keeperHover img:nth-child(1) {
-  animation: seqOut 0.3s steps(1, end) forwards;
-}
-
-.keeperHover img:nth-child(2) {
-  animation: seqMid 0.6s steps(1, end) forwards;
-}
-
-.keeperHover img:nth-child(3) {
-  animation: seqEnd 0.6s steps(1, end) forwards;
-}
-
-@keyframes seqOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes seqMid {
-  0% {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes seqEnd {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-/* the stall's idle prop, inside the opening */
-.stallProp {
-  position: absolute;
-  right: 13%;
-  bottom: 22%;
-  z-index: 2;
-}
-
-.stallProp img {
-  width: calc(var(--m) * 0.9 * var(--hs));
-  height: auto;
-}
-
-.stall[data-stall="manual"] .stallProp {
-  left: 28%;
-  right: auto;
-  bottom: 52%;
-}
-
-.stall[data-stall="manual"] .stallProp img {
-  width: calc(var(--m) * 0.65 * var(--hs));
-}
-
-@media (max-width: 700px) {
-  .stall[data-stall="manual"] .stallProp {
-    left: 5%;
-  }
-
-  .stall[data-stall="manual"] .stallProp img {
-    width: calc(var(--m) * 0.45 * var(--hs));
-  }
-}
-
-.customer {
-  position: absolute;
-  right: 18%;
-  bottom: 17%;
-  z-index: 1;
-}
-
-.customer img {
-  height: calc(var(--m) * 1.5 * var(--hs));
-  width: auto;
-}
-
-.stall[data-stall="serve"] .keeperIdle {
-  animation: hologramFlicker 1.9s steps(1, end) infinite;
-}
-
-@keyframes hologramFlicker {
-  0%,
-  91%,
-  100% {
-    opacity: 1;
-  }
-  92% {
-    opacity: 0.35;
-  }
-  94% {
-    opacity: 0.8;
-  }
-  96% {
-    opacity: 0.25;
-  }
-}
-
-/* marquee text: the hard rect from the brief (9-23% height) */
-.stallSign {
-  position: absolute;
-  top: 9%;
-  left: 10%;
-  right: 10%;
-  height: 14%;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(var(--m) * 0.24 * var(--hs));
-  line-height: 1;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--tint) 55%, white);
-  text-shadow:
-    0 0 calc(var(--m) * 0.06) var(--tint),
-    0 0 calc(var(--m) * 0.16) var(--tint);
-  pointer-events: none;
-}
-
-.stallWrap:hover .stallSign,
-.stallWrap:focus-within .stallSign {
-  color: #ffffff;
-}
-
-/* market floors take the stairs' natural height (1.25m wide, 40:176 aspect = 5.5m) */
-.floorMkt {
-  height: calc(var(--m) * 5.5);
-  scroll-snap-align: center;
-  overflow: visible; /* dialogs pop above the stalls, past the floor edge */
-}
-
-@media (max-width: 700px) {
-  .floorMkt {
-    height: 100svh;
-    scroll-snap-align: start;
-  }
-}
-
-.floor {
-  transition: filter 0.5s ease;
-}
-
-.dimmed {
-  filter: brightness(0.55);
-}
-
-/* ---------- FFIX dialog ---------- */
-/* FFIX: the dialog sits at the bottom of the screen, never over the stall */
-.dialog {
-  position: fixed;
-  bottom: calc(var(--m) * 0.35);
-  left: 50%;
-  translate: -50% 0;
-  width: max-content;
-  max-width: min(440px, 86vw);
-  z-index: 30;
-  display: none;
-  padding: 10px 12px;
-  border: 2px solid #f2f2f2;
-  border-radius: 8px;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.04) 0 2px,
-      transparent 2px 4px
-    ),
-    linear-gradient(180deg, #7c8088, #5e626a);
-  box-shadow:
-    inset 1px 1px 0 rgba(255, 255, 255, 0.45),
-    inset -1px -1px 0 rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(0, 0, 0, 0.6),
-    0 6px 16px rgba(0, 0, 0, 0.5);
-  font-size: 10px;
-  line-height: 1.8;
-  color: #fff;
-  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
-  text-transform: none;
-}
-
-.stallWrap:hover .dialog,
-.stallWrap:focus-within .dialog,
-.dialogOpen .dialog {
-  display: block;
-}
-
-.dialogDesc {
-  margin: 0 0 8px;
-}
-
-.dialogLinks {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.dialogLinks a {
-  color: #ffe9a8;
-  text-decoration: none;
-}
-
-.dialogLinks a::before {
-  content: "\25B8 ";
-}
-
-.dialogLinks a:hover {
-  color: #ffffff;
-}
-
-/* frame-speed overrides: the rat runs, the steam drifts */
-.rat .cycle > img {
-  animation-duration: 0.35s;
-}
-
-.stallWrap[data-stall="manual"] .stallProp > img {
-  animation-duration: 1.1s;
-}
-
-/* ---------- slabs ---------- */
-.slab {
+.mfloor {
+  background-image: url("/images/bazaar4/arch/wf-tile.png");
+  background-size: calc(var(--mfloor-h) * 0.5 / 597 * 300)
+    calc(var(--mfloor-h) * 0.5);
+  background-repeat: repeat;
+  background-position: left bottom;
+  --mg: 4vw; /* the floor's gap knob: every _ in both stories */
+  --slot-min: 62vw;
+  --a-cap: calc(var(--mfloor-h) * 0.48 * var(--armin));
+  --slot-target: min(var(--slot-min), var(--a-cap));
+  --shift-ramp: calc((700px - 100vw) * 0.8);
+  --shift-demand: calc(
+    var(--slot-target) -
+    (100vw - var(--sm-w) - 2 * var(--mg))
+  );
+  --shift-m: clamp(
+    0px,
+    max(var(--shift-ramp), var(--shift-demand)),
+    calc(var(--sm-w) / 2)
+  );
+  --slot: calc(100vw - var(--sm-w) + var(--shift-m) - 2 * var(--mg));
   position: relative;
-  z-index: 3;
-  height: calc(var(--m) * 0.75);
-  margin: calc(var(--m) * -0.25) 0;
-  background-repeat: repeat-x;
-  background-size: auto 100%;
+  display: flex;
+  height: var(--mfloor-h);
+}
+
+.sm {
+  flex: none;
+  width: var(--sm-w);
+  height: 100%;
+  margin-left: calc(-1 * var(--shift-m));
+  background: url("/images/bazaar4/arch/sm.png") center / 100% 100% no-repeat;
   image-rendering: pixelated;
-  box-shadow:
-    0 10px 24px rgba(0, 0, 0, 0.55),
-    0 -10px 24px rgba(0, 0, 0, 0.55);
 }
 
-/* ---------- hud ---------- */
-.hud {
-  position: fixed;
-  top: 12px;
-  right: 14px;
-  z-index: 10;
+.mfloorR .sm {
+  margin-left: 0;
+  margin-right: calc(-1 * var(--shift-m));
+  transform: scaleX(-1); /* exits face the stalls */
 }
 
-.hudBtn {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #d6dbe6;
-  background: rgba(5, 7, 11, 0.8);
-  border: 1px solid #1c212e;
-  border-radius: 3px;
-  padding: 5px 9px;
-  cursor: pointer;
-}
-
-.hudBtn:hover {
-  border-color: #4fd8c8;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .scene *,
-  .scene *::before,
-  .scene *::after {
-    /* last block in the file: source order beats the animation classes above */
-    animation: none;
-    transition: none;
-  }
-}
-
-/* the seated ramen customer, back to the viewer */
-.customer {
-  position: absolute;
-  left: 22%;
-  bottom: 12%;
-  z-index: 2;
-}
-
-.customer img {
-  height: calc(var(--m) * 1.5 * var(--hs));
-  width: auto;
-}
-
-/* serve: hologram flicker is runtime, no hover frames */
-.stallWrap[data-stall="serve"] .keeper {
-  animation: holoFlicker 2.8s steps(1, end) infinite;
-}
-
-.stallWrap[data-stall="serve"]:hover .keeperIdle,
-.stallWrap[data-stall="serve"]:focus-within .keeperIdle {
+.stack {
+  flex: 1;
+  min-width: 0;
   display: grid;
+  /* stories split at the SM art's measured platform line */
+  grid-template-rows: calc(var(--sm-split, 0.5) * 100%) 1fr;
 }
 
-.stallWrap[data-stall="serve"]:hover .keeper {
-  animation-duration: 0.9s;
+.storyRow {
+  display: flex;
+  align-items: flex-end;
+  min-height: 0;
 }
 
-@keyframes holoFlicker {
-  0%,
-  86%,
-  100% {
-    opacity: 1;
+@media (max-width: 699px) {
+  .stallWrap {
+    /* one shared width per floor: all four gaps equal by construction */
+    width: min(var(--slot), var(--a-cap));
+    height: auto;
+    aspect-ratio: var(--ar);
+    margin-inline: auto;
   }
-  88% {
-    opacity: 0.4;
-  }
-  91% {
-    opacity: 0.85;
-  }
-  95% {
-    opacity: 0.55;
-  }
+}
+
+.sepM {
+  height: 4svh;
+  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-size: auto 100%;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  image-rendering: pixelated;
+  filter: brightness(0.7) blur(1px);
+}
+
+/* ---------- hitbox debug ---------- */
+
+[data-hitbox] .stallWrap {
+  outline: 2px dashed rgb(75 210 225 / 0.8);
+  outline-offset: -2px;
+}
+
+[data-hitbox] .stairs,
+[data-hitbox] .sm {
+  outline: 2px dashed rgb(224 160 64 / 0.8);
+  outline-offset: -2px;
 }
