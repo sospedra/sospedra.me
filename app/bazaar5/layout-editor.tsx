@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import s4 from '../bazaar4/bazaar4.module.css'
-import { DECO_INVENTORY } from '../bazaar4/deco-inventory'
-import { GLOW_COLORS } from '../bazaar4/decor-manifest'
+import s4 from './bazaar4.module.css'
+import { DECO_INVENTORY } from './deco-inventory'
+import { GLOW_COLORS } from './decor-manifest'
 
 type Sel = { el: HTMLElement; id: string }
 

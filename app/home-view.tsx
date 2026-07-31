@@ -22,7 +22,6 @@ import { useNav } from 'service/nav'
 import { useTheme } from 'service/theme'
 import { useTransition } from 'service/transition'
 import { usePrefetch } from 'service/transition/use-prefetch'
-import { prefetchBazaarAssets } from './bazaar3/prefetch'
 
 const BAZAAR_SIGNATURE_DURATION = 3100
 const BAZAAR_EXPRESS_DURATION = 2500
@@ -242,7 +241,6 @@ function HomeStage() {
   }, [isDeparting, router])
 
   const departForBazaar = (event: ReactMouseEvent<HTMLAnchorElement>) => {
-    prefetchBazaarAssets()
     const shouldUseNativeNavigation =
       event.button !== 0 ||
       event.metaKey ||

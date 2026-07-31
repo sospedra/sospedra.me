@@ -15,11 +15,11 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { type StallId, setSoundEnabled, sfx } from '../bazaar/sounds'
-import s4 from '../bazaar4/bazaar4.module.css'
-import SceneStall from '../bazaar4/scene-stall'
-import { type Bazaar4StallId, SIM_DIMS } from '../bazaar4/stalls-manifest'
+import s4 from './bazaar4.module.css'
 import s5 from './bazaar5.module.css'
 import LayoutEditor from './layout-editor'
+import SceneStall from './scene-stall'
+import { type Bazaar4StallId, SIM_DIMS } from './stalls-manifest'
 
 const pixelFont = Press_Start_2P({ weight: '400', subsets: ['latin'] })
 
