@@ -1,6 +1,6 @@
 /* bazaar5 — the LAYOUT_HANDOFF system, ported from public/bz4-layout-proto.html.
    Street level + stall internals + dialogs + editor chrome come from
-   bazaar4.module.css (imported by the view); THIS file owns only the
+   scene.module.css (imported by the view); THIS file owns only the
    validated layout: su law, regimes A/B, mobile SM floors. */
 
 .scene {

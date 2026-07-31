@@ -14,9 +14,9 @@ import {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
-import s5 from './bazaar.module.css'
-import s4 from './bazaar4.module.css'
+import css from './bazaar.module.css'
 import LayoutEditor from './layout-editor'
+import scene from './scene.module.css'
 import SceneStall from './scene-stall'
 import { type StallId, setSoundEnabled, sfx } from './sounds'
 import { type Bazaar4StallId, SIM_DIMS } from './stalls-manifest'
@@ -48,33 +48,37 @@ const DIMS = Object.fromEntries(
 
 function StreetFloor({ onDoor }: { onDoor: () => void }) {
   return (
-    <section className={s4.floor} data-floor='' data-market-scene=''>
+    <section className={scene.floor} data-floor='' data-market-scene=''>
       <img
         src={`${STREET}/bg-tower.png`}
         alt=''
-        className={s4.sTower}
+        className={scene.sTower}
         aria-hidden
       />
-      <div className={s4.streetBg} />
-      <div className={s4.sAlleySigns} aria-hidden>
+      <div className={scene.streetBg} />
+      <div className={scene.sAlleySigns} aria-hidden>
         <img src={`${STREET}/alley-signs-1.png`} alt='' />
         <img src={`${STREET}/alley-signs-2.png`} alt='' data-alt='' />
       </div>
-      <div className={s4.alleyShade} aria-hidden />
-      <img src={`${STREET}/building-pad.png`} alt='' className={s4.sPadL} />
-      <img src={`${STREET}/building-pad.png`} alt='' className={s4.sPadR} />
-      <img src={`${STREET}/building-a.png`} alt='' className={s4.sA} />
-      <div className={s4.sCDWrap}>
-        <img src={`${STREET}/building-cd.png`} alt='' className={s4.sCDImg} />
-        <div className={s4.sNeon} aria-hidden>
+      <div className={scene.alleyShade} aria-hidden />
+      <img src={`${STREET}/building-pad.png`} alt='' className={scene.sPadL} />
+      <img src={`${STREET}/building-pad.png`} alt='' className={scene.sPadR} />
+      <img src={`${STREET}/building-a.png`} alt='' className={scene.sA} />
+      <div className={scene.sCDWrap}>
+        <img
+          src={`${STREET}/building-cd.png`}
+          alt=''
+          className={scene.sCDImg}
+        />
+        <div className={scene.sNeon} aria-hidden>
           <img src={`${STREET}/neon-off.png`} alt='' />
-          <div className={s4.sNeonOn}>
+          <div className={scene.sNeonOn}>
             <img src={`${STREET}/neon.png`} alt='Bazaar' />
           </div>
         </div>
         <button
           type='button'
-          className={cn(s4.hit, s4.sDoor)}
+          className={cn(scene.hit, scene.sDoor)}
           data-label='door'
           aria-label='enter the market'
           onMouseEnter={() => sfx.hover()}
@@ -88,12 +92,12 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
           <img src={`${STREET}/door-open-2.png`} alt='' data-frame='2' />
         </button>
       </div>
-      <div className={s4.alleyGlow} aria-hidden />
-      <div className={s4.sFloor} />
-      <div className={s4.sCar} aria-hidden>
-        <div className={s4.sCarStretch}>
-          <div className={s4.sCarSquash}>
-            <div className={s4.sCarScale}>
+      <div className={scene.alleyGlow} aria-hidden />
+      <div className={scene.sFloor} />
+      <div className={scene.sCar} aria-hidden>
+        <div className={scene.sCarStretch}>
+          <div className={scene.sCarSquash}>
+            <div className={scene.sCarScale}>
               <SpriteCar engineOn isMoving />
             </div>
           </div>
@@ -101,7 +105,7 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
       </div>
       <Link
         url='/'
-        className={cn(s4.hit, s4.sBus)}
+        className={cn(scene.hit, scene.sBus)}
         data-label='bus'
         aria-label='bus stop: exit to the city'
         onMouseEnter={() => sfx.hover()}
@@ -315,20 +319,25 @@ function DialogContent(props: {
 
   return (
     <>
-      <p className={cn(s4.dialogDesc, links.length === 0 && s4.dialogDescSolo)}>
-        <span className={s4.srOnly}>{desc}</span>
-        <span className={s4.typeMeasure} aria-hidden>
+      <p
+        className={cn(
+          scene.dialogDesc,
+          links.length === 0 && scene.dialogDescSolo,
+        )}
+      >
+        <span className={scene.srOnly}>{desc}</span>
+        <span className={scene.typeMeasure} aria-hidden>
           {desc}
         </span>
-        <span className={s4.typeText} aria-hidden>
+        <span className={scene.typeText} aria-hidden>
           {sliceCharacters(desc, descVisibleChars)}
           {descVisibleChars < descLength && (
-            <span className={s4.typeCursor}>_</span>
+            <span className={scene.typeCursor}>_</span>
           )}
         </span>
       </p>
       {links.length > 0 && (
-        <div className={s4.dialogLinks}>
+        <div className={scene.dialogLinks}>
           {links.map((link) => {
             const linkLength = countCharacters(link.label)
             const linkVisibleChars = getVisibleCharacters(
@@ -340,18 +349,18 @@ function DialogContent(props: {
             linkStart += linkLength
             const content = (
               <>
-                <span className={s4.linkTypeMeasure} aria-hidden>
+                <span className={scene.linkTypeMeasure} aria-hidden>
                   {link.label}
                 </span>
-                <span className={s4.linkTypeText} aria-hidden>
+                <span className={scene.linkTypeText} aria-hidden>
                   {sliceCharacters(link.label, linkVisibleChars)}
                   {started && linkVisibleChars < linkLength && (
-                    <span className={s4.typeCursor}>_</span>
+                    <span className={scene.typeCursor}>_</span>
                   )}
                 </span>
               </>
             )
-            const className = cn(!started && s4.dialogLinkPending)
+            const className = cn(!started && scene.dialogLinkPending)
 
             return link.external ? (
               <a
@@ -430,7 +439,7 @@ function Dialog(props: {
       ref={dialogRef}
       role='dialog'
       aria-label={`${spec.label} stall details`}
-      className={cn(s4.dialog, pixelFont.className)}
+      className={cn(scene.dialog, pixelFont.className)}
       style={{ left: position.left, top: position.top }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -509,7 +518,7 @@ function GamesDialogs(props: {
       ref={dialogRef}
       role='dialog'
       aria-label='Games stall conversation'
-      className={cn(s4.gamesDialogs, pixelFont.className)}
+      className={cn(scene.gamesDialogs, pixelFont.className)}
       style={{ left: position.left, top: position.top }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -533,15 +542,15 @@ function GamesDialogs(props: {
           <div
             key={`${turn.speaker}-${turn.text}`}
             className={cn(
-              s4.dialog,
-              s4.gamesDialog,
+              scene.dialog,
+              scene.gamesDialog,
               turn.speaker === 'sister'
-                ? s4.gamesDialogSister
-                : s4.gamesDialogBrother,
-              !started && s4.gamesDialogPending,
+                ? scene.gamesDialogSister
+                : scene.gamesDialogBrother,
+              !started && scene.gamesDialogPending,
             )}
           >
-            <span className={s4.srOnly}>{turn.speaker} says: </span>
+            <span className={scene.srOnly}>{turn.speaker} says: </span>
             <DialogContent
               desc={turn.text}
               links={links}
@@ -694,7 +703,7 @@ function Stall({ id }: { id: Bazaar4StallId }) {
     // biome-ignore lint/a11y/noStaticElementInteractions: coordinates hover and focus state for the child link and its portalled dialog
     <div
       ref={wrapRef}
-      className={cn(s5.stallWrap, active && s4.dialogOpen)}
+      className={cn(css.stallWrap, active && scene.dialogOpen)}
       style={
         {
           '--tint': spec.tint,
@@ -722,7 +731,7 @@ function Stall({ id }: { id: Bazaar4StallId }) {
       }}
     >
       <Link
-        className={s4.stall}
+        className={scene.stall}
         aria-label={spec.label}
         data-label={spec.label}
         onClick={guardTap}
@@ -731,13 +740,13 @@ function Stall({ id }: { id: Bazaar4StallId }) {
         url={spec.href}
       >
         {staticStall ? (
-          <div className={s4.sceneStack} aria-hidden>
+          <div className={scene.sceneStack} aria-hidden>
             <img src={staticStall.src} alt='' draggable={false} />
           </div>
         ) : (
           <SceneStall id={id} active={active} />
         )}
-        <div className={s4.glowWash} />
+        <div className={scene.glowWash} />
       </Link>
       {id === 'games' ? (
         <GamesDialogs
@@ -789,9 +798,9 @@ const MOBILE_FLOORS: MobileFloor[] = [
 
 function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
   const sum = spec.stalls.reduce((total, id) => total + DIMS[id].w, 0)
-  const stairs = <div className={s5.stairs} aria-hidden />
+  const stairs = <div className={css.stairs} aria-hidden />
   const band = (
-    <div className={s5.band} data-stage=''>
+    <div className={css.band} data-stage=''>
       {spec.stalls.map((id) => (
         <Stall key={id} id={id} />
       ))}
@@ -799,7 +808,7 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
   )
   return (
     <section
-      className={cn(s5.floor, spec.stairsRight && s5.floorR)}
+      className={cn(css.floor, spec.stairsRight && css.floorR)}
       data-floor=''
       data-market-index={index}
       style={{ '--sum': sum, '--n': spec.stalls.length } as React.CSSProperties}
@@ -818,11 +827,11 @@ function MobileMarketFloor({
   index: number
 }) {
   const armin = Math.min(...spec.stalls.map((id) => DIMS[id].w / DIMS[id].h))
-  const sm = <div className={s5.sm} aria-hidden />
+  const sm = <div className={css.sm} aria-hidden />
   const stack = (
-    <div className={s5.stack} data-stage=''>
+    <div className={css.stack} data-stage=''>
       {spec.stalls.map((id) => (
-        <div key={id} className={s5.storyRow}>
+        <div key={id} className={css.storyRow}>
           <Stall id={id} />
         </div>
       ))}
@@ -830,7 +839,7 @@ function MobileMarketFloor({
   )
   return (
     <section
-      className={cn(s5.mfloor, spec.smRight && s5.mfloorR)}
+      className={cn(css.mfloor, spec.smRight && css.mfloorR)}
       data-floor=''
       data-market-index={index}
       style={{ '--armin': armin } as React.CSSProperties}
@@ -871,21 +880,25 @@ export default function BazaarView() {
   }
 
   return (
-    <main className={s5.scene} ref={sceneRef} data-hitbox={hitbox || undefined}>
-      <div className={s4.hud}>
-        <button type='button' className={s4.hudBtn} onClick={toggleSound}>
+    <main
+      className={css.scene}
+      ref={sceneRef}
+      data-hitbox={hitbox || undefined}
+    >
+      <div className={scene.hud}>
+        <button type='button' className={scene.hudBtn} onClick={toggleSound}>
           {sound ? 'SOUND ON' : 'SOUND OFF'}
         </button>
         <button
           type='button'
-          className={s4.hudBtn}
+          className={scene.hudBtn}
           onClick={() => setHitbox((p) => !p)}
         >
           {hitbox ? 'HITBOX ON' : 'HITBOX OFF'}
         </button>
         <button
           type='button'
-          className={s4.hudBtn}
+          className={scene.hudBtn}
           onClick={() => setEditor((p) => !p)}
         >
           {editor ? 'EDITOR ON' : 'EDITOR OFF'}
@@ -893,32 +906,32 @@ export default function BazaarView() {
       </div>
       <LayoutEditor enabled={editor} />
 
-      <div className={s5.desktopTree}>
-        <div className={cn(s4.scene, s5.streetHost)}>
+      <div className={css.desktopTree}>
+        <div className={cn(scene.scene, css.streetHost)}>
           <StreetFloor onDoor={scrollToMarket} />
         </div>
         {DESKTOP_FLOORS.map((spec, i) => (
           <Fragment key={spec.stalls[0]}>
-            <div className={s5.sep} data-bz5-sep={i} />
+            <div className={css.sep} data-bz5-sep={i} />
             <MarketFloor spec={spec} index={i} />
           </Fragment>
         ))}
-        <div className={s5.sep} data-bz5-sep={3} />
-        <div className={s5.bottomPad} />
+        <div className={css.sep} data-bz5-sep={3} />
+        <div className={css.bottomPad} />
       </div>
 
-      <div className={s5.mobileTree}>
-        <div className={cn(s4.scene, s5.streetHost)}>
+      <div className={css.mobileTree}>
+        <div className={cn(scene.scene, css.streetHost)}>
           <StreetFloor onDoor={scrollToMarket} />
         </div>
         {MOBILE_FLOORS.map((spec, i) => (
           <Fragment key={spec.stalls[0]}>
-            <div className={s5.sepM} />
+            <div className={css.sepM} />
             <MobileMarketFloor spec={spec} index={i} />
           </Fragment>
         ))}
-        <div className={s5.sepM} />
-        <div className={s5.bottomPad} />
+        <div className={css.sepM} />
+        <div className={css.bottomPad} />
       </div>
     </main>
   )

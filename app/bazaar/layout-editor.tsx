@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import s4 from './bazaar4.module.css'
 import { DECO_INVENTORY } from './deco-inventory'
 import { GLOW_COLORS } from './decor-manifest'
+import scene from './scene.module.css'
 
 type Sel = { el: HTMLElement; id: string }
 
@@ -348,8 +348,8 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
     const round3 = (v: number) => Math.round(v * 1000) / 1000
 
     const down = (e: PointerEvent) => {
-      if ((e.target as HTMLElement).closest(`.${s4.editPanel}`)) return
-      if ((e.target as HTMLElement).closest(`.${s4.editHandle}`)) return
+      if ((e.target as HTMLElement).closest(`.${scene.editPanel}`)) return
+      if ((e.target as HTMLElement).closest(`.${scene.editHandle}`)) return
       const el = pickAt(e.clientX, e.clientY)
       if (!el) return
       e.preventDefault()
@@ -436,7 +436,7 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
       resize.current = null
     }
     const swallowClick = (e: MouseEvent) => {
-      if ((e.target as HTMLElement).closest(`.${s4.editPanel}`)) return
+      if ((e.target as HTMLElement).closest(`.${scene.editPanel}`)) return
       if ((e.target as HTMLElement).closest('[data-edit-id]')) {
         e.preventDefault()
         e.stopPropagation()
@@ -458,8 +458,8 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
 
   useEffect(() => {
     if (!sel) return
-    sel.el.classList.add(s4.editSel)
-    return () => sel.el.classList.remove(s4.editSel)
+    sel.el.classList.add(scene.editSel)
+    return () => sel.el.classList.remove(scene.editSel)
   }, [sel])
 
   /* a fresh spawn selects itself once its portal lands in the DOM */
@@ -721,13 +721,13 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
             HANDLES.map(({ kind, cursor }) => (
               <div
                 key={kind}
-                className={s4.editHandle}
+                className={scene.editHandle}
                 style={{ ...handlePos(kind, selRect), cursor }}
                 onPointerDown={grabHandle(kind)}
               />
             ))}
           <div
-            className={s4.editPanel}
+            className={scene.editPanel}
             style={{
               width: 312,
               maxHeight: 'calc(100vh - 5rem)',
@@ -741,7 +741,7 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
             }}
           >
             <div
-              className={s4.editPanelTitle}
+              className={scene.editPanelTitle}
               style={{ cursor: 'grab', touchAction: 'none' }}
               onPointerDown={onPanelTitleDown}
               onPointerMove={onPanelTitleMove}
@@ -753,7 +753,7 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
             </div>
             <div>drag = move · corners = scale · edges = one axis</div>
             {selected ? (
-              <div className={s4.editPanelSel}>
+              <div className={scene.editPanelSel}>
                 <strong>{selected.id}</strong> f{selected.floor}
                 {selected.host && <> {selected.host}</>}
                 <br />x {selected.x} · y {selected.y}
@@ -768,9 +768,9 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
                 )}
               </div>
             ) : (
-              <div className={s4.editPanelSel}>click anything outlined</div>
+              <div className={scene.editPanelSel}>click anything outlined</div>
             )}
-            <div className={s4.editPanelRow}>
+            <div className={scene.editPanelRow}>
               <button
                 type='button'
                 onClick={() => {
@@ -798,7 +798,7 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
                 bright
               </button>
             </div>
-            <div className={s4.editPanelRow}>
+            <div className={scene.editPanelRow}>
               <button type='button' onClick={() => nudgeOpacity(-0.1)}>
                 op-
               </button>
@@ -815,7 +815,7 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
                 copy ({touched.current.size + items.length})
               </button>
             </div>
-            <div className={s4.editPanelRow}>
+            <div className={scene.editPanelRow}>
               <button type='button' onClick={deleteSelected}>
                 delete
               </button>
@@ -826,7 +826,7 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
                 reset all
               </button>
             </div>
-            <div className={s4.editPanelRow} style={{ marginTop: 8 }}>
+            <div className={scene.editPanelRow} style={{ marginTop: 8 }}>
               {GLOW_KEYS.map((key) => (
                 <button
                   key={key}

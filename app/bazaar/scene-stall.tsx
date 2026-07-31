@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import styles from './bazaar4.module.css'
+import styles from './scene.module.css'
 import {
   type Bazaar4StallId,
   type FxFrame,
