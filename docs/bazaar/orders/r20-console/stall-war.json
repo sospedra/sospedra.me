@@ -1,0 +1,327 @@
+[
+  {
+    "n": "01",
+    "name": "s01-place-this-ed",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "camera-copy Ed"
+  },
+  {
+    "n": "02",
+    "name": "s02-ed-headup",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "Ed + tiny delta"
+  },
+  {
+    "n": "03",
+    "name": "s03-dual-authority",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png",
+      "r15/gen-games.png"
+    ],
+    "desc": "Ed + world camera"
+  },
+  {
+    "n": "04",
+    "name": "s04-games-camera",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r15/gen-games.png"
+    ],
+    "desc": "world camera only"
+  },
+  {
+    "n": "05",
+    "name": "s05-ed-silhouette",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-sil.png"
+    ],
+    "desc": "silhouette contract"
+  },
+  {
+    "n": "06",
+    "name": "s06-sil-plus-ed",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-sil.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "silhouette + identity"
+  },
+  {
+    "n": "07",
+    "name": "s07-ed-trace",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-trace.png"
+    ],
+    "desc": "trace the blur"
+  },
+  {
+    "n": "08",
+    "name": "s08-restore-around",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "restoration around Ed"
+  },
+  {
+    "n": "09",
+    "name": "s09-eye-height",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "verbal eye height"
+  },
+  {
+    "n": "10",
+    "name": "s10-horizon",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "horizon at Ed's eyes"
+  },
+  {
+    "n": "11",
+    "name": "s11-negative",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "negative space"
+  },
+  {
+    "n": "12",
+    "name": "s12-floor-band",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "foreshortening ratio"
+  },
+  {
+    "n": "13",
+    "name": "s13-skeleton",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "skeleton rows in stall coords"
+  },
+  {
+    "n": "14",
+    "name": "s14-zorder",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "overlap order"
+  },
+  {
+    "n": "15",
+    "name": "s15-proportions",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "proportion table"
+  },
+  {
+    "n": "16",
+    "name": "s16-diorama",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "diorama product shot"
+  },
+  {
+    "n": "17",
+    "name": "s17-security-cam",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "security cam"
+  },
+  {
+    "n": "18",
+    "name": "s18-borrow-kids",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r15/gen-games.png"
+    ],
+    "desc": "borrow the kids' camera"
+  },
+  {
+    "n": "19",
+    "name": "s19-pose-lock",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "camera lock under delta"
+  },
+  {
+    "n": "20",
+    "name": "s20-minimal",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "minimal"
+  },
+  {
+    "n": "21",
+    "name": "s21-hyperverbose",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "hyper-verbose"
+  },
+  {
+    "n": "22",
+    "name": "s22-one-law",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "one law"
+  },
+  {
+    "n": "23",
+    "name": "s23-two-step",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r15/gen-games.png"
+    ],
+    "desc": "two-step imagination"
+  },
+  {
+    "n": "24",
+    "name": "s24-mirror-ed",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "mirror test"
+  },
+  {
+    "n": "25",
+    "name": "s25-triple",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png",
+      "r21-ed/in/ed-sil.png",
+      "r15/gen-games.png"
+    ],
+    "desc": "triple authority"
+  },
+  {
+    "n": "26",
+    "name": "s26-strip-delta",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "one-prop delta"
+  },
+  {
+    "n": "27",
+    "name": "s27-depth-math",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "6-to-1 arithmetic"
+  },
+  {
+    "n": "28",
+    "name": "s28-anime-midshot",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png"
+    ],
+    "desc": "anime mid-shot"
+  },
+  {
+    "n": "29",
+    "name": "s29-set-first",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png"
+    ],
+    "desc": "set first, Ed last"
+  },
+  {
+    "n": "30",
+    "name": "s30-kitchen-sink",
+    "refs": [
+      "r10/console-alpha-r11.png",
+      "r20-console/frame-guide.png",
+      "r20-console/blueprint.png",
+      "r21-ed/in/ed-ref.png",
+      "r21-ed/in/ed-sil.png",
+      "r15/gen-games.png"
+    ],
+    "desc": "kitchen sink"
+  }
+]

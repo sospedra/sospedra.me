@@ -1,0 +1,190 @@
+[
+  {
+    "n": "01",
+    "name": "s01-camera-copy",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "identity+camera"
+  },
+  {
+    "n": "02",
+    "name": "s02-camera-copy-headup",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "identity+camera, tiny delta"
+  },
+  {
+    "n": "03",
+    "name": "s03-dual-authority",
+    "refs": ["r21-ed/in/ed-ref.png", "r21-ed/in/games-floor.png"],
+    "desc": "identity+camera + floor authority"
+  },
+  {
+    "n": "04",
+    "name": "s04-games-floor-only",
+    "refs": ["r21-ed/in/games-floor.png"],
+    "desc": "floor authority only"
+  },
+  {
+    "n": "05",
+    "name": "s05-silhouette-fill",
+    "refs": ["r21-ed/in/ed-sil.png"],
+    "desc": "silhouette contract"
+  },
+  {
+    "n": "06",
+    "name": "s06-sil-plus-identity",
+    "refs": ["r21-ed/in/ed-sil.png", "r21-ed/in/ed-ref.png"],
+    "desc": "silhouette + identity"
+  },
+  {
+    "n": "07",
+    "name": "s07-trace-blur",
+    "refs": ["r21-ed/in/ed-trace.png"],
+    "desc": "trace the blur"
+  },
+  {
+    "n": "08",
+    "name": "s08-edit-sharpen",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "edit-mode restoration"
+  },
+  {
+    "n": "09",
+    "name": "s09-eye-height",
+    "refs": [],
+    "desc": "verbal: eye height + 15 degrees"
+  },
+  {
+    "n": "10",
+    "name": "s10-horizon",
+    "refs": [],
+    "desc": "verbal: horizon at eye level"
+  },
+  {
+    "n": "11",
+    "name": "s11-negative",
+    "refs": [],
+    "desc": "verbal: negative space"
+  },
+  {
+    "n": "12",
+    "name": "s12-floor-band",
+    "refs": [],
+    "desc": "verbal: foreshortening ratio"
+  },
+  {
+    "n": "13",
+    "name": "s13-skeleton",
+    "refs": [],
+    "desc": "verbal: skeleton rows"
+  },
+  {
+    "n": "14",
+    "name": "s14-zorder",
+    "refs": [],
+    "desc": "verbal: overlap order"
+  },
+  {
+    "n": "15",
+    "name": "s15-proportions",
+    "refs": [],
+    "desc": "verbal: proportion table"
+  },
+  {
+    "n": "16",
+    "name": "s16-figurine",
+    "refs": [],
+    "desc": "verbal: figurine product shot"
+  },
+  {
+    "n": "17",
+    "name": "s17-security-cam",
+    "refs": [],
+    "desc": "verbal: security cam"
+  },
+  {
+    "n": "18",
+    "name": "s18-borrow-kids",
+    "refs": ["r21-ed/in/games-floor.png"],
+    "desc": "borrow the kids' camera"
+  },
+  {
+    "n": "19",
+    "name": "s19-pose-delta",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "camera lock under pose delta"
+  },
+  {
+    "n": "20",
+    "name": "s20-minimal",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "minimal three sentences"
+  },
+  {
+    "n": "21",
+    "name": "s21-hyperverbose",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "hyper-verbose restatement"
+  },
+  {
+    "n": "22",
+    "name": "s22-palette-camera",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "palette + one law"
+  },
+  {
+    "n": "23",
+    "name": "s23-two-step",
+    "refs": ["r21-ed/in/games-floor.png"],
+    "desc": "two-step imagination"
+  },
+  {
+    "n": "24",
+    "name": "s24-mirror",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "mirror test"
+  },
+  {
+    "n": "25",
+    "name": "s25-triple",
+    "refs": [
+      "r21-ed/in/ed-ref.png",
+      "r21-ed/in/ed-sil.png",
+      "r21-ed/in/games-floor.png"
+    ],
+    "desc": "triple authority"
+  },
+  {
+    "n": "26",
+    "name": "s26-controller-up",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "one-prop delta"
+  },
+  {
+    "n": "27",
+    "name": "s27-depth-ratio",
+    "refs": [],
+    "desc": "verbal: 6-to-1 compression"
+  },
+  {
+    "n": "28",
+    "name": "s28-anime-midshot",
+    "refs": [],
+    "desc": "verbal: anime mid-shot"
+  },
+  {
+    "n": "29",
+    "name": "s29-zoom",
+    "refs": ["r21-ed/in/ed-ref.png"],
+    "desc": "2x scale test"
+  },
+  {
+    "n": "30",
+    "name": "s30-kitchen-sink",
+    "refs": [
+      "r21-ed/in/ed-ref.png",
+      "r21-ed/in/ed-sil.png",
+      "r21-ed/in/games-floor.png"
+    ],
+    "desc": "kitchen sink minimal"
+  }
+]
