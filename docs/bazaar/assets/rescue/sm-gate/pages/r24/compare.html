@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>r24 SM probes — gate</title>
+<style>
+  body { background: #0a0d13; color: #d6dbe6; font: 13px/1.5 ui-monospace, Menlo, monospace; margin: 24px; }
+  .row { display: flex; gap: 32px; align-items: flex-start; }
+  figure { margin: 0; position: relative; }
+  img { height: 78vh; image-rendering: pixelated; display: block; }
+  .mid { position: absolute; left: -12px; right: -12px; top: 50%; border-top: 2px dashed #37f7e0; }
+  figcaption { margin-top: 10px; }
+  .pass { color: #37f7a0; } .fail { color: #ff5f5f; }
+</style>
+<h1>r24 SM — probe-B redo: frontal base, drum interior, flatness law</h1>
+<div class="row">
+  <figure><img src="trim-a.png"><div class="mid"></div>
+    <figcaption>A — baseline<br>ar 0.451 · deck 46.6% · <b class="fail">51px high</b></figcaption></figure>
+  <figure><img src="trim-b.png"><div class="mid"></div>
+    <figcaption>B — tread emphasis<br>ar 0.465 · deck 49.7% · <b class="pass">LAW PASS (−5px)</b></figcaption></figure>
+  <figure><img src="trim-c.png"><div class="mid"></div>
+    <figcaption>C — max chunk<br>ar 0.452 · deck 46.4% · <b class="fail">55px high</b></figcaption></figure>
+</div>

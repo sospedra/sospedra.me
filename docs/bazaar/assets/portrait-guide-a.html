@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>portrait-guide-a</title>
+<style>
+  * { box-sizing: border-box; } html, body { margin: 0; background: #0d0f12; }
+  #stage { position: relative; width: 1024px; height: 1536px; overflow: hidden;
+    font: 11px/1.2 Menlo, monospace; color: #cfd3d8; }
+  .box { position: absolute; border: 2px dashed #ffd26b; }
+  .box span { position: absolute; left: 2px; top: 2px; color: #ffd26b;
+    background: rgb(13 15 18 / 0.8); padding: 0 2px; }
+  .box.dim { border-color: #7a828c; } .box.dim span { color: #9aa2ac; }
+  .box.hot { border-color: #f2f1ee; } .box.hot span { color: #f2f1ee; }
+  .frame { position: absolute; border: 3px solid #e04b6a; }
+  .frame span { position: absolute; left: 4px; top: -20px; color: #e04b6a; }
+  .cap { position: absolute; color: #8a929c; }
+</style></head><body><div id="stage">
+<svg width="1024" height="1536" style="position:absolute" viewBox="0 0 1024 1536">
+  <polygon points="276,1223 748,1223 816,1304 208,1304"
+    fill="rgb(0 255 0 / 0.10)" stroke="#35e05a" stroke-width="2"/>
+  <rect x="208" y="1304" width="608" height="64"
+    fill="rgb(224 0 255 / 0.10)" stroke="#e055e0" stroke-width="2"/>
+  <polygon points="274,1252 750,1252 790,1300 234,1300"
+    fill="rgb(255 210 107 / 0.10)" stroke="#ad6a1e" stroke-width="2" stroke-dasharray="7 5"/>
+  <g fill="#35e05a"><circle cx="276" cy="1223" r="4"/><circle cx="259" cy="1243" r="4"/><circle cx="242" cy="1263" r="4"/><circle cx="225" cy="1283" r="4"/><circle cx="208" cy="1304" r="4"/><circle cx="748" cy="1223" r="4"/><circle cx="765" cy="1243" r="4"/><circle cx="782" cy="1263" r="4"/><circle cx="799" cy="1283" r="4"/><circle cx="816" cy="1304" r="4"/></g>
+</svg>
+<div class="frame" style="left:208px;top:568px;width:608px;height:800px;">
+  <span>PORTRAIT FRAME 608 x 800 - family width</span></div>
+<div class="box " style="left:536px;top:590px;width:264px;height:97px;"><span>SIGN plate, hacky-mounted</span></div>
+<div class="box dim" style="left:786px;top:600px;width:20px;height:330px;"><span>LAMP POST dead vertical</span></div>
+<div class="box dim" style="left:772px;top:568px;width:40px;height:32px;"><span>dead lamp</span></div>
+<div class="box hot" style="left:268px;top:772px;width:140px;height:88px;"><span>LIT CRT</span></div>
+<div class="box " style="left:252px;top:860px;width:162px;height:400px;"><span>RACK A</span></div>
+<div class="box dim" style="left:434px;top:904px;width:176px;height:360px;"><span>RACK B</span></div>
+<div class="box hot" style="left:444px;top:1025px;width:212px;height:275px;"><span>ED</span></div>
+<div class="box " style="left:614px;top:928px;width:160px;height:336px;"><span>SHELVING</span></div>
+<div class="box dim" style="left:624px;top:1196px;width:128px;height:100px;"><span>periph box</span></div>
+<div class="box dim" style="left:292px;top:1264px;width:96px;height:36px;"><span>pizza</span></div>
+<div class="box dim" style="left:404px;top:1280px;width:96px;height:18px;"><span>strip</span></div>
+<div class="box dim" style="left:504px;top:1268px;width:80px;height:32px;"><span>handhelds</span></div>
+<div class="cap" style="left:208px;top:1378px;width:608px;">
+ground y=1368. dashed boxes + dots invisible constraints: obey, never draw.
+slab sides EXACT 68:81 through the green dots.</div>
+</div></body></html>

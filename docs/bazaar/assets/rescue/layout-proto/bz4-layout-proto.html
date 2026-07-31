@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bazaar4 layout proto</title>
+<!--
+  bazaar4 layout system — box prototype, no art.
+
+  Spec:
+    >=1400 container   |xS_sc_a.._ecx|   stalls in a 1400px container, n+1 equal
+                                          gaps inside, stairs outside sc with one
+                                          more equal gap, x = leftover
+    mobile..cap        |S_a.._|           stairs flush to their screen edge,
+                                          n+1 equal gaps, full bleed, no
+                                          container; from 1200px down S slides
+                                          offscreen progressively, reaching
+                                          HALF (rule 2) at the 700px handoff
+    <mobile (700px)    |SM_a_|            ONE floor = ONE SM + TWO stalls
+                       |SM_a_|            stacked beside it, one per story.
+                                          SM spans both stories (that is what
+                                          makes it a distinct asset). ALL four
+                                          gaps of the floor are equal (shared
+                                          slot width, both stalls render the
+                                          same width). Floor caps at 100vh.
+
+  S/SM alternates sides per floor (here: R, L, R desktop / R, L, R, L mobile,
+  matching production). Patterns mirror; every rule holds unchanged. The side
+  is DOM order: S/SM last in the floor = stairs right.
+
+  Rules:
+    1. a never overlaps a or S/SM (gaps >= 0 by construction)
+    2. S/SM may crop offscreen up to HALF their width when needed
+    3. floor height = S/SM height, aspect fixed (S = 324x597 su),
+       everything freezes at the cap (no growth past it)
+
+  Model: ONE knob, --su-cap (px per sim unit at the cap). Everything derives.
+    stall widths  = simW * su         (dispW/dispH from stalls-manifest)
+    floor height  = 597 * su
+    S width       = 324 * su
+    inner gaps    = leftover / (n+1), per floor, always equal within a floor
+    su            = su-cap * min(1, (100vw + shift) / VSTAR)
+
+  VSTAR = viewport where the composition freezes = the point where the 1400px
+  container plus at least HALF of S fits (rule 2). Binding floor is the
+  2-stall one (biggest gaps):
+    g1 = (1400 - 1077*0.9) / 3        = 143.6
+    group1 = 324*0.9 + g1 + 1400      = 1835.2
+    VSTAR  = group1 - (324*0.9)/2     = 1689.4  -> 1690
+  Consequence: the literal 1400 container only materializes at vw >= 1690.
+  Between 1400 and 1690 the full-bleed regime keeps running (rule 2 makes
+  a hard 1400 switch impossible: at vw=1400 the stairs would be 100% off).
+  Retune VSTAR (here and in the media query) if you change --su-cap.
+
+  Desktop soft crop (1200 -> 700): --shift ramps 0 -> S/2 linearly. The
+  reclaimed width feeds back into --su, so stalls grow instead of gaps.
+  Constants derive from the fixpoint shift = 162 * su(700 + shift):
+    su(v) = 0.9 * v / 1690;  shift = 0.08627 * (700 + shift)  ->  shift = 66.1
+    slope = 66.1 / (1200 - 700) = 0.132
+  Retune 0.132 and 66px if --su-cap or --vstar change.
+
+  Constraint when raising --su-cap: sum(stall su widths) * su-cap must stay
+  under 1400 or gaps go negative (rule 1). Worst floor is 1156 su -> su-cap
+  max ~1.15 with a little gap left.
+
+  Mobile: floor height = SM height, capped at 100vh. Real SM lands at 70-80vh
+  (regen pending), faked here as a --sm-h tall, --sm-ar aspect box. Gap knob
+  is --mg. Both stalls of a floor render ONE shared width, so all four gaps
+  match by construction:
+    a-cap  = story height * headroom * min(ar1, ar2)   worst stall of the pair
+    target = min(--slot-min, a-cap)                    never ask for width the
+                                                       tall stall can't turn
+                                                       into height
+    ramp   = (700px - 100vw) * 0.8                     SM slides out from the
+                                                       handoff; ~47-50% hidden
+                                                       by 570px (hits SM/2 at
+                                                       ~562px on tall
+                                                       viewports, sooner on
+                                                       short ones)
+    demand = target - natural slot                     extra room the stalls
+                                                       can still spend
+    shift  = clamp(0, max(ramp, demand), SM/2)         progressive AND
+                                                       demand-driven, capped
+                                                       at half (rule 2)
+    width  = min(slot, a-cap)                          shared by both stalls
+  When a-cap binds, gaps grow past --mg but stay equal. The story divider
+  only crosses the stall column: the stairwell is continuous.
+
+  Note: 100vw includes the scrollbar on non-overlay platforms; on macOS
+  overlay scrollbars this is exact.
+
+  Rulers: dashed = measured gap, green = all equal gaps on that floor agree
+  within 1.5px (mobile pools BOTH stories of a floor), red = they don't,
+  grey = x (undefined leftover), amber = crop.
+-->
+<style>
+  :root {
+    --su-cap: 0.9;    /* THE knob: px per sim unit at the cap */
+    --vstar: 1690;    /* keep in sync with the @media below and --su-cap */
+    --shift: clamp(0px, (1200px - 100vw) * 0.132, 66px); /* S soft crop, 1200->700 */
+    --su: min(
+      calc(var(--su-cap) * 1px),
+      calc((100vw + var(--shift)) * var(--su-cap) / var(--vstar))
+    );
+    --s-w: calc(var(--su) * 324);
+    --floor-h: calc(var(--su) * 597);
+    --sm-h: 75svh;    /* SM height once the asset lands: 70-80vh */
+    --sm-ar: 0.464;   /* measured: r24-B no-rail trim, 705x1518 */
+    --sm-split: 0.497; /* r24-B's measured deck line */
+    --mfloor-h: min(var(--sm-h), 100svh); /* one mobile floor, never past 100vh */
+    --sm-w: calc(var(--mfloor-h) * var(--sm-ar));
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: #05060a;
+    color: #d6dbe6;
+    font: 12px/1.4 ui-monospace, "SF Mono", Menlo, monospace;
+    overflow-x: clip;
+    position: relative;
+  }
+  header { padding: 10px 14px; color: #6b7280; }
+  header b { color: #d6dbe6; font-weight: 600; }
+
+  .floor {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    height: var(--floor-h);
+    background: #0a0d13;
+    /* full-bleed regime: S flush to its edge, n+1 equal gaps, trailing gap included */
+    --g: calc((100vw + var(--shift) - var(--s-w) - var(--su) * var(--sum)) / (var(--n) + 1));
+    column-gap: var(--g);
+    padding-right: var(--g);
+  }
+  .floor .s { margin-left: calc(-1 * var(--shift)); }
+  .floor.r { padding-right: 0; padding-left: var(--g); }
+  .floor.r .s { margin-left: 0; margin-right: calc(-1 * var(--shift)); }
+  .band { display: contents; }
+
+  .s, .sm {
+    flex: none;
+    background: rgb(224 160 64 / 0.10);
+    outline: 2px solid #e0a040;
+    outline-offset: -2px;
+    color: #e0a040;
+    display: grid;
+    place-items: center;
+  }
+  .s {
+    width: var(--s-w);
+    height: 100%;
+    background: url('/images/bazaar4/arch/stairs.png') center / 100% 100% no-repeat;
+    image-rendering: pixelated;
+  }
+  .floor:not(.r) .s { transform: scaleX(-1); } /* art faces right-placement */
+  .a {
+    flex: none;
+    width: calc(var(--su) * var(--w));
+    height: calc(var(--su) * var(--h));
+    background: rgb(75 210 225 / 0.08);
+    outline: 2px solid #4bd2e1;
+    outline-offset: -2px;
+    color: #4bd2e1;
+    display: grid;
+    place-items: center;
+    text-align: center;
+  }
+
+  /* cap regime: the 1400px container exists, S hangs outside it */
+  @media (min-width: 1690px) {
+    .floor, .floor.r {
+      --gc: calc((1400px - var(--su) * var(--sum)) / (var(--n) + 1));
+      --group: calc(var(--s-w) + var(--gc) + 1400px);
+      width: max-content;
+      column-gap: var(--gc);
+      padding: 0;
+    }
+    /* centered group; pins the container edge first, S crops on its own side */
+    .floor { margin-left: min(calc((100vw - var(--group)) / 2), calc(100vw - var(--group))); }
+    .floor.r { margin-left: max(calc((100vw - var(--group)) / 2), 0px); }
+    .band {
+      display: flex;
+      align-items: flex-end;
+      column-gap: var(--gc);
+      padding-inline: var(--gc);
+      width: 1400px;
+      height: 100%;
+      outline: 1px dashed rgb(255 95 170 / 0.55);
+      outline-offset: -1px;
+    }
+  }
+
+  .sep {
+    height: calc(var(--su) * 225);
+    background: repeating-linear-gradient(90deg, #0d1017 0 40px, #090c12 40px 80px);
+  }
+
+  /* mobile tree: one floor = one SM spanning two stories + two stacked stalls */
+  #mobile { display: none; }
+  .mfloor {
+    --mg: 4vw;        /* the floor's gap knob: every _ in both stories */
+    --slot-min: 62vw; /* stall room that triggers the SM crop */
+    /* widest width the floor's tallest stall can spend inside its story */
+    --a-cap: calc(var(--mfloor-h) * 0.48 * var(--armin));
+    --slot-target: min(var(--slot-min), var(--a-cap));
+    /* viewport ramp: SM slides out from the 700px handoff, ~half by 570 */
+    --shift-ramp: calc((700px - 100vw) * 0.8);
+    /* demand: whatever the stalls still need beyond the ramp */
+    --shift-demand: calc(var(--slot-target) - (100vw - var(--sm-w) - 2 * var(--mg)));
+    --shift-m: clamp(
+      0px,
+      max(var(--shift-ramp), var(--shift-demand)),
+      calc(var(--sm-w) / 2)
+    );
+    --slot: calc(100vw - var(--sm-w) + var(--shift-m) - 2 * var(--mg));
+    display: flex;
+    height: var(--mfloor-h);
+    background: #0a0d13;
+  }
+  .sm {
+    width: var(--sm-w);
+    height: 100%;
+    margin-left: calc(-1 * var(--shift-m));
+    background: url('/bz4-sm-b2.png') center / 100% 100% no-repeat;
+    image-rendering: pixelated;
+  }
+  .mfloor.r .sm { transform: scaleX(-1); } /* exits face the stalls */
+  .mfloor.r .sm { margin-left: 0; margin-right: calc(-1 * var(--shift-m)); }
+  .stack {
+    flex: 1;
+    min-width: 0;
+    display: grid;
+    /* stories split at the SM art's measured platform line, not blind 50/50 */
+    grid-template-rows: calc(var(--sm-split, 0.5) * 100%) 1fr;
+  }
+  .storyRow { display: flex; align-items: flex-end; min-height: 0; }
+  .storyRow + .storyRow { border-top: 2px solid #05060a; } /* stall column only */
+  .storyRow .a {
+    /* one shared width per floor: equality across both stories by construction */
+    width: min(var(--slot), var(--a-cap));
+    height: auto;
+    aspect-ratio: var(--ar);
+    margin-inline: auto; /* equal gap to SM and to the screen edge */
+  }
+  .sep-m { height: 4svh; background: repeating-linear-gradient(90deg, #0d1017 0 24px, #090c12 24px 48px); }
+
+  @media (max-width: 699px) {
+    #desktop { display: none; }
+    #mobile { display: block; }
+  }
+
+  #hud {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 20;
+    padding: 6px 9px;
+    background: rgb(6 7 13 / 0.9);
+    border: 1px solid #37f7e0;
+    color: #37f7e0;
+    white-space: pre;
+  }
+
+  #rulers { position: absolute; inset: 0; z-index: 10; pointer-events: none; }
+  .ruler { position: absolute; border-top: 1px dashed; }
+  .ruler span {
+    position: absolute;
+    left: 50%;
+    translate: -50% -100%;
+    padding: 0 4px;
+    background: #05060a;
+    white-space: nowrap;
+  }
+  .ruler.ok { color: #37f7a0; border-color: #37f7a0; }
+  .ruler.bad { color: #ff5f5f; border-color: #ff5f5f; }
+  .ruler.x { color: #6b7280; border-color: #6b7280; }
+  .ruler.crop { color: #e0a040; border-color: #e0a040; }
+</style>
+</head>
+<body>
+<header><b>bazaar4 layout proto</b> — resize me. green rulers = equal gaps, grey = x leftover, amber = stairs crop. knobs: --su-cap, --sm-h, --sm-ar, --mg, --slot-min.</header>
+
+<div id="desktop">
+  <!-- stairs RIGHT: S goes last in the DOM -->
+  <section class="floor r" style="--sum: 1077; --n: 2">
+    <div class="band">
+      <div class="a" style="--w: 576; --h: 520">uses<br>576×520</div>
+      <div class="a" style="--w: 501; --h: 440">papers<br>501×440</div>
+    </div>
+    <div class="s"></div>
+  </section>
+  <div class="sep"></div>
+  <section class="floor" style="--sum: 1125; --n: 3">
+    <div class="s"></div>
+    <div class="band">
+      <div class="a" style="--w: 345; --h: 500">manual<br>345×500</div>
+      <div class="a" style="--w: 438; --h: 520">console<br>438×520</div>
+      <div class="a" style="--w: 342; --h: 500">talks<br>342×500</div>
+    </div>
+  </section>
+  <div class="sep"></div>
+  <section class="floor r" style="--sum: 1156; --n: 3">
+    <div class="band">
+      <div class="a" style="--w: 463; --h: 500">w98<br>463×500</div>
+      <div class="a" style="--w: 352; --h: 480">games<br>352×480</div>
+      <div class="a" style="--w: 341; --h: 480">travel<br>341×480</div>
+    </div>
+    <div class="s"></div>
+  </section>
+</div>
+
+<div id="mobile">
+  <section class="mfloor r" style="--armin: 1.108">
+    <div class="stack">
+      <div class="storyRow"><div class="a" style="--ar: 1.108">uses</div></div>
+      <div class="storyRow"><div class="a" style="--ar: 1.139">papers</div></div>
+    </div>
+    <div class="sm"></div>
+  </section>
+  <div class="sep-m"></div>
+  <section class="mfloor" style="--armin: 0.684">
+    <div class="sm"></div>
+    <div class="stack">
+      <div class="storyRow"><div class="a" style="--ar: 0.690">manual</div></div>
+      <div class="storyRow"><div class="a" style="--ar: 0.684">talks</div></div>
+    </div>
+  </section>
+  <div class="sep-m"></div>
+  <section class="mfloor r" style="--armin: 0.842">
+    <div class="stack">
+      <div class="storyRow"><div class="a" style="--ar: 0.842">console</div></div>
+      <div class="storyRow"><div class="a" style="--ar: 0.926">w98</div></div>
+    </div>
+    <div class="sm"></div>
+  </section>
+  <div class="sep-m"></div>
+  <section class="mfloor" style="--armin: 0.710">
+    <div class="sm"></div>
+    <div class="stack">
+      <div class="storyRow"><div class="a" style="--ar: 0.733">games</div></div>
+      <div class="storyRow"><div class="a" style="--ar: 0.710">travel</div></div>
+    </div>
+  </section>
+</div>
+
+<div id="rulers"></div>
+<div id="hud"></div>
+
+<script>
+  const rulers = document.getElementById('rulers')
+  const hud = document.getElementById('hud')
+
+  const regime = () =>
+    innerWidth < 700 ? 'mobile' : innerWidth >= 1690 ? 'A (1400 container)' : 'B (full bleed)'
+
+  function ruler(from, to, y, kind, text) {
+    const el = document.createElement('div')
+    el.className = `ruler ${kind}`
+    el.style.left = `${Math.min(from, to)}px`
+    el.style.width = `${Math.max(1, Math.abs(to - from))}px`
+    el.style.top = `${y}px`
+    el.innerHTML = `<span>${text}</span>`
+    rulers.appendChild(el)
+  }
+
+  const fmt = (v) => `${Math.round(v * 10) / 10}px`
+
+  const cropSpanFor = (rect, onRight) => {
+    const crop = onRight ? rect.right - innerWidth : -rect.left
+    if (crop <= 0.5) return null
+    return {
+      from: onRight ? innerWidth : 0,
+      to: rect.left + rect.width / 2,
+      kind: 'crop',
+      label: `crop ${fmt(crop)} (${Math.round((crop / rect.width) * 100)}%)`,
+    }
+  }
+
+  /* spans for one desktop floor, stairs side detected from geometry */
+  function floorSpans(row) {
+    const s = row.querySelector('.s').getBoundingClientRect()
+    const rects = [...row.querySelectorAll('.a')].map((a) => a.getBoundingClientRect())
+    const band = row.querySelector('.band')?.getBoundingClientRect()
+    const onRight = s.left > rects[0].left
+    const cropSpan = cropSpanFor(s, onRight)
+
+    const inner = []
+    rects.slice(1).forEach((r, i) => inner.push({ from: rects[i].right, to: r.left, kind: 'gap' }))
+
+    if (band && regime().startsWith('A')) {
+      const outer = onRight
+        ? [
+            { from: 0, to: band.left, kind: 'x', label: `x ${fmt(band.left)}` },
+            { from: band.left, to: rects[0].left, kind: 'gap' },
+            { from: rects[rects.length - 1].right, to: band.right, kind: 'gap' },
+            { from: band.right, to: s.left, kind: 'gap' },
+            cropSpan ?? { from: s.right, to: innerWidth, kind: 'x', label: `x ${fmt(innerWidth - s.right)}` },
+          ]
+        : [
+            cropSpan ?? { from: 0, to: s.left, kind: 'x', label: `x ${fmt(s.left)}` },
+            { from: s.right, to: band.left, kind: 'gap' },
+            { from: band.left, to: rects[0].left, kind: 'gap' },
+            { from: rects[rects.length - 1].right, to: band.right, kind: 'gap' },
+            { from: band.right, to: innerWidth, kind: 'x', label: `x ${fmt(innerWidth - band.right)}` },
+          ]
+      return [...outer, ...inner].filter(Boolean)
+    }
+
+    const spans = onRight
+      ? [
+          { from: 0, to: rects[0].left, kind: 'gap' },
+          ...inner,
+          { from: rects[rects.length - 1].right, to: s.left, kind: 'gap' },
+        ]
+      : [
+          { from: s.right, to: rects[0].left, kind: 'gap' },
+          ...inner,
+          { from: rects[rects.length - 1].right, to: innerWidth, kind: 'gap' },
+        ]
+    if (cropSpan) spans.push(cropSpan)
+    return spans
+  }
+
+  /* one SM, two stalls: per-story spans measured against the shared SM */
+  function mobileRows(mf) {
+    const smEl = mf.querySelector('.sm')
+    const sm = smEl.getBoundingClientRect()
+    const stalls = [...mf.querySelectorAll('.a')]
+    const onRight = sm.left > stalls[0].getBoundingClientRect().left
+    const rows = stalls.map((a) => {
+      const r = a.getBoundingClientRect()
+      const spans = onRight
+        ? [
+            { from: 0, to: r.left, kind: 'gap' },
+            { from: r.right, to: sm.left, kind: 'gap' },
+          ]
+        : [
+            { from: sm.right, to: r.left, kind: 'gap' },
+            { from: r.right, to: innerWidth, kind: 'gap' },
+          ]
+      return { spans, y: r.top + scrollY - 10 }
+    })
+    const crop = cropSpanFor(sm, onRight)
+    if (crop) rows[0].spans.push({ ...crop, })
+    return rows
+  }
+
+  const gapsOf = (spans) => spans.filter((sp) => sp.kind === 'gap').map((sp) => Math.abs(sp.to - sp.from))
+  const allEqual = (gaps) => Math.max(...gaps) - Math.min(...gaps) <= 1.5
+
+  function drawRow(spans, y, equal) {
+    for (const sp of spans) {
+      const kind = sp.kind === 'gap' ? (equal ? 'ok' : 'bad') : sp.kind
+      ruler(sp.from, sp.to, y, kind, sp.label ?? fmt(Math.abs(sp.to - sp.from)))
+    }
+  }
+
+  function measure() {
+    rulers.replaceChildren()
+    const visible = (el) => el.offsetParent !== null
+
+    for (const floor of [...document.querySelectorAll('.floor')].filter(visible)) {
+      const spans = floorSpans(floor)
+      drawRow(spans, floor.getBoundingClientRect().top + scrollY + 18, allEqual(gapsOf(spans)))
+    }
+    /* one floor = two stories: pool the gaps, equality must hold across both */
+    for (const mf of [...document.querySelectorAll('.mfloor')].filter(visible)) {
+      const rows = mobileRows(mf)
+      const equal = allEqual(rows.flatMap((row) => gapsOf(row.spans)))
+      for (const row of rows) drawRow(row.spans, row.y, equal)
+    }
+
+    const sDesk = document.querySelector('#desktop .s')
+    const su = sDesk && visible(sDesk) ? sDesk.getBoundingClientRect().width / 324 : 0
+    hud.textContent = su
+      ? `${innerWidth}×${innerHeight}  ${regime()}\nsu ${su.toFixed(3)}  floor-h ${Math.round(su * 597)}px`
+      : `${innerWidth}×${innerHeight}  ${regime()}`
+  }
+
+  let raf = 0
+  const queue = () => {
+    cancelAnimationFrame(raf)
+    raf = requestAnimationFrame(measure)
+  }
+  addEventListener('resize', queue)
+  addEventListener('load', queue)
+  queue()
+</script>
+</body>
+</html>
