@@ -89,9 +89,16 @@ inside head and shorts boxes and only if not blue-leaning — cool darks
 are racks and cables; largest component + lens-bearing components
 survive; interior holes fill by outside-flood), nearest-side inpaint
 for the plate, byte-identity assert (0 repairs), head-implant idle,
-dense-run screen detection for the CRT static roll, and two parallel
-4-leg chained pose runs on the fenced isolate. Winner: chain B (peace
-sign). Opaque ratios 0.91-0.94 across all eight frames, no flags.
+dense-run screen detection for the CRT static roll. Poses took three
+failed chained runs before the SHEET DOCTRINE ended it: chains
+re-diffuse the sprite every leg (saturation compounds, detail mushes),
+so poses are ONE generation — frame 0 attached as the only asset, the
+order asks for a four-cell sprite-sheet row whose first cell is an
+exact copy of frame 0; all poses share one diffusion pass and one
+palette. Slice cells by column gaps, register to the rest baseline,
+de-green per frame. The user's law, verbatim: start from the good
+one, never send the ones-to-fix back to codex. The shipped hover is
+the sheet's peace-sign rise, opaque ratios 1.05 flat across frames.
 
 The console stall shipped STATIC first (the r20 master, no layers) —
 the architecture is per-stall opt-in, and layers returned only when
