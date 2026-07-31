@@ -1,12 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
+import { isEditableTarget } from 'service/hotkeys'
 
 const ITEM_SELECTOR = '[data-arrow-item]'
-
-const isEditableTarget = (target: EventTarget | null) =>
-  target instanceof Element &&
-  Boolean(target.closest('input, textarea, select, [contenteditable]'))
 
 const shouldIgnoreKey = (event: KeyboardEvent) =>
   event.metaKey ||

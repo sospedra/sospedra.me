@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import type { Metadata } from 'next'
 import { cacheLife } from 'next/cache'
 import { Courier_Prime } from 'next/font/google'
+import { CROSSWORDS_DESC } from 'service/descriptions'
 import type { CrosswordChallengeFile } from './crossword-data'
 import CrosswordsView from './crosswords-view'
 import {
@@ -21,8 +22,7 @@ const courierPrime = Courier_Prime({
 
 export const metadata: Metadata = {
   title: 'Crosswords',
-  description:
-    'A bilingual daily crossword with keyboard-first play in English and Spanish.',
+  description: CROSSWORDS_DESC,
   alternates: { canonical: '/crosswords' },
 }
 

@@ -329,7 +329,7 @@ export default function VideoclubView() {
     : 'Power on the television'
 
   return (
-    <Shell canonical='/videoclub' className={css.frame}>
+    <Shell className={css.frame}>
       <nav className={css.rail} aria-label='Videoclub navigation'>
         <Link url='/' className={css.backLink}>
           <LinkBack>Home</LinkBack>

@@ -1,24 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 export const useInterval = (callback: () => void, delay: number | null) => {
   const memo = useRef<(() => void) | undefined>(undefined)
-  const [interval, saveInterval] = useState<ReturnType<typeof setInterval>>()
 
   useEffect(() => {
     memo.current = callback
   }, [callback])
 
   useEffect(() => {
-    if (delay === null) {
-      saveInterval(undefined)
-      return
-    }
-    const tick = () => memo.current?.()
-    const interval = setInterval(tick, delay)
-    saveInterval(interval)
-
+    if (delay === null) return
+    const interval = setInterval(() => memo.current?.(), delay)
     return () => clearInterval(interval)
   }, [delay])
-
-  return interval
 }

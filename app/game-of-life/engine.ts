@@ -42,12 +42,6 @@ export const cellOf = (key: CellKey): Cell => {
   return [Number(key.slice(0, comma)), Number(key.slice(comma + 1))] as const
 }
 
-export const setFromCells = (cells: Iterable<Cell>): CellSet => {
-  const set = new Set<CellKey>()
-  for (const [x, y] of cells) set.add(keyOf(x, y))
-  return set
-}
-
 export const parseRle = (source: string): CellSet => {
   const data = source
     .replaceAll('\r', '')

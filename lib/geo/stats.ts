@@ -5,6 +5,7 @@ import type {
   PersistedGeoStats,
   RoundType,
 } from './model'
+import { isUtcPublicationDate } from './publication-date'
 
 export interface RoundStatistics {
   type: RoundType
@@ -138,23 +139,9 @@ export const recordOfficialRun = (
 }
 
 const utcDayNumber = (date: string) => {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date)
-  if (!match) return null
-
-  const year = Number(match[1])
-  const month = Number(match[2])
-  const day = Number(match[3])
-  const timestamp = Date.UTC(year, month - 1, day)
-  const parsed = new Date(timestamp)
-  if (
-    parsed.getUTCFullYear() !== year ||
-    parsed.getUTCMonth() !== month - 1 ||
-    parsed.getUTCDate() !== day
-  ) {
-    return null
-  }
-
-  return Math.floor(timestamp / 86_400_000)
+  if (!isUtcPublicationDate(date)) return null
+  const [year, month, day] = date.split('-').map(Number)
+  return Math.floor(Date.UTC(year, month - 1, day) / 86_400_000)
 }
 
 export const calculateDailyPlayStreak = (

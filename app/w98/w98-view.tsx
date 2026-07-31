@@ -7,6 +7,7 @@ import MusicView, {
 } from 'components/music/music-view'
 import Shell from 'components/Shell'
 import { clamp } from 'es-toolkit'
+import { readLocal, writeLocal } from 'lib/storage'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useHotkeys } from 'service/hotkeys'
@@ -297,7 +298,7 @@ const useSoundPref = (audio: SweepAudio) => {
   const [sound, setSound] = useState(true)
 
   useEffect(() => {
-    if (window.localStorage.getItem(SOUND_KEY) !== 'off') return
+    if (readLocal(SOUND_KEY) !== 'off') return
     setSound(false)
     audio.setEnabled(false)
   }, [audio])
@@ -306,7 +307,7 @@ const useSoundPref = (audio: SweepAudio) => {
     const next = !sound
     setSound(next)
     audio.setEnabled(next)
-    window.localStorage.setItem(SOUND_KEY, next ? 'on' : 'off')
+    writeLocal(SOUND_KEY, next ? 'on' : 'off')
   }
 
   return { sound, toggle }
@@ -666,7 +667,7 @@ export default function Windows98View() {
   const face = pressing && live ? '○' : FACES[state.status]
 
   return (
-    <Shell canonical='/w98' className={css.frame}>
+    <Shell className={css.frame}>
       <section
         className={css.desktop}
         aria-label='Windows 98 desktop'

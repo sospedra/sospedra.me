@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>console stall - Ed asset kit (winner: hover B)</title>
+<style>
+  body { background: #0b0d10; color: #cfd3d8; font: 13px/1.5 monospace; margin: 0; padding: 20px; }
+  h1 { font-size: 15px; margin: 0 0 4px; }
+  h2 { font-size: 13px; color: #f2f1ee; margin: 22px 0 8px; }
+  p.note { color: #8a929c; margin: 0 0 10px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+  figure { margin: 0; background: #14161a; border: 1px solid #2a2e35; padding: 8px; }
+  figure img { display: block; image-rendering: pixelated; background:
+    repeating-conic-gradient(#20242b 0% 25%, #171a20 0% 50%) 0 0 / 16px 16px; }
+  figcaption { font-size: 11px; color: #ffd26b; padding-top: 6px; }
+  figcaption span { color: #8a929c; display: block; }
+</style>
+</head>
+<body>
+<h1>console stall - the Ed asset kit</h1>
+<p class="note">Winner hover: CHAIN B (peace sign). Chain A retired. Every layer at native
+resolution on checkerboard = keyed alpha.</p>
+
+<h2>the plate (inpainted, never changes)</h2>
+<div class="grid">
+  <figure><img src="plate.png" width="420"><figcaption>plate.png (FIXED)<span>hole diffusion-inpainted, outside pixels clamped byte-original</span></figcaption></figure>
+</div>
+
+<h2>char idle (deterministic head implant)</h2>
+<div class="grid">
+  <figure><img src="char-f1.png" width="300"><figcaption>char-f1.png<span>rest, extracted from the master, byte-identical composite</span></figcaption></figure>
+  <figure><img src="char-f2.png" width="300"><figcaption>char-f2.png<span>head region shifted 1px down, body planted</span></figcaption></figure>
+  <figure><img src="char-f3.png" width="300"><figcaption>char-f3.png<span>rest copy, loop return</span></figcaption></figure>
+</div>
+
+<h2>char hover - chain B first pass (RETIRED: cord imprints on the tee)</h2>
+<div class="grid">
+  <figure><img src="char-b1.png" width="300"><figcaption>char-b1.png<span>V-sign lifts to chest, head tilts up</span></figcaption></figure>
+  <figure><img src="char-b2.png" width="300"><figcaption>char-b2.png<span>V-hand rises beside his head</span></figcaption></figure>
+  <figure><img src="char-b3.png" width="300"><figcaption>char-b3.png<span>apex: V held high, big grin</span></figcaption></figure>
+  <figure><img src="char-b4.png" width="300"><figcaption>char-b4.png<span>held apex, micro shift</span></figcaption></figure>
+</div>
+
+<h2>char hover - SHEET p2 (one-shot, palette-locked, judging round)</h2>
+<div class="grid">
+  <figure><img src="char-b1s.png" width="300"><figcaption>char-b1s.png<span>V lifts, no cord anywhere</span></figcaption></figure>
+  <figure><img src="char-b2s.png" width="300"><figcaption>char-b2s.png<span>V beside his head</span></figcaption></figure>
+  <figure><img src="char-b3s.png" width="300"><figcaption>char-b3s.png<span>apex, grin</span></figcaption></figure>
+  <figure><img src="char-b4s.png" width="300"><figcaption>char-b4s.png<span>held apex (pending if missing)</span></figcaption></figure>
+</div>
+
+<h2>fx - lit CRT static (screen interior rolls)</h2>
+<div class="grid">
+  <figure><img src="fx-crt-f1.png" width="300"><figcaption>fx-crt-f1.png<span>rest bands</span></figcaption></figure>
+  <figure><img src="fx-crt-f2.png" width="300"><figcaption>fx-crt-f2.png<span>rolled +1/3</span></figcaption></figure>
+  <figure><img src="fx-crt-f3.png" width="300"><figcaption>fx-crt-f3.png<span>rolled +2/3</span></figcaption></figure>
+</div>
+
+<h2>pipeline intermediates</h2>
+<div class="grid">
+  <figure><img src="ed-iso.png" width="220"><figcaption>ed-iso.png<span>fenced isolate on portrait chroma: the chain input</span></figcaption></figure>
+  <figure><img src="plate-holed.png" width="300"><figcaption>plate-holed.png<span>the magenta pocket sent to codex</span></figcaption></figure>
+  <figure><img src="plate-smear.png" width="300"><figcaption>plate-smear.png<span>the rejected nearest-side fill (the drips)</span></figcaption></figure>
+</div>
+</body>
+</html>

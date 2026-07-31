@@ -1,6 +1,7 @@
 import ArrowNav from 'components/ArrowNav'
-import Icon, { type IconName } from 'components/Icon'
+import Icon from 'components/Icon'
 import Link from 'components/Link'
+import { pizzaSlices, readingLabel } from 'components/Meta'
 import RouteHeader from 'components/RouteHeader'
 import Shell from 'components/Shell'
 import type { Metadata, Route } from 'next'
@@ -28,22 +29,12 @@ const stampFormat = new Intl.DateTimeFormat('en-US', {
 
 const stamp = (iso: string) => stampFormat.format(new Date(iso)).toUpperCase()
 
-const readLabel = (paper: Paper) =>
-  `${Math.max(1, Math.round(paper.minutes))} minute read`
-
-// same scale as <Meta />: one slice per ~3 minutes, a whole box past five
 function PizzaTime(props: { paper: Paper }) {
-  const slices = Math.max(Math.round(props.paper.minutes / 3), 1)
-  const icons: IconName[] =
-    slices > 5 ? ['pizza-box.png'] : Array(slices).fill('pizza.svg')
+  const icons = pizzaSlices(props.paper.minutes)
+  const label = readingLabel(props.paper.minutes)
 
   return (
-    <span
-      className={css.slices}
-      role='img'
-      title={readLabel(props.paper)}
-      aria-label={readLabel(props.paper)}
-    >
+    <span className={css.slices} role='img' title={label} aria-label={label}>
       {icons.map((name, idx) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: identical static slices
         <Icon name={name} key={idx} />
@@ -101,7 +92,7 @@ export default async function PapersPage() {
   const [headline, ...archive] = papers
 
   return (
-    <Shell canonical='/papers' className={css.frame}>
+    <Shell className={css.frame}>
       <div className={css.receiver}>
         <RouteHeader
           className={css.routeHeader}

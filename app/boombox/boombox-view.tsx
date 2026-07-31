@@ -1,12 +1,11 @@
 'use client'
 
+import { readLocalJson, writeLocalJson } from 'lib/storage'
 import { Caveat, Share_Tech_Mono, VT323 } from 'next/font/google'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  type DailyCountdown,
-  formatDailyCountdown,
-} from 'service/daily-countdown'
+import { type DailyCountdown, useDailyCountdown } from 'service/daily-countdown'
 import { useGameInput } from 'service/hotkeys'
+import { shareText } from 'service/share'
 import css from './boombox.module.css'
 import { createDeckSfx, type DeckSfx } from './deck-sfx'
 import {
@@ -85,54 +84,14 @@ const SCORE_NOTE = {
 } satisfies Record<GuessScore, string>
 
 const loadState = (day: number): BoomboxState => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return initialState(day)
-    const stored: BoomboxState = JSON.parse(raw)
-    return stored.day === day ? stored : initialState(day)
-  } catch {
-    return initialState(day)
-  }
+  const loaded = readLocalJson(STORAGE_KEY)
+  const stored =
+    loaded.status === 'ok' ? (loaded.value as BoomboxState | null) : null
+  return stored && stored.day === day ? stored : initialState(day)
 }
 
 const persistState = (state: BoomboxState) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-  } catch {
-    /* private mode: the game still works, it just forgets at reload */
-  }
-}
-
-const pad = (value: number) => value.toString().padStart(2, '0')
-
-/* the site's dailies count to utc midnight; this tape flips at 02:00 on
-   spain's wall clock, so the lcd counts to the engine's own flip instant */
-const useTapeCountdown = (): DailyCountdown => {
-  const [countdown, setCountdown] = useState<DailyCountdown>({
-    label: null,
-    ready: false,
-    remainingFraction: null,
-  })
-
-  useEffect(() => {
-    const target = nextFlipAt(new Date()).getTime()
-    const update = () => {
-      const remainingMs = target - Date.now()
-      setCountdown({
-        label: formatDailyCountdown(remainingMs),
-        ready: remainingMs <= 0,
-        remainingFraction: Math.min(1, Math.max(0, remainingMs / 86_400_000)),
-      })
-      return remainingMs
-    }
-    if (update() <= 0) return
-    const interval = window.setInterval(() => {
-      if (update() <= 0) window.clearInterval(interval)
-    }, 1000)
-    return () => window.clearInterval(interval)
-  }, [])
-
-  return countdown
+  writeLocalJson(STORAGE_KEY, state)
 }
 
 /* the door greets you open, then the mechanism swallows the tape */
@@ -349,7 +308,7 @@ const Lcd = (props: {
         <div className={css.lcdTop}>
           <span>boombox #{props.state.day + 1}</span>
           <span>
-            {pad(props.seconds).padStart(3, '0')}/
+            {String(props.seconds).padStart(3, '0')}/
             {playing ? `${props.limit}s` : '30s'}
           </span>
         </div>
@@ -586,49 +545,41 @@ type PaperProps = {
   dropdown: React.ReactNode
 }
 
-/* the written face of the j-card: shared by the desk case and the
-   walkman sheet, which only differ in the frame around it */
-const PaperContent = (props: PaperProps) => (
-  <>
-    <h2 className={css.caseTitle}>
-      tracklist <small>· today's guesses</small>
-    </h2>
-    <p className={css.caseRule}>side a · type i · c-90</p>
-    <ol className={css.trackRows}>
-      {Array.from({ length: MAX_GUESSES }, (_, index) => {
-        const guess = props.guesses[index]
-        const active = props.stage === 'play' && index === props.guesses.length
-        return (
-          <li
-            key={`track-${
-              // biome-ignore lint/suspicious/noArrayIndexKey: fixed six-line card
-              index
-            }`}
-            data-long={(guess?.label.length ?? 0) > 22}
-            data-active={active}
-          >
-            {guess && <NoteEntry guess={guess} />}
-            {active && props.input}
-            {active && props.dropdown}
-          </li>
-        )
-      })}
-    </ol>
-    <div className={css.caseFoot}>
-      <span>dolby off</span>
-      <span>rebobina abans, va</span>
-    </div>
-  </>
-)
-
-/* the j-card holds the pen now: guesses are tracks on the inner paper.
-   the paper lies flat where the post-it lived; the empty tray shell
-   hangs ajar off its right hinge, about a quarter turn open. */
+/* the j-card holds the pen: guesses are tracks on the inner paper, the
+   empty tray shell hangs ajar off its right hinge. both builds seat it */
 const CaseTracklist = (props: PaperProps) => (
   <aside className={css.caseScene} aria-label='Attempts'>
     <div className={css.caseRig}>
       <div className={css.casePaper}>
-        <PaperContent {...props} />
+        <h2 className={css.caseTitle}>
+          tracklist <small>· today's guesses</small>
+        </h2>
+        <p className={css.caseRule}>side a · type i · c-90</p>
+        <ol className={css.trackRows}>
+          {Array.from({ length: MAX_GUESSES }, (_, index) => {
+            const guess = props.guesses[index]
+            const active =
+              props.stage === 'play' && index === props.guesses.length
+            return (
+              <li
+                key={`track-${
+                  // biome-ignore lint/suspicious/noArrayIndexKey: fixed six-line card
+                  index
+                }`}
+                data-long={(guess?.label.length ?? 0) > 22}
+                data-active={active}
+              >
+                {guess && <NoteEntry guess={guess} />}
+                {active && props.input}
+                {active && props.dropdown}
+              </li>
+            )
+          })}
+        </ol>
+        <div className={css.caseFoot}>
+          <span>dolby off</span>
+          <span>rebobina abans, va</span>
+        </div>
       </div>
       <span className={css.caseSpine} aria-hidden />
       <div className={css.caseArm} aria-hidden>
@@ -743,9 +694,7 @@ type TransportProps = {
   onShare: () => void
 }
 
-/* a mechanical piano key: silver top cap over a tall front face. travel
-   sinks the key and foreshortens the cap; latched keys stay down. */
-const DeckKey = (props: {
+type LeverSpec = {
   glyph: string
   word: string
   on?: boolean
@@ -753,87 +702,76 @@ const DeckKey = (props: {
   disabled?: boolean
   ariaLabel: string
   onPress: () => void
-}) => (
-  <button
-    type='button'
-    className={`${css.pianoKey} ${props.red ? css.pianoKeyRec : ''}`}
-    data-on={props.on}
-    aria-label={props.ariaLabel}
-    onClick={props.onPress}
-    disabled={props.disabled}
-  >
-    <span className={css.pianoWell} aria-hidden />
-    <span className={css.pianoTop} aria-hidden />
-    <span className={css.pianoFront} aria-hidden>
-      <span className={css.pianoGlyph}>{props.glyph}</span>
-      <span className={css.pianoWord}>{props.word}</span>
-    </span>
-  </button>
-)
+}
 
-/* the transport row: piano keys in the slot. play latches physically
-   down while the tape rolls; stop springs it back up. */
-const Transport = (props: TransportProps) => (
-  <div className={css.transportBank}>
-    <DeckKey
-      glyph={'▶'}
-      word='play'
-      on={props.soundPlaying}
-      ariaLabel='Play'
-      onPress={props.onPlay}
-      disabled={!props.soundReady}
-    />
-    <DeckKey glyph={'◼'} word='stop' ariaLabel='Stop' onPress={props.onStop} />
-    <DeckKey
-      glyph={'◀◀'}
-      word='rew'
-      ariaLabel='Rewind to the previous waypoint'
-      onPress={props.onRewind}
-      disabled={!props.canRewind}
-    />
-    <DeckKey
-      glyph={'▶▶'}
-      word={props.skipGain > 0 ? `skip +${props.skipGain}s` : 'skip'}
-      ariaLabel='Skip attempt'
-      onPress={props.onSkip}
-      disabled={!props.playing}
-    />
-    <DeckKey
-      glyph={'●'}
-      word={props.copied ? 'copied.' : 'rec·share'}
-      on={props.copied}
-      red
-      ariaLabel='Share result'
-      onPress={props.onShare}
-      disabled={props.playing}
-    />
+/* latching lever keys: legends silkscreened on the fascia, blank caps
+   slide under the slot mouth. latched keys stay down; both decks share it */
+const LeverBank = (props: { size: 'deck' | 'tad'; keys: LeverSpec[] }) => (
+  <div className={css.leverBank} data-size={props.size}>
+    <div className={css.leverLegend} aria-hidden>
+      {props.keys.map((key) => (
+        <span key={key.ariaLabel} className={css.legendCell}>
+          <b>{key.word}</b>
+          {key.red ? <i data-dot='true' /> : <i>{key.glyph}</i>}
+        </span>
+      ))}
+    </div>
+    <div className={css.leverSlot}>
+      {props.keys.map((key) => (
+        <button
+          key={key.ariaLabel}
+          type='button'
+          className={css.leverKey}
+          data-on={key.on}
+          aria-label={key.ariaLabel}
+          onClick={key.onPress}
+          disabled={key.disabled}
+        >
+          <span className={css.leverCap} aria-hidden />
+        </button>
+      ))}
+    </div>
   </div>
 )
 
-/* tad key: cream cap riding a skirt, the word printed under it */
-const TadKey = (props: {
-  glyph: string
-  word: string
-  on?: boolean
-  red?: boolean
-  disabled?: boolean
-  ariaLabel: string
-  onPress: () => void
-}) => (
-  <span className={css.tadK}>
-    <button
-      type='button'
-      className={css.tadBtn}
-      data-on={props.on}
-      data-red={props.red}
-      aria-label={props.ariaLabel}
-      onClick={props.onPress}
-      disabled={props.disabled}
-    >
-      {props.glyph}
-    </button>
-    <em>{props.word}</em>
-  </span>
+const Transport = (props: TransportProps) => (
+  <LeverBank
+    size='deck'
+    keys={[
+      {
+        glyph: '▶',
+        word: 'play',
+        on: props.soundPlaying,
+        ariaLabel: 'Play',
+        onPress: props.onPlay,
+        disabled: !props.soundReady,
+      },
+      { glyph: '◼', word: 'stop', ariaLabel: 'Stop', onPress: props.onStop },
+      {
+        glyph: '◀◀',
+        word: 'rew',
+        ariaLabel: 'Rewind to the previous waypoint',
+        onPress: props.onRewind,
+        disabled: !props.canRewind,
+      },
+      {
+        glyph: '▶▶',
+        word: props.skipGain > 0 ? `skip +${props.skipGain}s` : 'skip',
+        ariaLabel: 'Skip attempt',
+        onPress: props.onSkip,
+        disabled: !props.playing,
+      },
+      {
+        glyph: '●',
+        word: props.copied ? 'copied.' : 'rec·share',
+        on: props.copied,
+        red: true,
+        ariaLabel: 'Share result',
+        onPress: props.onShare,
+        disabled: props.playing,
+      },
+    ]}
+  />
 )
 
 export default function BoomboxView() {
@@ -847,7 +785,9 @@ export default function BoomboxView() {
   )
   const [volume, setVolume] = useState(0.65)
   const sfxRef = useRef<DeckSfx | null>(null)
-  const countdown = useTapeCountdown()
+  /* the site's dailies count to utc midnight; this tape flips at 02:00 on
+     spain's wall clock, so the lcd counts to the engine's own flip instant */
+  const countdown = useDailyCountdown(nextFlipAt)
   const doorOpen = useDoorGreeting()
 
   useGameInput()
@@ -955,14 +895,7 @@ export default function BoomboxView() {
     if (!state) return
     sfx().click()
     const card = shareCard(state)
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: card })
-        return
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') return
-      }
-    }
+    if ((await shareText({ text: card })) !== 'unsupported') return
     await navigator.clipboard.writeText(card).catch(() => undefined)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
@@ -1197,7 +1130,7 @@ export default function BoomboxView() {
           </div>
           <div className={css.tadLower}>
             <div className={css.tadBrand}>
-              <b>easa-guess</b>
+              <b>somo</b>
               <span>tad-2200 · daily mixtape</span>
             </div>
             <div className={css.tadPanel}>
@@ -1228,61 +1161,61 @@ export default function BoomboxView() {
                 <span className={css.tadVol} aria-hidden />
                 <span className={css.tadGrille} aria-hidden />
               </div>
-              <div className={css.tadKeys}>
-                <TadKey
-                  glyph={'◀◀'}
-                  word='rew'
-                  ariaLabel='Rewind to the previous waypoint'
-                  onPress={onRewind}
-                  disabled={!(sound.seconds > 0 || sound.isPlaying)}
-                />
-                <TadKey
-                  glyph={'▶'}
-                  word='play'
-                  on={sound.isPlaying}
-                  ariaLabel='Play'
-                  onPress={togglePlay}
-                  disabled={!sound.isReady}
-                />
-                <TadKey
-                  glyph={'▶▶'}
-                  word={
-                    skipSecondsGain(state) > 0
-                      ? `skip +${skipSecondsGain(state)}s`
-                      : 'skip'
-                  }
-                  ariaLabel='Skip attempt'
-                  onPress={onSkip}
-                  disabled={!playing}
-                />
-                <TadKey
-                  glyph={'◼'}
-                  word='stop'
-                  ariaLabel='Stop'
-                  onPress={onStop}
-                />
-                <TadKey
-                  glyph={'●'}
-                  word={copied ? 'copied.' : 'rec·share'}
-                  red
-                  on={copied}
-                  ariaLabel='Share result'
-                  onPress={onShare}
-                  disabled={playing}
-                />
-              </div>
+              <LeverBank
+                size='tad'
+                keys={[
+                  {
+                    glyph: '◀◀',
+                    word: 'rew',
+                    ariaLabel: 'Rewind to the previous waypoint',
+                    onPress: onRewind,
+                    disabled: !(sound.seconds > 0 || sound.isPlaying),
+                  },
+                  {
+                    glyph: '▶',
+                    word: 'play',
+                    on: sound.isPlaying,
+                    ariaLabel: 'Play',
+                    onPress: togglePlay,
+                    disabled: !sound.isReady,
+                  },
+                  {
+                    glyph: '▶▶',
+                    word:
+                      skipSecondsGain(state) > 0
+                        ? `skip +${skipSecondsGain(state)}s`
+                        : 'skip',
+                    ariaLabel: 'Skip attempt',
+                    onPress: onSkip,
+                    disabled: !playing,
+                  },
+                  {
+                    glyph: '◼',
+                    word: 'stop',
+                    ariaLabel: 'Stop',
+                    onPress: onStop,
+                  },
+                  {
+                    glyph: '●',
+                    word: copied ? 'copied.' : 'rec·share',
+                    on: copied,
+                    red: true,
+                    ariaLabel: 'Share result',
+                    onPress: onShare,
+                    disabled: playing,
+                  },
+                ]}
+              />
             </div>
             <div className={css.tadLip} aria-hidden />
           </div>
         </section>
-        <section className={css.apSheet} aria-label='Attempts'>
-          <PaperContent
-            guesses={state.guesses}
-            stage={state.stage}
-            input={guessInput('boombox-results-m', false)}
-            dropdown={guessDropdown('boombox-results-m')}
-          />
-        </section>
+        <CaseTracklist
+          guesses={state.guesses}
+          stage={state.stage}
+          input={guessInput('boombox-results-m', false)}
+          dropdown={guessDropdown('boombox-results-m')}
+        />
       </div>
     </main>
   )

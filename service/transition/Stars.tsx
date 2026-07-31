@@ -1,10 +1,10 @@
 import cn from 'clsx'
 import { isNotNil, range } from 'es-toolkit'
+import { createRange, createRng } from 'lib/random'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
-import { createRange, createRng } from 'service/random'
+import { sceneFor } from './altitude'
 import { useTransition } from './context'
-import { createPtr } from './create-ptr'
 import css from './stars.module.css'
 
 const rrange = createRange()
@@ -53,10 +53,7 @@ const createStars = () => {
     .filter(isNotNil)
 }
 
-const getHidden = (href: string) => {
-  const ptr = createPtr(href)
-  return ptr('/papers/:slug') || ptr('/about')
-}
+const getHidden = (href: string) => sceneFor(href).starsHidden
 
 const stars = createStars()
 // own rng instance: the shared one advances per prerendered page and breaks hydration

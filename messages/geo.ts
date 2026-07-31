@@ -13,9 +13,6 @@ const messages: Record<GeoLocale, GeoMessages> = {
   es: es.geo,
 }
 
-export const isGeoLocale = (value: string): value is GeoLocale =>
-  GEO_LOCALES.some((locale) => locale === value)
-
 export const getGeoMessages = (locale: GeoLocale): GeoMessages =>
   messages[locale]
 

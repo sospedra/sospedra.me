@@ -3,6 +3,7 @@
 import Link, { LinkBack } from 'components/Link'
 import Row from 'components/Row'
 import Shell from 'components/Shell'
+import { readLocal, writeLocal } from 'lib/storage'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useGameInput } from 'service/hotkeys'
@@ -153,20 +154,20 @@ type SetPressed = React.Dispatch<React.SetStateAction<ReadonlySet<string>>>
 
 const useStoredProgress = (state: GameState, dispatch: Dispatch) => {
   useEffect(() => {
-    const top = Number(window.localStorage.getItem(TOP_KEY))
+    const top = Number(readLocal(TOP_KEY))
     if (top > 0) dispatch({ type: 'TOP', top })
-    const level = Number(window.localStorage.getItem(LEVEL_KEY))
+    const level = Number(readLocal(LEVEL_KEY))
     if (level > 0) dispatch({ type: 'LEVEL', level })
   }, [dispatch])
 
   useEffect(() => {
     if (state.phase === 'over' && state.top > 0) {
-      window.localStorage.setItem(TOP_KEY, String(state.top))
+      writeLocal(TOP_KEY, String(state.top))
     }
   }, [state.phase, state.top])
 
   useEffect(() => {
-    window.localStorage.setItem(LEVEL_KEY, String(state.level))
+    writeLocal(LEVEL_KEY, String(state.level))
   }, [state.level])
 }
 
@@ -333,10 +334,7 @@ export default function SnakeView() {
   }
 
   return (
-    <Shell
-      className={`relative w-full px-4 text-white ${css.page}`}
-      canonical='/snake'
-    >
+    <Shell className={`relative w-full px-4 text-white ${css.page}`}>
       {/* the escaped snake: one-bit mural crawling the wall behind the phone */}
       <svg
         className={css.mural}

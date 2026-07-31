@@ -173,7 +173,7 @@ export interface GeoChallengeRules {
 }
 
 export interface DailyGeoChallenge {
-  schemaVersion: 1
+  schemaVersion: typeof GEO_SCHEMA_VERSION
   generatorVersion: string
   rulesVersion: string
   id: string
@@ -258,7 +258,7 @@ export interface MapPinAnswerResult extends AnswerResultBase {
 export type AnswerResult = ChoiceAnswerResult | MapPinAnswerResult
 
 export interface PersistedGeoRun {
-  schemaVersion: 1
+  schemaVersion: typeof GEO_SCHEMA_VERSION
   challengeId: string
   rulesVersion: string
   status: 'started' | 'completed'
@@ -292,7 +292,7 @@ export interface PersistedGeoRun {
 }
 
 export interface GeoSettings {
-  schemaVersion: 1
+  schemaVersion: typeof GEO_SCHEMA_VERSION
   sound: boolean
   reducedMotion: boolean
 }
@@ -309,6 +309,6 @@ export interface OfficialGeoRunRecord {
 }
 
 export interface PersistedGeoStats {
-  schemaVersion: 1
+  schemaVersion: typeof GEO_SCHEMA_VERSION
   runs: OfficialGeoRunRecord[]
 }

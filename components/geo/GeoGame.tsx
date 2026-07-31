@@ -1,7 +1,10 @@
 'use client'
 
+import DailyCountdownPanel from 'components/DailyCountdownPanel'
+import Modal from 'components/Modal'
 import {
   type AnswerResult,
+  buildGeoAutocompleteIndex,
   calculateDailyPlayStreak,
   calculateRunStatistics,
   createGeoGameState,
@@ -17,7 +20,6 @@ import {
   type GeoGameState,
   type GeoSettings,
   geoGameReducer,
-  getBrowserGeoStorage,
   isMeaningfulGeoAnswerInput,
   type LocalizedOption,
   loadGeoRun,
@@ -30,7 +32,7 @@ import {
   type Round,
   type RoundType,
   type RunNonce,
-  rankGeoAutocompleteCandidates,
+  rankGeoAutocompleteIndex,
   recordOfficialRun,
   removeGeoRun,
   resolveExactGeoOptionId,
@@ -41,18 +43,14 @@ import {
   saveGeoStats,
   serializeGeoRun,
 } from 'lib/geo'
+import { getBrowserStorage } from 'lib/storage'
 import {
   formatGeoMessage,
   type GeoLocale,
   type GeoMessages,
   getGeoMessages,
 } from 'messages/geo'
-import type {
-  CSSProperties,
-  FormEvent,
-  MutableRefObject,
-  ReactNode,
-} from 'react'
+import type { CSSProperties, FormEvent, MutableRefObject } from 'react'
 import {
   useCallback,
   useEffect,
@@ -62,22 +60,21 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useDailyCountdown } from 'service/daily-countdown'
 import { useGameInput } from 'service/hotkeys'
+import { useDocumentLang } from 'service/locale'
+import { shareText } from 'service/share'
+import { useViewportHeightVar } from 'service/viewport'
 import css from './GeoGame.module.css'
 import GeoMap, { type GeoMapLabels } from './GeoMap'
 import { createGeoAudio, type GeoSound } from './geo-audio'
 
 export type GeoGameMode = 'daily' | 'practice'
-export type GeoRouteKind = 'today' | 'archive' | 'practice'
-
 export interface GeoGameProps {
   challenge: DailyGeoChallenge
   locale: GeoLocale
   mode?: GeoGameMode
-  onLocaleChange?: (locale: GeoLocale) => void
-  onModeChange?: (mode: GeoGameMode) => void
-  routeKind?: GeoRouteKind
+  onLocaleChange: (locale: GeoLocale) => void
+  onModeChange: (mode: GeoGameMode) => void
 }
 
 type PracticeRound = 'all' | RoundType
@@ -173,18 +170,6 @@ const roundInstruction = (copy: GeoMessages, type: RoundType) => {
   return copy.mapInstruction
 }
 
-const routeFor = (
-  locale: GeoLocale,
-  routeKind: GeoRouteKind,
-  publicationDate: string,
-) => {
-  if (routeKind === 'practice') return `/${locale}/games/geo/practice`
-  if (routeKind === 'archive') {
-    return `/${locale}/games/geo/${publicationDate}`
-  }
-  return `/${locale}/games/geo`
-}
-
 const practiceChallenge = (
   challenge: DailyGeoChallenge,
   practiceRound: PracticeRound,
@@ -197,47 +182,6 @@ const practiceChallenge = (
     id: `${challenge.id}:practice:${practiceRound}`,
     rounds: challenge.rounds.filter((round) => round.type === practiceRound),
   }
-}
-
-function Modal({
-  children,
-  close,
-  labelId,
-  open,
-}: {
-  children: ReactNode
-  close: () => void
-  labelId: string
-  open: boolean
-}) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
-
-  useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    if (open && !dialog.open) {
-      dialog.showModal()
-      window.requestAnimationFrame(() => {
-        dialog.querySelector<HTMLElement>('[data-initial-focus]')?.focus()
-      })
-    } else if (!open && dialog.open) {
-      dialog.close()
-    }
-  }, [open])
-
-  return (
-    <dialog
-      ref={dialogRef}
-      className={css.dialog}
-      aria-labelledby={labelId}
-      onCancel={(event) => {
-        event.preventDefault()
-        close()
-      }}
-    >
-      {children}
-    </dialog>
-  )
 }
 
 function DialogHeader({
@@ -281,7 +225,6 @@ function AppHeader({
   onSoundToggle,
   openHelp,
   openSettings,
-  routeKind,
   soundEnabled,
   timedState,
 }: {
@@ -289,17 +232,14 @@ function AppHeader({
   copy: GeoMessages
   locale: GeoLocale
   mode: GeoGameMode
-  onLocaleChange?: (locale: GeoLocale) => void
-  onModeChange?: (mode: GeoGameMode) => void
+  onLocaleChange: (locale: GeoLocale) => void
+  onModeChange: (mode: GeoGameMode) => void
   onSoundToggle: () => void
   openHelp: (button: HTMLButtonElement) => void
   openSettings: (button: HTMLButtonElement) => void
-  routeKind: GeoRouteKind
   soundEnabled: boolean
   timedState: boolean
 }) {
-  const alternateLocale = locale === 'en' ? 'es' : 'en'
-
   return (
     <header className={css.topbar}>
       <div className={css.brandCluster}>
@@ -335,101 +275,47 @@ function AppHeader({
 
       <div className={css.headerTools}>
         <nav className={css.modeNav} aria-label={copy.edition}>
-          {onModeChange ? (
-            <>
-              <button
-                type='button'
-                className={css.modeLink}
-                data-active={mode === 'daily'}
-                aria-pressed={mode === 'daily'}
-                disabled={timedState}
-                onClick={() => onModeChange('daily')}
-              >
-                {copy.daily}
-              </button>
-              <button
-                type='button'
-                className={css.modeLink}
-                data-active={mode === 'practice'}
-                aria-pressed={mode === 'practice'}
-                disabled={timedState}
-                onClick={() => onModeChange('practice')}
-              >
-                {copy.practice}
-              </button>
-            </>
-          ) : (
-            <>
-              <a
-                className={css.modeLink}
-                data-active={mode === 'daily'}
-                href={`/${locale}/games/geo`}
-              >
-                {copy.daily}
-              </a>
-              <a
-                className={css.modeLink}
-                data-active={mode === 'practice'}
-                href={`/${locale}/games/geo/practice`}
-              >
-                {copy.practice}
-              </a>
-            </>
-          )}
+          <button
+            type='button'
+            className={css.modeLink}
+            data-active={mode === 'daily'}
+            aria-pressed={mode === 'daily'}
+            disabled={timedState}
+            onClick={() => onModeChange('daily')}
+          >
+            {copy.daily}
+          </button>
+          <button
+            type='button'
+            className={css.modeLink}
+            data-active={mode === 'practice'}
+            aria-pressed={mode === 'practice'}
+            disabled={timedState}
+            onClick={() => onModeChange('practice')}
+          >
+            {copy.practice}
+          </button>
           <span className={css.headerDivider} aria-hidden='true' />
-          {onLocaleChange ? (
-            <>
-              <button
-                type='button'
-                className={css.languageLink}
-                data-active={locale === 'en'}
-                aria-label={`${copy.language}: ${copy.english}`}
-                aria-pressed={locale === 'en'}
-                onClick={() => onLocaleChange('en')}
-              >
-                EN
-              </button>
-              <button
-                type='button'
-                className={css.languageLink}
-                data-active={locale === 'es'}
-                aria-label={`${copy.language}: ${copy.spanish}`}
-                aria-pressed={locale === 'es'}
-                onClick={() => onLocaleChange('es')}
-              >
-                ES
-              </button>
-            </>
-          ) : (
-            <>
-              <a
-                className={css.languageLink}
-                data-active='true'
-                href={routeFor(locale, routeKind, challenge.publicationDate)}
-                hrefLang={locale}
-                aria-label={`${copy.language}: ${
-                  locale === 'en' ? copy.english : copy.spanish
-                }`}
-              >
-                {locale.toUpperCase()}
-              </a>
-              <a
-                className={css.languageLink}
-                data-active='false'
-                href={routeFor(
-                  alternateLocale,
-                  routeKind,
-                  challenge.publicationDate,
-                )}
-                hrefLang={alternateLocale}
-                aria-label={
-                  alternateLocale === 'en' ? copy.english : copy.spanish
-                }
-              >
-                {alternateLocale.toUpperCase()}
-              </a>
-            </>
-          )}
+          <button
+            type='button'
+            className={css.languageLink}
+            data-active={locale === 'en'}
+            aria-label={`${copy.language}: ${copy.english}`}
+            aria-pressed={locale === 'en'}
+            onClick={() => onLocaleChange('en')}
+          >
+            EN
+          </button>
+          <button
+            type='button'
+            className={css.languageLink}
+            data-active={locale === 'es'}
+            aria-label={`${copy.language}: ${copy.spanish}`}
+            aria-pressed={locale === 'es'}
+            onClick={() => onLocaleChange('es')}
+          >
+            ES
+          </button>
         </nav>
         <button
           type='button'
@@ -834,6 +720,14 @@ const FEEDBACK_ATTRS: Record<FeedbackResult, string> = {
   perfect: 'perfect',
 }
 
+const FEEDBACK_SOUNDS: Record<FeedbackResult, GeoSound> = {
+  correct: 'correct',
+  expired: 'timeout',
+  incorrect: 'incorrect',
+  passed: 'pass',
+  perfect: 'perfect',
+}
+
 const feedbackDetail = (
   answer: AnswerResult,
   copy: GeoMessages,
@@ -1011,13 +905,17 @@ function TextAnswerConsole({
   const inputId = useId()
   const listboxId = useId()
   const active = state.phase === 'question'
+  const lexiconIndex = useMemo(
+    () => buildGeoAutocompleteIndex(lexicon, locale),
+    [lexicon, locale],
+  )
   const candidates = useMemo(
     () =>
-      rankGeoAutocompleteCandidates(value, lexicon, locale, {
+      rankGeoAutocompleteIndex(value, lexiconIndex, {
         maxResults: 8,
         minimumCharacters: 1,
       }),
-    [lexicon, locale, value],
+    [lexiconIndex, value],
   )
   const expanded = active && focused && !dismissed && candidates.length > 0
   const meaningful = isMeaningfulGeoAnswerInput(value, locale)
@@ -1311,41 +1209,6 @@ function VisibilityPause({
   )
 }
 
-function NextGameCountdown({ copy }: { copy: GeoMessages }) {
-  const countdown = useDailyCountdown()
-  if (!countdown.label) return null
-  if (countdown.ready) {
-    return (
-      <button
-        type='button'
-        className={css.nextGameReady}
-        onClick={() => window.location.reload()}
-      >
-        {copy.nextGameReady}
-      </button>
-    )
-  }
-  return (
-    <div className={css.nextGame}>
-      <p className={css.nextGameReadout}>
-        <span>{copy.nextGameIn}</span>
-        <strong>{countdown.label}</strong>
-      </p>
-      <span
-        className={css.nextGameTrack}
-        aria-hidden='true'
-        style={
-          {
-            '--remaining': countdown.remainingFraction ?? 0,
-          } as CSSProperties
-        }
-      >
-        <span />
-      </span>
-    </div>
-  )
-}
-
 function Completion({
   copy,
   locale,
@@ -1395,7 +1258,17 @@ function Completion({
             ? `${copy.officialResult} · ${copy.returnTomorrow}`
             : copy.replayResult}
         </span>
-        {state.runKind === 'official' && <NextGameCountdown copy={copy} />}
+        {state.runKind === 'official' && (
+          <DailyCountdownPanel
+            classes={{
+              panel: css.nextGame,
+              readout: css.nextGameReadout,
+              ready: css.nextGameReady,
+              track: css.nextGameTrack,
+            }}
+            labels={{ countdown: copy.nextGameIn, ready: copy.nextGameReady }}
+          />
+        )}
         <div className={css.completionActions}>
           <button type='button' className={css.primaryButton} onClick={onShare}>
             <span>{copy.share}</span>
@@ -1512,6 +1385,7 @@ function GameDialogs({
         open={state.overlay === 'settings'}
         labelId='geo-settings-title'
         close={close}
+        className={css.dialog}
       >
         <DialogHeader
           close={close}
@@ -1549,6 +1423,7 @@ function GameDialogs({
         open={state.overlay === 'help'}
         labelId='geo-help-title'
         close={close}
+        className={css.dialog}
       >
         <DialogHeader
           close={close}
@@ -1605,7 +1480,6 @@ function GeoSession({
   onSettingsChange,
   practiceRound,
   practiceTimed,
-  routeKind,
   settings,
 }: {
   copy: GeoMessages
@@ -1613,21 +1487,17 @@ function GeoSession({
   initialState: GeoGameState
   locale: GeoLocale
   mode: GeoGameMode
-  onLocaleChange?: (locale: GeoLocale) => void
-  onModeChange?: (mode: GeoGameMode) => void
+  onLocaleChange: (locale: GeoLocale) => void
+  onModeChange: (mode: GeoGameMode) => void
   onNewPracticeGame: () => void
   onPracticeRoundChange: (round: PracticeRound) => void
   onPracticeTimedChange: (timed: boolean) => void
   onSettingsChange: (settings: GeoSettings) => void
   practiceRound: PracticeRound
   practiceTimed: boolean
-  routeKind: GeoRouteKind
   settings: GeoSettings
 }) {
   const [state, dispatch] = useReducer(geoGameReducer, initialState)
-  const [questionElapsedMs, setQuestionElapsedMs] = useState(
-    state.questionElapsedMs,
-  )
   const [roundElapsedMs, setRoundElapsedMs] = useState(state.roundElapsedMs)
   const [countdown, setCountdown] = useState(3)
   const [marker, setMarker] = useState<{
@@ -1635,12 +1505,12 @@ function GeoSession({
     coordinate: GeoCoordinate
   } | null>(null)
   const [stats, setStats] = useState(
-    () => loadGeoStats(getBrowserGeoStorage()).value,
+    () => loadGeoStats(getBrowserStorage()).value,
   )
   const [announcement, setAnnouncement] = useState('')
   const [audio] = useState(createGeoAudio)
   const stateRef = useRef(state)
-  const questionElapsedRef = useRef(questionElapsedMs)
+  const questionElapsedRef = useRef(state.questionElapsedMs)
   const roundElapsedRef = useRef(roundElapsedMs)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
   const openerRef = useRef<HTMLElement | null>(null)
@@ -1713,25 +1583,15 @@ function GeoSession({
   }, [state])
 
   useEffect(() => {
-    questionElapsedRef.current = questionElapsedMs
-  }, [questionElapsedMs])
-
-  useEffect(() => {
-    roundElapsedRef.current = roundElapsedMs
-  }, [roundElapsedMs])
-
-  useEffect(() => {
     if (state.phase !== 'question' || !round) return
     const baseElapsed = state.questionElapsedMs
     const startedAt = performance.now()
     let frame = 0
-    setQuestionElapsedMs(baseElapsed)
     questionElapsedRef.current = baseElapsed
 
     const update = (now: number) => {
       const nextElapsed = Math.max(0, baseElapsed + now - startedAt)
       const cappedElapsed = Math.min(round.questionLimitMs, nextElapsed)
-      setQuestionElapsedMs(cappedElapsed)
       questionElapsedRef.current = cappedElapsed
       if (cappedElapsed >= round.questionLimitMs) return
       frame = window.requestAnimationFrame(update)
@@ -1868,14 +1728,7 @@ function GeoSession({
         ? message
         : `${message}. ${copy.correctAnswer}: ${correctLabel}`,
     )
-    const sounds: Record<FeedbackResult, GeoSound> = {
-      correct: 'correct',
-      expired: 'timeout',
-      incorrect: 'incorrect',
-      passed: 'pass',
-      perfect: 'perfect',
-    }
-    audio.play(sounds[feedbackResult(answer)])
+    audio.play(FEEDBACK_SOUNDS[feedbackResult(answer)])
   }, [announce, audio, copy, locale, options, state.lastAnswer, state.phase])
 
   useEffect(() => {
@@ -1905,11 +1758,7 @@ function GeoSession({
   useEffect(() => {
     const serialized = serializeGeoRun(state)
     if (!serialized) return
-    saveGeoRun(
-      getBrowserGeoStorage(),
-      state.challenge.publicationDate,
-      serialized,
-    )
+    saveGeoRun(getBrowserStorage(), state.challenge.publicationDate, serialized)
   }, [state])
 
   useEffect(() => {
@@ -1922,7 +1771,7 @@ function GeoSession({
       return
     }
     recordedCompletionRef.current = state.completedAt
-    const storage = getBrowserGeoStorage()
+    const storage = getBrowserStorage()
     const loaded = loadGeoStats(storage).value
     const record = createOfficialRunRecord({
       answers: state.answers,
@@ -1952,7 +1801,7 @@ function GeoSession({
       const serialized = serializeGeoRun(frozen)
       if (serialized) {
         saveGeoRun(
-          getBrowserGeoStorage(),
+          getBrowserStorage(),
           current.challenge.publicationDate,
           serialized,
         )
@@ -2159,14 +2008,10 @@ function GeoSession({
       locale,
       challengeNumber: challengeSequence(state.challenge),
     })
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: result, title: copy.brand })
-        return
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') return
-      }
-    }
+    if (
+      (await shareText({ text: result, title: copy.brand })) !== 'unsupported'
+    )
+      return
     await copyResult()
   }
 
@@ -2240,7 +2085,6 @@ function GeoSession({
         onLocaleChange={onLocaleChange}
         onModeChange={onModeChange}
         onSoundToggle={toggleSound}
-        routeKind={routeKind}
         soundEnabled={settings.sound}
         timedState={timedState}
         openSettings={(button) => openOverlay('settings', button)}
@@ -2428,7 +2272,6 @@ export default function GeoGame({
   mode = 'daily',
   onLocaleChange,
   onModeChange,
-  routeKind = mode === 'practice' ? 'practice' : 'today',
 }: GeoGameProps) {
   const copy = getGeoMessages(locale)
   const [settings, setSettings] = useState<GeoSettings | null>(null)
@@ -2455,34 +2298,11 @@ export default function GeoGame({
     return officialChallenge
   }, [challenge, mode, officialChallenge, practiceRound, sessionNonce])
 
-  useEffect(() => {
-    const previous = document.documentElement.lang
-    document.documentElement.lang = locale
-    return () => {
-      document.documentElement.lang = previous
-    }
-  }, [locale])
+  useDocumentLang(locale)
+  useViewportHeightVar('--geo-viewport-height')
 
   useEffect(() => {
-    const viewport = window.visualViewport
-    const update = () => {
-      document.documentElement.style.setProperty(
-        '--geo-viewport-height',
-        `${viewport?.height ?? window.innerHeight}px`,
-      )
-    }
-    update()
-    viewport?.addEventListener('resize', update)
-    window.addEventListener('resize', update)
-    return () => {
-      viewport?.removeEventListener('resize', update)
-      window.removeEventListener('resize', update)
-      document.documentElement.style.removeProperty('--geo-viewport-height')
-    }
-  }, [])
-
-  useEffect(() => {
-    const storage = getBrowserGeoStorage()
+    const storage = getBrowserStorage()
     const loadedSettings = loadGeoSettings(storage)
     setSettings(loadedSettings.value)
 
@@ -2509,7 +2329,7 @@ export default function GeoGame({
 
   const updateSettings = useCallback((next: GeoSettings) => {
     setSettings(next)
-    saveGeoSettings(getBrowserGeoStorage(), next)
+    saveGeoSettings(getBrowserStorage(), next)
   }, [])
 
   if (!settings || restoredState === undefined) {
@@ -2571,7 +2391,6 @@ export default function GeoGame({
             onPracticeTimedChange={setPracticeTimed}
             practiceRound={practiceRound}
             practiceTimed={practiceTimed}
-            routeKind={routeKind}
             settings={settings}
             onSettingsChange={updateSettings}
           />

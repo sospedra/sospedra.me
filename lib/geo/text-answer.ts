@@ -139,34 +139,51 @@ const MATCH_RANK: Record<GeoAutocompleteMatch, number> = {
   substring: 4,
 }
 
-/**
- * Returns deterministic, uniquely resolvable suggestions. Duplicate labels
- * that normalize to different option ids are intentionally omitted. Match
- * quality remains primary; within the same match tier, capital-city options
- * lead non-capital city options.
- */
-export const rankGeoAutocompleteCandidates = (
-  input: string,
+export interface GeoAutocompleteIndex {
+  locale: Locale
+  resolvable: readonly IndexedOption[]
+}
+
+/* the normalization pass over a ~1900-label lexicon must not run per keystroke */
+export const buildGeoAutocompleteIndex = (
   options: readonly LocalizedOption[],
   locale: Locale,
+): GeoAutocompleteIndex => ({
+  locale,
+  resolvable: uniquelyResolvableOptions(indexOptions(options, locale)),
+})
+
+const collators = new Map<Locale, Intl.Collator>()
+
+const collatorFor = (locale: Locale): Intl.Collator => {
+  const cached = collators.get(locale)
+  if (cached) return cached
+  const collator = new Intl.Collator(locale, {
+    numeric: true,
+    sensitivity: 'base',
+  })
+  collators.set(locale, collator)
+  return collator
+}
+
+export const rankGeoAutocompleteIndex = (
+  input: string,
+  index: GeoAutocompleteIndex,
   config: GeoAutocompleteOptions = {},
 ): GeoAutocompleteCandidate[] => {
   const minimumCharacters = positiveInteger(
     config.minimumCharacters,
     DEFAULT_MINIMUM_CHARACTERS,
   )
-  const normalizedQuery = normalizeGeoAnswer(input, locale)
+  const normalizedQuery = normalizeGeoAnswer(input, index.locale)
   if (meaningfulCharacterCount(normalizedQuery) < minimumCharacters) {
     return []
   }
 
   const maxResults = positiveInteger(config.maxResults, DEFAULT_MAX_RESULTS)
-  const collator = new Intl.Collator(locale, {
-    numeric: true,
-    sensitivity: 'base',
-  })
+  const collator = collatorFor(index.locale)
 
-  return uniquelyResolvableOptions(indexOptions(options, locale))
+  return index.resolvable
     .flatMap((option) => {
       const match = matchFor(option.normalizedLabel, normalizedQuery)
       return match ? [{ ...option, match }] : []
@@ -187,6 +204,24 @@ export const rankGeoAutocompleteCandidates = (
       match,
     }))
 }
+
+/**
+ * Returns deterministic, uniquely resolvable suggestions. Duplicate labels
+ * that normalize to different option ids are intentionally omitted. Match
+ * quality remains primary; within the same match tier, capital-city options
+ * lead non-capital city options.
+ */
+export const rankGeoAutocompleteCandidates = (
+  input: string,
+  options: readonly LocalizedOption[],
+  locale: Locale,
+  config: GeoAutocompleteOptions = {},
+): GeoAutocompleteCandidate[] =>
+  rankGeoAutocompleteIndex(
+    input,
+    buildGeoAutocompleteIndex(options, locale),
+    config,
+  )
 
 /**
  * Resolves only an exact normalized label. Ambiguous normalized labels return

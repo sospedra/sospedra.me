@@ -290,7 +290,6 @@ function HomeStage() {
     <Shell
       className='flex flex-col items-center justify-center flex-1 w-screen h-dvh'
       shellClassName='overflow-hidden'
-      canonical='/'
     >
       <animated.div
         className={css.world}

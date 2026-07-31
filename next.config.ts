@@ -1,15 +1,6 @@
-import { writeFileSync } from 'node:fs'
 import createMDX from '@next/mdx'
 import type { NextConfig } from 'next'
-import { listStaticFiles } from './service/io'
 import rewrites from './service/router/rewrites.json'
-
-// /console renders from this snapshot: tracing public/** into its
-// revalidation function blew Vercel's 250mb limit (public is 533mb)
-writeFileSync(
-  './service/io/static-files.json',
-  `${JSON.stringify(listStaticFiles('public'), null, 2)}\n`,
-)
 
 const withMDX = createMDX({
   extension: /\.mdx?$/,

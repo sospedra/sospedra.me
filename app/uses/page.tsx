@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { yearsSinceCareerStart } from 'service/career'
 import { USES_DESC } from 'service/descriptions'
 import RamenView from './ramen-view'
 
@@ -8,13 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/uses' },
 }
 
-// cached: the level bakes at build, new Date() is banned at prerender
-const getLevelSince = async (start: number) => {
-  'use cache'
-  return new Date().getUTCFullYear() - start
-}
-
 export default async function UsesPage() {
-  const level = await getLevelSince(2013)
+  const level = await yearsSinceCareerStart()
   return <RamenView level={level} />
 }

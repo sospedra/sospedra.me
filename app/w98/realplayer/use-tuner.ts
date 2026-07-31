@@ -1,5 +1,7 @@
 'use client'
 
+import { clamp } from 'es-toolkit'
+import { readLocal, writeLocal } from 'lib/storage'
 import { useEffect, useReducer, useState } from 'react'
 import { type RealStation, stationById } from './stations.ts'
 import { DEFAULT_VOLUME, INITIAL_TUNER, reduceTuner } from './tuner.ts'
@@ -9,11 +11,11 @@ const STATION_KEY = 'g-real-station'
 const VOLUME_KEY = 'g-real-volume'
 
 const readSavedVolume = (): number | null => {
-  const raw = window.localStorage.getItem(VOLUME_KEY)
+  const raw = readLocal(VOLUME_KEY)
   if (raw === null) return null
   const value = Number(raw)
   if (!Number.isFinite(value)) return null
-  return Math.min(1, Math.max(0, value))
+  return clamp(value, 0, 1)
 }
 
 export const useTuner = () => {
@@ -28,7 +30,7 @@ export const useTuner = () => {
   useEffect(() => () => controller.dispose(), [controller])
 
   useEffect(() => {
-    const savedStation = window.localStorage.getItem(STATION_KEY)
+    const savedStation = readLocal(STATION_KEY)
     if (savedStation && stationById(savedStation)) {
       dispatch({ type: 'restore', stationId: savedStation })
     }
@@ -45,9 +47,7 @@ export const useTuner = () => {
   }, [controller, muted])
 
   useEffect(() => {
-    if (state.stationId) {
-      window.localStorage.setItem(STATION_KEY, state.stationId)
-    }
+    if (state.stationId) writeLocal(STATION_KEY, state.stationId)
   }, [state.stationId])
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export const useTuner = () => {
 
   const rememberVolume = (value: number) => {
     setVolume(value)
-    window.localStorage.setItem(VOLUME_KEY, String(value))
+    writeLocal(VOLUME_KEY, String(value))
   }
 
   return {

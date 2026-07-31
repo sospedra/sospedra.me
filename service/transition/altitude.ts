@@ -1,19 +1,50 @@
 import { createPtr } from './create-ptr'
 
-// Camera altitude per route: each level looks further up the sky.
-// Matches the vertical bands of the Background pan.
-export const getAltitude = (href: string): number => {
-  const ptr = createPtr(href)
-  switch (true) {
-    case ptr('/papers'):
-    case ptr('/bazaar'):
-      return 1
-    case ptr('/papers/:slug'):
-      return 2
-    default:
-      return 0
-  }
+export type Scene = {
+  /* camera altitude: each level looks further up the sky */
+  altitude: number
+  /* Background pan target for the route's vertical band */
+  offset: string
+  /* reading routes clear the starfield */
+  starsHidden: boolean
 }
+
+const DEFAULT_SCENE: Scene = {
+  altitude: 0,
+  offset: 'translate3d(0vw, -400vh, 0)',
+  starsHidden: false,
+}
+
+const SCENES: Record<string, Scene> = {
+  '/papers': {
+    altitude: 1,
+    offset: 'translate3d(0vw, -250vh, 0)',
+    starsHidden: false,
+  },
+  '/papers/:slug': {
+    altitude: 2,
+    offset: 'translate3d(0vw, 0vh, 0)',
+    starsHidden: true,
+  },
+  '/about': {
+    altitude: 0,
+    offset: 'translate3d(-100vw, -400vh, 0)',
+    starsHidden: true,
+  },
+  '/bazaar': {
+    altitude: 1,
+    offset: 'translate3d(-300vw, -250vh, 0)',
+    starsHidden: false,
+  },
+}
+
+export const sceneFor = (href: string): Scene => {
+  const ptr = createPtr(href)
+  const match = Object.entries(SCENES).find(([pattern]) => ptr(pattern))
+  return match?.[1] ?? DEFAULT_SCENE
+}
+
+export const getAltitude = (href: string): number => sceneFor(href).altitude
 
 let current: string | null = null
 let previous: string | null = null

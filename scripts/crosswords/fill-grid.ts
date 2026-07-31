@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import { readFileSync, writeFileSync } from 'node:fs'
+import { mulberry32 } from '../../lib/random.ts'
 
 type Slot = {
   id: string
@@ -124,17 +125,6 @@ export const extractSlots = (rows: readonly string[]): Slot[] => {
   return slots
 }
 
-const mulberry32 = (seedBytes: Buffer) => {
-  let a = seedBytes.readUInt32BE(0)
-  return () => {
-    a |= 0
-    a = (a + 0x6d2b79f5) | 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
-
 type FillResult =
   | { ok: true; grid: string[]; answers: Map<string, string>; nodes: number }
   | { ok: false; failedSlot: string; nodes: number }
@@ -146,7 +136,9 @@ export const fillPattern = (
   nodeBudget = NODE_BUDGET,
 ): FillResult => {
   const slots = extractSlots(rows)
-  const random = mulberry32(createHash('sha256').update(seed).digest())
+  const random = mulberry32(
+    createHash('sha256').update(seed).digest().readUInt32BE(0),
+  )
 
   const byLength = new Map<number, string[]>()
   for (const word of words) {

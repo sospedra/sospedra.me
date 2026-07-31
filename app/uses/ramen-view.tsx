@@ -443,7 +443,7 @@ function Charms() {
 
 export default function RamenView(props: { level: number }) {
   return (
-    <Shell canonical='/uses' className={css.den} shellClassName={css.scroller}>
+    <Shell className={css.den} shellClassName={css.scroller}>
       <h1 className='sr-only'>Uses</h1>
       <p className='sr-only'>
         The tools behind every part of my work, served as the menu of a

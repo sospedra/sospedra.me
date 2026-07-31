@@ -5,6 +5,8 @@
  * drawn land.
  */
 
+import { clamp } from 'es-toolkit'
+
 const A1 = 1.340264
 const A2 = -0.081106
 const A3 = 0.000893
@@ -15,9 +17,6 @@ const NEWTON_ITERATIONS = 12
 
 const DEGREES_TO_RADIANS = Math.PI / 180
 const RADIANS_TO_DEGREES = 180 / Math.PI
-
-const clamp = (value: number, minimum: number, maximum: number) =>
-  Math.min(maximum, Math.max(minimum, value))
 
 const yPolynomial = (theta: number): number => {
   const theta2 = theta * theta

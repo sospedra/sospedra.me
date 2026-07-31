@@ -47,7 +47,7 @@ export default function ShapeAuditPage() {
   const countries = auditCountries()
 
   return (
-    <Shell canonical='/meridian/shapes' className={css.page}>
+    <Shell className={css.page}>
       <header className={css.header}>
         <h1>Meridian shape audit</h1>
         <p>

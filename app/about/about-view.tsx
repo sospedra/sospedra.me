@@ -21,10 +21,7 @@ export default function AboutView(props: { years: number }) {
   )
 
   return (
-    <Shell
-      className='relative w-full h-full max-w-4xl px-4 pt-12 pb-20 mx-auto text-white'
-      canonical='/about'
-    >
+    <Shell className='relative w-full h-full max-w-4xl px-4 pt-12 pb-20 mx-auto text-white'>
       <RouteHeader
         className={css.routeHeader}
         title='Rubén Sospedra'

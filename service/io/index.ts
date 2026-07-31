@@ -1,6 +1,8 @@
 import { readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
+export const STATIC_ROOT = 'public'
+
 const BUNDLED_EXTENSIONS = new Set(['tsx', 'ts', 'js', 'lock', 'css'])
 
 const filterStatic = (name: string) => {
@@ -9,7 +11,7 @@ const filterStatic = (name: string) => {
   return name.includes('.') && !BUNDLED_EXTENSIONS.has(extension.toLowerCase())
 }
 
-// build-time only: next.config.ts snapshots the result into static-files.json
+// build-time only: scripts/io/snapshot-static-files.ts writes static-files.json
 export const listStaticFiles = (dir: string): string[] => {
   const dirents = readdirSync(dir, { withFileTypes: true })
     .filter((dirent) => filterStatic(dirent.name) || dirent.isDirectory())

@@ -1,3 +1,4 @@
+import { clamp } from 'es-toolkit'
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
 import { formatTime } from './format'
 import css from './music.module.css'
@@ -47,8 +48,7 @@ const VOLUME_LINEAR_DISTANCE = 266.30871
 const VOLUME_MASK_WIDTH = 197
 const VOLUME_MASK_HEIGHT = 464
 
-const clampProgress = (progress: number): number =>
-  Math.min(1, Math.max(0, progress))
+const clampProgress = (progress: number): number => clamp(progress, 0, 1)
 
 const volumeGaugeBackground = (volume: number): string => {
   const progress = clampProgress(volume)

@@ -1,6 +1,7 @@
 'use client'
 
 import Shell from 'components/Shell'
+import { readLocal, writeLocal } from 'lib/storage'
 import {
   type KeyboardEvent,
   type PointerEvent,
@@ -166,11 +167,7 @@ export default function GameOfLifeView() {
     const next = !soundEnabled
     setSoundEnabled(next)
     audio.setEnabled(next)
-    try {
-      window.localStorage.setItem(LIFE_SOUND_KEY, next ? 'on' : 'off')
-    } catch {
-      // Storage can be unavailable in private or restricted browsing modes.
-    }
+    writeLocal(LIFE_SOUND_KEY, next ? 'on' : 'off')
     if (next) {
       audio.play('key')
       if (running) audio.setRunning(true, speed)
@@ -254,13 +251,7 @@ export default function GameOfLifeView() {
   )
 
   useEffect(() => {
-    let stored: string | null = null
-    try {
-      stored = window.localStorage.getItem(LIFE_SOUND_KEY)
-    } catch {
-      // Keep the default when storage is unavailable.
-    }
-    if (stored !== 'off') return
+    if (readLocal(LIFE_SOUND_KEY) !== 'off') return
     setSoundEnabled(false)
     audio.setEnabled(false)
   }, [audio])
@@ -603,11 +594,7 @@ export default function GameOfLifeView() {
       : 'infinite plane'
 
   return (
-    <Shell
-      canonical='/game-of-life'
-      className={`relative w-full ${css.page}`}
-      shellClassName={css.shell}
-    >
+    <Shell className={`relative w-full ${css.page}`} shellClassName={css.shell}>
       <LifeLayout
         state={state}
         running={running}

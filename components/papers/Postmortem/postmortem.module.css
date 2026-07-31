@@ -1,0 +1,63 @@
+/* Doubled class: .markdown > * + * in paper.module.css ties on specificity,
+   and chunk order across CSS modules is not guaranteed. */
+.postmortem.postmortem {
+  display: grid;
+  margin: 2.25rem 0 2.5rem;
+  overflow: hidden;
+  border: 1px solid rgb(109 247 234 / 24%);
+  border-radius: 0.375rem;
+  background: #100d1a;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 5.25rem 1fr;
+  border-top: 1px solid rgb(109 247 234 / 12%);
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.kind {
+  padding: 0.65rem 0 0.6rem 1rem;
+  font-family: var(--font-code, monospace);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.row[data-kind="error"] .kind {
+  color: var(--color-signal-pink, #ff5ea8);
+}
+
+.row[data-kind="insight"] .kind {
+  color: var(--color-signal-yellow, #ffea00);
+}
+
+.row[data-kind="fix"] .kind {
+  color: var(--color-signal-cyan, #6df7ea);
+}
+
+.body {
+  margin: 0;
+  padding: 0.6rem 1rem 0.6rem 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 496px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .kind {
+    padding: 0.6rem 1rem 0;
+  }
+
+  .body {
+    padding: 0.2rem 1rem 0.65rem;
+  }
+}

@@ -1,0 +1,114 @@
+/* Doubled class: .markdown > * + * in paper.module.css ties on specificity,
+   and chunk order across CSS modules is not guaranteed. */
+.palette.palette {
+  margin: 2.75rem 0 3rem;
+  overflow: hidden;
+  border: 1px solid rgb(109 247 234 / 24%);
+  border-radius: 0.375rem;
+  background: rgb(109 247 234 / 4%);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.6rem 1rem 0.55rem;
+  border-bottom: 1px solid rgb(109 247 234 / 18%);
+  background: rgb(109 247 234 / 5%);
+}
+
+.label {
+  color: var(--color-signal-cyan, #6df7ea);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.count {
+  flex: 1;
+  color: var(--color-text, #d6dbe6);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+}
+
+.toggle {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.mode {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid rgb(109 247 234 / 36%);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--color-signal-cyan, #6df7ea);
+  cursor: pointer;
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.mode[aria-pressed="true"] {
+  background: rgb(109 247 234 / 14%);
+}
+
+.mode:focus-visible {
+  outline: 2px solid var(--color-signal-cyan, #6df7ea);
+  outline-offset: 2px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(4.4rem, 1fr));
+  gap: 0.75rem 0.5rem;
+  padding: 1rem;
+}
+
+.chip {
+  display: grid;
+  gap: 0.3rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.swatch {
+  width: 100%;
+  height: 2.1rem;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 0.25rem;
+  transition:
+    background 240ms ease,
+    opacity 240ms ease,
+    transform 240ms ease;
+}
+
+.chip[data-stray="true"] .swatch {
+  opacity: 0.55;
+  transform: scale(0.82);
+  border-style: dashed;
+}
+
+.hex {
+  color: var(--color-text, #d6dbe6);
+  font-family: var(--font-code, monospace);
+  font-size: 0.5625rem;
+  letter-spacing: 0.04em;
+}
+
+.chip[data-stray="true"] .hex {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.scope {
+  color: var(--color-signal-yellow, #ffea00);
+  font-family: var(--font-code, monospace);
+  font-size: 0.5625rem;
+  letter-spacing: 0.04em;
+}

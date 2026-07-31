@@ -1,4 +1,5 @@
 import { type FC, useEffect } from 'react'
+import { prefersQuietFx } from 'service/theme'
 import css from './easteregg.module.css'
 
 const fullDuration = 3200
@@ -10,9 +11,7 @@ const Egg: FC<{
 }> = ({ exitFullscreenOnComplete, onComplete }) => {
   useEffect(() => {
     const root = document.documentElement
-    const isQuiet =
-      root.classList.contains('fx-quiet') ||
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isQuiet = prefersQuietFx()
     root.dataset.systemOverride = 'konami'
 
     const timeout = window.setTimeout(

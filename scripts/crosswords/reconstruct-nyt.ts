@@ -71,11 +71,6 @@ export const loadArchive = () => {
   return perDate
 }
 
-/* Fully checked grids count every white cell twice, so an odd letter total
-   proves the export lost rows for that date. */
-export const letterParityOk = (entries: { answer: string }[]) =>
-  entries.reduce((sum, entry) => sum + entry.answer.length, 0) % 2 === 0
-
 type Run = { word: string; start: number; length: number }
 
 export const reconstruct = (
@@ -184,9 +179,7 @@ export const reconstruct = (
       const mirror = height - 1 - row
       if (mirror > row) return true
       if (mirror === row) {
-        return rowBlacks.every(
-          (black, c) => black === rowBlacks[width - 1 - c],
-        )
+        return rowBlacks.every((black, c) => black === rowBlacks[width - 1 - c])
       }
       return rowBlacks.every(
         (black, c) => black === (grid[mirror][width - 1 - c] === '#'),

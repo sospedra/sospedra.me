@@ -306,7 +306,7 @@ export default function CameraView() {
         : 'OFFLINE'
 
   return (
-    <Shell canonical='/camera' className={css.frame} shellClassName={css.shell}>
+    <Shell className={css.frame} shellClassName={css.shell}>
       <header className={css.rail}>
         <Link url='/' className={css.homeLink}>
           <LinkBack>Home</LinkBack>

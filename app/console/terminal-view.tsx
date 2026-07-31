@@ -3,6 +3,7 @@
 import cn from 'clsx'
 import Shell from 'components/Shell'
 import { clamp } from 'es-toolkit'
+import { readLocal, writeLocal } from 'lib/storage'
 import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
@@ -422,10 +423,7 @@ export default function TerminalView(props: {
   const [ready, setReady] = useState(false)
   // true when autoplay was blocked: we wait for a keypress to boot with sound
   const [gated, setGated] = useState(false)
-  const [muted, setMuted] = useState(
-    () =>
-      typeof window !== 'undefined' && localStorage.getItem(MUTE_KEY) === '1',
-  )
+  const [muted, setMuted] = useState(() => readLocal(MUTE_KEY) === '1')
   // null = shell mode, a number = hackertyper mode at that many chars typed
   const [hackerPos, setHackerPos] = useState<number | null>(null)
   const [anim, setAnim] = useState<{ frames: string[]; index: number } | null>(
@@ -567,7 +565,7 @@ export default function TerminalView(props: {
   const toggleAudio = () => {
     setMuted((current) => {
       const next = !current
-      localStorage.setItem(MUTE_KEY, next ? '1' : '0')
+      writeLocal(MUTE_KEY, next ? '1' : '0')
       note([
         {
           kind: 'text',
@@ -781,7 +779,7 @@ export default function TerminalView(props: {
   const screenOps = INTRO_OPS.slice(screenStart, intro)
 
   return (
-    <Shell canonical='/console' className={css.page}>
+    <Shell className={css.page}>
       <h1 className='sr-only'>Console — asset terminal</h1>
       <div className={css.machine}>
         <span

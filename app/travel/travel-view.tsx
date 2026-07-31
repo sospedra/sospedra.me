@@ -3,6 +3,8 @@
 import cn from 'clsx'
 import Link from 'components/Link'
 import Shell from 'components/Shell'
+import { clamp } from 'es-toolkit'
+import { haversineDistanceKm } from 'lib/geo/distance'
 import type {
   CSSProperties,
   KeyboardEvent as ReactKeyboardEvent,
@@ -68,24 +70,18 @@ const formatCoords = (spot: { lat: number; lon: number }): string => {
   return `${lat} ${lon}`
 }
 
-const EARTH_RADIUS_KM = 6371.0088
 const distanceFormatter = new Intl.NumberFormat('en', {
   maximumFractionDigits: 0,
 })
 const countryFormatter = new Intl.DisplayNames(['en'], { type: 'region' })
 
-const distanceFromHome = (spot: Destination): number => {
-  const latDelta = toRadians(spot.lat - HOME.lat)
-  const lonDelta = toRadians(spot.lon - HOME.lon)
-  const homeLat = toRadians(HOME.lat)
-  const spotLat = toRadians(spot.lat)
-  const chord =
-    Math.sin(latDelta / 2) ** 2 +
-    Math.cos(homeLat) * Math.cos(spotLat) * Math.sin(lonDelta / 2) ** 2
-  return Math.round(
-    EARTH_RADIUS_KM * 2 * Math.atan2(Math.sqrt(chord), Math.sqrt(1 - chord)),
+const distanceFromHome = (spot: Destination): number =>
+  Math.round(
+    haversineDistanceKm(
+      { latitude: HOME.lat, longitude: HOME.lon },
+      { latitude: spot.lat, longitude: spot.lon },
+    ),
   )
-}
 
 const formatRange = (spot: Destination): string =>
   spot.home
@@ -540,7 +536,7 @@ function ContactRow(props: {
     }
 
     const clampPercent = (value: number): number =>
-      Math.min(100, Math.max(0, Math.round(value * 100) / 100))
+      clamp(Math.round(value * 100) / 100, 0, 100)
 
     onTrack(spot, {
       x: clampPercent(((event.clientX - bounds.left) / bounds.width) * 100),
@@ -809,11 +805,7 @@ export default function TravelView() {
   ])
 
   return (
-    <Shell
-      canonical='/travel'
-      className={css.frame}
-      shellClassName={css.travelShell}
-    >
+    <Shell className={css.frame} shellClassName={css.travelShell}>
       <section
         className={cn(css.console, poweredOff && css.consoleOff)}
         aria-labelledby='travel-control-title'

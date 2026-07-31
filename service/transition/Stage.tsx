@@ -4,6 +4,7 @@ import cn from 'clsx'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useLayoutEffect, useRef } from 'react'
+import { prefersQuietFx } from 'service/theme'
 import { getAltitude, getOriginPathname } from './altitude'
 import { useTransition } from './context'
 
@@ -14,11 +15,6 @@ const EXIT_MS = 420
 const EXIT_EASING = 'cubic-bezier(0.5, 0, 0.75, 0.6)'
 
 const shift = (vh: number) => ({ transform: `translate3d(0, ${vh}vh, 0)` })
-
-// synchronous read at animation time: no flicker while media queries settle
-const isQuiet = () =>
-  document.documentElement.classList.contains('fx-quiet') ||
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 // Camera-tilt stage: climbing routes drop in from the top and fall out the
 // bottom, descending routes do the reverse. WAAPI keeps the transform alive
@@ -35,7 +31,7 @@ const StageMain: React.FunctionComponent<{
   // layout effect: runs before paint and again on every Activity revival
   useLayoutEffect(() => {
     const origin = getOriginPathname(pathname)
-    if (origin === null || isQuiet()) return
+    if (origin === null || prefersQuietFx()) return
     const climb = altitude - getAltitude(origin)
     if (climb === 0) return
 
@@ -47,7 +43,7 @@ const StageMain: React.FunctionComponent<{
   }, [altitude, pathname])
 
   useEffect(() => {
-    if (!url || isQuiet()) return
+    if (!url || prefersQuietFx()) return
     const climb = getAltitude(url) - altitude
     if (climb === 0) return
 

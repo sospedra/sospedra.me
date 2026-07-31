@@ -1,5 +1,6 @@
 'use client'
 
+import { readLocalJson, writeLocalJson } from 'lib/storage'
 import type React from 'react'
 import {
   createContext,
@@ -41,14 +42,10 @@ export function SystemProvider(props: { children: React.ReactNode }) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-      if (!Array.isArray(stored)) return
-      const valid = stored.filter((id): id is AnomalyId => id in ANOMALIES)
-      setAnomalies((current) => [...new Set([...valid, ...current])])
-    } catch {
-      // A damaged preference should never stop the site from rendering.
-    }
+    const stored = readLocalJson(STORAGE_KEY).value
+    if (!Array.isArray(stored)) return
+    const valid = stored.filter((id): id is AnomalyId => id in ANOMALIES)
+    setAnomalies((current) => [...new Set([...valid, ...current])])
   }, [])
 
   useEffect(() => {
@@ -68,11 +65,7 @@ export function SystemProvider(props: { children: React.ReactNode }) {
       setAnomalies((current) => {
         if (current.includes(id)) return current
         const next = [...current, id]
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-        } catch {
-          // Storage is an enhancement; the discovery still works this visit.
-        }
+        writeLocalJson(STORAGE_KEY, next)
         notify(`ANOMALY LOGGED / ${ANOMALIES[id]} ▼`)
         return next
       })

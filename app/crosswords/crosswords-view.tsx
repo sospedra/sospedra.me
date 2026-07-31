@@ -1,8 +1,16 @@
 'use client'
 
 import cn from 'clsx'
+import DailyCountdownPanel from 'components/DailyCountdownPanel'
 import Link from 'components/Link'
+import Modal from 'components/Modal'
 import Shell from 'components/Shell'
+import {
+  readLocal,
+  readLocalJson,
+  writeLocal,
+  writeLocalJson,
+} from 'lib/storage'
 import {
   type CSSProperties,
   type FormEvent,
@@ -22,8 +30,10 @@ import {
   playKeyClick,
   playTypewriterBell,
 } from 'service/audio/key-click'
-import { useDailyCountdown } from 'service/daily-countdown'
 import { useGameInput } from 'service/hotkeys'
+import { useDocumentLang } from 'service/locale'
+import { shareText } from 'service/share'
+import { useViewportHeightVar } from 'service/viewport'
 import {
   type CrosswordChallengeFile,
   type CrosswordDirection,
@@ -74,6 +84,41 @@ const DEFAULT_SETTINGS: GameSettings = {
 
 const SETTINGS_KEY = 'crossword:v1:settings'
 const LOCALE_KEY = 'crossword:v1:locale'
+
+const BOOLEAN_SETTINGS = [
+  'showTimer',
+  'skipFilled',
+  'autoCheck',
+  'largeText',
+  'highContrast',
+] as const
+
+type SavedSettings = Partial<GameSettings> & { keySounds?: boolean }
+
+const restoredSoundLevel = (saved: SavedSettings): SoundLevel => {
+  const { soundLevel } = saved
+  if (typeof soundLevel === 'number' && soundLevel >= 0 && soundLevel <= 3) {
+    return soundLevel as SoundLevel
+  }
+  // pre-soundLevel saves stored a keySounds boolean
+  if (saved.keySounds === false) return 0
+  return DEFAULT_SETTINGS.soundLevel
+}
+
+const parseSavedSettings = (value: unknown): GameSettings => {
+  if (typeof value !== 'object' || value === null) return DEFAULT_SETTINGS
+  const saved = value as SavedSettings
+  const next = { ...DEFAULT_SETTINGS }
+  for (const key of BOOLEAN_SETTINGS) {
+    const flag = saved[key]
+    if (typeof flag === 'boolean') next[key] = flag
+  }
+  next.soundLevel = restoredSoundLevel(saved)
+  if (saved.solveMode === 'guided' || saved.solveMode === 'standard') {
+    next.solveMode = saved.solveMode
+  }
+  return next
+}
 const PROGRESS_VERSION = 'v2'
 const MOBILE_LAYOUT_MEDIA =
   '(max-width: 52rem), (max-width: 64rem) and (max-height: 36rem)'
@@ -420,6 +465,12 @@ const directionLabel = (
   locale: CrosswordLocale,
 ) => COPY[locale][direction]
 
+const revealTargetFor = (scope: Scope, cell: number, entryId: string) => {
+  if (scope === 'cell') return `cell:${cell}`
+  if (scope === 'answer') return `answer:${entryId}`
+  return 'puzzle'
+}
+
 // The grid already shows every answer's length; the only assist worth
 // offering is the first letter, and it derives from the fill for free.
 const clueAssist = (
@@ -429,45 +480,6 @@ const clueAssist = (
 ) => {
   if (mode !== 'guided') return null
   return COPY[locale].firstLetter(entry.gridAnswer[0])
-}
-
-const NextPuzzleCountdown = ({
-  copy,
-}: {
-  copy: (typeof COPY)[CrosswordLocale]
-}) => {
-  const countdown = useDailyCountdown()
-  if (!countdown.label) return null
-  if (countdown.ready) {
-    return (
-      <button
-        type='button'
-        className={css.nextPuzzleReady}
-        onClick={() => window.location.reload()}
-      >
-        {copy.nextPuzzleReady}
-      </button>
-    )
-  }
-  return (
-    <div className={css.nextPuzzle}>
-      <p className={css.nextPuzzleReadout}>
-        <span>{copy.nextPuzzleIn}</span>
-        <strong>{countdown.label}</strong>
-      </p>
-      <span
-        className={css.nextPuzzleTrack}
-        aria-hidden='true'
-        style={
-          {
-            '--remaining': countdown.remainingFraction ?? 0,
-          } as CSSProperties
-        }
-      >
-        <span />
-      </span>
-    </div>
-  )
 }
 
 const entryFor = (
@@ -600,48 +612,6 @@ const ConfettiBurst = () => (
     ))}
   </div>
 )
-
-const Modal = ({
-  children,
-  className,
-  close,
-  labelId,
-  open,
-}: {
-  children: ReactNode
-  className?: string
-  close: () => void
-  labelId: string
-  open: boolean
-}) => {
-  const ref = useRef<HTMLDialogElement>(null)
-
-  useEffect(() => {
-    const dialog = ref.current
-    if (!dialog) return
-    if (open && !dialog.open) {
-      dialog.showModal()
-      window.requestAnimationFrame(() => {
-        dialog.querySelector<HTMLElement>('[data-initial-focus]')?.focus()
-      })
-    }
-    if (!open && dialog.open) dialog.close()
-  }, [open])
-
-  return (
-    <dialog
-      ref={ref}
-      className={cn(css.dialog, className)}
-      aria-labelledby={labelId}
-      onCancel={(event) => {
-        event.preventDefault()
-        close()
-      }}
-    >
-      {children}
-    </dialog>
-  )
-}
 
 const DialogHeader = ({
   close,
@@ -1080,12 +1050,11 @@ function CrosswordSession({
   )
   const activeEntry =
     entryFor(puzzle, state.selectedCell, state.direction) ?? orderedEntries[0]
-  const revealTargetKey =
-    toolScope === 'cell'
-      ? `cell:${state.selectedCell}`
-      : toolScope === 'answer'
-        ? `answer:${activeEntry.id}`
-        : 'puzzle'
+  const revealTargetKey = revealTargetFor(
+    toolScope,
+    state.selectedCell,
+    activeEntry.id,
+  )
   const revealArmed = armedRevealTarget === revealTargetKey
   const sweepEntry = wordSweep
     ? puzzle.entries.find((entry) => entry.id === wordSweep.entryId)
@@ -1133,14 +1102,10 @@ function CrosswordSession({
 
   const save = useCallback(
     (current: CrosswordState) => {
-      try {
-        window.localStorage.setItem(
-          progressKey(puzzle),
-          JSON.stringify(serializeCrosswordState(current, puzzle.id)),
-        )
-      } catch {
-        // Private browsing and storage quotas must never interrupt play.
-      }
+      writeLocalJson(
+        progressKey(puzzle),
+        serializeCrosswordState(current, puzzle.id),
+      )
     },
     [puzzle],
   )
@@ -1206,17 +1171,12 @@ function CrosswordSession({
   )
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(progressKey(puzzle))
-      if (raw) {
-        const restored = restoreCrosswordState(JSON.parse(raw), puzzle)
-        if (restored) dispatch({ type: 'HYDRATE', state: restored })
-      }
-    } catch {
-      // Invalid or unavailable local storage falls back to a fresh grid.
-    } finally {
-      setHydrated(true)
+    const loaded = readLocalJson(progressKey(puzzle))
+    if (loaded.status === 'ok') {
+      const restored = restoreCrosswordState(loaded.value, puzzle)
+      if (restored) dispatch({ type: 'HYDRATE', state: restored })
     }
+    setHydrated(true)
   }, [puzzle])
 
   useEffect(() => {
@@ -1901,14 +1861,7 @@ function CrosswordSession({
 
   const shareResult = async () => {
     const card = shareCard(puzzle, state)
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: card })
-        return
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') return
-      }
-    }
+    if ((await shareText({ text: card })) !== 'unsupported') return
     try {
       await navigator.clipboard.writeText(card)
       announce(copy.resultCopied)
@@ -1925,6 +1878,8 @@ function CrosswordSession({
     copy.answerScope,
     copy.puzzleScope,
   ] as const
+  const scopeLabel =
+    scopeLabels[scopeValues.indexOf(toolScope)] ?? copy.answerScope
   const soundLabels = [
     copy.soundOff,
     copy.soundLow,
@@ -1986,9 +1941,7 @@ function CrosswordSession({
           label={copy.scopeControl}
           max={scopeValues.length - 1}
           value={scopeValues.indexOf(toolScope)}
-          valueText={
-            scopeLabels[scopeValues.indexOf(toolScope)] ?? copy.answerScope
-          }
+          valueText={scopeLabel}
           tone='ivory'
           onChange={(value) => {
             setArmedRevealTarget(null)
@@ -2141,7 +2094,7 @@ function CrosswordSession({
           <span>{copy.pencil}</span>
         </ToolbarButton>
         <ToolbarButton
-          label={`${copy.checkLabel}: ${scopeLabels[scopeValues.indexOf(toolScope)]}`}
+          label={`${copy.checkLabel}: ${scopeLabel}`}
           descriptionId='crossword-check-hint'
           className={css.checkTool}
           disabled={paused || complete}
@@ -2156,7 +2109,7 @@ function CrosswordSession({
           <span>{copy.check}</span>
         </ToolbarButton>
         <ToolbarButton
-          label={`${copy.revealLabel}: ${scopeLabels[scopeValues.indexOf(toolScope)]}`}
+          label={`${copy.revealLabel}: ${scopeLabel}`}
           descriptionId='crossword-reveal-hint'
           className={cn(css.revealTool, css.guardTool)}
           active={revealArmed}
@@ -2599,7 +2552,7 @@ function CrosswordSession({
         open={dialog === 'help'}
         close={closeDialog}
         labelId='help-title'
-        className={css.wideDialog}
+        className={cn(css.dialog, css.wideDialog)}
       >
         <DialogHeader
           id='help-title'
@@ -2699,7 +2652,7 @@ function CrosswordSession({
         open={dialog === 'complete'}
         close={closeDialog}
         labelId='complete-title'
-        className={css.completionDialog}
+        className={cn(css.dialog, css.completionDialog)}
       >
         {dialog === 'complete' && <ConfettiBurst />}
         <div className={css.completionMark} aria-hidden='true'>
@@ -2724,7 +2677,18 @@ function CrosswordSession({
               <dd>{revealsUsed ? '✓' : '—'}</dd>
             </div>
           </dl>
-          <NextPuzzleCountdown copy={copy} />
+          <DailyCountdownPanel
+            classes={{
+              panel: css.nextPuzzle,
+              readout: css.nextPuzzleReadout,
+              ready: css.nextPuzzleReady,
+              track: css.nextPuzzleTrack,
+            }}
+            labels={{
+              countdown: copy.nextPuzzleIn,
+              ready: copy.nextPuzzleReady,
+            }}
+          />
           <div className={css.completionActions}>
             <button type='button' onClick={restartPuzzle}>
               {copy.playAgain}
@@ -2754,7 +2718,7 @@ export default function CrosswordsView({
   letterFontClassName: string
 }) {
   useGameInput()
-  const [locale, setLocaleState] = useState<CrosswordLocale>('en')
+  const [locale, setLocale] = useState<CrosswordLocale>('en')
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS)
   const [preferencesReady, setPreferencesReady] = useState(false)
   const [editionDate, setEditionDate] = useState<string | null>(null)
@@ -2778,118 +2742,29 @@ export default function CrosswordsView({
   )
 
   useEffect(() => {
-    try {
-      const savedLocale = window.localStorage.getItem(LOCALE_KEY)
-      if (savedLocale === 'en' || savedLocale === 'es') {
-        setLocaleState(savedLocale)
-      }
-      const raw = window.localStorage.getItem(SETTINGS_KEY)
-      if (raw) {
-        const saved = JSON.parse(raw) as Partial<GameSettings> & {
-          keySounds?: boolean
-        }
-        setSettings({
-          showTimer:
-            typeof saved.showTimer === 'boolean'
-              ? saved.showTimer
-              : DEFAULT_SETTINGS.showTimer,
-          skipFilled:
-            typeof saved.skipFilled === 'boolean'
-              ? saved.skipFilled
-              : DEFAULT_SETTINGS.skipFilled,
-          autoCheck:
-            typeof saved.autoCheck === 'boolean'
-              ? saved.autoCheck
-              : DEFAULT_SETTINGS.autoCheck,
-          soundLevel:
-            typeof saved.soundLevel === 'number' &&
-            saved.soundLevel >= 0 &&
-            saved.soundLevel <= 3
-              ? (saved.soundLevel as SoundLevel)
-              : saved.keySounds === false
-                ? 0
-                : DEFAULT_SETTINGS.soundLevel,
-          solveMode:
-            saved.solveMode === 'guided' || saved.solveMode === 'standard'
-              ? saved.solveMode
-              : DEFAULT_SETTINGS.solveMode,
-          largeText:
-            typeof saved.largeText === 'boolean'
-              ? saved.largeText
-              : DEFAULT_SETTINGS.largeText,
-          highContrast:
-            typeof saved.highContrast === 'boolean'
-              ? saved.highContrast
-              : DEFAULT_SETTINGS.highContrast,
-        })
-      }
-    } catch {
-      // Preferences remain at safe defaults when storage is unavailable.
-    } finally {
-      setPreferencesReady(true)
+    const savedLocale = readLocal(LOCALE_KEY)
+    if (savedLocale === 'en' || savedLocale === 'es') {
+      setLocale(savedLocale)
     }
+    const loaded = readLocalJson(SETTINGS_KEY)
+    if (loaded.status === 'ok') setSettings(parseSavedSettings(loaded.value))
+    setPreferencesReady(true)
   }, [])
 
-  useEffect(() => {
-    const previous = document.documentElement.lang
-    document.documentElement.lang = locale
-    return () => {
-      document.documentElement.lang = previous
-    }
-  }, [locale])
+  useDocumentLang(locale)
+  useViewportHeightVar('--crossword-viewport-height')
 
   useEffect(() => {
     if (!preferencesReady) return
-    try {
-      window.localStorage.setItem(LOCALE_KEY, locale)
-      window.localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
-    } catch {
-      // Preference storage is optional.
-    }
+    writeLocal(LOCALE_KEY, locale)
+    writeLocalJson(SETTINGS_KEY, settings)
   }, [locale, preferencesReady, settings])
-
-  useEffect(() => {
-    const viewport = window.visualViewport
-    let frame = 0
-    const update = () => {
-      window.cancelAnimationFrame(frame)
-      frame = window.requestAnimationFrame(() => {
-        const height = viewport?.height ?? window.innerHeight
-        document.documentElement.style.setProperty(
-          '--crossword-viewport-height',
-          `${height}px`,
-        )
-      })
-    }
-    update()
-    viewport?.addEventListener('resize', update)
-    viewport?.addEventListener('scroll', update)
-    window.addEventListener('resize', update)
-    return () => {
-      window.cancelAnimationFrame(frame)
-      viewport?.removeEventListener('resize', update)
-      viewport?.removeEventListener('scroll', update)
-      window.removeEventListener('resize', update)
-      document.documentElement.style.removeProperty(
-        '--crossword-viewport-height',
-      )
-    }
-  }, [])
-
-  const setLocale = (nextLocale: CrosswordLocale) => {
-    if (nextLocale === locale) return
-    setLocaleState(nextLocale)
-  }
 
   const activeLocale = puzzles.es ? locale : 'en'
   const puzzle = activeLocale === 'es' && puzzles.es ? puzzles.es : puzzles.en
 
   return (
-    <Shell
-      canonical='/crosswords'
-      shellClassName={css.shell}
-      className={css.page}
-    >
+    <Shell shellClassName={css.shell} className={css.page}>
       <CrosswordSession
         key={puzzle.id}
         locale={activeLocale}

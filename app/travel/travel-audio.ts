@@ -1,3 +1,9 @@
+import {
+  audioContextClass,
+  createMasterBus,
+  noiseBufferFor,
+} from 'service/audio/kit'
+
 type TravelAudioCue = { kind: 'button' } | { direction: -1 | 1; kind: 'rotary' }
 
 type TravelAudioGraph = {
@@ -14,7 +20,6 @@ type ReceiverStatic = {
 }
 
 const ROTARY_CUE_INTERVAL_MS = 28
-const NOISE_BUFFER_SECONDS = 1.2
 
 const hasActiveUserGesture = () => {
   if (typeof navigator === 'undefined') return false
@@ -36,39 +41,20 @@ export const createTravelAudio = () => {
     if (typeof window === 'undefined' || !hasActiveUserGesture()) return null
     if (graph && graph.context.state !== 'closed') return graph
 
-    const AudioContextClass =
-      window.AudioContext ??
-      (
-        window as typeof window & {
-          webkitAudioContext?: typeof AudioContext
-        }
-      ).webkitAudioContext
+    const AudioContextClass = audioContextClass()
     if (!AudioContextClass) return null
 
     try {
       context = new AudioContextClass({ latencyHint: 'interactive' })
-
-      const output = context.createGain()
-      const limiter = context.createDynamicsCompressor()
-      output.gain.value = 0.66
-      limiter.threshold.value = -12
-      limiter.knee.value = 7
-      limiter.ratio.value = 8
-      limiter.attack.value = 0.002
-      limiter.release.value = 0.08
-      output.connect(limiter).connect(context.destination)
-
-      const noiseBuffer = context.createBuffer(
-        1,
-        Math.ceil(context.sampleRate * NOISE_BUFFER_SECONDS),
-        context.sampleRate,
-      )
-      const noiseData = noiseBuffer.getChannelData(0)
-      for (let index = 0; index < noiseData.length; index += 1) {
-        noiseData[index] = Math.random() * 2 - 1
-      }
-
-      graph = { context, noiseBuffer, output }
+      const output = createMasterBus(context, {
+        gain: 0.66,
+        threshold: -12,
+        knee: 7,
+        ratio: 8,
+        attack: 0.002,
+        release: 0.08,
+      })
+      graph = { context, noiseBuffer: noiseBufferFor(context), output }
       return graph
     } catch {
       context = null

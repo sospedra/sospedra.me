@@ -16,11 +16,18 @@ const Time: React.FC<{ time: string }> = (props) => {
   )
 }
 
+// one slice per ~3 minutes, a whole box past five
+export const pizzaSlices = (minutes: number): IconName[] => {
+  const slices = Math.max(Math.round(minutes / 3), 1)
+  return slices > 5 ? ['pizza-box.png'] : Array(slices).fill('pizza.svg')
+}
+
+export const readingLabel = (minutes: number) =>
+  `${Math.max(1, Math.round(minutes))} minute read`
+
 const Reading: React.FC<{ minutes: number }> = (props) => {
-  const slices = Math.max(Math.round(props.minutes / 3), 1)
-  const pizza: IconName[] =
-    slices > 5 ? ['pizza-box.png'] : Array(slices).fill('pizza.svg')
-  const label = `${Math.max(1, Math.round(props.minutes))} minute read`
+  const pizza = pizzaSlices(props.minutes)
+  const label = readingLabel(props.minutes)
   return (
     <div
       className='inline-flex flex-wrap'

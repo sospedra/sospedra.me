@@ -3,14 +3,9 @@ import type React from 'react'
 import StageMain from 'service/transition/Stage'
 
 type ShellProps = {
-  canonical: string
   className?: string
-  description?: string
-  image?: string
   shellClassName?: string
   stage?: boolean
-  title?: string
-  keywords?: string[]
   children: React.ReactNode
 }
 

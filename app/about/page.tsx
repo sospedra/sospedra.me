@@ -1,19 +1,15 @@
 import type { Metadata } from 'next'
+import { yearsSinceCareerStart } from 'service/career'
+import { ABOUT_DESC } from 'service/descriptions'
 import AboutView from './about-view'
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'javascript hacker ▼ principal engineer',
+  description: ABOUT_DESC,
   alternates: { canonical: '/about' },
 }
 
-// cached: the career age bakes at build, new Date() is banned at prerender
-const getYearsSince = async (start: number) => {
-  'use cache'
-  return new Date().getUTCFullYear() - start
-}
-
 export default async function AboutPage() {
-  const years = await getYearsSince(2013)
+  const years = await yearsSinceCareerStart()
   return <AboutView years={years} />
 }

@@ -1,4 +1,6 @@
+import { clamp } from 'es-toolkit'
 import type { GeoChallengeRules, MapDistanceBand } from './model'
+import { nonNegativeFinite } from './numeric'
 
 export const CHOICE_MIN_BASE_SCORE = 500
 export const CHOICE_SPEED_BONUS = 500
@@ -55,12 +57,6 @@ export interface MapBaseScore {
   baseScore: number
   distanceBand: Exclude<MapDistanceBand, 'expired'>
 }
-
-const clamp = (value: number, minimum: number, maximum: number) =>
-  Math.min(maximum, Math.max(minimum, value))
-
-const nonNegativeFinite = (value: number) =>
-  Number.isFinite(value) ? Math.max(0, value) : 0
 
 export const streakMultiplierFor = (
   correctStreak: number,

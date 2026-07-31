@@ -2,6 +2,7 @@
 
 import GeoGame, { type GeoGameMode } from 'components/geo/GeoGame'
 import type { DailyGeoChallenge } from 'lib/geo'
+import { readLocal, writeLocal } from 'lib/storage'
 import type { GeoLocale } from 'messages/geo'
 import { useEffect, useState } from 'react'
 
@@ -16,23 +17,15 @@ export default function MeridianGame({
   const [mode, setMode] = useState<GeoGameMode>('daily')
 
   useEffect(() => {
-    try {
-      const savedLocale = window.localStorage.getItem(MERIDIAN_LOCALE_KEY)
-      if (savedLocale === 'en' || savedLocale === 'es') {
-        setLocaleState(savedLocale)
-      }
-    } catch {
-      // Locale persistence is an optional enhancement.
+    const savedLocale = readLocal(MERIDIAN_LOCALE_KEY)
+    if (savedLocale === 'en' || savedLocale === 'es') {
+      setLocaleState(savedLocale)
     }
   }, [])
 
   const setLocale = (nextLocale: GeoLocale) => {
     setLocaleState(nextLocale)
-    try {
-      window.localStorage.setItem(MERIDIAN_LOCALE_KEY, nextLocale)
-    } catch {
-      // Locale persistence is an optional enhancement.
-    }
+    writeLocal(MERIDIAN_LOCALE_KEY, nextLocale)
   }
 
   return (
@@ -41,7 +34,6 @@ export default function MeridianGame({
       challenge={challenge}
       locale={locale}
       mode={mode}
-      routeKind={mode === 'practice' ? 'practice' : 'today'}
       onLocaleChange={setLocale}
       onModeChange={setMode}
     />

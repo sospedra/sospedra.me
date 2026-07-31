@@ -1,18 +1,20 @@
 import type { Region } from './destinations'
 
-let ac: AudioContext | null = null
-let master: GainNode | null = null
+type SignalGraph = { ac: AudioContext; master: GainNode }
+
+let graph: SignalGraph | null = null
 
 /* AudioContext must be created inside a user gesture */
-function ensure(): AudioContext {
-  if (!ac) {
-    ac = new AudioContext()
-    master = ac.createGain()
+function ensure(): SignalGraph {
+  if (!graph) {
+    const ac = new AudioContext()
+    const master = ac.createGain()
     master.gain.value = 0.5
     master.connect(ac.destination)
+    graph = { ac, master }
   }
-  if (ac.state === 'suspended') void ac.resume()
-  return ac
+  if (graph.ac.state === 'suspended') void graph.ac.resume()
+  return graph
 }
 
 type ToneSpec = {
@@ -35,32 +37,32 @@ function tone(spec: ToneSpec) {
     delay = 0,
     attack = 0,
   } = spec
-  const c = ensure()
-  const now = c.currentTime + delay
-  const osc = c.createOscillator()
+  const { ac, master } = ensure()
+  const now = ac.currentTime + delay
+  const osc = ac.createOscillator()
   osc.type = type
   osc.frequency.setValueAtTime(f, now)
   if (to) osc.frequency.exponentialRampToValueAtTime(to, now + t)
-  const gain = c.createGain()
+  const gain = ac.createGain()
   gain.gain.setValueAtTime(0.0008, now)
   gain.gain.linearRampToValueAtTime(g, now + Math.max(attack, 0.004))
   gain.gain.exponentialRampToValueAtTime(0.0008, now + t)
-  osc.connect(gain).connect(master as GainNode)
+  osc.connect(gain).connect(master)
   osc.start(now)
   osc.stop(now + t + 0.02)
 }
 
 function thump(f: number, delay: number) {
-  const c = ensure()
-  const now = c.currentTime + delay
-  const osc = c.createOscillator()
+  const { ac, master } = ensure()
+  const now = ac.currentTime + delay
+  const osc = ac.createOscillator()
   osc.type = 'sine'
   osc.frequency.setValueAtTime(f, now)
   osc.frequency.exponentialRampToValueAtTime(f * 0.4, now + 0.12)
-  const gain = c.createGain()
+  const gain = ac.createGain()
   gain.gain.setValueAtTime(0.11, now)
   gain.gain.exponentialRampToValueAtTime(0.0008, now + 0.14)
-  osc.connect(gain).connect(master as GainNode)
+  osc.connect(gain).connect(master)
   osc.start(now)
   osc.stop(now + 0.16)
 }
@@ -109,9 +111,8 @@ export function playRegionSignal(region: Region) {
 }
 
 export function disposeRegionSignals() {
-  const closing = ac
-  ac = null
-  master = null
+  const closing = graph?.ac
+  graph = null
   if (closing && closing.state !== 'closed') {
     void closing.close().catch(() => undefined)
   }

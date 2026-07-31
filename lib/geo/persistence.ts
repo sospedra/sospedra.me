@@ -1,4 +1,13 @@
+import {
+  readJson,
+  type StorageLike,
+  type StorageLoadResult,
+  writeJson,
+} from '../storage.ts'
 import { haversineDistanceKm, isGeoCoordinate } from './distance'
+
+export type { StorageLike } from '../storage.ts'
+
 import type {
   AnswerResult,
   DailyGeoChallenge,
@@ -13,6 +22,7 @@ import type {
   RoundType,
 } from './model'
 import { roundQuestionForAttempt, roundTimeLimitMs } from './model'
+import { isUtcPublicationDate } from './publication-date'
 import type { GeoGameState } from './reducer'
 import {
   mapBaseScoreForDistance,
@@ -20,34 +30,16 @@ import {
   scoreMapAnswer,
 } from './scoring'
 
-export const GEO_SETTINGS_STORAGE_KEY = 'games:geo:v1:settings'
-export const GEO_STATS_STORAGE_KEY = 'games:geo:v1:stats'
+const GEO_SETTINGS_STORAGE_KEY = 'games:geo:v1:settings'
+const GEO_STATS_STORAGE_KEY = 'games:geo:v1:stats'
 
-export const geoRunStorageKey = (publicationDate: string) =>
+const geoRunStorageKey = (publicationDate: string) =>
   `games:geo:v1:run:${publicationDate}`
 
 export const DEFAULT_GEO_SETTINGS: GeoSettings = {
   schemaVersion: 1,
   sound: true,
   reducedMotion: false,
-}
-
-export const EMPTY_GEO_STATS: PersistedGeoStats = {
-  schemaVersion: 1,
-  runs: [],
-}
-
-export interface StorageLike {
-  getItem: (key: string) => string | null
-  setItem: (key: string, value: string) => void
-  removeItem: (key: string) => void
-}
-
-export type PersistenceLoadStatus = 'ok' | 'missing' | 'invalid' | 'unavailable'
-
-export interface PersistenceLoadResult<T> {
-  status: PersistenceLoadStatus
-  value: T
 }
 
 type UnknownRecord = Record<string, unknown>
@@ -67,22 +59,8 @@ const isNonNegativeInteger = (value: unknown): value is number =>
 const isIsoDateTime = (value: unknown): value is string =>
   typeof value === 'string' && Number.isFinite(Date.parse(value))
 
-const isIsoDate = (value: unknown): value is string => {
-  if (typeof value !== 'string') return false
-
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
-  if (!match) return false
-
-  const year = Number(match[1])
-  const month = Number(match[2])
-  const day = Number(match[3])
-  const parsed = new Date(Date.UTC(year, month - 1, day))
-  return (
-    parsed.getUTCFullYear() === year &&
-    parsed.getUTCMonth() === month - 1 &&
-    parsed.getUTCDate() === day
-  )
-}
+const isIsoDate = (value: unknown): value is string =>
+  typeof value === 'string' && isUtcPublicationDate(value)
 
 const isRoundType = (value: unknown): value is RoundType =>
   value === 'shape' ||
@@ -154,46 +132,6 @@ export const isAnswerResult = (value: unknown): value is AnswerResult => {
   return false
 }
 
-const readJson = (
-  storage: StorageLike | null,
-  key: string,
-): PersistenceLoadResult<unknown> => {
-  if (!storage) return { status: 'unavailable', value: null }
-
-  try {
-    const raw = storage.getItem(key)
-    if (raw === null) return { status: 'missing', value: null }
-    return { status: 'ok', value: JSON.parse(raw) }
-  } catch {
-    return { status: 'invalid', value: null }
-  }
-}
-
-const writeJson = (
-  storage: StorageLike | null,
-  key: string,
-  value: unknown,
-) => {
-  if (!storage) return false
-
-  try {
-    storage.setItem(key, JSON.stringify(value))
-    return true
-  } catch {
-    return false
-  }
-}
-
-export const getBrowserGeoStorage = (): StorageLike | null => {
-  if (typeof window === 'undefined') return null
-
-  try {
-    return window.localStorage
-  } catch {
-    return null
-  }
-}
-
 const parseGeoSettings = (value: unknown): GeoSettings | null => {
   if (
     !isRecord(value) ||
@@ -213,7 +151,7 @@ const parseGeoSettings = (value: unknown): GeoSettings | null => {
 
 export const loadGeoSettings = (
   storage: StorageLike | null,
-): PersistenceLoadResult<GeoSettings> => {
+): StorageLoadResult<GeoSettings> => {
   const loaded = readJson(storage, GEO_SETTINGS_STORAGE_KEY)
   if (loaded.status !== 'ok') {
     return { status: loaded.status, value: { ...DEFAULT_GEO_SETTINGS } }
@@ -280,7 +218,7 @@ const parseGeoStats = (value: unknown): PersistedGeoStats | null => {
 
 export const loadGeoStats = (
   storage: StorageLike | null,
-): PersistenceLoadResult<PersistedGeoStats> => {
+): StorageLoadResult<PersistedGeoStats> => {
   const loaded = readJson(storage, GEO_STATS_STORAGE_KEY)
   if (loaded.status !== 'ok') {
     return {
@@ -782,7 +720,7 @@ export const serializeGeoRun = (
 export const loadGeoRun = (
   storage: StorageLike | null,
   challenge: DailyGeoChallenge,
-): PersistenceLoadResult<PersistedGeoRun | null> => {
+): StorageLoadResult<PersistedGeoRun | null> => {
   const loaded = readJson(storage, geoRunStorageKey(challenge.publicationDate))
   if (loaded.status !== 'ok') {
     return { status: loaded.status, value: null }

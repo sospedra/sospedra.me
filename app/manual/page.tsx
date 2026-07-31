@@ -59,7 +59,7 @@ function CommissioningCheck({
 
 export default function ManualPage() {
   return (
-    <Shell canonical='/manual' className={css.frame}>
+    <Shell className={css.frame}>
       <nav className={css.manualNav} aria-label='Manual controls'>
         <Link url='/'>
           <LinkBack>Home</LinkBack>

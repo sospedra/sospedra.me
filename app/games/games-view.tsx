@@ -3,9 +3,9 @@
 import Link from 'components/Link'
 import Shell from 'components/Shell'
 import type { Route } from 'next'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useGameInput } from 'service/hotkeys'
+import { isEditableTarget, useGameInput } from 'service/hotkeys'
 import { useTheme } from 'service/theme'
 import { useTransition } from 'service/transition'
 import { GAMES, type GameId } from './catalogue'
@@ -587,32 +587,20 @@ function BoomboxIcon() {
   )
 }
 
-function GameIcon({ id }: { id: GameId }) {
-  switch (id) {
-    case 'geo':
-      return <MeridianIcon />
-    case 'crosswords':
-      return <CrosswordsIcon />
-    case 'boombox':
-      return <BoomboxIcon />
-    case 'snake':
-      return <SnakeIcon />
-    case 'mines':
-      return <MinesIcon />
-    case 'rubiks':
-      return <RubiksIcon />
-    case 'life':
-      return <LifeIcon />
-  }
-}
+const GAME_ICONS = {
+  geo: MeridianIcon,
+  crosswords: CrosswordsIcon,
+  boombox: BoomboxIcon,
+  snake: SnakeIcon,
+  mines: MinesIcon,
+  rubiks: RubiksIcon,
+  life: LifeIcon,
+} satisfies Record<GameId, () => ReactNode>
 
-const isEditableTarget = (target: EventTarget | null) =>
-  target instanceof Element &&
-  Boolean(
-    target.closest(
-      'input, textarea, select, [contenteditable]:not([contenteditable="false"])',
-    ),
-  )
+function GameIcon({ id }: { id: GameId }) {
+  const Icon = GAME_ICONS[id]
+  return <Icon />
+}
 
 export default function GamesView() {
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -759,7 +747,7 @@ export default function GamesView() {
   const selected = GAMES[selectedIndex]
 
   return (
-    <Shell canonical='/games' className={css.frame} shellClassName={css.shell}>
+    <Shell className={css.frame} shellClassName={css.shell}>
       <div
         className={css.scene}
         data-phase={phase}

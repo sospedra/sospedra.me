@@ -8,13 +8,13 @@
 .room {
   --silver-hi: #f5f5f0;
   --ink: #111719;
-  /* midnight i/o tokens: the machine glass and glow speak the site's hues */
-  --navy: var(--color-surface-code);
-  --cyan: var(--color-signal-cyan);
-  --cyan-dim: var(--color-signal-cyan-deep);
-  --amber: #e6a642;
+  /* 808 dressing: the glass glows red led, the room stays midnight */
+  --navy: #180703;
+  --cyan: #ff5424;
+  --cyan-dim: #a63312;
+  --amber: #eab445;
   --red: #cb2525;
-  --tuner-teal: #6fb3c4;
+  --tuner-teal: #e0a35c;
   --coal: #141517;
   --chrome-hi: #f6f7f7;
   --chrome-lo: #9fa4a8;
@@ -33,9 +33,9 @@
   --jc-ink-soft: #4a58a3;
   --jc-rule: #c9bb98;
   --jc-print: #8a7c5c;
-  --jc-band: #d84f3a;
-  --jc-band-2: #f0a83c;
-  --jc-band-3: #2f6f66;
+  --jc-band: #d0402c;
+  --jc-band-2: #e06f28;
+  --jc-band-3: #edac34;
   --jc-depth: 22px;
   --micro: var(--font-micro), monospace;
   --lcd: var(--font-lcd), monospace;
@@ -644,7 +644,7 @@
   font: 10px / 12px var(--micro);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  text-shadow: 0 0 5px rgb(113 239 255 / 60%);
+  text-shadow: 0 0 5px rgb(255 84 36 / 55%);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -853,25 +853,36 @@
 .deckBrand {
   position: absolute;
   z-index: 3;
-  top: 6px;
-  left: 16px;
+  top: 4px;
+  left: 12px;
+  right: 12px;
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 9px;
+  padding: 4px 10px;
+  border-radius: 2px;
   color: #22292b;
+  background: linear-gradient(#a6a8aa, #8d8f92);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 55%),
+    inset 0 -1px 0 rgb(0 0 0 / 35%),
+    0 1px 0 #000;
 }
 
 .deckLogo {
   font:
-    900 italic 17px / 1 Arial,
-    Helvetica,
-    sans-serif;
-  letter-spacing: -0.05em;
-  text-shadow: 1px 1px 0 rgb(255 255 255 / 70%);
+    italic 900 15px / 1 Georgia,
+    "Times New Roman",
+    serif;
+  letter-spacing: 0.01em;
+  color: #ef6a24;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 25%);
 }
 
 .deckTag {
-  font: 7px / 1 var(--micro);
+  margin-left: auto;
+  color: #1e2022;
+  font: 700 7px / 1 var(--micro);
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
@@ -915,35 +926,35 @@
 .powerLed {
   width: 8px;
   height: 8px;
-  border: 1px solid #071009;
+  border: 1px solid #180404;
   border-radius: 50%;
-  background: #24402a;
+  background: #3c1512;
 }
 
 .powerLed[data-on="true"] {
-  background: #79ee84;
-  box-shadow: 0 0 6px #79ee84;
+  background: #ff4130;
+  box-shadow: 0 0 6px #ff4130;
   animation: led-breathe 1.7s steps(2, end) infinite;
 }
 
 .lcdScreen {
   height: 100%;
   padding: 4px 38px 4px 8px;
-  border: 1px solid #36515b;
+  border: 1px solid #4c2314;
   color: var(--cyan);
   background:
     repeating-linear-gradient(
       0deg,
-      rgb(100 236 255 / 2.8%) 0 1px,
+      rgb(255 84 36 / 3%) 0 1px,
       transparent 1px 3px
     ),
-    radial-gradient(circle at 50% 35%, #0c2c3d, var(--navy) 68%);
+    radial-gradient(circle at 50% 35%, #2a0d05, var(--navy) 68%);
   box-shadow:
-    inset 2px 2px 0 #02080d,
-    inset -1px -1px 0 #1c4553;
+    inset 2px 2px 0 #0a0201,
+    inset -1px -1px 0 #40190c;
   font-family: var(--lcd);
   text-transform: uppercase;
-  text-shadow: 0 0 6px rgb(113 239 255 / 70%);
+  text-shadow: 0 0 6px rgb(255 84 36 / 60%);
 }
 
 .lcdTop,
@@ -969,8 +980,25 @@
 
 .lcdSegment {
   height: 8px;
-  border: 1px solid #163e49;
-  background: #081a22;
+  border: 1px solid #6c6962;
+  background: #3e3d39;
+}
+
+/* the sixteen cells wear the step banks four by four; :where keeps the
+   tint below the played/unlocked tones */
+.lcdSegment:where(:nth-child(-n + 4)) {
+  border-color: #5e1d14;
+  background: #36110b;
+}
+
+.lcdSegment:where(:nth-child(n + 5):nth-child(-n + 8)) {
+  border-color: #653212;
+  background: #3a1d0a;
+}
+
+.lcdSegment:where(:nth-child(n + 9):nth-child(-n + 12)) {
+  border-color: #6b4d17;
+  background: #3e2d0e;
 }
 
 .lcdSegment[data-tone="played"] {
@@ -990,7 +1018,7 @@
 
 .lcdStatus {
   margin-top: 2px;
-  color: #8fe7d1;
+  color: #f2b088;
   font-size: 12px;
   line-height: 13px;
   overflow: hidden;
@@ -1000,8 +1028,8 @@
   overflow: hidden;
   height: 4px;
   margin-top: 3px;
-  border: 1px solid #36515b;
-  background: rgb(100 236 255 / 8%);
+  border: 1px solid #4c2314;
+  background: rgb(255 84 36 / 8%);
 }
 
 .lcdNextBar span {
@@ -1009,7 +1037,7 @@
   width: calc(var(--remaining, 0) * 100%);
   height: 100%;
   background: var(--cyan);
-  box-shadow: 0 0 6px rgb(100 236 255 / 55%);
+  box-shadow: 0 0 6px rgb(255 84 36 / 55%);
   transition: width 900ms linear;
 }
 
@@ -1148,17 +1176,17 @@
 .functionLed {
   width: 6px;
   height: 6px;
-  border: 1px solid #06090b;
+  border: 1px solid #180404;
   border-radius: 50%;
-  background: #23301f;
+  background: #351210;
 }
 
 .functionKey[data-on="true"] .functionLed {
-  background: #79ee84;
-  box-shadow: 0 0 5px #79ee84;
+  background: #ff4130;
+  box-shadow: 0 0 5px #ff4130;
 }
 
-/* two acknowledge blinks: green for the loaded source, red for a refusal */
+/* two acknowledge blinks: amber for the loaded source, red for a refusal */
 .functionLed[data-blink="true"] {
   animation: fn-blink-home 0.3s steps(1, end) 2;
 }
@@ -1170,12 +1198,12 @@
 @keyframes fn-blink-home {
   0%,
   100% {
-    background: #23301f;
+    background: #351210;
     box-shadow: none;
   }
   50% {
-    background: #79ee84;
-    box-shadow: 0 0 6px #79ee84;
+    background: #eab445;
+    box-shadow: 0 0 6px #eab445;
   }
 }
 
@@ -1282,6 +1310,29 @@
     );
 }
 
+/* the sash starts below the label hints (they end at 31/35% height);
+   skewing about the top edge keeps every corner inside the glass */
+.doorCase::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 37%;
+  bottom: 0;
+  width: 33%;
+  transform: skewX(-14deg);
+  transform-origin: 50% 0;
+  pointer-events: none;
+  opacity: 0.9;
+  background: linear-gradient(
+    90deg,
+    #d0402c 0 25%,
+    #e06f28 25% 50%,
+    #edac34 50% 75%,
+    #efe9da 75% 100%
+  );
+}
+
 .caseTopLabel {
   display: flex;
   align-items: center;
@@ -1302,6 +1353,8 @@
 }
 
 .caseBottomLabel {
+  position: relative;
+  z-index: 2;
   flex-basis: 45%;
   display: flex;
   align-items: center;
@@ -1909,14 +1962,14 @@
   right: 14px;
   bottom: 10px;
   padding: 6px;
-  border: 1px solid #36515b;
+  border: 1px solid #4c2314;
   color: var(--cyan);
   background: var(--navy);
   cursor: pointer;
   font: 13px / 1 var(--lcd);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  text-shadow: 0 0 6px rgb(113 239 255 / 70%);
+  text-shadow: 0 0 6px rgb(255 84 36 / 60%);
   animation: caret-blink 1.4s steps(1, end) infinite;
 }
 
@@ -2473,8 +2526,8 @@
     #6e7176 8%,
     #eceded 45%,
     #0c0d0e 46%,
-    #aab0b4 47%,
-    #aab0b4 53%,
+    #eab445 47%,
+    #eab445 53%,
     #0c0d0e 54%,
     #eceded 57%,
     #8b9094 88%,
@@ -2495,346 +2548,224 @@
   letter-spacing: 0.06em;
 }
 
-/* ── transport: mechanical piano keys ── */
+/* ── transport: latching lever keys. legends silkscreen on the fascia;
+   blank caps ride a machined slot and slide under its mouth ── */
 
-.transportBank {
-  box-sizing: border-box;
-  display: flex;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  align-items: stretch;
-  gap: 4px;
-  overflow: hidden;
-  padding: 8px 8px 13px;
-  border: 2px solid #343a3c;
-  border-radius: 2px;
-  background:
-    linear-gradient(
-      180deg,
-      #050708 0,
-      #0a0d0e 9px,
-      transparent 10px 88%,
-      rgb(255 255 255 / 4%) 89%
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 7px,
-      rgb(255 255 255 / 2.5%) 7px 8px
-    ),
-    #111719;
-  box-shadow:
-    inset 0 9px 14px rgb(0 0 0 / 82%),
-    inset 3px 0 0 #050708,
-    inset -3px -3px 0 #353d3f,
-    inset 0 -8px 10px rgb(0 0 0 / 72%),
-    0 2px 0 rgb(255 255 255 / 55%);
+.leverBank {
+  --kw: 76px;
+  --kh: 58px;
+  --lip: 8px;
+  --kgap: 9px;
+  --mouth: 11px;
+  --void: 12px;
+  --lever-ink: #2b2d2f;
 }
 
-.pianoKey {
-  position: relative;
-  z-index: 1;
-  flex: 1 1 0;
-  min-width: 0;
+.leverBank[data-size="deck"] {
+  place-self: center;
+}
+
+.leverBank[data-size="tad"] {
+  --kw: 56px;
+  --kh: 42px;
+  --lip: 6px;
+  --kgap: 8px;
+  --mouth: 9px;
+  --void: 9px;
+  --lever-ink: #d9d5c9;
+  width: fit-content;
+  margin: 2px auto 6px;
+}
+
+.leverLegend {
   display: flex;
-  flex-direction: column;
-  margin: 0 0 7px;
+  gap: var(--kgap);
+  padding: 0 10px;
+  margin-bottom: 6px;
+}
+
+.legendCell {
+  width: var(--kw);
+  display: grid;
+  justify-items: center;
+  color: var(--lever-ink);
+}
+
+.legendCell b {
+  font: 700 6.5px var(--micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.legendCell i {
+  margin-top: 2px;
+  font: 8px / 1 var(--micro);
+  font-style: normal;
+  letter-spacing: -0.08em;
+}
+
+.legendCell i[data-dot] {
+  width: 7px;
+  height: 7px;
+  margin-top: 3px;
+  border-radius: 50%;
+  background: #c23325;
+}
+
+.leverSlot {
+  display: flex;
+  gap: var(--kgap);
+  padding: var(--mouth) 10px var(--void);
+  border-top: 1px solid rgb(0 0 0 / 50%);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #060707, #141514);
+  box-shadow:
+    inset 0 3px 8px rgb(0 0 0 / 85%),
+    inset 0 -1px 0 rgb(255 255 255 / 5%),
+    0 1px 0 rgb(255 255 255 / 40%);
+}
+
+.leverKey {
+  position: relative;
+  display: block;
+  width: var(--kw);
+  height: var(--kh);
   border: 0;
   padding: 0;
   background: transparent;
   cursor: pointer;
-  transform: perspective(240px) rotateX(0) translateY(0);
-  transform-origin: 50% 40%;
-  transform-style: preserve-3d;
-  transition:
-    transform 105ms cubic-bezier(0.18, 0.78, 0.24, 1),
-    filter 105ms ease;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-.pianoKey::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  inset: 5px -1px -7px 2px;
-  border: 1px solid #34393a;
-  border-radius: 2px 2px 4px 4px;
-  background:
-    linear-gradient(90deg, #777c7c 0 3px, transparent 4px),
-    linear-gradient(90deg, transparent calc(100% - 4px), #515657),
-    linear-gradient(180deg, #929797 0 68%, #3d4243 69% 100%);
-  box-shadow:
-    2px 3px 0 #050708,
-    4px 7px 8px rgb(0 0 0 / 74%);
-  transform: translateZ(-2px);
-  transition:
-    opacity 105ms ease,
-    transform 105ms cubic-bezier(0.18, 0.78, 0.24, 1);
-}
-
-.pianoKey::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  right: 2px;
-  bottom: -11px;
-  left: 3px;
-  height: 10px;
-  border-radius: 0 0 3px 3px;
-  background: linear-gradient(180deg, #020303, rgb(2 3 3 / 12%));
-  box-shadow: 0 3px 4px rgb(0 0 0 / 64%);
-  transition:
-    height 105ms ease,
-    opacity 105ms ease,
-    transform 105ms cubic-bezier(0.18, 0.78, 0.24, 1);
-}
-
-.pianoKey:hover:enabled:not([data-on="true"]) {
-  filter: brightness(1.035);
-}
-
-/* the game-of-life press: pivot at 40% height, the bottom sinks back
-   into the panel while the well flap peeks out above */
-.pianoKey:active:enabled,
-.pianoKey[data-on="true"] {
-  z-index: 0;
-  transform: perspective(240px) rotateX(-13deg) translateY(8px);
-}
-
-.pianoKey:active:enabled::before,
-.pianoKey[data-on="true"]::before {
-  opacity: 0.48;
-  transform: translateY(-3px) translateZ(-2px) scaleY(0.94);
-}
-
-.pianoKey:active:enabled::after,
-.pianoKey[data-on="true"]::after {
-  height: 3px;
-  opacity: 0.34;
-  transform: translateY(-5px);
-}
-
-/* the bright plane faces upward, with a rolled rear edge and front chamfer */
-/* the well's inner wall, revealed above the key as it tips back */
-.pianoWell {
-  position: absolute;
-  top: -8px;
-  right: 3px;
-  left: 3px;
-  height: 12px;
-  border-radius: 4px 4px 2px 2px;
-  background: #23282a;
-  box-shadow:
-    inset 0 5px 3px 1px rgb(0 0 0 / 52%),
-    inset 0 -5px 2px 0 rgb(113 239 255 / 8%);
-  transform: perspective(300px) rotateX(50deg);
-  opacity: 0;
-  transition: opacity 130ms ease;
-}
-
-.pianoKey:active:enabled .pianoWell,
-.pianoKey[data-on="true"] .pianoWell {
-  opacity: 1;
-}
-
-/* the bright upward plane, drawn frontal like the rest of the machine;
-   it compresses as the key sinks, the fold meeting the face at a chamfer */
-.pianoTop {
-  position: relative;
-  z-index: 2;
-  height: 27px;
-  flex: none;
-  margin: 0 1px;
-  border: 1px solid #666c6d;
-  border-bottom: 1px solid #f4f6f2;
-  border-radius: 4px 4px 0 0;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      rgb(255 255 255 / 16%) 0 1px,
-      rgb(0 0 0 / 3%) 1px 3px
-    ),
-    linear-gradient(
-      180deg,
-      #b9bebe 0,
-      var(--chrome-hi) 16%,
-      #eceeeb 52%,
-      #c9cdcb 88%,
-      #b0b5b4 100%
-    );
-  box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 92%),
-    inset 3px 0 0 rgb(255 255 255 / 40%),
-    inset -3px 0 0 rgb(0 0 0 / 13%);
-  transition:
-    height 105ms cubic-bezier(0.18, 0.78, 0.24, 1),
-    filter 105ms ease;
-}
-
-.pianoTop::before {
-  content: "";
-  position: absolute;
-  top: 4px;
-  right: 9px;
-  left: 9px;
-  height: 2px;
-  border-radius: 50%;
-  background: rgb(255 246 218 / 62%);
-  box-shadow: 0 1px 2px rgb(91 70 38 / 18%);
-}
-
-.pianoTop::after {
-  content: "";
-  position: absolute;
-  right: 2px;
-  bottom: 0;
-  left: 2px;
-  height: 4px;
-  background: linear-gradient(
-    180deg,
-    rgb(255 255 255 / 24%),
-    rgb(50 55 56 / 30%)
-  );
-}
-
-.pianoKey:active:enabled .pianoTop,
-.pianoKey[data-on="true"] .pianoTop {
-  height: 10px;
-  filter: brightness(0.82);
-}
-
-/* the tall face carries the legend; edge bands read as cast sidewalls */
-.pianoFront {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  margin: 0 1px;
-  border: 1px solid #474c4d;
-  border-top: 0;
-  border-radius: 0 0 4px 4px;
-  color: #202526;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      rgb(255 255 255 / 9%) 0 1px,
-      rgb(0 0 0 / 2.5%) 1px 3px
-    ),
-    linear-gradient(
-      90deg,
-      rgb(255 255 255 / 42%) 0 4px,
-      transparent 5px calc(100% - 6px),
-      rgb(34 39 40 / 24%) calc(100% - 5px)
-    ),
-    linear-gradient(
-      180deg,
-      #dfe1de 0,
-      #c5c8c6 12%,
-      #adb1b0 58%,
-      #858a8b 88%,
-      #656a6b 100%
-    );
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 76%),
-    inset 4px 0 3px rgb(255 255 255 / 22%),
-    inset -5px 0 4px rgb(0 0 0 / 14%),
-    inset 0 -8px 9px rgb(0 0 0 / 26%),
-    0 2px 0 #3d4243;
-  transition:
-    filter 105ms ease,
-    box-shadow 105ms ease;
-}
-
-.pianoKey:active:enabled .pianoFront,
-.pianoKey[data-on="true"] .pianoFront {
-  filter: brightness(0.82);
-  box-shadow:
-    inset 0 8px 10px rgb(0 0 0 / 37%),
-    inset 4px 0 3px rgb(255 255 255 / 12%),
-    inset -5px 0 4px rgb(0 0 0 / 19%),
-    inset 0 -4px 6px rgb(0 0 0 / 30%),
-    0 1px 0 #303536;
-}
-
-.pianoGlyph {
-  min-height: 16px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 15px;
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -2px;
-  text-shadow:
-    0 1px 0 rgb(255 255 255 / 48%),
-    0 -1px 0 rgb(0 0 0 / 22%);
-}
-
-.pianoWord {
-  max-width: calc(100% - 12px);
-  overflow: hidden;
-  font: 700 9px / 1 var(--micro);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  text-shadow:
-    0 1px 0 rgb(255 255 255 / 56%),
-    0 -1px 0 rgb(0 0 0 / 18%);
-}
-
-/* rec led burns signal pink: the site's color for the hot action */
-.pianoKeyRec .pianoGlyph {
-  width: 16px;
-  min-height: 16px;
-  overflow: hidden;
-  border: 1px solid #6d0a56;
-  border-radius: 50%;
-  color: transparent;
-  background:
-    radial-gradient(circle at 34% 26%, #ffa4e4 0 8%, transparent 10%),
-    radial-gradient(
-      circle at 42% 38%,
-      var(--color-signal-pink-hot),
-      var(--color-signal-pink) 48%,
-      var(--color-signal-pink-deep) 76%
-    );
-  box-shadow:
-    0 0 0 2px #858a89,
-    0 0 0 3px #4a4f50,
-    inset -2px -3px 3px rgb(70 0 40 / 54%),
-    0 2px 2px rgb(0 0 0 / 36%);
-  text-shadow: none;
-}
-
-/* the copied confirmation latches the key and blooms the led */
-.pianoKeyRec[data-on="true"] .pianoGlyph {
-  box-shadow:
-    0 0 0 2px #858a89,
-    0 0 0 3px #4a4f50,
-    inset -2px -3px 3px rgb(70 0 40 / 40%),
-    0 2px 2px rgb(0 0 0 / 36%),
-    var(--shadow-neon-pink);
-}
-
-/* dim the faces, not the button: a filter on the key itself flattens the
-   3d skirt and reads as a broken tent */
-.pianoKey:disabled {
+.leverKey:disabled {
   cursor: default;
 }
 
-.pianoKey:disabled .pianoTop,
-.pianoKey:disabled .pianoFront {
-  filter: saturate(0.4) brightness(0.75);
+.leverKey:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 
-.pianoKey:focus-visible {
-  z-index: 3;
-  outline: 2px solid var(--amber);
-  outline-offset: -3px;
+/* rear edge dives under the mouth; greige abs unless a bank claims it */
+.leverCap {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px 2px 3px 3px;
+  transform-origin: 50% 0;
+  transition:
+    transform 160ms ease-out,
+    filter 160ms ease-out,
+    box-shadow 160ms ease-out;
+  background-image:
+    linear-gradient(180deg, rgb(0 0 0 / 60%), rgb(0 0 0 / 0%) 26%),
+    linear-gradient(
+      90deg,
+      rgb(255 255 255 / 20%),
+      rgb(255 255 255 / 0%) 22% 78%,
+      rgb(0 0 0 / 16%)
+    ),
+    repeating-linear-gradient(
+      180deg,
+      rgb(0 0 0 / 5%) 0 1px,
+      rgb(0 0 0 / 0%) 1px 3px
+    ),
+    linear-gradient(
+      180deg,
+      var(--cap-rear, #7f7d72),
+      var(--cap-front, #a5a398) 80%
+    );
+  box-shadow:
+    0 10px 9px -5px rgb(0 0 0 / 55%),
+    0 20px 18px -10px rgb(0 0 0 / 32%),
+    5px 0 6px -4px rgb(0 0 0 / 70%),
+    -5px 0 6px -4px rgb(0 0 0 / 70%);
+}
+
+.leverCap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--lip);
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(
+    180deg,
+    var(--lip-hi, #5b594f),
+    var(--lip-lo, #3d3c35)
+  );
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 35%);
+  transition: height 160ms ease-out;
+}
+
+.leverKey:hover:enabled .leverCap {
+  filter: brightness(1.04);
+}
+
+.leverKey:disabled .leverCap {
+  filter: saturate(0.55) brightness(0.9);
+}
+
+.leverKey[data-on="true"] .leverCap {
+  transform: perspective(700px) rotateX(-9deg);
+  filter: brightness(0.88);
+  box-shadow:
+    0 5px 5px -3px rgb(0 0 0 / 55%),
+    0 10px 9px -6px rgb(0 0 0 / 32%),
+    4px 0 5px -3px rgb(0 0 0 / 65%),
+    -4px 0 5px -3px rgb(0 0 0 / 65%);
+}
+
+.leverKey[data-on="true"] .leverCap::after {
+  height: 3px;
+}
+
+.leverKey:active:enabled .leverCap {
+  transition-duration: 50ms;
+  transform: perspective(700px) rotateX(-12deg);
+  filter: brightness(0.84);
+  box-shadow:
+    0 3px 4px -2px rgb(0 0 0 / 55%),
+    0 7px 7px -5px rgb(0 0 0 / 32%),
+    3px 0 4px -3px rgb(0 0 0 / 60%),
+    -3px 0 4px -3px rgb(0 0 0 / 60%);
+}
+
+.leverKey:active:enabled .leverCap::after {
+  height: 2px;
+  transition-duration: 50ms;
+}
+
+/* the step banks claim keys by position: red, orange, amber, cream */
+.leverKey:nth-child(1) .leverCap {
+  --cap-rear: #ab3424;
+  --cap-front: #d55341;
+  --lip-hi: #79251a;
+  --lip-lo: #571b12;
+}
+
+.leverKey:nth-child(2) .leverCap {
+  --cap-rear: #b85b21;
+  --cap-front: #e37d3e;
+  --lip-hi: #824017;
+  --lip-lo: #5e2f11;
+}
+
+.leverKey:nth-child(3) .leverCap {
+  --cap-rear: #c28d2b;
+  --cap-front: #efb448;
+  --lip-hi: #89641e;
+  --lip-lo: #644816;
+}
+
+.leverKey:nth-child(4) .leverCap {
+  --cap-rear: #c4bfb3;
+  --cap-front: #f1ebde;
+  --lip-hi: #8b877e;
+  --lip-lo: #64625c;
 }
 
 /* ── volume ── */
@@ -2905,7 +2836,7 @@
   width: 5px;
   height: 21px;
   border-radius: 3px;
-  background: var(--amber);
+  background: #ef6a24;
   box-shadow: 1px 1px 0 #5d3708;
   transform-origin: 2.5px 28px;
   transform: rotate(var(--angle, 0deg));
@@ -3049,6 +2980,7 @@
    corner bloom, only lightly tinted so the tape stays readable */
 .tadLid {
   position: absolute;
+  z-index: 1;
   inset: 0;
   pointer-events: none;
   border: 2px solid;
@@ -3061,6 +2993,14 @@
     )
     2;
   background:
+    linear-gradient(
+      115deg,
+      rgb(255 255 255 / 30%) 0 9%,
+      rgb(255 255 255 / 7%) 9% 22%,
+      rgb(255 255 255 / 0%) 22% 60%,
+      rgb(255 255 255 / 10%) 60% 66%,
+      rgb(255 255 255 / 0%) 66%
+    ),
     radial-gradient(
       circle at 450% 750%,
       rgb(255 255 255 / 0%) 0%,
@@ -3069,6 +3009,26 @@
       rgb(255 255 255 / 0%) 99%
     ),
     linear-gradient(rgb(16 20 26 / 16%), rgb(10 12 16 / 28%));
+}
+
+.tadLid::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 38%;
+  bottom: 0;
+  width: 33%;
+  transform: skewX(-14deg);
+  transform-origin: 50% 0;
+  opacity: 0.9;
+  background: linear-gradient(
+    90deg,
+    #d0402c 0 25%,
+    #e06f28 25% 50%,
+    #edac34 50% 75%,
+    #efe9da 75% 100%
+  );
 }
 
 /* the same D-C90 shell, at bay scale: fluid below 420px viewports,
@@ -3107,10 +3067,12 @@
 }
 
 .tadBrand b {
-  color: #c9c5ba;
-  font: 700 12px var(--micro);
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
+  color: #ef6a24;
+  font:
+    italic 800 13px / 1 Georgia,
+    "Times New Roman",
+    serif;
+  letter-spacing: 0.03em;
   text-shadow: 0 1px 0 rgb(0 0 0 / 60%);
 }
 
@@ -3290,78 +3252,6 @@
     0 1px 0 rgb(255 255 255 / 13%);
 }
 
-.tadKeys {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding-bottom: 2px;
-}
-
-.tadK {
-  display: flex;
-  flex: 1 1 0;
-  min-width: 0;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.tadK em {
-  max-width: 100%;
-  overflow: hidden;
-  color: #b9b5ab;
-  font: 7px var(--micro);
-  font-style: normal;
-  letter-spacing: 0.14em;
-  white-space: nowrap;
-  text-transform: uppercase;
-}
-
-/* cream cap on a skirt; press or latch sinks it flush */
-.tadBtn {
-  width: 100%;
-  height: 34px;
-  padding: 0;
-  border: 0;
-  border-radius: 4px;
-  color: #4a473f;
-  background: linear-gradient(#e3dfd5, #b9b5ab);
-  box-shadow:
-    0 4px 0 #77736a,
-    0 6px 6px rgb(0 0 0 / 56%),
-    inset 0 1px 0 #fff;
-  cursor: pointer;
-  font: 700 11px var(--micro);
-  letter-spacing: 0.05em;
-  text-shadow: 0 1px 0 rgb(255 255 255 / 53%);
-  transition:
-    translate 60ms ease,
-    box-shadow 60ms ease;
-}
-
-.tadBtn:active,
-.tadBtn[data-on="true"] {
-  translate: 0 3px;
-  box-shadow:
-    0 1px 0 #77736a,
-    0 1px 2px rgb(0 0 0 / 56%),
-    inset 0 1px 0 #fff;
-}
-
-.tadBtn[data-red="true"] {
-  color: #b3271e;
-}
-
-.tadBtn:disabled {
-  cursor: default;
-  filter: saturate(0.5) brightness(0.8);
-}
-
-.tadBtn:focus-visible {
-  outline: 2px solid var(--amber);
-  outline-offset: 2px;
-}
-
 /* front lip: mic and line holes drilled at the right */
 .tadLip {
   position: relative;
@@ -3392,16 +3282,14 @@
   height: 88px;
 }
 
-.apSheet {
+/* the ansaphone seats the j-card in flow; 276 is the 262 box plus the
+   open tray's 30px right overhang minus the tilt's 17px left one */
+.ansaphone .caseScene {
   position: relative;
-  rotate: -1deg;
-  padding: 16px 18px 42px;
-  color: var(--jc-ink);
-  background: linear-gradient(180deg, var(--jc-paper-hi), var(--jc-paper));
-  box-shadow:
-    inset 0 0 0 1px rgb(0 0 0 / 12%),
-    0 16px 30px -14px rgb(0 0 0 / 75%);
-  font-family: var(--hand);
+  z-index: 30;
+  top: auto;
+  right: auto;
+  margin-left: max(0px, calc((100% - 276px) / 2));
 }
 
 /* below this width the machine cannot keep readable type or 44px keys;
@@ -3436,12 +3324,8 @@
   .reelTakeup,
   .albumSticker,
   .volumeKnob::after,
-  .pianoKey,
-  .pianoKey::before,
-  .pianoKey::after,
-  .pianoTop,
-  .pianoWell,
-  .pianoFront,
+  .leverCap,
+  .leverCap::after,
   .functionKey,
   .doorCase,
   .cassette {

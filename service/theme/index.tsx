@@ -1,5 +1,6 @@
 'use client'
 
+import { readLocal, writeLocal } from 'lib/storage'
 import type React from 'react'
 import {
   createContext,
@@ -26,6 +27,11 @@ const ThemeContext = createContext<ThemeContextValue>({
 
 const FX_KEY = 'midnight-io:fx'
 
+// synchronous read for non-react call sites; components read useTheme instead
+export const prefersQuietFx = () =>
+  document.documentElement.classList.contains('fx-quiet') ||
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = (
   props,
 ) => {
@@ -38,13 +44,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = (
     syncMotion()
     media.addEventListener('change', syncMotion)
 
-    try {
-      const storedFx = localStorage.getItem(FX_KEY)
-      if (storedFx === 'full' || storedFx === 'quiet') {
-        setFxPreference(storedFx)
-      }
-    } catch {
-      // Preferences remain session-only when storage is unavailable.
+    const storedFx = readLocal(FX_KEY)
+    if (storedFx === 'full' || storedFx === 'quiet') {
+      setFxPreference(storedFx)
     }
 
     return () => media.removeEventListener('change', syncMotion)
@@ -62,11 +64,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = (
 
   const setFxMode = useCallback((mode: FxMode) => {
     setFxPreference(mode)
-    try {
-      localStorage.setItem(FX_KEY, mode)
-    } catch {
-      // Keep the preference for the current session.
-    }
+    writeLocal(FX_KEY, mode)
   }, [])
 
   const value = useMemo(

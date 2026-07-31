@@ -8,11 +8,8 @@ const hashSeed = (seed: string) => {
   return hash >>> 0
 }
 
-// mulberry32, constant seed: server html and client hydration
-// must draw identical values
-export const createRng = (seed = 'sospedra.me') => {
-  let state = hashSeed(seed)
-
+export const mulberry32 = (seed: number) => {
+  let state = seed
   return () => {
     state = (state + 0x6d2b79f5) | 0
     let t = Math.imul(state ^ (state >>> 15), state | 1)
@@ -21,6 +18,21 @@ export const createRng = (seed = 'sospedra.me') => {
   }
 }
 
+// constant seed: server html and client hydration must draw identical values
+export const createRng = (seed = 'sospedra.me') => mulberry32(hashSeed(seed))
+
 export const createRange = (rng = createRng()) => {
   return (max = 1, min = 0) => Math.floor(rng() * (max - min + 1)) + min
+}
+
+export const shuffleWith = <Value>(
+  rng: () => number,
+  values: readonly Value[],
+): Value[] => {
+  const shuffled = [...values]
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const target = Math.floor(rng() * (index + 1))
+    ;[shuffled[index], shuffled[target]] = [shuffled[target], shuffled[index]]
+  }
+  return shuffled
 }

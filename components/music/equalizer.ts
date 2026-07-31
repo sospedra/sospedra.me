@@ -38,8 +38,6 @@ export const EQUALIZER_PRESETS: readonly EqualizerPreset[] = [
   },
 ] as const
 
-export const DEFAULT_EQ_BANDS = [...EQUALIZER_PRESETS[1].bands]
-
 export const formatFrequency = (frequency: number): string =>
   frequency >= 1000 ? `${frequency / 1000}k` : String(frequency)
 

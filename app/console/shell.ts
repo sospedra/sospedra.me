@@ -1,3 +1,5 @@
+import { SITE_URL } from '../../service/site.ts'
+
 export type LinkEntry = {
   source: string
   title: string
@@ -47,7 +49,7 @@ const waveFrames = [
   '~        ~~~~         ~~~~        \n ~~    ~~    ~~><>~~     ~~    ~~ \n   ~~~~        ~~~~~        ~~~~  ',
 ]
 
-export const ANIMATIONS: Record<string, string[]> = {
+const ANIMATIONS: Record<string, string[]> = {
   run: runFrames,
   cat: catFrames,
   wave: waveFrames,
@@ -60,8 +62,6 @@ export type ShellContext = {
   links: LinkEntry[]
   cwd: string[]
 }
-
-export const SITE = 'https://sospedra.me'
 
 export const HELP = [
   ['help', 'this index'],
@@ -83,7 +83,7 @@ export const codeOf = (link: LinkEntry) => link.source.split('/').at(-1) ?? ''
 export const joinPath = (segments: string[]) =>
   segments.length ? `/${segments.join('/')}` : '/'
 
-export const entriesAt = (paths: string[], dir: string[]) => {
+const entriesAt = (paths: string[], dir: string[]) => {
   const prefix = dir.length ? `${joinPath(dir)}/` : '/'
   const dirs = new Set<string>()
   const files = new Set<string>()
@@ -208,7 +208,7 @@ const url: Command = (ctx, args) => {
 
   const link = findLink(ctx.links, arg)
   if (link) {
-    const short = `${SITE}${link.source}`
+    const short = `${SITE_URL}${link.source}`
     return stay(ctx, [text(short, 'bright')], { kind: 'copy', text: short })
   }
 
@@ -216,7 +216,7 @@ const url: Command = (ctx, args) => {
   if (!target) return stay(ctx, [fault(`File not found — ${arg}`)])
   if (target.kind === 'dir') return stay(ctx, [fault(`Not a file — ${arg}`)])
 
-  const href = `${SITE}${joinPath(target.segments)}`
+  const href = `${SITE_URL}${joinPath(target.segments)}`
   return stay(ctx, [text(href, 'bright')], { kind: 'copy', text: href })
 }
 

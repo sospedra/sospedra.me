@@ -5,7 +5,6 @@ import type {
   DailyGeoChallenge,
   GeoCoordinate,
   MapPinAnswerResult,
-  MapQuestion,
   PersistedGeoRun,
   Question,
   Round,
@@ -817,6 +816,3 @@ export const geoGameReducer = (
       return { ...state, overlay: null }
   }
 }
-
-export const isMapQuestion = (question: Question): question is MapQuestion =>
-  question.type === 'map'

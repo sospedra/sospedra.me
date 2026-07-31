@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { fetchPapers } from 'service/markdown/files'
+import { SITE_URL } from 'service/site'
 
 const STATIC_ROUTES = [
   '',
@@ -30,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   return routes.map((route) => ({
-    url: `https://sospedra.me${route}`,
+    url: `${SITE_URL}${route}`,
     changeFrequency: 'daily',
     priority: 0.7,
   }))

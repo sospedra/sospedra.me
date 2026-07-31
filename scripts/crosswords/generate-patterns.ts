@@ -1,21 +1,11 @@
 import { createHash } from 'node:crypto'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { mulberry32 } from '../../lib/random.ts'
 import { fillPattern, PATTERN_TEST_1, validatePattern } from './fill-grid'
 
 const SIZE = 13
 const TARGET = 16
 const OUT_DIR = 'data/crosswords/editorial/patterns/13'
-
-const mulberry32 = (seedBytes: Buffer) => {
-  let a = seedBytes.readUInt32BE(0)
-  return () => {
-    a |= 0
-    a = (a + 0x6d2b79f5) | 0
-    let t = Math.imul(a ^ (a >>> 15), 1 | a)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
 
 /* Random symmetric block placement, validated by the same gate the filler
    uses. Most candidates fail; the seed loop just keeps drawing. */
@@ -82,7 +72,10 @@ const main = () => {
   while (patterns.size < TARGET && attempts < 400_000) {
     attempts += 1
     const random = mulberry32(
-      createHash('sha256').update(`pattern-draw:${attempts}`).digest(),
+      createHash('sha256')
+        .update(`pattern-draw:${attempts}`)
+        .digest()
+        .readUInt32BE(0),
     )
     const pool = [...patterns.values()]
     const candidate =

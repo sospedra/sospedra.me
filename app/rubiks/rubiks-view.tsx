@@ -305,10 +305,7 @@ export default function RubiksView() {
   const turnMs = state.turning ? TURN_MS[state.turning.kind] : TURN_MS.play
 
   return (
-    <Shell
-      className={`relative w-full px-4 text-white ${css.page}`}
-      canonical='/rubiks'
-    >
+    <Shell className={`relative w-full px-4 text-white ${css.page}`}>
       <div className={css.navRow}>
         <Row
           right={

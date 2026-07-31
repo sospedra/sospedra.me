@@ -1,3 +1,6 @@
+import { clamp } from 'es-toolkit'
+import { nonNegativeFinite } from './numeric'
+
 export interface MonotonicClock {
   now: () => number
 }
@@ -19,17 +22,7 @@ export interface RoundTimerReading {
   expired: boolean
 }
 
-const finiteNonNegative = (value: number) =>
-  Number.isFinite(value) ? Math.max(0, value) : 0
-
-const clamp = (value: number, minimum: number, maximum: number) =>
-  Math.min(maximum, Math.max(minimum, value))
-
 const validNow = (now: number) => (Number.isFinite(now) ? now : 0)
-
-export const createPerformanceClock = (): MonotonicClock => ({
-  now: () => globalThis.performance.now(),
-})
 
 export interface ManualClock extends MonotonicClock {
   advanceBy: (milliseconds: number) => number
@@ -42,7 +35,7 @@ export const createManualClock = (initialNowMs = 0): ManualClock => {
   return {
     now: () => nowMs,
     advanceBy: (milliseconds) => {
-      nowMs += finiteNonNegative(milliseconds)
+      nowMs += nonNegativeFinite(milliseconds)
       return nowMs
     },
     set: (milliseconds) => {
@@ -56,11 +49,11 @@ export const createRoundTimer = (
   roundLimitMs: number,
   initialElapsedMs = 0,
 ): RoundTimer => {
-  const limitMs = finiteNonNegative(roundLimitMs)
+  const limitMs = nonNegativeFinite(roundLimitMs)
 
   return {
     limitMs,
-    accruedMs: clamp(finiteNonNegative(initialElapsedMs), 0, limitMs),
+    accruedMs: clamp(nonNegativeFinite(initialElapsedMs), 0, limitMs),
     startedAtMs: null,
     deadlineMs: null,
     status: 'idle',
@@ -71,8 +64,8 @@ export const readRoundTimer = (
   timer: RoundTimer,
   now: number,
 ): RoundTimerReading => {
-  const limitMs = finiteNonNegative(timer.limitMs)
-  const accruedMs = clamp(finiteNonNegative(timer.accruedMs), 0, limitMs)
+  const limitMs = nonNegativeFinite(timer.limitMs)
+  const accruedMs = clamp(nonNegativeFinite(timer.accruedMs), 0, limitMs)
   const remainingMs =
     timer.status === 'running' && timer.deadlineMs !== null
       ? clamp(timer.deadlineMs - validNow(now), 0, limitMs)
@@ -116,37 +109,3 @@ export const pauseRoundTimer = (timer: RoundTimer, now: number): RoundTimer => {
 }
 
 export const resumeRoundTimer = startRoundTimer
-
-export const freezeRoundTimer = (
-  timer: RoundTimer,
-  now: number,
-): RoundTimer => {
-  if (timer.status === 'frozen') return timer
-
-  const reading = readRoundTimer(timer, now)
-  return {
-    ...timer,
-    accruedMs: reading.elapsedMs,
-    startedAtMs: null,
-    deadlineMs: null,
-    status: 'frozen',
-  }
-}
-
-export const resetRoundTimer = (timer: RoundTimer, initialElapsedMs = 0) =>
-  createRoundTimer(timer.limitMs, initialElapsedMs)
-
-/**
- * Schema-v1 API aliases. They intentionally point at the round timer so older
- * imports keep working without reintroducing per-question resets.
- */
-export type QuestionTimerStatus = RoundTimerStatus
-export type QuestionTimer = RoundTimer
-export type QuestionTimerReading = RoundTimerReading
-export const createQuestionTimer = createRoundTimer
-export const readQuestionTimer = readRoundTimer
-export const startQuestionTimer = startRoundTimer
-export const pauseQuestionTimer = pauseRoundTimer
-export const resumeQuestionTimer = resumeRoundTimer
-export const freezeQuestionTimer = freezeRoundTimer
-export const resetQuestionTimer = resetRoundTimer

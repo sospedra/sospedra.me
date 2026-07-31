@@ -2,6 +2,7 @@ import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef } from 'react'
+import { prefersQuietFx } from 'service/theme'
 import { tinykeys } from 'tinykeys'
 
 export type Trap = [string | string[], (event: KeyboardEvent) => void]
@@ -33,7 +34,7 @@ let successKey: string | null = null
 let successKeyTimeout: number | null = null
 let gameInputClaims = 0
 
-const isEditableTarget = (target: EventTarget | null) => {
+export const isEditableTarget = (target: EventTarget | null) => {
   if (!(target instanceof Element)) return false
 
   return Boolean(
@@ -250,8 +251,8 @@ const findScrollableAncestor = (
   return null
 }
 
-export const getActiveScrollSurface = () => {
-  // shell-less scenes (bazaar2) scroll their own <main> instead of #vbody
+const getActiveScrollSurface = () => {
+  // shell-less scenes scroll their own <main> instead of #vbody
   const root =
     document.getElementById('vbody') ??
     document.querySelector<HTMLElement>('main')
@@ -277,13 +278,8 @@ export const getActiveScrollSurface = () => {
   return findScrollableAncestor(root, root)
 }
 
-const getScrollBehavior = (): ScrollBehavior => {
-  const prefersReducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)',
-  ).matches
-  const isQuietFx = document.documentElement.classList.contains('fx-quiet')
-  return prefersReducedMotion || isQuietFx ? 'auto' : 'smooth'
-}
+const getScrollBehavior = (): ScrollBehavior =>
+  prefersQuietFx() ? 'auto' : 'smooth'
 
 const nearestSceneIndex = (scenes: HTMLElement[], surfaceTop: number) => {
   const distances = scenes.map((scene) =>
@@ -326,7 +322,7 @@ const scrollSurfaceByPage = (surface: HTMLElement, direction: -1 | 1) => {
   return true
 }
 
-export const scrollActivePage = (direction: -1 | 1) => {
+const scrollActivePage = (direction: -1 | 1) => {
   if (hasOpenModal()) return false
 
   const surface = getActiveScrollSurface()
@@ -346,7 +342,7 @@ export const scrollActivePage = (direction: -1 | 1) => {
 const hasOpenModal = () =>
   Boolean(document.querySelector('dialog[open], [aria-modal="true"]'))
 
-export const scrollToPageEdge = (direction: -1 | 1) => {
+const scrollToPageEdge = (direction: -1 | 1) => {
   if (hasOpenModal()) return false
 
   const surface = getActiveScrollSurface()
@@ -457,27 +453,15 @@ export const Hotkeys: React.FC<{ children: React.ReactNode }> = (props) => {
         if (window.location.pathname !== '/') router.back()
       },
     ],
-    [
-      'h',
-      (event) => {
-        event.preventDefault()
-        router.push('/')
-      },
-    ],
-    [
-      'p',
-      (event) => {
-        event.preventDefault()
-        router.push('/papers')
-      },
-    ],
-    [
-      'a',
-      (event) => {
-        event.preventDefault()
-        router.push('/about')
-      },
-    ],
+    ...(['h', 'p', 'a'] as const).map(
+      (key): Trap => [
+        key,
+        (event) => {
+          event.preventDefault()
+          router.push(GOTO_ROUTES[key])
+        },
+      ],
+    ),
     [
       'j',
       (event) => {

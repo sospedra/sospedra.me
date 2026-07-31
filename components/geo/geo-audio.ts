@@ -1,3 +1,5 @@
+import { audioContextClass, createMasterBus } from 'service/audio/kit'
+
 export type GeoSound =
   | 'correct'
   | 'incorrect'
@@ -150,27 +152,20 @@ export const createGeoAudio = () => {
   const createGraph = (): AudioGraph | null => {
     if (!enabled || typeof window === 'undefined') return null
 
-    const AudioContextClass =
-      window.AudioContext ??
-      (
-        window as typeof window & {
-          webkitAudioContext?: typeof AudioContext
-        }
-      ).webkitAudioContext
+    const AudioContextClass = audioContextClass()
     if (!AudioContextClass) return null
 
     try {
       if (!context || context.state === 'closed') {
         context = new AudioContextClass()
-        output = context.createGain()
-        output.gain.value = 0.82
-        const limiter = context.createDynamicsCompressor()
-        limiter.threshold.value = -12
-        limiter.knee.value = 5
-        limiter.ratio.value = 8
-        limiter.attack.value = 0.002
-        limiter.release.value = 0.1
-        output.connect(limiter).connect(context.destination)
+        output = createMasterBus(context, {
+          gain: 0.82,
+          threshold: -12,
+          knee: 5,
+          ratio: 8,
+          attack: 0.002,
+          release: 0.1,
+        })
       }
       return output ? { context, output } : null
     } catch {

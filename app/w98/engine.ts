@@ -1,3 +1,5 @@
+import { mulberry32 } from 'lib/random'
+
 // The board is sized by the view: rows and cols come from the screen fit.
 export type Level = { rows: number; cols: number; mines: number }
 
@@ -59,17 +61,6 @@ const neighborsOf = (index: number, level: Level): number[] => {
     .map(([r, c]) => r * level.cols + c)
 }
 
-// mulberry32: the reducer must stay pure, so randomness arrives as a seed
-const mulberry32 = (seed: number) => {
-  let state = seed
-  return () => {
-    state = (state + 0x6d2b79f5) | 0
-    let t = Math.imul(state ^ (state >>> 15), 1 | state)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
-
 // first click is never a mine: the safe index leaves the candidate pool
 const pickMines = (level: Level, safe: number, seed: number): Set<number> => {
   const random = mulberry32(seed)
@@ -91,8 +82,7 @@ const armBoard = (state: MinesState, safe: number, seed: number): Cell[] => {
   }))
 }
 
-const floodReveal = (cells: Cell[], level: Level, start: number): Cell[] => {
-  const swept = cells.map((cell) => ({ ...cell }))
+const floodInPlace = (swept: Cell[], level: Level, start: number) => {
   const queue = [start]
   // drains at most once per cell: revealed cells never re-enqueue
   while (queue.length > 0) {
@@ -103,6 +93,11 @@ const floodReveal = (cells: Cell[], level: Level, start: number): Cell[] => {
     cell.revealed = true
     if (cell.adjacent === 0) queue.push(...neighborsOf(index, level))
   }
+}
+
+const floodReveal = (cells: Cell[], level: Level, start: number): Cell[] => {
+  const swept = cells.map((cell) => ({ ...cell }))
+  floodInPlace(swept, level, start)
   return swept
 }
 
@@ -143,10 +138,8 @@ const chordAt = (state: MinesState, index: number): MinesState => {
   )
   const mine = hidden.find((n) => state.cells[n].mine)
   if (mine !== undefined) return detonate(state, state.cells, mine)
-  const swept = hidden.reduce(
-    (cells, n) => floodReveal(cells, level, n),
-    state.cells,
-  )
+  const swept = state.cells.map((cell) => ({ ...cell }))
+  for (const n of hidden) floodInPlace(swept, level, n)
   return settle({ ...state, cells: swept })
 }
 

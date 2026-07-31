@@ -3,8 +3,8 @@ import cn from 'clsx'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { sceneFor } from './altitude'
 import { useTransition } from './context'
-import { createPtr } from './create-ptr'
 import Stars from './Stars'
 import css from './transition.module.css'
 
@@ -18,21 +18,9 @@ const ROUTE_SPRING = {
   mass: 1.15,
 }
 
-const getOffsetFromHref = (href: string): OffsetT => {
-  const ptr = createPtr(href)
-  switch (true) {
-    case ptr('/papers'):
-      return { transform: 'translate3d(0vw, -250vh, 0)' }
-    case ptr('/papers/:slug'):
-      return { transform: 'translate3d(0vw, 0vh, 0)' }
-    case ptr('/about'):
-      return { transform: 'translate3d(-100vw, -400vh, 0)' }
-    case ptr('/bazaar'):
-      return { transform: 'translate3d(-300vw, -250vh, 0)' }
-    default:
-      return { transform: 'translate3d(0vw, -400vh, 0)' }
-  }
-}
+const getOffsetFromHref = (href: string): OffsetT => ({
+  transform: sceneFor(href).offset,
+})
 
 const useFxQuiet = () => {
   const [isQuiet, setIsQuiet] = useState(false)

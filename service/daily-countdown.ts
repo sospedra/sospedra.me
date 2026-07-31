@@ -30,7 +30,9 @@ export const formatDailyCountdown = (remainingMs: number): string => {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`
 }
 
-export const useDailyCountdown = (): DailyCountdown => {
+export const useDailyCountdown = (
+  boundary: (now: Date) => Date = nextDailyBoundary,
+): DailyCountdown => {
   const [countdown, setCountdown] = useState<DailyCountdown>({
     label: null,
     ready: false,
@@ -38,7 +40,7 @@ export const useDailyCountdown = (): DailyCountdown => {
   })
 
   useEffect(() => {
-    const target = nextDailyBoundary(new Date()).getTime()
+    const target = boundary(new Date()).getTime()
     const update = () => {
       const remainingMs = target - Date.now()
       setCountdown({
@@ -53,7 +55,7 @@ export const useDailyCountdown = (): DailyCountdown => {
       if (update() <= 0) window.clearInterval(interval)
     }, 1000)
     return () => window.clearInterval(interval)
-  }, [])
+  }, [boundary])
 
   return countdown
 }

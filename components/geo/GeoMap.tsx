@@ -1,5 +1,6 @@
 'use client'
 
+import { clamp } from 'es-toolkit'
 import {
   EQUAL_EARTH_ASPECT,
   equalEarthForward,
@@ -147,9 +148,6 @@ const INITIAL_VIEWPORT: Viewport = {
   zoom: 1,
 }
 
-const clamp = (value: number, minimum: number, maximum: number) =>
-  Math.min(maximum, Math.max(minimum, value))
-
 const clampZoom = (zoom: number) => clamp(zoom, MIN_ZOOM, MAX_ZOOM)
 
 const viewBoxFor = ({ centerX, centerY, zoom }: Viewport) => {
@@ -216,11 +214,10 @@ const pointerMidpoint = (
 }
 
 const clientPointToWorldPoint = (
-  svg: SVGSVGElement,
+  rect: DOMRect,
   point: PointerPoint,
   viewport: Viewport,
 ): WorldPoint => {
-  const rect = svg.getBoundingClientRect()
   const viewBox = viewBoxFor(viewport)
   const xRatio = rect.width > 0 ? (point.clientX - rect.left) / rect.width : 0.5
   const yRatio =
@@ -286,6 +283,8 @@ export default function GeoMap({
   const [viewport, setViewport] = useState<Viewport>(INITIAL_VIEWPORT)
   const [announcement, setAnnouncement] = useState('')
   const svgRef = useRef<SVGSVGElement>(null)
+  // measured once per gesture: a getBoundingClientRect per pointermove forces layout
+  const svgRectRef = useRef<DOMRect | null>(null)
   const pointersRef = useRef(new Map<number, PointerPoint>())
   const dragPointerRef = useRef<number | null>(null)
   const pinchRef = useRef<PinchSession | null>(null)
@@ -367,8 +366,9 @@ export default function GeoMap({
   }
 
   const selectAtClientPoint = (svg: SVGSVGElement, point: PointerPoint) => {
+    const rect = svgRectRef.current ?? svg.getBoundingClientRect()
     return selectCoordinate(
-      worldPointToCoordinate(clientPointToWorldPoint(svg, point, viewport)),
+      worldPointToCoordinate(clientPointToWorldPoint(rect, point, viewport)),
     )
   }
 
@@ -384,7 +384,7 @@ export default function GeoMap({
       return
     }
 
-    const rect = svgRef.current.getBoundingClientRect()
+    const rect = svgRectRef.current ?? svgRef.current.getBoundingClientRect()
     const nextWidth = MAP_WIDTH / nextZoom
     const nextHeight = MAP_HEIGHT / nextZoom
     const xRatio =
@@ -424,6 +424,7 @@ export default function GeoMap({
     event.preventDefault()
     event.currentTarget.focus({ preventScroll: true })
     event.currentTarget.setPointerCapture(event.pointerId)
+    svgRectRef.current = event.currentTarget.getBoundingClientRect()
     pointersRef.current.set(event.pointerId, {
       clientX: event.clientX,
       clientY: event.clientY,
@@ -442,7 +443,7 @@ export default function GeoMap({
         distance: Math.max(1, pointerDistance(pointersRef.current)),
         viewport,
         worldPoint: clientPointToWorldPoint(
-          event.currentTarget,
+          svgRectRef.current ?? event.currentTarget.getBoundingClientRect(),
           midpoint,
           viewport,
         ),

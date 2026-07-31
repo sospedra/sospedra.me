@@ -1,3 +1,4 @@
+import { clamp } from 'es-toolkit'
 import { type Bounds, type Cell, type CellSet, cellOf, keyOf } from './engine'
 
 export type Camera = {
@@ -39,8 +40,7 @@ const MIN_ZOOM = 2
 const MAX_ZOOM = 34
 const MAX_DPR = 2
 
-export const clampZoom = (zoom: number) =>
-  Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom))
+const clampZoom = (zoom: number) => clamp(zoom, MIN_ZOOM, MAX_ZOOM)
 
 const canvasSize = (canvas: HTMLCanvasElement) => {
   const rect = canvas.getBoundingClientRect()
@@ -455,11 +455,14 @@ export const drawLifeCanvas = (
   const useGlow =
     palette.mode !== 'poster' && cells.size < 1800 && camera.zoom >= 6
 
+  const glowBlur = Math.min(8, camera.zoom * 0.4)
   if (useGlow) {
-    context.shadowBlur = Math.min(8, camera.zoom * 0.4)
+    context.shadowBlur = glowBlur
     context.shadowColor = palette.survivorGlow
   }
 
+  // shadowColor assignment parses a css color; write it only when the kind flips
+  let glowNewborn = false
   for (const key of cells) {
     const [x, y] = cellOf(key)
     if (x < left || x > right || y < top || y > bottom) continue
@@ -467,14 +470,12 @@ export const drawLifeCanvas = (
     const screenX = width / 2 + (x - camera.x) * camera.zoom + inset
     const screenY = height / 2 + (y - camera.y) * camera.zoom + inset
 
-    if (useGlow) {
+    if (useGlow && newborn !== glowNewborn) {
       context.shadowColor = newborn ? palette.newbornGlow : palette.survivorGlow
+      glowNewborn = newborn
     }
     drawCell(context, palette, screenX, screenY, cellSize, newborn, camera.zoom)
-    if (useGlow) {
-      context.shadowBlur = Math.min(8, camera.zoom * 0.4)
-      context.shadowColor = palette.survivorGlow
-    }
+    if (useGlow) context.shadowBlur = glowBlur
   }
 
   context.shadowBlur = 0

@@ -21,9 +21,7 @@ export async function loadCurrentGeoChallenge(): Promise<DailyGeoChallenge> {
     .filter((filename) => challengeFilenamePattern.test(filename))
     .map((filename) => filename.slice(0, 10))
     .sort()
-  const today = resolveGeoPublicationDate(
-    process.env.MERIDIAN_PUBLICATION_DATE,
-  )
+  const today = resolveGeoPublicationDate(process.env.MERIDIAN_PUBLICATION_DATE)
   const current = latestPublicationDateOnOrBefore(dates, today)
   if (!current) {
     throw new Error(

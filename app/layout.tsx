@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
+import { SITE_URL } from 'service/site'
 import Providers from './providers'
 import 'service/style/global.css'
 
@@ -54,20 +55,20 @@ const PERSON_JSON_LD = {
   '@context': 'http://schema.org',
   '@type': 'Person',
   email: 'mailto:hello@sospedra.me',
-  image: 'https://sospedra.me/serve/profile.jpg',
+  image: `${SITE_URL}/serve/profile.jpg`,
   jobTitle: 'Software engineer',
   name: 'Rubén Sospedra',
-  url: 'https://sospedra.me',
+  url: SITE_URL,
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://sospedra.me'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'Rubén Sospedra',
     template: '%s ▼ Rubén Sospedra',
   },
   description: 'Rubén Sospedra ▼ javascript hacker',
-  authors: [{ name: 'Rubén Sospedra', url: 'https://sospedra.me' }],
+  authors: [{ name: 'Rubén Sospedra', url: SITE_URL }],
   manifest: '/manifest.webmanifest',
   alternates: {
     types: {
@@ -76,7 +77,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    url: 'https://sospedra.me',
+    url: SITE_URL,
     images: ['/sospedra.png'],
   },
   twitter: {

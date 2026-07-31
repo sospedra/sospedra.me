@@ -1,11 +1,11 @@
 import { loadCurrentGeoChallenge } from 'lib/geo/challenges'
 import type { Metadata } from 'next'
+import { MERIDIAN_DESC } from 'service/descriptions'
 import MeridianGame from './meridian-game'
 
 export const metadata: Metadata = {
   title: 'Meridian — Daily geography',
-  description:
-    'A bilingual daily geography signal with shapes, flags, capitals, and a precision world map.',
+  description: MERIDIAN_DESC,
   alternates: { canonical: '/meridian' },
 }
 

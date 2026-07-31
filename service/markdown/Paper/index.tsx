@@ -8,15 +8,7 @@ import css from './paper.module.css'
 
 const PaperShell: React.FC<Paper & { children: React.ReactNode }> = (props) => {
   return (
-    <Shell
-      stage
-      canonical={`/papers/${props.slug}`}
-      className={css.frame}
-      description={props.excerpt}
-      image={props.og}
-      title={props.title}
-      keywords={props.categories}
-    >
+    <Shell stage className={css.frame}>
       <div className={css.scanhead} aria-hidden='true' />
       <RouteHeader
         backHref='/papers'

@@ -1,3 +1,5 @@
+import { audioContextClass, createMasterBus } from '../../service/audio/kit.ts'
+
 export type LifeMechanicalSound =
   | 'cartridge'
   | 'key'
@@ -44,16 +46,8 @@ export const createLifeAudio = (options: LifeAudioOptions = {}) => {
 
   const createContext = () => {
     if (options.createContext) return options.createContext()
-    if (typeof window === 'undefined') return null
-    const AudioContextClass =
-      window.AudioContext ??
-      (
-        window as typeof window & {
-          webkitAudioContext?: typeof AudioContext
-        }
-      ).webkitAudioContext
-    if (!AudioContextClass) return null
-    return new AudioContextClass()
+    const AudioContextClass = audioContextClass()
+    return AudioContextClass ? new AudioContextClass() : null
   }
 
   const reportError = (stage: string, error: unknown) => {
@@ -77,16 +71,14 @@ export const createLifeAudio = (options: LifeAudioOptions = {}) => {
       nextContext = createContext()
       if (!nextContext) return null
 
-      const nextOutput = nextContext.createGain()
-      nextOutput.gain.value = 0.88
-
-      const limiter = nextContext.createDynamicsCompressor()
-      limiter.threshold.value = -10
-      limiter.knee.value = 8
-      limiter.ratio.value = 8
-      limiter.attack.value = 0.002
-      limiter.release.value = 0.12
-      nextOutput.connect(limiter).connect(nextContext.destination)
+      const nextOutput = createMasterBus(nextContext, {
+        gain: 0.88,
+        threshold: -10,
+        knee: 8,
+        ratio: 8,
+        attack: 0.002,
+        release: 0.12,
+      })
 
       context = nextContext
       output = nextOutput

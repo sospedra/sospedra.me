@@ -1,3 +1,5 @@
+import { noiseSourceFor } from './kit'
+
 type NoiseBurst = {
   at: number
   duration: number
@@ -7,30 +9,18 @@ type NoiseBurst = {
 }
 
 const playNoiseBurst = (context: AudioContext, burst: NoiseBurst) => {
-  const buffer = context.createBuffer(
-    1,
-    Math.max(1, Math.floor(context.sampleRate * burst.duration)),
-    context.sampleRate,
-  )
-  const data = buffer.getChannelData(0)
-
-  for (let index = 0; index < data.length; index += 1) {
-    data[index] =
-      (Math.random() * 2 - 1) * (1 - index / Math.max(1, data.length))
-  }
-
-  const source = context.createBufferSource()
+  const { source, offset } = noiseSourceFor(context, burst.duration)
   const band = context.createBiquadFilter()
   const gain = context.createGain()
 
-  source.buffer = buffer
   band.type = 'bandpass'
   band.frequency.value = burst.frequency
   band.Q.value = burst.q
-  gain.gain.value = burst.volume
+  gain.gain.setValueAtTime(burst.volume, burst.at)
+  gain.gain.linearRampToValueAtTime(0, burst.at + burst.duration)
 
   source.connect(band).connect(gain).connect(context.destination)
-  source.start(burst.at)
+  source.start(burst.at, offset, burst.duration)
 }
 
 export const playKeyClick = (context: AudioContext, volume = 0.12) =>
