@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "checks": [
+    {
+      "id": "STY-01",
+      "category": "rendering",
+      "hard": true,
+      "expected": "Large connected flat color fields dominate; materials normally use two hard tones and at most one controlled highlight."
+    },
+    {
+      "id": "STY-02",
+      "category": "rendering",
+      "hard": true,
+      "expected": "Strong connected near-black exterior and structural outlines survive at actual website size."
+    },
+    {
+      "id": "STY-03",
+      "category": "rendering",
+      "hard": true,
+      "expected": "The scene reads as authored low-resolution pixel art, never richly textured pseudo-pixel illustration."
+    },
+    {
+      "id": "STY-04",
+      "category": "rendering",
+      "hard": true,
+      "expected": "Walls, floor, counters, cloth, wood and metal contain breathing room; detail is concentrated on faces, hands, signs, actions and causal fittings."
+    },
+    {
+      "id": "STY-05",
+      "category": "rendering",
+      "hard": true,
+      "expected": "No antialiasing, smooth gradients, bloom, fuzzy edges, glossy 3D, micro-scratches, fine leaf noise, post-downscale texture or mixed pixel density."
+    },
+    {
+      "id": "STY-06",
+      "category": "rendering",
+      "hard": true,
+      "expected": "Projects, Games and Travel retain distinct tenant palettes while sharing exact material and light swatches; there is no global tint or desaturation."
+    },
+    {
+      "id": "STY-07",
+      "category": "rendering",
+      "hard": true,
+      "expected": "No malformed anatomy, duplicated prop, impossible cable termination, broken joint, melted silhouette, pseudo-lettering or arbitrary colored pixel."
+    },
+    {
+      "id": "CAM-01",
+      "category": "camera",
+      "hard": true,
+      "expected": "The scene uses a frontal shallow-oblique parallel camera: architectural horizontals remain horizontal and verticals remain vertical with no convergence."
+    },
+    {
+      "id": "CAM-02",
+      "category": "camera",
+      "hard": true,
+      "expected": "Counter, platform, shelf and pot top planes are shallow bands around 0.15–0.25 of their related front faces, never deep isometric slabs or ellipses."
+    },
+    {
+      "id": "LAY-01",
+      "category": "layout",
+      "hard": true,
+      "expected": "The result is one reclaimed underground market floor, not three cards or isolated stall images over wallpaper."
+    },
+    {
+      "id": "LAY-02",
+      "category": "layout",
+      "hard": true,
+      "expected": "Projects, Games and Travel remain at the rear; the lower foreground is a broad, mostly open pedestrian lobby."
+    },
+    {
+      "id": "LAY-03",
+      "category": "layout",
+      "hard": true,
+      "expected": "The two full-height H-beam crop corridors remain architecture-only and are not crossed by tenant silhouettes, props, light or clutter."
+    },
+    {
+      "id": "LAY-04",
+      "category": "layout",
+      "hard": true,
+      "expected": "Left stairs read as normal-scale wall-and-floor architecture entering a real aperture and landing; the pink Up blade is on the stair side and no Down sign exists."
+    },
+    {
+      "id": "LAY-05",
+      "category": "layout",
+      "hard": true,
+      "expected": "No important prop is clipped at the canvas or lobby boundary; bridge props are sparse, complete and causally placed."
+    },
+    {
+      "id": "INT-01",
+      "category": "integration",
+      "hard": true,
+      "expected": "Continuous ceiling, wall, floor, drain/trench, fascia and H-beams form one causal building shared by all tenants."
+    },
+    {
+      "id": "INT-02",
+      "category": "integration",
+      "hard": true,
+      "expected": "Each stall has a rear relationship, meaningful boundary crossing, exact support contacts, a practical shared receiver and restrained foreground overlap."
+    },
+    {
+      "id": "INT-03",
+      "category": "integration",
+      "hard": true,
+      "expected": "Every external prop explains water, drainage, support, power, repair, traffic or ownership; there are no random blue wires or purposeless pixel clusters."
+    },
+    {
+      "id": "LGT-01",
+      "category": "lighting",
+      "hard": true,
+      "expected": "One cool low-chroma upper/front-left ambient unifies the floor without replacing tenant color."
+    },
+    {
+      "id": "LGT-02",
+      "category": "lighting",
+      "hard": true,
+      "expected": "Every practical source has a hard receiver on its stall, a weaker receiver on adjacent shared architecture and a matching compact occlusion/contact."
+    },
+    {
+      "id": "LGT-03",
+      "category": "lighting",
+      "hard": true,
+      "expected": "Projects uses bulbs, violet seed light and tiny rose emissions; Games uses arcade cyan and warm bulbs; Travel uses strong amber lanterns and only restrained cool instruments."
+    },
+    {
+      "id": "LGT-04",
+      "category": "lighting",
+      "hard": true,
+      "expected": "Tenant spill reaches only the rear portion of the lobby; no soft cone, global overlay or shared generic trapezoid covers the floor."
+    },
+    {
+      "id": "PRJ-01",
+      "category": "projects",
+      "hard": true,
+      "expected": "Projects is completely roofless with a ragged plant-and-post top, two uneven planted shelf wings, a dark work bay, askew lowercase sign and one sagging bulb string."
+    },
+    {
+      "id": "PRJ-02",
+      "category": "projects",
+      "hard": true,
+      "expected": "The gardener is one slim planted bipedal machine with a small rectangular head, exactly two lenses, bent antenna, segmented neck/torso, visible pistons/cables/joints and three-finger grippers."
+    },
+    {
+      "id": "PRJ-03",
+      "category": "projects",
+      "hard": true,
+      "expected": "The robot is olive-gray, mossed, apron-only and gently stooped; both connected arms control one dented watering can over one seedling while bench, pots and foliage partially occlude it."
+    },
+    {
+      "id": "PRJ-04",
+      "category": "projects",
+      "hard": true,
+      "expected": "The robot is not a floating orb, Manual robot, pedestal mount, wheeled unit, armored mecha, pale skeleton, mascot, cyclops, three-eyed robot or clothed humanoid."
+    },
+    {
+      "id": "PRJ-05",
+      "category": "projects",
+      "hard": true,
+      "expected": "Both alien creatures retain the approved anatomy and scale: the upper-right six-limbed three-eyed indigo dozer and the lower-left four-legged finned antenna creature."
+    },
+    {
+      "id": "PRJ-06",
+      "category": "projects",
+      "hard": true,
+      "expected": "Abundant chunky plants, pots, seed trays, soil and tools survive; water feed, drain, roots, dampness and one infrastructure-clipped vine connect the stall to the world."
+    },
+    {
+      "id": "GAM-01",
+      "category": "games",
+      "hard": true,
+      "expected": "Games remains an open, crooked, cheap kid-built wood/plastic stall with no retail counter; arcade is left, stock shelves right and bins break the lower flanks."
+    },
+    {
+      "id": "GAM-02",
+      "category": "games",
+      "hard": true,
+      "expected": "Exactly two clearly young siblings share one generic handheld: older brown-ponytail sister in dusty-blue hoodie and younger black-haired brother in rust/cream stripes."
+    },
+    {
+      "id": "GAM-03",
+      "category": "games",
+      "hard": true,
+      "expected": "The sister reads confident/social and the brother serious/protective; both remain grounded at distinct fixed heights in a quiet shared-screen idle."
+    },
+    {
+      "id": "GAM-04",
+      "category": "games",
+      "hard": true,
+      "expected": "The pair is not adult, same-height twins, recast, role-swapped, romantic, chibi, branded, separately equipped, behind a counter or performing a victory pose."
+    },
+    {
+      "id": "GAM-05",
+      "category": "games",
+      "hard": true,
+      "expected": "Selling stock remains complete and readable; platform wedges, one routed power cable, junction, arcade receiver and sparse crate/litter integrate it without professionalizing it."
+    },
+    {
+      "id": "TRV-01",
+      "category": "travel",
+      "hard": true,
+      "expected": "Travel contains exactly one gray-blue adult Hearthian with broad side ears, compact mouth, exactly four paired amber eyes and exactly two arms."
+    },
+    {
+      "id": "TRV-02",
+      "category": "travel",
+      "hard": true,
+      "expected": "The agent wears a practical flight jacket and scarf; one hand contacts the counter, one holds a ticket, and the character reads welcoming, seasoned and charmingly urgent."
+    },
+    {
+      "id": "TRV-03",
+      "category": "travel",
+      "hard": true,
+      "expected": "The agent is not a frog, green amphibian, captain/smuggler, generic gray alien, human, goblin, robot, wrong-eye creature, extra-armed mascot or child-sized figure."
+    },
+    {
+      "id": "TRV-04",
+      "category": "travel",
+      "hard": true,
+      "expected": "The enclosed booth has a rear wall visibly about one metre behind the agent, thick side and soffit returns, overlap and a dark rear floor gap without convergence."
+    },
+    {
+      "id": "TRV-05",
+      "category": "travel",
+      "hard": true,
+      "expected": "Patched canopy, individual travel sign, exact LAST SEATS board, three route cards, lanterns, maps, suit/helmet, tickets, orbital model, machine, scope, storage, crate and rocket remain."
+    },
+    {
+      "id": "TRV-06",
+      "category": "travel",
+      "hard": true,
+      "expected": "Luggage is hand-carried scale; lantern receivers reach the shared wall/floor/queue; queue wear, arrows and tags extend outside the booth without entering a crop corridor."
+    },
+    {
+      "id": "SCL-01",
+      "category": "scale",
+      "hard": true,
+      "expected": "The descending scale order is obvious: Projects robot, Hearthian adult, older sister, younger brother, carry-on luggage."
+    },
+    {
+      "id": "SCL-02",
+      "category": "scale",
+      "hard": true,
+      "expected": "Stairs, rails, counters, handles and props use normal adult ergonomics; children and luggage do not rival adult scale."
+    },
+    {
+      "id": "TXT-01",
+      "category": "text",
+      "hard": true,
+      "expected": "Readable text is limited to projects, games, travel, LAST SEATS and the Up blade; spelling is correct and no Down sign or extra copy exists."
+    },
+    {
+      "id": "THM-01",
+      "category": "thumbnail",
+      "hard": true,
+      "expected": "At the generated small preview, stairs, three distinct stall silhouettes, all four character silhouettes, both gaps and the open lobby remain immediately readable."
+    }
+  ]
+}

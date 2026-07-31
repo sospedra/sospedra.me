@@ -50,7 +50,7 @@ site's taste for restraint even when the palette screams.
 
 History: bazaar (v1) and bazaar2 established the concept and the CSS
 effects language (motes, neon blink, parallax foreground, dialogs).
-bazaar3 was the AI-asset takeover campaign (the BAZAAR3_TAKEOVER docs).
+bazaar3 was the AI-asset takeover campaign (the takeover docs, now docs/bazaar/takeover/).
 bazaar4 mounted the r17 layered animated stalls plus r15 architecture and
 r19 decoration on bazaar2's skeleton. bazaar5 is the validated-layout
 rebuild, final assets only, built for hand-placement.

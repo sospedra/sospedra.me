@@ -80,6 +80,18 @@ Compaction opportunities:
 4. 09's lessons restate 02's instrument hierarchy: fine for notes,
    merge to one telling in the final post.
 
+## Canon imported from the campaign
+
+- `takeover/` — the complete BAZAAR3_TAKEOVER package: the twelve
+  numbered docs (the bible: decision ledger, art/camera/palette laws,
+  stalls + animation, responsive architecture, master-first workflow,
+  file map, prompts, chronology, and 11 = the world-scale + hitbox
+  GOSPEL), plus masters/, source/, and visual-references/ (camera
+  gospels, character refs, approved directional sets).
+- `doctrine/` — the run-dir doctrine docs rescued from tmp:
+  RUN_SUMMARY.md, ANIM_ORDERS.md (r16), DOCTRINE.md and
+  HOVER-DOCTRINE.md (r17 layered animation).
+
 ## Where the artifacts live
 
 - `assets/` (this folder): the key images plus composed blog shots

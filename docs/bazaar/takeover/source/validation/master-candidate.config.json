@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "deliveryCanvas": {
+    "width": 1536,
+    "height": 1024
+  },
+  "sceneWindow": {
+    "x": 144,
+    "y": 213,
+    "width": 1248,
+    "height": 597
+  },
+  "croppedCanvas": {
+    "width": 1248,
+    "height": 597
+  },
+  "pixelScale": 3,
+  "matte": "#020307",
+  "palette": [
+    "#020307",
+    "#080c12",
+    "#111923",
+    "#1c2731",
+    "#2b3741",
+    "#414c55",
+    "#606970",
+    "#898e8d",
+    "#4b4236",
+    "#786852",
+    "#a38b69",
+    "#cfad7e",
+    "#edd09c",
+    "#1d100a",
+    "#321a0f",
+    "#4b2816",
+    "#6b391c",
+    "#925022",
+    "#bd7133",
+    "#361015",
+    "#5c171c",
+    "#882225",
+    "#b83932",
+    "#dd6048",
+    "#171221",
+    "#2a1e38",
+    "#443153",
+    "#674870",
+    "#966d94",
+    "#071421",
+    "#0a2942",
+    "#0d486d",
+    "#126e9b",
+    "#1f9cc8",
+    "#4bd2e1",
+    "#071c1d",
+    "#0e3534",
+    "#165652",
+    "#267c73",
+    "#56b4a4",
+    "#10180e",
+    "#1e2d14",
+    "#31461a",
+    "#4b6220",
+    "#6b7e2d",
+    "#95a247",
+    "#2e1723",
+    "#50283b",
+    "#784159",
+    "#a95f77",
+    "#d68b9a",
+    "#4a280d",
+    "#7b4514",
+    "#ad6a1e",
+    "#df9e32",
+    "#ffd26b",
+    "#2f1915",
+    "#542b22",
+    "#80442f",
+    "#ad6744",
+    "#d18d5a",
+    "#efbd82",
+    "#ffe3a1",
+    "#8be9e7"
+  ],
+  "thresholds": {
+    "maximumOpaqueColors": 64,
+    "maximumEffectiveColors": 56,
+    "effectiveColorMinimumShare": 0.0005,
+    "minimumSolidBlockRatio": 0.998,
+    "minimumBlockPixelAgreement": 0.9995,
+    "minimumGridEdgeAlignment": 0.995,
+    "maximumChangedEdgeRatio": 0.38,
+    "maximumIsolated8Ratio": 0.1,
+    "maximumSmallComponent2Ratio": 0.14,
+    "maximumSmallComponent4Ratio": 0.22,
+    "maximumEntropyMedian": 3,
+    "maximumEntropyP95": 4,
+    "maximumHighEntropyTileShare": 0.05,
+    "highEntropyBits": 4
+  },
+  "rails": [
+    {
+      "id": "ceiling-bottom",
+      "y": 27,
+      "tolerance": 6,
+      "minimumCoverage": 0.45
+    },
+    {
+      "id": "wall-floor",
+      "y": 465,
+      "tolerance": 9,
+      "minimumCoverage": 0.25
+    },
+    {
+      "id": "fascia-top",
+      "y": 561,
+      "tolerance": 6,
+      "minimumCoverage": 0.5
+    },
+    {
+      "id": "underside-top",
+      "y": 585,
+      "tolerance": 6,
+      "minimumCoverage": 0.5
+    }
+  ],
+  "bays": [
+    {
+      "id": "stairs",
+      "x": 0,
+      "width": 93
+    },
+    {
+      "id": "projects",
+      "x": 93,
+      "width": 356
+    },
+    {
+      "id": "crop-gap-1",
+      "x": 449,
+      "width": 38
+    },
+    {
+      "id": "games",
+      "x": 487,
+      "width": 278
+    },
+    {
+      "id": "crop-gap-2",
+      "x": 765,
+      "width": 38
+    },
+    {
+      "id": "travel",
+      "x": 803,
+      "width": 353
+    },
+    {
+      "id": "right-margin",
+      "x": 1156,
+      "width": 92
+    }
+  ]
+}

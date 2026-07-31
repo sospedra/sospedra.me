@@ -1,0 +1,2652 @@
+.scene {
+  --m: min(20svh, 10.2vw);
+  --hs: 1;
+  --alley-gap: 5svh;
+  /* market meter: derived from the 1248px frame so floors never overflow;
+     3 stalls (270u) + gaps + stairs = ~10.5m of content per floor */
+  --mkt-w: min(100vw, calc(1248px + 10svh));
+  --mkt-frame-w: min(100vw, 1248px);
+  --stairs-w: max(calc(var(--mkt-m) * 1.272), 9vw);
+  --stairs-row-avoid: max(
+    0px,
+    calc(var(--stairs-w) - (100vw - var(--mkt-frame-w)) / 2)
+  );
+  /* outer edges of the two random buildings, for the fg silhouettes */
+  --padl-left: calc(
+    var(--street-margin) +
+    var(--street-shift) +
+    3svh -
+    72.2svh
+  );
+  --padr-right: calc(
+    var(--street-margin) -
+    var(--street-shift) +
+    17svh -
+    86.4svh
+  );
+  --mkt-m: min(calc(var(--mkt-w) / 11.1), 16.5svh);
+  /* A(32.55svh) + gap + CD(53.45svh) centered as one block, then shifted */
+  --street-shift: 5vw;
+  --street-margin: calc((100vw - 109.8svh - var(--alley-gap)) / 2);
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow-y: auto;
+  overflow-x: clip;
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+  background: var(--color-bg-void); /* the site's normal sky */
+  color: #d6dbe6;
+  image-rendering: pixelated;
+}
+
+@media (pointer: fine) {
+  .scene {
+    scroll-snap-type: y mandatory;
+  }
+}
+
+@media (max-width: 700px) {
+  .scene {
+    --m: min(10svh, 13vw);
+    --hs: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .scene {
+    /*
+     * Worst desktop row:
+     * Projects + Games + Travel + two H-beams + 1.7u stairs = 11.494u.
+     * 11.5 leaves a fractional safety pixel without changing any sprite's
+     * proportions or relative composition.
+     */
+    --mkt-m: min(calc(var(--mkt-frame-w) / 11.5), 16.5svh);
+    --stairs-w: calc(var(--mkt-m) * 1.7);
+  }
+}
+
+.scene img {
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+.mobileTree {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .desktopTree {
+    display: none;
+  }
+  .mobileTree {
+    display: block;
+  }
+}
+
+.floor {
+  position: relative;
+  height: 100svh;
+  scroll-snap-align: start;
+  overflow: hidden;
+  transition: filter 0.5s ease;
+}
+
+.dimmed {
+  filter: brightness(0.55);
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- street level: gemini extraction kit ---------- */
+.streetBg {
+  position: absolute;
+  inset: 0 0 20svh 0;
+  background: url("/images/bazaar2/assets/street2/bg.png") left bottom repeat-x;
+  background-size: auto 96%;
+  image-rendering: pixelated;
+}
+
+/* the lone red tower: the tallest silhouette, appears exactly once */
+.sTower {
+  position: absolute;
+  left: 50vw;
+  translate: -50% 0;
+  bottom: 76svh;
+  height: 26svh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* street-level light haze: the bottom of the skyline glows */
+.streetBg::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 10svh;
+  background: linear-gradient(
+    to top,
+    rgb(255 170 220 / 0.34),
+    rgb(120 200 255 / 0.12) 55%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.sFloor {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 20svh;
+  background: url("/images/bazaar2/assets/street2/floor.png") left bottom
+    repeat-x;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  z-index: 1;
+  filter: brightness(0.8);
+}
+
+/* alley shadow: darkens the gap from CD's base, fading up over 10u */
+.alleyShade {
+  position: absolute;
+  left: calc(var(--street-margin) + var(--street-shift) + 36.5svh);
+  width: var(--alley-gap);
+  bottom: 10svh;
+  height: 10svh;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.82), rgb(0 0 0 / 0.98));
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* the pavement recedes: darken it progressively toward its top edge */
+.sFloor::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.55),
+    rgb(0 0 0 / 0.18) 45%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* pads sit in front of A+CD, overlapping the block 1u on each side */
+.sPadL {
+  position: absolute;
+  /* right edge = A left edge + 1svh; pad width 52svh * 0.8764 = 45.6svh */
+  left: calc(var(--street-margin) + var(--street-shift) + 3svh - 72.2svh);
+  bottom: 13svh;
+  height: 82.4svh;
+  z-index: 3;
+}
+
+.sPadR {
+  position: absolute;
+  /* left edge = CD right edge - 1svh; pad width 56svh * 0.8764 = 49.1svh */
+  right: calc(var(--street-margin) - var(--street-shift) + 7svh - 86.4svh);
+  bottom: 11svh;
+  height: 98.6svh;
+  z-index: 3;
+}
+
+.sA {
+  position: absolute;
+  /* right edge = CD left edge - --alley-gap, all in svh so the gap is
+     constant on any viewport: 95vw - CDw(53.45svh) - gap - Aw(32.55svh) */
+  left: calc(var(--street-margin) + var(--street-shift));
+  bottom: 13svh;
+  height: 87.4svh;
+  z-index: 4;
+  filter: brightness(0.8);
+}
+
+/* CD wrapper: door and neon are children, positioned in % of the
+   building so they track it through any move or resize */
+.sCDWrap {
+  position: absolute;
+  right: calc(var(--street-margin) - var(--street-shift));
+  bottom: 15svh;
+  height: 46svh;
+  aspect-ratio: 1113 / 776;
+  z-index: 2;
+}
+
+/* the neighboring block shades only the right-hand wall; the building
+   alpha keeps the wash off its cutouts, and the rooftop stays untouched */
+.sCDWrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent 24%,
+    rgb(0 0 0 / 0.1) 38%,
+    rgb(0 0 0 / 0.24) 60%,
+    rgb(0 0 0 / 0.42) 80%,
+    rgb(0 0 0 / 0.64) 100%
+  );
+  clip-path: inset(13% 0 0);
+  -webkit-mask:
+    url("/images/bazaar2/assets/street2/building-cd.png") center / 100% 100%
+    no-repeat;
+  mask:
+    url("/images/bazaar2/assets/street2/building-cd.png") center / 100% 100%
+    no-repeat;
+}
+
+.sCDImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.sBus {
+  position: absolute;
+  left: calc(var(--street-margin) + var(--street-shift) - 3svh);
+  bottom: 10svh;
+  height: 28.8svh;
+  /* box owns the geometry: both frames fill it identically, no
+     width:auto rounding drift between in-flow and absolute images */
+  aspect-ratio: 1060 / 1335;
+  z-index: 10;
+}
+
+/* overlay sprites sit exactly on the baked door/neon geometry of CD:
+   neon plate x118-289 y353-423, door x148-302 y444-770 (of 1113x776) */
+.sNeon {
+  position: absolute;
+  left: 8%;
+  top: 42.9%;
+  width: 20.6%;
+  z-index: 4;
+  pointer-events: none;
+  line-height: 0;
+}
+
+.sNeon img {
+  width: 100%;
+  height: auto;
+}
+
+/* lit sign + its glow live in one animated wrapper: they cannot drift */
+.sNeonOn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  line-height: 0;
+  animation: neonBlink 8s steps(1, end) infinite;
+}
+
+/* subtle ambient glow while the sign is lit */
+.sNeonOn::after {
+  content: "";
+  position: absolute;
+  inset: -45% -30%;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(255 60 180 / 0.3),
+    rgb(255 60 180 / 0.1) 55%,
+    transparent 75%
+  );
+  mix-blend-mode: screen;
+  filter: blur(5px);
+}
+
+@keyframes neonBlink {
+  0%,
+  62% {
+    opacity: 1;
+  }
+  63% {
+    opacity: 0;
+  }
+  64.5%,
+  70% {
+    opacity: 1;
+  }
+  71% {
+    opacity: 0;
+  }
+  72%,
+  73% {
+    opacity: 1;
+  }
+  73.8% {
+    opacity: 0;
+  }
+  74.6%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.sDoor {
+  position: absolute;
+  left: 11.5%;
+  bottom: 0.8%;
+  height: 42.7%;
+  z-index: 3;
+}
+
+.sDoor img {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+/* hover: door swings open in two frames, last frame holds */
+.sDoor img[data-frame] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.sDoor:hover img:first-child,
+.sDoor:focus-visible img:first-child {
+  animation: seqOut 0.28s steps(1, end) forwards;
+}
+
+.sDoor:hover img[data-frame="1"],
+.sDoor:focus-visible img[data-frame="1"] {
+  animation: seqMid 0.56s steps(1, end) forwards;
+}
+
+.sDoor:hover img[data-frame="2"],
+.sDoor:focus-visible img[data-frame="2"] {
+  animation: seqEnd 0.56s steps(1, end) forwards;
+}
+
+/* hover: the shelter bulb flickers irregularly, then stays lit */
+.sBus img[data-on] {
+  opacity: 0;
+}
+
+.sBus:hover img[data-on],
+.sBus:focus-visible img[data-on] {
+  animation: bulbFlicker 1.2s steps(1, end) forwards;
+}
+
+@keyframes bulbFlicker {
+  0% {
+    opacity: 1;
+  }
+  9% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  24% {
+    opacity: 0;
+  }
+  31% {
+    opacity: 1;
+  }
+  37% {
+    opacity: 0;
+  }
+  52%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* neon pink glow spilling out of the alley: rect [50,40] to [70,55] */
+.alleyGlow {
+  position: absolute;
+  left: 40vw;
+  top: 50svh;
+  width: 15vw;
+  height: 20svh;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(255 60 180 / 0.55),
+    rgb(255 60 180 / 0.18) 55%,
+    transparent 78%
+  );
+  mix-blend-mode: screen;
+  filter: blur(6px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* the deep-alley sign cluster: on the floor line, centered in the gap */
+.sAlleySigns {
+  position: absolute;
+  /* alley center = A left edge + A width (43.8svh) + half gap */
+  left: calc(var(--street-margin) + var(--street-shift) + 46.3svh);
+  translate: -50% 0;
+  bottom: 20svh;
+  height: 40svh;
+  z-index: 0;
+  filter: blur(0.8px);
+  pointer-events: none;
+  line-height: 0;
+}
+
+.sAlleySigns img {
+  height: 100%;
+  width: auto;
+  transform: translateZ(0);
+}
+
+/* marquee bulb chase: the two frames alternate */
+.sAlleySigns img[data-alt] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: marqueeAlt 1.1s steps(1, end) infinite;
+}
+
+@keyframes marqueeAlt {
+  0% {
+    opacity: 0;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* street glow doesn't reach the deep alley: dark at the base, fading up */
+.sAlleySigns::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.8),
+    rgb(0 0 0 / 0.35) 40%,
+    transparent 75%
+  );
+}
+
+.sBus img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* both frames on compositing layers: identical pixel snapping, no
+     1px jump when the overlay's opacity animation layerizes it */
+  transform: translateZ(0);
+}
+
+.sDoor img {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+/* hover: door swings open in two frames, last frame holds */
+.sDoor img[data-frame] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.sDoor:hover img:first-child,
+.sDoor:focus-visible img:first-child {
+  animation: seqOut 0.28s steps(1, end) forwards;
+}
+
+.sDoor:hover img[data-frame="1"],
+.sDoor:focus-visible img[data-frame="1"] {
+  animation: seqMid 0.56s steps(1, end) forwards;
+}
+
+.sDoor:hover img[data-frame="2"],
+.sDoor:focus-visible img[data-frame="2"] {
+  animation: seqEnd 0.56s steps(1, end) forwards;
+}
+
+/* hover: the shelter bulb flickers irregularly, then stays lit */
+.sBus img[data-on] {
+  opacity: 0;
+}
+
+.sBus:hover img[data-on],
+.sBus:focus-visible img[data-on] {
+  animation: bulbFlicker 1.2s steps(1, end) forwards;
+}
+
+@keyframes bulbFlicker {
+  0% {
+    opacity: 1;
+  }
+  9% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  24% {
+    opacity: 0;
+  }
+  31% {
+    opacity: 1;
+  }
+  37% {
+    opacity: 0;
+  }
+  52%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* neon pink glow spilling out of the alley: rect [50,40] to [70,55] */
+.alleyGlow {
+  position: absolute;
+  left: 40vw;
+  top: 50svh;
+  width: 15vw;
+  height: 20svh;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(255 60 180 / 0.55),
+    rgb(255 60 180 / 0.18) 55%,
+    transparent 78%
+  );
+  mix-blend-mode: screen;
+  filter: blur(6px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* the deep-alley sign cluster: on the floor line, centered in the gap */
+.sAlleySigns {
+  position: absolute;
+  /* alley center = A left edge + A width (43.8svh) + half gap */
+  left: calc(var(--street-margin) + var(--street-shift) + 46.3svh);
+  translate: -50% 0;
+  bottom: 20svh;
+  height: 40svh;
+  z-index: 0;
+  filter: blur(0.8px);
+  pointer-events: none;
+  line-height: 0;
+}
+
+.sAlleySigns img {
+  height: 100%;
+  width: auto;
+  transform: translateZ(0);
+}
+
+/* marquee bulb chase: the two frames alternate */
+.sAlleySigns img[data-alt] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: marqueeAlt 1.1s steps(1, end) infinite;
+}
+
+@keyframes marqueeAlt {
+  0% {
+    opacity: 0;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* street glow doesn't reach the deep alley: dark at the base, fading up */
+.sAlleySigns::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.8),
+    rgb(0 0 0 / 0.35) 40%,
+    transparent 75%
+  );
+}
+
+/* foreground parallax silhouettes, home-bridge style: one per side,
+   anchored off the outer edges of the random buildings */
+.fgLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.fgL,
+.fgR {
+  position: absolute;
+  top: -6svh;
+  bottom: -6svh;
+  height: auto;
+  width: 24vw;
+  background: url("/images/foreground-tower.svg") bottom / 100% 100% no-repeat;
+  filter: brightness(0.5) blur(3px);
+  transform: scaleY(1.2);
+  transform-origin: bottom;
+}
+
+.fgL {
+  /* right edge lands 5u past the left building's start, or 5u past the
+     screen's left edge when that start is offscreen */
+  /* tower svg content ends at 90% of its box: compensate */
+  left: calc(max(var(--padl-left), 0px) + 8svh - 21.5vw);
+}
+
+.fgR {
+  background-image: url("/images/foreground-block.svg");
+  /* left edge lands 5u before the right building's end, or 5u before
+     the screen's right edge when that end is offscreen */
+  /* block svg content starts at 4.5% of its box: compensate */
+  right: calc(max(var(--padr-right), 0px) + 8svh - 22.9vw);
+}
+
+@media (max-width: 700px) {
+  .fgLayer {
+    display: none;
+  }
+}
+
+/* the home-page neon car, parked center, wheels on the 98 line, 2x */
+/* the home car passes through on load: offscreen left to offscreen
+   right, same easing as the home drive (must match --drive-ease there) */
+.sCar {
+  position: absolute;
+  left: 0;
+  bottom: -0.5svh;
+  z-index: 39;
+  pointer-events: none;
+  transform: translateX(-40vw);
+  animation: carDrive 1s cubic-bezier(0.4, 0, 0.6, 0.52) 1.6s both;
+}
+
+@keyframes carDrive {
+  to {
+    transform: translateX(110vw);
+  }
+}
+
+/* safari has no directional blur: squash 4x, blur, stretch back, so the
+   blur radius comes out 4x horizontal vs vertical */
+.sCarStretch {
+  transform: scaleX(4);
+  transform-origin: bottom left;
+}
+
+.sCarSquash {
+  transform: scaleX(0.25);
+  transform-origin: bottom left;
+  filter: blur(1.5px);
+}
+
+.sCarScale {
+  transform: scale(1.8);
+  transform-origin: bottom left;
+  filter: brightness(0.45);
+}
+
+/* arrival: the home blackout hands over, we fade in, then the car passes */
+.fadeIn {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #000;
+  pointer-events: none;
+  animation: sceneFade 1.5s ease-in both;
+}
+
+@keyframes sceneFade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* pipes slab between floors, bazaar1 style */
+.slab {
+  position: relative;
+  /* above even the dim-filter stacking contexts of the floors */
+  z-index: 6;
+  height: calc(var(--mkt-m) * 0.75);
+  margin: calc(var(--mkt-m) * -0.25) 0;
+  /* layer 1: the single featured element, once, grid-aligned two tiles in;
+     layer 2: the plain tile repeating (tile width = 4x band height) */
+  background-repeat: no-repeat, repeat-x;
+  background-size:
+    auto 100%,
+    auto 100%;
+  background-position:
+    calc(var(--mkt-m) * 6) bottom,
+    left bottom;
+  image-rendering: pixelated;
+  isolation: isolate;
+  filter: brightness(0.58);
+  box-shadow:
+    0 8px 0 rgb(0 0 0 / 0.45),
+    0 -5px 0 rgb(0 0 0 / 0.38);
+  pointer-events: none;
+}
+
+.slab::before,
+.slab::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  display: block;
+  background-image: url("/images/bazaar3/assets/architecture/h-beam-horizontal.png");
+  background-repeat: repeat-x;
+  background-position: left center;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.slab::before {
+  top: 0;
+  height: 34%;
+}
+
+.slab::after {
+  bottom: 0;
+  height: 28%;
+  filter: brightness(0.72);
+}
+
+/* the slab after the street stays below it: no peeking from ground level */
+.floor:not(.floorMkt) + .slab {
+  margin-top: 0;
+}
+
+/* ---------- direction grid ---------- */
+.grid {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      rgb(55 247 224 / 0.22) 0 1px,
+      transparent 1px 5vw
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(55 247 224 / 0.22) 0 1px,
+      transparent 1px 5svh
+    );
+}
+
+.gridLabelV,
+.gridLabelH {
+  position: absolute;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 9px;
+  line-height: 1;
+  color: #37f7e0;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.gridLabelV {
+  top: 2px;
+  translate: 3px 0;
+}
+
+.gridLabelH {
+  left: 2px;
+  translate: 0 3px;
+}
+
+/* ---------- market floors ---------- */
+/* stairs desktop are 40x176u: floors take their natural height (5.5m) */
+.floorMkt {
+  height: calc(var(--mkt-m) * 5.5);
+  scroll-snap-align: center;
+  overflow: visible; /* dialogs pop past the floor edge */
+}
+
+/* signs hang from the floor above: up follows the stairs, down opposes it */
+.wayfindingRail {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: min(100%, 1024px);
+  height: calc(var(--mkt-m) * 1.8);
+  z-index: 20;
+  pointer-events: none;
+}
+
+.wayfindingSign {
+  position: absolute;
+  top: 0;
+  width: clamp(64px, calc(var(--mkt-m) * 0.9), 104px);
+  padding: 0;
+  border: 0;
+  background: none;
+  line-height: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.wayfindingSign img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.wayfindingSign:focus-visible {
+  outline: 2px solid #37f7e0;
+  outline-offset: 2px;
+}
+
+.wayfindingLeft {
+  left: 0;
+}
+
+.wayfindingRight {
+  right: 0;
+}
+
+/*
+ * On wide screens the signs live in the gutters beyond the 1024px rail.
+ * Their offset grows only as quickly as the real viewport gutter, so the
+ * 1024px boundary never creates a horizontal-scroll seam.
+ */
+@media (min-width: 1024px) {
+  .wayfindingLeft {
+    translate: clamp(-65%, calc((1024px - 100vw) / 2), 0px) 0;
+  }
+
+  .wayfindingRight {
+    translate: clamp(0px, calc((100vw - 1024px) / 2), 65%) 0;
+  }
+}
+
+/* everything on a market floor lives in a centered 1248px frame */
+.mktFrame {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: var(--mkt-frame-w);
+  z-index: 2;
+}
+
+.marketCeilingBeam,
+.marketFloorRail {
+  position: absolute;
+  right: 0;
+  left: 0;
+  display: block;
+  background-image: url("/images/bazaar3/assets/architecture/h-beam-horizontal.png");
+  background-repeat: repeat-x;
+  background-position: left center;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.marketCeilingBeam {
+  top: 0;
+  z-index: 7;
+  height: clamp(24px, calc(var(--mkt-m) * 0.26), 42px);
+  filter: brightness(0.72);
+}
+
+.marketFloorRail {
+  bottom: calc(var(--mkt-m) * 0.12);
+  z-index: 2;
+  height: clamp(20px, calc(var(--mkt-m) * 0.2), 34px);
+  filter: brightness(0.58);
+}
+
+@media (max-width: 700px) {
+  .floorMkt {
+    height: 100svh;
+    scroll-snap-align: start;
+  }
+}
+
+/* mkt-env: merged wall + ground, ground band is the bottom 22% */
+.envTile {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  filter: brightness(0.72) saturate(0.84);
+  transition: filter 0.35s steps(3, end);
+  pointer-events: none;
+}
+
+/* the walkable band recedes: darker at its far (top) edge */
+.mktGroundShade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 22%;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.48) 0 24%,
+    rgb(0 0 0 / 0.26) 24% 52%,
+    rgb(0 0 0 / 0.08) 52% 72%,
+    transparent 72%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.prop {
+  position: absolute;
+  width: auto;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+/* beyond the frame the market falls into darkness */
+.floorMkt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0.62),
+    transparent calc((100vw - var(--mkt-w)) / 2),
+    transparent calc(100vw - (100vw - var(--mkt-w)) / 2),
+    rgb(0 0 0 / 0.62)
+  );
+}
+
+.mktRow {
+  position: absolute;
+  inset: auto 0 calc(var(--mkt-m) * 0.65 - 4svh) 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  z-index: 4;
+}
+
+.stallBayBeam {
+  position: relative;
+  z-index: 4;
+  align-self: flex-end;
+  flex: 0 0 calc(var(--mkt-m) * 0.35);
+  height: calc(var(--mkt-m) * 5.12);
+  margin-bottom: calc(var(--mkt-m) * -0.42);
+  background:
+    url("/images/bazaar3/assets/architecture/h-beam-vertical.png") center top /
+    clamp(18px, calc(var(--mkt-m) * 0.16), 30px) auto repeat-y;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.stallBayBeam::before,
+.stallBayBeam::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  z-index: 1;
+  width: clamp(34px, calc(var(--mkt-m) * 0.3), 58px);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  background:
+    url("/images/bazaar3/assets/architecture/h-beam-joint.png") center / 100%
+    100% no-repeat;
+  image-rendering: pixelated;
+}
+
+.stallBayBeam::before {
+  top: 0;
+}
+
+.stallBayBeam::after {
+  bottom: 0;
+}
+
+/* stairs sit at the viewport edge; the row only dodges the part of the
+   stairs lane that intrudes into the centered frame */
+.floorMkt[data-stairs="left"] .mktRow {
+  left: var(--stairs-row-avoid);
+}
+
+.floorMkt[data-stairs="right"] .mktRow {
+  right: var(--stairs-row-avoid);
+}
+
+.stairs {
+  align-self: stretch;
+  width: var(--stairs-w);
+  flex: 0 0 auto;
+  line-height: 0;
+  pointer-events: none;
+}
+
+/* bazaar1 contract: stairs flush at the frame edge, top 0, running to
+   just below the stall row's feet; the row never enters their lane */
+.stairsL,
+.stairsR {
+  position: absolute;
+  top: 0;
+  bottom: 5svh;
+  /*
+   * Do not create a parent stacking context: the recess/landing children must
+   * paint behind mktFrame (z2), while core/lip/H-beams paint in front.
+   */
+  z-index: auto;
+}
+
+.stairsL {
+  left: 0;
+}
+
+.stairsR {
+  right: 0;
+}
+
+.stairsL::before,
+.stairsR::before,
+.stairsL::after,
+.stairsR::after {
+  content: "";
+  position: absolute;
+  display: block;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.stairsL::before,
+.stairsR::before {
+  top: 0;
+  z-index: 7;
+  width: max(
+    calc(100% + var(--mkt-m) * 0.42),
+    calc((100vw - var(--mkt-frame-w)) / 2 + var(--mkt-m) * 0.42)
+  );
+  height: clamp(24px, calc(var(--mkt-m) * 0.26), 42px);
+  background:
+    url("/images/bazaar3/assets/architecture/h-beam-horizontal.png") left center
+    / auto 100% repeat-x;
+  filter: brightness(0.72);
+}
+
+.stairsL::before {
+  left: 0;
+}
+
+.stairsR::before {
+  right: 0;
+}
+
+.stairsL::after,
+.stairsR::after {
+  top: 0;
+  bottom: 0;
+  z-index: 6;
+  width: clamp(18px, calc(var(--mkt-m) * 0.16), 30px);
+  background:
+    url("/images/bazaar3/assets/architecture/h-beam-vertical.png") center top /
+    100% auto repeat-y;
+}
+
+.stairsL::after {
+  right: calc(var(--mkt-m) * -0.08);
+}
+
+.stairsR::after {
+  left: calc(var(--mkt-m) * -0.08);
+}
+
+.stairsColumn {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+.desktopStairsRear,
+.desktopStairsLanding,
+.desktopStairsServiceBridge,
+.desktopStairsTrenchBridge,
+.desktopStairsFront {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+/* The rear recess and landing sit behind the stalls. The existing approved
+   core remains crisp above them, with only the landing lip painting in front. */
+.desktopStairsRear {
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: calc(100% + var(--mkt-m) * 0.24);
+  background: repeating-linear-gradient(
+    to bottom,
+    #05080d 0 calc(var(--mkt-m) * 0.18),
+    #101722 calc(var(--mkt-m) * 0.18) calc(var(--mkt-m) * 0.22)
+  );
+  box-shadow:
+    inset 0 0 0 3px #030508,
+    inset calc(var(--mkt-m) * 0.08) 0 0 #1f2934;
+}
+
+.stairsL .desktopStairsRear {
+  left: 0;
+  clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+}
+
+.stairsR .desktopStairsRear {
+  right: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 8% 100%);
+}
+
+.desktopStairsLanding {
+  bottom: 0;
+  z-index: 1;
+  width: calc(100% + var(--mkt-m) * 0.5);
+  height: calc(var(--mkt-m) * 0.34);
+  background:
+    url("/images/bazaar3/assets/architecture/mobile-deck.png") left bottom /
+    auto 100% repeat-x;
+  filter: brightness(0.76);
+  box-shadow: inset 0 3px 0 #55606d;
+}
+
+.stairsL .desktopStairsLanding {
+  left: 0;
+}
+
+.stairsR .desktopStairsLanding {
+  right: 0;
+}
+
+.desktopStairsServiceBridge,
+.desktopStairsTrenchBridge {
+  z-index: 1;
+  width: max(
+    calc(100% + var(--mkt-m) * 0.34),
+    calc((100vw - var(--mkt-frame-w)) / 2 + var(--mkt-m) * 0.34)
+  );
+}
+
+/*
+ * These two responsive strips close the real gap between the viewport-edge
+ * stair and the centered 1248px building stage. The floor raster never bakes a
+ * fake stair opening, so the bridge length may change without duplicating the
+ * stair or moving tenant endpoints.
+ */
+.desktopStairsServiceBridge {
+  top: 23%;
+  height: calc(var(--mkt-m) * 0.24);
+  border-block: max(2px, calc(var(--mkt-m) * 0.025)) solid #06090d;
+  background: linear-gradient(
+    to bottom,
+    #171e26 0 24%,
+    #48515a 24% 38%,
+    #222b34 38% 68%,
+    #0b1016 68%
+  );
+  box-shadow:
+    inset 0 max(2px, calc(var(--mkt-m) * 0.02)) 0 #78502f,
+    0 max(3px, calc(var(--mkt-m) * 0.04)) 0 #030508;
+}
+
+.desktopStairsTrenchBridge {
+  bottom: 0;
+  height: calc(var(--mkt-m) * 0.34);
+  background:
+    url("/images/bazaar3/assets/architecture/mobile-deck.png") left bottom /
+    auto 100% repeat-x;
+  filter: brightness(0.72) saturate(0.8);
+  box-shadow:
+    inset 0 max(3px, calc(var(--mkt-m) * 0.035)) 0 #626a70,
+    0 calc(var(--mkt-m) * 0.1) 0 #05070a;
+}
+
+.stairsL .desktopStairsServiceBridge,
+.stairsL .desktopStairsTrenchBridge {
+  left: 0;
+}
+
+.stairsR .desktopStairsServiceBridge,
+.stairsR .desktopStairsTrenchBridge {
+  right: 0;
+}
+
+.desktopStairsCore {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+
+.desktopStairsFront {
+  bottom: calc(var(--mkt-m) * -0.02);
+  z-index: 4;
+  width: calc(100% + var(--mkt-m) * 0.5);
+  height: calc(var(--mkt-m) * 0.13);
+  background:
+    url("/images/bazaar3/assets/architecture/mobile-fascia.png") left top / auto
+    100% repeat-x;
+  filter: brightness(0.66);
+  box-shadow: 0 calc(var(--mkt-m) * 0.08) 0 #05070a;
+}
+
+.stairsL .desktopStairsFront {
+  left: 0;
+}
+
+.stairsR .desktopStairsFront {
+  right: 0;
+}
+
+.mGridR,
+.mGridL {
+  position: absolute;
+  inset: 0 0 calc(var(--mkt-m) * 0.65) 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-items: end;
+  z-index: 2;
+}
+
+.mGridR {
+  grid-template-columns: minmax(0, 1fr) 24vw;
+}
+
+.mGridR .stairs {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / 3;
+  width: auto;
+  align-self: stretch;
+}
+
+.mGridL {
+  grid-template-columns: 24vw minmax(0, 1fr);
+}
+
+.mGridL .stairs {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: auto;
+  align-self: stretch;
+}
+
+/*
+ * Mobile is one continuous stairwell with two exits. Its midpoint is an
+ * architectural layer within this MarketFloor—not another scroll target.
+ */
+.mobileMidfloor {
+  position: absolute;
+  top: 50%;
+  width: 100vw;
+  height: 11svh;
+  translate: 0 -4svh;
+  pointer-events: none;
+}
+
+.mGridR .mobileMidfloor {
+  right: 0;
+}
+
+.mGridL .mobileMidfloor {
+  left: 0;
+}
+
+.mobileMidfloorDeck,
+.mobileMidfloorContact,
+.mobileMidfloorFascia,
+.mobileMidfloorUnderside {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+/* A real shallow walkable plane sits behind the upper stall. */
+.mobileMidfloorDeck {
+  inset: 0 0 auto;
+  z-index: 1;
+  width: 100%;
+  height: 4svh;
+  background:
+    url("/images/bazaar3/assets/architecture/mobile-deck.png") left bottom /
+    50vw 4svh repeat-x;
+  filter: brightness(0.64);
+}
+
+.mobileMidfloorContact {
+  top: 2.75svh;
+  z-index: 1;
+  height: 1.25svh;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.74) 0 0.5svh,
+    rgb(0 0 0 / 0.42) 0.5svh 1svh,
+    transparent 1svh
+  );
+}
+
+.mGridL .mobileMidfloorContact {
+  right: 0;
+  left: 40vw;
+}
+
+.mGridR .mobileMidfloorContact {
+  right: 40vw;
+  left: 0;
+}
+
+/* The lip is a distinct foreground strip; it never changes on hover. */
+.mobileMidfloorFascia {
+  top: 4svh;
+  left: 0;
+  z-index: 6;
+  width: 100%;
+  height: 4svh;
+  background:
+    url("/images/bazaar3/assets/architecture/mobile-fascia.png") left top / 50vw
+    4svh repeat-x;
+  filter: brightness(0.58);
+}
+
+.mobileMidfloorUnderside {
+  top: 8svh;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 3svh;
+  background:
+    url("/images/bazaar3/assets/architecture/mobile-underside.png") left top /
+    50vw 2svh repeat-x,
+    linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.58) 0 1svh,
+      rgb(0 0 0 / 0.3) 1svh 2svh,
+      transparent 2svh
+    );
+}
+
+/*
+ * Only the orientation-sensitive hardware is mirrored. Keeping core and
+ * platform in one wrapper guarantees the right stair cannot drift out of
+ * registration with its own landing.
+ */
+.mobileStairsHardware {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  overflow-x: clip;
+  overflow-y: visible;
+  pointer-events: none;
+}
+
+.mGridR .mobileStairsHardware {
+  transform: scaleX(-1);
+  transform-origin: center;
+}
+
+.mobileStairsCore {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 40vw;
+  max-width: none;
+  height: 95svh;
+}
+
+.mobileStairsPlatform {
+  position: absolute;
+  top: 50%;
+  left: -5vw;
+  z-index: 2;
+  width: 50vw;
+  max-width: none;
+  height: 25vw;
+  translate: 0 calc(-15vw - 3svh);
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.mobileBottomLanding,
+.mobileBottomLandingLip {
+  position: absolute;
+  bottom: 0;
+  left: -5vw;
+  display: block;
+  width: 52vw;
+  max-width: none;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+.mobileBottomLanding {
+  z-index: 2;
+  height: 5svh;
+  background:
+    url("/images/bazaar3/assets/architecture/mobile-deck.png") left bottom /
+    50vw 5svh repeat-x;
+  filter: brightness(0.72);
+}
+
+.mobileBottomLandingLip {
+  bottom: -2.5svh;
+  z-index: 3;
+  height: 3svh;
+  background:
+    url("/images/bazaar3/assets/architecture/mobile-fascia.png") left top / 50vw
+    3svh repeat-x;
+  filter: brightness(0.62);
+}
+
+/* ---------- stalls ---------- */
+.stallWrap {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  width: calc(var(--mkt-m) * var(--stall-w) / 32);
+  height: calc(var(--mkt-m) * var(--stall-h) / 32);
+  isolation: isolate;
+  --contact-left: 7%;
+  --contact-right: 7%;
+  --contact-bottom: -0.8svh;
+  --contact-height: 1.8svh;
+  --bay-left: 7%;
+  --bay-right: 7%;
+  --bay-top: 14%;
+  --bay-bottom: 3%;
+  --bay-conduit-x: 12%;
+}
+
+/* contact shadow: grounds the place on the walkable band */
+.stallWrap::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  right: var(--contact-right);
+  bottom: var(--contact-bottom);
+  left: var(--contact-left);
+  height: var(--contact-height);
+  background: #030508;
+  clip-path: polygon(3% 0, 97% 0, 100% 38%, 95% 100%, 5% 100%, 0 38%);
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.stallWrap[data-authored-integration]::after {
+  display: none;
+}
+
+/* living air: faint dust motes drifting up through the stall's light */
+.motes {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(
+      circle 2px at 12% 80%,
+      rgb(255 220 160 / 0.8),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 1px at 34% 55%,
+      rgb(255 240 210 / 0.7),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 2px at 57% 88%,
+      rgb(200 230 255 / 0.5),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 1px at 79% 62%,
+      rgb(255 230 180 / 0.65),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 2px at 92% 74%,
+      rgb(255 220 160 / 0.5),
+      transparent 100%
+    );
+  background-size: 62% 190%;
+  background-repeat: repeat;
+  animation: moteFloat 18s linear infinite;
+}
+
+@keyframes moteFloat {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 -200%;
+  }
+}
+
+@media (max-width: 700px) {
+  .stallWrap {
+    width: auto;
+    height: 43svh;
+    aspect-ratio: 736 / 928;
+    justify-self: center;
+  }
+}
+
+.mGridL .stallWrap {
+  grid-column: 2;
+}
+
+.stall {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: block;
+  isolation: isolate;
+  line-height: 0;
+}
+
+.stallArt {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+
+.layeredSprite {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  aspect-ratio: auto;
+}
+
+.integrationLight,
+.integrationRear,
+.integrationFront {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+
+/* A stepped pool touches wall, floor and the stall edge. It is intentionally
+   hard-edged: no fog, blur or generic radial halo. */
+.integrationLight {
+  --stall-light-direct: #df9e32;
+  --stall-light-spill: #ad6a1e;
+  z-index: 0;
+  right: 3%;
+  bottom: -3%;
+  left: 3%;
+  height: 34%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0 18%,
+    var(--stall-light-spill) 18% 40%,
+    var(--stall-light-direct) 40% 54%,
+    var(--stall-light-spill) 54% 68%,
+    transparent 68%
+  );
+  clip-path: polygon(18% 0, 82% 0, 98% 74%, 90% 100%, 10% 100%, 2% 74%);
+}
+
+/* Desktop has registered floor receivers; this fallback is mobile-only. */
+.floorMkt[data-breakpoint="desktop"] .integrationLight {
+  display: none;
+}
+
+/* The stall bay is shared architecture, but its crop and attachments are
+   changed per inhabitant below. It stays behind the approved sprite. */
+.integrationRear {
+  z-index: 1;
+  top: var(--bay-top);
+  right: var(--bay-right);
+  bottom: var(--bay-bottom);
+  left: var(--bay-left);
+  border: max(2px, calc(var(--mkt-m) * 0.025)) solid #2b3741;
+  background: repeating-linear-gradient(
+    to right,
+    #080c12 0 12%,
+    #111923 12% 24%
+  );
+  box-shadow:
+    inset 0 max(3px, calc(var(--mkt-m) * 0.04)) 0 #020307,
+    inset max(3px, calc(var(--mkt-m) * 0.04)) 0 0 #1c2731,
+    inset calc(var(--mkt-m) * -0.03) 0 0 #080c12;
+  clip-path: polygon(3% 0, 97% 0, 100% 3%, 100% 100%, 0 100%, 0 3%);
+}
+
+.integrationRear::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: var(--bay-conduit-x);
+  width: clamp(5px, calc(var(--mkt-m) * 0.055), 10px);
+  height: 18%;
+  background: repeating-linear-gradient(
+    to bottom,
+    #080c12 0 18%,
+    #414c55 18% 36%,
+    #1c2731 36% 54%
+  );
+  box-shadow:
+    -2px 0 0 #020307,
+    2px 0 0 #020307;
+}
+
+.integrationRear::after {
+  content: "";
+  position: absolute;
+  right: 5%;
+  bottom: 2%;
+  left: 5%;
+  height: 16%;
+  background: var(--bay-contact-color, #111923);
+  clip-path: polygon(5% 0, 95% 0, 100% 45%, 92% 100%, 8% 100%, 0 45%);
+}
+
+.stallWrap[data-stall="uses"] {
+  --bay-contact-color: #6b391c;
+  --contact-left: 5%;
+  --contact-right: 5%;
+  --bay-left: 2%;
+  --bay-right: 2%;
+  --bay-top: 18%;
+  --bay-conduit-x: 91%;
+}
+
+.stallWrap[data-stall="uses"] .integrationRear {
+  border-color: #4b2816;
+  background: repeating-linear-gradient(
+    to right,
+    #1d100a 0 10%,
+    #321a0f 10% 20%
+  );
+}
+
+.stallWrap[data-stall="papers"] {
+  --bay-contact-color: #0d486d;
+  --contact-left: 14%;
+  --contact-right: 10%;
+  --bay-left: 11%;
+  --bay-right: 8%;
+  --bay-top: 10%;
+  --bay-bottom: 5%;
+  --bay-conduit-x: 8%;
+}
+
+.stallWrap[data-stall="papers"] .integrationRear {
+  border-color: #0d486d;
+  clip-path: polygon(8% 0, 96% 0, 100% 7%, 96% 100%, 3% 100%, 0 8%);
+}
+
+.stallWrap[data-stall="manual"] {
+  --bay-contact-color: #4b4236;
+  --contact-left: 10%;
+  --contact-right: 9%;
+  --bay-left: 7%;
+  --bay-right: 6%;
+  --bay-top: 16%;
+  --bay-conduit-x: 84%;
+}
+
+.stallWrap[data-stall="manual"] .integrationRear {
+  border-color: #4b4236;
+  background: repeating-linear-gradient(
+    to right,
+    #080c12 0 18%,
+    #1c2731 18% 21%
+  );
+}
+
+.stallWrap[data-stall="console"] {
+  --bay-contact-color: #0e3534;
+  --contact-left: 3%;
+  --contact-right: 3%;
+  --contact-height: 2.2svh;
+  --bay-left: 4%;
+  --bay-right: 4%;
+  --bay-top: 26%;
+  --bay-bottom: 2%;
+  --bay-conduit-x: 74%;
+}
+
+.stallWrap[data-stall="console"] .integrationRear {
+  border-color: #0e3534;
+  background: repeating-linear-gradient(to right, #080c12 0 8%, #071c1d 8% 16%);
+  clip-path: polygon(
+    0 9%,
+    8% 9%,
+    8% 0,
+    92% 0,
+    92% 8%,
+    100% 8%,
+    100% 100%,
+    0 100%
+  );
+}
+
+.stallWrap[data-stall="talks"] {
+  --bay-contact-color: #4b2816;
+  --contact-left: 8%;
+  --contact-right: 8%;
+  --bay-left: 6%;
+  --bay-right: 7%;
+  --bay-top: 15%;
+  --bay-conduit-x: 10%;
+}
+
+.stallWrap[data-stall="talks"] .integrationRear {
+  border-color: #4b2816;
+  background: repeating-linear-gradient(
+    to right,
+    #1d100a 0 16%,
+    #321a0f 16% 32%
+  );
+}
+
+.stallWrap[data-stall="projects"] {
+  --bay-contact-color: #1e2d14;
+  --contact-left: 6%;
+  --contact-right: 6%;
+  --bay-left: 24%;
+  --bay-right: 23%;
+  --bay-top: 40%;
+  --bay-bottom: 6%;
+  --bay-conduit-x: 88%;
+}
+
+.stallWrap[data-stall="projects"] .integrationRear {
+  border-color: #1e2d14;
+  background: #10180e;
+  clip-path: polygon(7% 0, 93% 0, 100% 9%, 96% 100%, 4% 100%, 0 9%);
+}
+
+.stallWrap[data-stall="projects"] .integrationRear::before {
+  height: 34%;
+}
+
+.stallWrap[data-stall="games"] {
+  --bay-contact-color: #0a2942;
+  --contact-left: 8%;
+  --contact-right: 7%;
+  --bay-left: 8%;
+  --bay-right: 8%;
+  --bay-top: 29%;
+  --bay-bottom: 5%;
+  --bay-conduit-x: 86%;
+}
+
+.stallWrap[data-stall="games"] .integrationRear {
+  border-color: #4b2816;
+  background: repeating-linear-gradient(
+    to right,
+    #1d100a 0 22%,
+    #321a0f 22% 28%
+  );
+  clip-path: polygon(4% 3%, 17% 0, 96% 5%, 100% 100%, 0 100%, 0 8%);
+}
+
+.stallWrap[data-stall="travel"] {
+  --bay-contact-color: #2a1e38;
+  --contact-left: 5%;
+  --contact-right: 5%;
+  --bay-left: 3%;
+  --bay-right: 3%;
+  --bay-top: 5%;
+  --bay-bottom: 2%;
+  --bay-conduit-x: 94%;
+}
+
+.stallWrap[data-stall="travel"] .integrationRear {
+  border-color: #2a1e38;
+  background: repeating-linear-gradient(
+    to right,
+    #080c12 0 13%,
+    #171221 13% 26%
+  );
+}
+
+.stallWrap[data-stall="papers"] .integrationLight,
+.stallWrap[data-stall="talks"] .integrationLight,
+.stallWrap[data-stall="games"] .integrationLight {
+  --stall-light-direct: #4bd2e1;
+  --stall-light-spill: #126e9b;
+}
+
+.stallWrap[data-stall="console"] .integrationLight {
+  --stall-light-direct: #56b4a4;
+  --stall-light-spill: #165652;
+}
+
+/* One small stall-specific foreground seam is enough. These reuse the
+   approved Bazaar2 prop language but never standardise structure or signs. */
+.integrationFront {
+  z-index: 5;
+  bottom: -2%;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: contain;
+}
+
+.stallWrap[data-stall="uses"] .integrationFront {
+  right: 8%;
+  left: 8%;
+  height: 8%;
+  background:
+    linear-gradient(
+      to right,
+      #11151b 0 8%,
+      transparent 8% 42%,
+      #11151b 42% 50%,
+      transparent 50% 92%,
+      #11151b 92%
+    ),
+    linear-gradient(to bottom, #40372f 0 35%, #15171b 35%);
+  clip-path: polygon(
+    0 35%,
+    8% 35%,
+    8% 0,
+    15% 0,
+    15% 35%,
+    85% 35%,
+    85% 0,
+    92% 0,
+    92% 35%,
+    100% 35%,
+    100% 100%,
+    0 100%
+  );
+}
+
+.stallWrap[data-stall="papers"] .integrationFront {
+  right: -3%;
+  width: 42%;
+  height: 11%;
+  background-image: url("/images/bazaar2/assets/props/floor-cable-short.png");
+}
+
+.stallWrap[data-stall="manual"] .integrationFront {
+  left: 3%;
+  width: 46%;
+  height: 12%;
+  background-image: url("/images/bazaar2/assets/props/floor-cable.png");
+}
+
+.stallWrap[data-stall="console"] .integrationFront {
+  right: -4%;
+  width: 58%;
+  height: 13%;
+  background-image: url("/images/bazaar2/assets/props/floor-cable-short.png");
+}
+
+.stallWrap[data-stall="talks"] .integrationFront {
+  left: 16%;
+  width: 48%;
+  height: 11%;
+  background-image: url("/images/bazaar2/assets/props/worn-mat.png");
+  filter: brightness(0.62);
+}
+
+.stallWrap[data-stall="projects"] .integrationFront {
+  left: 4%;
+  width: 42%;
+  height: 12%;
+  background-image: url("/images/bazaar2/assets/props/puddle.png");
+  filter: brightness(0.48) sepia(0.22);
+}
+
+.stallWrap[data-stall="games"] .integrationFront {
+  right: 1%;
+  width: 40%;
+  height: 11%;
+  background-image: url("/images/bazaar2/assets/props/floor-cable-short.png");
+  filter: brightness(0.72);
+}
+
+.stallWrap[data-stall="travel"] .integrationFront {
+  right: 7%;
+  left: 7%;
+  height: 7%;
+  background: repeating-linear-gradient(
+    to right,
+    #34394a 0 8%,
+    #c4873f 8% 12%,
+    #151922 12% 24%
+  );
+  clip-path: polygon(0 35%, 88% 35%, 88% 0, 100% 50%, 88% 100%, 88% 65%, 0 65%);
+  opacity: 0.68;
+}
+
+/* fine vertical registration per place */
+.stallWrap[data-stall="uses"],
+.stallWrap[data-stall="games"] {
+  translate: 0 -4svh;
+}
+
+/* vertical layout instructions use the overlay grid: 1u = 1svh */
+.stallWrap[data-stall="console"] {
+  translate: 0; /* 2u up from the previous +2u position */
+}
+
+.stallWrap[data-stall="travel"],
+.stallWrap[data-stall="projects"],
+.stallWrap[data-stall="manual"],
+.stallWrap[data-stall="talks"] {
+  translate: 0 -2svh;
+}
+
+/* full-stall cel animation: all poses share one generated clean plate */
+.fullStallFrames {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fullStallBase {
+  opacity: 1;
+}
+
+.fullStallIdleSecond {
+  opacity: 0;
+  animation-duration: var(--full-stall-idle-duration);
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+  animation-delay: var(--full-stall-idle-delay);
+}
+
+.stallWrap[data-stall="uses"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 4.5s;
+  --full-stall-idle-delay: -0.45s;
+
+  animation-name: fullStallIdleAccent;
+}
+
+.stallWrap[data-stall="papers"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 2.6s;
+  --full-stall-idle-delay: -0.65s;
+
+  animation-name: fullStallIdleFlicker;
+}
+
+.stallWrap[data-stall="games"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 0.8s;
+  --full-stall-idle-delay: -0.12s;
+
+  animation-name: fullStallIdleEven;
+}
+
+.stallWrap[data-stall="talks"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 5s;
+  --full-stall-idle-delay: -1.5s;
+
+  animation-name: fullStallIdleBlink;
+}
+
+.stallWrap[data-stall="manual"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 1.4s;
+  --full-stall-idle-delay: -0.21s;
+
+  animation-name: fullStallIdleEven;
+}
+
+.stallWrap[data-stall="console"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 2.8s;
+  --full-stall-idle-delay: -0.7s;
+
+  animation-name: fullStallIdleAccent;
+}
+
+.stallWrap[data-stall="projects"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 1.8s;
+  --full-stall-idle-delay: -0.45s;
+
+  animation-name: fullStallIdleEven;
+}
+
+.stallWrap[data-stall="travel"] .fullStallIdleSecond {
+  --full-stall-idle-duration: 4.2s;
+  --full-stall-idle-delay: -1.05s;
+
+  animation-name: fullStallIdleBlink;
+}
+
+@keyframes fullStallIdleAccent {
+  0%,
+  86.99%,
+  94%,
+  100% {
+    opacity: 0;
+  }
+  87%,
+  93.99% {
+    opacity: 1;
+  }
+}
+
+@keyframes fullStallIdleFlicker {
+  0%,
+  67.99%,
+  73%,
+  81.99%,
+  84%,
+  100% {
+    opacity: 0;
+  }
+  68%,
+  72.99%,
+  82%,
+  83.99% {
+    opacity: 1;
+  }
+}
+
+@keyframes fullStallIdleEven {
+  0%,
+  49.99%,
+  100% {
+    opacity: 0;
+  }
+  50%,
+  99.99% {
+    opacity: 1;
+  }
+}
+
+@keyframes fullStallIdleBlink {
+  0%,
+  89.99%,
+  95%,
+  100% {
+    opacity: 0;
+  }
+  90%,
+  94.99% {
+    opacity: 1;
+  }
+}
+
+.fullStallHoverFrame {
+  opacity: 0;
+}
+
+.stallWrap:hover .fullStallIdleSecond,
+.stallWrap:focus-within .fullStallIdleSecond,
+.stallWrap.dialogOpen .fullStallIdleSecond {
+  animation: none;
+  opacity: 0;
+}
+
+.stallWrap:hover .fullStallHoverFirst,
+.stallWrap:focus-within .fullStallHoverFirst,
+.stallWrap.dialogOpen .fullStallHoverFirst {
+  animation: fullStallHoverFirst 0.6s steps(1, end) both;
+}
+
+.stallWrap:hover .fullStallHoverMiddle,
+.stallWrap:focus-within .fullStallHoverMiddle,
+.stallWrap.dialogOpen .fullStallHoverMiddle {
+  animation: fullStallHoverMiddle 0.6s steps(1, end) both;
+}
+
+.stallWrap:hover .fullStallHoverLast,
+.stallWrap:focus-within .fullStallHoverLast,
+.stallWrap.dialogOpen .fullStallHoverLast {
+  animation: fullStallHoverLast 0.6s steps(1, end) both;
+}
+
+@keyframes fullStallHoverFirst {
+  0%,
+  33.32% {
+    opacity: 1;
+  }
+  33.33%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fullStallHoverMiddle {
+  0%,
+  33.32%,
+  66.66%,
+  100% {
+    opacity: 0;
+  }
+  33.33%,
+  66.65% {
+    opacity: 1;
+  }
+}
+
+@keyframes fullStallHoverLast {
+  0%,
+  66.65% {
+    opacity: 0;
+  }
+  66.66%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Static split-scene interiors never pulse; motion belongs to explicit cels. */
+.interior {
+  animation: none;
+}
+
+.glowWash {
+  display: none;
+}
+
+/* keeper: behind the front, feet behind the counter band */
+.keeper {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  bottom: 8%;
+  z-index: 1;
+}
+
+.keeper img {
+  height: calc(var(--mkt-m) * 2.1875 * var(--hs));
+  width: auto;
+}
+
+/* console keeper sits cross-legged (26x48u), projects is a squat robot (36x42u) */
+.stallWrap[data-stall="console"] .keeper img {
+  height: calc(var(--mkt-m) * 1.5 * var(--hs));
+}
+
+.stallWrap[data-stall="projects"] .keeper img {
+  height: calc(var(--mkt-m) * 1.3125 * var(--hs));
+}
+
+.keeperIdle {
+  display: grid;
+}
+
+.keeperIdle img {
+  grid-area: 1 / 1;
+  animation: slot2 1.4s steps(1, end) infinite;
+}
+
+.keeperIdle img:nth-child(2) {
+  animation-delay: -0.7s;
+}
+
+.keeperHover {
+  display: none;
+}
+
+.keeperHover img {
+  grid-area: 1 / 1;
+  opacity: 0;
+}
+
+.stallWrap:hover .keeperIdle,
+.stallWrap:focus-within .keeperIdle {
+  display: none;
+}
+
+.stallWrap:hover .keeperHover,
+.stallWrap:focus-within .keeperHover {
+  display: grid;
+}
+
+/* greeting plays once, holds the last frame */
+.keeperHover img:nth-child(1) {
+  animation: seqOut 0.3s steps(1, end) forwards;
+}
+
+.keeperHover img:nth-child(2) {
+  animation: seqMid 0.6s steps(1, end) forwards;
+}
+
+.keeperHover img:nth-child(3) {
+  animation: seqEnd 0.6s steps(1, end) forwards;
+}
+
+@keyframes seqOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes seqMid {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes seqEnd {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slot2 {
+  0% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* the seated ramen customer, back to the viewer */
+.customer {
+  position: absolute;
+  left: 20%;
+  bottom: 10%;
+  z-index: 1;
+}
+
+.customer img {
+  height: calc(var(--mkt-m) * 1.5 * var(--hs));
+  width: auto;
+}
+
+.cycle2 {
+  display: grid;
+  line-height: 0;
+}
+
+.cycle2 img {
+  grid-area: 1 / 1;
+  animation: slot2 1.4s steps(1, end) infinite;
+}
+
+.cycle2 img:nth-child(2) {
+  animation-delay: -0.7s;
+}
+
+/* papers: the hologram flickers at runtime, no hover frames */
+.stallWrap[data-stall="papers"] .keeper {
+  animation: holoFlicker 2.8s steps(1, end) infinite;
+}
+
+.stallWrap[data-stall="papers"]:hover .keeperIdle,
+.stallWrap[data-stall="papers"]:focus-within .keeperIdle {
+  display: grid;
+}
+
+.stallWrap[data-stall="papers"]:hover .keeper {
+  animation-duration: 0.9s;
+}
+
+@keyframes holoFlicker {
+  0%,
+  86%,
+  100% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 0.4;
+  }
+  91% {
+    opacity: 0.85;
+  }
+  95% {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- FFIX dialog: a popover bubble anchored to its stall ---------- */
+.dialog {
+  --dialog-shift-x: 0px;
+  --dialog-shift-y: 0px;
+
+  position: fixed;
+  translate: calc(-50% + var(--dialog-shift-x))
+    calc(-100% - 14px + var(--dialog-shift-y));
+  width: max-content;
+  max-width: min(300px, 76vw);
+  z-index: 2147483000;
+  padding: 10px 12px;
+  border: 2px solid #f2f2f2;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.04) 0 2px,
+      transparent 2px 4px
+    ),
+    linear-gradient(180deg, #7c8088, #5e626a);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.45),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 6px 16px rgba(0, 0, 0, 0.5);
+  font-size: 10px;
+  line-height: 1.8;
+  color: #fff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+  text-transform: none;
+}
+
+/* keep the stall and its bubble in one continuous hover target */
+.dialog::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 16px;
+}
+
+/* speech tail pointing at the stall below */
+.dialog::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  translate: -50% 0;
+  border: 7px solid transparent;
+  border-top-color: #f2f2f2;
+}
+
+.gamesDialogs {
+  --dialog-shift-x: 0px;
+  --dialog-shift-y: 0px;
+
+  position: fixed;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(300px, calc(100vw - 16px));
+  box-sizing: border-box;
+  pointer-events: auto;
+  translate: calc(-50% + var(--dialog-shift-x))
+    calc(-100% - 14px + var(--dialog-shift-y));
+}
+
+/* one continuous hover bridge for the full conversation */
+.gamesDialogs::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 16px;
+}
+
+.dialog.gamesDialog {
+  position: relative;
+  width: fit-content;
+  max-width: 82%;
+  box-sizing: border-box;
+  translate: none;
+  overflow-wrap: anywhere;
+}
+
+/* the wrapper owns the bridge; each turn only owns its visible bubble */
+.dialog.gamesDialog::before {
+  display: none;
+}
+
+.gamesDialogSister {
+  align-self: flex-start;
+}
+
+.gamesDialogBrother {
+  align-self: flex-end;
+}
+
+/* alternate the tails toward the two siblings below */
+.gamesDialogSister::after {
+  left: 18%;
+}
+
+.gamesDialogBrother::after {
+  left: 82%;
+}
+
+.gamesDialogPending {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Hover never lifts the whole stall above stairs, fascia or H-beams.
+   The dialog itself is portalled and already owns the topmost z-index. */
+
+@media (max-width: 700px) {
+  .dialog {
+    max-width: min(240px, 62vw);
+  }
+}
+
+.dialogDesc {
+  position: relative;
+  margin: 0 0 8px;
+  white-space: pre-line;
+}
+
+.dialogDescSolo {
+  margin-bottom: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.typeMeasure {
+  visibility: hidden;
+}
+
+.typeText {
+  position: absolute;
+  inset: 0;
+}
+
+.typeCursor {
+  animation: typeCursor 0.24s steps(1, end) infinite;
+}
+
+@keyframes typeCursor {
+  50% {
+    opacity: 0;
+  }
+}
+
+.dialogLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dialogLinks a {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  width: max-content;
+  max-width: 100%;
+  color: #ffe9a8;
+  text-decoration: none;
+}
+
+.dialogLinks a::before {
+  content: "\25B8 ";
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.linkTypeMeasure,
+.linkTypeText {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.linkTypeMeasure {
+  visibility: hidden;
+}
+
+.dialogLinkPending::before,
+.dialogLinkPending .linkTypeText {
+  visibility: hidden;
+}
+
+.dialogLinks a:hover {
+  color: #ffffff;
+}
+
+.dialogLinks a:focus-visible {
+  outline: 1px solid #ffe9a8;
+  outline-offset: 2px;
+}
+
+/* ---------- hud ---------- */
+.hud {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hudBtn {
+  padding: 0.45rem 0.7rem;
+  border: 2px solid #37f7e0;
+  background: rgb(6 7 13 / 0.85);
+  color: #37f7e0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.55rem;
+  cursor: pointer;
+}
+
+.hudBtn:hover {
+  background: #12202b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene {
+    scroll-behavior: auto;
+  }
+
+  .scene *,
+  .scene *::before,
+  .scene *::after {
+    /* last block in the file: source order beats the animation classes above */
+    animation: none;
+    transition: none;
+  }
+
+  .fadeIn,
+  .motes {
+    display: none;
+  }
+
+  .fgLayer {
+    position: absolute;
+    transform: none;
+  }
+
+  .scene .stallWrap .fullStallIdleSecond,
+  .scene .stallWrap .fullStallHoverFrame {
+    animation: none;
+    opacity: 0;
+  }
+
+  .scene .stallWrap:hover .fullStallHoverLast,
+  .scene .stallWrap:focus-within .fullStallHoverLast,
+  .scene .stallWrap.dialogOpen .fullStallHoverLast {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/*
+ * Hover dimming belongs to the bay, not the art. Keeping this final in source
+ * order also guarantees that the market's structure/props darken without
+ * placing a compositing layer over any stall sprite.
+ */
+.floorMkt.dimmed {
+  filter: none;
+}
+
+.floorMkt.dimmed > .envTile {
+  filter: brightness(0.42) saturate(0.72);
+}
+
+.floorMkt.dimmed > .mktGroundShade,
+.floorMkt.dimmed > .mktFrame > .prop,
+.floorMkt.dimmed > .mktFrame > .motes {
+  filter: brightness(0.55);
+}
+
+.floorMkt.dimmed > .mktFrame > [data-integration-floor] {
+  filter: brightness(0.55) saturate(0.78);
+}
+
+/* A promoted authored floor supplies its own opaque base and ground response. */
+.floorMkt[data-authored-integration] > .envTile,
+.floorMkt[data-authored-integration] > .mktGroundShade {
+  visibility: hidden;
+}
+
+/*
+ * ---------- bounded desktop floor-system hook ----------
+ *
+ * Floor-system passes live inside mktFrame, below the stall row and existing
+ * H-beam/stair hardware. Dimming targets those passes directly; no overlay is
+ * introduced above a stall sprite, hitbox, wayfinding sign or dialog.
+ */
+.floorMkt.dimmed > .mktFrame > [data-floor-system-layer] {
+  filter: brightness(0.55) saturate(0.78);
+}
+
+/* The typed system owns deliberate semantic clutter; retire the old random
+   bridge-prop set only on floors where the new system is present. */
+.mktFrame:has(> [data-floor-system-layer]) > .prop {
+  display: none;
+}

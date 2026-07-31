@@ -1,0 +1,2597 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Consolidated art direction, palette, lighting, responsive architecture, animation, and production plan for Bazaar 3."
+    />
+    <title>Bazaar 3 — Underground Art Bible</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #080c12;
+        --bg-deep: #020307;
+        --surface: #111923;
+        --surface-raised: #1c2731;
+        --surface-soft: #151d25;
+        --line: #2b3741;
+        --line-strong: #414c55;
+        --ink: #edd09c;
+        --ink-strong: #ffe3a1;
+        --muted: #a38b69;
+        --steel: #898e8d;
+        --amber: #df9e32;
+        --amber-bright: #ffd26b;
+        --cyan: #4bd2e1;
+        --teal: #56b4a4;
+        --red: #dd6048;
+        --purple: #966d94;
+        --green: #95a247;
+        --danger: #b83932;
+        --warning: #df9e32;
+        --success: #56b4a4;
+        --info: #4bd2e1;
+        --font-body:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        --font-mono:
+          "SFMono-Regular", "Cascadia Code", "Roboto Mono", Consolas,
+          monospace;
+        --step--1: clamp(0.72rem, 0.68rem + 0.14vw, 0.8rem);
+        --step-0: clamp(0.94rem, 0.89rem + 0.2vw, 1.05rem);
+        --step-1: clamp(1.12rem, 1rem + 0.5vw, 1.38rem);
+        --step-2: clamp(1.45rem, 1.2rem + 1vw, 2rem);
+        --step-3: clamp(2.1rem, 1.4rem + 2.6vw, 3.8rem);
+        --space-1: 0.4rem;
+        --space-2: 0.75rem;
+        --space-3: 1rem;
+        --space-4: 1.5rem;
+        --space-5: 2rem;
+        --space-6: 3rem;
+        --radius: 3px;
+        --outline: 2px solid var(--bg-deep);
+        --shadow: 8px 8px 0 var(--bg-deep);
+        --content: 78rem;
+        --prose: 74ch;
+        --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 1.5rem;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(rgba(65, 76, 85, 0.08) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(65, 76, 85, 0.08) 1px, transparent 1px),
+          var(--bg);
+        background-size: 24px 24px;
+        color: var(--ink);
+        font-family: var(--font-body);
+        font-size: var(--step-0);
+        line-height: 1.65;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      a {
+        color: var(--cyan);
+        text-underline-offset: 0.2em;
+      }
+
+      a:hover {
+        color: var(--ink-strong);
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--amber-bright);
+        outline-offset: 3px;
+      }
+
+      .skip-link {
+        position: fixed;
+        z-index: 1000;
+        top: 0.75rem;
+        left: 0.75rem;
+        padding: 0.65rem 0.8rem;
+        background: var(--ink-strong);
+        color: var(--bg-deep);
+        transform: translateY(-180%);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      .progress {
+        position: fixed;
+        z-index: 50;
+        inset: 0 0 auto;
+        height: 4px;
+        background: var(--bg-deep);
+      }
+
+      .progress > span {
+        display: block;
+        width: 0;
+        height: 100%;
+        background: var(--amber);
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: minmax(16rem, 20rem) minmax(0, 1fr);
+        min-height: 100vh;
+      }
+
+      .rail {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        height: 100vh;
+        overflow: auto;
+        border-right: 1px solid var(--line);
+        background: rgba(2, 3, 7, 0.94);
+        padding: var(--space-4);
+      }
+
+      .rail__mark {
+        display: grid;
+        grid-template-columns: 2.75rem 1fr;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: var(--space-4);
+      }
+
+      .rail__glyph {
+        display: grid;
+        place-items: center;
+        width: 2.75rem;
+        aspect-ratio: 1;
+        border: 2px solid var(--amber);
+        box-shadow: 4px 4px 0 #4a280d;
+        color: var(--amber-bright);
+        font: 800 0.9rem/1 var(--font-mono);
+      }
+
+      .rail__eyebrow,
+      .eyebrow,
+      .section-number,
+      .label,
+      .status,
+      th {
+        font-family: var(--font-mono);
+        font-size: var(--step--1);
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      .rail__eyebrow {
+        color: var(--amber);
+      }
+
+      .rail__title {
+        margin-top: 0.15rem;
+        color: var(--ink-strong);
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .search {
+        width: 100%;
+        min-height: 2.75rem;
+        margin-bottom: var(--space-3);
+        border: 1px solid var(--line-strong);
+        border-radius: 0;
+        background: var(--surface);
+        color: var(--ink-strong);
+        padding: 0.65rem 0.75rem;
+      }
+
+      .search::placeholder {
+        color: var(--steel);
+      }
+
+      .rail nav {
+        display: grid;
+        gap: 0.15rem;
+      }
+
+      .rail nav a {
+        display: grid;
+        grid-template-columns: 2rem 1fr;
+        min-height: 2.5rem;
+        align-items: center;
+        border-left: 2px solid transparent;
+        color: var(--steel);
+        padding: 0.45rem 0.55rem;
+        font-size: 0.86rem;
+        text-decoration: none;
+      }
+
+      .rail nav a span {
+        color: var(--line-strong);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+      }
+
+      .rail nav a:hover,
+      .rail nav a[aria-current="true"] {
+        border-left-color: var(--amber);
+        background: var(--surface);
+        color: var(--ink-strong);
+      }
+
+      .rail__footer {
+        margin-top: var(--space-4);
+        border-top: 1px solid var(--line);
+        padding-top: var(--space-3);
+        color: var(--steel);
+        font-size: var(--step--1);
+      }
+
+      .rail__footer a {
+        display: block;
+        margin-block: 0.45rem;
+      }
+
+      .page {
+        min-width: 0;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        min-height: min(44rem, 82vh);
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(90deg, transparent 0 68%, rgba(223, 158, 50, 0.08) 68%),
+          var(--bg-deep);
+        padding: clamp(2rem, 5vw, 5rem);
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: auto -4rem -10rem auto;
+        width: 32rem;
+        height: 32rem;
+        border: 5rem solid var(--surface);
+        transform: rotate(45deg);
+        opacity: 0.55;
+        pointer-events: none;
+      }
+
+      .hero__inner {
+        position: relative;
+        z-index: 1;
+        max-width: var(--content);
+        margin-inline: auto;
+      }
+
+      .hero h1 {
+        max-width: 12ch;
+        margin: 1rem 0;
+        color: var(--ink-strong);
+        font-size: var(--step-3);
+        line-height: 0.98;
+        letter-spacing: -0.055em;
+      }
+
+      .hero__lede {
+        max-width: 62ch;
+        margin: 0;
+        color: #cfad7e;
+        font-size: var(--step-1);
+        line-height: 1.45;
+      }
+
+      .hero__north-star {
+        max-width: 58rem;
+        margin-top: var(--space-5);
+        border-left: 6px solid var(--amber);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        padding: var(--space-4);
+      }
+
+      .hero__north-star strong {
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--amber-bright);
+        font-family: var(--font-mono);
+        font-size: var(--step--1);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .hero__north-star p {
+        margin: 0;
+        color: var(--ink-strong);
+        font-size: var(--step-1);
+      }
+
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(8rem, 1fr));
+        gap: 1px;
+        max-width: 68rem;
+        margin-top: var(--space-5);
+        border: 1px solid var(--line);
+        background: var(--line);
+      }
+
+      .fact {
+        min-height: 7rem;
+        background: var(--bg-deep);
+        padding: var(--space-3);
+      }
+
+      .fact strong {
+        display: block;
+        color: var(--ink-strong);
+        font: 800 var(--step-2)/1 var(--font-mono);
+      }
+
+      .fact span {
+        display: block;
+        margin-top: 0.55rem;
+        color: var(--steel);
+        font-size: var(--step--1);
+      }
+
+      main {
+        width: min(100%, var(--content));
+        margin-inline: auto;
+        padding: clamp(1.25rem, 4vw, 4rem);
+      }
+
+      .chapter {
+        position: relative;
+        margin-block: clamp(4rem, 9vw, 8rem);
+        scroll-margin-top: 1.5rem;
+      }
+
+      .chapter[hidden] {
+        display: none;
+      }
+
+      .chapter__header {
+        display: grid;
+        grid-template-columns: 4.4rem minmax(0, var(--prose));
+        gap: var(--space-3);
+        align-items: start;
+        margin-bottom: var(--space-4);
+      }
+
+      .section-number {
+        display: grid;
+        place-items: center;
+        min-height: 3.2rem;
+        border: 1px solid var(--line-strong);
+        background: var(--surface);
+        color: var(--amber);
+      }
+
+      .chapter h2 {
+        margin: 0;
+        color: var(--ink-strong);
+        font-size: var(--step-2);
+        line-height: 1.1;
+        letter-spacing: -0.025em;
+      }
+
+      .chapter__intro {
+        max-width: var(--prose);
+        margin: 0.6rem 0 0;
+        color: var(--steel);
+      }
+
+      .prose {
+        max-width: var(--prose);
+        margin-left: 5.4rem;
+      }
+
+      .prose h3,
+      .full h3 {
+        margin: 2.3rem 0 0.7rem;
+        color: var(--amber-bright);
+        font-size: var(--step-1);
+        line-height: 1.25;
+      }
+
+      .prose h4,
+      .full h4 {
+        margin: 1.5rem 0 0.4rem;
+        color: var(--ink-strong);
+      }
+
+      .prose p,
+      .full p {
+        margin-block: 0.6rem;
+      }
+
+      .prose ul,
+      .prose ol,
+      .full ul,
+      .full ol {
+        padding-left: 1.25rem;
+      }
+
+      li + li {
+        margin-top: 0.28rem;
+      }
+
+      .full {
+        width: 100%;
+      }
+
+      .callout {
+        max-width: var(--prose);
+        margin: var(--space-4) 0;
+        border: 1px solid var(--line-strong);
+        border-left-width: 6px;
+        background: var(--surface-soft);
+        padding: var(--space-3) var(--space-4);
+      }
+
+      .callout--locked {
+        border-left-color: var(--amber);
+      }
+
+      .callout--warning {
+        border-left-color: var(--red);
+      }
+
+      .callout--proposal {
+        border-left-color: var(--cyan);
+      }
+
+      .callout p:first-child {
+        margin-top: 0;
+      }
+
+      .callout p:last-child {
+        margin-bottom: 0;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        width: fit-content;
+        border: 1px solid currentColor;
+        padding: 0.28rem 0.48rem;
+        line-height: 1;
+      }
+
+      .status::before {
+        content: "";
+        width: 0.45rem;
+        height: 0.45rem;
+        background: currentColor;
+      }
+
+      .status--locked {
+        color: var(--amber-bright);
+      }
+
+      .status--current {
+        color: var(--info);
+      }
+
+      .status--proposal {
+        color: var(--teal);
+      }
+
+      .status--pending {
+        color: var(--purple);
+      }
+
+      .status--rejected {
+        color: var(--red);
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(9rem, 1fr));
+        gap: 1px;
+        border: 1px solid var(--line);
+        background: var(--line);
+      }
+
+      .status-grid > article {
+        background: var(--surface);
+        padding: var(--space-3);
+      }
+
+      .status-grid h3 {
+        margin: 0.8rem 0 0.4rem;
+        color: var(--ink-strong);
+        font-size: 1rem;
+      }
+
+      .status-grid p {
+        margin: 0;
+        color: var(--steel);
+        font-size: 0.86rem;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--bg-deep);
+      }
+
+      th,
+      td {
+        padding: 0.8rem 0.9rem;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+
+      th {
+        background: var(--surface);
+        color: var(--amber);
+      }
+
+      td {
+        color: #cfad7e;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      code,
+      kbd {
+        font-family: var(--font-mono);
+        font-size: 0.86em;
+      }
+
+      code {
+        color: var(--cyan);
+      }
+
+      pre {
+        overflow: auto;
+        border: 1px solid var(--line);
+        background: var(--bg-deep);
+        padding: var(--space-3);
+        color: #cfad7e;
+      }
+
+      .asset-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-3);
+      }
+
+      .asset-card {
+        position: relative;
+        min-width: 0;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        box-shadow: 5px 5px 0 var(--bg-deep);
+      }
+
+      .asset-card__image {
+        display: grid;
+        place-items: center;
+        height: 15rem;
+        overflow: hidden;
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(45deg, #080c12 25%, transparent 25%),
+          linear-gradient(-45deg, #080c12 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #080c12 75%),
+          linear-gradient(-45deg, transparent 75%, #080c12 75%),
+          #111923;
+        background-position:
+          0 0,
+          0 8px,
+          8px -8px,
+          -8px 0;
+        background-size: 16px 16px;
+      }
+
+      .asset-card__image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        image-rendering: pixelated;
+      }
+
+      .asset-card__body {
+        padding: var(--space-3);
+      }
+
+      .asset-card h3 {
+        margin: 0.65rem 0 0.25rem;
+        color: var(--ink-strong);
+        font-size: 1.05rem;
+      }
+
+      .asset-card p {
+        margin: 0;
+        color: var(--steel);
+        font-size: 0.82rem;
+      }
+
+      .palette {
+        display: grid;
+        gap: var(--space-3);
+      }
+
+      .ramp {
+        display: grid;
+        grid-template-columns: minmax(8.5rem, 12rem) 1fr;
+        gap: var(--space-3);
+        align-items: center;
+      }
+
+      .ramp__name strong {
+        display: block;
+        color: var(--ink-strong);
+      }
+
+      .ramp__name span {
+        color: var(--steel);
+        font: var(--step--1)/1.4 var(--font-mono);
+      }
+
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(4.8rem, 1fr));
+        gap: 4px;
+      }
+
+      .swatch {
+        position: relative;
+        min-height: 4.5rem;
+        border: 1px solid var(--bg-deep);
+        background: var(--c);
+        cursor: copy;
+      }
+
+      .swatch span {
+        position: absolute;
+        inset: auto 0 0;
+        background: rgba(2, 3, 7, 0.9);
+        color: #edd09c;
+        padding: 0.28rem 0.25rem;
+        font: 0.62rem/1 var(--font-mono);
+        text-align: center;
+      }
+
+      .light-chain {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        align-items: stretch;
+        gap: 1.5rem;
+        margin-block: var(--space-4);
+      }
+
+      .light-chain article {
+        position: relative;
+        border: 1px solid var(--line-strong);
+        background: var(--surface);
+        padding: var(--space-3);
+      }
+
+      .light-chain article:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        top: 50%;
+        right: -1.25rem;
+        color: var(--amber);
+        font: 800 1.25rem/1 var(--font-mono);
+        transform: translateY(-50%);
+      }
+
+      .light-chain strong {
+        color: var(--ink-strong);
+      }
+
+      .light-chain p {
+        margin: 0.45rem 0 0;
+        color: var(--steel);
+        font-size: 0.86rem;
+      }
+
+      .floor-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--space-3);
+      }
+
+      .floor {
+        border-top: 6px solid var(--amber);
+        background: var(--surface);
+        padding: var(--space-4);
+      }
+
+      .floor:nth-child(2) {
+        border-top-color: var(--cyan);
+      }
+
+      .floor:nth-child(3) {
+        border-top-color: var(--green);
+      }
+
+      .floor h3 {
+        margin-top: 0;
+      }
+
+      .floor p,
+      .floor li {
+        color: var(--steel);
+        font-size: 0.9rem;
+      }
+
+      details {
+        border: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      details + details {
+        margin-top: var(--space-2);
+      }
+
+      summary {
+        min-height: 3.2rem;
+        cursor: pointer;
+        color: var(--ink-strong);
+        padding: 0.8rem 1rem;
+        font-weight: 750;
+      }
+
+      details[open] summary {
+        border-bottom: 1px solid var(--line);
+        color: var(--amber-bright);
+      }
+
+      .details-body {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-3);
+        padding: var(--space-3);
+      }
+
+      .details-body h4 {
+        margin-top: 0;
+        color: var(--cyan);
+        font-family: var(--font-mono);
+        font-size: var(--step--1);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .details-body ul,
+      .details-body ol {
+        margin-bottom: 0;
+        padding-left: 1.1rem;
+      }
+
+      .details-body li {
+        color: #cfad7e;
+        font-size: 0.88rem;
+      }
+
+      .layout-diagram {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4);
+      }
+
+      .diagram {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        padding: var(--space-3);
+      }
+
+      .diagram__row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        min-height: 5.5rem;
+        border: 2px solid var(--bg-deep);
+      }
+
+      .diagram__row + .diagram__row {
+        margin-top: 0.6rem;
+      }
+
+      .diagram__row span {
+        display: grid;
+        place-items: center;
+        border-right: 1px solid var(--line);
+        padding: 0.35rem;
+        color: var(--ink-strong);
+        font: 0.66rem/1.3 var(--font-mono);
+        text-align: center;
+      }
+
+      .diagram__row span:last-child {
+        border-right: 0;
+      }
+
+      .diagram__row .stairs {
+        background:
+          repeating-linear-gradient(
+            -45deg,
+            var(--surface-raised),
+            var(--surface-raised) 6px,
+            var(--bg-deep) 6px,
+            var(--bg-deep) 10px
+          );
+        color: var(--amber-bright);
+      }
+
+      .diagram__mobile {
+        display: grid;
+        grid-template-columns: 1fr 30%;
+        min-height: 17rem;
+        border: 2px solid var(--bg-deep);
+      }
+
+      .diagram__mobile > div:first-child {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+      }
+
+      .diagram__mobile span {
+        display: grid;
+        place-items: center;
+        border-bottom: 1px solid var(--line);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+      }
+
+      .diagram__mobile .stairs {
+        display: grid;
+        grid-template-rows: 1fr 1fr;
+        border-left: 1px solid var(--line);
+        background:
+          repeating-linear-gradient(
+            -45deg,
+            var(--surface-raised),
+            var(--surface-raised) 7px,
+            var(--bg-deep) 7px,
+            var(--bg-deep) 11px
+          );
+      }
+
+      .diagram__mobile .stairs b {
+        display: grid;
+        place-items: end center;
+        border-bottom: 4px solid var(--amber);
+        padding: 0.3rem;
+        color: var(--amber-bright);
+        font: 0.66rem/1.3 var(--font-mono);
+      }
+
+      .steps {
+        display: grid;
+        counter-reset: phase;
+        gap: 1px;
+        border: 1px solid var(--line);
+        background: var(--line);
+      }
+
+      .phase {
+        counter-increment: phase;
+        display: grid;
+        grid-template-columns: 4rem minmax(0, 1fr);
+        background: var(--surface);
+      }
+
+      .phase::before {
+        content: counter(phase, decimal-leading-zero);
+        display: grid;
+        place-items: center;
+        background: var(--bg-deep);
+        color: var(--amber);
+        font: 800 1rem/1 var(--font-mono);
+      }
+
+      .phase__body {
+        padding: var(--space-3) var(--space-4);
+      }
+
+      .phase h3 {
+        margin: 0;
+        color: var(--ink-strong);
+        font-size: 1.05rem;
+      }
+
+      .phase p {
+        margin: 0.35rem 0 0;
+        color: var(--steel);
+        font-size: 0.9rem;
+      }
+
+      .reject-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--space-2);
+      }
+
+      .reject {
+        border-left: 4px solid var(--red);
+        background: #1d1011;
+        padding: var(--space-3);
+        color: #d68b9a;
+      }
+
+      .checklist {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1px;
+        border: 1px solid var(--line);
+        background: var(--line);
+        counter-reset: gate;
+      }
+
+      .checklist li {
+        counter-increment: gate;
+        display: grid;
+        grid-template-columns: 2.4rem 1fr;
+        gap: 0.7rem;
+        margin: 0;
+        background: var(--surface);
+        padding: var(--space-3);
+        list-style: none;
+      }
+
+      .checklist li::before {
+        content: counter(gate, decimal-leading-zero);
+        color: var(--amber);
+        font-family: var(--font-mono);
+      }
+
+      .source-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-2);
+      }
+
+      .source-list article {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        padding: var(--space-3);
+      }
+
+      .source-list h3 {
+        margin: 0 0 0.4rem;
+        color: var(--ink-strong);
+        font-size: 1rem;
+      }
+
+      .source-list p {
+        margin: 0;
+        color: var(--steel);
+        font-size: 0.86rem;
+      }
+
+      .footer {
+        border-top: 1px solid var(--line);
+        background: var(--bg-deep);
+        padding: var(--space-6) clamp(1.25rem, 4vw, 4rem);
+      }
+
+      .footer__inner {
+        display: flex;
+        max-width: var(--content);
+        margin-inline: auto;
+        align-items: start;
+        justify-content: space-between;
+        gap: var(--space-4);
+      }
+
+      .footer p {
+        max-width: 60ch;
+        margin: 0;
+        color: var(--steel);
+      }
+
+      .footer button {
+        min-height: 2.75rem;
+        border: 1px solid var(--amber);
+        border-radius: 0;
+        background: transparent;
+        color: var(--amber-bright);
+        padding: 0.55rem 0.8rem;
+        cursor: pointer;
+      }
+
+      .footer button:hover {
+        background: var(--amber);
+        color: var(--bg-deep);
+      }
+
+      .search-empty {
+        display: none;
+        margin: 4rem auto;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        padding: var(--space-5);
+        color: var(--steel);
+        text-align: center;
+      }
+
+      .search-empty[data-visible="true"] {
+        display: block;
+      }
+
+      @media (max-width: 1100px) {
+        .shell {
+          grid-template-columns: 15rem minmax(0, 1fr);
+        }
+
+        .facts,
+        .status-grid {
+          grid-template-columns: repeat(3, minmax(8rem, 1fr));
+        }
+
+        .asset-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .details-body {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .light-chain {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .light-chain article::after {
+          display: none;
+        }
+      }
+
+      @media (max-width: 820px) {
+        .shell {
+          display: block;
+        }
+
+        .rail {
+          position: relative;
+          z-index: 20;
+          width: 100%;
+          height: auto;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding: var(--space-3);
+        }
+
+        .rail__mark {
+          margin-bottom: var(--space-2);
+        }
+
+        .rail nav {
+          display: flex;
+          overflow-x: auto;
+          padding-bottom: 0.4rem;
+        }
+
+        .rail nav a {
+          grid-template-columns: auto;
+          white-space: nowrap;
+          border-bottom: 2px solid transparent;
+          border-left: 0;
+        }
+
+        .rail nav a span,
+        .rail__footer {
+          display: none;
+        }
+
+        .rail nav a:hover,
+        .rail nav a[aria-current="true"] {
+          border-bottom-color: var(--amber);
+          border-left-color: transparent;
+        }
+
+        .hero {
+          min-height: auto;
+        }
+
+        .chapter__header {
+          grid-template-columns: 3.2rem minmax(0, 1fr);
+        }
+
+        .prose {
+          margin-left: 0;
+        }
+
+        .floor-grid,
+        .layout-diagram {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .hero,
+        main {
+          padding-inline: 1rem;
+        }
+
+        .facts,
+        .status-grid,
+        .asset-grid,
+        .details-body,
+        .light-chain,
+        .reject-grid,
+        .checklist,
+        .source-list {
+          grid-template-columns: 1fr;
+        }
+
+        .chapter__header {
+          display: block;
+        }
+
+        .section-number {
+          width: 3.2rem;
+          margin-bottom: 0.7rem;
+        }
+
+        .ramp {
+          grid-template-columns: 1fr;
+        }
+
+        .phase {
+          grid-template-columns: 3rem minmax(0, 1fr);
+        }
+
+        .footer__inner {
+          display: grid;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.001ms !important;
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+
+      @media print {
+        :root {
+          color-scheme: light;
+        }
+
+        body {
+          background: #fff;
+          color: #111;
+        }
+
+        .progress,
+        .rail,
+        .footer button {
+          display: none;
+        }
+
+        .shell {
+          display: block;
+        }
+
+        .hero,
+        .chapter,
+        .asset-card,
+        details,
+        .phase,
+        .floor,
+        .source-list article {
+          break-inside: avoid;
+        }
+
+        .hero,
+        .footer,
+        .callout,
+        .surface,
+        details,
+        .asset-card,
+        .floor,
+        .phase,
+        .source-list article {
+          background: #fff !important;
+          color: #111 !important;
+          box-shadow: none;
+        }
+
+        a {
+          color: #111;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to the art bible</a>
+    <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+    <div class="shell">
+      <aside class="rail" aria-label="Art bible navigation">
+        <div class="rail__mark">
+          <div class="rail__glyph" aria-hidden="true">B3</div>
+          <div>
+            <div class="rail__eyebrow">Underground ledger</div>
+            <div class="rail__title">Bazaar 3 art bible</div>
+          </div>
+        </div>
+
+        <label class="label" for="search">Search the bible</label>
+        <input
+          class="search"
+          id="search"
+          type="search"
+          placeholder="Try “stairs”, “Console”, “palette”…"
+          autocomplete="off"
+        />
+
+        <nav id="chapterNav">
+          <a href="#status"><span>01</span>Current truth</a>
+          <a href="#authority"><span>02</span>Authority</a>
+          <a href="#thesis"><span>03</span>Design thesis</a>
+          <a href="#rendering"><span>04</span>Rendering + camera</a>
+          <a href="#palette"><span>05</span>Palette</a>
+          <a href="#lighting"><span>06</span>Lighting</a>
+          <a href="#integration"><span>07</span>Integration</a>
+          <a href="#stalls"><span>08</span>Stalls</a>
+          <a href="#animation"><span>09</span>Animation</a>
+          <a href="#responsive"><span>10</span>Responsive + stairs</a>
+          <a href="#layers"><span>11</span>Layer order</a>
+          <a href="#workflow"><span>12</span>Production plan</a>
+          <a href="#verification"><span>13</span>Verification</a>
+          <a href="#rejected"><span>14</span>Rejected</a>
+          <a href="#sources"><span>15</span>Sources + decisions</a>
+        </nav>
+
+        <div class="rail__footer">
+          Consolidated 27 July 2026.
+          <a href="/bazaar3">Open current Bazaar 3</a>
+          <a href="http://localhost:8123/orders/gen-places.html"
+            >Open original gen-places</a
+          >
+        </div>
+      </aside>
+
+      <div class="page">
+        <header class="hero">
+          <div class="hero__inner">
+            <div class="eyebrow">Consolidated production authority · v0.1</div>
+            <h1>Bazaar 3 underground art bible</h1>
+            <p class="hero__lede">
+              The complete design, responsive architecture, palette, lighting,
+              animation, integration, and validation plan—separated into what
+              is locked, proposed, pending, current, and rejected.
+            </p>
+
+            <div class="hero__north-star">
+              <strong>North star</strong>
+              <p>
+                Preserve radically different stalls. Make them inhabit one
+                physical underground market through shared camera, palette,
+                light, contact, utilities, stairs, and depth—not through a
+                common tint or common shop shell.
+              </p>
+            </div>
+
+            <div class="facts" aria-label="Key Bazaar 3 facts">
+              <div class="fact"><strong>8</strong><span>distinct stalls</span></div>
+              <div class="fact"><strong>2 + 3</strong><span>idle + hover frames</span></div>
+              <div class="fact"><strong>64</strong><span>proposed master colors</span></div>
+              <div class="fact"><strong>3 / 4</strong><span>desktop floors / mobile pairs</span></div>
+              <div class="fact"><strong>0</strong><span>street edits or audio work</span></div>
+            </div>
+          </div>
+        </header>
+
+        <main id="main" tabindex="-1">
+          <div class="search-empty" id="searchEmpty" role="status">
+            Nothing in the art bible matches that search.
+          </div>
+
+          <section class="chapter searchable" id="status" data-title="Current truth">
+            <header class="chapter__header">
+              <div class="section-number">01</div>
+              <div>
+                <h2>Current truth</h2>
+                <p class="chapter__intro">
+                  Runtime presence, machine validation, and human art approval
+                  are three different things. This is the honest current state.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <div class="status-grid">
+                <article>
+                  <span class="status status--locked">Locked</span>
+                  <h3>Stall identities</h3>
+                  <p>Approved character, sign, posture, structure, and behavior are Gospel.</p>
+                </article>
+                <article>
+                  <span class="status status--current">Current</span>
+                  <h3>Bazaar 2 interaction</h3>
+                  <p>Responsive order, hitboxes, dialogs, navigation, and stairs are protected.</p>
+                </article>
+                <article>
+                  <span class="status status--proposal">Proposed</span>
+                  <h3>Palette + light</h3>
+                  <p>Measured 64-color library and one causal lighting grammar await approval.</p>
+                </article>
+                <article>
+                  <span class="status status--pending">Pending</span>
+                  <h3>Manual</h3>
+                  <p>Candidate 4 is mounted but remains static, opaque, and human-unapproved.</p>
+                </article>
+                <article>
+                  <span class="status status--rejected">Rejected</span>
+                  <h3>Workshop floor</h3>
+                  <p>The fixed 1248×597 visual treatment is historical negative evidence.</p>
+                </article>
+              </div>
+
+              <div class="callout callout--warning">
+                <p>
+                  <strong>Latest correction:</strong> the workshop prototype
+                  did not integrate the stalls. It broke responsive tiling,
+                  used the wrong spatial staging and proportions, flattened
+                  color identities, detached lighting, cropped props, and
+                  made the stairs disproportionate. Its tooling may be reused;
+                  its visual design may not.
+                </p>
+              </div>
+
+              <h3>Mounted stall gallery</h3>
+              <p>
+                These are the exact current <code>idle-1</code> files, shown as
+                runtime evidence. “Mounted” does not silently mean “approved.”
+              </p>
+
+              <div class="asset-grid">
+                <article class="asset-card">
+                  <div class="asset-card__image">
+                    <img loading="lazy" decoding="async" src="/images/bazaar3/assets/stalls/uses/frames/idle-1.png" alt="Current Uses stall idle frame" />
+                  </div>
+                  <div class="asset-card__body">
+                    <span class="status status--locked">Gospel</span>
+                    <h3>Uses</h3>
+                    <p>1147×904 · five frames · camera and rendering authority</p>
+                  </div>
+                </article>
+                <article class="asset-card">
+                  <div class="asset-card__image">
+                    <img loading="lazy" decoding="async" src="/images/bazaar3/assets/stalls/papers/frames/idle-1.png" alt="Current Papers stall idle frame" />
+                  </div>
+                  <div class="asset-card__body">
+                    <span class="status status--locked">Approved</span>
+                    <h3>Papers</h3>
+                    <p>1056×1309 · five frames · identity/layout authority</p>
+                  </div>
+                </article>
+                <article class="asset-card">
+                  <div class="asset-card__image">
+                    <img loading="lazy" decoding="async" src="/images/bazaar3/assets/stalls/manual-v3/frames/idle-1.png" alt="Mounted Manual calibration candidate" />
+                  </div>
+                  <div class="asset-card__body">
+                    <span class="status status--pending">Pending</span>
+                    <h3>Manual</h3>
+                    <p>960×1264 RGB · one static opaque candidate</p>
+                  </div>
+                </article>
+                <article class="asset-card">
+                  <div class="asset-card__image">
+                    <img loading="lazy" decoding="async" src="/images/bazaar3/assets/stalls/console-v2/frames/idle-1.png" alt="Current Console stall idle frame" />
+                  </div>
+                  <div class="asset-card__body">
+                    <span class="status status--locked">Approved C4</span>
+                    <h3>Console</h3>
+                    <p>960×1264 · five frames · Bazaar 2 Ed identity</p>
+                  </div>
+                </article>
+                <article class="asset-card">
+                  <div class="asset-card__image">
+                    <img loading="lazy" decoding="async" src="/images/bazaar3/assets/stalls/talks/frames/idle-1.png" alt="Current Talks Video Club stall idle frame" />
+                  </div>
+                  <div class="asset-card__body">
+                    <span class="status status--locked">Approved</span>
+                    <h3>Talks</h3>
+                    <p>941×1006 · five frames · Video Club authority</p>
+                  </div>
+                </article>
+                <article class="asset-card">
+                  <div class="asset-card__image">
+                    <img loading="lazy" decoding="async" src="/images/bazaar3/assets/stalls/projects-v2/frames/idle-1.png" alt="Current Projects stall idle frame" />
+                  </div>
+                  <div class="asset-card__body">
+                    <span class="status status--locked">Approved C3</span>
+                    <h3>Projects</h3>
+                    <p>960×1264 · five frames · positive flat-rendering reference</p>
+                  </div>
+                </article>
+                <article class="asset-card">
+                  <div class="asset-card__image">
+                    <img loading="lazy" decoding="async" src="/images/bazaar3/assets/stalls/games/frames/idle-1.png" alt="Current Games stall idle frame" />
+                  </div>
+                  <div class="asset-card__body">
+                    <span class="status status--locked">Gospel</span>
+                    <h3>Games</h3>
+                    <p>1131×1325 · five frames · handmade secondary authority</p>
+                  </div>
+                </article>
+                <article class="asset-card">
+                  <div class="asset-card__image">
+                    <img loading="lazy" decoding="async" src="/images/bazaar3/assets/stalls/travel-v2/frames/idle-1.png" alt="Current Travel stall idle frame" />
+                  </div>
+                  <div class="asset-card__body">
+                    <span class="status status--locked">Approved C7</span>
+                    <h3>Travel</h3>
+                    <p>960×1264 · five frames · Hearthian and depth authority</p>
+                  </div>
+                </article>
+              </div>
+
+              <h3>Known runtime contradictions</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Area</th><th>Current reality</th><th>Required resolution</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Manual</td><td>Candidate 4 is mounted as opaque RGB.</td><td>Human approval plus transparent/layered production delivery.</td></tr>
+                    <tr><td>Manual animation</td><td>Only <code>idle-1</code> exists.</td><td>Two idle and three hover states built from locked plates.</td></tr>
+                    <tr><td>Prefetch</td><td>Still resolves Manual through the obsolete family.</td><td>Correct only when runtime implementation resumes.</td></tr>
+                    <tr><td>Workshop</td><td>Rejected base plus local plates remain mounted as prototype.</td><td>Replace with responsive environment modules.</td></tr>
+                    <tr><td>Other floors</td><td>Desktop/mobile integration remains legacy.</td><td>Roll out only after the new calibration and proof pass.</td></tr>
+                    <tr><td>Runtime tint</td><td>Manual pink, Console olive, Travel purple, etc.</td><td>Remove as art authority; use semantic source/receiver tokens.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="authority" data-title="Authority and frozen scope">
+            <header class="chapter__header">
+              <div class="section-number">02</div>
+              <div>
+                <h2>Authority and frozen scope</h2>
+                <p class="chapter__intro">
+                  Preserve before improving. A beautiful image that changes an
+                  approved identity or camera is still a rejection.
+                </p>
+              </div>
+            </header>
+
+            <div class="prose">
+              <h3>Authority order</h3>
+              <ol>
+                <li>Latest explicit user instruction.</li>
+                <li>This consolidated master plan and decision ledger.</li>
+                <li>Approved Bazaar 2 working-tree rendering and interaction.</li>
+                <li><code>ART_DIRECTION.md</code>.</li>
+                <li>Approved declarations in the preserved <code>gen-places</code> source.</li>
+                <li>The long integration bible, except demoted prototype sections.</li>
+                <li>Uses as primary camera/rendering Gospel.</li>
+                <li>Games as secondary handmade/rendering Gospel.</li>
+                <li>Approved Console C4, Projects C3, and Travel C7 compositions.</li>
+              </ol>
+
+              <h3>Street level is frozen</h3>
+              <p>
+                No regeneration, recoloring, relighting, repositioning,
+                re-layering, or replaying old <code>u</code> nudges. Buildings,
+                doors, signs, vehicles, shadows, backgrounds, props, and street
+                interactions remain identical to Bazaar 2.
+              </p>
+
+              <h3>No audio</h3>
+              <p>No new audio assets, loops, controls, or synchronized animation.</p>
+
+              <h3>Protected interaction</h3>
+              <ul>
+                <li>Stall destinations, dialog content, keyboard, pointer, and touch access.</li>
+                <li>Portalled dialog at the global maximum z-index.</li>
+                <li>Fast character-by-character typewriter text.</li>
+                <li>Hitbox/DOM ordering, including stairs.</li>
+                <li>Scroll snapping, Up/Down targets, and final-floor no-Down.</li>
+                <li>Decorative layers always use <code>pointer-events: none</code>.</li>
+              </ul>
+
+              <div class="callout callout--locked">
+                <p>
+                  Historical incremental placement instructions are not
+                  replayed. The current reviewed rendering is placement
+                  authority.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="thesis" data-title="Design thesis">
+            <header class="chapter__header">
+              <div class="section-number">03</div>
+              <div>
+                <h2>Design thesis</h2>
+                <p class="chapter__intro">
+                  A hidden reclaimed night market built inside the decaying
+                  service infrastructure of an older facility.
+                </p>
+              </div>
+            </header>
+
+            <div class="prose">
+              <p>
+                Japanese back-alley intimacy, Blade Runner noir, CRT and lo-fi
+                technology, improvised Fallout-like repairs, rusted industrial
+                structure, warm decay, and playful inhabitants rendered with
+                serious environmental logic.
+              </p>
+              <h3>It should feel</h3>
+              <ul>
+                <li>old but active;</li>
+                <li>illicit but inviting;</li>
+                <li>repaired rather than restored;</li>
+                <li>cluttered but graphically readable;</li>
+                <li>physically coherent while materially diverse.</li>
+              </ul>
+              <h3>It must not feel</h3>
+              <ul>
+                <li>like a mall or row of matching franchises;</li>
+                <li>like eight cards placed over wallpaper;</li>
+                <li>like one global cyberpunk tint;</li>
+                <li>like a fixed concept illustration that cannot respond to the viewport;</li>
+                <li>like random trash was used as a substitute for history.</li>
+              </ul>
+              <div class="callout callout--locked">
+                <p>
+                  <strong>Integration, never uniformity.</strong> Width,
+                  roofline, openness, material, sign, lettering, clutter,
+                  practical light, symmetry, and behavioral rhythm remain
+                  different.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="rendering" data-title="Rendering camera material Gospel">
+            <header class="chapter__header">
+              <div class="section-number">04</div>
+              <div>
+                <h2>Rendering, camera, and materials</h2>
+                <p class="chapter__intro">
+                  Simplify rendering, never approved layout. Uses’ countertop
+                  angle is the camera Gospel.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <div class="floor-grid">
+                <article class="floor">
+                  <h3>Flat masses first</h3>
+                  <p>Large bounded colors, strong outlines, connected shadow shapes, sparse highlights.</p>
+                </article>
+                <article class="floor">
+                  <h3>Front-facing shallow oblique</h3>
+                  <p>Parallel projection, vertical uprights, horizontal counters, thin top bands, no convergence.</p>
+                </article>
+                <article class="floor">
+                  <h3>Quiet surfaces</h3>
+                  <p>Normally three tones per material. Detail collects only around identity and action.</p>
+                </article>
+              </div>
+
+              <div class="prose">
+                <h3>Rendering contract</h3>
+                <ul>
+                  <li>Genuinely authored at low resolution.</li>
+                  <li>Strong near-black outer and structural outlines.</li>
+                  <li>Chunky 16-bit-inspired clusters.</li>
+                  <li>Three tones per material: shadow, body, highlight.</li>
+                  <li>Nearest-neighbor enlargement only.</li>
+                  <li>Readable at actual CSS size and around 300px preview width.</li>
+                  <li>Dithering only as a deliberate local transition.</li>
+                </ul>
+
+                <h3>Camera law</h3>
+                <ul>
+                  <li>Parallel projection, zero bay rotation, no vanishing point.</li>
+                  <li>Posts, racks, walls, and character centerlines stay vertical.</li>
+                  <li>Counter faces, beams, shelves, and floor seams stay horizontal.</li>
+                  <li>Top planes are shallow bands, normally about 0.2 height-to-width.</li>
+                  <li>No deep ellipse, trapezoid, side-wall wedge, or perspective correction.</li>
+                </ul>
+
+                <h3>Depth sequence</h3>
+                <ol>
+                  <li>Back wall.</li>
+                  <li>Rear infrastructure/recess.</li>
+                  <li>Rear stall structure.</li>
+                  <li>Character plane.</li>
+                  <li>Counter/display plane.</li>
+                  <li>Ground-contact objects.</li>
+                  <li>Foreground spill and shared lobby.</li>
+                </ol>
+
+                <h3>Standard new-asset grid</h3>
+                <pre><code>author:   320 × 421
+enlarge:  exactly 3× nearest-neighbor
+art:      960 × 1263
+deliver:  960 × 1264 with one transparent padding row</code></pre>
+                <p>
+                  Approved legacy families retain their existing dimensions.
+                  Grid and final-row policy remain manifest-specific.
+                </p>
+
+                <h3>Material shorthand</h3>
+                <ul>
+                  <li><strong>Metal:</strong> dark local shadow, desaturated body, tiny hard edge; rust only where caused.</li>
+                  <li><strong>Wood:</strong> warped/chipped masses; broad grain only; dark board gaps.</li>
+                  <li><strong>Concrete:</strong> large quiet planes; sparse cracks, damp paths, patches.</li>
+                  <li><strong>Fabric:</strong> broad flat folds, tension, faded pigment, torn edges.</li>
+                  <li><strong>Plastic:</strong> harder highlight; sticker ghosts and scratches; Games may be brighter.</li>
+                  <li><strong>Paper:</strong> cream/yellowed groups; no large pure-white fields.</li>
+                  <li><strong>Plants:</strong> deep yellow-biased greens in chunky overlapping masses.</li>
+                  <li><strong>Emission:</strong> one bright core and one or two hard receiver bands.</li>
+                </ul>
+
+                <div class="callout callout--warning">
+                  <p>
+                    Reject the “classic AI” finish: painterly modeling,
+                    micro-scratches everywhere, random tubes and cables,
+                    antialiasing, soft glow, fine fronds, mixed pixel density,
+                    and detail invisible at display size.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="palette" data-title="Master palette Proposal A">
+            <header class="chapter__header">
+              <div class="section-number">05</div>
+              <div>
+                <h2>Master palette Proposal A</h2>
+                <p class="chapter__intro">
+                  One exact semantic library; different subsets and proportions
+                  preserve each stall’s identity. Pending explicit approval.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <div class="callout callout--proposal">
+                <p>
+                  <span class="status status--proposal">Proposed</span>
+                </p>
+                <p>
+                  64 colors, 11 semantic ramps, and two light cores. A normal
+                  stall uses roughly 18–28; a new integration prop roughly
+                  10–16. Harmonization means the same purple is literally the
+                  same hex everywhere—not that every stall becomes brown.
+                  This supersedes the earlier 66-color exploratory board.
+                </p>
+              </div>
+
+              <div class="palette" aria-label="Proposed master palette">
+                <div class="ramp">
+                  <div class="ramp__name"><strong>N · ink / steel</strong><span>architecture, outlines, machines</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#020307" data-color="#020307"><span>#020307</span></div>
+                    <div class="swatch" style="--c:#080c12" data-color="#080c12"><span>#080c12</span></div>
+                    <div class="swatch" style="--c:#111923" data-color="#111923"><span>#111923</span></div>
+                    <div class="swatch" style="--c:#1c2731" data-color="#1c2731"><span>#1c2731</span></div>
+                    <div class="swatch" style="--c:#2b3741" data-color="#2b3741"><span>#2b3741</span></div>
+                    <div class="swatch" style="--c:#414c55" data-color="#414c55"><span>#414c55</span></div>
+                    <div class="swatch" style="--c:#606970" data-color="#606970"><span>#606970</span></div>
+                    <div class="swatch" style="--c:#898e8d" data-color="#898e8d"><span>#898e8d</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>C · cream / paper</strong><span>paper, canvas, signs</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#4b4236" data-color="#4b4236"><span>#4b4236</span></div>
+                    <div class="swatch" style="--c:#786852" data-color="#786852"><span>#786852</span></div>
+                    <div class="swatch" style="--c:#a38b69" data-color="#a38b69"><span>#a38b69</span></div>
+                    <div class="swatch" style="--c:#cfad7e" data-color="#cfad7e"><span>#cfad7e</span></div>
+                    <div class="swatch" style="--c:#edd09c" data-color="#edd09c"><span>#edd09c</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>W · wood / leather</strong><span>timber, cardboard, rust-warm bodies</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#1d100a" data-color="#1d100a"><span>#1d100a</span></div>
+                    <div class="swatch" style="--c:#321a0f" data-color="#321a0f"><span>#321a0f</span></div>
+                    <div class="swatch" style="--c:#4b2816" data-color="#4b2816"><span>#4b2816</span></div>
+                    <div class="swatch" style="--c:#6b391c" data-color="#6b391c"><span>#6b391c</span></div>
+                    <div class="swatch" style="--c:#925022" data-color="#925022"><span>#925022</span></div>
+                    <div class="swatch" style="--c:#bd7133" data-color="#bd7133"><span>#bd7133</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>R · red lacquer</strong><span>Uses, Ed, rug, selected paint</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#361015" data-color="#361015"><span>#361015</span></div>
+                    <div class="swatch" style="--c:#5c171c" data-color="#5c171c"><span>#5c171c</span></div>
+                    <div class="swatch" style="--c:#882225" data-color="#882225"><span>#882225</span></div>
+                    <div class="swatch" style="--c:#b83932" data-color="#b83932"><span>#b83932</span></div>
+                    <div class="swatch" style="--c:#dd6048" data-color="#dd6048"><span>#dd6048</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>P · violet / purple</strong><span>shared accent, shadow, cosmic life</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#171221" data-color="#171221"><span>#171221</span></div>
+                    <div class="swatch" style="--c:#2a1e38" data-color="#2a1e38"><span>#2a1e38</span></div>
+                    <div class="swatch" style="--c:#443153" data-color="#443153"><span>#443153</span></div>
+                    <div class="swatch" style="--c:#674870" data-color="#674870"><span>#674870</span></div>
+                    <div class="swatch" style="--c:#966d94" data-color="#966d94"><span>#966d94</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>B · blue / cyan</strong><span>arcade, hologram, screens</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#071421" data-color="#071421"><span>#071421</span></div>
+                    <div class="swatch" style="--c:#0a2942" data-color="#0a2942"><span>#0a2942</span></div>
+                    <div class="swatch" style="--c:#0d486d" data-color="#0d486d"><span>#0d486d</span></div>
+                    <div class="swatch" style="--c:#126e9b" data-color="#126e9b"><span>#126e9b</span></div>
+                    <div class="swatch" style="--c:#1f9cc8" data-color="#1f9cc8"><span>#1f9cc8</span></div>
+                    <div class="swatch" style="--c:#4bd2e1" data-color="#4bd2e1"><span>#4bd2e1</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>T · teal</strong><span>electronics, oxidized structure, reflection</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#071c1d" data-color="#071c1d"><span>#071c1d</span></div>
+                    <div class="swatch" style="--c:#0e3534" data-color="#0e3534"><span>#0e3534</span></div>
+                    <div class="swatch" style="--c:#165652" data-color="#165652"><span>#165652</span></div>
+                    <div class="swatch" style="--c:#267c73" data-color="#267c73"><span>#267c73</span></div>
+                    <div class="swatch" style="--c:#56b4a4" data-color="#56b4a4"><span>#56b4a4</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>G · foliage</strong><span>Projects, moss, damp life</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#10180e" data-color="#10180e"><span>#10180e</span></div>
+                    <div class="swatch" style="--c:#1e2d14" data-color="#1e2d14"><span>#1e2d14</span></div>
+                    <div class="swatch" style="--c:#31461a" data-color="#31461a"><span>#31461a</span></div>
+                    <div class="swatch" style="--c:#4b6220" data-color="#4b6220"><span>#4b6220</span></div>
+                    <div class="swatch" style="--c:#6b7e2d" data-color="#6b7e2d"><span>#6b7e2d</span></div>
+                    <div class="swatch" style="--c:#95a247" data-color="#95a247"><span>#95a247</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>K · dusty rose</strong><span>creatures, rare warmth, life glow</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#2e1723" data-color="#2e1723"><span>#2e1723</span></div>
+                    <div class="swatch" style="--c:#50283b" data-color="#50283b"><span>#50283b</span></div>
+                    <div class="swatch" style="--c:#784159" data-color="#784159"><span>#784159</span></div>
+                    <div class="swatch" style="--c:#a95f77" data-color="#a95f77"><span>#a95f77</span></div>
+                    <div class="swatch" style="--c:#d68b9a" data-color="#d68b9a"><span>#d68b9a</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>A · amber emission</strong><span>lanterns, lamps, warm receivers</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#4a280d" data-color="#4a280d"><span>#4a280d</span></div>
+                    <div class="swatch" style="--c:#7b4514" data-color="#7b4514"><span>#7b4514</span></div>
+                    <div class="swatch" style="--c:#ad6a1e" data-color="#ad6a1e"><span>#ad6a1e</span></div>
+                    <div class="swatch" style="--c:#df9e32" data-color="#df9e32"><span>#df9e32</span></div>
+                    <div class="swatch" style="--c:#ffd26b" data-color="#ffd26b"><span>#ffd26b</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>S · skin</strong><span>shared human skin ramp</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#2f1915" data-color="#2f1915"><span>#2f1915</span></div>
+                    <div class="swatch" style="--c:#542b22" data-color="#542b22"><span>#542b22</span></div>
+                    <div class="swatch" style="--c:#80442f" data-color="#80442f"><span>#80442f</span></div>
+                    <div class="swatch" style="--c:#ad6744" data-color="#ad6744"><span>#ad6744</span></div>
+                    <div class="swatch" style="--c:#d18d5a" data-color="#d18d5a"><span>#d18d5a</span></div>
+                    <div class="swatch" style="--c:#efbd82" data-color="#efbd82"><span>#efbd82</span></div>
+                  </div>
+                </div>
+                <div class="ramp">
+                  <div class="ramp__name"><strong>E · light cores</strong><span>source pixels only</span></div>
+                  <div class="swatches">
+                    <div class="swatch" style="--c:#ffe3a1" data-color="#ffe3a1"><span>#ffe3a1</span></div>
+                    <div class="swatch" style="--c:#8be9e7" data-color="#8be9e7"><span>#8be9e7</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <h3>Stall allocations</h3>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Stall</th><th>Dominant ramps</th><th>Identity preserved by</th></tr></thead>
+                  <tbody>
+                    <tr><td>Uses</td><td>W + R, P/K, tiny B/T</td><td>Red lacquer, warm timber, purple/pink canopy accents</td></tr>
+                    <tr><td>Papers</td><td>T + C + B, restrained W</td><td>Teal structure, paper cream, holographic cyan</td></tr>
+                    <tr><td>Manual</td><td>N + W + C + A</td><td>Steel, brass, organized workshop amber</td></tr>
+                    <tr><td>Console</td><td>N + W + R + T/B</td><td>Servers, cardboard, Ed’s hair/rug, cool screens</td></tr>
+                    <tr><td>Talks</td><td>W + C + S + B/T</td><td>Mahogany, cream sign, warm face, CRT</td></tr>
+                    <tr><td>Projects</td><td>G + W + N + P/K + A</td><td>Foliage, soil, robot, alien life, string bulbs</td></tr>
+                    <tr><td>Games</td><td>W + B + R + S + A</td><td>Kid-built timber, cheap plastic blue, playful color</td></tr>
+                    <tr><td>Travel</td><td>W/C + N/B + A + tiny P</td><td>Wood/canvas/brass, Hearthian, lanterns, cosmic accent</td></tr>
+                    <tr><td>Architecture</td><td>80–90% N, 5–10% W</td><td>Tenant hues only where real light/material crosses</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="lighting" data-title="Lighting value source receiver shadow">
+            <header class="chapter__header">
+              <div class="section-number">06</div>
+              <div>
+                <h2>Shared lighting grammar</h2>
+                <p class="chapter__intro">
+                  Darkness alone does not integrate. Light must be visible,
+                  causal, material-aware, and cross the stall boundary.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <div class="light-chain" aria-label="Required light integration chain">
+                <article><strong>01 · Source</strong><p>A visible bulb, screen, hologram, lantern, lamp, or creature.</p></article>
+                <article><strong>02 · Stall receiver</strong><p>Hard palette-selected blocks on character, prop, and structure.</p></article>
+                <article><strong>03 · World receiver</strong><p>The same light touches nearby wall, beam, stair, trench, or floor.</p></article>
+                <article><strong>04 · Response</strong><p>Compact contact/cast shadow and occlusion consistent with that source.</p></article>
+              </div>
+
+              <div class="prose">
+                <h3>Common value ladder</h3>
+                <div class="table-wrap">
+                  <table>
+                    <thead><tr><th>Role</th><th>Approx. L*</th><th>Use</th></tr></thead>
+                    <tbody>
+                      <tr><td>Outline / AO</td><td>2–5</td><td>Outer contour, deepest overlap</td></tr>
+                      <tr><td>Deep shadow</td><td>8–12</td><td>Underside and cavity</td></tr>
+                      <tr><td>Ambient shadow</td><td>17–22</td><td>Far/right plane</td></tr>
+                      <tr><td>Material body</td><td>29–36</td><td>Front face</td></tr>
+                      <tr><td>Top/key plane</td><td>43–52</td><td>Upward shallow band</td></tr>
+                      <tr><td>Selected highlight</td><td>58–68</td><td>Focal edge, face, tool</td></tr>
+                      <tr><td>Emissive core</td><td>82–92</td><td>Source pixels only</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3>Plane law</h3>
+                <ul>
+                  <li>Cool low-chroma ambient from upper/front-left.</li>
+                  <li>Right/far faces one step darker; undersides two steps darker.</li>
+                  <li>Front faces use material base; shallow top planes one step brighter.</li>
+                  <li>Hard cast direction trends down-right at about 2:1, pending Uses calibration.</li>
+                  <li>Background architecture remains one material step below stalls.</li>
+                  <li>Lobby stays open; local light enters only the rear 8–12u.</li>
+                </ul>
+
+                <h3>Local light limits</h3>
+                <ul>
+                  <li>At most three hard bands: core, direct receiver, weaker spill.</li>
+                  <li>Core normally below 1% of stall pixels.</li>
+                  <li>Colored receiver normally below 8%.</li>
+                  <li>No blur, gradients, arbitrary alpha, CSS filter, <code>color-mix()</code>, or global tint.</li>
+                  <li>Occlusion by signs, counters, racks, foliage, and bodies fragments every pool.</li>
+                  <li>Hover changes source and declared receiver together by only 8–12%.</li>
+                </ul>
+
+                <h3>Current measured failure</h3>
+                <p>
+                  The flatter mounted Console, Projects, and Travel assets
+                  contain effectively no pixels above luma 160. Their better
+                  source renders did contain bright UI, bulbs, and lanterns.
+                  Frequency-only quantization erased the sources. Emissive
+                  masks must be protected before palette normalization.
+                </p>
+              </div>
+
+              <details>
+                <summary>Per-stall fixture and receiver map</summary>
+                <div class="details-body">
+                  <div><h4>Uses</h4><ul><li>Two lanterns + hanging bulb.</li><li>Chef, counter, posts, stools, nearby metal.</li></ul></div>
+                  <div><h4>Papers</h4><ul><li>Cyan hologram + weak warm strip.</li><li>Book, hands, sill, paper edges, wall.</li></ul></div>
+                  <div><h4>Manual</h4><ul><li>Upper work lamp.</li><li>Dome, eyes, arms, tools, counter, rear aisle.</li></ul></div>
+                  <div><h4>Console</h4><ul><li>Visor/laptop/rack screens + weak amber practical.</li><li>Ed, hands, rug, racks, wall plate, trench.</li></ul></div>
+                  <div><h4>Talks</h4><ul><li>Warm pendant + CRT rectangle.</li><li>Face, counter, tapes, bin, shelf, short floor area.</li></ul></div>
+                  <div><h4>Projects</h4><ul><li>Warm bulbs + violet seed + tiny dusty rose.</li><li>Fragmented leaves, robot shoulders, tools, creatures.</li></ul></div>
+                  <div><h4>Games</h4><ul><li>Arcade cyan + warm bulbs.</li><li>Siblings, hands, cabinet, threshold, sign/post.</li></ul></div>
+                  <div><h4>Travel</h4><ul><li>Bright amber lanterns + tiny visible instrument.</li><li>Face, suit, counter, posts, nearby architecture.</li></ul></div>
+                </div>
+              </details>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="integration" data-title="Physical integration floor lobby utilities H beams">
+            <header class="chapter__header">
+              <div class="section-number">07</div>
+              <div>
+                <h2>Physical integration system</h2>
+                <p class="chapter__intro">
+                  Responsive modules, one open lobby, tenant consequences, and
+                  meaningful seam crossings replace the rejected fixed floor.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <div class="callout callout--locked">
+                <p>
+                  The stalls occupy the rear/background side. The lower/front
+                  part is a shared market lobby or walking aisle. Props must
+                  not be clipped at its lower edge.
+                </p>
+              </div>
+
+              <div class="prose">
+                <h3>Responsive environment kit</h3>
+                <ul>
+                  <li>Tileable rear wall/environment bands.</li>
+                  <li>Tileable ceiling, slab, fascia, and lobby-floor bands.</li>
+                  <li>H-beams and columns at real load/seam points.</li>
+                  <li>Flexible utility runs with authored junctions and ends.</li>
+                  <li>Local rear/front tenant connection plates.</li>
+                  <li>Unique contact, caster, and receiver plates.</li>
+                  <li>Separate stair rear/core/front/light package.</li>
+                </ul>
+                <p>
+                  H-beams are required structural ingredients, particularly at
+                  bay divisions and stair/floor junctions. They are not
+                  identical cages wrapped around every stall.
+                </p>
+
+                <h3>Meaningful seam crossing</h3>
+                <ul>
+                  <li>Cable disappears behind equipment and returns in front.</li>
+                  <li>Pipe visibly feeds a stall or drain.</li>
+                  <li>Vine wraps shared infrastructure.</li>
+                  <li>Rug passes under an exterior cable.</li>
+                  <li>Rack bolts into a shared plate.</li>
+                  <li>Platform wedges into the floor.</li>
+                  <li>Light lands on both stall and architecture.</li>
+                  <li>Tenant wear continues beyond the sprite boundary.</li>
+                </ul>
+
+                <h3>Grounding</h3>
+                <p>
+                  Each stall receives exact support/contact islands, a compact
+                  caster tied to a visible source, and a tenant-specific floor
+                  response. No generic ellipse, common polygon, or shadow wedge.
+                </p>
+              </div>
+
+              <h3>Floor narratives</h3>
+              <div class="floor-grid">
+                <article class="floor">
+                  <h3>Archive / service</h3>
+                  <p><strong>Uses + Papers</strong></p>
+                  <ul>
+                    <li>Cold upper infrastructure, warm working height.</li>
+                    <li>Cable tray, meter/support, drain, mounting scars.</li>
+                    <li>Grease/soot transitions into dust/paper.</li>
+                  </ul>
+                </article>
+                <article class="floor">
+                  <h3>Workshop / media</h3>
+                  <p><strong>Manual + Console + Talks</strong></p>
+                  <ul>
+                    <li>Power/tool rail, patch panel, vent, cable trench.</li>
+                    <li>Organized workshop, low rug nest, video-club recess.</li>
+                    <li>First complete proof after calibration.</li>
+                  </ul>
+                </article>
+                <article class="floor">
+                  <h3>Leisure / transit</h3>
+                  <p><strong>Projects + Games + Travel</strong></p>
+                  <ul>
+                    <li>Drainage, dampness, improvised power, transit wear.</li>
+                    <li>Plants, kid-built play, deep cosmic booth.</li>
+                    <li>Controlled green, cyan, violet, and amber.</li>
+                  </ul>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="stalls" data-title="Stall identity character behavior Uses Papers Manual Console Talks Projects Games Travel">
+            <header class="chapter__header">
+              <div class="section-number">08</div>
+              <div>
+                <h2>Stall Gospel cards</h2>
+                <p class="chapter__intro">
+                  Character and stall design are adamantly preserved. Integration
+                  is allowed to touch their world, not erase their individuality.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <details>
+                <summary>Uses · the severe ramen curator</summary>
+                <div class="details-body">
+                  <div><h4>Lock</h4><ul><li>Stern chef, upright folded arms.</li><li>Working ramen stall, stools, menu, cooking props.</li><li>Quietly exacting, never hostile.</li></ul></div>
+                  <div><h4>Idle</h4><ol><li>Silent assessment.</li><li>Slow blink + tiny finger/eyebrow adjustment.</li></ol></div>
+                  <div><h4>Hover</h4><ol><li>Eye contact, chin rise.</li><li>Two fingers indicate stool/menu.</li><li>Restrained nod, open palm: “Omakase.”</li></ol></div>
+                  <div><h4>Integrate</h4><ul><li>Grease, soot, power, scrape.</li><li>Compact stool/crate contact.</li><li>Warm metal receiver and seam crossing.</li></ul></div>
+                </div>
+              </details>
+
+              <details>
+                <summary>Papers · the holographic archivist</summary>
+                <div class="details-body">
+                  <div><h4>Lock</h4><ul><li>Courteous scholarly hologram.</li><li>Book, glasses, archive context.</li><li>Composed posture and individual sign.</li></ul></div>
+                  <div><h4>Idle</h4><ol><li>Calm reading.</li><li>Scanline/glasses/page flicker only.</li></ol></div>
+                  <div><h4>Hover</h4><ol><li>Signal stabilizes; looks up.</li><li>Finds passage.</li><li>Offers open book.</li></ol></div>
+                  <div><h4>Integrate</h4><ul><li>Archive conduit and paper accumulation.</li><li>Rack-wheel contact.</li><li>Cyan book/sill/wall response.</li></ul></div>
+                </div>
+              </details>
+
+              <details>
+                <summary>Manual · the courteous floating service robot</summary>
+                <div class="details-body">
+                  <div><h4>Lock</h4><ul><li>Exactly 3 connected eye stalks and 3 connected arms.</li><li>Round floating torso + downward thruster.</li><li>Rear aisle behind foreground counter.</li><li>No pedestal, legs, pole, wheels, or mount.</li></ul></div>
+                  <div><h4>Idle</h4><ol><li>Three arms work independently.</li><li>Only pupils scan; optional tiny spark.</li></ol></div>
+                  <div><h4>Hover</h4><ol><li>Eyes snap toward customer.</li><li>Eye stalks bow; tools tuck.</li><li>One claw presents counter; work resumes.</li></ol></div>
+                  <div><h4>Integrate</h4><ul><li>Brackets, tool power, task lamp.</li><li>Rear-aisle thruster receiver.</li><li>Organized wear and foreground scrap.</li><li>Current candidate still pending.</li></ul></div>
+                </div>
+              </details>
+
+              <details>
+                <summary>Console · the immersed infrastructure hermit</summary>
+                <div class="details-body">
+                  <div><h4>Lock</h4><ul><li>Bazaar 2 Ed identity, wild red hair.</li><li>Cross-legged on rug, visor always on.</li><li>Racks, servers, cables, pizza, boxes, controls.</li><li>Tall post with Console sign above.</li></ul></div>
+                  <div><h4>Idle</h4><ol><li>Tracks invisible interfaces.</li><li>Visor change + precise finger tap.</li></ol></div>
+                  <div><h4>Hover</h4><ol><li>Notices viewer through visor.</li><li>Quick peace sign.</li><li>Holds sign while other hand resumes.</li></ol></div>
+                  <div><h4>Integrate</h4><ul><li>Rack anchors, power, vent, heat.</li><li>Cables pass behind and in front.</li><li>Teal light reaches Ed, rug, racks, wall, trench.</li><li>Never tidy or add counter.</li></ul></div>
+                </div>
+              </details>
+
+              <details>
+                <summary>Talks / Video Club · the dry cinephile</summary>
+                <div class="details-body">
+                  <div><h4>Lock</h4><ul><li>Seasoned clerk, cheek on hand.</li><li>Deadpan cultivated boredom.</li><li>Tapes, CRT, counter, shelves, standee.</li></ul></div>
+                  <div><h4>Idle</h4><ol><li>Long quiet shift.</li><li>Slow blink; optional fingertip tap.</li></ol></div>
+                  <div><h4>Hover</h4><ol><li>Slow evaluation.</li><li>Selects and checks tape.</li><li>Offers tape with knowing smile.</li></ol></div>
+                  <div><h4>Integrate</h4><ul><li>Real wall recess.</li><li>CRT rectangle and warm pendant.</li><li>Tape spill, worn floor, standee/bin contact.</li></ul></div>
+                </div>
+              </details>
+
+              <details>
+                <summary>Projects · the patient robot gardener</summary>
+                <div class="details-body">
+                  <div><h4>Lock</h4><ul><li>Completely roofless open garden shop.</li><li>Apron-only slim mechanical gardener.</li><li>Visible pistons, cables, grippers.</li><li>Abundant chunky plants, two alien creatures.</li><li>Rope-hung lowercase “projects”.</li></ul></div>
+                  <div><h4>Idle</h4><ol><li>Carefully waters seedling.</li><li>Lens/can/water pixels change; optional creature blink.</li></ol></div>
+                  <div><h4>Hover</h4><ol><li>Notices visitor.</li><li>Parts and inspects leaves.</li><li>Proudly presents new sprout.</li></ol></div>
+                  <div><h4>Integrate</h4><ul><li>Water feed/drain, roots, vines, moss.</li><li>Foliage crosses seam.</li><li>Fragmented bulb/seed/creature light.</li><li>Never roof, glass, greenhouse, or mascot.</li></ul></div>
+                </div>
+              </details>
+
+              <details>
+                <summary>Games · the siblings’ kid-built stall</summary>
+                <div class="details-body">
+                  <div><h4>Lock</h4><ul><li>Two siblings sharing handheld.</li><li>Sister social; brother protective.</li><li>Cheap wood/plastic, crooked handmade engineering.</li><li>Independent fixed torso anchors.</li></ul></div>
+                  <div><h4>Idle</h4><ol><li>Both absorbed.</li><li>Screen/button/eyes change only.</li></ol></div>
+                  <div><h4>Hover</h4><ol><li>Sister excited; brother suspicious.</li><li>Huge wave; protective close.</li><li>She presents game; he decides.</li></ol></div>
+                  <div><h4>Integrate</h4><ul><li>Visible wedges and improvised power.</li><li>Arcade light and floor scratches.</li><li>Cable/drain junction and crates.</li><li>Never professionalize.</li></ul></div>
+                </div>
+              </details>
+
+              <details>
+                <summary>Travel · the last-seats Hearthian</summary>
+                <div class="details-body">
+                  <div><h4>Lock</h4><ul><li>Friendly four-eyed Hearthian, never frog.</li><li>Exact “LAST SEATS”.</li><li>Wood/canvas/brass booth, astronaut gear.</li><li>Rear wall ~1m behind agent with thick returns.</li></ul></div>
+                  <div><h4>Idle</h4><ol><li>Manages tickets.</li><li>Four-eye blink + ticket shuffle.</li></ol></div>
+                  <div><h4>Hover</h4><ol><li>Welcoming eye contact.</li><li>Raises ticket.</li><li>Points toward improbable route.</li></ol></div>
+                  <div><h4>Integrate</h4><ul><li>Booth attachment and warm lantern response.</li><li>Queue/transit wear, tags, luggage marks.</li><li>Retain deep rear gap.</li><li>Never frog, flat, or corporate.</li></ul></div>
+                </div>
+              </details>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="animation" data-title="Animation fixed torso root frames harness">
+            <header class="chapter__header">
+              <div class="section-number">09</div>
+              <div>
+                <h2>Animation contract</h2>
+                <p class="chapter__intro">
+                  The customer is the camera. The world stays registered; only
+                  deliberate anatomy, tools, screens, and effects move.
+                </p>
+              </div>
+            </header>
+
+            <div class="prose">
+              <h3>Exactly five states</h3>
+              <ul>
+                <li>Two idle frames.</li>
+                <li>Three hover frames.</li>
+                <li>Hover plays 1 → 2 → 3 once.</li>
+                <li>Frame 3 holds while hover/focus remains.</li>
+              </ul>
+
+              <h3>Absolute invariants</h3>
+              <ul>
+                <li>Same canvas, crop, transparent bounds, CSS box, scale, transform, and origin.</li>
+                <li>Nothing rescales.</li>
+                <li>No whole-layer translation.</li>
+                <li>Structure, sign, floor, counter, and fixed clutter remain byte-identical.</li>
+                <li>Character root remains fixed.</li>
+                <li>Torso never translates left or right.</li>
+                <li>No breathing by torso scaling.</li>
+                <li>Motion stays inside declared semantic masks.</li>
+                <li>Architecture and surrounding environment never change.</li>
+              </ul>
+
+              <p>
+                A character may articulate the head, face, arms, tool, or held
+                object; extend; lean; bend; or bow around the fixed root. That
+                freedom does not permit sliding.
+              </p>
+
+              <h3>Construction model</h3>
+              <pre><code>immutable rear plate
+bounded character cel
+bounded animated prop/effect cel
+immutable front plate</code></pre>
+              <p>
+                A verified full-frame family is acceptable only when it is
+                deterministically reconstructed from locked plates and masks.
+                Never generate five unrelated complete scenes.
+              </p>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="responsive" data-title="Responsive desktop mobile stairs midpoint signs">
+            <header class="chapter__header">
+              <div class="section-number">10</div>
+              <div>
+                <h2>Responsive composition and stairs</h2>
+                <p class="chapter__intro">
+                  The solved Bazaar 2 ordering remains. Architecture must adapt
+                  to it rather than inventing a new equal-column grid.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <div class="layout-diagram">
+                <article class="diagram">
+                  <h3>Desktop · min 701px</h3>
+                  <div class="diagram__row">
+                    <span>Uses</span><span>Papers</span><span aria-hidden="true">—</span><span class="stairs">stairs right</span>
+                  </div>
+                  <div class="diagram__row">
+                    <span class="stairs">stairs left</span><span>Manual</span><span>Console</span><span>Talks</span>
+                  </div>
+                  <div class="diagram__row">
+                    <span class="stairs">stairs left</span><span>Projects</span><span>Games</span><span>Travel</span>
+                  </div>
+                  <p>Three stalls + stairs, or Uses + one stall + stairs. No desktop midpoint floor.</p>
+                </article>
+
+                <article class="diagram">
+                  <h3>Mobile · max 700px</h3>
+                  <div class="diagram__mobile">
+                    <div><span>upper stall on real midpoint floor</span><span>lower stall at bottom landing</span></div>
+                    <div class="stairs"><b>midpoint exit</b><b>bottom exit</b></div>
+                  </div>
+                  <p>One continuous full-height staircase; the whole assembly mirrors on right-side pairs.</p>
+                </article>
+              </div>
+
+              <div class="prose">
+                <h3>Mobile pairs</h3>
+                <ol>
+                  <li>Uses above Papers; stairs right.</li>
+                  <li>Manual above Talks; stairs left.</li>
+                  <li>Console above Projects; stairs right.</li>
+                  <li>Games above Travel; stairs left.</li>
+                </ol>
+
+                <h3>Desktop stair integration</h3>
+                <ul>
+                  <li>Ceiling aperture, collar, rear recess, and brackets.</li>
+                  <li>Real landing/top plane with compact contact and walking threshold.</li>
+                  <li>Utilities turn around or connect to the stair opening.</li>
+                  <li>Selected front lip/rail overlap.</li>
+                  <li>Navigation lane remains clear.</li>
+                </ul>
+
+                <h3>Mobile midpoint assembly</h3>
+                <pre><code>mobile-stairs-column
+mobile-bottom-landing
+mobile-midpoint-platform
+mobile-midfloor-top
+mobile-midfloor-fascia
+mobile-midfloor-underside-shadow</code></pre>
+                <p>
+                  Column continues through midpoint. Platform stays registered
+                  relative to the stair and paints above its core. Upper stall
+                  stands on a visible top plane. Hover changes none of it.
+                </p>
+
+                <h3>Wayfinding</h3>
+                <ul>
+                  <li>Up is on the stairs side; Down is opposite.</li>
+                  <li>Final underground floor has no Down.</li>
+                  <li>Below 1024px signs sit inside the content rail.</li>
+                  <li>At/above 1024px signs sit in outer gutters.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="layers" data-title="Scene z index layer order dialog">
+            <header class="chapter__header">
+              <div class="section-number">11</div>
+              <div>
+                <h2>Scene layer order</h2>
+                <p class="chapter__intro">
+                  Rear, middle, and front interleaving is the visual mechanism;
+                  the portalled dialog remains above everything.
+                </p>
+              </div>
+            </header>
+
+            <div class="prose">
+              <ol>
+                <li>Base tiled environment.</li>
+                <li>Rear recesses and structural shadow.</li>
+                <li>Floor-wide rear utilities.</li>
+                <li>Tenant rear connections.</li>
+                <li>Lobby/floor/landing top.</li>
+                <li>Casters.</li>
+                <li>Contacts.</li>
+                <li>Stall rear.</li>
+                <li>Character animation.</li>
+                <li>Animated effect and emission.</li>
+                <li>Stall front.</li>
+                <li>Mid utilities and between-stall structure.</li>
+                <li>Stair rear/core/front.</li>
+                <li>Sparse foreground occluders and landing lips.</li>
+                <li>Separator/fascia.</li>
+                <li>Up/Down wayfinding.</li>
+                <li>Portalled dialog at global maximum.</li>
+              </ol>
+              <div class="callout callout--warning">
+                <p>
+                  Floor darkening always paints behind stalls and their
+                  hitboxes. Hover/focus never changes structural z-order, hides
+                  between-floor assets, moves a hitbox, or rescales a stall.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="workflow" data-title="Production workflow plan phases generation">
+            <header class="chapter__header">
+              <div class="section-number">12</div>
+              <div>
+                <h2>Corrected production plan</h2>
+                <p class="chapter__intro">
+                  Palette and light are calibrated before another full floor.
+                  The fixed workshop raster is not the starting point.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <div class="steps">
+                <article class="phase"><div class="phase__body"><h3>Governance and baseline</h3><p>Freeze hashes, anchors, interaction, and street capture. Resolve Manual’s mounted/unapproved contradiction.</p></div></article>
+                <article class="phase"><div class="phase__body"><h3>Palette and light calibration</h3><p>Approve/revise Proposal A; build semantic palette checks and protected emitter masks.</p></div></article>
+                <article class="phase"><div class="phase__body"><h3>One responsive calibration bay</h3><p>Uses + one H-beam division + current stairs + tiled wall + open lobby at mobile and desktop widths.</p></div></article>
+                <article class="phase"><div class="phase__body"><h3>Responsive environment kit</h3><p>Re-author wall, floor, beam, separator, stair, and utility modules in one pixel density and plane law.</p></div></article>
+                <article class="phase"><div class="phase__body"><h3>Stall master resolution</h3><p>Preserve approved designs. Re-render only assets that fail camera, opacity, palette, light, or surface rules. Approve Manual.</p></div></article>
+                <article class="phase"><div class="phase__body"><h3>Workshop / media proof</h3><p>Integrate Manual, Console, and Talks responsively with one continuous service network; stop for approval.</p></div></article>
+                <article class="phase"><div class="phase__body"><h3>Remaining desktop floors</h3><p>Uses + Papers, then Projects + Games + Travel, each with its own narrative and shared laws.</p></div></article>
+                <article class="phase"><div class="phase__body"><h3>Dedicated mobile pass</h3><p>Build four two-stall vertical compositions with one staircase and a real midpoint floor.</p></div></article>
+                <article class="phase"><div class="phase__body"><h3>Animation completion</h3><p>Build Manual’s missing frames, audit every existing family, and couple declared sources/receivers.</p></div></article>
+                <article class="phase"><div class="phase__body"><h3>Final QA and promotion</h3><p>Run sprite/integration harnesses, Chrome matrix, street diff, typecheck, lint, and production build.</p></div></article>
+              </div>
+
+              <div class="prose">
+                <h3>Generation loop</h3>
+                <ol>
+                  <li>Freeze identity, canvas, root, structure, sign, and source hash.</li>
+                  <li>Create an exact low-color geometry guide against Uses and target placement.</li>
+                  <li>Generate one design master or bounded asset.</li>
+                  <li>Surface its exact path immediately.</li>
+                  <li>Reject camera/anatomy/layout failures before surface judgment.</li>
+                  <li>Run a rendering-only flattening pass with exact same shapes.</li>
+                  <li>Inspect full size and actual CSS size.</li>
+                  <li>Approve the master before creating animation cels.</li>
+                  <li>Build five frames from locked plates and bounded masks.</li>
+                  <li>Composite in actual responsive Bazaar 3 before promotion.</li>
+                </ol>
+              </div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="verification" data-title="Verification harness tests Chrome palette animation">
+            <header class="chapter__header">
+              <div class="section-number">13</div>
+              <div>
+                <h2>Verification harness</h2>
+                <p class="chapter__intro">
+                  Machine PASS is evidence, not art approval. Both are required.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <details open>
+                <summary>Sprite hard failures</summary>
+                <div class="details-body">
+                  <div><h4>Geometry</h4><ul><li>Canvas/crop/scale/transform mismatch.</li><li>Whole-frame shift or inset.</li><li>Broken 3× blocks.</li></ul></div>
+                  <div><h4>Registration</h4><ul><li>Root or torso translation.</li><li>Sign/structure/fixed prop change.</li><li>Motion outside mask.</li></ul></div>
+                  <div><h4>Pixels</h4><ul><li>Antialias/partial fringe.</li><li>Key spill or holes.</li><li>Palette explosion.</li></ul></div>
+                  <div><h4>Identity</h4><ul><li>Normalization changes layout.</li><li>Character/stall redesign.</li><li>Motion clips envelope.</li></ul></div>
+                </div>
+              </details>
+
+              <details>
+                <summary>Integration and lighting hard failures</summary>
+                <div class="details-body">
+                  <div><h4>World</h4><ul><li>Pasted rectangle read.</li><li>Wrong rear/lobby staging.</li><li>Tile seam or overflow.</li></ul></div>
+                  <div><h4>Ground</h4><ul><li>No real contact/caster.</li><li>Generic wedge/ellipse.</li><li>Clipped prop.</li></ul></div>
+                  <div><h4>Light</h4><ul><li>No visible cause.</li><li>No world receiver.</li><li>Quantization deletes core.</li></ul></div>
+                  <div><h4>Interaction</h4><ul><li>Decorative hit interception.</li><li>Architecture covers sign/action.</li><li>Floor/stairs change on hover.</li></ul></div>
+                </div>
+              </details>
+
+              <div class="prose">
+                <h3>Required evidence</h3>
+                <ul>
+                  <li>Five-frame contact and onion sheets.</li>
+                  <li>Motion heatmap and immutable byte diff.</li>
+                  <li>Root/torso delta and motion-mask report.</li>
+                  <li>Palette/grid/alpha report with protected emitters.</li>
+                  <li>Source/receiver and contact/caster overlays.</li>
+                  <li>Rear/mid/front layer breakdown.</li>
+                  <li>Desktop/mobile scene captures and street diff.</li>
+                </ul>
+
+                <h3>Chrome matrix</h3>
+                <ul>
+                  <li>Small phone, tall phone, 700px, and 701px.</li>
+                  <li>1023px, 1024px, and 1025px.</li>
+                  <li>1248px, 1440px, and 1728px desktop.</li>
+                  <li>Pointer, keyboard, touch, reduced motion.</li>
+                  <li>Every dialog, frame sequence, Up/Down target, and final-floor no-Down.</li>
+                  <li>Mobile midpoint support and desktop stair aperture/landing/lane.</li>
+                  <li>Unchanged street level.</li>
+                </ul>
+              </div>
+
+              <h3>Promotion gates</h3>
+              <ol class="checklist">
+                <li>Approved identity and distinctive construction remain intact.</li>
+                <li>Uses camera is obeyed.</li>
+                <li>Rendering is flat, outlined, chunky, and quiet.</li>
+                <li>Palette swatches are exact and semantic.</li>
+                <li>Every light has source, stall receiver, world receiver, and response.</li>
+                <li>Unique contact islands and caster ground the stall.</li>
+                <li>Architecture passes behind and in front.</li>
+                <li>A meaningful seam crossing exists.</li>
+                <li>Shared lobby remains readable and uncropped.</li>
+                <li>Stairs belong to the same building.</li>
+                <li>Responsive tiling works across the matrix.</li>
+                <li>Structure, scale, root, and torso remain locked in animation.</li>
+                <li>Dialog, signs, hitboxes, and scroll targets stay correct.</li>
+                <li>Street diff is empty.</li>
+                <li>The actual scene no longer reads as pasted sprites.</li>
+              </ol>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="rejected" data-title="Rejected negative lessons">
+            <header class="chapter__header">
+              <div class="section-number">14</div>
+              <div>
+                <h2>Rejection ledger</h2>
+                <p class="chapter__intro">
+                  These are not alternative directions. They are errors the
+                  production process must prevent from recurring.
+                </p>
+              </div>
+            </header>
+
+            <div class="reject-grid">
+              <div class="reject">Background darkening presented as integration.</div>
+              <div class="reject">Fixed full-floor bitmap replacing responsive tiling.</div>
+              <div class="reject">Wrong top-down/isometric camera or converging room.</div>
+              <div class="reject">Stalls placed in the foreground instead of rear bays.</div>
+              <div class="reject">One tint/desaturation erasing tenant color.</div>
+              <div class="reject">Generic light trapezoids with no visible cause.</div>
+              <div class="reject">Random blue cable pixels and purposeless props.</div>
+              <div class="reject">Props cropped by module or lobby boundaries.</div>
+              <div class="reject">Over-rendered pseudo-pixel art and noisy surfaces.</div>
+              <div class="reject">Disproportionate or detached stairs.</div>
+              <div class="reject">No H-beams—or identical H-beam cages everywhere.</div>
+              <div class="reject">Generic rear rectangles and shared shadow polygons.</div>
+              <div class="reject">Opaque Manual blocking its own integration layers.</div>
+              <div class="reject">Manual mounted on/over counter or given pedestal.</div>
+              <div class="reject">Console without Ed, visor, rug, clutter, or tall sign post.</div>
+              <div class="reject">Professionalized Games stall.</div>
+              <div class="reject">Roofed, glazed, greenhouse Projects.</div>
+              <div class="reject">Frog Travel or flat corporate booth.</div>
+            </div>
+          </section>
+
+          <section class="chapter searchable" id="sources" data-title="Sources pending decisions documents">
+            <header class="chapter__header">
+              <div class="section-number">15</div>
+              <div>
+                <h2>Sources and pending decisions</h2>
+                <p class="chapter__intro">
+                  Durable evidence remains available, but only this consolidated
+                  plan resolves the latest decisions.
+                </p>
+              </div>
+            </header>
+
+            <div class="full">
+              <div class="source-list">
+                <article><h3><code>MASTER_PLAN.md</code></h3><p>Current canonical written consolidation and decision ledger.</p></article>
+                <article><h3><code>ART_DIRECTION.md</code></h3><p>Detailed stall identity, behavior, responsive, dialog, and animation Gospel.</p></article>
+                <article><h3><code>INTEGRATION_BIBLE.md</code></h3><p>Long recovered production history; prototype sections are explicitly demoted.</p></article>
+                <article><h3><code>references/gen-places-source.html</code></h3><p>Archived original design declarations; later Hearthian, Manual, and stair decisions supersede conflicts.</p></article>
+                <article><h3><code>bazaar3-view.tsx</code> + CSS</h3><p>Current runtime reality and responsive behavior, not art approval.</p></article>
+                <article><h3><code>integration-manifest.ts</code></h3><p>Current prototype/legacy registration and layer declarations.</p></article>
+              </div>
+
+              <div class="prose">
+                <h3>Open decisions</h3>
+                <ol>
+                  <li>Approve or revise the 64-color master palette Proposal A.</li>
+                  <li>Approve the exact common cast-shadow tendency after Uses calibration.</li>
+                  <li>Approve or reject the mounted Manual calibration candidate.</li>
+                  <li>Choose which legacy Gospel assets need a rendering-only palette pass versus environment integration alone.</li>
+                  <li>Approve the first responsive Uses calibration composition.</li>
+                </ol>
+
+                <div class="callout callout--proposal">
+                  <p>
+                    Everything else needed to start the calibration phase is
+                    documented. No further brainstorming is required before
+                    those five decisions.
+                  </p>
+                </div>
+
+                <h3>Useful local links</h3>
+                <ul>
+                  <li><a href="/bazaar3">Current Bazaar 3 runtime</a></li>
+                  <li><a href="/bazaar2">Approved Bazaar 2 baseline</a></li>
+                  <li><a href="http://localhost:8123/orders/gen-places.html">Original gen-places page</a></li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer class="footer">
+          <div class="footer__inner">
+            <p>
+              Consolidated from the complete design conversation, current
+              runtime, mounted assets, preserved gen-places source, animation
+              bibles, integration history, and measured palette/lighting audit.
+              Last reviewed 27 July 2026.
+            </p>
+            <button type="button" id="printButton">Print / save PDF</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      const chapters = [...document.querySelectorAll(".searchable")];
+      const navLinks = [...document.querySelectorAll("#chapterNav a")];
+      const searchInput = document.querySelector("#search");
+      const searchEmpty = document.querySelector("#searchEmpty");
+      const progressBar = document.querySelector("#progressBar");
+
+      const setCurrentChapter = (id) => {
+        navLinks.forEach((link) => {
+          const current = link.getAttribute("href") === `#${id}`;
+          if (current) link.setAttribute("aria-current", "true");
+          else link.removeAttribute("aria-current");
+        });
+      };
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((entry) => entry.isIntersecting)
+            .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (visible) setCurrentChapter(visible.target.id);
+        },
+        { rootMargin: "-15% 0px -72% 0px", threshold: [0, 0.08, 0.2] },
+      );
+
+      chapters.forEach((chapter) => observer.observe(chapter));
+
+      searchInput.addEventListener("input", () => {
+        const term = searchInput.value.trim().toLowerCase();
+        let matches = 0;
+        chapters.forEach((chapter) => {
+          const match = !term || chapter.textContent.toLowerCase().includes(term);
+          chapter.hidden = !match;
+          if (match) matches += 1;
+        });
+        searchEmpty.dataset.visible = String(matches === 0);
+      });
+
+      const updateProgress = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = max > 0 ? (window.scrollY / max) * 100 : 0;
+        progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+      };
+
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      window.addEventListener("resize", updateProgress);
+      updateProgress();
+
+      document.querySelectorAll(".swatch").forEach((swatch) => {
+        swatch.setAttribute("role", "button");
+        swatch.setAttribute("tabindex", "0");
+        swatch.setAttribute("aria-label", `Copy color ${swatch.dataset.color}`);
+        const copy = async () => {
+          try {
+            await navigator.clipboard.writeText(swatch.dataset.color);
+            const label = swatch.querySelector("span");
+            const original = label.textContent;
+            label.textContent = "copied";
+            window.setTimeout(() => {
+              label.textContent = original;
+            }, 900);
+          } catch {
+            // The hex remains visible when clipboard access is unavailable.
+          }
+        };
+        swatch.addEventListener("click", copy);
+        swatch.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            copy();
+          }
+        });
+      });
+
+      document.querySelector("#printButton").addEventListener("click", () => {
+        window.print();
+      });
+    </script>
+  </body>
+</html>

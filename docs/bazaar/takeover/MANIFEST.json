@@ -1,0 +1,84 @@
+{
+  "package": "Bazaar 3 takeover",
+  "createdAt": "2026-07-28",
+  "repository": "/Users/sospedra/labs/sospedra.me",
+  "status": "handoff-ready",
+  "visualApproval": {
+    "bazaar3Route": "rejected",
+    "completeFloorMasters": 0,
+    "latestReviewPngs": "rejected-unverified",
+    "manualFinalDesign": "not-approved"
+  },
+  "authority": [
+    "latest explicit user instruction",
+    "00_USER_DECISION_LEDGER.md",
+    "source/canonical/MASTER_PLAN.md with dated supersessions",
+    "current dirty Bazaar 2 working tree",
+    "source/canonical/ART_DIRECTION.md",
+    "source/reference-html/gen-places-source.html",
+    "source/canonical/INTEGRATION_BIBLE.md excluding demoted prototypes",
+    "Uses camera/rendering Gospel",
+    "Games clean-rendering/handmade-construction Gospel"
+  ],
+  "frozen": [
+    "street level",
+    "Bazaar 2 interaction and hitbox ordering",
+    "destinations and dialog content",
+    "no audio"
+  ],
+  "nextAction": "Generate and obtain user approval for one complete Floor 1 master before editing runtime code.",
+  "runtimeEntry": "app/bazaar3/page.tsx",
+  "latestRejectedReviewPngs": [
+    {
+      "floor": 1,
+      "path": "masters/unapproved-latest/floor-1-archive-service.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "a399e5394b78117238b1104b1a85ce46fe335e5b5621b80d618b69b9bb6c31c1"
+    },
+    {
+      "floor": 2,
+      "path": "masters/unapproved-latest/floor-2-workshop-media.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "e490cb5be3b99325782678b6f84ce02321a88f7d1d7ac8d1831edabdd307f734"
+    },
+    {
+      "floor": 3,
+      "path": "masters/unapproved-latest/floor-3-leisure-transit.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "ed99215f4e823ba944e261de56ad4056a97ad262193bb367486cdf54e74d8336"
+    }
+  ],
+  "priorDirectionalReference": [
+    {
+      "path": "masters/prior-master-reference/leisure-transit-master-v5-source.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "e4cd397048d940552a3a6a7bd5ad4717f11cae70a6f5b808ccaf6868935b0c25",
+      "approval": "not-approved; comparatively positive rendering direction only"
+    },
+    {
+      "path": "masters/prior-master-reference/leisure-transit-master-v5-canonical.png",
+      "width": 1248,
+      "height": 597,
+      "sha256": "755f5fd5a89aa4ba80027c1e973ca09c27baa0bfbda41f734ab020e82188b74f",
+      "approval": "not-approved; canonical crop of directional reference"
+    }
+  ],
+  "externalReference": {
+    "title": "Creating 3D Illustrations with CSS",
+    "url": "https://frontend.horse/articles/creating-3d-illustrations-with-css/",
+    "role": "supplemental responsive architecture technique only"
+  },
+  "safety": {
+    "worktree": "extensively dirty and untracked",
+    "never": [
+      "git reset --hard",
+      "git clean",
+      "broad checkout or restore",
+      "reconstruct Bazaar 2 from Git HEAD"
+    ]
+  }
+}

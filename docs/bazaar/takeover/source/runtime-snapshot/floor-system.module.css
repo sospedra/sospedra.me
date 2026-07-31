@@ -1,0 +1,450 @@
+/*
+ * Bazaar 3 desktop floor-system foundation.
+ *
+ * This module paints only shared architecture, local light receivers and
+ * seam/contact props. It never filters, translates, scales or recolors a stall.
+ */
+
+.pass,
+.pass *,
+.pass *::before,
+.pass *::after {
+  box-sizing: border-box;
+  pointer-events: none;
+  user-select: none;
+}
+
+.pass {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  image-rendering: pixelated;
+}
+
+.pass[data-integration-phase="rear"] {
+  z-index: 0;
+}
+
+.pass[data-integration-phase="light"] {
+  z-index: 1;
+}
+
+.pass[data-integration-phase="mid"] {
+  z-index: 2;
+}
+
+.pass[data-integration-phase="caster"],
+.pass[data-integration-phase="contact"] {
+  z-index: 3;
+}
+
+.pass[data-integration-phase="front"] {
+  z-index: 5;
+}
+
+/*
+ * The verified 1248×597 plate scales from its height and repeats horizontally.
+ * It is never stretched on one axis, so its 3× pixel grid and 2:1 floor marks
+ * stay coherent while the centered stage clips responsively.
+ */
+.environmentTile {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-image: var(--floor-environment-image);
+  background-repeat: repeat-x;
+  background-position: center bottom;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+}
+
+.receiver,
+.prop {
+  position: absolute;
+  top: var(--item-y);
+  left: var(--item-x);
+  display: block;
+  width: var(--item-width);
+  height: var(--item-height);
+}
+
+.receiver {
+  --receiver-paint-direct: var(--receiver-direct);
+  --receiver-paint-spill: var(--receiver-spill);
+}
+
+.receiver[data-mirror-x="true"],
+.prop[data-mirror-x="true"] {
+  transform: scaleX(-1);
+}
+
+/* Stepped receivers: local colour, hard edges, no global floor tint. */
+.receiver[data-shape="wall-column"] {
+  background: none;
+}
+
+.receiver[data-shape="wall-column"]::before,
+.receiver[data-shape="wall-column"]::after,
+.receiver[data-shape="wall-shelf"]::before,
+.receiver[data-shape="wall-shelf"]::after,
+.receiver[data-shape="floor-pool"]::after {
+  content: "";
+  position: absolute;
+  display: block;
+}
+
+.receiver[data-shape="wall-column"]::before {
+  top: 16%;
+  left: 38%;
+  width: 12%;
+  height: 54%;
+  background: linear-gradient(
+    to right,
+    var(--receiver-paint-spill) 0 48%,
+    var(--receiver-paint-direct) 48% 72%,
+    transparent 72%
+  );
+  clip-path: polygon(0 0, 100% 4%, 84% 100%, 0 94%);
+}
+
+.receiver[data-shape="wall-column"]::after {
+  top: 12%;
+  left: 24%;
+  width: 34%;
+  height: 4%;
+  background: var(--receiver-paint-direct);
+  box-shadow:
+    0 calc(var(--mkt-m) * 0.38) 0 var(--receiver-paint-spill),
+    calc(var(--mkt-m) * 0.18) calc(var(--mkt-m) * 0.72) 0
+    var(--receiver-paint-spill);
+}
+
+.receiver[data-shape="wall-shelf"] {
+  background: none;
+}
+
+.receiver[data-shape="wall-shelf"]::before {
+  top: 24%;
+  left: 8%;
+  width: 68%;
+  height: 8%;
+  background: linear-gradient(
+    to right,
+    var(--receiver-paint-spill) 0 28%,
+    var(--receiver-paint-direct) 28% 48%,
+    var(--receiver-paint-spill) 48% 70%,
+    transparent 70%
+  );
+}
+
+.receiver[data-shape="wall-shelf"]::after {
+  top: 32%;
+  left: 14%;
+  width: 54%;
+  height: 34%;
+  background: repeating-linear-gradient(
+    to right,
+    transparent 0 17%,
+    var(--receiver-paint-spill) 17% 21%
+  );
+}
+
+/*
+ * Floor pools use a hard 2:1 axonometric footprint. No blur, ellipse or generic
+ * radial halo can creep across a neighbouring tenant.
+ */
+.receiver[data-shape="floor-pool"] {
+  background: linear-gradient(
+    to bottom,
+    var(--receiver-paint-direct) 0 10%,
+    var(--receiver-paint-spill) 10% 34%,
+    transparent 34%
+  );
+  clip-path: polygon(30% 0, 70% 0, 100% 30%, 80% 44%, 20% 44%, 0 30%);
+}
+
+.receiver[data-shape="floor-pool"]::after {
+  top: 10%;
+  left: 38%;
+  width: 24%;
+  height: 5%;
+  background: var(--receiver-paint-direct);
+}
+
+.receiver[data-shape="beam-kiss"] {
+  background: repeating-linear-gradient(
+    to right,
+    transparent 0 8%,
+    var(--receiver-paint-direct) 8% 10%,
+    var(--receiver-paint-spill) 10% 15%
+  );
+}
+
+.receiver[data-shape="floor-trace"] {
+  background: linear-gradient(
+    to right,
+    transparent 0 10%,
+    var(--receiver-paint-spill) 10% 78%,
+    var(--receiver-paint-direct) 78% 84%,
+    transparent 84%
+  );
+  clip-path: polygon(0 35%, 86% 35%, 86% 0, 100% 50%, 86% 100%, 86% 65%, 0 65%);
+}
+
+/*
+ * Hover/focus only increases the matching owner's local receiver. The stall,
+ * H-beams, stairs and every other tenant remain registered and unchanged.
+ */
+.pass:has(~ [data-market-stalls] [data-stall="uses"][data-active])
+.receiver[data-owner="uses"],
+.pass:has(~ [data-market-stalls] [data-stall="papers"][data-active])
+  .receiver[data-owner="papers"],
+.pass:has(~ [data-market-stalls] [data-stall="manual"][data-active])
+  .receiver[data-owner="manual"],
+.pass:has(~ [data-market-stalls] [data-stall="console"][data-active])
+  .receiver[data-owner="console"],
+.pass:has(~ [data-market-stalls] [data-stall="talks"][data-active])
+  .receiver[data-owner="talks"],
+.pass:has(~ [data-market-stalls] [data-stall="projects"][data-active])
+  .receiver[data-owner="projects"],
+.pass:has(~ [data-market-stalls] [data-stall="games"][data-active])
+  .receiver[data-owner="games"],
+.pass:has(~ [data-market-stalls] [data-stall="travel"][data-active])
+  .receiver[data-owner="travel"] {
+  --receiver-paint-direct: var(--receiver-core);
+  --receiver-paint-spill: var(--receiver-direct);
+}
+
+.prop {
+  z-index: 1;
+  image-rendering: pixelated;
+}
+
+.assetProp {
+  z-index: 2;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+.prop[data-tone="iron"] {
+  --prop-dark: var(--floor-iron-shadow);
+  --prop-mid: var(--floor-iron-mid);
+  --prop-edge: var(--floor-iron-edge);
+}
+
+.prop[data-tone="oxide"] {
+  --prop-dark: var(--floor-iron-shadow);
+  --prop-mid: var(--floor-oxide);
+  --prop-edge: var(--floor-oxide-edge);
+}
+
+.prop[data-tone="floor"] {
+  --prop-dark: var(--floor-ground-shadow);
+  --prop-mid: var(--floor-ground-mid);
+  --prop-edge: var(--floor-iron-edge);
+}
+
+.prop[data-tone="void"] {
+  --prop-dark: #020307;
+  --prop-mid: var(--floor-void);
+  --prop-edge: var(--floor-seam);
+}
+
+.serviceDrop {
+  border-inline: max(2px, calc(var(--mkt-m) * 0.018)) solid var(--prop-dark);
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--prop-mid) 0 calc(var(--mkt-m) * 0.18),
+    var(--prop-edge) calc(var(--mkt-m) * 0.18) calc(var(--mkt-m) * 0.22),
+    var(--prop-dark) calc(var(--mkt-m) * 0.22) calc(var(--mkt-m) * 0.28)
+  );
+}
+
+.beamClamp {
+  border: max(2px, calc(var(--mkt-m) * 0.02)) solid var(--prop-dark);
+  background: linear-gradient(
+    to right,
+    var(--prop-dark) 0 18%,
+    var(--prop-mid) 18% 82%,
+    var(--prop-dark) 82%
+  );
+  box-shadow:
+    inset 0 max(2px, calc(var(--mkt-m) * 0.02)) 0 var(--prop-edge),
+    inset 0 calc(var(--mkt-m) * -0.04) 0 var(--prop-dark);
+  clip-path: polygon(
+    16% 0,
+    84% 0,
+    100% 18%,
+    100% 82%,
+    84% 100%,
+    16% 100%,
+    0 82%,
+    0 18%
+  );
+}
+
+.wallLedger {
+  border-block: max(2px, calc(var(--mkt-m) * 0.018)) solid var(--prop-dark);
+  background: repeating-linear-gradient(
+    to right,
+    var(--prop-mid) 0 14%,
+    var(--prop-dark) 14% 17%,
+    var(--prop-edge) 17% 19%
+  );
+  box-shadow: 0 calc(var(--mkt-m) * 0.06) 0 var(--floor-void);
+}
+
+.floorTrench {
+  background:
+    repeating-linear-gradient(
+      to right,
+      transparent 0 7%,
+      var(--prop-edge) 7% 9%,
+      transparent 9% 18%
+    ),
+    linear-gradient(
+      to bottom,
+      var(--prop-dark) 0 24%,
+      var(--prop-mid) 24% 62%,
+      var(--prop-dark) 62%
+    );
+  clip-path: polygon(2% 0, 98% 0, 100% 24%, 97% 100%, 3% 100%, 0 24%);
+}
+
+.thresholdPlate {
+  border: max(2px, calc(var(--mkt-m) * 0.018)) solid var(--prop-dark);
+  background: repeating-linear-gradient(
+    153.435deg,
+    var(--prop-mid) 0 calc(var(--mkt-m) * 0.18),
+    var(--prop-edge) calc(var(--mkt-m) * 0.18) calc(var(--mkt-m) * 0.21)
+  );
+  clip-path: polygon(8% 0, 92% 0, 100% 42%, 92% 100%, 8% 100%, 0 42%);
+}
+
+.crateStack {
+  border: max(2px, calc(var(--mkt-m) * 0.02)) solid var(--prop-dark);
+  background:
+    linear-gradient(
+      to right,
+      transparent 0 44%,
+      var(--prop-dark) 44% 49%,
+      transparent 49%
+    ),
+    linear-gradient(
+      to bottom,
+      var(--prop-edge) 0 6%,
+      var(--prop-mid) 6% 47%,
+      var(--prop-dark) 47% 53%,
+      var(--prop-mid) 53% 94%,
+      var(--prop-dark) 94%
+    );
+  clip-path: polygon(7% 0, 93% 0, 100% 7%, 100% 100%, 0 100%, 0 7%);
+}
+
+.bayRecess {
+  z-index: 0;
+  border: max(2px, calc(var(--mkt-m) * 0.025)) solid var(--floor-seam);
+  background: linear-gradient(
+    to bottom,
+    var(--floor-iron-mid) 0 3%,
+    var(--floor-void) 3% 94%,
+    var(--floor-seam) 94%
+  );
+  box-shadow:
+    inset max(3px, calc(var(--mkt-m) * 0.04)) 0 0 var(--floor-wall-shadow),
+    inset calc(var(--mkt-m) * -0.04) 0 0 var(--floor-wall-shadow);
+  clip-path: polygon(4% 0, 96% 0, 100% 4%, 100% 100%, 0 100%, 0 4%);
+}
+
+.serverBank {
+  z-index: 2;
+  border: max(2px, calc(var(--mkt-m) * 0.025)) solid var(--prop-dark);
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--prop-edge) 0 3%,
+    var(--prop-mid) 3% 14%,
+    var(--prop-dark) 14% 18%
+  );
+  box-shadow:
+    inset max(2px, calc(var(--mkt-m) * 0.018)) 0 0 var(--prop-edge),
+    inset calc(var(--mkt-m) * -0.03) 0 0 var(--prop-dark);
+  clip-path: polygon(8% 0, 92% 0, 100% 3%, 100% 100%, 0 100%, 0 3%);
+}
+
+.serverBank::before,
+.serverBank::after {
+  content: "";
+  position: absolute;
+  display: block;
+}
+
+.serverBank::before {
+  top: 9%;
+  right: 20%;
+  width: 18%;
+  height: 3%;
+  background: #56b4a4;
+  box-shadow:
+    0 calc(var(--mkt-m) * 0.32) 0 #165652,
+    0 calc(var(--mkt-m) * 0.66) 0 #6b391c,
+    0 calc(var(--mkt-m) * 1) 0 #267c73;
+}
+
+.serverBank::after {
+  right: 12%;
+  bottom: 2%;
+  left: 12%;
+  height: 4%;
+  background: var(--prop-dark);
+}
+
+.rugExtension {
+  z-index: 1;
+  border: max(2px, calc(var(--mkt-m) * 0.02)) solid var(--floor-void);
+  background: repeating-linear-gradient(
+    153.435deg,
+    #5c171c 0 calc(var(--mkt-m) * 0.22),
+    #a38b69 calc(var(--mkt-m) * 0.22) calc(var(--mkt-m) * 0.31),
+    #321a0f calc(var(--mkt-m) * 0.31) calc(var(--mkt-m) * 0.48)
+  );
+  clip-path: polygon(8% 0, 92% 0, 100% 38%, 90% 100%, 10% 100%, 0 38%);
+}
+
+.cableRun {
+  border-top: max(3px, calc(var(--mkt-m) * 0.04)) solid var(--prop-mid);
+  border-radius: 48% 52% 0 0;
+  box-shadow:
+    0 max(2px, calc(var(--mkt-m) * 0.018)) 0 var(--prop-dark),
+    inset 0 max(2px, calc(var(--mkt-m) * 0.018)) 0 var(--prop-edge);
+  transform: rotate(-3deg);
+  transform-origin: left center;
+}
+
+.drainChannel {
+  border-block: max(2px, calc(var(--mkt-m) * 0.018)) solid var(--prop-dark);
+  background: repeating-linear-gradient(
+    to right,
+    var(--prop-dark) 0 4%,
+    var(--prop-edge) 4% 6%,
+    var(--prop-mid) 6% 10%
+  );
+  clip-path: polygon(2% 0, 98% 0, 100% 30%, 96% 100%, 4% 100%, 0 30%);
+}
+
+.routeRail {
+  border-block: max(2px, calc(var(--mkt-m) * 0.018)) solid var(--prop-dark);
+  background: repeating-linear-gradient(
+    to right,
+    var(--prop-mid) 0 11%,
+    var(--prop-edge) 11% 14%,
+    var(--prop-dark) 14% 23%
+  );
+  clip-path: polygon(0 28%, 88% 28%, 88% 0, 100% 50%, 88% 100%, 88% 72%, 0 72%);
+}
+
+@media (max-width: 700px) {
+  /* Only the three desktop identities are currently authored. */
+  .pass {
+    display: none;
+  }
+}
