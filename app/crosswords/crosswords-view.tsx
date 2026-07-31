@@ -17,7 +17,11 @@ import {
   useRef,
   useState,
 } from 'react'
-import { playKeyClick, playTypewriterBell } from 'service/audio/key-click'
+import {
+  playCarriageShift,
+  playKeyClick,
+  playTypewriterBell,
+} from 'service/audio/key-click'
 import { useDailyCountdown } from 'service/daily-countdown'
 import { useGameInput } from 'service/hotkeys'
 import {
@@ -34,8 +38,10 @@ import {
   type CrosswordState,
   createCrosswordState,
   crosswordReducer,
+  formatTime,
   restoreCrosswordState,
   serializeCrosswordState,
+  shareCard,
 } from './crossword-engine'
 import css from './crosswords.module.css'
 
@@ -409,18 +415,6 @@ const normalizeLetter = (value: string) => {
   return [...normalized].findLast((letter) => /^[A-ZÑ]$/u.test(letter)) ?? ''
 }
 
-const formatTime = (milliseconds: number) => {
-  const seconds = Math.max(0, Math.floor(milliseconds / 1000))
-  const minutes = Math.floor(seconds / 60)
-  const hours = Math.floor(minutes / 60)
-  const minutePart =
-    hours > 0 ? String(minutes % 60).padStart(2, '0') : String(minutes)
-  const secondPart = String(seconds % 60).padStart(2, '0')
-  return hours > 0
-    ? `${hours}:${minutePart}:${secondPart}`
-    : `${minutePart}:${secondPart}`
-}
-
 const directionLabel = (
   direction: CrosswordDirection,
   locale: CrosswordLocale,
@@ -559,6 +553,54 @@ const CorrectWordSweep = ({
   )
 }
 
+const CONFETTI_TONES = [
+  '#d7653c',
+  '#476f8f',
+  '#62a996',
+  '#e3b84a',
+  '#bd4e3b',
+  '#f3eedf',
+] as const
+
+/* Deterministic scatter: index-hashed values dodge Math.random so every
+   render (and any hydration) agrees on the same burst. */
+const CONFETTI_PIECES = Array.from({ length: 26 }, (_, index) => ({
+  id: `piece-${index + 1}`,
+  x: (((index * 7) % 13) / 12 - 0.5) * 34,
+  peak: -(3.4 + ((index * 53) % 40) / 10),
+  fall: 17 + ((index * 29) % 9),
+  spin: (index % 2 === 0 ? 1 : -1) * (420 + ((index * 47) % 360)),
+  delay: (index * 83) % 340,
+  duration: 1500 + ((index * 37) % 700),
+  width: 0.3 + ((index * 11) % 4) * 0.05,
+  height: 0.55 + ((index * 19) % 5) * 0.07,
+  tone: CONFETTI_TONES[index % CONFETTI_TONES.length],
+}))
+
+const ConfettiBurst = () => (
+  <div className={css.confettiBurst} aria-hidden='true'>
+    {CONFETTI_PIECES.map((piece) => (
+      <span
+        key={piece.id}
+        className={css.confettiPiece}
+        style={
+          {
+            '--cw-cf-x': `${piece.x}rem`,
+            '--cw-cf-peak': `${piece.peak}rem`,
+            '--cw-cf-fall': `${piece.fall}rem`,
+            '--cw-cf-spin': `${piece.spin}deg`,
+            '--cw-cf-delay': `${piece.delay}ms`,
+            '--cw-cf-duration': `${piece.duration}ms`,
+            '--cw-cf-tone': piece.tone,
+            '--cw-cf-w': `${piece.width}rem`,
+            '--cw-cf-h': `${piece.height}rem`,
+          } as CSSProperties
+        }
+      />
+    ))}
+  </div>
+)
+
 const Modal = ({
   children,
   className,
@@ -665,64 +707,66 @@ const ClueList = ({
 
   return (
     <section className={css.clueGroup} aria-labelledby={labelId}>
-      <header className={css.clueHeading}>
-        <h2 id={labelId}>{heading}</h2>
-        <span className={css.clueTally}>
-          {progressReady && (
-            <span className={css.srOnly}>
-              {progressLabel(solvedCount, entries.length)}
+      <div className={css.cluePaper}>
+        <header className={css.clueHeading}>
+          <h2 id={labelId}>{heading}</h2>
+          <span className={css.clueTally}>
+            {progressReady && (
+              <span className={css.srOnly}>
+                {progressLabel(solvedCount, entries.length)}
+              </span>
+            )}
+            <span aria-hidden='true'>
+              {progressReady ? solvedCount : '—'}/{entries.length}
             </span>
-          )}
-          <span aria-hidden='true'>
-            {progressReady ? solvedCount : '—'}/{entries.length}
           </span>
-        </span>
-      </header>
-      <div ref={listRef} className={css.clueScroller}>
-        <ol className={css.clueList}>
-          {entries.map((entry) => {
-            const solved = solvedEntryIds.has(entry.id)
-            const assist = assistFor(entry)
-            const mask = entry.cells
-              .map((cellIndex) => guesses[cellIndex] || '·')
-              .join('')
+        </header>
+        <div ref={listRef} className={css.clueScroller}>
+          <ol className={css.clueList}>
+            {entries.map((entry) => {
+              const solved = solvedEntryIds.has(entry.id)
+              const assist = assistFor(entry)
+              const mask = entry.cells
+                .map((cellIndex) => guesses[cellIndex] || '·')
+                .join('')
 
-            return (
-              <li key={entry.id}>
-                <button
-                  type='button'
-                  className={css.clueButton}
-                  data-active={entry.id === activeId}
-                  data-solved={solved}
-                  data-strike={strikeSolved && solved}
-                  aria-current={entry.id === activeId ? 'true' : undefined}
-                  data-clue-id={entry.id}
-                  onClick={() => select(entry)}
-                >
-                  <span className={css.clueNumber}>{entry.number}</span>
-                  <span className={css.clueCopy}>
-                    {entry.clue ? (
-                      <span className={css.clueText}>{entry.clue}</span>
-                    ) : (
-                      <span className={css.clueMask} aria-hidden='true'>
-                        {mask}
+              return (
+                <li key={entry.id}>
+                  <button
+                    type='button'
+                    className={css.clueButton}
+                    data-active={entry.id === activeId}
+                    data-solved={solved}
+                    data-strike={strikeSolved && solved}
+                    aria-current={entry.id === activeId ? 'true' : undefined}
+                    data-clue-id={entry.id}
+                    onClick={() => select(entry)}
+                  >
+                    <span className={css.clueNumber}>{entry.number}</span>
+                    <span className={css.clueCopy}>
+                      {entry.clue ? (
+                        <span className={css.clueText}>{entry.clue}</span>
+                      ) : (
+                        <span className={css.clueMask} aria-hidden='true'>
+                          {mask}
+                        </span>
+                      )}
+                      {assist && <span className={css.clueMeta}>{assist}</span>}
+                      {solved && (
+                        <span className={css.srOnly}> — {solvedLabel}</span>
+                      )}
+                    </span>
+                    {solved && (
+                      <span className={css.proofMark} aria-hidden='true'>
+                        <span>✓</span> {filedLabel}
                       </span>
                     )}
-                    {assist && <span className={css.clueMeta}>{assist}</span>}
-                    {solved && (
-                      <span className={css.srOnly}> — {solvedLabel}</span>
-                    )}
-                  </span>
-                  {solved && (
-                    <span className={css.proofMark} aria-hidden='true'>
-                      <span>✓</span> {filedLabel}
-                    </span>
-                  )}
-                </button>
-              </li>
-            )
-          })}
-        </ol>
+                  </button>
+                </li>
+              )
+            })}
+          </ol>
+        </div>
       </div>
     </section>
   )
@@ -984,6 +1028,13 @@ function CrosswordSession({
     const context = getAudioContext()
     if (context) {
       playTypewriterBell(context, [0, 0.08, 0.12, 0.16][settings.soundLevel])
+    }
+  }, [getAudioContext, settings.soundLevel])
+
+  const shiftCarriage = useCallback(() => {
+    const context = getAudioContext()
+    if (context) {
+      playCarriageShift(context, [0, 0.05, 0.08, 0.11][settings.soundLevel])
     }
   }, [getAudioContext, settings.soundLevel])
 
@@ -1423,9 +1474,10 @@ function CrosswordSession({
       const current = found >= 0 ? found : 0
       const next =
         (current + delta + orderedEntries.length) % orderedEntries.length
+      shiftCarriage()
       chooseEntry(orderedEntries[next], keepNativeKeyboard)
     },
-    [activeEntry.id, chooseEntry, orderedEntries],
+    [activeEntry.id, chooseEntry, orderedEntries, shiftCarriage],
   )
 
   const advanceWithinEntry = useCallback(
@@ -1751,7 +1803,9 @@ function CrosswordSession({
       } else if (event.key === '?') {
         event.preventDefault()
         openDialog('help', event.currentTarget)
-      } else if (!hasCommand && !event.altKey) {
+      } else if (!hasCommand && !event.altKey && event.key.length === 1) {
+        // Named keys ('Shift', 'CapsLock', 'Dead', 'F1'…) must never reach
+        // the normalizer: it keeps the last A-Z glyph, so SHIFT typed a T.
         const letter = normalizeLetter(event.key)
         if (letter) {
           event.preventDefault()
@@ -1846,12 +1900,20 @@ function CrosswordSession({
       : copy.clueProgress(solvedEntryIds.size, puzzle.entries.length)
 
   const shareResult = async () => {
-    const result = `${copy.brand} · ${puzzle.publicationDate} · ${locale.toUpperCase()}\n${puzzle.width}×${puzzle.height} · ${formatTime(state.elapsedMs)}${revealsUsed ? ' · revealed' : ''}`
+    const card = shareCard(puzzle, state)
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: card })
+        return
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') return
+      }
+    }
     try {
-      await navigator.clipboard.writeText(result)
+      await navigator.clipboard.writeText(card)
       announce(copy.resultCopied)
     } catch {
-      announce(result.replace('\n', '. '))
+      announce(card.replaceAll('\n', '. '))
     }
   }
 
@@ -2639,6 +2701,7 @@ function CrosswordSession({
         labelId='complete-title'
         className={css.completionDialog}
       >
+        {dialog === 'complete' && <ConfettiBurst />}
         <div className={css.completionMark} aria-hidden='true'>
           <span>C</span>
           <span>W</span>

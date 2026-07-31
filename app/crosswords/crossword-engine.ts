@@ -338,6 +338,57 @@ const restoreFlags = (value: unknown, cellCount: number) => {
   return flags
 }
 
+export const formatTime = (milliseconds: number) => {
+  const seconds = Math.max(0, Math.floor(milliseconds / 1000))
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
+  const minutePart =
+    hours > 0 ? String(minutes % 60).padStart(2, '0') : String(minutes)
+  const secondPart = String(seconds % 60).padStart(2, '0')
+  return hours > 0
+    ? `${hours}:${minutePart}:${secondPart}`
+    : `${minutePart}:${secondPart}`
+}
+
+const ROW_CLEAN = '🟩'
+const ROW_CHECKED = '🟨'
+const ROW_REVEALED = '🟥'
+
+const rowSymbol = (
+  puzzle: CrosswordPuzzle,
+  state: CrosswordState,
+  row: number,
+) => {
+  const cells = puzzle.cells.filter(
+    (cell) => cell.row === row && cell.solution !== null,
+  )
+  if (cells.some((cell) => state.revealedCells[cell.index])) {
+    return ROW_REVEALED
+  }
+  if (cells.some((cell) => state.checkedCells[cell.index])) {
+    return ROW_CHECKED
+  }
+  return ROW_CLEAN
+}
+
+/* One symbol per grid row: green solved it yourself, yellow leaned on
+   Check, red needed a reveal. The same journey grammar as /boombox. */
+export const shareCard = (
+  puzzle: CrosswordPuzzle,
+  state: CrosswordState,
+): string => {
+  const rows = Array.from({ length: puzzle.height }, (_, row) =>
+    rowSymbol(puzzle, state, row),
+  )
+  const brand = puzzle.locale === 'es' ? 'CRUCIGRAMA' : 'CROSSWORDS'
+
+  return [
+    `${brand} ${puzzle.publicationDate} 🗞️`,
+    rows.join(''),
+    `⏱️ ${formatTime(state.elapsedMs)} · sospedra.me/crosswords`,
+  ].join('\n')
+}
+
 export const restoreCrosswordState = (
   value: unknown,
   puzzle: CrosswordPuzzle,

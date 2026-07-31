@@ -1,8 +1,15 @@
-export const playKeyClick = (context: AudioContext, volume = 0.12) => {
-  const duration = 0.02
+type NoiseBurst = {
+  at: number
+  duration: number
+  frequency: number
+  q: number
+  volume: number
+}
+
+const playNoiseBurst = (context: AudioContext, burst: NoiseBurst) => {
   const buffer = context.createBuffer(
     1,
-    Math.floor(context.sampleRate * duration),
+    Math.max(1, Math.floor(context.sampleRate * burst.duration)),
     context.sampleRate,
   )
   const data = buffer.getChannelData(0)
@@ -18,12 +25,45 @@ export const playKeyClick = (context: AudioContext, volume = 0.12) => {
 
   source.buffer = buffer
   band.type = 'bandpass'
-  band.frequency.value = 1800 + Math.random() * 900
-  band.Q.value = 0.7
-  gain.gain.value = volume
+  band.frequency.value = burst.frequency
+  band.Q.value = burst.q
+  gain.gain.value = burst.volume
 
   source.connect(band).connect(gain).connect(context.destination)
-  source.start()
+  source.start(burst.at)
+}
+
+export const playKeyClick = (context: AudioContext, volume = 0.12) =>
+  playNoiseBurst(context, {
+    at: context.currentTime,
+    duration: 0.02,
+    frequency: 1800 + Math.random() * 900,
+    q: 0.7,
+    volume,
+  })
+
+/* Carriage hop for clue navigation: a short descending ratchet and a
+   felt-damped landing thunk, quieter and lower than a key strike. */
+export const playCarriageShift = (context: AudioContext, volume = 0.1) => {
+  const start = context.currentTime
+
+  for (const [step, offset] of [0, 0.034, 0.068].entries()) {
+    playNoiseBurst(context, {
+      at: start + offset,
+      duration: 0.016,
+      frequency: 2400 - step * 380,
+      q: 1.1,
+      volume: volume * (0.5 + step * 0.25),
+    })
+  }
+
+  playNoiseBurst(context, {
+    at: start + 0.104,
+    duration: 0.05,
+    frequency: 320,
+    q: 0.6,
+    volume: volume * 1.35,
+  })
 }
 
 export const playTypewriterBell = (context: AudioContext, volume = 0.16) => {

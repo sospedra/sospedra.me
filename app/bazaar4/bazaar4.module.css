@@ -1,0 +1,1701 @@
+.scene {
+  --m: min(20svh, 10.2vw);
+  --hs: 1;
+  --alley-gap: 5svh;
+  /* market meter: derived from the 1248px frame so floors never overflow;
+     3 stalls (270u) + gaps + stairs = ~10.5m of content per floor */
+  --mkt-w: min(100vw, calc(1248px + 10svh));
+  --stairs-w: max(calc(var(--mkt-m) * 1.272), 9vw);
+  /* outer edges of the two random buildings, for the fg silhouettes */
+  --padl-left: calc(
+    var(--street-margin) +
+    var(--street-shift) +
+    3svh -
+    72.2svh
+  );
+  --padr-right: calc(
+    var(--street-margin) -
+    var(--street-shift) +
+    17svh -
+    86.4svh
+  );
+  --mkt-m: min(calc(var(--mkt-w) / 11), 16.5svh);
+  /* composition law: per floor, stairs (324 su, fixed) + stalls (1483
+     su) form ONE 1807 su group capped at 1440px, with 60px horizontal
+     padding around the stall area, centered */
+  --su: min(
+    calc((1440px - 120px) / 1807),
+    calc((100vw - 136px) / 1807),
+    calc(74svh / 597)
+  );
+  /* A(32.55svh) + gap + CD(53.45svh) centered as one block, then shifted */
+  --street-shift: 5vw;
+  --street-margin: calc((100vw - 109.8svh - var(--alley-gap)) / 2);
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow-y: auto;
+  overflow-x: clip;
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+  background: var(--color-bg-void); /* the site's normal sky */
+  color: #d6dbe6;
+  image-rendering: pixelated;
+}
+
+@media (pointer: fine) {
+  .scene {
+    scroll-snap-type: y mandatory;
+  }
+}
+
+@media (max-width: 700px) {
+  .scene {
+    --m: min(10svh, 13vw);
+    --hs: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .scene {
+    --stairs-w: max(calc(var(--mkt-m) * 1.7), 15svh);
+  }
+}
+
+.scene img {
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+.mobileTree {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .desktopTree {
+    display: none;
+  }
+  .mobileTree {
+    display: block;
+  }
+}
+
+.floor {
+  position: relative;
+  height: 100svh;
+  scroll-snap-align: start;
+  overflow: hidden;
+  transition: filter 0.5s ease;
+}
+
+.dimmed {
+  filter: brightness(0.55);
+}
+
+.fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- street level: gemini extraction kit ---------- */
+.streetBg {
+  position: absolute;
+  inset: 0 0 20svh 0;
+  background: url("/images/bazaar4/street/bg.png") left bottom repeat-x;
+  background-size: auto 96%;
+  image-rendering: pixelated;
+}
+
+/* the lone red tower: the tallest silhouette, appears exactly once */
+.sTower {
+  position: absolute;
+  /* right of the bazaar door, deep behind the skyline, tallest peak */
+  left: 63vw;
+  translate: -50% 0;
+  bottom: 34svh;
+  height: 64svh;
+  pointer-events: none;
+}
+
+/* street-level light haze: the bottom of the skyline glows */
+.streetBg::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 10svh;
+  background: linear-gradient(
+    to top,
+    rgb(255 170 220 / 0.34),
+    rgb(120 200 255 / 0.12) 55%,
+    transparent
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.sFloor {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 20svh;
+  background: url("/images/bazaar4/street/floor.png") left bottom repeat-x;
+  background-size: auto 100%;
+  image-rendering: pixelated;
+  z-index: 1;
+  filter: brightness(0.8);
+}
+
+/* alley shadow: darkens the gap from CD's base, fading up over 10u */
+.alleyShade {
+  position: absolute;
+  left: calc(var(--street-margin) + var(--street-shift) + 36.5svh);
+  width: var(--alley-gap);
+  bottom: 10svh;
+  height: 10svh;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.82), rgb(0 0 0 / 0.98));
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* the pavement recedes: darken it progressively toward its top edge */
+.sFloor::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.55),
+    rgb(0 0 0 / 0.18) 45%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* pads sit in front of A+CD, overlapping the block 1u on each side */
+.sPadL {
+  position: absolute;
+  /* right edge = A left edge + 1svh; pad width 52svh * 0.8764 = 45.6svh */
+  left: calc(var(--street-margin) + var(--street-shift) + 3svh - 72.2svh);
+  bottom: 13svh;
+  height: 82.4svh;
+  z-index: 3;
+}
+
+.sPadR {
+  position: absolute;
+  /* left edge = CD right edge - 1svh; pad width 56svh * 0.8764 = 49.1svh */
+  right: calc(var(--street-margin) - var(--street-shift) + 7svh - 86.4svh);
+  bottom: 11svh;
+  height: 98.6svh;
+  z-index: 3;
+}
+
+.sA {
+  position: absolute;
+  /* right edge = CD left edge - --alley-gap, all in svh so the gap is
+     constant on any viewport: 95vw - CDw(53.45svh) - gap - Aw(32.55svh) */
+  left: calc(var(--street-margin) + var(--street-shift));
+  bottom: 13svh;
+  height: 87.4svh;
+  z-index: 4;
+  filter: brightness(0.8);
+}
+
+/* CD wrapper: door and neon are children, positioned in % of the
+   building so they track it through any move or resize */
+.sCDWrap {
+  position: absolute;
+  right: calc(var(--street-margin) - var(--street-shift));
+  bottom: 15svh;
+  height: 46svh;
+  aspect-ratio: 1113 / 776;
+  z-index: 2;
+}
+
+/* the neighboring block shades only the right-hand wall; the building
+   alpha keeps the wash off its cutouts, and the rooftop stays untouched */
+.sCDWrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    transparent 24%,
+    rgb(0 0 0 / 0.1) 38%,
+    rgb(0 0 0 / 0.24) 60%,
+    rgb(0 0 0 / 0.42) 80%,
+    rgb(0 0 0 / 0.64) 100%
+  );
+  clip-path: inset(13% 0 0);
+  -webkit-mask:
+    url("/images/bazaar4/street/building-cd.png") center / 100% 100% no-repeat;
+  mask:
+    url("/images/bazaar4/street/building-cd.png") center / 100% 100% no-repeat;
+}
+
+.sCDImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.sBus {
+  position: absolute;
+  left: calc(var(--street-margin) + var(--street-shift) - 3svh);
+  bottom: 10svh;
+  height: 28.8svh;
+  /* box owns the geometry: both frames fill it identically, no
+     width:auto rounding drift between in-flow and absolute images */
+  aspect-ratio: 1060 / 1335;
+  z-index: 10;
+}
+
+/* overlay sprites sit exactly on the baked door/neon geometry of CD:
+   neon plate x118-289 y353-423, door x148-302 y444-770 (of 1113x776) */
+.sNeon {
+  position: absolute;
+  left: 8%;
+  top: 42.9%;
+  width: 20.6%;
+  z-index: 4;
+  pointer-events: none;
+  line-height: 0;
+}
+
+.sNeon img {
+  width: 100%;
+  height: auto;
+}
+
+/* lit sign + its glow live in one animated wrapper: they cannot drift */
+.sNeonOn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  line-height: 0;
+  animation: neonBlink 8s steps(1, end) infinite;
+}
+
+/* subtle ambient glow while the sign is lit */
+.sNeonOn::after {
+  content: "";
+  position: absolute;
+  inset: -45% -30%;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(255 60 180 / 0.3),
+    rgb(255 60 180 / 0.1) 55%,
+    transparent 75%
+  );
+  mix-blend-mode: screen;
+  filter: blur(5px);
+}
+
+@keyframes neonBlink {
+  0%,
+  24% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0;
+  }
+  26.5%,
+  32% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 0;
+  }
+  34%,
+  35% {
+    opacity: 1;
+  }
+  35.8% {
+    opacity: 0;
+  }
+  36.6%,
+  62% {
+    opacity: 1;
+  }
+  63% {
+    opacity: 0;
+  }
+  64.5%,
+  70% {
+    opacity: 1;
+  }
+  71% {
+    opacity: 0;
+  }
+  72%,
+  73% {
+    opacity: 1;
+  }
+  73.8% {
+    opacity: 0;
+  }
+  74.6%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.sDoor {
+  position: absolute;
+  left: 11.5%;
+  bottom: 0.8%;
+  height: 42.7%;
+  z-index: 3;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.sDoor img {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+/* hover: door swings open in two frames, last frame holds */
+.sDoor img[data-frame] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.sDoor:hover img:first-child,
+.sDoor:focus-visible img:first-child {
+  animation: seqOut 0.28s steps(1, end) forwards;
+}
+
+.sDoor:hover img[data-frame="1"],
+.sDoor:focus-visible img[data-frame="1"] {
+  animation: seqMid 0.56s steps(1, end) forwards;
+}
+
+.sDoor:hover img[data-frame="2"],
+.sDoor:focus-visible img[data-frame="2"] {
+  animation: seqEnd 0.56s steps(1, end) forwards;
+}
+
+/* hover: the shelter bulb flickers irregularly, then stays lit */
+.sBus img[data-on] {
+  opacity: 0;
+}
+
+.sBus:hover img[data-on],
+.sBus:focus-visible img[data-on] {
+  animation: bulbFlicker 1.2s steps(1, end) forwards;
+}
+
+@keyframes bulbFlicker {
+  0% {
+    opacity: 1;
+  }
+  9% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  24% {
+    opacity: 0;
+  }
+  31% {
+    opacity: 1;
+  }
+  37% {
+    opacity: 0;
+  }
+  52%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* neon pink glow spilling out of the alley: rect [50,40] to [70,55] */
+.alleyGlow {
+  position: absolute;
+  left: 40vw;
+  top: 50svh;
+  width: 15vw;
+  height: 20svh;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(255 60 180 / 0.55),
+    rgb(255 60 180 / 0.18) 55%,
+    transparent 78%
+  );
+  mix-blend-mode: screen;
+  filter: blur(6px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* the deep-alley sign cluster: on the floor line, centered in the gap */
+.sAlleySigns {
+  position: absolute;
+  /* alley center = A left edge + A width (43.8svh) + half gap */
+  left: calc(var(--street-margin) + var(--street-shift) + 46.3svh);
+  translate: -50% 0;
+  bottom: 20svh;
+  height: 40svh;
+  z-index: 0;
+  filter: blur(0.8px);
+  pointer-events: none;
+  line-height: 0;
+}
+
+.sAlleySigns img {
+  height: 100%;
+  width: auto;
+  transform: translateZ(0);
+}
+
+/* marquee bulb chase: the two frames alternate */
+.sAlleySigns img[data-alt] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: marqueeAlt 1.1s steps(1, end) infinite;
+}
+
+@keyframes marqueeAlt {
+  0% {
+    opacity: 0;
+  }
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* street glow doesn't reach the deep alley: dark at the base, fading up */
+.sAlleySigns::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.8),
+    rgb(0 0 0 / 0.35) 40%,
+    transparent 75%
+  );
+}
+
+.sBus img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* both frames on compositing layers: identical pixel snapping, no
+     1px jump when the overlay's opacity animation layerizes it */
+  transform: translateZ(0);
+}
+
+/* foreground parallax silhouettes, home-bridge style: one per side,
+   anchored off the outer edges of the random buildings */
+.fgLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.fgL,
+.fgR {
+  position: absolute;
+  top: -6svh;
+  bottom: -6svh;
+  height: auto;
+  width: 24vw;
+  background: url("/images/foreground-tower.svg") bottom / 100% 100% no-repeat;
+  filter: brightness(0.5) blur(3px);
+  transform: scaleY(1.2);
+  transform-origin: bottom;
+}
+
+.fgL {
+  /* right edge lands 5u past the left building's start, or 5u past the
+     screen's left edge when that start is offscreen */
+  /* tower svg content ends at 90% of its box: compensate */
+  left: calc(max(var(--padl-left), 0px) + 8svh - 21.5vw);
+}
+
+.fgR {
+  background-image: url("/images/foreground-block.svg");
+  /* left edge lands 5u before the right building's end, or 5u before
+     the screen's right edge when that end is offscreen */
+  /* block svg content starts at 4.5% of its box: compensate */
+  right: calc(max(var(--padr-right), 0px) + 8svh - 22.9vw);
+}
+
+@media (max-width: 700px) {
+  .fgLayer {
+    display: none;
+  }
+}
+
+/* the home-page neon car, parked center, wheels on the 98 line, 2x */
+/* the home car passes through on load: offscreen left to offscreen
+   right, same easing as the home drive (must match --drive-ease there) */
+.sCar {
+  position: absolute;
+  left: 0;
+  bottom: -0.5svh;
+  z-index: 39;
+  pointer-events: none;
+  transform: translateX(-40vw);
+  animation: carDrive 1s cubic-bezier(0.4, 0, 0.6, 0.52) 1.6s both;
+}
+
+@keyframes carDrive {
+  to {
+    transform: translateX(110vw);
+  }
+}
+
+/* safari has no directional blur: squash 4x, blur, stretch back, so the
+   blur radius comes out 4x horizontal vs vertical */
+.sCarStretch {
+  transform: scaleX(4);
+  transform-origin: bottom left;
+}
+
+.sCarSquash {
+  transform: scaleX(0.25);
+  transform-origin: bottom left;
+  filter: blur(1.5px);
+}
+
+.sCarScale {
+  transform: scale(1.8);
+  transform-origin: bottom left;
+  filter: brightness(0.45);
+}
+
+/* arrival: the home blackout hands over, we fade in, then the car passes */
+.fadeIn {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #000;
+  pointer-events: none;
+  animation: sceneFade 1.5s ease-in both;
+}
+
+@keyframes sceneFade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* r15 separator: the riveted h-beam band between floors — max layer */
+.sep {
+  position: relative;
+  z-index: 9;
+  height: calc(var(--su) * 225);
+  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-size: calc(var(--su) * 120) calc(var(--su) * 225);
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  image-rendering: pixelated;
+  /* the separator is nearer than the floors: soft focus while passing */
+  filter: brightness(0.7) blur(1.5px);
+  box-shadow:
+    0 10px 24px rgb(0 0 0 / 0.55),
+    0 -10px 24px rgb(0 0 0 / 0.55);
+}
+
+/* ---------- direction grid ---------- */
+.grid {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      rgb(55 247 224 / 0.22) 0 1px,
+      transparent 1px 5vw
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgb(55 247 224 / 0.22) 0 1px,
+      transparent 1px 5svh
+    );
+}
+
+.gridLabelV,
+.gridLabelH {
+  position: absolute;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 9px;
+  line-height: 1;
+  color: #37f7e0;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.gridLabelV {
+  top: 2px;
+  translate: 3px 0;
+}
+
+.gridLabelH {
+  left: 2px;
+  translate: 0 3px;
+}
+
+/* ---------- market floors ---------- */
+/* per-floor WF variants (all carry the approved floor strip) */
+.floorMkt[data-market-index="1"] {
+  background-image: url("/images/bazaar4/arch/wf-min-a2.png");
+}
+
+.floorMkt[data-market-index="2"] {
+  background-image: url("/images/bazaar4/arch/wf-min-b2.png");
+}
+
+/* r15 architecture: floor = 597 sim px of WF wall+walkway tile */
+.floorMkt {
+  height: calc(var(--su) * 597);
+  scroll-snap-align: center;
+  overflow: visible; /* dialogs pop past the floor edge */
+  z-index: 7; /* stage overhang (signs in the sep zone) paints over .sep */
+  background-image: url("/images/bazaar4/arch/wf-tile.png");
+  background-size: calc(var(--su) * 300) calc(var(--su) * 597);
+  background-repeat: repeat-x;
+  background-position: left bottom;
+}
+
+/* signs bolt onto the separator band above the floor, clear of stalls */
+.wayfindingRail {
+  position: absolute;
+  top: calc(var(--su) * -190);
+  left: 50%;
+  translate: -50% 0;
+  width: min(100vw, calc(var(--su) * 1766));
+  height: calc(var(--su) * 180);
+  z-index: 7;
+  pointer-events: none;
+}
+
+.wayfindingSign {
+  position: absolute;
+  bottom: calc(var(--su) * 14);
+  width: clamp(56px, calc(var(--su) * 110), 104px);
+  padding: 0;
+  border: 0;
+  background: none;
+  line-height: 0;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.wayfindingSign img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.wayfindingSign:focus-visible {
+  outline: 2px solid #37f7e0;
+  outline-offset: 2px;
+}
+
+.wayfindingLeft {
+  left: calc(var(--su) * 40);
+}
+
+.wayfindingRight {
+  right: calc(var(--su) * 40);
+}
+
+/* everything on a market floor lives in a centered 1248px frame */
+.mktFrame {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: min(100%, 1248px);
+  z-index: 2;
+}
+
+@media (max-width: 700px) {
+  .floorMkt {
+    height: 100svh;
+    scroll-snap-align: start;
+    /* two stories per floor: one WF band per story */
+    background-size: calc(50svh / 597 * 300) 50svh;
+    background-repeat: repeat;
+  }
+}
+
+/* beyond the frame the market falls into darkness */
+.floorMkt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgb(0 0 0 / 0.62),
+    transparent calc((100vw - var(--mkt-w)) / 2),
+    transparent calc(100vw - (100vw - var(--mkt-w)) / 2),
+    rgb(0 0 0 / 0.62)
+  );
+}
+
+.mktRow {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: calc(var(--su) * var(--row-gap, 112));
+  z-index: 2;
+}
+
+/* walkway strip paints IN FRONT of stall bases (+60 depth per gospel) */
+.walkStrip {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: calc(var(--su) * 60);
+  background-image: url("/images/bazaar4/arch/wf-strip.png");
+  background-size: calc(var(--su) * 300) calc(var(--su) * 60);
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  z-index: -4;
+  pointer-events: none;
+}
+
+/* the r15 spiral staircase shaft: an in-flow slot, full floor height */
+.stairsSim {
+  position: absolute;
+  bottom: 0;
+  width: calc(var(--su) * 324);
+  height: calc(var(--su) * 597);
+  z-index: 5;
+  line-height: 0;
+  pointer-events: none;
+}
+
+/* flush against the stall band, clamped to the viewport edge */
+.stairsSimL {
+  left: calc(50% - var(--su) * 903.5);
+}
+
+.stairsSimR {
+  right: calc(50% - var(--su) * 903.5);
+}
+
+.stairsSim img {
+  width: 100%;
+  height: 100%;
+}
+
+.stairsMirror img {
+  transform: scaleX(-1);
+}
+
+.stairs {
+  align-self: stretch;
+  width: var(--stairs-w);
+  flex: 0 0 auto;
+  line-height: 0;
+}
+
+.stairsColumn {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mGridR,
+.mGridL {
+  position: absolute;
+  inset: 0 0 calc(var(--mkt-m) * 0.65) 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-items: end;
+  z-index: 2;
+}
+
+.mGridR {
+  grid-template-columns: minmax(0, 1fr) 24vw;
+}
+
+.mGridR .stairs {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / 3;
+  width: auto;
+  align-self: stretch;
+}
+
+.mGridL {
+  grid-template-columns: 24vw minmax(0, 1fr);
+}
+
+.mGridL .stairs {
+  position: relative;
+  grid-column: 1;
+  grid-row: 1 / 3;
+  width: auto;
+  align-self: stretch;
+}
+
+/*
+ * Mobile is one continuous stairwell with two occupied landings. The divider
+ * and landing remain children of the stair lane. Their shared 2:1 source
+ * canvas renders at half viewport scale, so its deck meets the floor tile
+ * without per-floor nudges.
+ */
+.mobileFloorSplit {
+  position: absolute;
+  top: 50%;
+  width: 100vw;
+  height: 25vw;
+  translate: 0 -60%;
+  pointer-events: none;
+}
+
+.mGridR .mobileFloorSplit {
+  right: 0;
+}
+
+.mGridL .mobileFloorSplit {
+  left: 0;
+}
+
+.mobileFloorSplitTile {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 7;
+  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-repeat: repeat-x;
+  background-position: center;
+  background-size: calc(25vw * 120 / 225) 25vw;
+}
+
+.mGridL .mobileFloorSplitTile {
+  background-position: 20vw center;
+}
+
+.mGridR .mobileFloorSplitTile {
+  background-position: -20vw center;
+}
+
+.mobileFloorSplitPlatform {
+  position: absolute;
+  top: 0;
+  z-index: 8;
+  width: 50vw;
+  height: 25vw;
+  translate: 0 -3svh;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.mGridR .mobileFloorSplitPlatform {
+  right: -5vw;
+  transform: scaleX(-1);
+  transform-origin: right center;
+}
+
+.mGridL .mobileFloorSplitPlatform {
+  left: -5vw;
+  transform: none;
+  transform-origin: left center;
+}
+
+.mGridR .stairsColumn,
+.mGridL .stairsColumn {
+  position: absolute;
+  top: 0;
+  z-index: 6;
+  width: auto;
+  height: 97svh;
+}
+
+.mGridL .stairsColumn {
+  left: 0;
+  transform: none;
+}
+
+.mGridR .stairsColumn {
+  right: 0;
+  transform: scaleX(-1);
+}
+
+/* the walkable band recedes: darker at its far (top) edge */
+.mktGroundShade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 22%;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.5),
+    rgb(0 0 0 / 0.15) 55%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* living air: faint dust motes drifting up through the stall's light */
+.motes {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.45;
+  background-image:
+    radial-gradient(
+      circle 2px at 12% 80%,
+      rgb(255 220 160 / 0.8),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 1px at 34% 55%,
+      rgb(255 240 210 / 0.7),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 2px at 57% 88%,
+      rgb(200 230 255 / 0.5),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 1px at 79% 62%,
+      rgb(255 230 180 / 0.65),
+      transparent 100%
+    ),
+    radial-gradient(
+      circle 2px at 92% 74%,
+      rgb(255 220 160 / 0.5),
+      transparent 100%
+    );
+  background-size: 62% 190%;
+  background-repeat: repeat;
+  animation: moteFloat 18s linear infinite;
+}
+
+@keyframes moteFloat {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 -200%;
+  }
+}
+
+/* ---------- stalls ---------- */
+/* r15 contract scale: --sw/--sh are the stall box in sim units; feet
+   ride 44 sim px up so the walkway strip tucks them 16 px deep */
+.stallWrap {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  width: calc(var(--su) * var(--sw));
+  height: calc(var(--su) * var(--sh));
+  margin-bottom: calc(var(--su) * 44);
+  isolation: isolate;
+}
+
+/* contact shadow: grounds the place on the walkable band */
+.stallWrap::after {
+  content: "";
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  bottom: calc(var(--su) * -20);
+  height: calc(var(--su) * 34);
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(0 0 0 / 0.55),
+    transparent 68%
+  );
+  pointer-events: none;
+}
+
+@media (max-width: 700px) {
+  .stallWrap {
+    width: min(calc(43svh * var(--ar)), 74vw);
+    height: auto;
+    aspect-ratio: var(--ar);
+    margin-bottom: 0;
+    justify-self: center;
+  }
+}
+
+.mGridL .stallWrap {
+  grid-column: 2;
+}
+
+.stall {
+  position: absolute;
+  inset: 0;
+  display: block;
+  line-height: 0;
+}
+
+/* the r17 layer stack: every pre-cropped layer fills the stall box */
+.sceneStack {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sceneStack img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* papers: the hologram archivist flickers at runtime */
+.holoFlicker {
+  animation: holoFlicker 2.8s steps(1, end) infinite;
+}
+
+@keyframes holoFlicker {
+  0%,
+  86%,
+  100% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 0.4;
+  }
+  91% {
+    opacity: 0.85;
+  }
+  95% {
+    opacity: 0.55;
+  }
+}
+
+/* hover illumination: same pixels, slightly brighter */
+.stallWrap:hover .sceneStack img,
+.stallWrap:focus-within .sceneStack img {
+  filter: brightness(1.12) saturate(1.12);
+}
+
+.glowWash {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    color-mix(in srgb, var(--tint) 34%, transparent),
+    transparent 72%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stallWrap:hover .glowWash,
+.stallWrap:focus-within .glowWash {
+  opacity: 1;
+}
+
+/* ---------- FFIX dialog: a popover bubble anchored to its stall ---------- */
+.dialog {
+  position: fixed;
+  translate: -50% calc(-100% - 14px);
+  width: max-content;
+  max-width: min(300px, 76vw);
+  z-index: 2147483000;
+  padding: 10px 12px;
+  border: 2px solid #f2f2f2;
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.04) 0 2px,
+      transparent 2px 4px
+    ),
+    linear-gradient(180deg, #7c8088, #5e626a);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.45),
+    inset -1px -1px 0 rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 6px 16px rgba(0, 0, 0, 0.5);
+  font-size: 10px;
+  line-height: 1.8;
+  color: #fff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+  text-transform: none;
+}
+
+/* keep the stall and its bubble in one continuous hover target */
+.dialog::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 16px;
+}
+
+/* speech tail pointing at the stall below */
+.dialog::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  translate: -50% 0;
+  border: 7px solid transparent;
+  border-top-color: #f2f2f2;
+}
+
+.gamesDialogs {
+  --dialog-shift-x: 0px;
+  --dialog-shift-y: 0px;
+
+  position: fixed;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(300px, calc(100vw - 16px));
+  box-sizing: border-box;
+  pointer-events: auto;
+  translate: calc(-50% + var(--dialog-shift-x))
+    calc(-100% - 14px + var(--dialog-shift-y));
+}
+
+/* one continuous hover bridge for the full conversation */
+.gamesDialogs::before {
+  content: "";
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 16px;
+}
+
+.dialog.gamesDialog {
+  position: relative;
+  width: fit-content;
+  max-width: 82%;
+  box-sizing: border-box;
+  translate: none;
+  overflow-wrap: anywhere;
+}
+
+/* the wrapper owns the bridge; each turn only owns its visible bubble */
+.dialog.gamesDialog::before {
+  display: none;
+}
+
+.gamesDialogSister {
+  align-self: flex-start;
+}
+
+.gamesDialogBrother {
+  align-self: flex-end;
+}
+
+/* alternate the tails toward the two siblings below */
+.gamesDialogSister::after {
+  left: 18%;
+}
+
+.gamesDialogBrother::after {
+  left: 82%;
+}
+
+.gamesDialogPending {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* the open stall paints above its market-row siblings */
+.stallWrap:hover,
+.stallWrap:focus-within,
+.dialogOpen {
+  z-index: 5;
+}
+
+@media (max-width: 700px) {
+  .dialog {
+    max-width: min(240px, 62vw);
+  }
+}
+
+.dialogDesc {
+  position: relative;
+  margin: 0 0 8px;
+  white-space: pre-line;
+}
+
+.dialogDescSolo {
+  margin-bottom: 0;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.typeMeasure {
+  visibility: hidden;
+}
+
+.typeText {
+  position: absolute;
+  inset: 0;
+}
+
+.typeCursor {
+  animation: typeCursor 0.24s steps(1, end) infinite;
+}
+
+@keyframes typeCursor {
+  50% {
+    opacity: 0;
+  }
+}
+
+.dialogLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dialogLinks a {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  width: max-content;
+  max-width: 100%;
+  color: #ffe9a8;
+  text-decoration: none;
+}
+
+.dialogLinks a::before {
+  content: "\25B8 ";
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.linkTypeMeasure,
+.linkTypeText {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.linkTypeMeasure {
+  visibility: hidden;
+}
+
+.dialogLinkPending::before,
+.dialogLinkPending .linkTypeText {
+  visibility: hidden;
+}
+
+.dialogLinks a:hover {
+  color: #ffffff;
+}
+
+.dialogLinks a:focus-visible {
+  outline: 1px solid #ffe9a8;
+  outline-offset: 2px;
+}
+
+/* keyframes shared by the street door sequence */
+@keyframes seqOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes seqMid {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes seqEnd {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* breathing room after the last floor */
+.bottomPad {
+  height: 24svh;
+  background: #000;
+}
+
+/* ---------- hud ---------- */
+.hud {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hudBtn {
+  padding: 0.45rem 0.7rem;
+  border: 2px solid #37f7e0;
+  background: rgb(6 7 13 / 0.85);
+  color: #37f7e0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.55rem;
+  cursor: pointer;
+}
+
+.hudBtn:hover {
+  background: #12202b;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene *,
+  .scene *::before,
+  .scene *::after {
+    /* last block in the file: source order beats the animation classes above */
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ---------- layout editor ---------- */
+.editSel {
+  outline: 2px dashed #37f7e0;
+  outline-offset: 2px;
+  cursor: move;
+}
+
+.editPanel {
+  position: fixed;
+  top: 4rem;
+  left: 1rem;
+  z-index: 2147483000;
+  padding: 10px 12px;
+  border: 2px solid #37f7e0;
+  background: rgb(6 7 13 / 0.92);
+  color: #cfd3d8;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.editPanelTitle {
+  color: #37f7e0;
+  margin-bottom: 2px;
+}
+
+.editPanelSel {
+  margin: 6px 0;
+  color: #ffd26b;
+}
+
+.editPanelRow {
+  display: flex;
+  gap: 6px;
+}
+
+.editPanelRow button {
+  padding: 3px 8px;
+  border: 1px solid #37f7e0;
+  background: #12202b;
+  color: #37f7e0;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ---------- decorations: su-space band shared with the stall row ---------- */
+.decorBand {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: calc(var(--su) * 1483);
+}
+
+.decorBandFront {
+  z-index: 5;
+}
+
+.decorItem {
+  position: absolute;
+  width: auto;
+  image-rendering: pixelated;
+}
+
+.editHandle {
+  position: fixed;
+  z-index: 2147483001;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffd26b;
+  background: rgb(6 7 13 / 0.9);
+  cursor: nwse-resize;
+}
+
+.editInv {
+  position: fixed;
+  top: 4rem;
+  right: 1rem;
+  bottom: 4rem;
+  width: 300px;
+  z-index: 2147483001;
+  padding: 10px;
+  border: 2px solid #37f7e0;
+  background: rgb(6 7 13 / 0.94);
+  color: #cfd3d8;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10px;
+  overflow-y: auto;
+}
+
+.editInvGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.editInvItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 2px;
+  border: 1px solid #2a2e35;
+  background: #14161a;
+  color: #9aa3ad;
+  font: inherit;
+  cursor: pointer;
+}
+
+.editInvItem:hover {
+  border-color: #37f7e0;
+  color: #ffd26b;
+}
+
+.editInvItem img {
+  max-width: 100%;
+  max-height: 56px;
+  image-rendering: pixelated;
+}
+
+.editInvItem span {
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- the floor stage: one shared stacking context ---------- */
+.floorStage {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: calc(var(--su) * 1483);
+}
+
+/* stairs + stalls center as one group: the band cedes half the shaft */
+.floorMkt[data-stairs="left"] .floorStage {
+  translate: calc(-50% + var(--su) * 162) 0;
+}
+
+.floorMkt[data-stairs="right"] .floorStage {
+  translate: calc(-50% - var(--su) * 162) 0;
+}
+
+.stagePos {
+  position: absolute;
+}
+
+.stageSign {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.stageSign img {
+  height: 100%;
+  width: auto;
+  image-rendering: pixelated;
+}
+
+/* glow area synced with the sign: same animation, same clock */
+.stageSign::before {
+  content: "";
+  position: absolute;
+  inset: -18% -30%;
+  background: radial-gradient(ellipse, var(--sign-glow) 0%, transparent 62%);
+  opacity: 0.45;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.stageSign:hover::before {
+  animation: signFlicker 1.2s steps(1, end) infinite;
+}
+
+.stageSign:focus-visible {
+  outline: 2px solid #37f7e0;
+  outline-offset: 2px;
+}
+
+.stageStrip {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: 100vw;
+  height: calc(var(--su) * 60);
+  background-image: url("/images/bazaar4/arch/wf-strip.png");
+  background-size: calc(var(--su) * 300) calc(var(--su) * 60);
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* sign flicker: hover blips the lit face off, revealing the dark tube */
+.stageSign img.signOn {
+  position: absolute;
+  inset: 0;
+}
+
+.stageSign:hover .signOn {
+  animation: signFlicker 1.2s steps(1, end) infinite;
+}
+
+@keyframes signFlicker {
+  0%,
+  7% {
+    opacity: 1;
+  }
+  8%,
+  11% {
+    opacity: 0;
+  }
+  12%,
+  38% {
+    opacity: 1;
+  }
+  39%,
+  41% {
+    opacity: 0;
+  }
+  42%,
+  74% {
+    opacity: 1;
+  }
+  75%,
+  77% {
+    opacity: 0;
+  }
+  78%,
+  100% {
+    opacity: 1;
+  }
+}
+
+/* editor-spawnable lighting spots */
+.glowSpot {
+  position: absolute;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+:global(body.bz4-editing) .glowSpot {
+  pointer-events: auto;
+}
+
+.editInvGlows {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.editInvGlow {
+  height: 44px;
+  border: 1px solid #2a2e35;
+  background-color: #14161a;
+  color: #cfd3d8;
+  font: inherit;
+  cursor: pointer;
+}
+
+.editInvGlow:hover {
+  border-color: #37f7e0;
+}
+
+/* HITBOX mode: the two composition areas per floor */
+[data-hitbox] .floorStage {
+  outline: 2px dashed rgb(75 210 225 / 0.6);
+  background: rgb(75 210 225 / 0.04);
+}
+
+[data-hitbox] .stairsSim {
+  outline: 2px dashed rgb(255 210 107 / 0.7);
+  background: rgb(255 210 107 / 0.05);
+}
+
+.holoFlicker img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+div.holoFlicker {
+  position: absolute;
+  inset: 0;
+}

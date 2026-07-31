@@ -6,8 +6,10 @@ import {
   type CrosswordState,
   createCrosswordState,
   crosswordReducer,
+  formatTime,
   restoreCrosswordState,
   serializeCrosswordState,
+  shareCard,
 } from './crossword-engine.ts'
 
 /* 2×2 fixture: cell 0 is a block, cells 1..3 hold A B C */
@@ -318,4 +320,48 @@ test('a playing save keeps a valid clock and restarts a broken one', () => {
   assert.ok(repaired)
   assert.equal(repaired.status, 'playing')
   assert.ok((repaired.runStartedAt ?? 0) >= before)
+})
+
+test('formatTime renders minutes and grows an hour part on demand', () => {
+  assert.equal(formatTime(0), '0:00')
+  assert.equal(formatTime(754_000), '12:34')
+  assert.equal(formatTime(3_661_000), '1:01:01')
+})
+
+test('shareCard prints a clean solve as all-green rows', () => {
+  const state: CrosswordState = { ...initial, elapsedMs: 754_000 }
+  assert.equal(
+    shareCard(puzzle, state),
+    [
+      'CROSSWORDS 2026-07-29 🗞️',
+      '🟩🟩',
+      '⏱️ 12:34 · sospedra.me/crosswords',
+    ].join('\n'),
+  )
+})
+
+test('shareCard marks checked rows yellow and revealed rows red', () => {
+  const state: CrosswordState = {
+    ...initial,
+    checkedCells: [false, true, false, false],
+    revealedCells: [false, false, false, true],
+  }
+  assert.equal(shareCard(puzzle, state).split('\n')[1], '🟨🟥')
+})
+
+test('shareCard lets a reveal outrank a check in the same row', () => {
+  const state: CrosswordState = {
+    ...initial,
+    checkedCells: [false, false, true, false],
+    revealedCells: [false, false, false, true],
+  }
+  assert.equal(shareCard(puzzle, state).split('\n')[1], '🟩🟥')
+})
+
+test('shareCard brands the spanish edition as crucigrama', () => {
+  const spanish = { ...puzzle, locale: 'es' as const }
+  assert.equal(
+    shareCard(spanish, initial).split('\n')[0],
+    'CRUCIGRAMA 2026-07-29 🗞️',
+  )
 })

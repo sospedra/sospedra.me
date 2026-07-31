@@ -294,6 +294,10 @@
 
 .brandBlock h1 {
   overflow: hidden;
+
+  /* The 0.95 line box beheads descenders (the g in Crucigrama); pad the
+     clip window below the baseline. The centered masthead row absorbs it. */
+  padding-bottom: 0.25em;
   color: var(--cw-ink);
   font: 750 clamp(1.45rem, 2vw, 2rem) / 0.95 var(--font-body);
   letter-spacing: -0.045em;
@@ -964,16 +968,53 @@
   overflow: hidden;
 }
 
+/* Same plate-and-recess grammar as the grid: a raised shell tray holds
+   the clue sheet pressed into a paper well. */
 .clueGroup {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 50%);
+  border-radius: 0.55rem;
+  padding: 0.32rem;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 62%), transparent 30%), #c6cacf;
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 78%),
+    inset -1px -1px 0 rgb(69 71 78 / 14%),
+    -5px -5px 12px rgb(255 255 255 / 55%),
+    6px 8px 16px rgb(45 49 56 / 16%);
+}
+
+.cluePaper {
+  position: relative;
+
+  /* Safari only honors the rounded clip from a stacking context. */
+  isolation: isolate;
   display: grid;
   min-width: 0;
   min-height: 0;
   grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
-  border: 0;
-  border-radius: 0.55rem;
+  border-radius: 0.26rem;
   background: var(--cw-paper);
-  box-shadow: var(--cw-plate-shadow);
+}
+
+/* Child backgrounds paint over a parent inset shadow, so the well sits
+   on an overlay above the sheet. */
+.cluePaper::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 2px 2px 6px rgb(118 114 100 / 42%),
+    inset -2px -2px 6px rgb(255 255 255 / 55%),
+    inset 0 0 0 1px rgb(32 33 38 / 12%);
+  content: "";
+  pointer-events: none;
 }
 
 .clueHeading {
@@ -984,6 +1025,9 @@
   justify-content: space-between;
   gap: 0.65rem;
   border-bottom: 1px solid #cbc8bf;
+
+  /* Round the strip itself: the paper's overflow clip misses it in Safari. */
+  border-radius: 0.26rem 0.26rem 0 0;
   padding: 0.3rem 0.6rem;
   color: var(--cw-ink);
   background: #ece9df;
@@ -1017,11 +1061,20 @@
   background: var(--cw-paper);
   scrollbar-color: #9fa1a5 transparent;
   scrollbar-width: thin;
+
+  /* Rows leave through a fade instead of a hard slice at the well edge. */
+  mask-image: linear-gradient(
+    180deg,
+    transparent,
+    #000 0.4rem,
+    #000 calc(100% - 1rem),
+    transparent
+  );
 }
 
 .clueList {
   margin: 0;
-  padding: 0;
+  padding: 0 0 0.9rem;
   list-style: none;
 }
 
@@ -2119,7 +2172,79 @@
 }
 
 .completionDialog {
+  position: relative;
   width: min(38rem, calc(100vw - 1.5rem));
+}
+
+.completionDialog[open] {
+  animation: cw-complete-in 420ms var(--cw-ease);
+}
+
+/* Short screens keep the scroll; tall ones free the confetti to fly
+   past the panel over the backdrop. */
+@media (min-height: 34rem) {
+  .completionDialog {
+    overflow: visible;
+  }
+}
+
+@keyframes cw-complete-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.9rem) scale(0.96);
+  }
+}
+
+.confettiBurst {
+  position: absolute;
+  z-index: 5;
+  top: 3.4rem;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.confettiPiece {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: var(--cw-cf-w);
+  height: var(--cw-cf-h);
+  border-radius: 0.09rem;
+  background: var(--cw-cf-tone);
+  opacity: 0;
+  animation: cw-confetti var(--cw-cf-duration) var(--cw-cf-delay) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes cw-confetti {
+  0% {
+    animation-timing-function: ease-out;
+    opacity: 0;
+    transform: translate3d(0, 0.4rem, 0) rotate3d(1, 0.7, 0.4, 0deg);
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  26% {
+    animation-timing-function: ease-in;
+    transform: translate3d(calc(var(--cw-cf-x) * 0.45), var(--cw-cf-peak), 0)
+      rotate3d(1, 0.7, 0.4, calc(var(--cw-cf-spin) * 0.35));
+  }
+
+  78% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--cw-cf-x), var(--cw-cf-fall), 0)
+      rotate3d(1, 0.7, 0.4, var(--cw-cf-spin));
+  }
 }
 
 .completionMark {
@@ -2128,7 +2253,30 @@
   grid-template-columns: repeat(2, 4rem);
   place-content: center;
   gap: 0.35rem;
+  border-radius: calc(0.72rem - 1px) calc(0.72rem - 1px) 0 0;
   background: var(--cw-display);
+}
+
+.completionDialog[open] .completionMark span {
+  animation: cw-mark-pop 560ms var(--cw-ease) both;
+}
+
+.completionDialog[open] .completionMark span:last-child {
+  animation-delay: 90ms;
+}
+
+@keyframes cw-mark-pop {
+  0% {
+    transform: scale(0.4);
+  }
+
+  62% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: none;
+  }
 }
 
 .completionMark span {
@@ -2629,7 +2777,17 @@
     height: 100%;
     border: 0;
     border-radius: 0;
+    padding: 0;
+    background: var(--cw-paper);
     box-shadow: none;
+  }
+
+  .mobileClueList .cluePaper {
+    border-radius: 0;
+  }
+
+  .mobileClueList .cluePaper::after {
+    display: none;
   }
 
   .mobileClueList .clueHeading {
@@ -2954,10 +3112,19 @@
   .grid,
   .gridRegion,
   .clueGroup,
+  .cluePaper,
   .mobileClueList {
     color: CanvasText;
     background: Canvas;
     forced-color-adjust: none;
+  }
+
+  .cluePaper::after {
+    display: none;
+  }
+
+  .clueScroller {
+    mask-image: none;
   }
 
   .cell,
@@ -2992,8 +3159,14 @@
   .cell[data-sweep="true"],
   .sweepRail,
   .sweepHead,
-  .sweepRegister {
+  .sweepRegister,
+  .completionDialog[open],
+  .completionDialog[open] .completionMark span {
     animation: none;
+  }
+
+  .confettiBurst {
+    display: none;
   }
 
   .sweepHead {
@@ -3028,8 +3201,14 @@
 :global(.fx-quiet) .cell[data-sweep="true"],
 :global(.fx-quiet) .sweepRail,
 :global(.fx-quiet) .sweepHead,
-:global(.fx-quiet) .sweepRegister {
+:global(.fx-quiet) .sweepRegister,
+:global(.fx-quiet) .completionDialog[open],
+:global(.fx-quiet) .completionDialog[open] .completionMark span {
   animation: none;
+}
+
+:global(.fx-quiet) .confettiBurst {
+  display: none;
 }
 
 :global(.fx-quiet) .sweepHead {
