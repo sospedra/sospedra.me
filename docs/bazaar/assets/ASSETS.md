@@ -56,3 +56,20 @@
 
 Shipped assets are NOT duplicated here; they live in
 public/images/bazaar4/ (hand-polish law applies there).
+
+## harness-shots/ (the method's own UI, captured live)
+
+- gate-index / gate-r22 / gate-r23 / gate-r24 — the SM stairs gate
+  pages: candidate probes side by side with measured aspect + deck
+  lines and LAW PASS verdicts. How rulings happened.
+- gallery-gen9-wars — the r20.9/r20.10 war board: six tests, probes,
+  references, verdict captions.
+- gallery-orders-viewer — the 30 stall-war order texts viewer (the
+  audit that convicted the shared prompt body).
+- gallery-stall-war / gallery-ed-war — the raw 30-gen war boards as
+  the user judged them.
+- gallery-console-candidates — rounds 1-3 A/B/C console candidates.
+- street-compare — the r18 street kit compare harness (composed
+  stages + animation lab + per-asset grid).
+- deco-inspect — the r19 decoration inspector.
+- anim-preview-all — the r17 eight-stall animation preview runtime.
