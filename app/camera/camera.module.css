@@ -1370,17 +1370,25 @@
   position: absolute;
   z-index: 2;
   top: 1px;
-  right: 4px;
+  right: -15px;
   display: block;
-  width: 28px;
+  width: 30px;
   height: 12px;
   border: 1px solid #151817;
   background:
     radial-gradient(
-      circle at 9px 6px,
-      #1d211f 0 2px,
-      #73766c 2.5px 3.5px,
-      transparent 4px
+      circle at 8px 6px,
+      #111413 0 2px,
+      #555b55 2.5px 3px,
+      #181c1a 3.5px 4px,
+      transparent 4.5px
+    ),
+    radial-gradient(
+      circle at 22px 6px,
+      #111413 0 2px,
+      #555b55 2.5px 3px,
+      #181c1a 3.5px 4px,
+      transparent 4.5px
     ),
     linear-gradient(155deg, #6f746c, #373c39 56%, #191d1c);
   box-shadow:
@@ -2009,20 +2017,20 @@
   }
 
   48% {
-    transform: translateX(-88px);
+    transform: translateX(-101px);
   }
 
   54% {
-    transform: translateX(-91px);
+    transform: translateX(-104px);
   }
 
   58%,
   64% {
-    transform: translateX(-88px);
+    transform: translateX(-101px);
   }
 
   82% {
-    transform: translateX(-32px);
+    transform: translateX(-38px);
   }
 
   100% {
