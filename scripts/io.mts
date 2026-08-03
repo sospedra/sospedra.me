@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs'
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
-export const abs = (pathname: string) => join(process.cwd(), pathname)
+export const absolute = (pathname: string) => join(process.cwd(), pathname)
 
 export async function readJson<T>(filename: string, fallback: T) {
   if (!existsSync(filename)) return fallback

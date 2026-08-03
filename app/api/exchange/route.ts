@@ -1,19 +1,18 @@
 import { connection } from 'next/server'
+import { isRecord } from 'services/is-record'
+import { DAY_MS, utcDayString } from 'services/time'
 import { sendMessage } from './telegram'
 
 const RATE_THRESHOLD = 0.85
-const DAY_MS = 24 * 60 * 60 * 1000
 
 const eurRateFrom = (payload: unknown): number | null => {
-  if (typeof payload !== 'object' || payload === null) return null
-  const rates = (payload as { rates?: unknown }).rates
-  if (typeof rates !== 'object' || rates === null) return null
-  const eur = (rates as { EUR?: unknown }).EUR
+  if (!isRecord(payload) || !isRecord(payload.rates)) return null
+  const eur = payload.rates.EUR
   return typeof eur === 'number' && Number.isFinite(eur) ? eur : null
 }
 
 const fetchRate = async (date: Date): Promise<number | null> => {
-  const day = date.toISOString().slice(0, 10)
+  const day = utcDayString(date)
   const response = await fetch(
     `https://api.exchangeratesapi.io/${day}?base=USD&symbols=EUR`,
     { signal: AbortSignal.timeout(10_000) },

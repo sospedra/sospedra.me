@@ -1,7 +1,6 @@
 import { clamp } from 'es-toolkit'
 import { useEffect, useState } from 'react'
-
-const DAY_MS = 86_400_000
+import { DAY_MS } from './time.ts'
 
 export type DailyCountdown =
   | { status: 'pending' }

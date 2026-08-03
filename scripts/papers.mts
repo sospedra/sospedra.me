@@ -1,6 +1,6 @@
 import { readdir } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
-import { abs, readJson, writeJson } from './io.mts'
+import { absolute, readJson, writeJson } from './io.mts'
 
 export type Metadata = {
   createdAt: string
@@ -20,7 +20,7 @@ export const isImage = (file: string) => IMAGE_RE.test(file)
 
 export const isMdx = (file: string) => file.endsWith('.mdx')
 
-export const paperDir = (slug: string) => abs(join('repo/papers', slug))
+export const paperDir = (slug: string) => absolute(join('repo/papers', slug))
 
 export const slugFromPaperFile = (filename: string) =>
   basename(dirname(filename))
@@ -50,7 +50,9 @@ export const defaultMetadata = (slug: string): Metadata => {
 }
 
 export const listPapers = async () => {
-  const entries = await readdir(abs('repo/papers'), { withFileTypes: true })
+  const entries = await readdir(absolute('repo/papers'), {
+    withFileTypes: true,
+  })
   return entries
     .filter((entry) => entry.isDirectory())
     .map((entry) => entry.name)

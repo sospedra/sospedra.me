@@ -1,9 +1,7 @@
 import type { Tone } from './command-shell'
 import { EYE_ART } from './console-art'
 
-// an intro op prints a line (eye/text) or clears to the next screen; `hold`
-// is the pause after it. The three screens sum to roughly 12 seconds.
-export type Op = {
+export type IntroOp = {
   kind: 'eye' | 'text' | 'clear'
   text?: string
   tone?: Tone
@@ -12,21 +10,23 @@ export type Op = {
 
 const EYE_LINES = EYE_ART.split('\n')
 
-// award-bios style ascii table, fixed width so columns align in any font.
-// inner width TW = left col (29) + right col (25) + 2 padding spaces
-const TW = 56
-const rule = () => `+${'-'.repeat(TW)}+`
+// inner width 56 = left column 29 + right column 25 + 2 padding spaces
+const TABLE_WIDTH = 56
+const rule = () => `+${'-'.repeat(TABLE_WIDTH)}+`
 const barTitle = (title: string) => {
   const label = `[ ${title} ]`
-  const pad = TW - label.length
+  const pad = TABLE_WIDTH - label.length
   const left = Math.floor(pad / 2)
   return `+${'='.repeat(left)}${label}${'='.repeat(pad - left)}+`
 }
-const trow = (left: string, right: string) =>
+const tableRow = (left: string, right: string) =>
   `| ${left.padEnd(29)}${right.padEnd(25)} |`
 
-export const buildIntroOps = (assetCount: number, linkCount: number): Op[] => [
-  ...EYE_LINES.map((text): Op => ({ kind: 'eye', text, hold: 70 })),
+export const buildIntroOps = (
+  assetCount: number,
+  linkCount: number,
+): IntroOp[] => [
+  ...EYE_LINES.map((text): IntroOp => ({ kind: 'eye', text, hold: 70 })),
   { kind: 'text', text: '', hold: 140 },
   {
     kind: 'text',
@@ -58,27 +58,27 @@ export const buildIntroOps = (assetCount: number, linkCount: number): Op[] => [
   },
   {
     kind: 'text',
-    text: trow('Main Processor : Pentium 66', 'Base Memory  : 640K'),
+    text: tableRow('Main Processor : Pentium 66', 'Base Memory  : 640K'),
     hold: 130,
   },
   {
     kind: 'text',
-    text: trow('Numeric Copro. : Present', 'Ext. Memory  : 15M'),
+    text: tableRow('Numeric Copro. : Present', 'Ext. Memory  : 15M'),
     hold: 130,
   },
   {
     kind: 'text',
-    text: trow('Floppy Drive A : 1.44M 3.5"', 'Cache Memory : 256K'),
+    text: tableRow('Floppy Drive A : 1.44M 3.5"', 'Cache Memory : 256K'),
     hold: 130,
   },
   {
     kind: 'text',
-    text: trow('Display Type   : EGA / VGA', 'Serial Port  : 03F8'),
+    text: tableRow('Display Type   : EGA / VGA', 'Serial Port  : 03F8'),
     hold: 130,
   },
   {
     kind: 'text',
-    text: trow(
+    text: tableRow(
       `Drive S:       : R/O ${assetCount}`,
       `Link Registry: ${linkCount}`,
     ),

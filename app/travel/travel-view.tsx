@@ -140,7 +140,6 @@ const mixChannel = (from: number, to: number, t: number): number =>
 const mixRgb = (from: Rgb, to: Rgb, t: number): string =>
   `rgb(${mixChannel(from[0], to[0], t)} ${mixChannel(from[1], to[1], t)} ${mixChannel(from[2], to[2], t)})`
 
-// the sun ages from young yellow to swollen red across the loop
 const sunStyle = (phase: number): CSSProperties =>
   ({
     '--sun-core': mixRgb(SUN_CORE_YOUNG, SUN_CORE_OLD, phase),
@@ -760,7 +759,6 @@ export default function TravelView() {
   }, [travelAudio])
 
   const turnOff = (event: ReactMouseEvent<HTMLAnchorElement>) => {
-    // own the exit timing: the rocker flips, the scope collapses, then we go
     event.preventDefault()
     if (poweredOff) return
     setPoweredOff(true)

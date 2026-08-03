@@ -32,21 +32,16 @@ export const Provider: React.FunctionComponent<{
   // timer, not spring onStart: v10 fires onStart only from idle,
   // so retargeting a running background pan would never unmount
   useEffect(() => {
-    if (!transition.hasRequestedUnmount) return
+    if (transition.phase !== 'departing') return
     const timer = setTimeout(transition.unmount, UNMOUNT_DELAY_MS)
     return () => clearTimeout(timer)
-  }, [transition.hasRequestedUnmount, transition.unmount])
+  }, [transition.phase, transition.unmount])
 
+  const pushUrl = transition.phase === 'unmounting' ? transition.url : null
   useEffect(() => {
-    if (!transition.hasRequestedUnmount || !transition.willUnmount) return
-    if (transition.url === '') return
-    router.push(transition.url)
-  }, [
-    transition.hasRequestedUnmount,
-    transition.willUnmount,
-    transition.url,
-    router.push,
-  ])
+    if (pushUrl === null) return
+    router.push(pushUrl)
+  }, [pushUrl, router.push])
 
   return (
     <TransitionCTX.Provider value={transition}>

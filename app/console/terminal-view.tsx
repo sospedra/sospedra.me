@@ -61,8 +61,6 @@ const CONSOLE_HELP: ReadonlyArray<readonly [string, string]> = [
   ...HELP.slice(2),
 ]
 
-// hackertyper pacing: chars of kernel per keypress, banner threshold
-const HACKER_CHUNK = 3
 const GRANTED_AT = 420
 const ANIM_FRAME_MS = 140
 const HDD_VOLUME = 0.16
@@ -265,16 +263,9 @@ export default function TerminalView(props: {
   useGameInput()
   const [state, dispatch] = useReducer(reduce, undefined, initialState)
   const [value, setValue] = useState('')
-  const [intro, setIntro] = useState(0)
+  const [introShown, setIntroShown] = useState(0)
   const [ready, setReady] = useState(false)
-  // true when autoplay was blocked: we wait for a keypress to boot with sound
-  const [gated, setGated] = useState(false)
   const [muted, setMuted] = useState(false)
-  // null = shell mode, a number = hackertyper mode at that many chars typed
-  const [hackerPos, setHackerPos] = useState<number | null>(null)
-  const [anim, setAnim] = useState<{ frames: string[]; index: number } | null>(
-    null,
-  )
   const [introOps] = useState(() => buildIntroOps(paths.length, links.length))
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -283,14 +274,11 @@ export default function TerminalView(props: {
   const audioCtxRef = useRef<AudioContext | null>(null)
   const mutedRef = useRef(muted)
   mutedRef.current = muted
-  const seqTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const introTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   const historyRef = useRef({ list: [] as string[], cursor: 0 })
-  const hacking = hackerPos !== null
-  const animating = anim !== null
-  const hackingRef = useRef(false)
-  hackingRef.current = hacking
-  const animatingRef = useRef(false)
-  animatingRef.current = animating
+  const mode = state.mode
+  const modeRef = useRef(mode)
+  modeRef.current = mode
 
   const note = (output: ConsoleOutput[]) => dispatch({ type: 'note', output })
 
@@ -319,17 +307,12 @@ export default function TerminalView(props: {
         void copyToClipboard(effect.text)
         return
       case 'clear':
-        dispatch({ type: 'clear' })
         return
       case 'exit':
         router.push('/')
         return
       case 'hacker':
-        setHackerPos(0)
-        inputRef.current?.blur()
-        return
       case 'animate':
-        setAnim({ frames: effect.frames, index: 0 })
         inputRef.current?.blur()
         return
       case 'toggle-audio':
@@ -382,22 +365,22 @@ export default function TerminalView(props: {
   executeRef.current = execute
 
   const runSequence = () => {
-    clearTimeout(seqTimer.current)
+    clearTimeout(introTimer.current)
     let shown = 0
     const tick = () => {
       shown += 1
-      setIntro(shown)
+      setIntroShown(shown)
       const hold = introOps[shown - 1].hold
       if (shown < introOps.length) {
-        seqTimer.current = setTimeout(tick, hold)
+        introTimer.current = setTimeout(tick, hold)
         return
       }
-      seqTimer.current = setTimeout(() => {
+      introTimer.current = setTimeout(() => {
         setReady(true)
         executeRef.current(['ls'])
       }, hold)
     }
-    seqTimer.current = setTimeout(tick, 300)
+    introTimer.current = setTimeout(tick, 300)
   }
   const runSequenceRef = useRef(runSequence)
   runSequenceRef.current = runSequence
@@ -435,14 +418,12 @@ export default function TerminalView(props: {
   }
 
   const startBoot = () => {
-    setGated(false)
+    dispatch({ type: 'boot' })
     audioRef.current?.play().catch(() => {})
     runSequence()
   }
   const startBootRef = useRef(startBoot)
   startBootRef.current = startBoot
-  const gatedRef = useRef(false)
-  gatedRef.current = gated
 
   const submit = () => {
     const command = value.trim()
@@ -490,66 +471,56 @@ export default function TerminalView(props: {
     if (event.key === 'ArrowDown') return recall(event, 1)
   }
 
-  const noteRef = useRef(note)
-  noteRef.current = note
   const clickKeyRef = useRef(clickKey)
   clickKeyRef.current = clickKey
 
-  // fkeys fire globally, clicks on dead glass refocus the prompt;
-  // in hacker mode every key feeds the feed and escape bails
   useEffect(() => {
     const onHackerKey = (event: KeyboardEvent) => {
       event.preventDefault()
       clickKeyRef.current()
       if (event.key === 'Escape') {
-        setHackerPos(null)
-        noteRef.current([
-          {
-            kind: 'text',
-            text: 'ACCESS GRANTED · trace wiped · welcome back to S-DOS',
-            tone: 'bright',
-          },
-        ])
-        inputRef.current?.focus({ preventScroll: true })
+        dispatch({ type: 'hacker-exit' })
         return
       }
-      setHackerPos((pos) => (pos ?? 0) + HACKER_CHUNK)
+      dispatch({ type: 'hacker-type' })
     }
     const onWindowKeyDown = (event: KeyboardEvent) => {
-      if (gatedRef.current) {
-        event.preventDefault()
-        startBootRef.current()
-        return
+      switch (modeRef.current.kind) {
+        case 'gated':
+          event.preventDefault()
+          startBootRef.current()
+          return
+        case 'anim':
+          event.preventDefault()
+          dispatch({ type: 'anim-stop' })
+          return
+        case 'hacker':
+          onHackerKey(event)
+          return
+        case 'shell': {
+          const command = FKEY_COMMANDS[event.key]
+          if (!command) return
+          event.preventDefault()
+          executeRef.current([command])
+        }
       }
-      if (animatingRef.current) {
-        event.preventDefault()
-        setAnim(null)
-        inputRef.current?.focus({ preventScroll: true })
-        return
-      }
-      if (hackingRef.current) return onHackerKey(event)
-      const command = FKEY_COMMANDS[event.key]
-      if (!command) return
-      event.preventDefault()
-      executeRef.current([command])
     }
     const onWindowClick = (event: MouseEvent) => {
-      if (gatedRef.current) {
-        startBootRef.current()
-        return
+      switch (modeRef.current.kind) {
+        case 'gated':
+          startBootRef.current()
+          return
+        case 'anim':
+          dispatch({ type: 'anim-stop' })
+          return
+        case 'hacker':
+          dispatch({ type: 'hacker-type' })
+          return
+        case 'shell':
+          if (isInteractive(event.target)) return
+          if (window.getSelection()?.toString()) return
+          inputRef.current?.focus({ preventScroll: true })
       }
-      if (animatingRef.current) {
-        setAnim(null)
-        inputRef.current?.focus({ preventScroll: true })
-        return
-      }
-      if (hackingRef.current) {
-        setHackerPos((pos) => (pos ?? 0) + HACKER_CHUNK)
-        return
-      }
-      if (isInteractive(event.target)) return
-      if (window.getSelection()?.toString()) return
-      inputRef.current?.focus({ preventScroll: true })
     }
     window.addEventListener('keydown', onWindowKeyDown)
     window.addEventListener('click', onWindowClick)
@@ -565,9 +536,8 @@ export default function TerminalView(props: {
     setMuted(storedMute)
   }, [])
 
-  // boot on load with sound. reduced motion skips straight to the shell.
-  // audio needs a user gesture: after an in-app click autoplay is allowed, so
-  // we try it; if the browser blocks it we gate on a keypress instead.
+  // autoplay needs a prior user gesture: try, and gate on a keypress when the
+  // browser blocks it. Reduced motion skips straight to the shell.
   useEffect(() => {
     const reduced = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
@@ -585,16 +555,16 @@ export default function TerminalView(props: {
     } else {
       play
         .then(() => runSequenceRef.current())
-        .catch((err: DOMException) => {
+        .catch((error: DOMException) => {
           // NotAllowedError = autoplay blocked; anything else = no/bad audio file
-          if (err?.name === 'NotAllowedError') setGated(true)
+          if (error?.name === 'NotAllowedError') dispatch({ type: 'gate' })
           else runSequenceRef.current()
         })
     }
-    return () => clearTimeout(seqTimer.current)
+    return () => clearTimeout(introTimer.current)
   }, [])
 
-  const showScroll = !hacking && !animating && !gated
+  const showScroll = mode.kind === 'shell'
 
   useEffect(() => {
     if (audioRef.current) audioRef.current.muted = muted
@@ -606,31 +576,28 @@ export default function TerminalView(props: {
   }, [ready, showScroll])
 
   useEffect(() => {
-    if (!animating) return
-    const timer = setInterval(() => {
-      setAnim((current) =>
-        current
-          ? { ...current, index: (current.index + 1) % current.frames.length }
-          : current,
-      )
-    }, ANIM_FRAME_MS)
+    if (mode.kind !== 'anim') return
+    const timer = setInterval(
+      () => dispatch({ type: 'anim-tick' }),
+      ANIM_FRAME_MS,
+    )
     return () => clearInterval(timer)
-  }, [animating])
+  }, [mode.kind])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: these are the scroll triggers, not values read
   useEffect(() => {
     const node = scrollRef.current
     if (node) node.scrollTop = node.scrollHeight
-  }, [state.entries, hackerPos, intro])
+  }, [state.entries, mode, introShown])
 
-  const hackerText = hacking
-    ? HACKER_SOURCE.repeat(
-        Math.floor(hackerPos / HACKER_SOURCE.length) + 1,
-      ).slice(0, hackerPos)
-    : ''
+  const hackerText =
+    mode.kind === 'hacker'
+      ? HACKER_SOURCE.repeat(
+          Math.floor(mode.typed / HACKER_SOURCE.length) + 1,
+        ).slice(0, mode.typed)
+      : ''
 
-  // only the current screen is on the tube: start after the last clear shown
-  const shownOps = introOps.slice(0, intro)
+  const shownOps = introOps.slice(0, introShown)
   const screenStart = shownOps.findLastIndex((op) => op.kind === 'clear') + 1
   const screenOps = shownOps.slice(screenStart)
 
@@ -640,7 +607,7 @@ export default function TerminalView(props: {
       <div className={css.machine}>
         <span
           className={css.bootPilot}
-          data-active={!ready || gated}
+          data-active={!ready || mode.kind === 'gated'}
           aria-hidden='true'
         >
           <i />
@@ -661,7 +628,7 @@ export default function TerminalView(props: {
             <source src='/sounds/hdd.m4a' type='audio/mp4' />
           </audio>
 
-          {gated && (
+          {mode.kind === 'gated' && (
             <button
               type='button'
               className={css.gate}
@@ -673,20 +640,20 @@ export default function TerminalView(props: {
             </button>
           )}
 
-          {animating && (
+          {mode.kind === 'anim' && (
             <div className={css.animStage}>
               <p className='sr-only'>
                 Playing an ascii animation. Any key stops.
               </p>
               <pre className={css.animArt} aria-hidden='true'>
-                {anim?.frames[anim.index]}
+                {mode.frames[mode.index]}
               </pre>
             </div>
           )}
 
-          {(hacking || showScroll) && (
+          {(mode.kind === 'hacker' || showScroll) && (
             <div className={css.scroll} ref={scrollRef}>
-              {hacking && (
+              {mode.kind === 'hacker' && (
                 <>
                   <p className='sr-only'>
                     Hacker mode. Any key types code, Escape exits.
@@ -781,7 +748,7 @@ export default function TerminalView(props: {
               )}
             </div>
           )}
-          {hacking && hackerPos >= GRANTED_AT && (
+          {mode.kind === 'hacker' && mode.typed >= GRANTED_AT && (
             <p className={css.granted} aria-hidden='true'>
               ACCESS GRANTED
             </p>

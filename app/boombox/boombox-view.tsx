@@ -7,7 +7,8 @@ import {
   useDailyCountdown,
 } from 'services/daily-countdown'
 import { useGameInput } from 'services/hotkeys'
-import { shareText } from 'services/share'
+import { isRecord } from 'services/is-record'
+import { shareHandled, shareText } from 'services/share'
 import { readLocalJson, writeLocalJson } from 'services/storage'
 import css from './boombox.module.css'
 import { createDeckSfx, type DeckSfx } from './deck-sfx'
@@ -79,7 +80,6 @@ const SCORE_LABEL = {
   year: 'Right year',
 } satisfies Record<GuessScore, string>
 
-/* pen margin notes; partial matches earn a scribble, not an emoji */
 const SCORE_NOTE = {
   album: 'right album!',
   artist: 'right artist!',
@@ -95,9 +95,6 @@ const STAGES = {
   play: true,
   won: true,
 } satisfies Record<BoomboxState['stage'], true>
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null
 
 const isStage = (value: string): value is BoomboxState['stage'] =>
   value in STAGES
@@ -141,7 +138,6 @@ const persistState = (state: BoomboxState) => {
   writeLocalJson(STORAGE_KEY, state)
 }
 
-/* the door greets you open, then the mechanism swallows the tape */
 const useDoorGreeting = () => {
   const [doorOpen, setDoorOpen] = useState(true)
 
@@ -197,7 +193,6 @@ const tickerZone = (at: number) => {
   return 'green'
 }
 
-/* the cover sharpens with the unlock ladder, one more hint to earn */
 const coverBlurClass = (limit: number, stage: BoomboxState['stage']) => {
   if (stage !== 'play') return css.coverClear
   if (limit >= 11) return css.coverSoft
@@ -421,7 +416,6 @@ const Lcd = (props: {
   )
 }
 
-/* pressing a source key answers with two led blinks: green home, red deny */
 const FunctionRow = (props: { onPress: () => void }) => {
   const [blinking, setBlinking] = useState<string | null>(null)
   const blinkTimerRef = useRef(0)
@@ -864,11 +858,11 @@ export default function BoomboxView() {
 }
 
 function BoomboxMachine({
-  initialState: dayOne,
+  initialState: startState,
 }: {
   initialState: BoomboxState
 }) {
-  const [state, setState] = useState(dayOne)
+  const [state, setState] = useState(startState)
   const [tapeExpired, setTapeExpired] = useState(false)
   const [query, setQuery] = useState('')
   const [cursor, setCursor] = useState(0)
@@ -889,7 +883,6 @@ function BoomboxMachine({
   const playing = state.stage === 'play'
   const tapeSpan = playing ? FULL_UNLOCK : CLIP_SECONDS
 
-  /* stable identity: sfx feeds the motor effect below */
   const sfx = useCallback(() => {
     sfxRef.current ??= createDeckSfx()
     return sfxRef.current
@@ -910,7 +903,6 @@ function BoomboxMachine({
 
   useEffect(() => () => window.clearTimeout(copiedTimerRef.current), [])
 
-  /* the tape flips at 02:00 spain time; playing past it earns a door slip */
   useEffect(() => {
     const check = () => setTapeExpired(dayNumber(new Date()) !== state.day)
     const interval = setInterval(check, 30_000)
@@ -975,7 +967,7 @@ function BoomboxMachine({
     sfx().click()
     const card = shareCard(state)
     const outcome = await shareText({ text: card })
-    if (outcome === 'shared' || outcome === 'dismissed') return
+    if (shareHandled(outcome)) return
     await navigator.clipboard.writeText(card).catch(() => undefined)
     setCopied(true)
     window.clearTimeout(copiedTimerRef.current)

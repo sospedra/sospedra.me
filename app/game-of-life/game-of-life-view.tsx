@@ -395,12 +395,6 @@ export default function GameOfLifeView() {
 
     const handleShortcut = (event: globalThis.KeyboardEvent) => {
       if (event.defaultPrevented || event.repeat) return
-      if (event.key === 'Escape' && patternBayOpen) {
-        event.preventDefault()
-        playMechanicalSound('key')
-        setPatternBayOpen(false)
-        return
-      }
       if (event.metaKey || event.ctrlKey || event.altKey) return
       const target = event.target
       if (
@@ -424,7 +418,6 @@ export default function GameOfLifeView() {
     jumpToPresets,
     playMechanicalSound,
     resetUniverse,
-    patternBayOpen,
     state.cells,
     stepOnce,
     toggleRunning,

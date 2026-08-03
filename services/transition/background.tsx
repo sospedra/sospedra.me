@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTheme } from 'services/theme'
 import { sceneFor } from './altitude'
 import { useRouteTransition } from './context'
+import { destinationUrl } from './reducer'
 import Stars from './stars'
 import css from './transition.module.css'
 
@@ -29,17 +30,17 @@ const Animation: React.FunctionComponent<{
   isQuiet: boolean
 }> = ({ start, animation, isQuiet }) => {
   const pathname = usePathname() || '/'
-  const { url } = useRouteTransition()
+  const destination = destinationUrl(useRouteTransition()) ?? pathname
   const movement = useRef(0)
   const [isMoving, setIsMoving] = useState(false)
 
   useEffect(() => {
     const id = ++movement.current
     setIsMoving(!isQuiet)
-    start(getOffsetFromHref(url || pathname), isQuiet, () => {
+    start(getOffsetFromHref(destination), isQuiet, () => {
       if (id === movement.current) setIsMoving(false)
     })
-  }, [isQuiet, pathname, start, url])
+  }, [destination, isQuiet, start])
 
   return (
     <animated.div

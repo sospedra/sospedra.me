@@ -1,7 +1,7 @@
-import * as p from '@clack/prompts'
+import * as clack from '@clack/prompts'
 import * as cheerio from 'cheerio'
 import Sqids from 'sqids'
-import { abs, readJson, writeJson } from '../io.mts'
+import { absolute, readJson, writeJson } from '../io.mts'
 import { type Context, unwrap } from '../prompts.mts'
 
 const tiny = new Sqids({ alphabet: 'abcdefghijklmnopqrstuvwxyz', minLength: 4 })
@@ -19,7 +19,7 @@ const withProtocol = (input: string) =>
 
 const promptDestination = async () =>
   unwrap(
-    await p.text({
+    await clack.text({
       message: 'Destination URL',
       placeholder: 'example.com/some-page',
       validate: (value) => {
@@ -32,7 +32,9 @@ const promptDestination = async () =>
 const resolveListed = async ({ arg, hidden }: Context) => {
   if (hidden) return false
   if (arg !== undefined) return true
-  return unwrap(await p.confirm({ message: 'List it publicly on /rewrite?' }))
+  return unwrap(
+    await clack.confirm({ message: 'List it publicly on /rewrite?' }),
+  )
 }
 
 const fetchTitle = async (destination: string) => {
@@ -63,11 +65,11 @@ const nextSource = (rewrites: Rewrite[]) => {
   return `/r/${tiny.encode([Math.max(-1, ...sequences) + 1])}`
 }
 
-export default async function rewrite(ctx: Context) {
-  const input = ctx.arg ?? (await promptDestination())
+export default async function rewrite(context: Context) {
+  const input = context.arg ?? (await promptDestination())
   const destination = new URL(withProtocol(input)).href
 
-  const filename = abs('services/rewrites.json')
+  const filename = absolute('services/rewrites.json')
   const rewrites = await readJson<Rewrite[]>(filename, [])
   const taken = (url: string) =>
     rewrites.some((rewrite) => rewrite.destination === url)
@@ -81,9 +83,9 @@ export default async function rewrite(ctx: Context) {
     throw Error(`The code ${source} is already taken`)
   }
 
-  const listed = await resolveListed(ctx)
+  const listed = await resolveListed(context)
 
-  const spin = p.spinner()
+  const spin = clack.spinner()
   spin.start(`Fetching ${destination}`)
   const page = await fetchTitle(destination)
   spin.stop(`Resolved: ${page.title}`)

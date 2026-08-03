@@ -28,9 +28,8 @@ const meaningfulCharactersPattern = /[\p{L}\p{N}]/gu
 const wordSeparatorsPattern = /[\s\p{Pd}']+/gu
 
 /**
- * Produces a comparison key without changing the visible localized label.
- * NFKD plus mark removal makes accented and unaccented input equivalent,
- * while whitespace and common apostrophe variants become deterministic.
+ * NFKD plus mark removal makes accented and unaccented input equivalent.
+ * Whitespace and common apostrophe variants collapse to one form.
  */
 export const normalizeGeoAnswer = (value: string, locale: Locale) =>
   value
@@ -205,12 +204,6 @@ export const rankGeoAutocompleteIndex = (
     }))
 }
 
-/**
- * Returns deterministic, uniquely resolvable suggestions. Duplicate labels
- * that normalize to different option ids are intentionally omitted. Match
- * quality remains primary; within the same match tier, capital-city options
- * lead non-capital city options.
- */
 export const rankGeoAutocompleteCandidates = (
   input: string,
   options: readonly LocalizedOption[],
@@ -223,10 +216,6 @@ export const rankGeoAutocompleteCandidates = (
     config,
   )
 
-/**
- * Resolves only an exact normalized label. Ambiguous normalized labels return
- * null instead of silently choosing the first option.
- */
 export const resolveExactGeoOptionId = (
   input: string,
   options: readonly LocalizedOption[],

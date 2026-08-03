@@ -88,11 +88,6 @@ const challenge: DailyGeoChallenge = {
   ],
 }
 
-/**
- * Plays the whole fixture the way official runs happen in production: timed
- * rounds that only end when the shared clock expires. One hit, one miss, one
- * near-perfect pin.
- */
 const playThrough = (): GeoGameState => {
   const at = (second: number) =>
     new Date(
@@ -140,8 +135,6 @@ const playThrough = (): GeoGameState => {
 }
 
 test('untimed completion never masquerades as an official save', () => {
-  // Official runs are timed; the validator insists completed rounds show a
-  // full round clock, so an untimed-style save must be rejected, not trusted.
   const state = playThrough()
   const serialized = serializeGeoRun(state)
   assert.ok(serialized)

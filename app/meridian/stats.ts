@@ -1,3 +1,4 @@
+import { DAY_MS } from 'services/time'
 import type {
   AnswerResult,
   DailyGeoChallenge,
@@ -6,8 +7,6 @@ import type {
   RoundType,
 } from './model'
 import { isUtcPublicationDate } from './publication-date'
-
-export const DAY_MS = 86_400_000
 
 export interface RoundStatistics {
   type: RoundType
@@ -121,9 +120,6 @@ export const createOfficialRunRecord = ({
   }
 }
 
-/**
- * The first completed result for a challenge remains official.
- */
 export const recordOfficialRun = (
   stats: PersistedGeoStats,
   run: OfficialGeoRunRecord,

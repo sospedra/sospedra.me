@@ -1,6 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { cacheLife, cacheTag } from 'next/cache'
+import { DAY_MS, utcDayString } from 'services/time'
 import type { CrosswordChallengeFile } from './crossword-data'
 import {
   type SpanishDailyChallenge,
@@ -26,7 +27,7 @@ export async function loadRecentChallenges(): Promise<
 
   // The archive pre-generates years ahead; ship only editions up to the
   // render date plus one day so the newest published one is tomorrow's.
-  const horizon = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10)
+  const horizon = utcDayString(new Date(Date.now() + DAY_MS))
   const published = files.filter((file) => file.slice(0, 10) <= horizon)
   const picked = (published.length > 0 ? published : files).slice(-5)
   return Promise.all(

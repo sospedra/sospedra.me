@@ -1,11 +1,12 @@
-const MS_PER_DAY = 86_400_000
+import { DAY_MS } from '../../services/time.ts'
+
 const JULIAN_UNIX_EPOCH = 2_440_587.5
 const JULIAN_J2000 = 2_451_545
 const TAU = Math.PI * 2
 const ARCSECONDS_PER_RADIAN = 206_264.8062
 
 // The sidereal month closes the orbit against the background stars.
-const SIDEREAL_MONTH_MS = 27.321661 * MS_PER_DAY
+const SIDEREAL_MONTH_MS = 27.321661 * DAY_MS
 const MEAN_LUNAR_DISTANCE_KM = 384_400
 
 export type LunarGlobeVector = [x: number, y: number, z: number]
@@ -40,7 +41,7 @@ const wrapSignedDegrees = (value: number): number => ((value + 540) % 360) - 180
 const fraction = (value: number): number => value - Math.floor(value)
 
 const julianDate = (date: Date): number =>
-  date.getTime() / MS_PER_DAY + JULIAN_UNIX_EPOCH
+  date.getTime() / DAY_MS + JULIAN_UNIX_EPOCH
 
 /*
  * Montenbruck–Pfleger "MiniMoon" series. It is deliberately smaller than a
@@ -113,13 +114,13 @@ const lunarCoordinatesAt = (date: Date): LunarCoordinates => {
 
 const meanObliquity = (date: Date): number => {
   const centuries = (julianDate(date) - JULIAN_J2000) / 36_525
-  const t2 = centuries * centuries
-  const t3 = t2 * centuries
+  const centuriesSquared = centuries * centuries
+  const centuriesCubed = centuriesSquared * centuries
   return radians(
     23.439291111 -
       0.013004167 * centuries -
-      0.000000164 * t2 +
-      0.000000504 * t3,
+      0.000000164 * centuriesSquared +
+      0.000000504 * centuriesCubed,
   )
 }
 

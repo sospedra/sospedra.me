@@ -15,11 +15,11 @@ import {
   drawPolygon,
   drawRect,
   drawRoundedRect,
-  getPx,
-  type Pt,
+  getPixel,
+  type Point,
   type Rect,
   type ShapeStyle,
-  setPx,
+  setPixel,
   spray,
 } from './raster.ts'
 import {
@@ -35,11 +35,11 @@ import {
 } from './selection.ts'
 import {
   type Button,
-  INITIAL_H,
+  INITIAL_HEIGHT,
   INITIAL_PAINT,
-  INITIAL_W,
+  INITIAL_WIDTH,
   type Nub,
-  normRect,
+  normalizeRect,
   type PaintEvent,
   type PaintState,
   prospectiveSize,
@@ -55,21 +55,21 @@ const MARQUEE_DARK: Rgba = [0, 0, 0, 255]
 const MARQUEE_LIGHT: Rgba = [255, 255, 255, 255]
 const HANDLE_INK: Rgba = [0, 0, 128, 255]
 
-const hexOf = (px: Rgba): string =>
-  `#${[px[0], px[1], px[2]]
+const hexOf = (pixel: Rgba): string =>
+  `#${[pixel[0], pixel[1], pixel[2]]
     .map((channel) => channel.toString(16).padStart(2, '0'))
     .join('')}`
 
-const clone = (bmp: Bitmap): Snapshot => ({
-  data: bmp.data.slice(),
-  w: bmp.w,
-  h: bmp.h,
+const clone = (bitmap: Bitmap): Snapshot => ({
+  data: bitmap.data.slice(),
+  width: bitmap.width,
+  height: bitmap.height,
 })
 
-const emptyOverlay = (w: number, h: number): Bitmap => ({
-  data: new Uint8ClampedArray(w * h * 4),
-  w,
-  h,
+const emptyOverlay = (width: number, height: number): Bitmap => ({
+  data: new Uint8ClampedArray(width * height * 4),
+  width,
+  height,
 })
 
 const inkColor = (state: PaintState, button: Button): Rgba =>
@@ -84,23 +84,23 @@ const shapeStyle = (state: PaintState, button: Button): ShapeStyle => {
 }
 
 const freehandSegment = (
-  bmp: Bitmap,
+  bitmap: Bitmap,
   state: PaintState,
-  from: Pt,
-  to: Pt,
+  from: Point,
+  to: Point,
   button: Button,
 ): void => {
   const color = inkColor(state, button)
   if (state.tool === 'pencil') {
-    drawLine(bmp, from, to, { color, size: 1 })
+    drawLine(bitmap, from, to, { color, size: 1 })
     return
   }
   if (state.tool === 'brush') {
-    brushStroke(bmp, from, to, { ...state.options.brush, color })
+    brushStroke(bitmap, from, to, { ...state.options.brush, color })
     return
   }
   if (state.tool === 'eraser') {
-    brushStroke(bmp, from, to, {
+    brushStroke(bitmap, from, to, {
       shape: 'square',
       size: state.options.eraserSize,
       color: toRgba(state.bg),
@@ -109,33 +109,33 @@ const freehandSegment = (
 }
 
 const renderShape = (
-  bmp: Bitmap,
+  bitmap: Bitmap,
   state: PaintState,
-  from: Pt,
-  to: Pt,
+  from: Point,
+  to: Point,
   button: Button,
 ): void => {
   const style = shapeStyle(state, button)
   if (state.tool === 'line') {
-    drawLine(bmp, from, to, {
+    drawLine(bitmap, from, to, {
       color: inkColor(state, button),
       size: state.options.strokeSize,
     })
     return
   }
-  if (state.tool === 'rect') drawRect(bmp, from, to, style)
-  if (state.tool === 'ellipse') drawEllipse(bmp, from, to, style)
-  if (state.tool === 'rrect') drawRoundedRect(bmp, from, to, style)
+  if (state.tool === 'rect') drawRect(bitmap, from, to, style)
+  if (state.tool === 'ellipse') drawEllipse(bitmap, from, to, style)
+  if (state.tool === 'rrect') drawRoundedRect(bitmap, from, to, style)
 }
 
 const renderCurve = (
-  bmp: Bitmap,
+  bitmap: Bitmap,
   state: PaintState,
-  spec: { from: Pt; to: Pt; c1?: Pt; c2?: Pt },
+  spec: { from: Point; to: Point; c1?: Point; c2?: Point },
   button: Button,
 ): void => {
   const c1 = spec.c1 ?? spec.from
-  drawCurve(bmp, {
+  drawCurve(bitmap, {
     from: spec.from,
     to: spec.to,
     c1,
@@ -146,10 +146,10 @@ const renderCurve = (
 }
 
 const dashedRect = (scratch: Bitmap, rect: Rect): void => {
-  const x1 = rect.x + rect.w - 1
-  const y1 = rect.y + rect.h - 1
+  const x1 = rect.x + rect.width - 1
+  const y1 = rect.y + rect.height - 1
   const plot = (x: number, y: number) =>
-    setPx(scratch, x, y, (x + y) % 4 < 2 ? MARQUEE_DARK : MARQUEE_LIGHT)
+    setPixel(scratch, x, y, (x + y) % 4 < 2 ? MARQUEE_DARK : MARQUEE_LIGHT)
   for (let x = rect.x; x <= x1; x++) {
     plot(x, rect.y)
     plot(x, y1)
@@ -164,7 +164,7 @@ const drawHandles = (scratch: Bitmap, rect: Rect): void => {
   for (const [, point] of handlePoints(rect)) {
     fillRect(
       scratch,
-      { x: point.x - 1, y: point.y - 1, w: 3, h: 3 },
+      { x: point.x - 1, y: point.y - 1, width: 3, height: 3 },
       HANDLE_INK,
     )
   }
@@ -190,10 +190,10 @@ const renderSelection = (
   if (look.handles) drawHandles(scratch, rect)
 }
 
-const renderPreview = (scratch: Bitmap, state: PaintState, at: Pt): void => {
+const renderPreview = (scratch: Bitmap, state: PaintState, at: Point): void => {
   const mode = state.mode
   if (mode.kind === 'selecting') {
-    dashedRect(scratch, normRect(mode.from, at))
+    dashedRect(scratch, normalizeRect(mode.from, at))
     return
   }
   if (mode.kind === 'shaping') {
@@ -244,7 +244,7 @@ export type NubBindings = {
 export const usePaint = () => {
   const [state, dispatch] = useReducer(reduce, INITIAL_PAINT)
   const stateRef = useRef(state)
-  const bmpRef = useRef<Bitmap | null>(null)
+  const bitmapRef = useRef<Bitmap | null>(null)
   const scratchRef = useRef<Bitmap | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const overlayRef = useRef<HTMLCanvasElement | null>(null)
@@ -253,21 +253,25 @@ export const usePaint = () => {
   const strokeUndoRef = useRef<Snapshot | null>(null)
   const floatRef = useRef<Bitmap | null>(null)
   const clipboardRef = useRef<Bitmap | null>(null)
-  const lastPtRef = useRef<Pt>({ x: 0, y: 0 })
+  const lastPointRef = useRef<Point>({ x: 0, y: 0 })
   const sprayTimerRef = useRef<number | null>(null)
   const pointerIdRef = useRef<number | null>(null)
   const lastZoomRef = useRef<Magnification>(2)
-  const [hover, setHover] = useState<Pt | null>(null)
+  const [hover, setHover] = useState<Point | null>(null)
 
   useEffect(() => {
     stateRef.current = state
   })
 
   const blit = () => {
-    const bmp = bmpRef.current
+    const bitmap = bitmapRef.current
     const ctx = canvasRef.current?.getContext('2d')
-    if (!bmp || !ctx) return
-    ctx.putImageData(new ImageData(bmp.data, bmp.w, bmp.h), 0, 0)
+    if (!bitmap || !ctx) return
+    ctx.putImageData(
+      new ImageData(bitmap.data, bitmap.width, bitmap.height),
+      0,
+      0,
+    )
   }
 
   const clearOverlay = () => {
@@ -281,10 +285,14 @@ export const usePaint = () => {
     if (!scratch || !ctx) return
     scratch.data.fill(0)
     render(scratch)
-    ctx.putImageData(new ImageData(scratch.data, scratch.w, scratch.h), 0, 0)
+    ctx.putImageData(
+      new ImageData(scratch.data, scratch.width, scratch.height),
+      0,
+      0,
+    )
   }
 
-  const drawOverlay = (at: Pt) =>
+  const drawOverlay = (at: Point) =>
     paintOverlay((scratch) => renderPreview(scratch, stateRef.current, at))
 
   const transparencyKey = (): Rgba | undefined => {
@@ -321,48 +329,64 @@ export const usePaint = () => {
   // pixels: rebuild the backing buffers and repaint after every size change
   useEffect(() => {
     const size = state.size
-    if (!bmpRef.current) bmpRef.current = createBitmap(size.w, size.h)
+    if (!bitmapRef.current) {
+      bitmapRef.current = createBitmap(size.width, size.height)
+    }
     if (
       !scratchRef.current ||
-      scratchRef.current.w !== size.w ||
-      scratchRef.current.h !== size.h
+      scratchRef.current.width !== size.width ||
+      scratchRef.current.height !== size.height
     ) {
-      scratchRef.current = emptyOverlay(size.w, size.h)
+      scratchRef.current = emptyOverlay(size.width, size.height)
     }
-    const bmp = bmpRef.current
+    const bitmap = bitmapRef.current
     canvasRef.current
       ?.getContext('2d')
-      ?.putImageData(new ImageData(bmp.data, bmp.w, bmp.h), 0, 0)
+      ?.putImageData(
+        new ImageData(bitmap.data, bitmap.width, bitmap.height),
+        0,
+        0,
+      )
   }, [state.size])
 
   const pushHistory = (before: Snapshot) => {
     historyRef.current = push(historyRef.current, before)
   }
 
-  const mutateWhen = (change: (bmp: Bitmap) => boolean): boolean => {
-    const bmp = bmpRef.current
-    if (!bmp) return false
-    const before = clone(bmp)
-    if (!change(bmp)) return false
+  const mutateWhen = (change: (bitmap: Bitmap) => boolean): boolean => {
+    const bitmap = bitmapRef.current
+    if (!bitmap) return false
+    const before = clone(bitmap)
+    if (!change(bitmap)) return false
     pushHistory(before)
     blit()
     return true
   }
 
-  const mutate = (change: (bmp: Bitmap) => void): void => {
-    mutateWhen((bmp) => {
-      change(bmp)
+  const mutate = (change: (bitmap: Bitmap) => void): void => {
+    mutateWhen((bitmap) => {
+      change(bitmap)
       return true
     })
   }
 
   const adopt = (snapshot: Snapshot) => {
-    const previous = bmpRef.current
-    bmpRef.current = { data: snapshot.data, w: snapshot.w, h: snapshot.h }
+    const previous = bitmapRef.current
+    bitmapRef.current = {
+      data: snapshot.data,
+      width: snapshot.width,
+      height: snapshot.height,
+    }
     const resized =
-      !previous || previous.w !== snapshot.w || previous.h !== snapshot.h
+      !previous ||
+      previous.width !== snapshot.width ||
+      previous.height !== snapshot.height
     if (resized) {
-      dispatch({ type: 'canvas-resized', w: snapshot.w, h: snapshot.h })
+      dispatch({
+        type: 'canvas-resized',
+        width: snapshot.width,
+        height: snapshot.height,
+      })
       return
     }
     blit()
@@ -381,33 +405,33 @@ export const usePaint = () => {
   }
 
   const doUndo = () => {
-    const bmp = bmpRef.current
+    const bitmap = bitmapRef.current
     const mode = stateRef.current.mode.kind
-    if (!bmp) return
+    if (!bitmap) return
     if (mode === 'selected') dropSelection()
     else if (mode !== 'idle') return
-    const restore = undo(historyRef.current, clone(bmp))
+    const restore = undo(historyRef.current, clone(bitmap))
     if (!restore) return
     historyRef.current = restore.history
     adopt(restore.snapshot)
   }
 
   const doRedo = () => {
-    const bmp = bmpRef.current
+    const bitmap = bitmapRef.current
     const mode = stateRef.current.mode.kind
-    if (!bmp) return
+    if (!bitmap) return
     if (mode === 'selected') dropSelection()
     else if (mode !== 'idle') return
-    const restore = redo(historyRef.current, clone(bmp))
+    const restore = redo(historyRef.current, clone(bitmap))
     if (!restore) return
     historyRef.current = restore.history
     adopt(restore.snapshot)
   }
 
   const liftIfNeeded = (rect: Rect) => {
-    const bmp = bmpRef.current
-    if (floatRef.current || !bmp) return
-    const clipped = clipRect(rect, bmp.w, bmp.h)
+    const bitmap = bitmapRef.current
+    if (floatRef.current || !bitmap) return
+    const clipped = clipRect(rect, bitmap.width, bitmap.height)
     if (!clipped) return
     mutate((target) => {
       floatRef.current = lift(target, clipped)
@@ -426,9 +450,9 @@ export const usePaint = () => {
       mode.kind === 'resizingSelection'
     if (!anchored) return
     const key = transparencyKey()
-    mutate((bmp) => {
+    mutate((bitmap) => {
       stamp(
-        bmp,
+        bitmap,
         float,
         { x: mode.rect.x, y: mode.rect.y },
         key ? { skip: key } : {},
@@ -445,14 +469,14 @@ export const usePaint = () => {
 
   const copySelection = () => {
     const rect = selectedRect()
-    const bmp = bmpRef.current
-    if (!rect || !bmp) return
+    const bitmap = bitmapRef.current
+    if (!rect || !bitmap) return
     if (floatRef.current) {
       clipboardRef.current = floatRef.current
       return
     }
-    const clipped = clipRect(rect, bmp.w, bmp.h)
-    if (clipped) clipboardRef.current = lift(bmp, clipped)
+    const clipped = clipRect(rect, bitmap.width, bitmap.height)
+    if (clipped) clipboardRef.current = lift(bitmap, clipped)
   }
 
   const cutSelection = () => {
@@ -472,8 +496,8 @@ export const usePaint = () => {
     if (floatRef.current) {
       floatRef.current = null
     } else {
-      mutate((bmp) => {
-        fillRect(bmp, rect, toRgba(stateRef.current.bg))
+      mutate((bitmap) => {
+        fillRect(bitmap, rect, toRgba(stateRef.current.bg))
       })
     }
     clearOverlay()
@@ -482,11 +506,16 @@ export const usePaint = () => {
   }
 
   const paste = () => {
-    const clip = clipboardRef.current
-    if (!clip) return
+    const clipboard = clipboardRef.current
+    if (!clipboard) return
     anchorFloat()
-    floatRef.current = clip
-    const rect = { x: 0, y: 0, w: clip.w, h: clip.h }
+    floatRef.current = clipboard
+    const rect = {
+      x: 0,
+      y: 0,
+      width: clipboard.width,
+      height: clipboard.height,
+    }
     send({ type: 'select-rect', rect })
     drawSelection(rect, true)
     dispatch({ type: 'commit' })
@@ -494,9 +523,9 @@ export const usePaint = () => {
 
   const selectAll = () => {
     anchorFloat()
-    const bmp = bmpRef.current
-    if (!bmp) return
-    const rect = { x: 0, y: 0, w: bmp.w, h: bmp.h }
+    const bitmap = bitmapRef.current
+    if (!bitmap) return
+    const rect = { x: 0, y: 0, width: bitmap.width, height: bitmap.height }
     send({ type: 'select-rect', rect })
     drawSelection(rect, true)
   }
@@ -511,23 +540,32 @@ export const usePaint = () => {
   }
 
   const resizeCanvasTo = (target: Size) => {
-    const bmp = bmpRef.current
-    if (!bmp || (target.w === bmp.w && target.h === bmp.h)) return
-    const before = clone(bmp)
-    const grown = createBitmap(target.w, target.h)
-    stamp(grown, bmp, { x: 0, y: 0 })
-    bmpRef.current = grown
+    const bitmap = bitmapRef.current
+    if (
+      !bitmap ||
+      (target.width === bitmap.width && target.height === bitmap.height)
+    ) {
+      return
+    }
+    const before = clone(bitmap)
+    const grown = createBitmap(target.width, target.height)
+    stamp(grown, bitmap, { x: 0, y: 0 })
+    bitmapRef.current = grown
     pushHistory(before)
-    dispatch({ type: 'canvas-resized', w: target.w, h: target.h })
+    dispatch({
+      type: 'canvas-resized',
+      width: target.width,
+      height: target.height,
+    })
   }
 
   const newFile = () => {
     floatRef.current = null
     historyRef.current = createHistory()
-    bmpRef.current = createBitmap(INITIAL_W, INITIAL_H)
+    bitmapRef.current = createBitmap(INITIAL_WIDTH, INITIAL_HEIGHT)
     clearOverlay()
     blit()
-    dispatch({ type: 'cleared', w: INITIAL_W, h: INITIAL_H })
+    dispatch({ type: 'cleared', width: INITIAL_WIDTH, height: INITIAL_HEIGHT })
   }
 
   const openFile = async (file: File) => {
@@ -535,10 +573,10 @@ export const usePaint = () => {
     if (!opened) return
     floatRef.current = null
     historyRef.current = createHistory()
-    bmpRef.current = opened
+    bitmapRef.current = opened
     clearOverlay()
     blit()
-    dispatch({ type: 'opened', w: opened.w, h: opened.h })
+    dispatch({ type: 'opened', width: opened.width, height: opened.height })
   }
 
   const saveFile = async () => {
@@ -557,18 +595,18 @@ export const usePaint = () => {
     const color = inkColor(captured, button)
     const size = captured.options.airbrushSize
     const burst = () => {
-      const bmp = bmpRef.current
-      if (!bmp) return
-      spray(bmp, lastPtRef.current, { size, color, rng: Math.random })
+      const bitmap = bitmapRef.current
+      if (!bitmap) return
+      spray(bitmap, lastPointRef.current, { size, color, rng: Math.random })
       blit()
     }
     burst()
     sprayTimerRef.current = window.setInterval(burst, SPRAY_MS)
   }
 
-  const applyPoint = (state: PaintState, at: Pt, button: Button) => {
-    const bmp = bmpRef.current
-    if (!bmp) return
+  const applyPoint = (state: PaintState, at: Point, button: Button) => {
+    const bitmap = bitmapRef.current
+    if (!bitmap) return
     if (state.tool === 'fill') {
       const changed = mutateWhen((target) =>
         floodFill(target, at, inkColor(state, button)),
@@ -577,12 +615,12 @@ export const usePaint = () => {
       return
     }
     if (state.tool === 'pick') {
-      const px = getPx(bmp, at.x, at.y)
-      if (!px) return
+      const pixel = getPixel(bitmap, at.x, at.y)
+      if (!pixel) return
       dispatch({
         type: 'color',
         slot: button === 'right' ? 'bg' : 'fg',
-        color: hexOf(px),
+        color: hexOf(pixel),
       })
       return
     }
@@ -591,22 +629,22 @@ export const usePaint = () => {
     dispatch({ type: 'zoom', level })
   }
 
-  const applyDown = (state: PaintState, at: Pt, button: Button) => {
+  const applyDown = (state: PaintState, at: Point, button: Button) => {
     const kind = toolById[state.tool].kind
-    lastPtRef.current = at
+    lastPointRef.current = at
     if (kind === 'point') {
       applyPoint(state, at, button)
       return
     }
     if (kind === 'freehand') {
-      const bmp = bmpRef.current
-      if (!bmp) return
-      strokeUndoRef.current = clone(bmp)
+      const bitmap = bitmapRef.current
+      if (!bitmap) return
+      strokeUndoRef.current = clone(bitmap)
       if (state.tool === 'airbrush') {
         startSpray(button)
         return
       }
-      freehandSegment(bmp, state, at, at, button)
+      freehandSegment(bitmap, state, at, at, button)
       blit()
       return
     }
@@ -615,23 +653,23 @@ export const usePaint = () => {
 
   const movingRect = (
     mode: Extract<PaintState['mode'], { kind: 'movingSelection' }>,
-    at: Pt,
+    at: Point,
   ): Rect => ({
     ...mode.rect,
     x: mode.rect.x + at.x - mode.grip.x,
     y: mode.rect.y + at.y - mode.grip.y,
   })
 
-  const applyMove = (state: PaintState, at: Pt) => {
+  const applyMove = (state: PaintState, at: Point) => {
     const mode = state.mode
     if (mode.kind === 'freehand') {
-      const bmp = bmpRef.current
-      if (!bmp) return
+      const bitmap = bitmapRef.current
+      if (!bitmap) return
       if (state.tool !== 'airbrush') {
-        freehandSegment(bmp, state, mode.last, at, mode.button)
+        freehandSegment(bitmap, state, mode.last, at, mode.button)
         blit()
       }
-      lastPtRef.current = at
+      lastPointRef.current = at
       return
     }
     if (mode.kind === 'movingSelection') {
@@ -656,7 +694,7 @@ export const usePaint = () => {
     if (previews) drawOverlay(at)
   }
 
-  const applyUp = (state: PaintState, at: Pt) => {
+  const applyUp = (state: PaintState, at: Point) => {
     const mode = state.mode
     if (mode.kind === 'freehand') {
       stopSpray()
@@ -666,22 +704,22 @@ export const usePaint = () => {
       return
     }
     if (mode.kind === 'shaping') {
-      mutate((bmp) => {
-        renderShape(bmp, state, mode.from, at, mode.button)
+      mutate((bitmap) => {
+        renderShape(bitmap, state, mode.from, at, mode.button)
       })
       clearOverlay()
       return
     }
     if (mode.kind === 'curving' && mode.phase === 'c2' && mode.dragging) {
-      mutate((bmp) => {
-        renderCurve(bmp, state, { ...mode, c2: at }, 'left')
+      mutate((bitmap) => {
+        renderCurve(bitmap, state, { ...mode, c2: at }, 'left')
       })
       clearOverlay()
       return
     }
     if (mode.kind === 'selecting') {
-      const rect = normRect(mode.from, mode.to)
-      if (rect.w === 1 && rect.h === 1) clearOverlay()
+      const rect = normalizeRect(mode.from, mode.to)
+      if (rect.width === 1 && rect.height === 1) clearOverlay()
       else drawSelection(rect, true)
       return
     }
@@ -692,7 +730,9 @@ export const usePaint = () => {
     if (mode.kind === 'resizingSelection') {
       const rect = resizeRect(mode.rect, mode.handle, mode.to)
       const float = floatRef.current
-      if (float) floatRef.current = scaleNearest(float, rect.w, rect.h)
+      if (float) {
+        floatRef.current = scaleNearest(float, rect.width, rect.height)
+      }
       drawSelection(rect, true)
       return
     }
@@ -704,8 +744,8 @@ export const usePaint = () => {
   const applyDoubleClick = (state: PaintState) => {
     const mode = state.mode
     if (mode.kind !== 'polygon' || mode.points.length < 2) return
-    mutate((bmp) => {
-      drawPolygon(bmp, mode.points, shapeStyle(state, mode.button))
+    mutate((bitmap) => {
+      drawPolygon(bitmap, mode.points, shapeStyle(state, mode.button))
     })
     clearOverlay()
   }
@@ -739,7 +779,7 @@ export const usePaint = () => {
 
   const pickTool = (tool: ToolId) => send({ type: 'tool', tool })
 
-  const bitmapPoint = (event: React.PointerEvent<HTMLCanvasElement>): Pt => {
+  const bitmapPoint = (event: React.PointerEvent<HTMLCanvasElement>): Point => {
     const zoom = stateRef.current.zoom
     return {
       x: Math.floor(event.nativeEvent.offsetX / zoom),
@@ -747,7 +787,7 @@ export const usePaint = () => {
     }
   }
 
-  const routeDown = (at: Pt, button: Button) => {
+  const routeDown = (at: Point, button: Button) => {
     const captured = stateRef.current
     if (captured.mode.kind === 'selected') {
       if (captured.tool === 'select') {
@@ -799,7 +839,7 @@ export const usePaint = () => {
     onContextMenu: (event) => event.preventDefault(),
   }
 
-  const stagePoint = (event: React.PointerEvent<Element>): Pt => {
+  const stagePoint = (event: React.PointerEvent<Element>): Point => {
     const rect = canvasRef.current?.getBoundingClientRect()
     if (!rect) return { x: 0, y: 0 }
     const zoom = stateRef.current.zoom

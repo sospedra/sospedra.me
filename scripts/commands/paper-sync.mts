@@ -1,4 +1,4 @@
-import * as p from '@clack/prompts'
+import * as clack from '@clack/prompts'
 import { isImage, isMdx, listPapers, transformPaper } from '../papers.mts'
 import { ALL_PAPERS, type Context, pickPaper } from '../prompts.mts'
 import reading from '../reading.mts'
@@ -21,7 +21,7 @@ const syncCommand = ({ label, match, apply }: Sync) => {
     const target = arg ?? (await pickPaper(`${label} for which paper?`, papers))
     const queue = target === ALL_PAPERS ? papers : [target]
 
-    const spin = p.spinner()
+    const spin = clack.spinner()
     spin.start(label)
     let count = 0
     for (const paper of queue) {

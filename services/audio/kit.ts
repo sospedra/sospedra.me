@@ -102,70 +102,73 @@ export const createSfxKit = ({
   attack?: number
   destination?: AudioNode
 } = {}) => {
-  let ctx: AudioContext | null = destination
+  let audioContext: AudioContext | null = destination
     ? (destination.context as AudioContext)
     : null
   let enabled = true
 
   const ensure = (): AudioContext | null => {
     if (!enabled) return null
-    if (!ctx) {
+    if (!audioContext) {
       const AudioContextClass = audioContextClass()
       if (!AudioContextClass) return null
-      ctx = new AudioContextClass()
+      audioContext = new AudioContextClass()
     }
-    if (ctx.state === 'suspended') void ctx.resume()
-    return ctx
+    if (audioContext.state === 'suspended') void audioContext.resume()
+    return audioContext
   }
 
-  const envelope = (ac: AudioContext, spec: EnvelopeSpec) => {
-    const start = ac.currentTime + (spec.at ?? 0)
-    const gain = ac.createGain()
+  const envelope = (context: AudioContext, spec: EnvelopeSpec) => {
+    const start = context.currentTime + (spec.at ?? 0)
+    const gain = context.createGain()
     gain.gain.setValueAtTime(0.0001, start)
     gain.gain.exponentialRampToValueAtTime(
       spec.peak,
       start + (spec.attack ?? attack),
     )
     gain.gain.exponentialRampToValueAtTime(0.0001, start + spec.duration)
-    gain.connect(destination ?? ac.destination)
+    gain.connect(destination ?? context.destination)
     return gain
   }
 
   const tone = (spec: SfxToneSpec) => {
-    const ac = ensure()
-    if (!ac) return
-    const start = ac.currentTime + (spec.at ?? 0)
-    const osc = ac.createOscillator()
-    osc.type = spec.shape ?? 'sine'
-    osc.frequency.setValueAtTime(spec.from, start)
+    const context = ensure()
+    if (!context) return
+    const start = context.currentTime + (spec.at ?? 0)
+    const oscillator = context.createOscillator()
+    oscillator.type = spec.shape ?? 'sine'
+    oscillator.frequency.setValueAtTime(spec.from, start)
     if (spec.to !== undefined) {
-      osc.frequency.exponentialRampToValueAtTime(spec.to, start + spec.duration)
+      oscillator.frequency.exponentialRampToValueAtTime(
+        spec.to,
+        start + spec.duration,
+      )
     }
-    osc.connect(envelope(ac, spec))
-    osc.start(start)
-    osc.stop(start + spec.duration + 0.05)
+    oscillator.connect(envelope(context, spec))
+    oscillator.start(start)
+    oscillator.stop(start + spec.duration + 0.05)
   }
 
   const burst = (spec: SfxBurstSpec) => {
-    const ac = ensure()
-    if (!ac) return
-    const start = ac.currentTime + (spec.at ?? 0)
-    const { source, offset } = noiseSourceFor(ac, spec.duration)
-    const filter = ac.createBiquadFilter()
+    const context = ensure()
+    if (!context) return
+    const start = context.currentTime + (spec.at ?? 0)
+    const { source, offset } = noiseSourceFor(context, spec.duration)
+    const filter = context.createBiquadFilter()
     filter.type = 'bandpass'
     filter.frequency.value = spec.frequency
     filter.Q.value = spec.q
     source.connect(filter)
-    filter.connect(envelope(ac, spec))
+    filter.connect(envelope(context, spec))
     source.start(start, offset, spec.duration)
   }
 
   const sweep = (spec: SfxSweepSpec) => {
-    const ac = ensure()
-    if (!ac) return
-    const start = ac.currentTime + (spec.at ?? 0)
-    const { source, offset } = noiseSourceFor(ac, spec.duration)
-    const filter = ac.createBiquadFilter()
+    const context = ensure()
+    if (!context) return
+    const start = context.currentTime + (spec.at ?? 0)
+    const { source, offset } = noiseSourceFor(context, spec.duration)
+    const filter = context.createBiquadFilter()
     filter.type = 'bandpass'
     filter.Q.value = spec.q
     filter.frequency.setValueAtTime(spec.from, start)
@@ -174,32 +177,35 @@ export const createSfxKit = ({
       start + (spec.ramp ?? spec.duration),
     )
     source.connect(filter)
-    filter.connect(envelope(ac, spec))
+    filter.connect(envelope(context, spec))
     source.start(start, offset, spec.duration)
   }
 
   const bed = (spec: SfxBedSpec): SfxBed | null => {
-    const ac = ensure()
-    if (!ac) return null
-    const { source } = noiseSourceFor(ac, NOISE_SECONDS)
+    const context = ensure()
+    if (!context) return null
+    const { source } = noiseSourceFor(context, NOISE_SECONDS)
     source.loop = true
-    const filter = ac.createBiquadFilter()
+    const filter = context.createBiquadFilter()
     filter.type = spec.filter
     filter.frequency.value = spec.frequency
-    const gain = ac.createGain()
-    gain.gain.setValueAtTime(0.0001, ac.currentTime)
+    const gain = context.createGain()
+    gain.gain.setValueAtTime(0.0001, context.currentTime)
     gain.gain.exponentialRampToValueAtTime(
       spec.level,
-      ac.currentTime + spec.fadeIn,
+      context.currentTime + spec.fadeIn,
     )
     source.connect(filter)
     filter.connect(gain)
-    gain.connect(destination ?? ac.destination)
+    gain.connect(destination ?? context.destination)
     source.start()
     return {
       stop: () => {
-        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.12)
-        source.stop(ac.currentTime + 0.16)
+        gain.gain.exponentialRampToValueAtTime(
+          0.0001,
+          context.currentTime + 0.12,
+        )
+        source.stop(context.currentTime + 0.16)
       },
     }
   }

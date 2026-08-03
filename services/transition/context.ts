@@ -1,13 +1,13 @@
 import type { Route } from 'next'
 import React, { useContext } from 'react'
-import { DEFAULT_STATE, type State } from './reducer'
+import { DEFAULT_STATE, type Offshore, type State } from './reducer'
 
 export type TransitionT = State & {
   navigate: (url: Route) => void
   navigateLater: (url: Route, delay: number) => void
   unmount: () => void
   reset: () => void
-  setOffshore: (offshore: State['offshore'], duration?: number) => void
+  setOffshore: (offshore: Offshore | undefined) => void
 }
 
 export const TransitionCTX = React.createContext<TransitionT>({

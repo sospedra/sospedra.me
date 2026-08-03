@@ -3,6 +3,7 @@
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useGameInput } from 'services/hotkeys'
+import { isKeyboardClick } from 'services/keyboard-click'
 import Link, { LinkBack } from 'services/link'
 import Row from 'services/row'
 import Shell from 'services/shell'
@@ -56,7 +57,6 @@ const KEY_TURNS: Record<string, Dir> = {
 
 const KEY_SELECT = new Set(['5', 'Enter', ' '])
 
-// physical keys light their phone button, like fingers would
 const DIR_SPOT: Record<Dir, string> = {
   up: '2',
   left: '4',
@@ -70,7 +70,13 @@ const spotForKey = (key: string) => {
   return KEY_SELECT.has(key) ? '5' : null
 }
 
-type HotspotZone = { id: string; x: number; y: number; w: number; h: number }
+type HotspotZone = {
+  id: string
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
 type Hotspot =
   | (HotspotZone & { kind: 'key' })
@@ -84,31 +90,31 @@ const HOTSPOTS: Hotspot[] = [
     kind: 'select',
     x: 29.5,
     y: 50.3,
-    w: 41,
-    h: 5.5,
+    width: 41,
+    height: 5.5,
     label: 'Start or pause',
   },
-  { id: 'soft-left', kind: 'key', x: 13.3, y: 53.7, w: 21.9, h: 8.7 },
-  { id: 'soft-right', kind: 'key', x: 54.2, y: 56.2, w: 26, h: 7.5 },
-  { id: '1', kind: 'key', x: 10.2, y: 65.5, w: 21, h: 6.2 },
+  { id: 'soft-left', kind: 'key', x: 13.3, y: 53.7, width: 21.9, height: 8.7 },
+  { id: 'soft-right', kind: 'key', x: 54.2, y: 56.2, width: 26, height: 7.5 },
+  { id: '1', kind: 'key', x: 10.2, y: 65.5, width: 21, height: 6.2 },
   {
     id: '2',
     kind: 'dir',
     x: 39.1,
     y: 67.2,
-    w: 21,
-    h: 6.2,
+    width: 21,
+    height: 6.2,
     label: 'Steer up',
     dir: 'up',
   },
-  { id: '3', kind: 'key', x: 68.8, y: 65.1, w: 21, h: 6.2 },
+  { id: '3', kind: 'key', x: 68.8, y: 65.1, width: 21, height: 6.2 },
   {
     id: '4',
     kind: 'dir',
     x: 11.7,
     y: 72.5,
-    w: 21,
-    h: 6.2,
+    width: 21,
+    height: 6.2,
     label: 'Steer left',
     dir: 'left',
   },
@@ -117,8 +123,8 @@ const HOTSPOTS: Hotspot[] = [
     kind: 'select',
     x: 39.8,
     y: 74.2,
-    w: 21,
-    h: 6.2,
+    width: 21,
+    height: 6.2,
     label: 'Start or pause',
   },
   {
@@ -126,34 +132,33 @@ const HOTSPOTS: Hotspot[] = [
     kind: 'dir',
     x: 68,
     y: 72.2,
-    w: 21,
-    h: 6.2,
+    width: 21,
+    height: 6.2,
     label: 'Steer right',
     dir: 'right',
   },
-  { id: '7', kind: 'key', x: 13.3, y: 79.6, w: 21, h: 6.2 },
+  { id: '7', kind: 'key', x: 13.3, y: 79.6, width: 21, height: 6.2 },
   {
     id: '8',
     kind: 'dir',
     x: 39.8,
     y: 81.3,
-    w: 21,
-    h: 6.2,
+    width: 21,
+    height: 6.2,
     label: 'Steer down',
     dir: 'down',
   },
-  { id: '9', kind: 'key', x: 67.2, y: 79.2, w: 21, h: 6.2 },
-  { id: 'star', kind: 'key', x: 14.1, y: 86.6, w: 21, h: 6.2 },
-  { id: '0', kind: 'key', x: 39.8, y: 87.7, w: 21, h: 6.2 },
-  { id: 'hash', kind: 'key', x: 66.4, y: 86.3, w: 21, h: 6.2 },
+  { id: '9', kind: 'key', x: 67.2, y: 79.2, width: 21, height: 6.2 },
+  { id: 'star', kind: 'key', x: 14.1, y: 86.6, width: 21, height: 6.2 },
+  { id: '0', kind: 'key', x: 39.8, y: 87.7, width: 21, height: 6.2 },
+  { id: 'hash', kind: 'key', x: 66.4, y: 86.3, width: 21, height: 6.2 },
 ]
 
-// taps act on pointerdown; the trailing click (detail >= 1) is skipped so
-// only keyboard and assistive tech clicks (detail 0) come through here
+// taps act on pointerdown, so pointer clicks must not act a second time
 const pressProps = (act: () => void) => ({
   onPointerDown: () => act(),
   onClick: (event: React.MouseEvent) => {
-    if (event.detail === 0) act()
+    if (isKeyboardClick(event)) act()
   },
 })
 
@@ -286,8 +291,8 @@ function HotspotButton({
       style={{
         left: `${spot.x}%`,
         top: `${spot.y}%`,
-        width: `${spot.w}%`,
-        height: `${spot.h}%`,
+        width: `${spot.width}%`,
+        height: `${spot.height}%`,
       }}
       aria-label={label}
       aria-hidden={label ? undefined : 'true'}
@@ -360,7 +365,6 @@ export default function SnakeView() {
 
   return (
     <Shell className={`relative w-full px-4 text-white ${css.page}`}>
-      {/* the escaped snake: one-bit mural crawling the wall behind the phone */}
       <svg
         className={css.mural}
         viewBox='0 0 1200 800'
@@ -406,7 +410,6 @@ export default function SnakeView() {
         </header>
 
         <div className={css.consoleDeck} data-phase={state.phase}>
-          {/* aria-hidden: the sr-only status line already announces this */}
           <aside className={`${css.hud} ${css.hudLeft}`} aria-hidden='true'>
             <p className={css.hudItem}>
               <span className={css.hudLabel}>score</span>

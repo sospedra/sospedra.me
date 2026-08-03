@@ -1,4 +1,5 @@
-// Desktop window manager: which apps are open, minimized, and focused.
+import type { WinampPanelId, WinampPanelVisibility } from './music/music-view'
+
 export type AppId = 'mines' | 'paint' | 'winamp' | 'realplayer'
 
 export type AppWindowState = {
@@ -9,15 +10,31 @@ export type AppWindowState = {
 export type DesktopState = {
   active: AppId | null
   apps: Record<AppId, AppWindowState>
+  winampPanels: WinampPanelVisibility
 }
 
 export type DesktopAction =
   | { type: 'launch'; app: AppId }
+  | { type: 'launch-winamp' }
   | { type: 'activate'; app: AppId }
   | { type: 'minimize'; app: AppId }
   | { type: 'close'; app: AppId }
+  | { type: 'open-winamp-panel'; panel: WinampPanelId }
+  | { type: 'close-winamp-panel'; panel: WinampPanelId }
 
 export const APP_IDS = ['mines', 'paint', 'winamp', 'realplayer'] as const
+
+const ALL_WINAMP_PANELS: WinampPanelVisibility = {
+  equalizer: true,
+  player: true,
+  tracklist: true,
+}
+
+const NO_WINAMP_PANELS: WinampPanelVisibility = {
+  equalizer: false,
+  player: false,
+  tracklist: false,
+}
 
 export const INITIAL_DESKTOP: DesktopState = {
   active: null,
@@ -27,6 +44,7 @@ export const INITIAL_DESKTOP: DesktopState = {
     winamp: { open: false, minimized: false },
     realplayer: { open: false, minimized: false },
   },
+  winampPanels: ALL_WINAMP_PANELS,
 }
 
 export const isAppId = (value: string): value is AppId =>
@@ -46,49 +64,65 @@ export const nextVisibleApp = (
     (app) => app !== excluding && apps[app].open && !apps[app].minimized,
   ) ?? null
 
+const launch = (state: DesktopState, app: AppId): DesktopState => ({
+  ...state,
+  active: app,
+  apps: { ...state.apps, [app]: { open: true, minimized: false } },
+})
+
+const minimize = (state: DesktopState, app: AppId): DesktopState => {
+  const current = state.apps[app]
+  if (!current.open || current.minimized) return state
+  const apps = { ...state.apps, [app]: { ...current, minimized: true } }
+  return {
+    ...state,
+    apps,
+    active: state.active === app ? nextVisibleApp(apps, app) : state.active,
+  }
+}
+
+const close = (state: DesktopState, app: AppId): DesktopState => {
+  if (!state.apps[app].open) return state
+  const apps = { ...state.apps, [app]: { open: false, minimized: false } }
+  return {
+    ...state,
+    apps,
+    active: state.active === app ? nextVisibleApp(apps, app) : state.active,
+  }
+}
+
 export const reduceDesktop = (
   state: DesktopState,
   action: DesktopAction,
 ): DesktopState => {
-  const current = state.apps[action.app]
   switch (action.type) {
     case 'launch':
-      return {
-        active: action.app,
-        apps: {
-          ...state.apps,
-          [action.app]: { open: true, minimized: false },
-        },
-      }
-    case 'activate':
+      return launch(state, action.app)
+    case 'launch-winamp':
+      return { ...launch(state, 'winamp'), winampPanels: ALL_WINAMP_PANELS }
+    case 'activate': {
+      const current = state.apps[action.app]
       if (!current.open || current.minimized) return state
       return { ...state, active: action.app }
-    case 'minimize': {
-      if (!current.open || current.minimized) return state
-      const apps = {
-        ...state.apps,
-        [action.app]: { ...current, minimized: true },
-      }
-      return {
-        apps,
-        active:
-          state.active === action.app
-            ? nextVisibleApp(apps, action.app)
-            : state.active,
-      }
     }
-    case 'close': {
-      if (!current.open) return state
-      const apps = {
-        ...state.apps,
-        [action.app]: { open: false, minimized: false },
+    case 'minimize':
+      return minimize(state, action.app)
+    case 'close':
+      return close(state, action.app)
+    case 'open-winamp-panel':
+      return {
+        ...launch(state, 'winamp'),
+        winampPanels: state.winampPanels[action.panel]
+          ? state.winampPanels
+          : { ...state.winampPanels, [action.panel]: true },
+      }
+    case 'close-winamp-panel': {
+      if (action.panel === 'player') {
+        return { ...close(state, 'winamp'), winampPanels: NO_WINAMP_PANELS }
       }
       return {
-        apps,
-        active:
-          state.active === action.app
-            ? nextVisibleApp(apps, action.app)
-            : state.active,
+        ...state,
+        winampPanels: { ...state.winampPanels, [action.panel]: false },
       }
     }
   }

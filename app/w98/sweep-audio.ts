@@ -1,4 +1,3 @@
-// Browser-generated cues keep the Minesweeper audio self-contained.
 import { createSfxKit } from 'services/audio/kit'
 
 export type SweepAudio = ReturnType<typeof createSweepAudio>
@@ -8,7 +7,6 @@ export const createSweepAudio = () => {
 
   return {
     setEnabled: kit.setEnabled,
-    // a dry tick per swept cell
     sweep() {
       kit.tone({
         from: 1500,

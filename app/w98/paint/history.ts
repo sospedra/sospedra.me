@@ -2,8 +2,8 @@
 // size snapshots and fewer after a canvas grow.
 export type Snapshot = {
   data: Uint8ClampedArray<ArrayBuffer>
-  w: number
-  h: number
+  width: number
+  height: number
 }
 
 export type History = {

@@ -399,7 +399,6 @@ function NeonRamen() {
           <path className={css.neonCore} d='M332 44 Q344 48 352 58' />
           <path className={css.neonCore} d='M330 122 Q378 114 408 50' />
         </svg>
-        {/* one cold tube of the site's cyan, wired into the same frame */}
         <svg
           className={css.neonAccent}
           viewBox='0 0 140 12'

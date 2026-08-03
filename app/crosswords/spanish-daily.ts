@@ -1,3 +1,4 @@
+import { isRecord } from '../../services/is-record.ts'
 import {
   type ChallengePuzzle,
   type CrosswordChallengeFile,
@@ -28,9 +29,6 @@ const ACCENT_FOLD: Record<string, string> = {
   Ù: 'U',
   Ü: 'U',
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null
 
 const normalizeLetter = (character: string): string => {
   const upper = character.toUpperCase()

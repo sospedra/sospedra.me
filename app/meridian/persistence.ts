@@ -1,4 +1,5 @@
 import { haversineDistanceKm, isGeoCoordinate } from 'services/distance'
+import { isRecord } from 'services/is-record'
 import {
   readJson,
   type StorageLike,
@@ -33,7 +34,6 @@ import {
   scoreMapAnswer,
 } from './scoring'
 
-// unlike the storage union, a geo load always carries a usable fallback value
 type GeoLoadResult<T> = { status: StorageLoadStatus; value: T }
 
 const GEO_SETTINGS_STORAGE_KEY = 'games:geo:v1:settings'
@@ -47,11 +47,6 @@ export const DEFAULT_GEO_SETTINGS: GeoSettings = {
   sound: true,
   reducedMotion: false,
 }
-
-type UnknownRecord = Record<string, unknown>
-
-const isRecord = (value: unknown): value is UnknownRecord =>
-  Boolean(value) && typeof value === 'object' && !Array.isArray(value)
 
 const isNonEmptyString = (value: unknown): value is string =>
   typeof value === 'string' && value.length > 0
@@ -83,7 +78,7 @@ const isMapDistanceBand = (value: unknown): value is MapDistanceBand =>
 const nearlyEqual = (left: number, right: number, tolerance: number) =>
   Math.abs(left - right) <= tolerance
 
-const answerBaseIsValid = (answer: UnknownRecord) =>
+const answerBaseIsValid = (answer: Record<string, unknown>) =>
   isNonEmptyString(answer.questionId) &&
   isNonEmptyString(answer.roundId) &&
   isRoundType(answer.roundType) &&
@@ -241,7 +236,7 @@ export const saveGeoStats = (
   stats: PersistedGeoStats,
 ) => writeJson(storage, GEO_STATS_STORAGE_KEY, stats)
 
-// Target: caps a recycled timed run's answer log; it bounds hostile saves, no honest run reaches it.
+// Caps a recycled timed run's answer log against hostile saves. No honest run reaches it.
 const MAX_TIMED_RUN_ANSWERS = 4096
 
 const challengeQuestions = (challenge: DailyGeoChallenge) =>
@@ -513,7 +508,6 @@ const normalizeLegacyRun = ({
   }
 }
 
-// isAnswerResult gates record shapes; this deep validator replays positions, clocks, streaks, and scores against the challenge.
 export const validatePersistedGeoRun = (
   value: unknown,
   challenge: DailyGeoChallenge,

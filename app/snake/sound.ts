@@ -5,7 +5,6 @@ export type SoundName = 'key' | 'start' | 'eat' | 'pause' | 'over'
 
 type Note = [frequency: number, at: number, duration: number]
 
-// square waves through a fast envelope: the monophonic piezo register
 const TUNES: Record<SoundName, Note[]> = {
   key: [[1245, 0, 0.03]],
   start: [
@@ -42,18 +41,18 @@ export const play = (name: SoundName) => {
   if (!audio) return
   const zero = audio.currentTime + 0.01
   for (const [frequency, at, duration] of TUNES[name]) {
-    const osc = audio.createOscillator()
+    const oscillator = audio.createOscillator()
     const envelope = audio.createGain()
-    osc.type = 'square'
-    osc.frequency.value = frequency
+    oscillator.type = 'square'
+    oscillator.frequency.value = frequency
     envelope.gain.setValueAtTime(0, zero + at)
     envelope.gain.linearRampToValueAtTime(0.045, zero + at + 0.006)
     envelope.gain.setValueAtTime(0.045, zero + at + duration - 0.012)
     envelope.gain.linearRampToValueAtTime(0, zero + at + duration)
-    osc.connect(envelope)
+    oscillator.connect(envelope)
     envelope.connect(audio.destination)
-    osc.start(zero + at)
-    osc.stop(zero + at + duration + 0.02)
+    oscillator.start(zero + at)
+    oscillator.stop(zero + at + duration + 0.02)
   }
 }
 
@@ -69,6 +68,5 @@ export const transitionSound = (
   if (next.phase === 'over') return 'over'
   if (next.phase === 'paused' || prev.phase === 'paused') return 'pause'
   if (next.phase === 'running') return 'start'
-  // the remaining moves walk the menu family: menu, level, tops
   return 'key'
 }

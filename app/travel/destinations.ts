@@ -43,7 +43,6 @@ const COUNTRY_FLAG_PALETTES: Record<string, FlagPalette> = {
 export const flagPaletteOf = (country: string): FlagPalette =>
   COUNTRY_FLAG_PALETTES[country] ?? ['#62d6c3', '#e2622b']
 
-// each region is a station on the signalscope band
 export const REGIONS: { id: Region; label: string; freq: string }[] = [
   { id: 'americas', label: 'Americas', freq: '12.7' },
   { id: 'europe', label: 'Europe', freq: '45.3' },
@@ -51,9 +50,14 @@ export const REGIONS: { id: Region; label: string; freq: string }[] = [
   { id: 'asia', label: 'Asia', freq: '103.9' },
 ]
 
-// ISO country code to regional-indicator emoji
+const REGIONAL_INDICATOR_OFFSET = 127_397
+
 export const flagOf = (country: string): string =>
-  String.fromCodePoint(...[...country].map((c) => 127397 + c.charCodeAt(0)))
+  String.fromCodePoint(
+    ...[...country].map(
+      (char) => REGIONAL_INDICATOR_OFFSET + char.charCodeAt(0),
+    ),
+  )
 
 export const HOME: Destination = {
   code: 'CAT',

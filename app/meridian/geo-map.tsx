@@ -28,7 +28,7 @@ const KEYBOARD_LARGE_STEP_DEGREES = 10
 const ANNOUNCEMENT_DELAY_MS = 220
 const GRATICULE_STEP_DEGREES = 5
 const PROJECTION_LATITUDE_LIMIT = 90
-// 90 is the projection domain edge; keyboard placement stops at 85 so the marker glyph stays inside the drawn frame.
+// 90 is the projection domain edge. Keyboard placement stops at 85 so the marker glyph stays inside the drawn frame.
 const KEYBOARD_LATITUDE_LIMIT = 85
 
 const projectToMap = (longitude: number, latitude: number) => {
@@ -113,7 +113,6 @@ export type GeoMapFeedback = {
 export type GeoMapProps = {
   locale: 'en' | 'es'
   labels: GeoMapLabels
-  /** Rendered as a banner over the map so the target stays readable. */
   prompt?: string
   disabled?: boolean
   selectedCoordinate: GeoCoordinate | null

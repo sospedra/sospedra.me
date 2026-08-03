@@ -1,22 +1,4 @@
-/**
- * Maintain the /boombox song set: the songs.json index and the blob assets.
- *
- * The index order IS the daily rotation. songForDay picks songs[day % length],
- * so appending is safe and any reorder repoints past days at other songs.
- * Every command that reorders prints the affected days and needs --yes.
- *
- *   node scripts/boombox/songs.ts add <folder> --dry-run
- *   node --env-file=.env.local scripts/boombox/songs.ts add <folder>
- *   node --env-file=.env.local scripts/boombox/songs.ts remove <id>... --yes
- *   node scripts/boombox/songs.ts reshuffle --seed <n> --yes
- *   node --env-file=.env.local scripts/boombox/songs.ts check
- *
- * add reads <folder>/songs.tsv. Header, then one row per song:
- *   file  start  artist  title  album  year  genre  cover
- * file is an mp3 in the folder. start is the clip offset, seconds or mm:ss.
- * Leave artist, title, album, year or genre blank to take the ID3 tag.
- * Leave cover blank to use <file basename>.jpg.
- */
+/* usage: songs.ts <add|check|remove|reshuffle>; docs in app/boombox/README.md */
 import { execFile } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
@@ -266,9 +248,9 @@ const buildAssets = async (
 }
 
 const preview = async (folder: string, song: Song, assets: Assets) => {
-  const out = join(folder, 'preview')
-  await mkdir(out, { recursive: true })
-  const stem = join(out, `${song.artist} - ${song.title}`)
+  const directory = join(folder, 'preview')
+  await mkdir(directory, { recursive: true })
+  const stem = join(directory, `${song.artist} - ${song.title}`)
   await writeFile(`${stem}.mp3`, assets.clip)
   await writeFile(`${stem}.jpg`, assets.cover)
   return `${stem}.mp3`
@@ -301,9 +283,9 @@ const add = async (args: string[], flags: Set<string>) => {
       batch.map(async ({ row, song }) => {
         const { clip, cover } = await buildAssets(row, song, folder)
         if (dryRun) {
-          const at = await preview(folder, song, { clip, cover })
+          const previewPath = await preview(folder, song, { clip, cover })
           console.log(
-            `${song.id}  ${clip.length}B clip, ${cover.length}B cover -> ${at}`,
+            `${song.id}  ${clip.length}B clip, ${cover.length}B cover -> ${previewPath}`,
           )
           return
         }

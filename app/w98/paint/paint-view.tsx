@@ -415,9 +415,9 @@ const PaletteBar: React.FC<{
 
 const gestureSize = (mode: Mode): string | null => {
   if (mode.kind !== 'shaping' && mode.kind !== 'selecting') return null
-  const w = Math.abs(mode.to.x - mode.from.x) + 1
-  const h = Math.abs(mode.to.y - mode.from.y) + 1
-  return `${w} x ${h}`
+  const width = Math.abs(mode.to.x - mode.from.x) + 1
+  const height = Math.abs(mode.to.y - mode.from.y) + 1
+  return `${width} x ${height}`
 }
 
 const cursorOf = (name: string, fallback: string) =>
@@ -575,8 +575,8 @@ export default function PaintWindow({
     paint.send({ type: 'option', patch: partial })
 
   const zoomed = {
-    width: state.size.w * state.zoom,
-    height: state.size.h * state.zoom,
+    width: state.size.width * state.zoom,
+    height: state.size.height * state.zoom,
   }
 
   const hasSelection = state.mode.kind === 'selected'
@@ -682,8 +682,8 @@ export default function PaintWindow({
             <canvas
               ref={paint.canvasRef}
               className={css.bitmap}
-              width={state.size.w}
-              height={state.size.h}
+              width={state.size.width}
+              height={state.size.height}
               style={{
                 ...zoomed,
                 cursor: selectionCursor(paint) ?? toolById[state.tool].cursor,
@@ -693,16 +693,16 @@ export default function PaintWindow({
             <canvas
               ref={paint.overlayRef}
               className={css.overlay}
-              width={state.size.w}
-              height={state.size.h}
+              width={state.size.width}
+              height={state.size.height}
               style={zoomed}
             />
             {resizing && (
               <span
                 className={css.resizePreview}
                 style={{
-                  width: resizing.w * state.zoom,
-                  height: resizing.h * state.zoom,
+                  width: resizing.width * state.zoom,
+                  height: resizing.height * state.zoom,
                 }}
               />
             )}
@@ -741,7 +741,8 @@ export default function PaintWindow({
           {paint.hover ? `${paint.hover.x},${paint.hover.y}` : ''}
         </span>
         <span className={css.statusSize}>
-          {gestureSize(state.mode) ?? `${state.size.w} x ${state.size.h}`}
+          {gestureSize(state.mode) ??
+            `${state.size.width} x ${state.size.height}`}
         </span>
       </footer>
 

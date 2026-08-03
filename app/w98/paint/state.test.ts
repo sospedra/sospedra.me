@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import {
-  INITIAL_H,
+  INITIAL_HEIGHT,
   INITIAL_PAINT,
-  INITIAL_W,
+  INITIAL_WIDTH,
   type PaintEvent,
   type PaintState,
   reduce,
@@ -19,7 +19,10 @@ test('the initial state is a clean pencil on a 683 by 384 canvas', () => {
   assert.equal(INITIAL_PAINT.tool, 'pencil')
   assert.equal(INITIAL_PAINT.dirty, false)
   assert.equal(INITIAL_PAINT.zoom, 1)
-  assert.deepEqual(INITIAL_PAINT.size, { w: INITIAL_W, h: INITIAL_H })
+  assert.deepEqual(INITIAL_PAINT.size, {
+    width: INITIAL_WIDTH,
+    height: INITIAL_HEIGHT,
+  })
   assert.equal(INITIAL_PAINT.mode.kind, 'idle')
 })
 
@@ -197,7 +200,7 @@ test('a selection drag normalizes into a rect', () => {
   ])
   assert.deepEqual(state.mode, {
     kind: 'selected',
-    rect: { x: 2, y: 3, w: 4, h: 3 },
+    rect: { x: 2, y: 3, width: 4, height: 3 },
   })
   assert.equal(state.dirty, false)
 })
@@ -228,7 +231,7 @@ test('grabbing a selection moves it by the pointer delta and dirties on drop', (
   )
   assert.deepEqual(dropped.mode, {
     kind: 'selected',
-    rect: { x: 7, y: 3, w: 5, h: 4 },
+    rect: { x: 7, y: 3, width: 5, height: 4 },
   })
   assert.equal(dropped.dirty, true)
 })
@@ -250,31 +253,31 @@ test('dragging a corner handle resizes the selection', () => {
   )
   assert.deepEqual(resized.mode, {
     kind: 'selected',
-    rect: { x: 10, y: 10, w: 11, h: 9 },
+    rect: { x: 10, y: 10, width: 11, height: 9 },
   })
   assert.equal(resized.dirty, true)
 })
 
 test('resizeRect clamps at one pixel instead of flipping', () => {
-  const rect = { x: 10, y: 10, w: 5, h: 5 }
+  const rect = { x: 10, y: 10, width: 5, height: 5 }
   assert.deepEqual(resizeRect(rect, 'e', at(2, 12)), {
     x: 10,
     y: 10,
-    w: 1,
-    h: 5,
+    width: 1,
+    height: 5,
   })
   assert.deepEqual(resizeRect(rect, 'nw', at(30, 30)), {
     x: 14,
     y: 14,
-    w: 1,
-    h: 1,
+    width: 1,
+    height: 1,
   })
 })
 
 test('select-rect switches to the select tool with the given rect', () => {
   const state = reduce(INITIAL_PAINT, {
     type: 'select-rect',
-    rect: { x: 0, y: 0, w: INITIAL_W, h: INITIAL_H },
+    rect: { x: 0, y: 0, width: INITIAL_WIDTH, height: INITIAL_HEIGHT },
   })
   assert.equal(state.tool, 'select')
   assert.equal(state.mode.kind, 'selected')
@@ -283,7 +286,7 @@ test('select-rect switches to the select tool with the given rect', () => {
 test('deselect returns a selection to idle', () => {
   const selected = reduce(INITIAL_PAINT, {
     type: 'select-rect',
-    rect: { x: 1, y: 1, w: 4, h: 4 },
+    rect: { x: 1, y: 1, width: 4, height: 4 },
   })
   assert.equal(reduce(selected, { type: 'deselect' }).mode.kind, 'idle')
   assert.equal(reduce(INITIAL_PAINT, { type: 'deselect' }), INITIAL_PAINT)
@@ -301,12 +304,22 @@ test('a nub drag previews without resizing until the buffer swap lands', () => {
     { type: 'move', at: at(700, 400) },
   ])
   assert.ok(dragging.mode.kind === 'resizingCanvas')
-  assert.deepEqual(dragging.size, { w: INITIAL_W, h: INITIAL_H })
+  assert.deepEqual(dragging.size, {
+    width: INITIAL_WIDTH,
+    height: INITIAL_HEIGHT,
+  })
   const released = reduce(dragging, { type: 'up', at: at(700, 400) })
   assert.equal(released.mode.kind, 'idle')
-  assert.deepEqual(released.size, { w: INITIAL_W, h: INITIAL_H })
-  const swapped = reduce(released, { type: 'canvas-resized', w: 700, h: 400 })
-  assert.deepEqual(swapped.size, { w: 700, h: 400 })
+  assert.deepEqual(released.size, {
+    width: INITIAL_WIDTH,
+    height: INITIAL_HEIGHT,
+  })
+  const swapped = reduce(released, {
+    type: 'canvas-resized',
+    width: 700,
+    height: 400,
+  })
+  assert.deepEqual(swapped.size, { width: 700, height: 400 })
   assert.equal(swapped.dirty, true)
 })
 
@@ -314,25 +327,28 @@ test('cleared resets size, zoom, and the dirty flag', () => {
   const messy = run([
     { type: 'zoom', level: 6 },
     { type: 'commit' },
-    { type: 'cleared', w: INITIAL_W, h: INITIAL_H },
+    { type: 'cleared', width: INITIAL_WIDTH, height: INITIAL_HEIGHT },
   ])
   assert.equal(messy.dirty, false)
   assert.equal(messy.zoom, 1)
 })
 
 test('opened adopts the file size and starts clean', () => {
-  const state = run([{ type: 'commit' }, { type: 'opened', w: 320, h: 200 }])
-  assert.deepEqual(state.size, { w: 320, h: 200 })
+  const state = run([
+    { type: 'commit' },
+    { type: 'opened', width: 320, height: 200 },
+  ])
+  assert.deepEqual(state.size, { width: 320, height: 200 })
   assert.equal(state.dirty, false)
 })
 
 test('saved clears the dirty flag and keeps the bitmap size', () => {
   const state = run([
-    { type: 'canvas-resized', w: 700, h: 400 },
+    { type: 'canvas-resized', width: 700, height: 400 },
     { type: 'saved' },
   ])
   assert.equal(state.dirty, false)
-  assert.deepEqual(state.size, { w: 700, h: 400 })
+  assert.deepEqual(state.size, { width: 700, height: 400 })
 })
 
 test('zoom, colors, and option patches merge into place', () => {

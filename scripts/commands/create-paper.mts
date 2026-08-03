@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import * as p from '@clack/prompts'
+import * as clack from '@clack/prompts'
 import {
   defaultMetadata,
   isImage,
@@ -18,7 +18,7 @@ const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
 const promptSlug = async () =>
   unwrap(
-    await p.text({
+    await clack.text({
       message: 'Paper slug',
       placeholder: 'my-next-paper',
       validate: (value) => {
@@ -30,7 +30,7 @@ const promptSlug = async () =>
 
 const promptTitle = async () =>
   unwrap(
-    await p.text({
+    await clack.text({
       message: 'Title',
       placeholder: 'Leave empty to fill it later',
       defaultValue: '',
@@ -54,7 +54,7 @@ export default async function createPaper({ arg }: Context) {
     await mkdir(dir, { recursive: true })
     await writeFile(join(dir, 'index.mdx'), '')
   } else {
-    p.log.info(`'${slug}' already exists, syncing it instead`)
+    clack.log.info(`'${slug}' already exists, syncing it instead`)
   }
 
   // existing values win: syncing a paper must never reset its metadata
@@ -64,7 +64,7 @@ export default async function createPaper({ arg }: Context) {
     title: meta.title ?? title,
   }))
 
-  const spin = p.spinner()
+  const spin = clack.spinner()
   spin.start('Syncing assets')
   const count = await syncAssets(slug)
   spin.stop(`Synced ${count} assets`)

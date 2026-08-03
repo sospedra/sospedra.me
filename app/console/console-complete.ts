@@ -38,9 +38,9 @@ const argMatches = (
   token: string,
   directoriesOnly = false,
 ): string[] => {
-  const cut = token.lastIndexOf('/') + 1
-  const base = token.slice(0, cut)
-  const stem = token.slice(cut).toLowerCase()
+  const stemStart = token.lastIndexOf('/') + 1
+  const base = token.slice(0, stemStart)
+  const stem = token.slice(stemStart).toLowerCase()
   const scope = base
     ? resolvePath(ctx.paths, ctx.cwd, base)
     : { kind: 'dir' as const, segments: ctx.cwd }
@@ -52,7 +52,9 @@ const argMatches = (
     ...dirs.map((dir) => `${base}${dir}/`),
     ...(directoriesOnly ? [] : files.map((file) => base + file)),
     ...codes,
-  ].filter((candidate) => candidate.slice(cut).toLowerCase().startsWith(stem))
+  ].filter((candidate) =>
+    candidate.slice(stemStart).toLowerCase().startsWith(stem),
+  )
 }
 
 export const complete = (

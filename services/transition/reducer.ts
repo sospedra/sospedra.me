@@ -2,51 +2,46 @@ import type { Route } from 'next'
 import { useReducer } from 'react'
 import type { TransitionT } from './context'
 
-export type State = {
-  offshore?: 'cloud'
-  offshoreDuration?: number
-  hasRequestedUnmount: boolean
-  willUnmount: boolean
-  url: Route | ''
-}
+export type Offshore = { kind: 'cloud'; duration?: number }
 
-export const DEFAULT_STATE: State = {
-  hasRequestedUnmount: false,
-  willUnmount: false,
-  url: '',
-}
+export type NavPhase =
+  | { phase: 'idle' }
+  | { phase: 'departing'; url: Route }
+  | { phase: 'unmounting'; url: Route }
 
-type Action =
+export type State = NavPhase & { offshore: Offshore | undefined }
+
+export const DEFAULT_STATE: State = { phase: 'idle', offshore: undefined }
+
+export type Action =
   | { type: 'NAVIGATE'; payload: { url: Route } }
   | { type: 'UNMOUNT' }
   | { type: 'RESET' }
-  | {
-      type: 'OFFSHORE'
-      payload: { offshore: State['offshore']; duration?: number }
-    }
+  | { type: 'OFFSHORE'; payload: { offshore: Offshore | undefined } }
+
+export const destinationUrl = (state: State): Route | null =>
+  state.phase === 'idle' ? null : state.url
 
 const assertNever = (value: never): never => {
   throw new Error(`Unhandled action: ${JSON.stringify(value)}`)
 }
 
-const reducer = (state: State, action: Action): State => {
+export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'NAVIGATE':
       return {
-        ...state,
-        hasRequestedUnmount: true,
+        // a mid-unmount navigate retargets the push instead of restarting
+        phase: state.phase === 'unmounting' ? 'unmounting' : 'departing',
         url: action.payload.url,
+        offshore: state.offshore,
       }
     case 'UNMOUNT':
-      return { ...state, willUnmount: true }
+      if (state.phase !== 'departing') return state
+      return { phase: 'unmounting', url: state.url, offshore: state.offshore }
     case 'RESET':
-      return { ...DEFAULT_STATE, offshore: state.offshore }
+      return { phase: 'idle', offshore: state.offshore }
     case 'OFFSHORE':
-      return {
-        ...state,
-        offshore: action.payload.offshore,
-        offshoreDuration: action.payload.duration,
-      }
+      return { ...state, offshore: action.payload.offshore }
     default:
       return assertNever(action)
   }
@@ -56,8 +51,8 @@ export const useStateReducer = (): TransitionT => {
   const [state, dispatch] = useReducer(reducer, DEFAULT_STATE)
   const unmount = () => dispatch({ type: 'UNMOUNT' })
   const reset = () => dispatch({ type: 'RESET' })
-  const setOffshore = (offshore: State['offshore'], duration?: number) =>
-    dispatch({ type: 'OFFSHORE', payload: { offshore, duration } })
+  const setOffshore = (offshore: Offshore | undefined) =>
+    dispatch({ type: 'OFFSHORE', payload: { offshore } })
   const navigate = (url: Route) => {
     // same-route guard: the pathname never changes, so reset instead
     if (url === window.location.pathname) {

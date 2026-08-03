@@ -2,7 +2,7 @@
 
 import { clamp } from 'es-toolkit'
 import { type KeyboardEvent, type PointerEvent, useRef, useState } from 'react'
-import { cssVars } from './format'
+import { cssVars } from 'services/css-vars'
 import type { DragPanelProps } from './types'
 
 type Point = { x: number; y: number }

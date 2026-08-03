@@ -1,4 +1,4 @@
-import * as p from '@clack/prompts'
+import * as clack from '@clack/prompts'
 
 export type Context = {
   arg?: string
@@ -9,8 +9,8 @@ export type Context = {
 export const ALL_PAPERS = '*'
 
 export function unwrap<T>(result: T | symbol): T {
-  if (p.isCancel(result)) {
-    p.cancel('Cancelled')
+  if (clack.isCancel(result)) {
+    clack.cancel('Cancelled')
     process.exit(0)
   }
   return result as T
@@ -18,7 +18,7 @@ export function unwrap<T>(result: T | symbol): T {
 
 export const pickPaper = async (message: string, papers: string[]) => {
   return unwrap(
-    await p.select({
+    await clack.select({
       message,
       options: [
         ...papers.map((slug) => ({ value: slug })),

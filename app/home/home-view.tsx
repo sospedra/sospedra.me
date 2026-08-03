@@ -8,8 +8,9 @@ import {
 } from '@react-spring/web'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import type { CSSProperties, MouseEvent as ReactMouseEvent } from 'react'
+import type { MouseEvent as ReactMouseEvent } from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
+import { cssVars } from 'services/css-vars'
 import { useHotkeys } from 'services/hotkeys'
 import Link from 'services/link'
 import Shell from 'services/shell'
@@ -163,7 +164,7 @@ export default function HomeView() {
   // cacheComponents revives this page with the exit offsets intact: effects
   // re-run while refs survive, so a second run means revival and a remount
   useEffect(() => {
-    if (revived.current) setEpoch((e) => e + 1)
+    if (revived.current) setEpoch((current) => current + 1)
     revived.current = true
   }, [])
 
@@ -341,7 +342,7 @@ function HomeStage() {
         className={css.foreground}
         data-driving={isDeparting ? 'true' : 'false'}
         data-leaving={isLeavingHome ? 'true' : 'false'}
-        style={{ '--drive-ms': `${driveDuration}ms` } as CSSProperties}
+        style={cssVars({ '--drive-ms': `${driveDuration}ms` })}
       >
         <div className={css.fgTrackWorld}>
           <span className={css.fgLamps} />

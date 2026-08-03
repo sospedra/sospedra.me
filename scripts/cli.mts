@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import { parseArgs } from 'node:util'
-import * as p from '@clack/prompts'
+import * as clack from '@clack/prompts'
 import createPaper from './commands/create-paper.mts'
 import { readingCommand, resizeCommand } from './commands/paper-sync.mts'
 import rewrite from './commands/rewrite.mts'
@@ -9,7 +9,7 @@ import { type Context, unwrap } from './prompts.mts'
 
 type Command = {
   hint: string
-  run: (ctx: Context) => Promise<string>
+  run: (context: Context) => Promise<string>
 }
 
 type EnvRequirement = {
@@ -129,7 +129,7 @@ const isCommand = (name: string): name is CommandName => name in COMMANDS
 
 const promptCommand = async () =>
   unwrap(
-    await p.select({
+    await clack.select({
       message: 'What do you want to run?',
       options: (Object.keys(COMMANDS) as CommandName[]).map((name) => ({
         value: name,
@@ -160,12 +160,12 @@ const resolveCommand = async () => {
   return requested
 }
 
-p.intro('sospedra.me')
+clack.intro('sospedra.me')
 
 try {
   const name = await resolveCommand()
-  p.outro(await COMMANDS[name].run(context))
-} catch (ex) {
-  p.cancel(ex instanceof Error ? ex.message : String(ex))
+  clack.outro(await COMMANDS[name].run(context))
+} catch (error) {
+  clack.cancel(error instanceof Error ? error.message : String(error))
   process.exit(1)
 }

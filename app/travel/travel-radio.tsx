@@ -2,13 +2,20 @@
 
 import { clamp } from 'es-toolkit'
 import type { CSSProperties } from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useReducer, useRef, useState } from 'react'
+import { createRadioController } from './radio-controller'
 import { getRadioStations } from './radio-stations'
+import {
+  initialRadio,
+  type RadioPhase,
+  type RadioState,
+  reduceRadio,
+  wantsPlayback,
+} from './radio-tuner'
 import type { TravelAudio } from './travel-audio'
 import css from './travel-control.module.css'
 
 type PlaybackState = 'error' | 'idle' | 'loading' | 'paused' | 'playing'
-const STARTUP_TIMEOUT_MS = 12_000
 const TRACE_WIDTH = 120
 
 const STATUS_COPY: Record<PlaybackState, string> = {
@@ -17,6 +24,19 @@ const STATUS_COPY: Record<PlaybackState, string> = {
   loading: 'FINDING SIGNAL',
   paused: 'SIGNAL HELD',
   playing: 'SIGNAL LOCKED',
+}
+
+const PHASE_STATUS: Record<Exclude<RadioPhase, 'off'>, PlaybackState> = {
+  error: 'error',
+  loading: 'loading',
+  playing: 'playing',
+  recovering: 'loading',
+  tuning: 'loading',
+}
+
+const playbackOf = (state: RadioState): PlaybackState => {
+  if (state.phase === 'off') return state.held ? 'paused' : 'idle'
+  return PHASE_STATUS[state.phase]
 }
 
 const buildDataTrace = (bitrateKbps: number | null): string => {
@@ -45,268 +65,68 @@ export default function TravelRadio({
   travelAudio,
 }: TravelRadioProps) {
   const stations = getRadioStations(destinationCode)
-  const [stationIndex, setStationIndex] = useState(0)
-  const [playback, setPlayback] = useState<PlaybackState>('idle')
   const audioRef = useRef<HTMLAudioElement>(null)
-  const stationsRef = useRef(stations)
-  const stationIndexRef = useRef(0)
-  const attemptedRef = useRef(new Set<number>())
-  const wantsPlaybackRef = useRef(false)
-  const attemptTokenRef = useRef(0)
-  const startupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const mediaCleanupRef = useRef<(() => void) | null>(null)
-  const previousDestinationRef = useRef(destinationCode)
-  const recoverFromRef = useRef<(failedIndex: number, token: number) => void>(
-    () => undefined,
+  const [state, dispatch] = useReducer(
+    reduceRadio,
+    stations.length,
+    initialRadio,
   )
-  const station = stations[stationIndex]
-
-  useEffect(() => {
-    stationsRef.current = stations
-  }, [stations])
-
-  const clearStartupTimer = useCallback(() => {
-    if (startupTimerRef.current === null) return
-    clearTimeout(startupTimerRef.current)
-    startupTimerRef.current = null
-  }, [])
-
-  const detachMediaListeners = useCallback(() => {
-    mediaCleanupRef.current?.()
-    mediaCleanupRef.current = null
-  }, [])
-
-  const armRecoveryTimer = useCallback(
-    (failedIndex: number, attemptToken: number) => {
-      clearStartupTimer()
-      startupTimerRef.current = setTimeout(() => {
-        recoverFromRef.current(failedIndex, attemptToken)
-      }, STARTUP_TIMEOUT_MS)
-    },
-    [clearStartupTimer],
+  const [controller] = useState(() =>
+    createRadioController({ audio: () => audioRef.current, dispatch }),
   )
+  const station = stations[state.stationIndex]
+  const playback = playbackOf(state)
 
-  const startStation = useCallback(
-    (nextIndex: number, resetAttempts: boolean) => {
-      const audio = audioRef.current
-      const nextStation = stationsRef.current[nextIndex]
-      if (!audio || !nextStation) {
-        wantsPlaybackRef.current = false
-        attemptTokenRef.current += 1
-        clearStartupTimer()
-        detachMediaListeners()
-        travelAudio.stopReceiverStatic()
-        if (audio) {
-          audio.pause()
-          audio.removeAttribute('src')
-          audio.load()
-        }
-        setPlayback('error')
-        return
-      }
-
-      clearStartupTimer()
-      detachMediaListeners()
-      if (resetAttempts) attemptedRef.current.clear()
-      attemptedRef.current.add(nextIndex)
-      stationIndexRef.current = nextIndex
-      wantsPlaybackRef.current = true
-      setStationIndex(nextIndex)
-      setPlayback('loading')
-
-      const attemptToken = attemptTokenRef.current + 1
-      attemptTokenRef.current = attemptToken
-      const isCurrentAttempt = () =>
-        wantsPlaybackRef.current && attemptToken === attemptTokenRef.current
-      const recoverCurrentAttempt = () => {
-        if (isCurrentAttempt()) {
-          recoverFromRef.current(nextIndex, attemptToken)
-        }
-      }
-      const handlePlaying = () => {
-        if (!isCurrentAttempt()) return
-        clearStartupTimer()
-        attemptedRef.current.clear()
-        travelAudio.stopReceiverStatic()
-        setPlayback('playing')
-      }
-      const handleWaiting = () => {
-        if (!isCurrentAttempt()) return
-        setPlayback('loading')
-        if (startupTimerRef.current === null) {
-          armRecoveryTimer(nextIndex, attemptToken)
-        }
-      }
-      const handlePause = () => {
-        if (attemptToken !== attemptTokenRef.current) return
-        if (!wantsPlaybackRef.current) setPlayback('paused')
-      }
-
-      // 'stalled' is deliberately unhandled: fetching can stall while buffered playback continues
-      audio.addEventListener('playing', handlePlaying)
-      audio.addEventListener('waiting', handleWaiting)
-      audio.addEventListener('ended', recoverCurrentAttempt)
-      audio.addEventListener('error', recoverCurrentAttempt)
-      audio.addEventListener('pause', handlePause)
-      mediaCleanupRef.current = () => {
-        audio.removeEventListener('playing', handlePlaying)
-        audio.removeEventListener('waiting', handleWaiting)
-        audio.removeEventListener('ended', recoverCurrentAttempt)
-        audio.removeEventListener('error', recoverCurrentAttempt)
-        audio.removeEventListener('pause', handlePause)
-      }
-
-      const isHls =
-        nextStation.format === 'HLS' ||
-        nextStation.streamUrl.toLowerCase().includes('.m3u8')
-      if (
-        isHls &&
-        !audio.canPlayType('application/vnd.apple.mpegurl') &&
-        !audio.canPlayType('application/x-mpegURL')
-      ) {
-        recoverCurrentAttempt()
-        return
-      }
-
-      audio.pause()
-      audio.src = nextStation.streamUrl
-      audio.load()
-      armRecoveryTimer(nextIndex, attemptToken)
-      void audio.play().catch((error: unknown) => {
-        if (!isCurrentAttempt()) return
-        if (error instanceof DOMException && error.name === 'NotAllowedError') {
-          wantsPlaybackRef.current = false
-          clearStartupTimer()
-          detachMediaListeners()
-          travelAudio.stopReceiverStatic()
-          setPlayback('paused')
-          return
-        }
-        recoverCurrentAttempt()
-      })
-    },
-    [armRecoveryTimer, clearStartupTimer, detachMediaListeners, travelAudio],
-  )
-
-  const recoverFrom = useCallback(
-    (failedIndex: number, attemptToken: number) => {
-      if (
-        !wantsPlaybackRef.current ||
-        attemptToken !== attemptTokenRef.current
-      ) {
-        return
-      }
-
-      attemptedRef.current.add(failedIndex)
-      const nextIndex = stationsRef.current.findIndex(
-        (_, index) => !attemptedRef.current.has(index),
-      )
-      if (nextIndex < 0) {
-        wantsPlaybackRef.current = false
-        attemptTokenRef.current += 1
-        clearStartupTimer()
-        detachMediaListeners()
-        travelAudio.stopReceiverStatic()
-        const audio = audioRef.current
-        if (audio) {
-          audio.pause()
-          audio.removeAttribute('src')
-          audio.load()
-        }
-        setPlayback('error')
-        return
-      }
-      startStation(nextIndex, false)
-    },
-    [clearStartupTimer, detachMediaListeners, startStation, travelAudio],
-  )
-  useEffect(() => {
-    recoverFromRef.current = recoverFrom
-  }, [recoverFrom])
-
-  useEffect(() => {
-    const audio = audioRef.current
-
-    return () => {
-      wantsPlaybackRef.current = false
-      attemptTokenRef.current += 1
-      clearStartupTimer()
-      detachMediaListeners()
+  useEffect(
+    () => () => {
+      controller.quiesce()
       travelAudio.stopReceiverStatic()
-      if (!audio) return
-      audio.pause()
-      audio.removeAttribute('src')
-      audio.load()
-    }
-  }, [clearStartupTimer, detachMediaListeners, travelAudio])
+    },
+    [controller, travelAudio],
+  )
 
   useEffect(() => {
-    if (previousDestinationRef.current === destinationCode) return
-    previousDestinationRef.current = destinationCode
+    controller.quiesce()
+    dispatch({ type: 'stations', stationCount: stations.length })
+  }, [controller, stations])
 
-    const shouldContinue = wantsPlaybackRef.current
-    const audio = audioRef.current
-    clearStartupTimer()
-    detachMediaListeners()
-    attemptTokenRef.current += 1
-    attemptedRef.current.clear()
-    stationIndexRef.current = 0
-    setStationIndex(0)
+  useEffect(() => {
+    const { phase, stationIndex } = state
+    if (phase !== 'tuning' && phase !== 'recovering') return
+    const next = stations[stationIndex]
+    if (!next) return
+    controller.start(next, stationIndex)
+  }, [controller, state, stations])
 
-    if (shouldContinue) travelAudio.startReceiverStatic()
-    if (audio) {
-      audio.pause()
-      audio.removeAttribute('src')
-      audio.load()
-    }
-
-    if (shouldContinue) startStation(0, true)
-    else setPlayback('idle')
-  }, [
-    clearStartupTimer,
-    destinationCode,
-    detachMediaListeners,
-    startStation,
-    travelAudio,
-  ])
-
-  const play = () => {
-    const audio = audioRef.current
-    if (!audio || !station) return
-
-    travelAudio.arm()
-    if (wantsPlaybackRef.current) {
-      wantsPlaybackRef.current = false
-      attemptTokenRef.current += 1
-      clearStartupTimer()
-      detachMediaListeners()
-      travelAudio.stopReceiverStatic()
-      audio.pause()
-      setPlayback('paused')
+  useEffect(() => {
+    if (state.phase === 'tuning') {
+      travelAudio.startReceiverStatic()
       return
     }
+    if (state.phase === 'playing' || state.phase === 'off') {
+      travelAudio.stopReceiverStatic()
+      return
+    }
+    if (state.phase === 'error') {
+      travelAudio.stopReceiverStatic()
+      controller.quiesce()
+    }
+  }, [controller, state.phase, travelAudio])
 
-    startStation(stationIndexRef.current, true)
+  const play = () => {
+    if (!station) return
+    travelAudio.arm()
+    if (wantsPlayback(state)) {
+      controller.hold()
+      return
+    }
+    controller.start(station, state.stationIndex)
   }
 
   const tune = (nextIndex: number) => {
-    if (nextIndex === stationIndexRef.current) return
-    const audio = audioRef.current
-    const shouldResume = wantsPlaybackRef.current
-
-    if (shouldResume) travelAudio.startReceiverStatic()
-    clearStartupTimer()
-    detachMediaListeners()
-    attemptTokenRef.current += 1
-    stationIndexRef.current = nextIndex
-    setStationIndex(nextIndex)
-    setPlayback(shouldResume ? 'loading' : 'idle')
-    if (audio) {
-      audio.pause()
-      audio.removeAttribute('src')
-      audio.load()
-    }
-    if (shouldResume) startStation(nextIndex, true)
+    if (nextIndex === state.stationIndex) return
+    controller.quiesce()
+    dispatch({ type: 'tune', stationIndex: nextIndex })
   }
 
   // biome-ignore lint/a11y/useMediaCaption: Live third-party radio streams do not expose timed caption tracks.
@@ -332,7 +152,9 @@ export default function TravelRadio({
     ? `IP DATA · ${station.bitrateKbps} KBPS`
     : 'IP DATA · RATE UNKNOWN'
   const dialPosition =
-    stations.length === 1 ? 50 : (stationIndex / (stations.length - 1)) * 100
+    stations.length === 1
+      ? 50
+      : (state.stationIndex / (stations.length - 1)) * 100
 
   return (
     <div className={css.radioModule} data-state={playback}>
@@ -341,7 +163,7 @@ export default function TravelRadio({
       <div className={css.radioScreen}>
         <span>
           LOCAL SIGNAL / {destinationCode} · CH{' '}
-          {String(stationIndex + 1).padStart(2, '0')}
+          {String(state.stationIndex + 1).padStart(2, '0')}
         </span>
         <strong title={station.station}>{station.station}</strong>
         <small>
@@ -397,7 +219,7 @@ export default function TravelRadio({
               key={`${preset.destinationCode}-${preset.stationUuid ?? preset.streamUrl}`}
               type='button'
               aria-label={`Tune to ${preset.station}`}
-              aria-pressed={stationIndex === index}
+              aria-pressed={state.stationIndex === index}
               title={preset.station}
               onClick={() => tune(index)}
             >

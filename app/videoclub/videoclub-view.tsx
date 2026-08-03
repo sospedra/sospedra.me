@@ -21,7 +21,6 @@ const VOLUME_STEP = 0.1
 const OSD_MS = 1800
 const VOLUME_BARS = 10
 
-/* messy-pile offsets, one per stack row */
 const DRIFT = ['-0.4rem', '0.7rem', '-0.15rem', '0.9rem', '0.25rem']
 const TIP = ['-0.5deg', '0.4deg', '-0.2deg', '0.6deg', '-0.35deg']
 
@@ -96,7 +95,6 @@ const reducer = (state: TvState, event: TvEvent): TvState => {
   }
 }
 
-/* one tape change in five cues the SMPTE test card instead of snow */
 const drawBurst = (): TapeBurst => (Math.random() < 0.2 ? 'bars' : 'snow')
 
 const BARS_MS = 1150
@@ -175,13 +173,13 @@ export default function VideoclubView() {
   })
   const [volume, setVolume] = useState(0.7)
   const [counterSeconds, setCounterSeconds] = useState(0)
-  const [osd, setOsd] = useState<{ text: string; at: number } | null>(null)
+  const [osd, setOsd] = useState<{ text: string; serial: number } | null>(null)
   const [audio] = useState(createDeckAudio)
   const videoRef = useRef<HTMLVideoElement>(null)
   const ghostRef = useRef<HTMLDivElement>(null)
   const slotRef = useRef<HTMLDivElement>(null)
   const stackRefs = useRef<(HTMLButtonElement | null)[]>([])
-  const osdSeq = useRef(0)
+  const osdSerial = useRef(0)
   const { fxMode, osReducedMotion } = useTheme()
 
   const tape = TAPES[state.tape]
@@ -266,8 +264,8 @@ export default function VideoclubView() {
   }, [osd])
 
   const flash = (text: string) => {
-    osdSeq.current += 1
-    setOsd({ text, at: osdSeq.current })
+    osdSerial.current += 1
+    setOsd({ text, serial: osdSerial.current })
   }
 
   const power = () => {
@@ -385,7 +383,7 @@ export default function VideoclubView() {
                 {formatChannel(state.tape)}
               </span>
               {osd && (
-                <span key={osd.at} className={css.osdFlash}>
+                <span key={osd.serial} className={css.osdFlash}>
                   {osd.text}
                 </span>
               )}

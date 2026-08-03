@@ -19,8 +19,6 @@ const formatCountdown = (remainingMs: number): string => {
   return `T−${minutes}:${seconds}`
 }
 
-/* A 22-minute loop of visible-tab time. The sun ages across the loop,
-   goes supernova, and the scope wakes up back at the home hearth. */
 export function useSupernovaLoop({ quiet, onLoop }: SupernovaOptions) {
   const [remainingMs, setRemainingMs] = useState(LOOP_MS)
   const [loop, setLoop] = useState(1)

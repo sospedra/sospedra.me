@@ -2,8 +2,6 @@
 
 import { createSfxKit } from 'services/audio/kit'
 
-/* synthesized PS2 browser foley; no recorded samples */
-
 export type MenuSfx = ReturnType<typeof createMenuSfx>
 
 export const createMenuSfx = () => {
@@ -18,18 +16,15 @@ export const createMenuSfx = () => {
   }) => kit.sweep({ ...spec, q: 2.2 })
 
   return {
-    /* selection move: short glassy tick */
     tick: () => {
       kit.tone({ from: 1244, to: 932, duration: 0.07, peak: 0.055 })
       kit.tone({ from: 2489, duration: 0.045, peak: 0.028 })
     },
-    /* × accept: rising sweep with a bell tail */
     confirm: () => {
       breath({ from: 900, to: 4200, duration: 0.22, peak: 0.04 })
       kit.tone({ from: 622, to: 1245, duration: 0.16, peak: 0.075 })
       kit.tone({ from: 1867, duration: 0.34, peak: 0.05, attack: 0.03 })
     },
-    /* ○ back: the same voice falling away */
     cancel: () => {
       kit.tone({
         from: 932,
@@ -40,7 +35,8 @@ export const createMenuSfx = () => {
       })
       kit.tone({ from: 466, duration: 0.12, peak: 0.045 })
     },
-    /* menu materialize: airy swell, only when audio is already unlocked */
+    // reveal fires from a load timer, not a gesture: play only when a prior
+    // gesture already unlocked audio
     reveal: () => {
       if (!navigator.userActivation?.hasBeenActive) return
       if (kit.ensure()?.state !== 'running') return

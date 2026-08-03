@@ -1,6 +1,6 @@
 import type { Metadata, Route } from 'next'
-import type React from 'react'
 import ArrowNav from 'services/arrow-nav'
+import { cssVars } from 'services/css-vars'
 import Link from 'services/link'
 import { Reading } from 'services/markdown/meta'
 import { fetchPapers } from 'services/markdown/paper.server-snapshot'
@@ -166,7 +166,7 @@ export default async function PapersPage() {
               <Link key={key.label} url={key.url}>
                 <i
                   aria-hidden='true'
-                  style={{ '--key-color': key.color } as React.CSSProperties}
+                  style={cssVars({ '--key-color': key.color })}
                 />
                 {key.label}
               </Link>

@@ -31,7 +31,6 @@ export type GameEvent =
   | { type: 'TOP'; top: number }
   | { type: 'LEVEL'; level: number }
 
-// level 1 strolls at 295ms per cell, level 9 sprints at 95ms
 export const stepMsFor = (level: number) => 320 - level * 25
 
 const DIR_VEC: Record<Dir, Vec> = {

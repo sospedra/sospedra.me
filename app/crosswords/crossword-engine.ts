@@ -404,8 +404,6 @@ const rowSymbol = (
   return ROW_CLEAN
 }
 
-/* One symbol per grid row: green solved it yourself, yellow leaned on
-   Check, red needed a reveal. The same journey grammar as /boombox. */
 export const shareCard = (
   puzzle: CrosswordPuzzle,
   state: CrosswordState,

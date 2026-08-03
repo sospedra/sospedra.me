@@ -60,10 +60,10 @@ const MIN_RENDER_PIXEL_RATIO = 0.75
 
 type Vec3 = [number, number, number]
 type ViewRotation = {
-  cosP: number
-  cosT: number
-  sinP: number
-  sinT: number
+  cosPhi: number
+  cosTheta: number
+  sinPhi: number
+  sinTheta: number
 }
 type CanvasBounds = { height: number; left: number; top: number; width: number }
 type PointerPoint = { x: number; y: number }
@@ -115,18 +115,23 @@ const toUnitVector = (lat: number, lon: number): Vec3 => {
 }
 
 const viewRotation = (phi: number, theta: number): ViewRotation => ({
-  cosT: Math.cos(theta),
-  sinT: Math.sin(theta),
-  cosP: Math.cos(phi),
-  sinP: Math.sin(phi),
+  cosTheta: Math.cos(theta),
+  sinTheta: Math.sin(theta),
+  cosPhi: Math.cos(phi),
+  sinPhi: Math.sin(phi),
 })
 
 // cobe's own view rotation, x/y are clip offsets, z faces the viewer
-const rotate = (vec: Vec3, { cosP, cosT, sinP, sinT }: ViewRotation): Vec3 => {
+const rotate = (
+  vec: Vec3,
+  { cosPhi, cosTheta, sinPhi, sinTheta }: ViewRotation,
+): Vec3 => {
   return [
-    cosP * vec[0] + sinP * vec[2],
-    sinP * sinT * vec[0] + cosT * vec[1] - cosP * sinT * vec[2],
-    -sinP * cosT * vec[0] + sinT * vec[1] + cosP * cosT * vec[2],
+    cosPhi * vec[0] + sinPhi * vec[2],
+    sinPhi * sinTheta * vec[0] + cosTheta * vec[1] - cosPhi * sinTheta * vec[2],
+    -sinPhi * cosTheta * vec[0] +
+      sinTheta * vec[1] +
+      cosPhi * cosTheta * vec[2],
   ]
 }
 
@@ -410,7 +415,7 @@ export function useTravelGlobe({
   const zoomUiValueRef = useRef(initialFrameRef.current.zoom)
   const zoomUiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pointersRef = useRef(new Map<number, PointerPoint>())
-  const pinchRef = useRef<{ dist: number; zoom: number } | null>(null)
+  const pinchRef = useRef<{ distance: number; zoom: number } | null>(null)
   const pressRef = useRef<{
     id: number
     x: number
@@ -494,8 +499,6 @@ export function useTravelGlobe({
       return
     }
 
-    // The original scope stays square. Comparison surfaces may opt into the
-    // full monitor rectangle so close zoom can use its spare horizontal room.
     const viewport = canvas.parentElement ?? canvas
     const measureCanvasBounds = () => {
       const rect = canvas.getBoundingClientRect()
@@ -1049,7 +1052,7 @@ export function useTravelGlobe({
       dragSampleRef.current = null
       velocityRef.current = { phi: 0, theta: 0 }
       pinchRef.current = {
-        dist: pinchDistance(pointers),
+        distance: pinchDistance(pointers),
         zoom: zoomTargetRef.current,
       }
       return
@@ -1076,7 +1079,7 @@ export function useTravelGlobe({
     point.y = event.clientY
     const pinch = pinchRef.current
     if (pinch && pointersRef.current.size >= 2) {
-      const ratio = pinchDistance(pointersRef.current) / pinch.dist
+      const ratio = pinchDistance(pointersRef.current) / pinch.distance
       applyZoom(pinch.zoom * ratio)
       return
     }

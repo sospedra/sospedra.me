@@ -1,12 +1,14 @@
 import type { Rgba } from './palette.ts'
-import type { Bitmap, Pt } from './raster.ts'
+import type { Bitmap, Point } from './raster.ts'
 
 // Scanline flood fill on exact RGBA match. Each pixel paints once, so the
-// stack drains in O(w * h).
-export const floodFill = (bmp: Bitmap, at: Pt, color: Rgba): boolean => {
-  if (at.x < 0 || at.y < 0 || at.x >= bmp.w || at.y >= bmp.h) return false
-  const { data, w } = bmp
-  const start = (at.y * w + at.x) * 4
+// stack drains in O(width * height).
+export const floodFill = (bitmap: Bitmap, at: Point, color: Rgba): boolean => {
+  if (at.x < 0 || at.y < 0 || at.x >= bitmap.width || at.y >= bitmap.height) {
+    return false
+  }
+  const { data, width } = bitmap
+  const start = (at.y * width + at.x) * 4
   const target = data.slice(start, start + 4)
   const same =
     target[0] === color[0] &&
@@ -16,7 +18,7 @@ export const floodFill = (bmp: Bitmap, at: Pt, color: Rgba): boolean => {
   if (same) return false
 
   const matches = (x: number, y: number): boolean => {
-    const i = (y * w + x) * 4
+    const i = (y * width + x) * 4
     return (
       data[i] === target[0] &&
       data[i + 1] === target[1] &&
@@ -25,31 +27,36 @@ export const floodFill = (bmp: Bitmap, at: Pt, color: Rgba): boolean => {
     )
   }
   const paint = (x: number, y: number): void => {
-    const i = (y * w + x) * 4
+    const i = (y * width + x) * 4
     data[i] = color[0]
     data[i + 1] = color[1]
     data[i + 2] = color[2]
     data[i + 3] = color[3]
   }
-  const seedRow = (xl: number, xr: number, y: number, stack: Pt[]): void => {
-    if (y < 0 || y >= bmp.h) return
-    for (let x = xl; x <= xr; x++) {
+  const seedRow = (
+    left: number,
+    right: number,
+    y: number,
+    stack: Point[],
+  ): void => {
+    if (y < 0 || y >= bitmap.height) return
+    for (let x = left; x <= right; x++) {
       if (!matches(x, y)) continue
-      if (x === xl || !matches(x - 1, y)) stack.push({ x, y })
+      if (x === left || !matches(x - 1, y)) stack.push({ x, y })
     }
   }
 
-  const stack: Pt[] = [at]
+  const stack: Point[] = [at]
   while (stack.length > 0) {
-    const seed = stack.pop() as Pt
+    const seed = stack.pop() as Point
     if (!matches(seed.x, seed.y)) continue
-    let xl = seed.x
-    while (xl > 0 && matches(xl - 1, seed.y)) xl--
-    let xr = seed.x
-    while (xr < w - 1 && matches(xr + 1, seed.y)) xr++
-    for (let x = xl; x <= xr; x++) paint(x, seed.y)
-    seedRow(xl, xr, seed.y - 1, stack)
-    seedRow(xl, xr, seed.y + 1, stack)
+    let left = seed.x
+    while (left > 0 && matches(left - 1, seed.y)) left--
+    let right = seed.x
+    while (right < width - 1 && matches(right + 1, seed.y)) right++
+    for (let x = left; x <= right; x++) paint(x, seed.y)
+    seedRow(left, right, seed.y - 1, stack)
+    seedRow(left, right, seed.y + 1, stack)
   }
   return true
 }

@@ -2,8 +2,8 @@
 
 import { useReducedMotion } from '@react-spring/web'
 import type React from 'react'
-import type { CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
+import { cssVars } from 'services/css-vars'
 import { useTheme } from 'services/theme'
 import { fetchVisitorLocation } from 'services/visitor-location'
 import { type MoonPhase, moonPhase, moonTilt } from './lunar-phase'
@@ -74,7 +74,7 @@ const SpriteMoon: React.FunctionComponent = () => {
         aria-valuenow={illumination}
         aria-valuetext={`${phase.name}, ${illumination}% illuminated`}
         className={css.moon}
-        style={{ '--moon-tilt': `${tilt}deg` } as CSSProperties}
+        style={cssVars({ '--moon-tilt': `${tilt}deg` })}
         onBlur={scrubber.onBlur}
         onKeyDown={scrubber.onKeyDown}
         onPointerCancel={scrubber.onPointerCancel}

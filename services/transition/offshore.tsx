@@ -1,5 +1,6 @@
 import type React from 'react'
 import { useEffect, useRef } from 'react'
+import { cssVars } from 'services/css-vars'
 import { useTheme } from 'services/theme'
 import { SpriteCloud } from './cloud-sprite'
 import { useRouteTransition } from './context'
@@ -9,9 +10,9 @@ const Cloud: React.FC<{ duration?: number }> = (props) => {
   const { setOffshore } = useRouteTransition()
   const { fxMode } = useTheme()
   const cloud = useRef<HTMLDivElement>(null)
-  const style = {
-    '--cloud-duration': props.duration ? `${props.duration}ms` : undefined,
-  } as React.CSSProperties
+  const style = cssVars(
+    props.duration ? { '--cloud-duration': `${props.duration}ms` } : {},
+  )
 
   useEffect(() => {
     if (fxMode !== 'quiet') return
@@ -36,9 +37,9 @@ const Cloud: React.FC<{ duration?: number }> = (props) => {
 }
 
 const Offshore: React.FC = () => {
-  const { offshore, offshoreDuration } = useRouteTransition()
-  if (offshore !== 'cloud') return null
-  return <Cloud duration={offshoreDuration} />
+  const { offshore } = useRouteTransition()
+  if (!offshore) return null
+  return <Cloud duration={offshore.duration} />
 }
 
 export default Offshore

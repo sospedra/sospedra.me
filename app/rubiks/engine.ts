@@ -1,7 +1,5 @@
 // Facelet cube engine. Sticker slots are fixed (position, normal) pairs in
 // grid space; a turn rotates the layer's slots and permutes their colors.
-// Solve replays the compressed inverse of the move history, so any state
-// reached through moves unwinds back to solved.
 
 export type Face = 'U' | 'D' | 'L' | 'R' | 'F' | 'B'
 export type Move = { face: Face; prime: boolean }
@@ -27,7 +25,8 @@ const QUARTER: Record<number, (v: Vec) => Vec> = {
   2: ([x, y, z]) => [-y, x, z],
 }
 
-export const axisOf = (n: Vec) => n.findIndex((c) => c !== 0)
+export const axisOf = (normal: Vec) =>
+  normal.findIndex((component) => component !== 0)
 
 // clockwise seen from outside the face = -90° about the outward normal
 export const rotateForMove = (move: Move) => {
@@ -149,6 +148,12 @@ export type Turn = { move: Move; kind: TurnKind }
 
 export type Phase = 'idle' | 'scrambling' | 'solving'
 
+export type TimerState =
+  | { status: 'off' }
+  | { status: 'armed' }
+  | { status: 'running'; startedAt: number }
+  | { status: 'done'; resultMs: number }
+
 export type GameState = {
   stickers: Stickers
   history: readonly Move[]
@@ -156,10 +161,7 @@ export type GameState = {
   queue: readonly Turn[]
   turning: Turn | null
   phase: Phase
-  // armed: scramble finished, the next player turn starts the clock
-  armed: boolean
-  timerStart: number | null
-  resultMs: number | null
+  timer: TimerState
 }
 
 export const initialState: GameState = {
@@ -169,9 +171,7 @@ export const initialState: GameState = {
   queue: [],
   turning: null,
   phase: 'idle',
-  armed: false,
-  timerStart: null,
-  resultMs: null,
+  timer: { status: 'off' },
 }
 
 export type GameEvent =
@@ -191,15 +191,12 @@ const enqueue = (state: GameState, turns: Turn[]): GameState => {
 
 const play = (state: GameState, move: Move, now: number): GameState => {
   if (state.phase !== 'idle') return state
-  const startClock = state.armed && state.timerStart === null
+  const timer: TimerState =
+    state.timer.status === 'armed'
+      ? { status: 'running', startedAt: now }
+      : state.timer
   return enqueue(
-    {
-      ...state,
-      history: [...state.history, move],
-      redo: [],
-      timerStart: startClock ? now : state.timerStart,
-      resultMs: startClock ? null : state.resultMs,
-    },
+    { ...state, history: [...state.history, move], redo: [], timer },
     [{ move, kind: 'play' }],
   )
 }
@@ -238,9 +235,7 @@ const scramble = (state: GameState, moves: Move[]): GameState => {
       phase: 'scrambling',
       history: [...state.history, ...moves],
       redo: [],
-      armed: false,
-      timerStart: null,
-      resultMs: null,
+      timer: { status: 'off' },
     },
     moves.map((move) => ({ move, kind: 'scramble' as const })),
   )
@@ -255,9 +250,7 @@ const solve = (state: GameState): GameState => {
       phase: 'solving',
       history: [],
       redo: [],
-      armed: false,
-      timerStart: null,
-      resultMs: null,
+      timer: { status: 'off' },
     },
     solution.map((move) => ({ move, kind: 'solve' as const })),
   )
@@ -266,15 +259,13 @@ const solve = (state: GameState): GameState => {
 const settle = (state: GameState, now: number): GameState => {
   if (state.turning) return state
   if (state.phase === 'scrambling') {
-    return { ...state, phase: 'idle', armed: true }
+    return { ...state, phase: 'idle', timer: { status: 'armed' } }
   }
-  if (state.timerStart !== null && isSolved(state.stickers)) {
+  if (state.timer.status === 'running' && isSolved(state.stickers)) {
     return {
       ...state,
       phase: 'idle',
-      armed: false,
-      timerStart: null,
-      resultMs: now - state.timerStart,
+      timer: { status: 'done', resultMs: now - state.timer.startedAt },
     }
   }
   return { ...state, phase: 'idle' }

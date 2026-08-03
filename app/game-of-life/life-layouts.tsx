@@ -12,6 +12,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { isKeyboardClick } from 'services/keyboard-click'
 import Link, { LinkBack } from 'services/link'
 import { MAX_ZOOM, MIN_ZOOM } from './canvas'
 import controls from './controls.module.css'
@@ -185,7 +186,7 @@ const RepeatActionKey = ({
       data-pressed={pressed ? 'true' : undefined}
       onBlur={stopRepeating}
       onClick={(event) => {
-        if (event.detail === 0) action()
+        if (isKeyboardClick(event)) action()
       }}
       onKeyDown={(event) => {
         if (event.key !== 'Enter' && event.key !== ' ') return
@@ -329,8 +330,7 @@ const GridPilot = ({
 
     if (deltaX !== 0 || deltaY !== 0) playMechanicalSound('knob')
 
-    // LifeCanvasUi.panBy moves the camera, so invert pointer deltas to keep the
-    // grid itself under the held control and following the user's hand.
+    // panBy moves the camera, so inverted deltas keep the grid under the hand
     canvas.panBy(-deltaX, -deltaY)
 
     const nextOffset = clampPilotOffset(
@@ -929,127 +929,103 @@ const PatternBay = ({
   loadPreset: (preset: InteractiveLifePreset) => void
   state: LifeState
 }) => {
-  const dialogRef = useRef<HTMLElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
+    dialogRef.current?.showModal()
     closeButtonRef.current?.focus()
   }, [])
 
-  const handleDialogKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      event.stopPropagation()
-      close()
-      return
-    }
-    if (event.key !== 'Tab' || !dialogRef.current) return
-
-    const focusable = Array.from(
-      dialogRef.current.querySelectorAll<HTMLElement>(
-        'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      ),
-    ).filter((node) => node.offsetParent !== null)
-    const first = focusable.at(0)
-    const last = focusable.at(-1)
-    if (!first || !last) return
-
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault()
-      last.focus()
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault()
-      first.focus()
-    }
+  const closeOnBackdropClick = (event: ReactMouseEvent<HTMLDialogElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const insideBay =
+      event.clientX >= bounds.left &&
+      event.clientX <= bounds.right &&
+      event.clientY >= bounds.top &&
+      event.clientY <= bounds.bottom
+    if (!insideBay) close()
   }
 
   return (
-    <div id='pattern-bay' className={css.patternOverlay}>
-      <button
-        type='button'
-        className={css.patternScrim}
-        aria-label='Close pattern bay'
-        tabIndex={-1}
-        onClick={close}
-      />
-      <section
-        ref={dialogRef}
-        className={css.patternBay}
-        role='dialog'
-        aria-modal='true'
-        aria-labelledby='pattern-bay-title'
-        onKeyDown={handleDialogKeyDown}
-      >
-        <header>
-          <div>
-            <span>11 runnable seeds · 2 dossiers</span>
-            <h2 id='pattern-bay-title'>Choose a pattern</h2>
-          </div>
-          <p>
-            Press a cartridge to load it now. Orange dossiers open reference
-            patterns built for a remote HashLife engine.
-          </p>
-          <a
-            className={css.protocolLink}
-            href='https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life'
-            target='_blank'
-            rel='noreferrer'
-          >
-            B3/S23 protocol ↗
-          </a>
-          <button
-            ref={closeButtonRef}
-            type='button'
-            className={css.patternClose}
-            aria-label='Close pattern bay'
-            onClick={close}
-          >
-            Close <span aria-hidden='true'>×</span>
-          </button>
-        </header>
-        <ol>
-          {LIFE_PRESETS.map((preset, index) => {
-            const active =
-              preset.kind === 'interactive' && state.presetId === preset.id
+    // biome-ignore lint/a11y/useKeyWithClickEvents: backdrop click is pointer sugar, Escape closes the modal natively
+    <dialog
+      ref={dialogRef}
+      id='pattern-bay'
+      className={css.patternBay}
+      aria-labelledby='pattern-bay-title'
+      onClick={closeOnBackdropClick}
+      onClose={close}
+    >
+      <header>
+        <div>
+          <span>11 runnable seeds · 2 dossiers</span>
+          <h2 id='pattern-bay-title'>Choose a pattern</h2>
+        </div>
+        <p>
+          Press a cartridge to load it now. Orange dossiers open reference
+          patterns built for a remote HashLife engine.
+        </p>
+        <a
+          className={css.protocolLink}
+          href='https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life'
+          target='_blank'
+          rel='noreferrer'
+        >
+          B3/S23 protocol ↗
+        </a>
+        <button
+          ref={closeButtonRef}
+          type='button'
+          className={css.patternClose}
+          aria-label='Close pattern bay'
+          onClick={close}
+        >
+          Close <span aria-hidden='true'>×</span>
+        </button>
+      </header>
+      <ol>
+        {LIFE_PRESETS.map((preset, index) => {
+          const active =
+            preset.kind === 'interactive' && state.presetId === preset.id
 
-            return (
-              <li key={preset.id} data-active={active} data-kind={preset.kind}>
-                {preset.kind === 'interactive' ? (
-                  <>
-                    <button
-                      type='button'
-                      className={css.cartridge}
-                      aria-pressed={active}
-                      data-life-sfx='cartridge'
-                      onClick={() => loadPreset(preset)}
-                    >
-                      <CartridgeBody
-                        active={active}
-                        index={index}
-                        preset={preset}
-                      />
-                    </button>
-                    <SourceLink preset={preset}>Info ↗</SourceLink>
-                  </>
-                ) : (
-                  <a
-                    className={`${css.cartridge} ${css.referenceCartridge}`}
+          return (
+            <li key={preset.id} data-active={active} data-kind={preset.kind}>
+              {preset.kind === 'interactive' ? (
+                <>
+                  <button
+                    type='button'
+                    className={css.cartridge}
+                    aria-pressed={active}
                     data-life-sfx='cartridge'
-                    href={preset.sourceHref}
-                    aria-label={`${preset.title}. Reference-scale pattern; open source dossier`}
-                    target='_blank'
-                    rel='noreferrer'
-                    onClick={close}
+                    onClick={() => loadPreset(preset)}
                   >
-                    <CartridgeBody index={index} preset={preset} />
-                  </a>
-                )}
-              </li>
-            )
-          })}
-        </ol>
-      </section>
-    </div>
+                    <CartridgeBody
+                      active={active}
+                      index={index}
+                      preset={preset}
+                    />
+                  </button>
+                  <SourceLink preset={preset}>Info ↗</SourceLink>
+                </>
+              ) : (
+                <a
+                  className={`${css.cartridge} ${css.referenceCartridge}`}
+                  data-life-sfx='cartridge'
+                  href={preset.sourceHref}
+                  aria-label={`${preset.title}. Reference-scale pattern; open source dossier`}
+                  target='_blank'
+                  rel='noreferrer'
+                  onClick={close}
+                >
+                  <CartridgeBody index={index} preset={preset} />
+                </a>
+              )}
+            </li>
+          )
+        })}
+      </ol>
+    </dialog>
   )
 }
 
@@ -1148,7 +1124,7 @@ export const LifeLayout = ({
     const control = origin.closest<HTMLElement>(
       'button:not(:disabled), a[href]',
     )
-    if (!control || control.classList.contains(css.patternScrim)) return
+    if (!control) return
     const keyboardReset =
       keyboardActivation && control.classList.contains(controls.modeButton)
     if (control.hasAttribute('data-no-press-pulse') && !keyboardReset) return
@@ -1242,7 +1218,7 @@ export const LifeLayout = ({
     const declared = origin.closest<HTMLElement>('[data-life-sfx]')
     const control =
       declared ?? origin.closest<HTMLElement>('button:not(:disabled), a[href]')
-    if (!control || control.classList.contains(css.patternScrim)) return
+    if (!control) return
     if (isDisabledControl(control)) return
 
     const kind = (declared?.dataset.lifeSfx ?? 'key') as LifeMechanicalSound
@@ -1260,7 +1236,7 @@ export const LifeLayout = ({
   }
 
   const handleMechanicalClick = (event: ReactMouseEvent<HTMLElement>) => {
-    if (event.detail !== 0) {
+    if (!isKeyboardClick(event)) {
       unlockAudio()
       return
     }

@@ -1,6 +1,5 @@
 import { mulberry32 } from 'services/random'
 
-// The board is sized by the view: rows and cols come from the screen fit.
 export type Level = { rows: number; cols: number; mines: number }
 
 export type Cell = {
@@ -56,9 +55,15 @@ const OFFSETS = [
 const neighborsOf = (index: number, level: Level): number[] => {
   const row = Math.floor(index / level.cols)
   const col = index % level.cols
-  return OFFSETS.map(([dr, dc]) => [row + dr, col + dc])
-    .filter(([r, c]) => r >= 0 && r < level.rows && c >= 0 && c < level.cols)
-    .map(([r, c]) => r * level.cols + c)
+  return OFFSETS.map(([rowStep, colStep]) => [row + rowStep, col + colStep])
+    .filter(
+      ([nearRow, nearCol]) =>
+        nearRow >= 0 &&
+        nearRow < level.rows &&
+        nearCol >= 0 &&
+        nearCol < level.cols,
+    )
+    .map(([nearRow, nearCol]) => nearRow * level.cols + nearCol)
 }
 
 // first click is never a mine: the safe index leaves the candidate pool
@@ -78,7 +83,8 @@ const armBoard = (state: MinesState, safe: number, seed: number): Cell[] => {
   return state.cells.map((cell, index) => ({
     ...cell,
     mine: mines.has(index),
-    adjacent: neighborsOf(index, level).filter((n) => mines.has(n)).length,
+    adjacent: neighborsOf(index, level).filter((near) => mines.has(near))
+      .length,
   }))
 }
 
@@ -112,7 +118,6 @@ const detonate = (
   cells: cells.map((cell) => (cell.mine ? { ...cell, revealed: true } : cell)),
 })
 
-// win check: once only mines stay hidden, leftover mines flag themselves
 const settle = (state: MinesState): MinesState => {
   const hidden = state.cells.filter((cell) => !cell.revealed).length
   if (hidden > state.level.mines) return state
@@ -131,15 +136,15 @@ const chordAt = (state: MinesState, index: number): MinesState => {
   if (cell.adjacent === 0) return state
   const { level } = state
   const neighbors = neighborsOf(index, level)
-  const flags = neighbors.filter((n) => state.cells[n].flagged).length
+  const flags = neighbors.filter((near) => state.cells[near].flagged).length
   if (flags !== cell.adjacent) return state
   const hidden = neighbors.filter(
-    (n) => !state.cells[n].flagged && !state.cells[n].revealed,
+    (near) => !state.cells[near].flagged && !state.cells[near].revealed,
   )
-  const mine = hidden.find((n) => state.cells[n].mine)
-  if (mine !== undefined) return detonate(state, state.cells, mine)
+  const mineIndex = hidden.find((near) => state.cells[near].mine)
+  if (mineIndex !== undefined) return detonate(state, state.cells, mineIndex)
   const swept = state.cells.map((cell) => ({ ...cell }))
-  for (const n of hidden) floodInPlace(swept, level, n)
+  for (const near of hidden) floodInPlace(swept, level, near)
   return settle({ ...state, cells: swept })
 }
 

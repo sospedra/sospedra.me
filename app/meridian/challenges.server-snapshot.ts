@@ -2,6 +2,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { cacheLife, cacheTag } from 'next/cache'
 import { serverEnv } from 'services/env.server'
+import { isRecord } from 'services/is-record'
 import { createLogger } from 'services/logger'
 import type { DailyGeoChallenge } from './model'
 import {
@@ -20,10 +21,7 @@ export class GeoChallengeFileError extends Error {
   }
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null
-
-/* Load-bearing shape only; the deep contract runs in CI through
+/* Shape gate only. The deep contract runs in CI through
    scripts/geo/validate-challenge.ts before any file lands here. */
 const isDailyGeoChallenge = (value: unknown): value is DailyGeoChallenge =>
   isRecord(value) &&

@@ -25,7 +25,7 @@ import { useGameInput } from 'services/hotkeys'
 import Link from 'services/link'
 import { useDocumentLang } from 'services/locale'
 import Modal from 'services/modal'
-import { shareText } from 'services/share'
+import { shareHandled, shareText } from 'services/share'
 import Shell from 'services/shell'
 import {
   readLocal,
@@ -33,6 +33,7 @@ import {
   writeLocal,
   writeLocalJson,
 } from 'services/storage'
+import { utcDayString } from 'services/time'
 import { useViewportHeightVar } from 'services/viewport'
 import {
   type CrosswordCell,
@@ -537,8 +538,6 @@ const revealTargetFor = (scope: Scope, cell: number, entryId: string) => {
   return 'puzzle'
 }
 
-// The grid already shows every answer's length; the only assist worth
-// offering is the first letter, and it derives from the fill for free.
 const clueAssist = (
   entry: CrosswordEntry,
   mode: SolveMode,
@@ -2142,7 +2141,7 @@ function CrosswordSession({
   const shareResult = async () => {
     const card = shareCard(puzzle, state)
     const outcome = await shareText({ text: card })
-    if (outcome === 'shared' || outcome === 'dismissed') return
+    if (shareHandled(outcome)) return
     try {
       await navigator.clipboard.writeText(card)
       announce(copy.resultCopied)
@@ -2803,10 +2802,7 @@ export default function CrosswordsView({
     }
     const loaded = readLocalJson(SETTINGS_KEY)
     if (loaded.status === 'ok') setSettings(parseSavedSettings(loaded.value))
-    setTakeover({
-      phase: 'client',
-      editionDate: new Date().toISOString().slice(0, 10),
-    })
+    setTakeover({ phase: 'client', editionDate: utcDayString(new Date()) })
   }, [])
 
   useDocumentLang(locale)

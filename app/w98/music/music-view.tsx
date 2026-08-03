@@ -1,7 +1,14 @@
 'use client'
 
 import Script from 'next/script'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
 import {
   BUNDLED_PLAYLIST_MANIFEST_URL,
   parseBundledPlaylist,
@@ -10,6 +17,12 @@ import { EQ_FREQUENCIES } from './equalizer'
 import EqualizerPanel from './equalizer-panel'
 import { extensionOf, stemOf } from './format'
 import css from './music.module.css'
+import {
+  INITIAL_PLAYBACK,
+  localDeckIndex,
+  type PlaybackState,
+  reducePlayback,
+} from './playback-state'
 import Player from './player'
 import {
   BONFIRE_PLAYLIST,
@@ -17,13 +30,13 @@ import {
   type SoundCloudSound,
   soundCloudEmbedUrl,
 } from './soundcloud'
+import type { SoundCloudStatus } from './soundcloud-state'
 import Tracklist from './tracklist'
 import type { LocalMusicTrack, MusicTrack, SoundCloudMusicTrack } from './types'
 import { useDraggablePanel } from './use-draggable-panel'
 import { useLocalAudio } from './use-local-audio'
 import { useSoundCloud } from './use-soundcloud'
 
-type ActiveSource = 'local' | 'soundcloud'
 export type WinampPanelId = 'equalizer' | 'player' | 'tracklist'
 export type WinampPanelVisibility = Record<WinampPanelId, boolean>
 
@@ -66,6 +79,81 @@ const trackFromSoundCloud = (
   soundIndex,
   title: sound.title ?? `Track ${soundIndex + 1}`,
   type: 'SC',
+})
+
+type DeckTracks = {
+  fallbackSound: SoundCloudSound | null
+  localTracks: LocalMusicTrack[]
+  soundCloudTracks: SoundCloudMusicTrack[]
+}
+
+const currentTrackOf = (
+  playback: PlaybackState,
+  decks: DeckTracks,
+): MusicTrack | null => {
+  switch (playback.source) {
+    case 'local':
+      return decks.localTracks[playback.index] ?? null
+    case 'none':
+      return null
+    case 'soundcloud':
+      return (
+        decks.soundCloudTracks[playback.index] ??
+        (decks.fallbackSound
+          ? trackFromSoundCloud(decks.fallbackSound, playback.index)
+          : null)
+      )
+  }
+}
+
+const currentIndexOf = (playback: PlaybackState, decks: DeckTracks): number => {
+  switch (playback.source) {
+    case 'local':
+      return decks.localTracks[playback.index]
+        ? decks.soundCloudTracks.length + playback.index
+        : -1
+    case 'none':
+      return -1
+    case 'soundcloud':
+      return decks.soundCloudTracks[playback.index] ? playback.index : -1
+  }
+}
+
+const withLiveDuration = (
+  localTracks: LocalMusicTrack[],
+  localDeck: number,
+  loadedDuration: number,
+): LocalMusicTrack[] =>
+  localTracks.map((track, index) =>
+    index === localDeck && loadedDuration > 0
+      ? { ...track, duration: loadedDuration }
+      : track,
+  )
+
+const panelLayer = (
+  activePanel: WinampPanelId,
+  panel: WinampPanelId,
+  restingLayer: number,
+): number => (activePanel === panel ? 30 : restingLayer)
+
+type PlayerFeed = {
+  canPlay: boolean
+  duration: number
+  isPlaying: boolean
+  position: number
+}
+
+const soundCloudPlayerFeed = (
+  soundCloud: { duration: number; position: number; status: SoundCloudStatus },
+  hasTrack: boolean,
+): PlayerFeed => ({
+  canPlay:
+    (soundCloud.status.phase === 'playing' ||
+      soundCloud.status.phase === 'ready') &&
+    hasTrack,
+  duration: soundCloud.duration,
+  isPlaying: soundCloud.status.phase === 'playing',
+  position: soundCloud.position,
 })
 
 const bundledPlaylistFailure = (error: unknown): string =>
@@ -118,7 +206,10 @@ export default function MusicView({
   onOpenPanel,
   panels,
 }: MusicViewProps) {
-  const [activeSource, setActiveSource] = useState<ActiveSource>('local')
+  const [playback, dispatchPlayback] = useReducer(
+    reducePlayback,
+    INITIAL_PLAYBACK,
+  )
   const [activePanel, setActivePanel] = useState<WinampPanelId>(
     () => PANEL_IDS.find((panel) => panels[panel]) ?? 'player',
   )
@@ -126,7 +217,6 @@ export default function MusicView({
   const [bands, setBands] = useState<number[]>(
     Array.from({ length: EQ_FREQUENCIES.length }, () => 0),
   )
-  const [currentLocalIndex, setCurrentLocalIndex] = useState(-1)
   const [bundledPlaylistError, setBundledPlaylistError] = useState<
     string | null
   >(null)
@@ -142,7 +232,7 @@ export default function MusicView({
     bands,
     enabled: true,
     onEnded: () => {
-      if (activeSource === 'local') next()
+      if (playback.source === 'local') next()
     },
     preamp: 0,
     volume,
@@ -151,17 +241,17 @@ export default function MusicView({
 
   const playerDrag = useDraggablePanel(
     'Audio player',
-    activePanel === 'player' ? 30 : 3,
+    panelLayer(activePanel, 'player', 3),
     () => setActivePanel('player'),
   )
   const equalizerDrag = useDraggablePanel(
     'Equalizer',
-    activePanel === 'equalizer' ? 30 : 2,
+    panelLayer(activePanel, 'equalizer', 2),
     () => setActivePanel('equalizer'),
   )
   const tracklistDrag = useDraggablePanel(
     'Tracklist',
-    activePanel === 'tracklist' ? 30 : 1,
+    panelLayer(activePanel, 'tracklist', 1),
     () => setActivePanel('tracklist'),
   )
 
@@ -187,6 +277,14 @@ export default function MusicView({
     [onOpenPanel],
   )
 
+  useEffect(() => {
+    dispatchPlayback({
+      index: soundCloud.currentIndex,
+      type: 'sync-soundcloud',
+    })
+  }, [soundCloud.currentIndex])
+
+  const localDeck = localDeckIndex(playback)
   const soundCloudTracks = useMemo(
     () =>
       soundCloudRequested ? soundCloud.sounds.map(trackFromSoundCloud) : [],
@@ -195,37 +293,36 @@ export default function MusicView({
   const tracks = useMemo<MusicTrack[]>(
     () => [
       ...soundCloudTracks,
-      ...localTracks.map((track, index) =>
-        index === currentLocalIndex && audio.duration > 0
-          ? { ...track, duration: audio.duration }
-          : track,
-      ),
+      ...withLiveDuration(localTracks, localDeck, audio.duration),
     ],
-    [audio.duration, currentLocalIndex, localTracks, soundCloudTracks],
+    [audio.duration, localDeck, localTracks, soundCloudTracks],
   )
-  const soundCloudCurrentTrack =
-    soundCloudTracks[soundCloud.currentIndex] ??
-    (soundCloud.currentSound
-      ? trackFromSoundCloud(soundCloud.currentSound, soundCloud.currentIndex)
-      : null)
-  const localCurrentTrack = localTracks[currentLocalIndex] ?? null
-  const currentTrack =
-    activeSource === 'soundcloud' ? soundCloudCurrentTrack : localCurrentTrack
-  const currentIndex =
-    activeSource === 'soundcloud'
-      ? soundCloudTracks[soundCloud.currentIndex]
-        ? soundCloud.currentIndex
-        : -1
-      : localCurrentTrack
-        ? soundCloudTracks.length + currentLocalIndex
-        : -1
-  const selectedIndex = selectedTrackId
-    ? tracks.findIndex((track) => track.id === selectedTrackId)
-    : -1
+  const decks: DeckTracks = {
+    fallbackSound: soundCloud.currentSound,
+    localTracks,
+    soundCloudTracks,
+  }
+  const currentTrack = currentTrackOf(playback, decks)
+  const currentIndex = currentIndexOf(playback, decks)
+  const localCurrentTrack = localTracks[localDeck] ?? null
+  const selectedIndex = tracks.findIndex(
+    (track) => track.id === selectedTrackId,
+  )
   const totalDuration = useMemo(
     () => tracks.reduce((total, track) => total + track.duration, 0),
     [tracks],
   )
+  const soundCloudError =
+    soundCloud.status.phase === 'error' ? soundCloud.status.message : null
+  const playerFeed: PlayerFeed =
+    playback.source === 'soundcloud'
+      ? soundCloudPlayerFeed(soundCloud, currentTrack !== null)
+      : {
+          canPlay: localCurrentTrack !== null,
+          duration: audio.duration,
+          isPlaying: audio.isPlaying,
+          position: audio.position,
+        }
 
   const loadLocalTrackSource = useCallback(
     (track: LocalMusicTrack): boolean => {
@@ -242,57 +339,55 @@ export default function MusicView({
       if (!track) return
 
       soundCloud.pause()
-      setActiveSource('local')
-      if (index === currentLocalIndex) {
+      dispatchPlayback({ index, type: 'play-local' })
+      if (index === localDeckIndex(playback)) {
         await audio.toggle()
         return
       }
 
       loadLocalTrackSource(track)
-      setCurrentLocalIndex(index)
       await audio.play()
     },
     [
       audio.play,
       audio.toggle,
-      currentLocalIndex,
       loadLocalTrackSource,
       localTracks,
+      playback,
       soundCloud.pause,
     ],
   )
 
   const next = useCallback(() => {
-    if (activeSource === 'soundcloud') {
+    if (playback.source === 'soundcloud') {
       soundCloud.next()
       return
     }
     if (localTracks.length === 0) return
-    const nextIndex =
-      currentLocalIndex < 0 ? 0 : (currentLocalIndex + 1) % localTracks.length
+    const nextIndex = localDeck < 0 ? 0 : (localDeck + 1) % localTracks.length
     void playLocalIndex(nextIndex)
   }, [
-    activeSource,
-    currentLocalIndex,
+    localDeck,
     localTracks.length,
     playLocalIndex,
+    playback.source,
     soundCloud.next,
   ])
 
   const previous = useCallback(() => {
-    if (activeSource === 'soundcloud') {
+    if (playback.source === 'soundcloud') {
       soundCloud.previous()
       return
     }
     if (localTracks.length === 0) return
     const previousIndex =
-      currentLocalIndex <= 0 ? localTracks.length - 1 : currentLocalIndex - 1
+      localDeck <= 0 ? localTracks.length - 1 : localDeck - 1
     void playLocalIndex(previousIndex)
   }, [
-    activeSource,
-    currentLocalIndex,
+    localDeck,
     localTracks.length,
     playLocalIndex,
+    playback.source,
     soundCloud.previous,
   ])
 
@@ -320,10 +415,9 @@ export default function MusicView({
       })
 
       soundCloud.pause()
-      setActiveSource('local')
       setSelectedTrackId(additions[0].id)
       loadLocalTrackSource(additions[0])
-      setCurrentLocalIndex(firstIndex)
+      dispatchPlayback({ index: firstIndex, type: 'play-local' })
       void audio.play()
     },
     [audio.play, loadLocalTrackSource, localTracks.length, soundCloud.pause],
@@ -337,7 +431,7 @@ export default function MusicView({
 
       if (track.kind === 'soundcloud') {
         audio.pause()
-        setActiveSource('soundcloud')
+        dispatchPlayback({ index: track.soundIndex, type: 'select-soundcloud' })
         soundCloud.selectTrack(track.soundIndex)
         return
       }
@@ -355,7 +449,7 @@ export default function MusicView({
       audio.pause()
       soundCloud.pause()
       setSoundCloudRequested(true)
-      setActiveSource('soundcloud')
+      dispatchPlayback({ type: 'load-soundcloud' })
       setSelectedTrackId(null)
       soundCloud.loadSource(source)
     },
@@ -363,22 +457,22 @@ export default function MusicView({
   )
 
   const toggle = useCallback(() => {
-    if (activeSource === 'soundcloud') {
+    if (playback.source === 'soundcloud') {
       soundCloud.toggle()
       return
     }
     void audio.toggle()
-  }, [activeSource, audio.toggle, soundCloud.toggle])
+  }, [audio.toggle, playback.source, soundCloud.toggle])
 
   const seek = useCallback(
     (position: number) => {
-      if (activeSource === 'soundcloud') {
+      if (playback.source === 'soundcloud') {
         soundCloud.seek(position)
         return
       }
       audio.seek(position)
     },
-    [activeSource, audio.seek, soundCloud.seek],
+    [audio.seek, playback.source, soundCloud.seek],
   )
 
   const changeBand = (index: number, value: number) => {
@@ -413,7 +507,7 @@ export default function MusicView({
       }
 
       setLocalTracks((current) => mergeBundledTracks(current, bundledTracks))
-      setCurrentLocalIndex((current) => (current < 0 ? 0 : current))
+      dispatchPlayback({ type: 'bundled-ready' })
       setSelectedTrackId((current) => current ?? bundledTracks[0]?.id ?? null)
       setBundledPlaylistError(null)
     }
@@ -424,14 +518,14 @@ export default function MusicView({
 
   useEffect(() => {
     if (
-      activeSource !== 'local' ||
+      playback.source !== 'local' ||
       !localCurrentTrack ||
       loadedLocalSourceRef.current === localCurrentTrack.src
     ) {
       return
     }
     loadLocalTrackSource(localCurrentTrack)
-  }, [activeSource, loadLocalTrackSource, localCurrentTrack])
+  }, [loadLocalTrackSource, localCurrentTrack, playback.source])
 
   useEffect(
     () => () => {
@@ -447,8 +541,8 @@ export default function MusicView({
     <section className={css.winamp} aria-label='Winamp music player'>
       <h2 className={css.srOnly}>Winamp music player</h2>
       <p className={css.srOnly} aria-live='polite'>
-        {activeSource === 'soundcloud'
-          ? soundCloud.error
+        {playback.source === 'soundcloud'
+          ? soundCloudError
           : (audio.error ?? bundledPlaylistError)}
       </p>
 
@@ -482,23 +576,11 @@ export default function MusicView({
       <div className={css.stage}>
         {panels.player ? (
           <Player
-            canPlay={
-              activeSource === 'soundcloud'
-                ? soundCloud.isReady && soundCloudCurrentTrack !== null
-                : localCurrentTrack !== null
-            }
+            canPlay={playerFeed.canPlay}
             dragProps={playerDrag}
-            duration={
-              activeSource === 'soundcloud'
-                ? soundCloud.duration
-                : audio.duration
-            }
+            duration={playerFeed.duration}
             equalizerOpen={panels.equalizer}
-            isPlaying={
-              activeSource === 'soundcloud'
-                ? soundCloud.isPlaying
-                : audio.isPlaying
-            }
+            isPlaying={playerFeed.isPlaying}
             onClose={() => closePanel('player')}
             onNext={next}
             onOpenEqualizer={() => openPanel('equalizer')}
@@ -507,11 +589,7 @@ export default function MusicView({
             onSeek={seek}
             onToggle={toggle}
             onVolumeChange={setVolume}
-            position={
-              activeSource === 'soundcloud'
-                ? soundCloud.position
-                : audio.position
-            }
+            position={playerFeed.position}
             track={currentTrack}
             tracklistOpen={panels.tracklist}
             volume={volume}
@@ -525,7 +603,7 @@ export default function MusicView({
             onBalanceChange={setBalance}
             onBandChange={changeBand}
             onClose={() => closePanel('equalizer')}
-            processingEnabled={activeSource === 'local'}
+            processingEnabled={playback.source !== 'soundcloud'}
           />
         ) : null}
         {panels.tracklist ? (

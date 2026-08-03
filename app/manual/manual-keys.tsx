@@ -91,7 +91,6 @@ function useAutoCheckOnScroll(id: string) {
   }, [id])
 }
 
-// `[` / `]` flip between the manual's authored sheets
 export default function ManualKeys() {
   useAutoCheckOnScroll(FIRST_COMMISSIONING_CHECK)
 

@@ -102,8 +102,8 @@ export interface Round {
    */
   questionLimitMs: number
   /**
-   * Shared time budget for the whole round. Older generated packs may omit it;
-   * the game contract still gives those rounds a 60-second budget.
+   * Shared time budget for the whole round. Older generated packs may omit
+   * it, and the game contract still gives those rounds a 60-second budget.
    */
   roundLimitMs?: number
   questions: Question[]
@@ -212,9 +212,6 @@ interface AnswerResultBase {
    * Optional so pre-recycling schema-v1 saves remain readable.
    */
   attemptIndex?: number
-  /**
-   * Per-question response time used by speed scoring and response statistics.
-   */
   elapsedMs: number
   /**
    * Explicit shared round-clock reading for records created by the corrected
@@ -242,10 +239,7 @@ export interface ChoiceAnswerResult extends AnswerResultBase {
   kind: 'choice'
   selectedOptionId: string | null
   correctOptionId: string
-  /**
-   * The localized text transmitted through the answer console. Older
-   * multiple-choice records omit it and remain valid.
-   */
+  /** Older multiple-choice records omit it and remain valid. */
   submittedText?: string
 }
 
@@ -272,13 +266,7 @@ export interface PersistedGeoRun {
   bestStreak: number
   startedAt: string
   completedAt?: string
-  /**
-   * Elapsed response time for the active prompt.
-   */
   questionElapsedMs?: number
-  /**
-   * Elapsed time on the current round's single shared clock.
-   */
   roundElapsedMs?: number
   /**
    * Marks a round whose questions are finished or whose shared clock expired.

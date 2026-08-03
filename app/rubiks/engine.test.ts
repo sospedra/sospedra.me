@@ -113,8 +113,7 @@ test('play buffers turns and records history', () => {
   const one = reduce(initialState, { type: 'PLAY', move: move('R'), now: 0 })
   assert.deepEqual(one.turning, { move: move('R'), kind: 'play' })
   assert.deepEqual(one.history, [move('R')])
-  // not armed: casual turns never start the clock
-  assert.equal(one.timerStart, null)
+  assert.deepEqual(one.timer, { status: 'off' })
 
   const two = reduce(one, { type: 'PLAY', move: move('U'), now: 1 })
   assert.deepEqual(two.queue, [{ move: move('U'), kind: 'play' }])
@@ -162,15 +161,14 @@ test('scramble arms the timer and the first armed turn starts it', () => {
     { type: 'TURN_END', now: 2 },
   ])
   assert.equal(armed.phase, 'idle')
-  assert.equal(armed.armed, true)
-  assert.equal(armed.timerStart, null)
+  assert.deepEqual(armed.timer, { status: 'armed' })
 
   const ticking = reduce(armed, {
     type: 'PLAY',
     move: move('U', true),
     now: 1000,
   })
-  assert.equal(ticking.timerStart, 1000)
+  assert.deepEqual(ticking.timer, { status: 'running', startedAt: 1000 })
 })
 
 test('returning to identity stops the clock with a result', () => {
@@ -181,9 +179,7 @@ test('returning to identity stops the clock with a result', () => {
     { type: 'TURN_END', now: 1600 },
   ])
   assert.deepEqual(finished.stickers, SOLVED)
-  assert.equal(finished.resultMs, 600)
-  assert.equal(finished.timerStart, null)
-  assert.equal(finished.armed, false)
+  assert.deepEqual(finished.timer, { status: 'done', resultMs: 600 })
 })
 
 test('scrambling blocks player input until it settles', () => {
@@ -197,7 +193,6 @@ test('scrambling blocks player input until it settles', () => {
   const blockedScramble: GameEvent = { type: 'SCRAMBLE', moves: [move('F')] }
   assert.equal(reduce(scrambling, blockedScramble), scrambling)
   const half = reduce(scrambling, { type: 'TURN_END', now: 6 })
-  // one queued turn left, so the phase holds
   assert.equal(half.phase, 'scrambling')
 })
 

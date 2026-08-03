@@ -126,27 +126,28 @@ export const boundsOf = (cells: CellSet): Bounds => {
   }
 }
 
-// Bresenham line walk; every pass advances an axis, so dx + dy passes suffice
+// Bresenham line walk; every pass advances an axis, so deltaX + deltaY
+// passes suffice
 export const rasterLine = (from: Cell, to: Cell): Cell[] => {
   const points: Cell[] = []
   let [x, y] = from
   const [targetX, targetY] = to
-  const dx = Math.abs(targetX - x)
-  const dy = Math.abs(targetY - y)
+  const deltaX = Math.abs(targetX - x)
+  const deltaY = Math.abs(targetY - y)
   const stepX = x < targetX ? 1 : -1
   const stepY = y < targetY ? 1 : -1
-  let error = dx - dy
+  let error = deltaX - deltaY
 
-  for (let step = 0; step <= dx + dy; step += 1) {
+  for (let step = 0; step <= deltaX + deltaY; step += 1) {
     points.push([x, y])
     if (x === targetX && y === targetY) break
     const doubled = error * 2
-    if (doubled > -dy) {
-      error -= dy
+    if (doubled > -deltaY) {
+      error -= deltaY
       x += stepX
     }
-    if (doubled < dx) {
-      error += dx
+    if (doubled < deltaX) {
+      error += deltaX
       y += stepY
     }
   }
@@ -161,10 +162,10 @@ export const evolve = (
 
   for (const key of cells) {
     const [x, y] = cellOf(key)
-    for (let dy = -1; dy <= 1; dy++) {
-      for (let dx = -1; dx <= 1; dx++) {
-        if (dx === 0 && dy === 0) continue
-        const neighbor = keyOf(x + dx, y + dy)
+    for (let deltaY = -1; deltaY <= 1; deltaY++) {
+      for (let deltaX = -1; deltaX <= 1; deltaX++) {
+        if (deltaX === 0 && deltaY === 0) continue
+        const neighbor = keyOf(x + deltaX, y + deltaY)
         neighborCounts.set(neighbor, (neighborCounts.get(neighbor) ?? 0) + 1)
       }
     }

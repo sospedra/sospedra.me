@@ -1,3 +1,5 @@
+import { DAY_MS } from '../../services/time.ts'
+
 export type Song = {
   album: string
   artist: string
@@ -40,7 +42,6 @@ export const CLIP_SECONDS = 30
 /* first tape spun on launch day; the tape flips for everyone at the same
    instant: 02:00 on Spain's wall clock, whatever utc offset that is */
 const EPOCH_UTC = Date.UTC(2026, 6, 28)
-const DAY_MS = 86_400_000
 const FLIP_HOUR = 2
 
 const SPAIN_CLOCK = new Intl.DateTimeFormat('en-CA', {

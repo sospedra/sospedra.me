@@ -1,5 +1,6 @@
 import type { PointerEvent as ReactPointerEvent } from 'react'
-import { cssVars, formatTime } from './format'
+import { cssVars } from 'services/css-vars'
+import { formatTime } from './format'
 import css from './music.module.css'
 import {
   TIME_GAUGE_SWEEP,

@@ -1,3 +1,4 @@
+import { isRecord } from '../is-record.ts'
 import type { Paper, PaperImageSize } from './paper.types.ts'
 
 export class PaperMetadataError extends Error {
@@ -13,9 +14,6 @@ export class PaperMetadataError extends Error {
 }
 
 const ISO_DATE_TIME = /^\d{4}-\d{2}-\d{2}/
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null
 
 const isImageSize = (value: unknown): value is PaperImageSize =>
   isRecord(value) &&

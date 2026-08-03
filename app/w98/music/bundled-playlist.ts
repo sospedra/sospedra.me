@@ -1,3 +1,4 @@
+import { isRecord } from '../../../services/is-record.ts'
 import { extensionOf } from './format.ts'
 import type { LocalMusicTrack } from './types'
 
@@ -11,9 +12,6 @@ type BundledPlaylistEntry = {
   id: number | string
   title: string
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null
 
 const playlistEntries = (value: unknown): unknown[] => {
   if (Array.isArray(value)) return value

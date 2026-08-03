@@ -2,9 +2,11 @@ import cn from 'clsx'
 import { range } from 'es-toolkit'
 import { usePathname } from 'next/navigation'
 import type React from 'react'
+import { cssVars } from 'services/css-vars'
 import { createRange, createRng } from 'services/random'
 import { sceneFor } from './altitude'
 import { useRouteTransition } from './context'
+import { destinationUrl } from './reducer'
 import css from './stars.module.css'
 
 const STAR_COUNT = 40
@@ -69,11 +71,7 @@ const ShootingStar: React.FC = () => {
   return (
     <span
       className={css.shooting}
-      style={
-        {
-          '--shooting-delay': `${shootingDelay}s`,
-        } as React.CSSProperties
-      }
+      style={cssVars({ '--shooting-delay': `${shootingDelay}s` })}
     >
       <span className={cn('start', css.star)} />
     </span>
@@ -82,8 +80,8 @@ const ShootingStar: React.FC = () => {
 
 const Stars: React.FC = () => {
   const pathname = usePathname() || '/'
-  const { url } = useRouteTransition()
-  const hidden = getHidden(url || pathname)
+  const destination = destinationUrl(useRouteTransition())
+  const hidden = getHidden(destination ?? pathname)
 
   return (
     <div
@@ -91,7 +89,7 @@ const Stars: React.FC = () => {
       className={cn(
         css.field,
         hidden && css.hidden,
-        url && !hidden && css.signalLock,
+        destination !== null && !hidden && css.signalLock,
       )}
     >
       <ShootingStar />

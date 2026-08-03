@@ -7,6 +7,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react'
 import { prefersQuietFx } from 'services/theme'
 import { getAltitude, getOriginPathname } from './altitude'
 import { useRouteTransition } from './context'
+import { destinationUrl } from './reducer'
 
 const ENTER_MS = 820
 const ENTER_EASING = 'cubic-bezier(0.22, 0.61, 0.36, 1)'
@@ -46,16 +47,15 @@ const animateClimb = (
   return () => animation?.cancel()
 }
 
-// Camera-tilt stage: climbing routes drop in from the top and fall out the
-// bottom, descending routes do the reverse. WAAPI keeps the transform alive
-// only while animating, so position: fixed children re-anchor at rest.
+// WAAPI keeps the transform alive only while animating,
+// so position: fixed children re-anchor at rest
 const StageMain: React.FunctionComponent<{
   className?: string
   children: React.ReactNode
 }> = ({ className, children }) => {
   const node = useRef<HTMLElement>(null)
   const pathname = usePathname() || '/'
-  const { url } = useRouteTransition()
+  const destination = destinationUrl(useRouteTransition())
   const altitude = getAltitude(pathname)
 
   // layout effect: runs before paint and again on every Activity revival
@@ -68,11 +68,11 @@ const StageMain: React.FunctionComponent<{
   }, [altitude, pathname])
 
   useEffect(() => {
-    if (!url || prefersQuietFx()) return
-    const climb = getAltitude(url) - altitude
+    if (destination === null || prefersQuietFx()) return
+    const climb = getAltitude(destination) - altitude
     if (climb === 0) return
     return animateClimb(node.current, climb, 'exit')
-  }, [url, altitude])
+  }, [destination, altitude])
 
   return (
     <main

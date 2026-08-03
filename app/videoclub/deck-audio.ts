@@ -35,25 +35,25 @@ export const createDeckAudio = () => {
   }
 
   const decodeSample = async (
-    ac: AudioContext,
+    context: AudioContext,
     name: SampleName,
   ): Promise<AudioBuffer> => {
     if (decoded[name]) return decoded[name]
     // decodeAudioData detaches its input; hand it a copy
     const bytes = (await fetchSample(name)).slice(0)
-    const buffer = await ac.decodeAudioData(bytes)
+    const buffer = await context.decodeAudioData(bytes)
     decoded[name] = buffer
     return buffer
   }
 
   const playSample = async (name: SampleName, rate = 1) => {
-    const ac = kit.ensure()
-    if (!ac) return
-    const buffer = await decodeSample(ac, name)
-    const source = ac.createBufferSource()
+    const context = kit.ensure()
+    if (!context) return
+    const buffer = await decodeSample(context, name)
+    const source = context.createBufferSource()
     source.buffer = buffer
     source.playbackRate.value = rate
-    source.connect(ac.destination)
+    source.connect(context.destination)
     source.start(0, SAMPLE_TRIM[name])
   }
 
@@ -62,15 +62,12 @@ export const createDeckAudio = () => {
   }
 
   return {
-    /* warm the sample cache before the first press needs it */
     preload: () => {
       for (const name of Object.keys(SAMPLE_URLS) as SampleName[]) {
         fetchSample(name).catch(() => undefined)
       }
     },
-    /* recorded deck button, pitch-wobbled so repeats read as distinct */
     click: () => sample('button', 0.97 + Math.random() * 0.06),
-    /* recorded cassette load: push, mechanism grab, settle */
     insert: () => sample('insert'),
     /* SMPTE color bars ship with a 1 kHz reference tone */
     beep: (duration: number) =>

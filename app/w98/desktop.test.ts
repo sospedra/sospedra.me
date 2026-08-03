@@ -17,6 +17,11 @@ const run = (actions: DesktopAction[], from: DesktopState = INITIAL_DESKTOP) =>
 test('the desktop boots with every window closed and nothing focused', () => {
   assert.equal(INITIAL_DESKTOP.active, null)
   assert.ok(APP_IDS.every((app) => !INITIAL_DESKTOP.apps[app].open))
+  assert.deepEqual(INITIAL_DESKTOP.winampPanels, {
+    equalizer: true,
+    player: true,
+    tracklist: true,
+  })
 })
 
 test('launch opens the window and focuses it', () => {
@@ -156,4 +161,79 @@ test('bootApps opens nothing without a usable sw param', () => {
   assert.deepEqual(bootApps('?foo=1'), [])
   assert.deepEqual(bootApps('?sw='), [])
   assert.deepEqual(bootApps('?sw=doom'), [])
+})
+
+test('launch-winamp opens and focuses winamp with every panel visible', () => {
+  const state = run([
+    { type: 'launch-winamp' },
+    { type: 'close-winamp-panel', panel: 'equalizer' },
+    { type: 'launch-winamp' },
+  ])
+  assert.equal(state.active, 'winamp')
+  assert.deepEqual(state.apps.winamp, { open: true, minimized: false })
+  assert.deepEqual(state.winampPanels, {
+    equalizer: true,
+    player: true,
+    tracklist: true,
+  })
+})
+
+test('closing a side panel hides it and keeps winamp open', () => {
+  const state = run([
+    { type: 'launch-winamp' },
+    { type: 'close-winamp-panel', panel: 'tracklist' },
+  ])
+  assert.equal(state.apps.winamp.open, true)
+  assert.deepEqual(state.winampPanels, {
+    equalizer: true,
+    player: true,
+    tracklist: false,
+  })
+})
+
+test('closing the player panel closes winamp and hands focus over', () => {
+  const state = run([
+    { type: 'launch', app: 'mines' },
+    { type: 'launch-winamp' },
+    { type: 'close-winamp-panel', panel: 'player' },
+  ])
+  assert.equal(state.active, 'mines')
+  assert.deepEqual(state.apps.winamp, { open: false, minimized: false })
+  assert.deepEqual(state.winampPanels, {
+    equalizer: false,
+    player: false,
+    tracklist: false,
+  })
+})
+
+test('open-winamp-panel shows the panel and restores the window', () => {
+  const state = run([
+    { type: 'launch-winamp' },
+    { type: 'close-winamp-panel', panel: 'equalizer' },
+    { type: 'minimize', app: 'winamp' },
+    { type: 'open-winamp-panel', panel: 'equalizer' },
+  ])
+  assert.equal(state.active, 'winamp')
+  assert.deepEqual(state.apps.winamp, { open: true, minimized: false })
+  assert.equal(state.winampPanels.equalizer, true)
+})
+
+test('open-winamp-panel on a visible panel keeps the visibility object', () => {
+  const opened = run([{ type: 'launch-winamp' }])
+  const again = reduceDesktop(opened, {
+    type: 'open-winamp-panel',
+    panel: 'player',
+  })
+  assert.equal(again.winampPanels, opened.winampPanels)
+})
+
+test('a plain launch restores winamp without resetting panels', () => {
+  const state = run([
+    { type: 'launch-winamp' },
+    { type: 'close-winamp-panel', panel: 'equalizer' },
+    { type: 'minimize', app: 'winamp' },
+    { type: 'launch', app: 'winamp' },
+  ])
+  assert.deepEqual(state.apps.winamp, { open: true, minimized: false })
+  assert.equal(state.winampPanels.equalizer, false)
 })

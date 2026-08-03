@@ -7,7 +7,7 @@ const SOUND_KEY = 'bazaar-sound'
 type AudioBus = { context: AudioContext; master: GainNode }
 
 let bus: AudioBus | null = null
-let verb: ConvolverNode | null = null
+let convolver: ConvolverNode | null = null
 let enabled: boolean | null = null
 
 const listeners = new Set<() => void>()
@@ -48,10 +48,9 @@ function ensure(): AudioBus | null {
   return bus
 }
 
-/* convolver fed a generated decaying-noise impulse: procedural reverb */
 function reverb({ context, master }: AudioBus): ConvolverNode {
-  if (verb) return verb
-  verb = context.createConvolver()
+  if (convolver) return convolver
+  convolver = context.createConvolver()
   const length = context.sampleRate * 1.6
   const impulse = context.createBuffer(2, length, context.sampleRate)
   for (let channel = 0; channel < 2; channel++) {
@@ -60,11 +59,11 @@ function reverb({ context, master }: AudioBus): ConvolverNode {
       data[i] = (Math.random() * 2 - 1) * (1 - i / length) ** 2.8
     }
   }
-  verb.buffer = impulse
+  convolver.buffer = impulse
   const gain = context.createGain()
   gain.gain.value = 0.5
-  verb.connect(gain).connect(master)
-  return verb
+  convolver.connect(gain).connect(master)
+  return convolver
 }
 
 type ToneSpec = {
@@ -92,17 +91,19 @@ function tone(spec: ToneSpec) {
   } = spec
   const { context, master } = active
   const start = context.currentTime + at
-  const osc = context.createOscillator()
-  osc.type = shape
-  osc.frequency.setValueAtTime(from, start)
-  if (to) osc.frequency.exponentialRampToValueAtTime(to, start + duration)
+  const oscillator = context.createOscillator()
+  oscillator.type = shape
+  oscillator.frequency.setValueAtTime(from, start)
+  if (to) {
+    oscillator.frequency.exponentialRampToValueAtTime(to, start + duration)
+  }
   const gain = context.createGain()
   gain.gain.setValueAtTime(peak, start)
   gain.gain.exponentialRampToValueAtTime(0.0008, start + duration)
-  osc.connect(gain).connect(master)
+  oscillator.connect(gain).connect(master)
   if (wet) gain.connect(reverb(active))
-  osc.start(start)
-  osc.stop(start + duration + 0.02)
+  oscillator.start(start)
+  oscillator.stop(start + duration + 0.02)
 }
 
 type NoiseSpec = {
@@ -217,8 +218,10 @@ async function loadDoorBuffer(): Promise<AudioBuffer> {
   if (doorBuffer) return doorBuffer
   const active = ensure()
   if (!active) throw new Error('AudioContext unavailable')
-  const res = await fetch('/sounds/door.webm')
-  doorBuffer = await active.context.decodeAudioData(await res.arrayBuffer())
+  const response = await fetch('/sounds/door.webm')
+  doorBuffer = await active.context.decodeAudioData(
+    await response.arrayBuffer(),
+  )
   return doorBuffer
 }
 
@@ -253,12 +256,12 @@ function playDoorBuffer(buffer: AudioBuffer) {
   const active = ensure()
   if (!active) return
   const { context, master } = active
-  const src = context.createBufferSource()
-  src.buffer = buffer
+  const source = context.createBufferSource()
+  source.buffer = buffer
   const gain = context.createGain()
   gain.gain.value = 0.6
-  src.connect(gain).connect(master)
-  src.start()
+  source.connect(gain).connect(master)
+  source.start()
 }
 
 function playDoorFile() {

@@ -1,5 +1,5 @@
+import { cssVars } from 'services/css-vars'
 import { EQ_FREQUENCIES, formatFrequency } from './equalizer'
-import { cssVars } from './format'
 import css from './music.module.css'
 import type { DragPanelProps } from './types'
 

@@ -23,6 +23,7 @@ import {
   reduce,
   type Stickers,
   slotIndex,
+  type TimerState,
   type Turn,
   type Vec,
 } from './engine'
@@ -55,10 +56,16 @@ const TURN_MS: Record<Turn['kind'], number> = {
   solve: 130,
 }
 
-const STATUS: Record<Phase, string> = {
+const STATUS: Record<Exclude<Phase, 'idle'>, string> = {
   scrambling: 'mixing',
   solving: 'auto',
-  idle: 'zen',
+}
+
+const TIMER_WORD: Record<TimerState['status'], string> = {
+  off: 'zen',
+  armed: 'ready',
+  running: 'live',
+  done: 'done',
 }
 
 const KEY_FACES: Record<string, Face> = {
@@ -112,13 +119,13 @@ const useTurnClock = (turning: Turn | null, dispatch: Dispatch) => {
 
   useEffect(() => {
     if (!turning) return
-    const raf = requestAnimationFrame(() => setSpun(true))
+    const frame = requestAnimationFrame(() => setSpun(true))
     const timeout = window.setTimeout(() => {
       setSpun(false)
       dispatch({ type: 'TURN_END', now: Date.now() })
     }, TURN_MS[turning.kind])
     return () => {
-      cancelAnimationFrame(raf)
+      cancelAnimationFrame(frame)
       window.clearTimeout(timeout)
     }
   }, [turning, dispatch])
@@ -165,10 +172,10 @@ type DragSession = {
   moved: boolean
 }
 
-type Orbit = { rx: number; ry: number }
+type Orbit = { rotateX: number; rotateY: number }
 
 const useOrbitAndTap = (dispatch: Dispatch) => {
-  const [orbit, setOrbit] = useState<Orbit>({ rx: -24, ry: -38 })
+  const [orbit, setOrbit] = useState<Orbit>({ rotateX: -24, rotateY: -38 })
   const session = useRef<DragSession | null>(null)
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -188,15 +195,15 @@ const useOrbitAndTap = (dispatch: Dispatch) => {
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const drag = session.current
     if (!drag) return
-    const dx = event.clientX - drag.x
-    const dy = event.clientY - drag.y
-    if (!drag.moved && Math.hypot(dx, dy) < 6) return
+    const deltaX = event.clientX - drag.x
+    const deltaY = event.clientY - drag.y
+    if (!drag.moved && Math.hypot(deltaX, deltaY) < 6) return
     drag.moved = true
     drag.x = event.clientX
     drag.y = event.clientY
     setOrbit((prev) => ({
-      rx: Math.max(-80, Math.min(80, prev.rx - dy * 0.4)),
-      ry: prev.ry + dx * 0.4,
+      rotateX: Math.max(-80, Math.min(80, prev.rotateX - deltaY * 0.4)),
+      rotateY: prev.rotateY + deltaX * 0.4,
     }))
   }
 
@@ -214,10 +221,8 @@ const useOrbitAndTap = (dispatch: Dispatch) => {
   return { orbit, onPointerDown, onPointerMove, onPointerUp }
 }
 
-const TimerReadout: React.FC<{
-  startedAt: number | null
-  resultMs: number | null
-}> = ({ startedAt, resultMs }) => {
+const TimerReadout: React.FC<{ timer: TimerState }> = ({ timer }) => {
+  const startedAt = timer.status === 'running' ? timer.startedAt : null
   const [elapsed, setElapsed] = useState(0)
 
   useEffect(() => {
@@ -232,7 +237,7 @@ const TimerReadout: React.FC<{
     return () => window.clearInterval(tick)
   }, [startedAt])
 
-  if (resultMs !== null) return <>{formatMs(resultMs)}</>
+  if (timer.status === 'done') return <>{formatMs(timer.resultMs)}</>
   return <>{formatMs(startedAt === null ? 0 : elapsed)}</>
 }
 
@@ -280,10 +285,8 @@ const Cubie: React.FC<{
 
 const statusWord = (state: GameState, solved: boolean) => {
   if (state.phase !== 'idle') return STATUS[state.phase]
-  if (state.timerStart !== null) return 'live'
-  if (state.armed) return 'ready'
-  if (solved && state.resultMs !== null) return 'done'
-  return 'zen'
+  if (state.timer.status === 'done' && !solved) return 'zen'
+  return TIMER_WORD[state.timer.status]
 }
 
 export default function RubiksView() {
@@ -366,7 +369,7 @@ export default function RubiksView() {
               <div
                 className={css.scene}
                 style={{
-                  transform: `rotateX(${orbit.rx}deg) rotateY(${orbit.ry}deg)`,
+                  transform: `rotateX(${orbit.rotateX}deg) rotateY(${orbit.rotateY}deg)`,
                 }}
               >
                 <div
@@ -404,10 +407,7 @@ export default function RubiksView() {
             <p className={css.hudItem}>
               <span className={css.hudLabel}>time</span>
               <span className={css.hudValue}>
-                <TimerReadout
-                  startedAt={state.timerStart}
-                  resultMs={state.resultMs}
-                />
+                <TimerReadout timer={state.timer} />
               </span>
             </p>
             <p className={css.hudItem}>
@@ -476,8 +476,8 @@ export default function RubiksView() {
           <kbd>drag</kbd>
         </p>
         <p className='sr-only' role='status'>
-          {solved && !pristine && state.resultMs !== null
-            ? `Cube solved in ${formatMs(state.resultMs)} seconds.`
+          {solved && !pristine && state.timer.status === 'done'
+            ? `Cube solved in ${formatMs(state.timer.resultMs)} seconds.`
             : `Cube ${status}. ${state.history.length} moves on record.`}
         </p>
       </section>

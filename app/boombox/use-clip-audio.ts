@@ -163,7 +163,6 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
     setSeconds(0)
   }, [])
 
-  /* jump the playhead without touching play state; keeps rolling if rolling */
   const seek = useCallback((to: number) => {
     const audio = audioRef.current
     if (!audio) return

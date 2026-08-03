@@ -176,8 +176,6 @@ const orderRoundQuestions = (
   )
 
 /**
- * Derives a persistence-safe runtime variant of a published challenge.
- *
  * Countries in the source pool are assigned to one eligible minigame, each
  * contributes one seeded prompt, and every round deck plays as an ascending
  * tier 1 → 4 ramp. Emitted country sets stay disjoint across minigames and no
@@ -217,8 +215,8 @@ export const deriveRunChallenge = (
 }
 
 /**
- * Derives the one official queue for a publication date. The date is an
- * explicit seed input so every player receives the same ordered questions.
+ * The publication date is an explicit seed input so every player receives
+ * the same ordered questions.
  */
 export const deriveDailyChallenge = (
   challenge: DailyGeoChallenge,
@@ -236,9 +234,8 @@ export const runChallengeSignature = (challenge: DailyGeoChallenge): string =>
     .join('|')
 
 /**
- * Rejects a nonce that reproduces the current practice game. The retry suffix
- * is deterministic so callers can start with a full-entropy browser UUID while
- * tests can force and verify the collision path.
+ * The retry suffix is deterministic so callers can start with a full-entropy
+ * browser UUID and tests can force and verify the collision path.
  */
 export const differentRunNonce = (
   challenge: DailyGeoChallenge,

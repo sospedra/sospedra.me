@@ -1,49 +1,29 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import {
-  BONFIRE_PLAYLIST,
   type SoundCloudProgress,
   type SoundCloudSound,
   type SoundCloudWidget,
   WIDGET_OPTIONS,
 } from './soundcloud'
+import { INITIAL_SOUNDCLOUD, reduceSoundCloud } from './soundcloud-state'
 
 // target: a cold-cache SoundCloud widget fires READY well under 12s
 const WIDGET_READY_TIMEOUT_MS = 12_000
+
+const TIMEOUT_MESSAGE =
+  'SoundCloud took too long to respond. Check content blockers, then reload.'
+const WIDGET_ERROR_MESSAGE =
+  'SoundCloud could not tune this signal. Check that the playlist is public and embeddable.'
+const API_ERROR_MESSAGE = 'The SoundCloud player API could not be loaded.'
 
 const fromWidget = <Value>(
   get: (callback: (value: Value) => void) => void,
 ): Promise<Value> => new Promise((resolve) => get(resolve))
 
-type SoundCloudState = {
-  currentIndex: number
-  currentSound: SoundCloudSound | null
-  duration: number
-  error: string | null
-  isLoading: boolean
-  isPlaying: boolean
-  isReady: boolean
-  position: number
-  sounds: SoundCloudSound[]
-  source: string
-}
-
-const initialState: SoundCloudState = {
-  currentIndex: 0,
-  currentSound: null,
-  duration: 0,
-  error: null,
-  isLoading: true,
-  isPlaying: false,
-  isReady: false,
-  position: 0,
-  sounds: [],
-  source: BONFIRE_PLAYLIST,
-}
-
 export const useSoundCloud = (outputVolume: number) => {
-  const [state, setState] = useState(initialState)
+  const [state, dispatch] = useReducer(reduceSoundCloud, INITIAL_SOUNDCLOUD)
   const [apiReady, setApiReady] = useState(false)
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null)
   const widgetRef = useRef<SoundCloudWidget | null>(null)
@@ -71,16 +51,7 @@ export const useSoundCloud = (outputVolume: number) => {
       fromWidget<number>((callback) => widget.getDuration(callback)),
     ])
     if (generation !== soundSyncRef.current) return
-    setState((current) => ({
-      ...current,
-      currentIndex,
-      currentSound,
-      duration,
-      position: current.currentIndex === currentIndex ? current.position : 0,
-      sounds: current.sounds.map((sound, index) =>
-        index === currentIndex ? { ...sound, ...currentSound } : sound,
-      ),
-    }))
+    dispatch({ currentIndex, currentSound, duration, type: 'sound-sync' })
   }, [])
 
   const syncPlaylist = useCallback(
@@ -88,7 +59,7 @@ export const useSoundCloud = (outputVolume: number) => {
       const generation = ++playlistSyncRef.current
       widget.getSounds((sounds) => {
         if (generation !== playlistSyncRef.current) return
-        setState((current) => ({ ...current, sounds }))
+        dispatch({ sounds, type: 'playlist-sync' })
       })
       void syncCurrentSound(widget)
     },
@@ -102,12 +73,7 @@ export const useSoundCloud = (outputVolume: number) => {
         callback: () => {
           if (generation !== sourceLoadRef.current) return
           widget.setVolume(Math.round(volumeRef.current * 100))
-          setState((current) => ({
-            ...current,
-            error: null,
-            isLoading: false,
-            isReady: true,
-          }))
+          dispatch({ type: 'ready' })
           syncPlaylist(widget)
         },
       })
@@ -135,62 +101,28 @@ export const useSoundCloud = (outputVolume: number) => {
       sourceLoadRef.current += 1
       widget.setVolume(Math.round(volumeRef.current * 100))
       syncPlaylist(widget)
-      setState((current) => ({
-        ...current,
-        error: null,
-        isLoading: false,
-        isReady: true,
-      }))
+      dispatch({ type: 'ready' })
     }
 
     const onPlay = () => {
       void syncCurrentSound(widget)
-      setState((current) => ({
-        ...current,
-        error: null,
-        isLoading: false,
-        isPlaying: true,
-      }))
-    }
-
-    const onPause = () => {
-      setState((current) => ({ ...current, isPlaying: false }))
-    }
-
-    const onFinish = () => {
-      setState((current) => ({
-        ...current,
-        isPlaying: false,
-        position: current.duration,
-      }))
+      dispatch({ type: 'play' })
     }
 
     const onProgress = (payload?: SoundCloudProgress) => {
       if (!payload) return
-      setState((current) => ({
-        ...current,
-        position: payload.currentPosition,
-      }))
-    }
-
-    const onError = () => {
-      setState((current) => ({
-        ...current,
-        error:
-          'SoundCloud could not tune this signal. Check that the playlist is public and embeddable.',
-        isLoading: false,
-        isPlaying: false,
-        isReady: false,
-      }))
+      dispatch({ position: payload.currentPosition, type: 'progress' })
     }
 
     widget.bind(events.READY, onReady)
     widget.bind(events.PLAY, onPlay)
-    widget.bind(events.PAUSE, onPause)
-    widget.bind(events.FINISH, onFinish)
+    widget.bind(events.PAUSE, () => dispatch({ type: 'pause' }))
+    widget.bind(events.FINISH, () => dispatch({ type: 'finish' }))
     widget.bind(events.PLAY_PROGRESS, onProgress)
     widget.bind(events.SEEK, onProgress)
-    widget.bind(events.ERROR, onError)
+    widget.bind(events.ERROR, () =>
+      dispatch({ message: WIDGET_ERROR_MESSAGE, type: 'error' }),
+    )
 
     return () => {
       widget.pause()
@@ -209,49 +141,31 @@ export const useSoundCloud = (outputVolume: number) => {
     }
   }, [apiReady, iframe, loadWidgetSource, syncCurrentSound, syncPlaylist])
 
+  const phase = state.status.phase
+
   useEffect(() => {
-    if (!iframe || state.isReady || state.error) return
+    if (!iframe || phase !== 'loading') return
 
     const timeout = window.setTimeout(() => {
-      setState((current) =>
-        current.isReady || current.error
-          ? current
-          : {
-              ...current,
-              error:
-                'SoundCloud took too long to respond. Check content blockers, then reload.',
-              isLoading: false,
-              isPlaying: false,
-            },
-      )
+      dispatch({ message: TIMEOUT_MESSAGE, type: 'timeout' })
     }, WIDGET_READY_TIMEOUT_MS)
 
     return () => window.clearTimeout(timeout)
-  }, [iframe, state.error, state.isReady])
+  }, [iframe, phase])
+
+  const widgetInteractive = phase === 'playing' || phase === 'ready'
 
   useEffect(() => {
-    if (!state.isReady) return
+    if (!widgetInteractive) return
     widgetRef.current?.setVolume(Math.round(outputVolume * 100))
-  }, [outputVolume, state.isReady])
+  }, [outputVolume, widgetInteractive])
 
   const loadSource = useCallback(
     (source: string) => {
       const generation = ++sourceLoadRef.current
       playlistSyncRef.current += 1
       soundSyncRef.current += 1
-      setState((current) => ({
-        ...current,
-        currentIndex: 0,
-        currentSound: null,
-        duration: 0,
-        error: null,
-        isLoading: true,
-        isPlaying: false,
-        isReady: false,
-        position: 0,
-        sounds: [],
-        source,
-      }))
+      dispatch({ type: 'load-start' })
 
       const widget = widgetRef.current
       if (!widget || !widgetReadyRef.current) {
@@ -283,21 +197,13 @@ export const useSoundCloud = (outputVolume: number) => {
 
   const seek = useCallback((position: number) => {
     widgetRef.current?.seekTo(position)
-    setState((current) => ({ ...current, position }))
+    dispatch({ position, type: 'progress' })
   }, [])
 
   const selectTrack = useCallback((index: number) => {
     const widget = widgetRef.current
     if (!widget) return
-    setState((current) => ({
-      ...current,
-      currentIndex: index,
-      currentSound: current.sounds[index] ?? null,
-      duration: current.sounds[index]?.duration ?? 0,
-      error: null,
-      isLoading: true,
-      position: 0,
-    }))
+    dispatch({ index, type: 'select-track' })
     widget.skip(index)
     widget.play()
   }, [])
@@ -307,18 +213,11 @@ export const useSoundCloud = (outputVolume: number) => {
   }, [])
 
   const markApiError = useCallback(() => {
-    setState((current) => ({
-      ...current,
-      error: 'The SoundCloud player API could not be loaded.',
-      isLoading: false,
-      isPlaying: false,
-      isReady: false,
-    }))
+    dispatch({ message: API_ERROR_MESSAGE, type: 'error' })
   }, [])
 
   return {
     ...state,
-    apiReady,
     bindIframe: setIframe,
     loadSource,
     markApiError,

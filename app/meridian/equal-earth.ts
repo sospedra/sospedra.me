@@ -33,7 +33,6 @@ const xDenominator = (theta: number): number => {
 const RAW_X_MAX = Math.PI / (M * xDenominator(0))
 const RAW_Y_MAX = yPolynomial(Math.asin(M))
 
-/** Width over height of the projected world. */
 export const EQUAL_EARTH_ASPECT = (2 * RAW_X_MAX) / (2 * RAW_Y_MAX)
 
 export interface NormalizedPoint {
@@ -44,9 +43,9 @@ export interface NormalizedPoint {
 }
 
 /**
- * Projects a coordinate into the unit frame. Longitude is deliberately not
- * clamped: antimeridian-wrapped inputs (for example 190°) land beyond the
- * frame edge, which the map connection line relies on.
+ * Longitude is deliberately not clamped: antimeridian-wrapped inputs (for
+ * example 190°) land beyond the frame edge, and the map connection line
+ * relies on that.
  */
 export const equalEarthForward = (
   longitudeDeg: number,
@@ -63,7 +62,6 @@ export const equalEarthForward = (
   }
 }
 
-/** Inverts a unit-frame point back to a coordinate, Newton on the y series. */
 export const equalEarthInverse = (
   point: NormalizedPoint,
 ): { latitude: number; longitude: number } => {

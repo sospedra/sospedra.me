@@ -4,11 +4,11 @@ import {
   type ToolOptions,
 } from './options.ts'
 import { DEFAULT_BG, DEFAULT_FG } from './palette.ts'
-import type { Pt, Rect } from './raster.ts'
+import type { Point, Rect } from './raster.ts'
 import { type ToolId, toolById } from './tools.ts'
 
-export const INITIAL_W = 683
-export const INITIAL_H = 384
+export const INITIAL_WIDTH = 683
+export const INITIAL_HEIGHT = 384
 
 export type Button = 'left' | 'right'
 
@@ -20,23 +20,23 @@ export type CurvePhase = 'line' | 'c1' | 'c2'
 
 export type Mode =
   | { kind: 'idle' }
-  | { kind: 'freehand'; last: Pt; button: Button }
-  | { kind: 'shaping'; from: Pt; to: Pt; button: Button }
-  | { kind: 'polygon'; points: readonly Pt[]; to: Pt; button: Button }
+  | { kind: 'freehand'; last: Point; button: Button }
+  | { kind: 'shaping'; from: Point; to: Point; button: Button }
+  | { kind: 'polygon'; points: readonly Point[]; to: Point; button: Button }
   | {
       kind: 'curving'
       phase: CurvePhase
-      from: Pt
-      to: Pt
-      c1?: Pt
-      c2?: Pt
+      from: Point
+      to: Point
+      c1?: Point
+      c2?: Point
       dragging: boolean
     }
-  | { kind: 'selecting'; from: Pt; to: Pt }
+  | { kind: 'selecting'; from: Point; to: Point }
   | { kind: 'selected'; rect: Rect }
-  | { kind: 'movingSelection'; rect: Rect; grip: Pt }
-  | { kind: 'resizingSelection'; rect: Rect; handle: Handle; to: Pt }
-  | { kind: 'resizingCanvas'; nub: Nub; start: Pt; to: Pt }
+  | { kind: 'movingSelection'; rect: Rect; grip: Point }
+  | { kind: 'resizingSelection'; rect: Rect; handle: Handle; to: Point }
+  | { kind: 'resizingCanvas'; nub: Nub; start: Point; to: Point }
 
 export type PaintState = {
   tool: ToolId
@@ -44,7 +44,7 @@ export type PaintState = {
   bg: string
   options: ToolOptions
   zoom: Magnification
-  size: { w: number; h: number }
+  size: { width: number; height: number }
   dirty: boolean
   mode: Mode
 }
@@ -54,20 +54,20 @@ export type PaintEvent =
   | { type: 'color'; slot: 'fg' | 'bg'; color: string }
   | { type: 'option'; patch: Partial<ToolOptions> }
   | { type: 'zoom'; level: Magnification }
-  | { type: 'down'; at: Pt; button: Button }
-  | { type: 'move'; at: Pt }
-  | { type: 'up'; at: Pt }
+  | { type: 'down'; at: Point; button: Button }
+  | { type: 'move'; at: Point }
+  | { type: 'up'; at: Point }
   | { type: 'dblclick' }
   | { type: 'cancel' }
   | { type: 'commit' }
   | { type: 'deselect' }
   | { type: 'select-rect'; rect: Rect }
-  | { type: 'grab'; at: Pt }
-  | { type: 'grab-handle'; handle: Handle; at: Pt }
-  | { type: 'resize-canvas'; nub: Nub; at: Pt }
-  | { type: 'canvas-resized'; w: number; h: number }
-  | { type: 'cleared'; w: number; h: number }
-  | { type: 'opened'; w: number; h: number }
+  | { type: 'grab'; at: Point }
+  | { type: 'grab-handle'; handle: Handle; at: Point }
+  | { type: 'resize-canvas'; nub: Nub; at: Point }
+  | { type: 'canvas-resized'; width: number; height: number }
+  | { type: 'cleared'; width: number; height: number }
+  | { type: 'opened'; width: number; height: number }
   | { type: 'saved' }
 
 const IDLE: Mode = { kind: 'idle' }
@@ -78,49 +78,54 @@ export const INITIAL_PAINT: PaintState = {
   bg: DEFAULT_BG,
   options: DEFAULT_OPTIONS,
   zoom: 1,
-  size: { w: INITIAL_W, h: INITIAL_H },
+  size: { width: INITIAL_WIDTH, height: INITIAL_HEIGHT },
   dirty: false,
   mode: IDLE,
 }
 
-const samePt = (a: Pt, b: Pt): boolean => a.x === b.x && a.y === b.y
+const samePoint = (a: Point, b: Point): boolean => a.x === b.x && a.y === b.y
 
-export const normRect = (a: Pt, b: Pt): Rect => ({
+export const normalizeRect = (a: Point, b: Point): Rect => ({
   x: Math.min(a.x, b.x),
   y: Math.min(a.y, b.y),
-  w: Math.abs(b.x - a.x) + 1,
-  h: Math.abs(b.y - a.y) + 1,
+  width: Math.abs(b.x - a.x) + 1,
+  height: Math.abs(b.y - a.y) + 1,
 })
 
-export type Size = { w: number; h: number }
+export type Size = { width: number; height: number }
 
-const clampPt = (at: Pt, size: Size): Pt => ({
-  x: Math.min(Math.max(at.x, 0), size.w - 1),
-  y: Math.min(Math.max(at.y, 0), size.h - 1),
+const clampPoint = (at: Point, size: Size): Point => ({
+  x: Math.min(Math.max(at.x, 0), size.width - 1),
+  y: Math.min(Math.max(at.y, 0), size.height - 1),
 })
 
 export const prospectiveSize = (
   size: Size,
   mode: Extract<Mode, { kind: 'resizingCanvas' }>,
 ): Size => ({
-  w: mode.nub === 's' ? size.w : Math.max(1, size.w + mode.to.x - mode.start.x),
-  h: mode.nub === 'e' ? size.h : Math.max(1, size.h + mode.to.y - mode.start.y),
+  width:
+    mode.nub === 's'
+      ? size.width
+      : Math.max(1, size.width + mode.to.x - mode.start.x),
+  height:
+    mode.nub === 'e'
+      ? size.height
+      : Math.max(1, size.height + mode.to.y - mode.start.y),
 })
 
-// selection handles never flip the rect: edges clamp at one pixel
-export const resizeRect = (rect: Rect, handle: Handle, to: Pt): Rect => {
+export const resizeRect = (rect: Rect, handle: Handle, to: Point): Rect => {
   let x0 = rect.x
   let y0 = rect.y
-  let x1 = rect.x + rect.w - 1
-  let y1 = rect.y + rect.h - 1
+  let x1 = rect.x + rect.width - 1
+  let y1 = rect.y + rect.height - 1
   if (handle.includes('w')) x0 = Math.min(to.x, x1)
   if (handle.includes('e')) x1 = Math.max(to.x, x0)
   if (handle.includes('n')) y0 = Math.min(to.y, y1)
   if (handle.includes('s')) y1 = Math.max(to.y, y0)
-  return { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 }
+  return { x: x0, y: y0, width: x1 - x0 + 1, height: y1 - y0 + 1 }
 }
 
-const downCurve = (mode: Mode, at: Pt): Mode => {
+const downCurve = (mode: Mode, at: Point): Mode => {
   if (mode.kind !== 'curving') {
     return { kind: 'curving', phase: 'line', from: at, to: at, dragging: true }
   }
@@ -128,19 +133,23 @@ const downCurve = (mode: Mode, at: Pt): Mode => {
   return { ...mode, c2: at, dragging: true }
 }
 
-const downPolygon = (mode: Mode, at: Pt, button: Button): Mode => {
+const downPolygon = (mode: Mode, at: Point, button: Button): Mode => {
   if (mode.kind === 'polygon') return { ...mode, to: at }
   return { kind: 'polygon', points: [at], to: at, button }
 }
 
-const reduceDown = (state: PaintState, at: Pt, button: Button): PaintState => {
+const reduceDown = (
+  state: PaintState,
+  at: Point,
+  button: Button,
+): PaintState => {
   const kind = toolById[state.tool].kind
   if (kind === 'point') return state
   if (kind === 'freehand') {
     return { ...state, mode: { kind: 'freehand', last: at, button } }
   }
   if (kind === 'select') {
-    const from = clampPt(at, state.size)
+    const from = clampPoint(at, state.size)
     return { ...state, mode: { kind: 'selecting', from, to: from } }
   }
   if (state.tool === 'curve') {
@@ -152,19 +161,22 @@ const reduceDown = (state: PaintState, at: Pt, button: Button): PaintState => {
   return { ...state, mode: { kind: 'shaping', from: at, to: at, button } }
 }
 
-const moveCurve = (mode: Extract<Mode, { kind: 'curving' }>, at: Pt): Mode => {
+const moveCurve = (
+  mode: Extract<Mode, { kind: 'curving' }>,
+  at: Point,
+): Mode => {
   if (!mode.dragging) return mode
   if (mode.phase === 'line') return { ...mode, to: at }
   if (mode.phase === 'c1') return { ...mode, c1: at }
   return { ...mode, c2: at }
 }
 
-const movedMode = (mode: Mode, at: Pt, size: Size): Mode => {
+const movedMode = (mode: Mode, at: Point, size: Size): Mode => {
   switch (mode.kind) {
     case 'freehand':
       return { ...mode, last: at }
     case 'selecting':
-      return { ...mode, to: clampPt(at, size) }
+      return { ...mode, to: clampPoint(at, size) }
     case 'shaping':
     case 'polygon':
       return { ...mode, to: at }
@@ -193,7 +205,7 @@ const upCurve = (
   mode: Extract<Mode, { kind: 'curving' }>,
 ): PaintState => {
   if (mode.phase === 'line') {
-    if (samePt(mode.from, mode.to)) return { ...state, mode: IDLE }
+    if (samePoint(mode.from, mode.to)) return { ...state, mode: IDLE }
     return { ...state, mode: { ...mode, phase: 'c1', dragging: false } }
   }
   if (mode.phase === 'c1') {
@@ -205,20 +217,20 @@ const upCurve = (
 const upPolygon = (
   state: PaintState,
   mode: Extract<Mode, { kind: 'polygon' }>,
-  at: Pt,
+  at: Point,
 ): PaintState => {
   const last = mode.points.at(-1)
-  if (last && samePt(last, at)) return state
+  if (last && samePoint(last, at)) return state
   return { ...state, mode: { ...mode, points: [...mode.points, at], to: at } }
 }
 
-const upSelecting = (state: PaintState, from: Pt, to: Pt): PaintState => {
-  const rect = normRect(from, to)
-  if (rect.w === 1 && rect.h === 1) return { ...state, mode: IDLE }
+const upSelecting = (state: PaintState, from: Point, to: Point): PaintState => {
+  const rect = normalizeRect(from, to)
+  if (rect.width === 1 && rect.height === 1) return { ...state, mode: IDLE }
   return { ...state, mode: { kind: 'selected', rect } }
 }
 
-const reduceUp = (state: PaintState, at: Pt): PaintState => {
+const reduceUp = (state: PaintState, at: Point): PaintState => {
   const mode = state.mode
   switch (mode.kind) {
     case 'freehand':
@@ -327,14 +339,14 @@ export const reduce = (state: PaintState, event: PaintEvent): PaintState => {
     case 'canvas-resized':
       return {
         ...state,
-        size: { w: event.w, h: event.h },
+        size: { width: event.width, height: event.height },
         dirty: true,
         mode: IDLE,
       }
     case 'cleared':
       return {
         ...state,
-        size: { w: event.w, h: event.h },
+        size: { width: event.width, height: event.height },
         dirty: false,
         zoom: 1,
         mode: IDLE,
@@ -342,7 +354,7 @@ export const reduce = (state: PaintState, event: PaintEvent): PaintState => {
     case 'opened':
       return {
         ...state,
-        size: { w: event.w, h: event.h },
+        size: { width: event.width, height: event.height },
         dirty: false,
         zoom: 1,
         mode: IDLE,

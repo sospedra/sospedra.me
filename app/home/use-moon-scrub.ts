@@ -2,12 +2,11 @@
 
 import type { KeyboardEvent, PointerEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { DAY_MS } from 'services/time'
 import { SYNODIC_MONTH_MS } from './lunar-phase'
 
-const DAY_MS = 86_400_000
 const RETURN_MS = 800
 
-// Arrow keys step one day through the cycle
 const KEY_NUDGE_MS: Record<string, number> = {
   ArrowDown: -DAY_MS,
   ArrowLeft: -DAY_MS,
@@ -20,8 +19,6 @@ type DragOrigin = {
   scrub: number
 }
 
-// Horizontal scrub through the lunar cycle: one viewport width sweeps one
-// synodic month. Releasing eases the moon back to tonight's real phase.
 export const useMoonScrub = (motionAllowed: boolean) => {
   const [scrub, setScrub] = useState(0)
   const scrubRef = useRef(0)

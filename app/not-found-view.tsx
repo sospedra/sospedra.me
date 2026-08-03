@@ -3,6 +3,7 @@
 import cn from 'clsx'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { cssVars } from 'services/css-vars'
 import Link from 'services/link'
 import { useSystem } from 'services/system'
 import { useTheme } from 'services/theme'
@@ -27,11 +28,6 @@ const LIQUID_LAYER_TIMINGS = [
 ] as const
 
 const HOME_LINK_WORDS = ['Take', 'me', 'to', 'a', 'safe', 'place'] as const
-
-type LiquidLayerStyle = React.CSSProperties & {
-  '--liquid-delay': string
-  '--liquid-duration': string
-}
 
 const HomeLinkLabel = () => (
   <span className={css.homeLinkLabel}>
@@ -200,12 +196,10 @@ const NotFoundView: React.FC = () => {
                 <span
                   className={css.homeLiquidLayer}
                   key={`${delay}-${duration}`}
-                  style={
-                    {
-                      '--liquid-delay': delay,
-                      '--liquid-duration': duration,
-                    } as LiquidLayerStyle
-                  }
+                  style={cssVars({
+                    '--liquid-delay': delay,
+                    '--liquid-duration': duration,
+                  })}
                 />
               ))}
               <span className={css.homeLiquidBase} />

@@ -435,7 +435,7 @@ if (checkOnly) {
     `Deterministic challenge matches ${relative(REPOSITORY_ROOT, challengePath)}`,
   )
 } else {
-  // Challenges are build artifacts now; a fresh checkout has no directory.
+  // challenges are build artifacts; a fresh checkout has no directory
   mkdirSync(dirname(challengePath), { recursive: true })
   writeFileSync(challengePath, output)
   console.log(`Generated ${relative(REPOSITORY_ROOT, challengePath)}`)

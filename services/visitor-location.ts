@@ -1,3 +1,5 @@
+import { isRecord } from 'services/is-record'
+
 export type VisitorLocation = {
   located: boolean
   lat?: number
@@ -5,9 +7,6 @@ export type VisitorLocation = {
   city?: string
   country?: string
 }
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null
 
 const finiteOrUndefined = (value: unknown): number | undefined =>
   typeof value === 'number' && Number.isFinite(value) ? value : undefined

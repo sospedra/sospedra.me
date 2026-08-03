@@ -21,7 +21,6 @@ const restFile = (layer: StallLayer): string => {
   return layer.idle[0].file
 }
 
-/** every frame a layer can show; all are mounted once and opacity-flipped */
 const layerFiles = (layer: StallLayer): string[] => {
   if (layer.role === 'plate') return [layer.file ?? 'plate-key.png']
   if (layer.role === 'effect') {
@@ -30,15 +29,15 @@ const layerFiles = (layer: StallLayer): string[] => {
       : layer.hover
         ? [layer.hover]
         : []
-    return [...new Set([...layer.frames.map((f) => f.file), ...hover])]
+    return [...new Set([...layer.frames.map((frame) => frame.file), ...hover])]
   }
   if (layer.role === 'prop') {
     return [...new Set([layer.rest, ...(layer.hover ?? [])])]
   }
   return [
     ...new Set([
-      ...layer.idle.map((f) => f.file),
-      ...layer.hover.map((f) => f.file),
+      ...layer.idle.map((frame) => frame.file),
+      ...layer.hover.map((frame) => frame.file),
     ]),
   ]
 }

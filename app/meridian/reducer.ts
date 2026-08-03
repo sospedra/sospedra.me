@@ -49,13 +49,7 @@ export interface GeoGameState {
   score: number
   currentStreak: number
   bestStreak: number
-  /**
-   * Authoritative elapsed time on the current round's shared clock.
-   */
   roundElapsedMs: number
-  /**
-   * Elapsed response time for the active prompt.
-   */
   questionElapsedMs: number
   startedAt: string | null
   completedAt: string | null

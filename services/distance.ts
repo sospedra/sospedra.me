@@ -23,9 +23,6 @@ export const isGeoCoordinate = (value: unknown): value is GeoCoordinate => {
   )
 }
 
-/**
- * Great-circle distance using the haversine formula.
- */
 export const haversineDistanceKm = (from: GeoCoordinate, to: GeoCoordinate) => {
   if (!isGeoCoordinate(from) || !isGeoCoordinate(to)) {
     throw new RangeError('Coordinates must be within world bounds')

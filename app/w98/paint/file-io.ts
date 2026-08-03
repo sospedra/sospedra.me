@@ -13,7 +13,7 @@ export const openPng = async (file: File): Promise<Bitmap | null> => {
     ctx.fillRect(0, 0, image.width, image.height)
     ctx.drawImage(image, 0, 0)
     const pixels = ctx.getImageData(0, 0, image.width, image.height)
-    return { data: pixels.data, w: image.width, h: image.height }
+    return { data: pixels.data, width: image.width, height: image.height }
   } catch {
     return null
   }

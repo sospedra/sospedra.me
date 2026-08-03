@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import type { CSSProperties } from 'react'
+import { cssVars } from 'services/css-vars'
 import { useDailyCountdown } from 'services/daily-countdown'
 
 type DailyCountdownPanelProps = {
@@ -44,7 +44,7 @@ const DailyCountdownPanel = ({ classes, labels }: DailyCountdownPanelProps) => {
       <span
         className={classes.track}
         aria-hidden='true'
-        style={{ '--remaining': countdown.remainingFraction } as CSSProperties}
+        style={cssVars({ '--remaining': countdown.remainingFraction })}
       >
         <span />
       </span>

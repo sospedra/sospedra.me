@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 
-// covers reload, tab close, and the address bar while the canvas is dirty
 export const useBeforeUnloadGuard = (dirty: boolean): void => {
   useEffect(() => {
     if (!dirty) return

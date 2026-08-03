@@ -26,10 +26,7 @@ import {
   minesLeft,
   reduce,
 } from './engine'
-import MusicView, {
-  type WinampPanelId,
-  type WinampPanelVisibility,
-} from './music/music-view'
+import MusicView, { type WinampPanelId } from './music/music-view'
 import PaintWindow, { type PaintHandle } from './paint/paint-view'
 import RealPlayerWindow from './realplayer/realplayer-view'
 import { createSweepAudio, type SweepAudio } from './sweep-audio'
@@ -40,7 +37,6 @@ const SOUND_KEY = 'g-mines-sound'
 type Density = 'beginner' | 'intermediate' | 'expert'
 type InputMode = 'sweep' | 'flag'
 
-// mine density per difficulty: the grid itself is sized by the screen
 const DENSITIES = {
   beginner: 0.12,
   intermediate: 0.16,
@@ -319,7 +315,6 @@ const useSoundPref = (audio: SweepAudio) => {
 const useSweepCues = (state: MinesState, audio: SweepAudio) => {
   const revealedRef = useRef(0)
 
-  // a tick per sweep, chords included; end states get their own cues
   useEffect(() => {
     const revealed = state.cells.filter((cell) => cell.revealed).length
     const grew = revealed > revealedRef.current
@@ -426,18 +421,6 @@ const useWindowDrag = (areaRef: React.RefObject<HTMLDivElement | null>) => {
 }
 
 type WindowDrag = ReturnType<typeof useWindowDrag>
-
-const ALL_WINAMP_PANELS: WinampPanelVisibility = {
-  equalizer: true,
-  player: true,
-  tracklist: true,
-}
-
-const CLOSED_WINAMP_PANELS: WinampPanelVisibility = {
-  equalizer: false,
-  player: false,
-  tracklist: false,
-}
 
 type IconId = 'msdos' | 'recycle' | 'mines' | 'paint' | 'winamp' | 'realplayer'
 
@@ -623,8 +606,6 @@ const useSweepClock = (status: MinesStatus) => {
 
 export default function Windows98View() {
   const [desktop, desktopDispatch] = useReducer(reduceDesktop, INITIAL_DESKTOP)
-  const [winampPanels, setWinampPanels] =
-    useState<WinampPanelVisibility>(ALL_WINAMP_PANELS)
   const [state, dispatch] = useReducer(reduce, DEFAULT_LEVEL, createGame)
   const [density, setDensity] = useState<Density>('beginner')
   const [pressing, setPressing] = useState(false)
@@ -673,8 +654,8 @@ export default function Windows98View() {
   }, [])
 
   const launchWinamp = () => {
-    setWinampPanels({ ...ALL_WINAMP_PANELS })
-    launchApp('winamp')
+    chromeDispatch({ type: 'menu', menu: null })
+    desktopDispatch({ type: 'launch-winamp' })
   }
 
   const startLaunch = (app: AppId) => {
@@ -686,20 +667,12 @@ export default function Windows98View() {
     launchApp(app)
   }
 
-  const closeWinampPanel = (panel: WinampPanelId) => {
-    if (panel === 'player') {
-      setWinampPanels({ ...CLOSED_WINAMP_PANELS })
-      desktopDispatch({ type: 'close', app: 'winamp' })
-      return
-    }
-    setWinampPanels((current) => ({ ...current, [panel]: false }))
-  }
+  const closeWinampPanel = (panel: WinampPanelId) =>
+    desktopDispatch({ type: 'close-winamp-panel', panel })
 
   const openWinampPanel = (panel: WinampPanelId) => {
-    setWinampPanels((current) =>
-      current[panel] ? current : { ...current, [panel]: true },
-    )
-    launchApp('winamp')
+    chromeDispatch({ type: 'menu', menu: null })
+    desktopDispatch({ type: 'open-winamp-panel', panel })
   }
 
   const minimizeMines = () => {
@@ -1043,7 +1016,7 @@ export default function Windows98View() {
             activate={activateApp}
           >
             <MusicView
-              panels={winampPanels}
+              panels={desktop.winampPanels}
               onClosePanel={closeWinampPanel}
               onOpenPanel={openWinampPanel}
             />

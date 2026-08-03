@@ -123,7 +123,6 @@ const loadPools = () => {
       pools.set(weekday, pool)
     }
   }
-  // Newest first: replay starts from the freshest puzzles.
   for (const pool of pools.values()) {
     pool.sort((a, b) => b.date.localeCompare(a.date))
   }

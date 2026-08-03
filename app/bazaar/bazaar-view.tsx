@@ -37,9 +37,9 @@ const DIALOG_SIZE = {
 const DIMS = Object.fromEntries(
   (Object.keys(SIM_DIMS) as BazaarStallId[]).map((id) => [
     id,
-    { w: SIM_DIMS[id].dispW, h: SIM_DIMS[id].dispH },
+    { width: SIM_DIMS[id].dispW, height: SIM_DIMS[id].dispH },
   ]),
-) as Record<BazaarStallId, { w: number; h: number }>
+) as Record<BazaarStallId, { width: number; height: number }>
 
 function StreetFloor({ onDoor }: { onDoor: () => void }) {
   return (
@@ -599,8 +599,8 @@ function Stall({ id }: { id: BazaarStallId }) {
 
   useEffect(() => {
     if (!open) return
-    const close = (e: PointerEvent) => {
-      const target = e.target as Node
+    const close = (event: PointerEvent) => {
+      const target = event.target as Node
       if (
         !wrapRef.current?.contains(target) &&
         !dialogRef.current?.contains(target)
@@ -649,11 +649,10 @@ function Stall({ id }: { id: BazaarStallId }) {
     }, HOVER_CLOSE_DELAY_MS)
   }
 
-  /* mobile: the first tap opens the dialog instead of navigating */
-  const guardTap = (e: React.MouseEvent) => {
+  const guardTap = (event: React.MouseEvent) => {
     const coarse = window.matchMedia('(hover: none)').matches
     if (coarse && !open) {
-      e.preventDefault()
+      event.preventDefault()
       updateDialogPosition()
       setOpen(true)
       sfx.stall(id)
@@ -699,9 +698,9 @@ function Stall({ id }: { id: BazaarStallId }) {
       style={
         {
           '--tint': spec.tint,
-          '--w': dims.w,
-          '--h': dims.h,
-          '--ar': dims.w / dims.h,
+          '--w': dims.width,
+          '--h': dims.height,
+          '--ar': dims.width / dims.height,
         } as React.CSSProperties
       }
       data-stall={id}
@@ -780,7 +779,7 @@ const MOBILE_FLOORS: MobileFloor[] = [
 ]
 
 function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
-  const sum = spec.stalls.reduce((total, id) => total + DIMS[id].w, 0)
+  const sum = spec.stalls.reduce((total, id) => total + DIMS[id].width, 0)
   const stairs = <div className={css.stairs} aria-hidden />
   const band = (
     <div className={css.band}>
@@ -809,7 +808,9 @@ function MobileMarketFloor({
   spec: MobileFloor
   index: number
 }) {
-  const armin = Math.min(...spec.stalls.map((id) => DIMS[id].w / DIMS[id].h))
+  const minAspectRatio = Math.min(
+    ...spec.stalls.map((id) => DIMS[id].width / DIMS[id].height),
+  )
   const sm = <div className={css.sm} aria-hidden />
   const stack = (
     <div className={css.stack}>
@@ -825,7 +826,7 @@ function MobileMarketFloor({
       className={cn(css.mfloor, spec.smRight && css.mfloorR)}
       data-floor=''
       data-market-index={index}
-      style={{ '--armin': armin } as React.CSSProperties}
+      style={{ '--armin': minAspectRatio } as React.CSSProperties}
     >
       {spec.smRight ? stack : sm}
       {spec.smRight ? sm : stack}
@@ -870,7 +871,7 @@ export default function BazaarView() {
         <button
           type='button'
           className={scene.hudBtn}
-          onClick={() => setHitbox((p) => !p)}
+          onClick={() => setHitbox((previous) => !previous)}
         >
           {hitbox ? 'HITBOX ON' : 'HITBOX OFF'}
         </button>

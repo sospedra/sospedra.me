@@ -64,11 +64,8 @@ const frame = (pose: Pose, opacity = 1, offset?: number): Keyframe => ({
   ...(offset === undefined ? {} : { offset }),
 })
 
-/*
- * The ghost has the source tape's untransformed dimensions. Every destination
- * coordinate is derived from the live slot rectangle, so the final registration
- * stays centred at every responsive layout and display density.
- */
+// destination coordinates derive from the live slot rect, so the final
+// registration stays centred at every layout and display density
 const stages = (parts: TapeSwapParts): Stage[] => {
   const source = parts.source.getBoundingClientRect()
   const slot = parts.slot.getBoundingClientRect()
@@ -83,10 +80,8 @@ const stages = (parts: TapeSwapParts): Stage[] => {
   const mouthInsetX = Math.max(8, Math.min(16, slot.width * 0.035))
   const mouthWidth = slot.width - mouthInsetX * 2
 
-  /*
-   * Width picks the docking size and the scale stays uniform: a cassette
-   * never flattens, it only slides behind the flap.
-   */
+  // the scale stays uniform: a cassette never flattens, it only slides
+  // behind the flap
   const dockScale = Math.min(1.16, mouthWidth / width)
   const dockWidth = width * dockScale
   const dockHeight = height * dockScale

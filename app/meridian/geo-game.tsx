@@ -20,8 +20,9 @@ import DailyCountdownPanel from 'services/daily-countdown-panel'
 import { useGameInput } from 'services/hotkeys'
 import { useDocumentLang } from 'services/locale'
 import Modal from 'services/modal'
-import { shareText } from 'services/share'
+import { shareHandled, shareText } from 'services/share'
 import { getBrowserStorage } from 'services/storage'
+import { DAY_MS } from 'services/time'
 import { useViewportHeightVar } from 'services/viewport'
 import { mergeCapitalAutocompleteOptions } from './city-options'
 import { OFFICIAL_COUNTRY_OPTIONS } from './country-lexicon'
@@ -74,7 +75,6 @@ import {
   calculateDailyPlayStreak,
   calculateRunStatistics,
   createOfficialRunRecord,
-  DAY_MS,
   personalBestFor,
   recordOfficialRun,
 } from './stats'
@@ -1684,7 +1684,7 @@ function GeoSession({
   }, [question, state.challenge.cityOptions, state.challenge.rounds])
   const answerPlaceholder =
     question?.type === 'capital' ? copy.typeCapital : copy.typeCountry
-  // Wrong answers keep the shared round clock ticking through feedback — the
+  // Wrong answers keep the shared round clock ticking through feedback: the
   // correction-reading time IS the error penalty. Correct feedback is free.
   const roundClockRunning =
     state.phase === 'question' ||
@@ -2116,7 +2116,7 @@ function GeoSession({
       challengeNumber: challengeSequence(state.challenge),
     })
     const outcome = await shareText({ text: result, title: copy.brand })
-    if (outcome === 'shared' || outcome === 'dismissed') return
+    if (shareHandled(outcome)) return
     await copyResult()
   }
 
