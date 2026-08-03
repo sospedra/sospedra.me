@@ -1,0 +1,31 @@
+@reference "../../services/style/global.css";
+
+.header2 {
+  @apply absolute top-0 text-right transform -rotate-90;
+  color: var(--pink);
+  font-size: 1.25rem;
+  line-height: 2.25rem;
+  text-shadow: -1px 1px 0 #fabada;
+  transform-origin: right top;
+  right: 4rem;
+  width: 26rem;
+  font-family:
+    "Hiragino Sans", "Hiragino Kaku Gothic Pro", "游ゴシック", "游ゴシック体",
+    YuGothic, "Yu Gothic", "ＭＳ ゴシック", "MS Gothic", monospace;
+}
+
+.replay {
+  all: unset;
+  display: block;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+.kanji {
+  width: 1.25em;
+  font-size: 0.72em;
+  line-height: 1;
+  text-align: center;
+  transform-origin: center;
+  vertical-align: 0.08em;
+}

@@ -30,12 +30,38 @@ const collator = new Intl.Collator('en', {
 const toPath = (segments: string[]) =>
   segments.length ? `/${segments.join('/')}` : '/'
 
-const makeDirectory = (name: string, segments: string[]): MutableDirectory => ({
+const childPath = (parentPath: string, name: string) =>
+  parentPath === '/' ? `/${name}` : `${parentPath}/${name}`
+
+const makeDirectory = (name: string, path: string): MutableDirectory => ({
   name,
-  path: toPath(segments),
+  path,
   directories: new Map(),
   files: new Set(),
 })
+
+const childDirectory = (
+  directory: MutableDirectory,
+  name: string,
+): MutableDirectory => {
+  const existing = directory.directories.get(name)
+  if (existing) return existing
+
+  const child = makeDirectory(name, childPath(directory.path, name))
+  directory.directories.set(name, child)
+  return child
+}
+
+const insertPath = (root: MutableDirectory, segments: string[]) => {
+  const fileName = segments.at(-1)
+  if (!fileName) return
+
+  let directory = root
+  for (const name of segments.slice(0, -1)) {
+    directory = childDirectory(directory, name)
+  }
+  directory.files.add(fileName)
+}
 
 const finalizeDirectory = (directory: MutableDirectory): FileTreeDirectory => {
   const directories = [...directory.directories.values()]
@@ -46,7 +72,7 @@ const finalizeDirectory = (directory: MutableDirectory): FileTreeDirectory => {
     .map((name) => ({
       kind: 'file',
       name,
-      path: directory.path === '/' ? `/${name}` : `${directory.path}/${name}`,
+      path: childPath(directory.path, name),
     }))
 
   return {
@@ -68,7 +94,7 @@ export const buildFileTree = (
   paths: string[],
   rootSegments: string[],
 ): FileTreeDirectory => {
-  const root = makeDirectory(rootSegments.at(-1) ?? 'S:', rootSegments)
+  const root = makeDirectory(rootSegments.at(-1) ?? 'S:', toPath(rootSegments))
 
   for (const sourcePath of paths) {
     const segments = sourcePath.split('/').filter(Boolean)
@@ -77,26 +103,7 @@ export const buildFileTree = (
     )
     if (!belongsToRoot) continue
 
-    const relative = segments.slice(rootSegments.length)
-    const fileName = relative.at(-1)
-    if (!fileName) continue
-
-    let directory = root
-    for (const [index, name] of relative.slice(0, -1).entries()) {
-      const existing = directory.directories.get(name)
-      if (existing) {
-        directory = existing
-        continue
-      }
-
-      const child = makeDirectory(name, [
-        ...rootSegments,
-        ...relative.slice(0, index + 1),
-      ])
-      directory.directories.set(name, child)
-      directory = child
-    }
-    directory.files.add(fileName)
+    insertPath(root, segments.slice(rootSegments.length))
   }
 
   return finalizeDirectory(root)

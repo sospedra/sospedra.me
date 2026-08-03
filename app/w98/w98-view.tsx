@@ -1,22 +1,19 @@
 'use client'
 
-import Link from 'components/Link'
-import MusicView, {
-  type WinampPanelId,
-  type WinampPanelVisibility,
-} from 'components/music/music-view'
-import Shell from 'components/Shell'
 import { clamp } from 'es-toolkit'
-import { readLocal, writeLocal } from 'lib/storage'
 import type { Route } from 'next'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { useHotkeys } from 'service/hotkeys'
-import { useTransition } from 'service/transition'
+import { useHotkeys } from 'services/hotkeys'
+import Link from 'services/link'
+import Shell from 'services/shell'
+import { readLocal, writeLocal } from 'services/storage'
+import { useRouteTransition } from 'services/transition/context'
 import { GAMES } from '../games/catalogue'
 import {
   type AppId,
   bootApps,
+  type DesktopState,
   INITIAL_DESKTOP,
   reduceDesktop,
 } from './desktop.ts'
@@ -29,6 +26,10 @@ import {
   minesLeft,
   reduce,
 } from './engine'
+import MusicView, {
+  type WinampPanelId,
+  type WinampPanelVisibility,
+} from './music/music-view'
 import PaintWindow, { type PaintHandle } from './paint/paint-view'
 import RealPlayerWindow from './realplayer/realplayer-view'
 import { createSweepAudio, type SweepAudio } from './sweep-audio'
@@ -471,6 +472,139 @@ const useDesktopShortcuts = () => {
   return { selected, press, clear }
 }
 
+type DesktopShortcuts = ReturnType<typeof useDesktopShortcuts>
+type GuardNav = (event: React.MouseEvent, url: Route) => void
+
+const DesktopLink: React.FC<{
+  url: Route
+  label: string
+  ariaLabel: string
+  icon: string
+  iconId: IconId
+  icons: DesktopShortcuts
+  guardNav: GuardNav
+}> = ({ url, label, ariaLabel, icon, iconId, icons, guardNav }) => {
+  const press = icons.press(iconId)
+  return (
+    <Link
+      url={url}
+      className={css.desktopShortcut}
+      aria-label={ariaLabel}
+      data-selected={icons.selected === iconId}
+      {...press}
+      onClick={(event) => {
+        press.onClick(event)
+        if (!event.defaultPrevented) guardNav(event, url)
+      }}
+    >
+      <span className={icon} aria-hidden='true' />
+      <span>{label}</span>
+    </Link>
+  )
+}
+
+const GameMenuItem: React.FC<{
+  game: (typeof GAMES)[number]
+  startLaunch: (app: AppId) => void
+  guardNav: GuardNav
+}> = ({ game, startLaunch, guardNav }) => {
+  const icon = (
+    <span className={css.gameIcon} data-game={game.id} aria-hidden='true' />
+  )
+  if (game.id === 'mines') {
+    return (
+      <button
+        type='button'
+        role='menuitem'
+        className={css.programItem}
+        onClick={() => startLaunch('mines')}
+      >
+        {icon}
+        {game.title}
+      </button>
+    )
+  }
+  return (
+    <Link
+      url={game.href}
+      role='menuitem'
+      className={css.programItem}
+      onClick={(event) => guardNav(event, game.href)}
+    >
+      {icon}
+      {game.title}
+    </Link>
+  )
+}
+
+const AppArea: React.FC<{
+  app: AppId
+  className: string
+  desktop: DesktopState
+  activate: (app: AppId) => void
+  activateOnFocus?: boolean
+  children: React.ReactNode
+}> = ({ app, className, desktop, activate, activateOnFocus, children }) => {
+  const appWindow = desktop.apps[app]
+  return (
+    <div
+      className={className}
+      data-hidden={!appWindow.open || appWindow.minimized}
+      data-active={desktop.active === app}
+      onPointerDownCapture={() => activate(app)}
+      onFocusCapture={activateOnFocus ? () => activate(app) : undefined}
+    >
+      {appWindow.open && children}
+    </div>
+  )
+}
+
+const TASKBAR_APPS: { id: AppId; label: string; icon: string }[] = [
+  { id: 'mines', label: 'Minesweeper', icon: css.appIcon },
+  { id: 'paint', label: 'Paint', icon: css.paintAppIcon },
+  { id: 'winamp', label: 'Winamp', icon: css.winampAppIcon },
+  { id: 'realplayer', label: 'RealPlayer', icon: css.realplayerAppIcon },
+]
+
+type MinesMenu = 'game' | 'help'
+type StartBranch = 'closed' | 'root' | 'programs' | 'games'
+
+type ChromeState = {
+  menu: MinesMenu | null
+  startMenu: StartBranch
+  helpOpen: boolean
+}
+
+type ChromeEvent =
+  | { type: 'menu'; menu: MinesMenu | null }
+  | { type: 'start'; startMenu: StartBranch }
+  | { type: 'help'; open: boolean }
+  | { type: 'exit-mines' }
+  | { type: 'escape' }
+
+const INITIAL_CHROME: ChromeState = {
+  menu: null,
+  startMenu: 'closed',
+  helpOpen: false,
+}
+
+const reduceChrome = (state: ChromeState, event: ChromeEvent): ChromeState => {
+  switch (event.type) {
+    case 'menu':
+      return { ...state, menu: event.menu }
+    case 'start':
+      return { ...state, startMenu: event.startMenu }
+    case 'help':
+      return event.open
+        ? { ...state, helpOpen: true, menu: null }
+        : { ...state, helpOpen: false }
+    case 'exit-mines':
+      return { ...state, menu: null, helpOpen: false }
+    case 'escape':
+      return INITIAL_CHROME
+  }
+}
+
 const useSweepClock = (status: MinesStatus) => {
   const [seconds, setSeconds] = useState(0)
 
@@ -494,13 +628,8 @@ export default function Windows98View() {
   const [state, dispatch] = useReducer(reduce, DEFAULT_LEVEL, createGame)
   const [density, setDensity] = useState<Density>('beginner')
   const [pressing, setPressing] = useState(false)
-  const [menu, setMenu] = useState<'game' | 'help' | null>(null)
-  const [startMenu, setStartMenu] = useState<
-    'closed' | 'root' | 'programs' | 'games'
-  >('closed')
-  const [isHelpOpen, setIsHelpOpen] = useState(false)
+  const [chrome, chromeDispatch] = useReducer(reduceChrome, INITIAL_CHROME)
   const [inputMode, setInputMode] = useState<InputMode>('sweep')
-  // lazy factory: the AudioContext itself waits for the first gesture
   const [audio] = useState(createSweepAudio)
   const deskRef = useRef<HTMLDivElement>(null)
   const workAreaRef = useRef<HTMLDivElement>(null)
@@ -510,7 +639,7 @@ export default function Windows98View() {
   const realDrag = useWindowDrag(workAreaRef)
   const helpDrag = useWindowDrag(workAreaRef)
   const icons = useDesktopShortcuts()
-  const transition = useTransition()
+  const transition = useRouteTransition()
 
   const { sound, toggle: toggleSoundPref } = useSoundPref(audio)
   useSweepCues(state, audio)
@@ -520,21 +649,19 @@ export default function Windows98View() {
   const live = state.status === 'idle' || state.status === 'playing'
   const minesWindow = desktop.apps.mines
   const paintWindow = desktop.apps.paint
-  const winampWindow = desktop.apps.winamp
-  const realWindow = desktop.apps.realplayer
 
   const launchApp = (app: AppId) => {
-    setMenu(null)
+    chromeDispatch({ type: 'menu', menu: null })
     desktopDispatch({ type: 'launch', app })
   }
 
-  // a dirty canvas guards every desktop exit: hold the navigation, restore
-  // the paint window, and let its save dialog decide
-  const guardNav = (event: React.MouseEvent, url: Route) => {
+  const activateApp = (app: AppId) => desktopDispatch({ type: 'activate', app })
+
+  const guardNav: GuardNav = (event, url) => {
     const paint = paintRef.current
     if (!paintWindow.open || !paint?.isDirty()) return
     event.preventDefault()
-    setStartMenu('closed')
+    chromeDispatch({ type: 'start', startMenu: 'closed' })
     desktopDispatch({ type: 'launch', app: 'paint' })
     paint.confirmExit(() => transition.navigateLater(url, 360))
   }
@@ -551,7 +678,7 @@ export default function Windows98View() {
   }
 
   const startLaunch = (app: AppId) => {
-    setStartMenu('closed')
+    chromeDispatch({ type: 'start', startMenu: 'closed' })
     if (app === 'winamp') {
       launchWinamp()
       return
@@ -576,13 +703,12 @@ export default function Windows98View() {
   }
 
   const minimizeMines = () => {
-    setMenu(null)
+    chromeDispatch({ type: 'menu', menu: null })
     desktopDispatch({ type: 'minimize', app: 'mines' })
   }
 
   const closeMines = () => {
-    setMenu(null)
-    setIsHelpOpen(false)
+    chromeDispatch({ type: 'exit-mines' })
     desktopDispatch({ type: 'close', app: 'mines' })
   }
 
@@ -603,13 +729,13 @@ export default function Windows98View() {
     })
     resetClock()
     setInputMode('sweep')
-    setMenu(null)
+    chromeDispatch({ type: 'menu', menu: null })
     audio.deal()
   }
 
   const toggleSound = () => {
     toggleSoundPref()
-    setMenu(null)
+    chromeDispatch({ type: 'menu', menu: null })
   }
 
   const sweep: Sweep = (index) =>
@@ -623,7 +749,6 @@ export default function Windows98View() {
     dispatch({ type: 'flag', index })
   }
 
-  // an untouched board redeals to fill the screen; a game in progress keeps its field
   useEffect(() => {
     if (!fit || state.status !== 'idle') return
     const target = levelFor(fit, density)
@@ -646,16 +771,12 @@ export default function Windows98View() {
     [
       'Escape',
       () => {
-        setMenu(null)
-        setStartMenu('closed')
-        setIsHelpOpen(false)
+        chromeDispatch({ type: 'escape' })
       },
     ],
   ])
 
   const face = pressing && live ? '○' : FACES[state.status]
-  const msdosPress = icons.press('msdos')
-  const recyclePress = icons.press('recycle')
 
   return (
     <Shell className={css.frame}>
@@ -669,34 +790,24 @@ export default function Windows98View() {
         </h1>
 
         <div className={css.desktopIcons}>
-          <Link
+          <DesktopLink
             url='/console'
-            className={css.desktopShortcut}
-            aria-label='Open the console'
-            data-selected={icons.selected === 'msdos'}
-            {...msdosPress}
-            onClick={(event) => {
-              msdosPress.onClick(event)
-              if (!event.defaultPrevented) guardNav(event, '/console')
-            }}
-          >
-            <span className={css.msdosIcon} aria-hidden='true' />
-            <span>MS-DOS</span>
-          </Link>
-          <Link
+            label='MS-DOS'
+            ariaLabel='Open the console'
+            icon={css.msdosIcon}
+            iconId='msdos'
+            icons={icons}
+            guardNav={guardNav}
+          />
+          <DesktopLink
             url='/recycle-bin'
-            className={css.desktopShortcut}
-            aria-label='Open the recycle bin'
-            data-selected={icons.selected === 'recycle'}
-            {...recyclePress}
-            onClick={(event) => {
-              recyclePress.onClick(event)
-              if (!event.defaultPrevented) guardNav(event, '/recycle-bin')
-            }}
-          >
-            <span className={css.recycleIcon} aria-hidden='true' />
-            <span>Recycle Bin</span>
-          </Link>
+            label='Recycle Bin'
+            ariaLabel='Open the recycle bin'
+            icon={css.recycleIcon}
+            iconId='recycle'
+            icons={icons}
+            guardNav={guardNav}
+          />
           <button
             type='button'
             className={css.desktopShortcut}
@@ -740,12 +851,12 @@ export default function Windows98View() {
         </div>
 
         <div ref={workAreaRef} className={css.desktopWorkArea}>
-          {menu && (
+          {chrome.menu && (
             <button
               type='button'
               className={css.menuBackdrop}
               aria-label='Close menu'
-              onClick={() => setMenu(null)}
+              onClick={() => chromeDispatch({ type: 'menu', menu: null })}
             />
           )}
 
@@ -754,9 +865,7 @@ export default function Windows98View() {
             className={css.programArea}
             data-hidden={!minesWindow.open || minesWindow.minimized}
             data-active={desktop.active === 'mines'}
-            onPointerDownCapture={() =>
-              desktopDispatch({ type: 'activate', app: 'mines' })
-            }
+            onPointerDownCapture={() => activateApp('mines')}
           >
             {minesWindow.open && (
               <div className={css.window} style={gameDrag.style}>
@@ -776,12 +885,17 @@ export default function Windows98View() {
                       type='button'
                       className={css.menuTrigger}
                       aria-haspopup='menu'
-                      aria-expanded={menu === 'game'}
-                      onClick={() => setMenu(menu === 'game' ? null : 'game')}
+                      aria-expanded={chrome.menu === 'game'}
+                      onClick={() =>
+                        chromeDispatch({
+                          type: 'menu',
+                          menu: chrome.menu === 'game' ? null : 'game',
+                        })
+                      }
                     >
                       <u>G</u>ame
                     </button>
-                    {menu === 'game' && (
+                    {chrome.menu === 'game' && (
                       <GameMenu
                         density={density}
                         sound={sound}
@@ -796,12 +910,17 @@ export default function Windows98View() {
                       type='button'
                       className={css.menuTrigger}
                       aria-haspopup='menu'
-                      aria-expanded={menu === 'help'}
-                      onClick={() => setMenu(menu === 'help' ? null : 'help')}
+                      aria-expanded={chrome.menu === 'help'}
+                      onClick={() =>
+                        chromeDispatch({
+                          type: 'menu',
+                          menu: chrome.menu === 'help' ? null : 'help',
+                        })
+                      }
                     >
                       <u>H</u>elp
                     </button>
-                    {menu === 'help' && (
+                    {chrome.menu === 'help' && (
                       <div
                         className={css.menu}
                         role='menu'
@@ -811,10 +930,9 @@ export default function Windows98View() {
                           type='button'
                           role='menuitem'
                           className={css.menuItem}
-                          onClick={() => {
-                            setIsHelpOpen(true)
-                            setMenu(null)
-                          }}
+                          onClick={() =>
+                            chromeDispatch({ type: 'help', open: true })
+                          }
                         >
                           <span>How to play</span>
                         </button>
@@ -900,82 +1018,73 @@ export default function Windows98View() {
             )}
           </div>
 
-          <div
+          <AppArea
+            app='paint'
             className={css.paintArea}
-            data-hidden={!paintWindow.open || paintWindow.minimized}
-            data-active={desktop.active === 'paint'}
-            onPointerDownCapture={() =>
-              desktopDispatch({ type: 'activate', app: 'paint' })
-            }
+            desktop={desktop}
+            activate={activateApp}
           >
-            {paintWindow.open && (
-              <PaintWindow
-                ref={paintRef}
-                dragStyle={paintDrag.style}
-                dragHandle={paintDrag.handle}
-                active={desktop.active === 'paint' && !paintWindow.minimized}
-                minimize={() =>
-                  desktopDispatch({ type: 'minimize', app: 'paint' })
-                }
-                close={() => desktopDispatch({ type: 'close', app: 'paint' })}
-              />
-            )}
-          </div>
+            <PaintWindow
+              ref={paintRef}
+              dragStyle={paintDrag.style}
+              dragHandle={paintDrag.handle}
+              active={desktop.active === 'paint' && !paintWindow.minimized}
+              minimize={() =>
+                desktopDispatch({ type: 'minimize', app: 'paint' })
+              }
+              close={() => desktopDispatch({ type: 'close', app: 'paint' })}
+            />
+          </AppArea>
 
-          <div
+          <AppArea
+            app='winamp'
             className={css.winampArea}
-            data-hidden={!winampWindow.open || winampWindow.minimized}
-            data-active={desktop.active === 'winamp'}
-            onPointerDownCapture={() =>
-              desktopDispatch({ type: 'activate', app: 'winamp' })
-            }
+            desktop={desktop}
+            activate={activateApp}
           >
-            {winampWindow.open && (
-              <MusicView
-                panels={winampPanels}
-                onClosePanel={closeWinampPanel}
-                onOpenPanel={openWinampPanel}
-              />
-            )}
-          </div>
+            <MusicView
+              panels={winampPanels}
+              onClosePanel={closeWinampPanel}
+              onOpenPanel={openWinampPanel}
+            />
+          </AppArea>
 
-          <div
+          <AppArea
+            app='realplayer'
             className={css.realplayerArea}
-            data-hidden={!realWindow.open || realWindow.minimized}
-            data-active={desktop.active === 'realplayer'}
-            onPointerDownCapture={() =>
-              desktopDispatch({ type: 'activate', app: 'realplayer' })
-            }
-            onFocusCapture={() =>
-              desktopDispatch({ type: 'activate', app: 'realplayer' })
-            }
+            desktop={desktop}
+            activate={activateApp}
+            activateOnFocus
           >
-            {realWindow.open && (
-              <RealPlayerWindow
-                dragStyle={realDrag.style}
-                dragHandle={realDrag.handle}
-                minimize={() =>
-                  desktopDispatch({ type: 'minimize', app: 'realplayer' })
-                }
-                close={() =>
-                  desktopDispatch({ type: 'close', app: 'realplayer' })
-                }
-              />
-            )}
-          </div>
+            <RealPlayerWindow
+              dragStyle={realDrag.style}
+              dragHandle={realDrag.handle}
+              minimize={() =>
+                desktopDispatch({ type: 'minimize', app: 'realplayer' })
+              }
+              close={() =>
+                desktopDispatch({ type: 'close', app: 'realplayer' })
+              }
+            />
+          </AppArea>
 
-          {isHelpOpen && (
-            <HelpWindow close={() => setIsHelpOpen(false)} drag={helpDrag} />
+          {chrome.helpOpen && (
+            <HelpWindow
+              close={() => chromeDispatch({ type: 'help', open: false })}
+              drag={helpDrag}
+            />
           )}
         </div>
 
         <footer className={css.taskbar}>
-          {startMenu !== 'closed' && (
+          {chrome.startMenu !== 'closed' && (
             <button
               type='button'
               className={css.menuBackdrop}
               aria-label='Close start menu'
-              onClick={() => setStartMenu('closed')}
+              onClick={() =>
+                chromeDispatch({ type: 'start', startMenu: 'closed' })
+              }
             />
           )}
           <div className={css.menuSlot}>
@@ -983,9 +1092,12 @@ export default function Windows98View() {
               type='button'
               className={css.startButton}
               aria-haspopup='menu'
-              aria-expanded={startMenu !== 'closed'}
+              aria-expanded={chrome.startMenu !== 'closed'}
               onClick={() =>
-                setStartMenu(startMenu === 'closed' ? 'root' : 'closed')
+                chromeDispatch({
+                  type: 'start',
+                  startMenu: chrome.startMenu === 'closed' ? 'root' : 'closed',
+                })
               }
             >
               <span className={css.winMark} aria-hidden='true'>
@@ -996,7 +1108,7 @@ export default function Windows98View() {
               </span>
               <strong>Start</strong>
             </button>
-            {startMenu !== 'closed' && (
+            {chrome.startMenu !== 'closed' && (
               <div
                 className={css.startMenu}
                 role='menu'
@@ -1008,17 +1120,21 @@ export default function Windows98View() {
                     role='menuitem'
                     className={css.menuItem}
                     aria-haspopup='menu'
-                    aria-expanded={startMenu === 'programs'}
+                    aria-expanded={chrome.startMenu === 'programs'}
                     onClick={() =>
-                      setStartMenu(
-                        startMenu === 'programs' ? 'root' : 'programs',
-                      )
+                      chromeDispatch({
+                        type: 'start',
+                        startMenu:
+                          chrome.startMenu === 'programs' ? 'root' : 'programs',
+                      })
                     }
-                    onPointerEnter={() => setStartMenu('programs')}
+                    onPointerEnter={() =>
+                      chromeDispatch({ type: 'start', startMenu: 'programs' })
+                    }
                   >
                     Programs <span aria-hidden='true'>▸</span>
                   </button>
-                  {startMenu === 'programs' && (
+                  {chrome.startMenu === 'programs' && (
                     <div
                       className={css.programsMenu}
                       role='menu'
@@ -1084,54 +1200,34 @@ export default function Windows98View() {
                     role='menuitem'
                     className={css.menuItem}
                     aria-haspopup='menu'
-                    aria-expanded={startMenu === 'games'}
+                    aria-expanded={chrome.startMenu === 'games'}
                     onClick={() =>
-                      setStartMenu(startMenu === 'games' ? 'root' : 'games')
+                      chromeDispatch({
+                        type: 'start',
+                        startMenu:
+                          chrome.startMenu === 'games' ? 'root' : 'games',
+                      })
                     }
-                    onPointerEnter={() => setStartMenu('games')}
+                    onPointerEnter={() =>
+                      chromeDispatch({ type: 'start', startMenu: 'games' })
+                    }
                   >
                     Games <span aria-hidden='true'>▸</span>
                   </button>
-                  {startMenu === 'games' && (
+                  {chrome.startMenu === 'games' && (
                     <div
                       className={css.gamesMenu}
                       role='menu'
                       aria-label='Games'
                     >
-                      {/* Minesweeper is this desktop's own app: launch it in place */}
-                      {GAMES.map((game) =>
-                        game.id === 'mines' ? (
-                          <button
-                            key={game.id}
-                            type='button'
-                            role='menuitem'
-                            className={css.programItem}
-                            onClick={() => startLaunch('mines')}
-                          >
-                            <span
-                              className={css.gameIcon}
-                              data-game={game.id}
-                              aria-hidden='true'
-                            />
-                            {game.title}
-                          </button>
-                        ) : (
-                          <Link
-                            key={game.id}
-                            url={game.href}
-                            role='menuitem'
-                            className={css.programItem}
-                            onClick={(event) => guardNav(event, game.href)}
-                          >
-                            <span
-                              className={css.gameIcon}
-                              data-game={game.id}
-                              aria-hidden='true'
-                            />
-                            {game.title}
-                          </Link>
-                        ),
-                      )}
+                      {GAMES.map((game) => (
+                        <GameMenuItem
+                          key={game.id}
+                          game={game}
+                          startLaunch={startLaunch}
+                          guardNav={guardNav}
+                        />
+                      ))}
                     </div>
                   )}
                 </div>
@@ -1149,63 +1245,23 @@ export default function Windows98View() {
             )}
           </div>
           <span className={css.taskDivider} aria-hidden='true' />
-          {minesWindow.open && (
-            <button
-              type='button'
-              className={css.taskButton}
-              data-active={desktop.active === 'mines' && !minesWindow.minimized}
-              aria-pressed={
-                desktop.active === 'mines' && !minesWindow.minimized
-              }
-              onClick={() => handleTaskButton('mines')}
-            >
-              <span className={css.appIcon} aria-hidden='true' /> Minesweeper
-            </button>
-          )}
-          {paintWindow.open && (
-            <button
-              type='button'
-              className={css.taskButton}
-              data-active={desktop.active === 'paint' && !paintWindow.minimized}
-              aria-pressed={
-                desktop.active === 'paint' && !paintWindow.minimized
-              }
-              onClick={() => handleTaskButton('paint')}
-            >
-              <span className={css.paintAppIcon} aria-hidden='true' /> Paint
-            </button>
-          )}
-          {winampWindow.open && (
-            <button
-              type='button'
-              className={css.taskButton}
-              data-active={
-                desktop.active === 'winamp' && !winampWindow.minimized
-              }
-              aria-pressed={
-                desktop.active === 'winamp' && !winampWindow.minimized
-              }
-              onClick={() => handleTaskButton('winamp')}
-            >
-              <span className={css.winampAppIcon} aria-hidden='true' /> Winamp
-            </button>
-          )}
-          {realWindow.open && (
-            <button
-              type='button'
-              className={css.taskButton}
-              data-active={
-                desktop.active === 'realplayer' && !realWindow.minimized
-              }
-              aria-pressed={
-                desktop.active === 'realplayer' && !realWindow.minimized
-              }
-              onClick={() => handleTaskButton('realplayer')}
-            >
-              <span className={css.realplayerAppIcon} aria-hidden='true' />{' '}
-              RealPlayer
-            </button>
-          )}
+          {TASKBAR_APPS.map(({ id, label, icon }) => {
+            const appWindow = desktop.apps[id]
+            if (!appWindow.open) return null
+            const shown = desktop.active === id && !appWindow.minimized
+            return (
+              <button
+                key={id}
+                type='button'
+                className={css.taskButton}
+                data-active={shown}
+                aria-pressed={shown}
+                onClick={() => handleTaskButton(id)}
+              >
+                <span className={icon} aria-hidden='true' /> {label}
+              </button>
+            )
+          })}
           <span className={css.taskSpacer} />
           <span className={css.tray} aria-hidden='true'>
             <span>EN</span>

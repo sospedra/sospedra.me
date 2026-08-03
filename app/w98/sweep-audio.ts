@@ -1,5 +1,5 @@
 // Browser-generated cues keep the Minesweeper audio self-contained.
-import { createSfxKit } from 'service/audio/kit'
+import { createSfxKit } from 'services/audio/kit'
 
 export type SweepAudio = ReturnType<typeof createSweepAudio>
 

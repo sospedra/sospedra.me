@@ -5,24 +5,21 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
-import { buildCityAutocompleteOptions } from '../../lib/geo/city-options.ts'
-import type { DailyGeoChallenge } from '../../lib/geo/model.ts'
-import { resolveGeoPublicationDate } from '../../lib/geo/publication-date.ts'
-import { deriveRunChallenge } from '../../lib/geo/run-variants.ts'
+import { buildCityAutocompleteOptions } from '../../app/meridian/city-options.ts'
+import type { GeneratedCityCorpus } from '../../app/meridian/corpus-model.ts'
+import type {
+  CountryRecord,
+  DailyGeoChallenge,
+  LocalizedOption,
+  LocalizedText,
+} from '../../app/meridian/model.ts'
+import { GEO_ROUND_LIMIT_MS } from '../../app/meridian/model.ts'
+import { resolveGeoPublicationDate } from '../../app/meridian/publication-date.ts'
+import { deriveRunChallenge } from '../../app/meridian/run-variants.ts'
 import {
   normalizeGeoAnswer,
   rankGeoAutocompleteCandidates,
-} from '../../lib/geo/text-answer.ts'
-
-type LocalizedText = {
-  en: string
-  es: string
-}
-
-type Option = {
-  id: string
-  label: LocalizedText
-}
+} from '../../app/meridian/text-answer.ts'
 
 type Question = {
   id: string
@@ -31,7 +28,7 @@ type Question = {
   difficulty: number
   prompt: LocalizedText
   assetUrl?: string
-  options?: Option[]
+  options?: LocalizedOption[]
   correctOptionId?: string
   answerCoordinate?: {
     latitude: number
@@ -55,7 +52,7 @@ type Challenge = {
   publicationDate: string
   seed: string
   sourceRevision: string
-  cityOptions: Option[]
+  cityOptions: LocalizedOption[]
   rules: {
     choice: { min: number; max: number }
     streak: { step: number; cap: number }
@@ -67,52 +64,10 @@ type Challenge = {
   rounds: Round[]
 }
 
-type Country = {
-  code: string
-  names: LocalizedText
-  continent: string
-  subregion: string
-  status: string
-  capital: {
-    names: LocalizedText
-    latitude: number
-    longitude: number
-  }
-  assets: {
-    shapeUrl?: string
-    flagUrl?: string
-  }
-  eligibility: Record<'shape' | 'flag' | 'capital' | 'map', boolean>
-  difficulty: Partial<Record<'shape' | 'flag' | 'capital' | 'map', number>>
-  sourceRevision: string
-}
-
 type CountryCorpus = {
   schemaVersion: number
   sourceRevision: string
-  countries: Country[]
-}
-
-type City = {
-  geonamesId: number
-  countryCode: string
-  names: LocalizedText
-  acceptedNames: Record<'en' | 'es', string[]>
-  latitude: number
-  longitude: number
-  population: number
-  populationRank: number
-  featureCode: string
-  isCapital: boolean
-  difficulty: number
-  sourceRevision: string
-}
-
-type CityCorpus = {
-  schemaVersion: number
-  sourceRevision: string
-  policyRevision: string
-  cities: City[]
+  countries: CountryRecord[]
 }
 
 type AssetEntry = {
@@ -201,27 +156,23 @@ const challengePath = resolve(
   challengeArgument ??
     join(
       REPOSITORY_ROOT,
-      'content/geo/challenges',
+      'repo/geo/challenges',
       `${configuredPublicationDate}.json`,
     ),
 )
-const corpusPath = join(REPOSITORY_ROOT, 'data/geo/generated/countries.json')
-const cityCorpusPath = join(REPOSITORY_ROOT, 'data/geo/generated/cities.json')
-const manifestPath = join(REPOSITORY_ROOT, 'data/geo/generated/assets.json')
-const approvalPath = join(
-  REPOSITORY_ROOT,
-  'content/geo/generation-approval.json',
-)
-const sourceLockPath = join(REPOSITORY_ROOT, 'data/geo/sources.lock.json')
+const corpusPath = join(REPOSITORY_ROOT, 'repo/geo/generated/countries.json')
+const cityCorpusPath = join(REPOSITORY_ROOT, 'repo/geo/generated/cities.json')
+const manifestPath = join(REPOSITORY_ROOT, 'repo/geo/generated/assets.json')
+const approvalPath = join(REPOSITORY_ROOT, 'repo/geo/generation-approval.json')
+const sourceLockPath = join(REPOSITORY_ROOT, 'repo/geo/sources.lock.json')
 const corpusSourceLockPath = join(
   REPOSITORY_ROOT,
-  'data/geo/corpus-sources.lock.json',
+  'repo/geo/corpus-sources.lock.json',
 )
 const cityOverridesPath = join(
   REPOSITORY_ROOT,
-  'data/geo/editorial/city-overrides.json',
+  'repo/geo/editorial/city-overrides.json',
 )
-const ROUND_LIMIT_MS = 60_000
 const MAX_CHALLENGE_GZIP_BYTES = 300 * 1024
 
 const errors: string[] = []
@@ -354,7 +305,7 @@ const validateAsset = (
 
 let challenge: Challenge
 let corpus: CountryCorpus
-let cityCorpus: CityCorpus
+let cityCorpus: GeneratedCityCorpus
 let manifest: AssetManifest
 let approval: GenerationApproval
 let sourceLock: SourceLock
@@ -364,7 +315,7 @@ let cityOverrides: CityOverrides
 try {
   challenge = readJson<Challenge>(challengePath)
   corpus = readJson<CountryCorpus>(corpusPath)
-  cityCorpus = readJson<CityCorpus>(cityCorpusPath)
+  cityCorpus = readJson<GeneratedCityCorpus>(cityCorpusPath)
   manifest = readJson<AssetManifest>(manifestPath)
   approval = readJson<GenerationApproval>(approvalPath)
   sourceLock = readJson<SourceLock>(sourceLockPath)
@@ -388,7 +339,7 @@ const generatedMapCityIds = new Set<number>()
 const correctPositions = [0, 0, 0, 0]
 const eligibleCountriesByRound = new Map<
   (typeof expectedRoundTypes)[number],
-  Map<string, Country>
+  Map<string, CountryRecord>
 >()
 
 for (const roundType of expectedRoundTypes) {
@@ -473,7 +424,7 @@ for (const locale of ['en', 'es'] as const) {
   }
 }
 const eligibleMapCountries =
-  eligibleCountriesByRound.get('map') ?? new Map<string, Country>()
+  eligibleCountriesByRound.get('map') ?? new Map<string, CountryRecord>()
 const eligibleMapCities = cityCorpus.cities.filter((city) =>
   eligibleMapCountries.has(city.countryCode),
 )
@@ -736,7 +687,8 @@ check(challenge.rounds.length === 4, 'Challenge must contain four rounds')
 for (const [roundIndex, round] of challenge.rounds.entries()) {
   const expectedType = expectedRoundTypes[roundIndex]
   const expectedCountries =
-    eligibleCountriesByRound.get(expectedType) ?? new Map<string, Country>()
+    eligibleCountriesByRound.get(expectedType) ??
+    new Map<string, CountryRecord>()
   const expectedQuestionCount = expectedCountries.size
   check(
     round.type === expectedType,
@@ -747,8 +699,8 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
     `${round.type} round has the wrong time limit`,
   )
   check(
-    round.roundLimitMs === ROUND_LIMIT_MS,
-    `${round.type} round must use the ${ROUND_LIMIT_MS} ms shared limit`,
+    round.roundLimitMs === GEO_ROUND_LIMIT_MS,
+    `${round.type} round must use the ${GEO_ROUND_LIMIT_MS} ms shared limit`,
   )
   check(!roundIds.has(round.id), `Duplicate round ID: ${round.id}`)
   roundIds.add(round.id)
@@ -1164,7 +1116,7 @@ console.log(
     .join(' · ')} · ${distinctAnswerCountryCodes.size} active countries`,
 )
 console.log(
-  `Choice positions ${correctPositions.join('/')} · ${ROUND_LIMIT_MS / 1000}s per round`,
+  `Choice positions ${correctPositions.join('/')} · ${GEO_ROUND_LIMIT_MS / 1000}s per round`,
 )
 console.log(
   `Challenge ${challengeBytes.length} B (${compressedChallengeBytes} B gzip) · map ${manifest.map.bytes} B`,

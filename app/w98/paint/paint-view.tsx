@@ -2,7 +2,7 @@
 
 import type React from 'react'
 import { useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { isEditableTarget, useGameInput } from 'service/hotkeys'
+import { isEditableTarget, useGameInput } from 'services/hotkeys'
 import w98 from '../w98.module.css'
 import { useBeforeUnloadGuard } from './exit-guard.ts'
 import {
@@ -21,7 +21,7 @@ import {
 } from './options.ts'
 import css from './paint.module.css'
 import { PALETTE } from './palette.ts'
-import { handleAt, insideRect } from './selection.ts'
+import { handleAt, handleTolerance, insideRect } from './selection.ts'
 import { type Handle, type Mode, prospectiveSize } from './state.ts'
 import { TOOLS, type ToolId, toolById } from './tools.ts'
 import { type Paint, usePaint } from './use-paint.ts'
@@ -443,7 +443,11 @@ const selectionCursor = (paint: Paint): string | null => {
   const eligible =
     paint.state.tool === 'select' && mode.kind === 'selected' && paint.hover
   if (!eligible || !paint.hover) return null
-  const handle = handleAt(mode.rect, paint.hover, 2)
+  const handle = handleAt(
+    mode.rect,
+    paint.hover,
+    handleTolerance(paint.state.zoom),
+  )
   if (handle) return HANDLE_CURSORS[handle]
   return insideRect(mode.rect, paint.hover) ? MOVE_CURSOR : null
 }
@@ -467,14 +471,14 @@ export default function PaintWindow({
   const [menu, setMenu] = useState<MenuId | null>(null)
   const [prompt, setPrompt] = useState<(() => void) | null>(null)
 
-  const confirm = (action: () => void) => {
+  const confirmDirty = (action: () => void) => {
     if (paint.isDirty()) setPrompt(() => action)
     else action()
   }
 
   useImperativeHandle(ref, () => ({
     isDirty: paint.isDirty,
-    confirmExit: confirm,
+    confirmExit: confirmDirty,
   }))
 
   useBeforeUnloadGuard(state.dirty)
@@ -495,8 +499,8 @@ export default function PaintWindow({
   }
 
   const MENU_ACTIONS: Record<string, () => void> = {
-    New: () => confirm(paint.newFile),
-    Open: () => confirm(openPicker),
+    New: () => confirmDirty(paint.newFile),
+    Open: () => confirmDirty(openPicker),
     'Save As': () => {
       void paint.saveFile()
     },
@@ -513,20 +517,18 @@ export default function PaintWindow({
     MENU_ACTIONS[name]?.()
   }
 
-  const modAction = (key: string, shift: boolean): (() => void) | null => {
-    const actions: Record<string, () => void> = {
-      z: shift ? paint.redo : paint.undo,
-      y: paint.redo,
-      x: paint.cut,
-      c: paint.copy,
-      v: paint.paste,
-      a: paint.selectAll,
-      s: () => {
-        void paint.saveFile()
-      },
-      o: () => confirm(openPicker),
-    }
-    return actions[key] ?? null
+  const MOD_ACTIONS: Record<string, () => void> = {
+    z: paint.undo,
+    'shift+z': paint.redo,
+    y: paint.redo,
+    x: paint.cut,
+    c: paint.copy,
+    v: paint.paste,
+    a: paint.selectAll,
+    s: () => {
+      void paint.saveFile()
+    },
+    o: () => confirmDirty(openPicker),
   }
 
   const plainKey = (event: KeyboardEvent) => {
@@ -550,7 +552,9 @@ export default function PaintWindow({
       plainKey(event)
       return
     }
-    const action = modAction(event.key.toLowerCase(), event.shiftKey)
+    const key = event.key.toLowerCase()
+    const shifted = event.shiftKey ? MOD_ACTIONS[`shift+${key}`] : undefined
+    const action = shifted ?? MOD_ACTIONS[key]
     if (!action) return
     event.preventDefault()
     action()
@@ -616,7 +620,7 @@ export default function PaintWindow({
           <button
             type='button'
             aria-label='Close Paint'
-            onClick={() => confirm(close)}
+            onClick={() => confirmDirty(close)}
           >
             ×
           </button>

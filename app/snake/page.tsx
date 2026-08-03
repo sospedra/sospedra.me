@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { SNAKE_DESC } from 'service/descriptions'
 import SnakeView from './snake-view'
 
 export const metadata: Metadata = {
   title: 'Snake',
-  description: SNAKE_DESC,
+  description:
+    'Snake, straight from the Nokia 3310. An 84×48 green LCD, one hungry snake and a top score that never leaves your browser.',
   alternates: { canonical: '/snake' },
 }
 

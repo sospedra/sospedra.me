@@ -34,6 +34,9 @@ export const handlePoints = (rect: Rect): readonly [Handle, Pt][] => {
   ]
 }
 
+export const handleTolerance = (zoom: number): number =>
+  Math.max(2, Math.ceil(3 / zoom))
+
 export const handleAt = (
   rect: Rect,
   at: Pt,

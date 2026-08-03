@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useMemo, useState } from 'react'
+import { useId, useState } from 'react'
 import css from './terminal.module.css'
 import {
   buildFileTree,
@@ -108,8 +108,8 @@ function TreeNodes({ nodes }: { nodes: FileTreeNode[] }) {
   )
 }
 
-export function TreeView({ paths, segments }: TreeViewProps) {
-  const tree = useMemo(() => buildFileTree(paths, segments), [paths, segments])
+export default function TreeView({ paths, segments }: TreeViewProps) {
+  const tree = buildFileTree(paths, segments)
   const drivePath = tree.path === '/' ? 'S:/' : `S:${tree.path}`
 
   return (

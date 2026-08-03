@@ -9,13 +9,11 @@ export type GameId =
   | 'rubiks'
   | 'life'
 
-export type GameHref = Route<'/meridian'>
-
 export type GameEntry = {
   id: GameId
   code: string
   title: string
-  href: GameHref
+  href: Route
   category: string
   description: string
   controls: string

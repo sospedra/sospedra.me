@@ -664,7 +664,10 @@
 /* ---------- FFIX dialog: a popover bubble anchored to its stall ---------- */
 .dialog {
   position: fixed;
-  translate: -50% calc(-100% - 14px);
+  --dialog-shift-x: 0px;
+  --dialog-shift-y: 0px;
+  translate: calc(-50% + var(--dialog-shift-x))
+    calc(-100% - 14px + var(--dialog-shift-y));
   width: max-content;
   max-width: min(300px, 76vw);
   z-index: 2147483000;

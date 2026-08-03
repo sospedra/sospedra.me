@@ -1,12 +1,16 @@
 import type { MDXComponents } from 'mdx/types'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Aside from 'service/markdown/Aside'
-import CodeBlock from 'service/markdown/Code'
-import { fetchPaper, fetchPapers, type Paper } from 'service/markdown/files'
-import PaperImage from 'service/markdown/Image'
-import PaperShell from 'service/markdown/Paper'
-import Pull from 'service/markdown/Pull'
+import Aside from 'services/markdown/aside'
+import CodeBlock from 'services/markdown/code'
+import PaperImage from 'services/markdown/image'
+import {
+  fetchPaper,
+  fetchPapers,
+} from 'services/markdown/paper.server-snapshot'
+import type { Paper } from 'services/markdown/paper.types'
+import PaperShell from 'services/markdown/paper-shell'
+import Pull from 'services/markdown/pull'
 import PaperKeys from './paper-keys'
 
 export async function generateStaticParams() {
@@ -58,21 +62,26 @@ const createMdxComponents = (meta: Paper): MDXComponents => {
   }
 }
 
+const paperNeighbors = (papers: Paper[], slug: string) => {
+  const index = papers.findIndex((paper) => paper.slug === slug)
+  if (index === -1) return { newer: undefined, older: undefined }
+  return { newer: papers[index - 1]?.slug, older: papers[index + 1]?.slug }
+}
+
 export default async function PaperPage(props: {
   params: Promise<{ slug: string }>
 }) {
   const { slug } = await props.params
   const meta = await fetchPaperOr404(slug)
-  const { default: Post } = await import(`content/papers/${slug}/index.mdx`)
-  const papers = await fetchPapers()
-  const index = papers.findIndex((paper) => paper.slug === slug)
+  const [{ default: Post }, papers] = await Promise.all([
+    import(`repo/papers/${slug}/index.mdx`),
+    fetchPapers(),
+  ])
+  const { newer, older } = paperNeighbors(papers, slug)
 
   return (
     <PaperShell {...meta}>
-      <PaperKeys
-        newer={papers[index - 1]?.slug}
-        older={papers[index + 1]?.slug}
-      />
+      <PaperKeys newer={newer} older={older} />
       <Post components={createMdxComponents(meta)} />
     </PaperShell>
   )

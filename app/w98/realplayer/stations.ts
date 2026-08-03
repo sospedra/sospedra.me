@@ -41,11 +41,8 @@ const toStation = ({
   return { ...record, tagline, badge }
 }
 
+// scripts/w98/verify-realplayer-streams.ts enforces corpus/presentation sync in CI
 export const REAL_STATIONS: RealStation[] = PRESENTATION.map(toStation)
-
-if (REAL_STATIONS.length !== RECORDS.length) {
-  throw new Error('RealPlayer corpus and presentation lists are out of sync.')
-}
 
 export const stationById = (id: string): RealStation | undefined =>
   REAL_STATIONS.find((station) => station.id === id)

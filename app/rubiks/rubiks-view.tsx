@@ -1,11 +1,12 @@
 'use client'
 
-import Link, { LinkBack } from 'components/Link'
-import Row from 'components/Row'
-import Shell from 'components/Shell'
+import { partition } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { useGameInput } from 'service/hotkeys'
+import { useGameInput } from 'services/hotkeys'
+import Link, { LinkBack } from 'services/link'
+import Row from 'services/row'
+import Shell from 'services/shell'
 import {
   axisOf,
   compress,
@@ -71,6 +72,9 @@ const KEY_FACES: Record<string, Face> = {
 
 const SCRAMBLE_LENGTH = 22
 const PB_LABEL = '27.21'
+const TIMER_TICK_MS = 53
+
+const ROTATION_AXIS = ['1, 0, 0', '0, 1, 0', '0, 0, 1'] as const
 
 const GRID = [-1, 0, 1]
 const CUBIES: Vec[] = GRID.flatMap((x) =>
@@ -84,8 +88,7 @@ const turnTransform = (move: Move, spun: boolean) => {
   const axis = axisOf(normal)
   const engineDeg = -90 * normal[axis] * (move.prime ? -1 : 1)
   const deg = axis === 1 ? engineDeg : -engineDeg
-  const vector = ['1, 0, 0', '0, 1, 0', '0, 0, 1'][axis]
-  return `rotate3d(${vector}, ${spun ? deg : 0}deg)`
+  return `rotate3d(${ROTATION_AXIS[axis]}, ${spun ? deg : 0}deg)`
 }
 
 const cubiePlace = ([x, y, z]: Vec) =>
@@ -224,7 +227,7 @@ const TimerReadout: React.FC<{
     }
     const tick = window.setInterval(
       () => setElapsed(Date.now() - startedAt),
-      53,
+      TIMER_TICK_MS,
     )
     return () => window.clearInterval(tick)
   }, [startedAt])
@@ -295,6 +298,12 @@ export default function RubiksView() {
   const pristine =
     solved && state.history.length === 0 && state.turning === null
   const status = statusWord(state, solved)
+
+  const turningFace = state.turning?.move.face
+  const [turningCubies, restingCubies] = partition(
+    CUBIES,
+    (position) => turningFace !== undefined && inLayer(position, turningFace),
+  )
 
   const scramble = () =>
     dispatch({
@@ -372,11 +381,7 @@ export default function RubiksView() {
                         : undefined,
                   }}
                 >
-                  {CUBIES.filter(
-                    (position) =>
-                      state.turning !== null &&
-                      inLayer(position, state.turning.move.face),
-                  ).map((position) => (
+                  {turningCubies.map((position) => (
                     <Cubie
                       key={position.join()}
                       position={position}
@@ -384,11 +389,7 @@ export default function RubiksView() {
                     />
                   ))}
                 </div>
-                {CUBIES.filter(
-                  (position) =>
-                    state.turning === null ||
-                    !inLayer(position, state.turning.move.face),
-                ).map((position) => (
+                {restingCubies.map((position) => (
                   <Cubie
                     key={position.join()}
                     position={position}

@@ -1,7 +1,6 @@
 import type { CanvasPalette } from './canvas'
 
 export const LIFE_CANVAS_PALETTE = {
-  mode: 'circuit',
   background: ['#3c5732', '#273d29', '#101812'],
   gridMinor: 'rgb(181 239 121 / 10%)',
   gridMajor: 'rgb(181 239 121 / 24%)',

@@ -1,8 +1,6 @@
 'use client'
 
 import cn from 'clsx'
-import Link from 'components/Link'
-import SpriteCar from 'components/Sprite/Car'
 import type { Route } from 'next'
 import { Press_Start_2P } from 'next/font/google'
 import {
@@ -12,38 +10,36 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  useSyncExternalStore,
 } from 'react'
 import { createPortal } from 'react-dom'
+import SpriteCar from 'services/car/car'
+import Link from 'services/link'
 import css from './bazaar.module.css'
 import scene from './scene.module.css'
 import SceneStall from './scene-stall'
-import { type StallId, setSoundEnabled, sfx } from './sounds'
+import { sfx, soundPreference } from './sounds'
 import { type BazaarStallId, SIM_DIMS } from './stalls-manifest'
 
 const pixelFont = Press_Start_2P({ weight: '400', subsets: ['latin'] })
 
 const STREET = '/images/bazaar/street'
 
-/* stalls that render one static image instead of r17 layers: none today —
-   the console's v2 animated kit shipped 2026-08-01 */
-const STATIC_STALLS: Partial<
-  Record<BazaarStallId, { src: string; w: number; h: number }>
-> = {}
+const DOOR_OPEN_MS = 350
+const MOBILE_BREAKPOINT_PX = 700
+const HOVER_CLOSE_DELAY_MS = 140
+const VIEWPORT_GUTTER = 8
+const DIALOG_SIZE = {
+  mobile: { maxWidth: 240, viewportShare: 0.62 },
+  desktop: { maxWidth: 300, viewportShare: 0.76 },
+}
 
-/* stall sim dims: SIM_DIMS display contract, static overrides on top */
 const DIMS = Object.fromEntries(
-  (Object.keys(SIM_DIMS) as BazaarStallId[]).map((id) => {
-    const stat = STATIC_STALLS[id]
-    return [
-      id,
-      stat
-        ? { w: stat.w, h: stat.h }
-        : { w: SIM_DIMS[id].dispW, h: SIM_DIMS[id].dispH },
-    ]
-  }),
+  (Object.keys(SIM_DIMS) as BazaarStallId[]).map((id) => [
+    id,
+    { w: SIM_DIMS[id].dispW, h: SIM_DIMS[id].dispH },
+  ]),
 ) as Record<BazaarStallId, { w: number; h: number }>
-
-/* ---------- street floor: the r18 kit, no stage props ---------- */
 
 function StreetFloor({ onDoor }: { onDoor: () => void }) {
   return (
@@ -83,7 +79,7 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
           onMouseEnter={() => sfx.hover()}
           onClick={() => {
             sfx.door()
-            setTimeout(onDoor, 350)
+            setTimeout(onDoor, DOOR_OPEN_MS)
           }}
         >
           <img src={`${STREET}/door.png`} alt='' />
@@ -115,19 +111,6 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
       </Link>
     </section>
   )
-}
-
-/* ---------- stalls: dialog machinery on the layout boxes ---------- */
-
-const SFX_ID: Record<BazaarStallId, StallId> = {
-  uses: 'uses',
-  games: 'games',
-  travel: 'travel',
-  manual: 'manual',
-  console: 'serve',
-  w98: 'projects',
-  talks: 'talks',
-  papers: 'papers',
 }
 
 type StallLink = { label: string; href: string; external?: boolean }
@@ -314,7 +297,12 @@ function DialogContent(props: {
   const { desc, links, onLinkFocus, visibleChars } = props
   const descLength = countCharacters(desc)
   const descVisibleChars = Math.min(visibleChars, descLength)
-  let linkStart = descLength
+  const linkLengths = links.map((link) => countCharacters(link.label))
+  const linkStarts = linkLengths.map(
+    (_, index) =>
+      descLength +
+      linkLengths.slice(0, index).reduce((total, length) => total + length, 0),
+  )
 
   return (
     <>
@@ -337,15 +325,14 @@ function DialogContent(props: {
       </p>
       {links.length > 0 && (
         <div className={scene.dialogLinks}>
-          {links.map((link) => {
-            const linkLength = countCharacters(link.label)
+          {links.map((link, index) => {
+            const linkLength = linkLengths[index]
             const linkVisibleChars = getVisibleCharacters(
               visibleChars,
-              linkStart,
+              linkStarts[index],
               linkLength,
             )
-            const started = visibleChars >= linkStart
-            linkStart += linkLength
+            const started = visibleChars >= linkStarts[index]
             const content = (
               <>
                 <span className={scene.linkTypeMeasure} aria-hidden>
@@ -412,6 +399,33 @@ function AnimatedDialogContent(props: {
   )
 }
 
+const axisShift = (start: number, end: number, limit: number) => {
+  if (start < VIEWPORT_GUTTER) return VIEWPORT_GUTTER - start
+  if (end > limit - VIEWPORT_GUTTER) return limit - VIEWPORT_GUTTER - end
+  return 0
+}
+
+function useViewportClamp(
+  dialogRef: React.RefObject<HTMLDivElement | null>,
+  active: boolean,
+  position: DialogPosition | null,
+) {
+  useLayoutEffect(() => {
+    const dialog = dialogRef.current
+    if (!active || !position || !dialog) return
+
+    dialog.style.setProperty('--dialog-shift-x', '0px')
+    dialog.style.setProperty('--dialog-shift-y', '0px')
+
+    const rect = dialog.getBoundingClientRect()
+    const shiftX = axisShift(rect.left, rect.right, window.innerWidth)
+    const shiftY = axisShift(rect.top, rect.bottom, window.innerHeight)
+
+    dialog.style.setProperty('--dialog-shift-x', `${shiftX}px`)
+    dialog.style.setProperty('--dialog-shift-y', `${shiftY}px`)
+  }, [active, dialogRef, position])
+}
+
 function Dialog(props: {
   spec: StallSpec
   active: boolean
@@ -430,8 +444,9 @@ function Dialog(props: {
     onMouseLeave,
     onKeyDown,
   } = props
+  useViewportClamp(dialogRef, active, position)
 
-  if (!active || !position || typeof document === 'undefined') return null
+  if (!active || !position) return null
 
   return createPortal(
     <div
@@ -483,34 +498,9 @@ function GamesDialogs(props: {
     turnLengths.reduce((total, length) => total + length, 0) +
     GAMES_TURN_PAUSE_CHARS * lastTurnIndex
   const { finish, visibleChars } = useTypewriter(active, totalCharacters)
+  useViewportClamp(dialogRef, active, position)
 
-  useLayoutEffect(() => {
-    const dialogs = dialogRef.current
-    if (!active || !position || !dialogs) return
-
-    dialogs.style.setProperty('--dialog-shift-x', '0px')
-    dialogs.style.setProperty('--dialog-shift-y', '0px')
-
-    const rect = dialogs.getBoundingClientRect()
-    const gutter = 8
-    let shiftX = 0
-    let shiftY = 0
-
-    if (rect.left < gutter) shiftX = gutter - rect.left
-    else if (rect.right > window.innerWidth - gutter) {
-      shiftX = window.innerWidth - gutter - rect.right
-    }
-
-    if (rect.top < gutter) shiftY = gutter - rect.top
-    else if (rect.bottom > window.innerHeight - gutter) {
-      shiftY = window.innerHeight - gutter - rect.bottom
-    }
-
-    dialogs.style.setProperty('--dialog-shift-x', `${shiftX}px`)
-    dialogs.style.setProperty('--dialog-shift-y', `${shiftY}px`)
-  }, [active, dialogRef, position])
-
-  if (!active || !position || typeof document === 'undefined') return null
+  if (!active || !position) return null
 
   return createPortal(
     <div
@@ -564,6 +554,16 @@ function GamesDialogs(props: {
   )
 }
 
+const focusNextStall = (wrap: HTMLElement): boolean => {
+  const siblings = Array.from(wrap.parentElement?.children ?? [])
+  const target = siblings
+    .slice(siblings.indexOf(wrap) + 1)
+    .map((sibling) => sibling.querySelector<HTMLAnchorElement>('a[href]'))
+    .find((link) => link !== null)
+  target?.focus()
+  return Boolean(target)
+}
+
 function Stall({ id }: { id: BazaarStallId }) {
   const spec = STALLS[id]
   const dims = DIMS[id]
@@ -581,16 +581,17 @@ function Stall({ id }: { id: BazaarStallId }) {
     const wrap = wrapRef.current
     if (!wrap) return
     const rect = wrap.getBoundingClientRect()
-    const mobile = window.innerWidth <= 700
+    const mobile = window.innerWidth <= MOBILE_BREAKPOINT_PX
+    const size = mobile ? DIALOG_SIZE.mobile : DIALOG_SIZE.desktop
     const maxWidth = Math.min(
-      mobile ? 240 : 300,
-      window.innerWidth * (mobile ? 0.62 : 0.76),
+      size.maxWidth,
+      window.innerWidth * size.viewportShare,
     )
     const half = maxWidth / 2
     setDialogPosition({
       left: Math.min(
-        window.innerWidth - half - 8,
-        Math.max(half + 8, rect.left + rect.width / 2),
+        window.innerWidth - half - VIEWPORT_GUTTER,
+        Math.max(half + VIEWPORT_GUTTER, rect.left + rect.width / 2),
       ),
       top: rect.top,
     })
@@ -645,7 +646,7 @@ function Stall({ id }: { id: BazaarStallId }) {
     closeTimerRef.current = window.setTimeout(() => {
       setOpen(false)
       closeTimerRef.current = null
-    }, 140)
+    }, HOVER_CLOSE_DELAY_MS)
   }
 
   /* mobile: the first tap opens the dialog instead of navigating */
@@ -655,7 +656,7 @@ function Stall({ id }: { id: BazaarStallId }) {
       e.preventDefault()
       updateDialogPosition()
       setOpen(true)
-      sfx.stall(SFX_ID[id])
+      sfx.stall(id)
       return
     }
     sfx.click()
@@ -685,19 +686,11 @@ function Stall({ id }: { id: BazaarStallId }) {
       return
     }
 
-    let sibling = wrapRef.current?.nextElementSibling
-    while (sibling) {
-      const nextStall = sibling.querySelector<HTMLAnchorElement>('a[href]')
-      if (nextStall) {
-        event.preventDefault()
-        nextStall.focus()
-        return
-      }
-      sibling = sibling.nextElementSibling
+    if (wrapRef.current && focusNextStall(wrapRef.current)) {
+      event.preventDefault()
     }
   }
 
-  const staticStall = STATIC_STALLS[id]
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: coordinates hover and focus state for the child link and its portalled dialog
     <div
@@ -733,17 +726,11 @@ function Stall({ id }: { id: BazaarStallId }) {
         aria-label={spec.label}
         data-label={spec.label}
         onClick={guardTap}
-        onMouseEnter={() => sfx.stall(SFX_ID[id])}
+        onMouseEnter={() => sfx.stall(id)}
         onKeyDown={focusDialogOnTab}
         url={spec.href}
       >
-        {staticStall ? (
-          <div className={scene.sceneStack} aria-hidden>
-            <img src={staticStall.src} alt='' draggable={false} />
-          </div>
-        ) : (
-          <SceneStall id={id} active={active} />
-        )}
+        <SceneStall id={id} active={active} />
         <div className={scene.glowWash} />
       </Link>
       {id === 'games' ? (
@@ -770,8 +757,6 @@ function Stall({ id }: { id: BazaarStallId }) {
     </div>
   )
 }
-
-/* ---------- floors ---------- */
 
 type DesktopFloor = { stalls: BazaarStallId[]; stairsRight: boolean }
 type MobileFloor = {
@@ -848,24 +833,20 @@ function MobileMarketFloor({
   )
 }
 
-/* ---------- page ---------- */
+const serverSoundOff = () => false
 
 export default function BazaarView() {
   const sceneRef = useRef<HTMLDivElement>(null)
-  const [sound, setSound] = useState(false)
+  const sound = useSyncExternalStore(
+    soundPreference.subscribe,
+    soundPreference.isEnabled,
+    serverSoundOff,
+  )
   const [hitbox, setHitbox] = useState(false)
-
-  useEffect(() => {
-    if (localStorage.getItem('bazaar-sound') !== 'on') return
-    setSound(true)
-    setSoundEnabled(true)
-  }, [])
 
   const toggleSound = () => {
     const next = !sound
-    setSound(next)
-    setSoundEnabled(next)
-    localStorage.setItem('bazaar-sound', next ? 'on' : 'off')
+    soundPreference.setEnabled(next)
     if (next) sfx.click()
   }
 

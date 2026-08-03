@@ -1,8 +1,8 @@
 'use client'
 
-import Link from 'components/Link'
 import type React from 'react'
 import { useEffect, useState } from 'react'
+import Link from 'services/link'
 import w98 from '../w98.module.css'
 import css from './realplayer.module.css'
 import {
@@ -113,42 +113,38 @@ const ChannelRow: React.FC<{
 
 const ChannelsPanel: React.FC<{
   tuner: Tuner
+  station: RealStation | undefined
   stations: RealStation[]
   query: string
-}> = ({ tuner, stations, query }) => {
-  const current = tuner.state.stationId
-    ? stationById(tuner.state.stationId)
-    : undefined
-  return (
-    <div className={css.channels} id='rp-channels'>
-      <span className={css.channelsTab}>Channels</span>
-      {stations.length === 0 && (
-        <p className={css.channelsEmpty}>No channel matches “{query}”.</p>
-      )}
-      <ul className={css.channelList}>
-        {stations.map((station) => (
-          <ChannelRow key={station.id} station={station} tuner={tuner} />
-        ))}
-      </ul>
-      <footer className={css.channelsFoot}>
-        <span>Updated {formatUpdated(STATIONS_VERIFIED_AT)}</span>
-        <button
-          type='button'
-          disabled={!current}
-          onClick={() => current && tuner.tune(current)}
-        >
-          Update
-        </button>
-      </footer>
-    </div>
-  )
-}
+}> = ({ tuner, station, stations, query }) => (
+  <div className={css.channels} id='rp-channels'>
+    <span className={css.channelsTab}>Channels</span>
+    {stations.length === 0 && (
+      <p className={css.channelsEmpty}>No channel matches “{query}”.</p>
+    )}
+    <ul className={css.channelList}>
+      {stations.map((entry) => (
+        <ChannelRow key={entry.id} station={entry} tuner={tuner} />
+      ))}
+    </ul>
+    <footer className={css.channelsFoot}>
+      <span>Updated {formatUpdated(STATIONS_VERIFIED_AT)}</span>
+      <button
+        type='button'
+        disabled={!station}
+        onClick={() => station && tuner.tune(station)}
+      >
+        Update
+      </button>
+    </footer>
+  </div>
+)
 
-const DisplayPanel: React.FC<{ tuner: Tuner }> = ({ tuner }) => {
+const DisplayPanel: React.FC<{
+  tuner: Tuner
+  station: RealStation | undefined
+}> = ({ tuner, station }) => {
   const { status } = tuner.state
-  const station = tuner.state.stationId
-    ? stationById(tuner.state.stationId)
-    : undefined
 
   if (status === 'error') {
     return (
@@ -233,11 +229,11 @@ const VolumeRail: React.FC<{
   </div>
 )
 
-const TransportBar: React.FC<{ tuner: Tuner }> = ({ tuner }) => {
+const TransportBar: React.FC<{
+  tuner: Tuner
+  station: RealStation | undefined
+}> = ({ tuner, station }) => {
   const { status } = tuner.state
-  const station = tuner.state.stationId
-    ? stationById(tuner.state.stationId)
-    : undefined
   const canPlay = status === 'idle' || status === 'paused' || status === 'error'
   const canPause = status === 'connecting' || status === 'playing'
 
@@ -461,10 +457,10 @@ const GuideBar: React.FC<{
   )
 }
 
-const StatusBar: React.FC<{ tuner: Tuner }> = ({ tuner }) => {
-  const station = tuner.state.stationId
-    ? stationById(tuner.state.stationId)
-    : undefined
+const StatusBar: React.FC<{
+  tuner: Tuner
+  station: RealStation | undefined
+}> = ({ tuner, station }) => {
   const live = tuner.state.status === 'playing'
   return (
     <footer className={css.statusBar}>
@@ -528,18 +524,23 @@ export default function RealPlayerWindow({
       </header>
 
       <RealMenubar tuner={tuner} close={close} />
-      <TransportBar tuner={tuner} />
+      <TransportBar tuner={tuner} station={station} />
 
       <div className={css.deck}>
         {channelsOpen && (
-          <ChannelsPanel tuner={tuner} stations={visible} query={query} />
+          <ChannelsPanel
+            tuner={tuner}
+            station={station}
+            stations={visible}
+            query={query}
+          />
         )}
         <VolumeRail
           tuner={tuner}
           channelsOpen={channelsOpen}
           toggleChannels={() => setChannelsOpen((open) => !open)}
         />
-        <DisplayPanel tuner={tuner} />
+        <DisplayPanel tuner={tuner} station={station} />
       </div>
 
       <GuideBar
@@ -548,7 +549,7 @@ export default function RealPlayerWindow({
         matches={visible}
         tuner={tuner}
       />
-      <StatusBar tuner={tuner} />
+      <StatusBar tuner={tuner} station={station} />
 
       <span className='sr-only' role='status' aria-live='polite'>
         {ANNOUNCEMENT[tuner.state.status]}

@@ -27,6 +27,7 @@ import {
   fillRect,
   handleAt,
   handlePoints,
+  handleTolerance,
   insideRect,
   lift,
   scaleNearest,
@@ -338,7 +339,7 @@ export const usePaint = () => {
     historyRef.current = push(historyRef.current, before)
   }
 
-  const mutate = (change: (bmp: Bitmap) => boolean): boolean => {
+  const mutateWhen = (change: (bmp: Bitmap) => boolean): boolean => {
     const bmp = bmpRef.current
     if (!bmp) return false
     const before = clone(bmp)
@@ -346,6 +347,13 @@ export const usePaint = () => {
     pushHistory(before)
     blit()
     return true
+  }
+
+  const mutate = (change: (bmp: Bitmap) => void): void => {
+    mutateWhen((bmp) => {
+      change(bmp)
+      return true
+    })
   }
 
   const adopt = (snapshot: Snapshot) => {
@@ -359,6 +367,11 @@ export const usePaint = () => {
     }
     blit()
     dispatch({ type: 'commit' })
+  }
+
+  const send = (event: PaintEvent) => {
+    applyEffects(stateRef.current, event)
+    dispatch(event)
   }
 
   const dropSelection = () => {
@@ -399,7 +412,6 @@ export const usePaint = () => {
     mutate((target) => {
       floatRef.current = lift(target, clipped)
       fillRect(target, clipped, toRgba(stateRef.current.bg))
-      return true
     })
   }
 
@@ -421,7 +433,6 @@ export const usePaint = () => {
         { x: mode.rect.x, y: mode.rect.y },
         key ? { skip: key } : {},
       )
-      return true
     })
     clearOverlay()
     dispatch({ type: 'commit' })
@@ -463,7 +474,6 @@ export const usePaint = () => {
     } else {
       mutate((bmp) => {
         fillRect(bmp, rect, toRgba(stateRef.current.bg))
-        return true
       })
     }
     clearOverlay()
@@ -560,7 +570,7 @@ export const usePaint = () => {
     const bmp = bmpRef.current
     if (!bmp) return
     if (state.tool === 'fill') {
-      const changed = mutate((target) =>
+      const changed = mutateWhen((target) =>
         floodFill(target, at, inkColor(state, button)),
       )
       if (changed) dispatch({ type: 'commit' })
@@ -658,7 +668,6 @@ export const usePaint = () => {
     if (mode.kind === 'shaping') {
       mutate((bmp) => {
         renderShape(bmp, state, mode.from, at, mode.button)
-        return true
       })
       clearOverlay()
       return
@@ -666,7 +675,6 @@ export const usePaint = () => {
     if (mode.kind === 'curving' && mode.phase === 'c2' && mode.dragging) {
       mutate((bmp) => {
         renderCurve(bmp, state, { ...mode, c2: at }, 'left')
-        return true
       })
       clearOverlay()
       return
@@ -698,7 +706,6 @@ export const usePaint = () => {
     if (mode.kind !== 'polygon' || mode.points.length < 2) return
     mutate((bmp) => {
       drawPolygon(bmp, mode.points, shapeStyle(state, mode.button))
-      return true
     })
     clearOverlay()
   }
@@ -725,11 +732,6 @@ export const usePaint = () => {
     }
   }
 
-  const send = (event: PaintEvent) => {
-    applyEffects(stateRef.current, event)
-    dispatch(event)
-  }
-
   const setZoom = (level: Magnification) => {
     if (level !== 1) lastZoomRef.current = level
     send({ type: 'zoom', level })
@@ -750,8 +752,7 @@ export const usePaint = () => {
     if (captured.mode.kind === 'selected') {
       if (captured.tool === 'select') {
         const rect = captured.mode.rect
-        const tolerance = Math.max(2, Math.ceil(3 / captured.zoom))
-        const handle = handleAt(rect, at, tolerance)
+        const handle = handleAt(rect, at, handleTolerance(captured.zoom))
         if (handle) {
           liftIfNeeded(rect)
           send({ type: 'grab-handle', handle, at })

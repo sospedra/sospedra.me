@@ -1,5 +1,11 @@
 import { clamp } from 'es-toolkit'
-import { type Bounds, type Cell, type CellSet, cellOf, keyOf } from './engine'
+import {
+  type Bounds,
+  type Cell,
+  type CellSet,
+  cellOf,
+  keyOf,
+} from './engine.ts'
 
 export type Camera = {
   x: number
@@ -8,7 +14,6 @@ export type Camera = {
 }
 
 export type CanvasPalette = {
-  mode: 'circuit' | 'poster' | 'ember' | 'organic'
   background: readonly [string, string, string]
   gridMinor: string
   gridMajor: string
@@ -36,24 +41,53 @@ type DrawOptions = {
   palette: CanvasPalette
 }
 
-const MIN_ZOOM = 2
-const MAX_ZOOM = 34
+export const MIN_ZOOM = 2
+export const MAX_ZOOM = 34
 const MAX_DPR = 2
+const FIT_PADDING_CELLS = 8
+const FIT_MAX_ZOOM = 24
+const CURSOR_MARGIN_CELLS = 2
+const CURSOR_MARGIN_SHARE = 0.4
+const MINOR_GRID_MIN_ZOOM = 7
+const MAJOR_GRID_STEP = 5
+const TIGHT_INSET_MIN_ZOOM = 10
+const CELL_INSET_TIGHT = 1.5
+const CELL_INSET_LOOSE = 0.65
+const HIGHLIGHT_MIN_ZOOM = 12
+const GLOW_MAX_CELLS = 1800
+const GLOW_MIN_ZOOM = 6
+const GLOW_MAX_BLUR = 8
+const GLOW_BLUR_PER_ZOOM = 0.4
+const RUNNING_LAMP_RIGHT = 15
+const RUNNING_LAMP_TOP = 8
+const RUNNING_LAMP_SIZE = 7
+
+type Frame = {
+  context: CanvasRenderingContext2D
+  camera: Camera
+  width: number
+  height: number
+  palette: CanvasPalette
+}
 
 const clampZoom = (zoom: number) => clamp(zoom, MIN_ZOOM, MAX_ZOOM)
 
-const canvasSize = (canvas: HTMLCanvasElement) => {
+const canvasMetrics = (canvas: HTMLCanvasElement) => {
   const rect = canvas.getBoundingClientRect()
   const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
-  const width = Math.max(1, Math.round(rect.width * dpr))
-  const height = Math.max(1, Math.round(rect.height * dpr))
+  return { width: rect.width, height: rect.height, dpr }
+}
 
+const resizeBackingStore = (
+  canvas: HTMLCanvasElement,
+  metrics: { width: number; height: number; dpr: number },
+) => {
+  const width = Math.max(1, Math.round(metrics.width * metrics.dpr))
+  const height = Math.max(1, Math.round(metrics.height * metrics.dpr))
   if (canvas.width !== width || canvas.height !== height) {
     canvas.width = width
     canvas.height = height
   }
-
-  return { width: rect.width, height: rect.height, dpr, rect }
 }
 
 export const cellAtClientPoint = (
@@ -105,23 +139,48 @@ export const cameraForBounds = (
   bounds: Bounds,
 ): Camera => {
   const rect = canvas.getBoundingClientRect()
-  const horizontal = rect.width / (bounds.width + 8)
-  const vertical = rect.height / (bounds.height + 8)
+  const horizontal = rect.width / (bounds.width + FIT_PADDING_CELLS)
+  const vertical = rect.height / (bounds.height + FIT_PADDING_CELLS)
 
   return {
     x: (bounds.minX + bounds.maxX + 1) / 2,
     y: (bounds.minY + bounds.maxY + 1) / 2,
-    zoom: clampZoom(Math.min(horizontal, vertical, 24)),
+    zoom: clampZoom(Math.min(horizontal, vertical, FIT_MAX_ZOOM)),
   }
 }
 
-const traceGrid = (
-  context: CanvasRenderingContext2D,
-  camera: Camera,
-  width: number,
-  height: number,
-  step: number,
+const centerOnAxis = (
+  center: number,
+  half: number,
+  margin: number,
+  target: number,
 ) => {
+  if (target < center - half + margin) return target + half - margin
+  if (target > center + half - margin) return target - half + margin
+  return center
+}
+
+export const keepCellInView = (
+  camera: Camera,
+  rect: { width: number; height: number },
+  cell: Cell,
+): Camera => {
+  const halfWidth = rect.width / (2 * camera.zoom)
+  const halfHeight = rect.height / (2 * camera.zoom)
+  const marginX = Math.min(CURSOR_MARGIN_CELLS, halfWidth * CURSOR_MARGIN_SHARE)
+  const marginY = Math.min(
+    CURSOR_MARGIN_CELLS,
+    halfHeight * CURSOR_MARGIN_SHARE,
+  )
+  const x = centerOnAxis(camera.x, halfWidth, marginX, cell[0] + 0.5)
+  const y = centerOnAxis(camera.y, halfHeight, marginY, cell[1] + 0.5)
+
+  if (x === camera.x && y === camera.y) return camera
+  return { ...camera, x, y }
+}
+
+const traceGrid = (frame: Frame, step: number) => {
+  const { camera, context, height, width } = frame
   const { zoom } = camera
   const left = camera.x - width / (2 * zoom)
   const right = camera.x + width / (2 * zoom)
@@ -143,42 +202,21 @@ const traceGrid = (
   }
 }
 
-const drawGrid = (
-  context: CanvasRenderingContext2D,
-  camera: Camera,
-  width: number,
-  height: number,
-  palette: CanvasPalette,
-) => {
-  const minorThreshold =
-    palette.mode === 'circuit'
-      ? 7
-      : palette.mode === 'poster'
-        ? 11
-        : palette.mode === 'organic'
-          ? 14
-          : Number.POSITIVE_INFINITY
-  const majorStep =
-    palette.mode === 'ember' ? 7 : palette.mode === 'organic' ? 6 : 5
+const drawGrid = (frame: Frame) => {
+  const { camera, context, height, palette, width } = frame
 
-  context.setLineDash(
-    palette.mode === 'organic' ? [1, Math.max(2, camera.zoom * 0.24)] : [],
-  )
-
-  if (camera.zoom >= minorThreshold) {
-    traceGrid(context, camera, width, height, 1)
+  if (camera.zoom >= MINOR_GRID_MIN_ZOOM) {
+    traceGrid(frame, 1)
     context.strokeStyle = palette.gridMinor
     context.lineWidth = 1
     context.stroke()
   }
 
-  traceGrid(context, camera, width, height, majorStep)
+  traceGrid(frame, MAJOR_GRID_STEP)
   context.strokeStyle = palette.gridMajor
   context.lineWidth = 1
   context.stroke()
-  context.setLineDash([])
 
-  if (palette.mode === 'organic') return
   const originX = Math.round(width / 2 - camera.x * camera.zoom) + 0.5
   const originY = Math.round(height / 2 - camera.y * camera.zoom) + 0.5
   context.beginPath()
@@ -191,113 +229,32 @@ const drawGrid = (
 }
 
 const drawCellMarker = (
-  context: CanvasRenderingContext2D,
-  cell: Cell,
-  camera: Camera,
-  width: number,
-  height: number,
-  color: string,
-  inset: number,
-  mode: CanvasPalette['mode'],
+  frame: Frame,
+  marker: { cell: Cell; color: string; inset: number },
 ) => {
-  const [x, y] = cell
+  const { camera, context, height, width } = frame
+  const [x, y] = marker.cell
   const left = width / 2 + (x - camera.x) * camera.zoom
   const top = height / 2 + (y - camera.y) * camera.zoom
-  context.strokeStyle = color
+  context.strokeStyle = marker.color
   context.lineWidth = 2
-  const size = Math.max(2, Math.round(camera.zoom - inset * 2))
-  const markerLeft = Math.round(left + inset)
-  const markerTop = Math.round(top + inset)
-
-  if (mode === 'organic') {
-    context.beginPath()
-    context.arc(
-      markerLeft + size / 2,
-      markerTop + size / 2,
-      size / 2,
-      0,
-      Math.PI * 2,
-    )
-    context.stroke()
-    return
-  }
-
-  if (mode === 'ember') {
-    const centerX = markerLeft + size / 2
-    const centerY = markerTop + size / 2
-    context.beginPath()
-    context.moveTo(centerX, markerTop)
-    context.lineTo(markerLeft + size, centerY)
-    context.lineTo(centerX, markerTop + size)
-    context.lineTo(markerLeft, centerY)
-    context.closePath()
-    context.stroke()
-    return
-  }
-
-  if (mode === 'poster') context.setLineDash([4, 2])
-  context.strokeRect(markerLeft, markerTop, size, size)
-  context.setLineDash([])
+  const size = Math.max(2, Math.round(camera.zoom - marker.inset * 2))
+  context.strokeRect(
+    Math.round(left + marker.inset),
+    Math.round(top + marker.inset),
+    size,
+    size,
+  )
 }
 
-const drawBackdrop = (
-  context: CanvasRenderingContext2D,
-  palette: CanvasPalette,
-  width: number,
-  height: number,
-) => {
-  if (palette.mode === 'poster') {
-    const backdrop = context.createLinearGradient(0, 0, width, height)
-    backdrop.addColorStop(0, palette.background[0])
-    backdrop.addColorStop(0.62, palette.background[1])
-    backdrop.addColorStop(1, palette.background[2])
-    context.fillStyle = backdrop
-    context.fillRect(0, 0, width, height)
-
-    context.beginPath()
-    context.arc(
-      width * 0.78,
-      height * 0.2,
-      Math.min(width, height) * 0.17,
-      0,
-      Math.PI * 2,
-    )
-    context.strokeStyle = palette.origin
-    context.lineWidth = 2
-    context.stroke()
-    return
-  }
-
-  if (palette.mode === 'organic') {
-    const backdrop = context.createLinearGradient(0, 0, 0, height)
-    backdrop.addColorStop(0, palette.background[0])
-    backdrop.addColorStop(0.58, palette.background[1])
-    backdrop.addColorStop(1, palette.background[2])
-    context.fillStyle = backdrop
-    context.fillRect(0, 0, width, height)
-
-    const light = context.createRadialGradient(
-      width * 0.2,
-      height * 0.12,
-      0,
-      width * 0.2,
-      height * 0.12,
-      Math.max(width, height) * 0.45,
-    )
-    light.addColorStop(0, 'rgb(255 249 205 / 32%)')
-    light.addColorStop(1, 'rgb(255 249 205 / 0%)')
-    context.fillStyle = light
-    context.fillRect(0, 0, width, height)
-    return
-  }
-
-  const centerY = palette.mode === 'ember' ? height * 0.88 : height / 2
+const drawBackdrop = (frame: Frame) => {
+  const { context, height, palette, width } = frame
   const backdrop = context.createRadialGradient(
     width / 2,
-    centerY,
+    height / 2,
     0,
     width / 2,
-    centerY,
+    height / 2,
     Math.max(width, height) * 0.72,
   )
   backdrop.addColorStop(0, palette.background[0])
@@ -307,127 +264,30 @@ const drawBackdrop = (
   context.fillRect(0, 0, width, height)
 }
 
-const fillDiamond = (
-  context: CanvasRenderingContext2D,
-  centerX: number,
-  centerY: number,
-  radius: number,
-) => {
-  context.beginPath()
-  context.moveTo(centerX, centerY - radius)
-  context.lineTo(centerX + radius, centerY)
-  context.lineTo(centerX, centerY + radius)
-  context.lineTo(centerX - radius, centerY)
-  context.closePath()
-  context.fill()
-}
-
 const drawCell = (
-  context: CanvasRenderingContext2D,
-  palette: CanvasPalette,
-  screenX: number,
-  screenY: number,
-  cellSize: number,
-  newborn: boolean,
-  zoom: number,
+  frame: Frame,
+  spot: { screenX: number; screenY: number; size: number; newborn: boolean },
 ) => {
-  const color = newborn ? palette.newborn : palette.survivor
-  const highlight = newborn
-    ? palette.newbornHighlight
-    : palette.survivorHighlight
-
-  if (palette.mode === 'poster') {
-    context.shadowBlur = 0
-    if (newborn) {
-      context.fillStyle = palette.newbornGlow
-      context.fillRect(
-        Math.round(screenX + 2),
-        Math.round(screenY + 2),
-        Math.max(1, Math.ceil(cellSize)),
-        Math.max(1, Math.ceil(cellSize)),
-      )
-    }
-    context.fillStyle = color
-    context.fillRect(
-      Math.round(screenX),
-      Math.round(screenY),
-      Math.max(1, Math.ceil(cellSize)),
-      Math.max(1, Math.ceil(cellSize)),
-    )
-    if (zoom >= 11) {
-      context.beginPath()
-      context.moveTo(screenX + cellSize * 0.68, screenY)
-      context.lineTo(screenX + cellSize, screenY + cellSize * 0.32)
-      context.strokeStyle = highlight
-      context.lineWidth = 1.5
-      context.stroke()
-    }
-    return
-  }
-
-  if (palette.mode === 'ember') {
-    const centerX = screenX + cellSize / 2
-    const centerY = screenY + cellSize / 2
-    context.fillStyle = color
-    fillDiamond(context, centerX, centerY, cellSize * 0.48)
-    if (zoom >= 9) {
-      context.shadowBlur = 0
-      context.fillStyle = highlight
-      fillDiamond(context, centerX, centerY, cellSize * 0.19)
-    }
-    return
-  }
-
-  if (palette.mode === 'organic') {
-    const centerX = screenX + cellSize / 2
-    const centerY = screenY + cellSize / 2
-    const radius = cellSize * 0.44
-    context.fillStyle = color
-    context.beginPath()
-    context.ellipse(
-      centerX,
-      centerY,
-      newborn ? radius * 0.78 : radius,
-      radius,
-      newborn ? Math.PI / 4 : 0,
-      0,
-      Math.PI * 2,
-    )
-    context.fill()
-    if (zoom >= 10) {
-      context.shadowBlur = 0
-      context.fillStyle = highlight
-      context.beginPath()
-      context.arc(
-        centerX - radius * 0.22,
-        centerY - radius * 0.24,
-        Math.max(1, radius * 0.18),
-        0,
-        Math.PI * 2,
-      )
-      context.fill()
-    }
-    return
-  }
-
-  context.fillStyle = color
+  const { camera, context, palette } = frame
+  context.fillStyle = spot.newborn ? palette.newborn : palette.survivor
   context.fillRect(
-    Math.round(screenX),
-    Math.round(screenY),
-    Math.max(1, Math.ceil(cellSize)),
-    Math.max(1, Math.ceil(cellSize)),
+    Math.round(spot.screenX),
+    Math.round(spot.screenY),
+    Math.max(1, Math.ceil(spot.size)),
+    Math.max(1, Math.ceil(spot.size)),
   )
 
-  if (zoom >= 12) {
-    context.shadowBlur = 0
-    context.fillStyle = highlight
-    context.fillRect(
-      Math.round(screenX + cellSize * 0.2),
-      Math.round(screenY + cellSize * 0.2),
-      Math.max(1, Math.round(cellSize * 0.22)),
-      Math.max(1, Math.round(cellSize * 0.22)),
-    )
-  }
+  if (camera.zoom < HIGHLIGHT_MIN_ZOOM) return
+  context.shadowBlur = 0
+  context.fillStyle = spot.newborn
+    ? palette.newbornHighlight
+    : palette.survivorHighlight
+  context.fillRect(
+    Math.round(spot.screenX + spot.size * 0.2),
+    Math.round(spot.screenY + spot.size * 0.2),
+    Math.max(1, Math.round(spot.size * 0.22)),
+    Math.max(1, Math.round(spot.size * 0.22)),
+  )
 }
 
 export const drawLifeCanvas = (
@@ -437,25 +297,27 @@ export const drawLifeCanvas = (
   const context = canvas.getContext('2d')
   if (!context) return
 
-  const { dpr, height, width } = canvasSize(canvas)
+  const metrics = canvasMetrics(canvas)
+  resizeBackingStore(canvas, metrics)
+  const { dpr, height, width } = metrics
   const { births, camera, cells, palette } = options
+  const frame: Frame = { camera, context, height, palette, width }
   context.setTransform(dpr, 0, 0, dpr, 0, 0)
   context.clearRect(0, 0, width, height)
 
-  drawBackdrop(context, palette, width, height)
+  drawBackdrop(frame)
+  drawGrid(frame)
 
-  drawGrid(context, camera, width, height, palette)
-
-  const inset = camera.zoom >= 10 ? 1.5 : 0.65
+  const inset =
+    camera.zoom >= TIGHT_INSET_MIN_ZOOM ? CELL_INSET_TIGHT : CELL_INSET_LOOSE
   const cellSize = Math.max(1, camera.zoom - inset * 2)
   const left = camera.x - width / (2 * camera.zoom) - 1
   const right = camera.x + width / (2 * camera.zoom) + 1
   const top = camera.y - height / (2 * camera.zoom) - 1
   const bottom = camera.y + height / (2 * camera.zoom) + 1
-  const useGlow =
-    palette.mode !== 'poster' && cells.size < 1800 && camera.zoom >= 6
+  const useGlow = cells.size < GLOW_MAX_CELLS && camera.zoom >= GLOW_MIN_ZOOM
 
-  const glowBlur = Math.min(8, camera.zoom * 0.4)
+  const glowBlur = Math.min(GLOW_MAX_BLUR, camera.zoom * GLOW_BLUR_PER_ZOOM)
   if (useGlow) {
     context.shadowBlur = glowBlur
     context.shadowColor = palette.survivorGlow
@@ -474,40 +336,35 @@ export const drawLifeCanvas = (
       context.shadowColor = newborn ? palette.newbornGlow : palette.survivorGlow
       glowNewborn = newborn
     }
-    drawCell(context, palette, screenX, screenY, cellSize, newborn, camera.zoom)
+    drawCell(frame, { newborn, screenX, screenY, size: cellSize })
     if (useGlow) context.shadowBlur = glowBlur
   }
 
   context.shadowBlur = 0
   if (options.hover) {
     const hoverAlive = cells.has(keyOf(...options.hover))
-    drawCellMarker(
-      context,
-      options.hover,
-      camera,
-      width,
-      height,
-      hoverAlive ? palette.hoverAlive : palette.hoverDead,
-      2.5,
-      palette.mode,
-    )
+    drawCellMarker(frame, {
+      cell: options.hover,
+      color: hoverAlive ? palette.hoverAlive : palette.hoverDead,
+      inset: 2.5,
+    })
   }
 
   if (options.showCursor) {
-    drawCellMarker(
-      context,
-      options.cursor,
-      camera,
-      width,
-      height,
-      palette.cursor,
-      0.75,
-      palette.mode,
-    )
+    drawCellMarker(frame, {
+      cell: options.cursor,
+      color: palette.cursor,
+      inset: 0.75,
+    })
   }
 
   if (options.running) {
     context.fillStyle = palette.running
-    context.fillRect(width - 15, 8, 7, 7)
+    context.fillRect(
+      width - RUNNING_LAMP_RIGHT,
+      RUNNING_LAMP_TOP,
+      RUNNING_LAMP_SIZE,
+      RUNNING_LAMP_SIZE,
+    )
   }
 }

@@ -1,9 +1,9 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
-import { SITE_URL } from 'service/site'
+import { SITE_URL } from 'services/site'
 import Providers from './providers'
-import 'service/style/global.css'
+import 'services/style/global.css'
 
 const wotfard = localFont({
   src: [

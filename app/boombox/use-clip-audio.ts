@@ -6,6 +6,8 @@ type ClipAudioOptions = {
   /* seconds of the clip the player may hear; playback hard-stops there */
   limit: number
   onLimit?: () => void
+  eqGains: readonly number[]
+  volume: number
 }
 
 export const EQ_BANDS = [60, 250, 1000, 4000, 12000] as const
@@ -59,7 +61,10 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
   const graphRef = useRef<ClipGraph | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const optionsRef = useRef(options)
-  optionsRef.current = options
+
+  useEffect(() => {
+    optionsRef.current = options
+  })
 
   useEffect(() => {
     const audio = createElement(src)
@@ -119,7 +124,8 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
     return () => cancelAnimationFrame(frame)
   }, [isPlaying])
 
-  /* the element source must be created inside a user gesture and only once */
+  /* the element source must be created inside a user gesture and only once;
+     the newborn graph seeds EQ and volume from the latest settings */
   const ensureGraph = useCallback(() => {
     const audio = audioRef.current
     if (!audio || typeof AudioContext === 'undefined') return null
@@ -127,6 +133,11 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
 
     try {
       const graph = buildGraph(audio)
+      const { eqGains, volume } = optionsRef.current
+      for (const [band, filter] of graph.filters.entries()) {
+        filter.gain.value = eqGains[band] ?? 0
+      }
+      graph.master.gain.value = Math.min(Math.max(volume, 0), 1)
       graphRef.current = graph
       analyserRef.current = graph.analyser
       return graph

@@ -1,13 +1,16 @@
 import {
   audioContextClass,
   createMasterBus,
+  createSfxKit,
   noiseBufferFor,
-} from 'service/audio/kit'
+  type SfxKit,
+} from 'services/audio/kit'
 
 type TravelAudioCue = { kind: 'button' } | { direction: -1 | 1; kind: 'rotary' }
 
 type TravelAudioGraph = {
   context: AudioContext
+  kit: SfxKit
   noiseBuffer: AudioBuffer
   output: GainNode
 }
@@ -54,7 +57,12 @@ export const createTravelAudio = () => {
         attack: 0.002,
         release: 0.08,
       })
-      graph = { context, noiseBuffer: noiseBufferFor(context), output }
+      graph = {
+        context,
+        kit: createSfxKit({ attack: 0.002, destination: output }),
+        noiseBuffer: noiseBufferFor(context),
+        output,
+      }
       return graph
     } catch {
       context = null
@@ -88,73 +96,31 @@ export const createTravelAudio = () => {
     return pending
   }
 
-  const noise = (
-    currentGraph: TravelAudioGraph,
-    frequency: number,
-    duration: number,
-    peak: number,
-    q: number,
-    startAt: number,
-  ) => {
-    const { context: audioContext, noiseBuffer, output } = currentGraph
-    const source = audioContext.createBufferSource()
-    const filter = audioContext.createBiquadFilter()
-    const gain = audioContext.createGain()
-    const offset = Math.random() * Math.max(0, noiseBuffer.duration - duration)
-
-    source.buffer = noiseBuffer
-    filter.type = 'bandpass'
-    filter.frequency.value = frequency
-    filter.Q.value = q
-    gain.gain.setValueAtTime(0.0001, startAt)
-    gain.gain.exponentialRampToValueAtTime(peak, startAt + 0.002)
-    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration)
-    source.connect(filter).connect(gain).connect(output)
-    source.start(startAt, offset, duration)
-    source.stop(startAt + duration + 0.01)
-  }
-
-  const tone = (
-    currentGraph: TravelAudioGraph,
-    from: number,
-    to: number,
-    duration: number,
-    peak: number,
-    startAt: number,
-  ) => {
-    const { context: audioContext, output } = currentGraph
-    const oscillator = audioContext.createOscillator()
-    const gain = audioContext.createGain()
-
-    oscillator.type = 'triangle'
-    oscillator.frequency.setValueAtTime(from, startAt)
-    oscillator.frequency.exponentialRampToValueAtTime(to, startAt + duration)
-    gain.gain.setValueAtTime(0.0001, startAt)
-    gain.gain.exponentialRampToValueAtTime(peak, startAt + 0.003)
-    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + duration)
-    oscillator.connect(gain).connect(output)
-    oscillator.start(startAt)
-    oscillator.stop(startAt + duration + 0.01)
-  }
-
   const renderCue = (currentGraph: TravelAudioGraph, cue: TravelAudioCue) => {
-    const start = currentGraph.context.currentTime
-
     if (cue.kind === 'rotary') {
-      const directionOffset = cue.direction * 120
-      noise(
-        currentGraph,
-        2540 + directionOffset + Math.random() * 240,
-        0.022,
-        0.065,
-        1.2,
-        start,
-      )
+      currentGraph.kit.burst({
+        frequency: 2540 + cue.direction * 120 + Math.random() * 240,
+        duration: 0.022,
+        peak: 0.065,
+        q: 1.2,
+      })
       return
     }
 
-    noise(currentGraph, 980 + Math.random() * 150, 0.064, 0.13, 0.72, start)
-    tone(currentGraph, 205, 82, 0.074, 0.07, start)
+    currentGraph.kit.burst({
+      frequency: 980 + Math.random() * 150,
+      duration: 0.064,
+      peak: 0.13,
+      q: 0.72,
+    })
+    currentGraph.kit.tone({
+      from: 205,
+      to: 82,
+      duration: 0.074,
+      peak: 0.07,
+      shape: 'triangle',
+      attack: 0.003,
+    })
   }
 
   const play = (cue: TravelAudioCue) => {

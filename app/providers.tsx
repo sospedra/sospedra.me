@@ -1,10 +1,10 @@
 'use client'
 
-import EasterEgg from 'service/easteregg'
-import { Hotkeys } from 'service/hotkeys'
-import { SystemProvider } from 'service/system'
-import { ThemeProvider } from 'service/theme'
-import { Provider as TransitionProvider } from 'service/transition'
+import EasterEgg from 'services/easteregg/easteregg'
+import { Hotkeys } from 'services/hotkeys'
+import { SystemProvider } from 'services/system'
+import { ThemeProvider } from 'services/theme'
+import { Provider as TransitionProvider } from 'services/transition/provider'
 
 export default function Providers(props: { children: React.ReactNode }) {
   return (

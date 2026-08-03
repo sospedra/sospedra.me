@@ -1,5 +1,5 @@
-import reading from './internals/reading.mts'
-import resize from './internals/resize.mts'
+import reading from './scripts/reading.mts'
+import resize from './scripts/resize.mts'
 
 export default {
   '*.{ts,tsx,css,json}': 'biome check --write --no-errors-on-unmatched',

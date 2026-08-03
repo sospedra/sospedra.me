@@ -1,13 +1,13 @@
 'use client'
 
 import cn from 'clsx'
-import Link, { LinkBack } from 'components/Link'
-import Shell from 'components/Shell'
 import { clamp } from 'es-toolkit'
 import type { CSSProperties } from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { type Trap, useHotkeys } from 'service/hotkeys'
-import { useTheme } from 'service/theme'
+import { sceneTrap, type Trap, useHotkeys } from 'services/hotkeys'
+import Link, { LinkBack } from 'services/link'
+import Shell from 'services/shell'
+import { useTheme } from 'services/theme'
 import { createDeckAudio } from './deck-audio'
 import { runTapeSwap } from './tape-swap'
 import { TAPES, type Tape } from './tapes'
@@ -24,6 +24,15 @@ const VOLUME_BARS = 10
 /* messy-pile offsets, one per stack row */
 const DRIFT = ['-0.4rem', '0.7rem', '-0.15rem', '0.9rem', '0.25rem']
 const TIP = ['-0.5deg', '0.4deg', '-0.2deg', '0.6deg', '-0.35deg']
+
+const pileStyle = (index: number): CSSProperties =>
+  ({
+    '--drift': DRIFT[index % DRIFT.length],
+    '--tip': TIP[index % TIP.length],
+  }) as CSSProperties
+
+const isNotAllowed = (error: unknown) =>
+  error instanceof DOMException && error.name === 'NotAllowedError'
 
 type TvStatus =
   | 'off'
@@ -165,7 +174,7 @@ export default function VideoclubView() {
     burst: 'snow',
   })
   const [volume, setVolume] = useState(0.7)
-  const [clock, setClock] = useState('0:00:00')
+  const [counterSeconds, setCounterSeconds] = useState(0)
   const [osd, setOsd] = useState<{ text: string; at: number } | null>(null)
   const [audio] = useState(createDeckAudio)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -232,7 +241,9 @@ export default function VideoclubView() {
       video.pause()
       return
     }
-    video.play().catch(() => dispatch({ type: 'toggle' }))
+    video.play().catch((error: unknown) => {
+      if (isNotAllowed(error)) dispatch({ type: 'toggle' })
+    })
   }, [state.status])
 
   // detached media elements keep playing audio until GC; the key remount
@@ -298,29 +309,22 @@ export default function VideoclubView() {
 
   const insertTape = (index: number) => {
     if (index === state.tape || state.status === 'inserting') return
-    setClock('0:00:00')
+    setCounterSeconds(0)
     flash(formatChannel(index))
     dispatch({ type: 'insert', tape: index })
   }
 
-  const deckTrap =
-    (press: () => void) =>
-    (event: KeyboardEvent): void => {
-      event.preventDefault()
-      press()
-    }
-
   const tapeTraps = TAPES.map(
-    (_, index): Trap => [String(index + 1), deckTrap(() => insertTape(index))],
+    (_, index): Trap => [String(index + 1), sceneTrap(() => insertTape(index))],
   )
 
   useHotkeys([
-    ['Space', deckTrap(toggle)],
-    ['t', deckTrap(power)],
-    ['ArrowLeft', deckTrap(() => seek(-SEEK_STEP))],
-    ['ArrowRight', deckTrap(() => seek(SEEK_STEP))],
-    ['ArrowUp', deckTrap(() => nudgeVolume(VOLUME_STEP))],
-    ['ArrowDown', deckTrap(() => nudgeVolume(-VOLUME_STEP))],
+    ['Space', sceneTrap(toggle)],
+    ['t', sceneTrap(power)],
+    ['ArrowLeft', sceneTrap(() => seek(-SEEK_STEP))],
+    ['ArrowRight', sceneTrap(() => seek(SEEK_STEP))],
+    ['ArrowUp', sceneTrap(() => nudgeVolume(VOLUME_STEP))],
+    ['ArrowDown', sceneTrap(() => nudgeVolume(-VOLUME_STEP))],
     ...tapeTraps,
   ])
 
@@ -359,7 +363,9 @@ export default function VideoclubView() {
                     event.currentTarget.volume = volume
                   }}
                   onTimeUpdate={(event) =>
-                    setClock(formatCounter(event.currentTarget.currentTime))
+                    setCounterSeconds(
+                      Math.floor(event.currentTarget.currentTime),
+                    )
                   }
                   onEnded={() => dispatch({ type: 'toggle' })}
                 />
@@ -383,7 +389,9 @@ export default function VideoclubView() {
                   {osd.text}
                 </span>
               )}
-              <span className={css.osdCounter}>{clock}</span>
+              <span className={css.osdCounter}>
+                {formatCounter(counterSeconds)}
+              </span>
             </div>
             <button
               type='button'
@@ -489,10 +497,7 @@ export default function VideoclubView() {
             ON AIR
           </span>
           {TAPES.map((item, index) => {
-            const pile = {
-              '--drift': DRIFT[index % DRIFT.length],
-              '--tip': TIP[index % TIP.length],
-            } as CSSProperties
+            const pile = pileStyle(index)
             if (index === state.tape) {
               return (
                 <span key={item.id} className={css.bay} style={pile}>
@@ -538,12 +543,7 @@ export default function VideoclubView() {
         <div
           ref={ghostRef}
           className={cn(css.vhs, css.ghost)}
-          style={
-            {
-              '--drift': DRIFT[state.incoming % DRIFT.length],
-              '--tip': TIP[state.incoming % TIP.length],
-            } as CSSProperties
-          }
+          style={pileStyle(state.incoming)}
           aria-hidden='true'
         >
           <SpineBar index={state.incoming} tape={TAPES[state.incoming]} />

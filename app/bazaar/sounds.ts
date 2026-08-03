@@ -1,176 +1,213 @@
-export type StallId =
-  | 'uses'
-  | 'games'
-  | 'travel'
-  | 'manual'
-  | 'serve'
-  | 'projects'
-  | 'talks'
-  | 'papers'
+import { audioContextClass, noiseSourceFor } from 'services/audio/kit'
+import { readLocal, writeLocal } from 'services/storage'
+import type { BazaarStallId } from './stalls-manifest'
 
-let ac: AudioContext | null = null
-let master: GainNode | null = null
+const SOUND_KEY = 'bazaar-sound'
+
+type AudioBus = { context: AudioContext; master: GainNode }
+
+let bus: AudioBus | null = null
 let verb: ConvolverNode | null = null
-let enabled = false
+let enabled: boolean | null = null
 
-export function soundEnabled() {
+const listeners = new Set<() => void>()
+
+const isEnabled = () => {
+  enabled ??= readLocal(SOUND_KEY) === 'on'
   return enabled
 }
 
 /* AudioContext must be created inside a user gesture */
-export function setSoundEnabled(next: boolean) {
+const setEnabled = (next: boolean) => {
   enabled = next
+  writeLocal(SOUND_KEY, next ? 'on' : 'off')
   if (next) ensure()
+  for (const listener of listeners) listener()
 }
 
-function ensure(): AudioContext {
-  if (!ac) {
-    ac = new AudioContext()
-    master = ac.createGain()
-    master.gain.value = 0.7
-    master.connect(ac.destination)
+const subscribe = (listener: () => void) => {
+  listeners.add(listener)
+  return () => {
+    listeners.delete(listener)
   }
-  if (ac.state === 'suspended') void ac.resume()
-  return ac
+}
+
+export const soundPreference = { isEnabled, setEnabled, subscribe }
+
+function ensure(): AudioBus | null {
+  if (!bus) {
+    const AudioContextClass = audioContextClass()
+    if (!AudioContextClass) return null
+    const context = new AudioContextClass()
+    const master = context.createGain()
+    master.gain.value = 0.7
+    master.connect(context.destination)
+    bus = { context, master }
+  }
+  if (bus.context.state === 'suspended') void bus.context.resume()
+  return bus
 }
 
 /* convolver fed a generated decaying-noise impulse: procedural reverb */
-function reverb(): ConvolverNode {
+function reverb({ context, master }: AudioBus): ConvolverNode {
   if (verb) return verb
-  const c = ensure()
-  verb = c.createConvolver()
-  const len = c.sampleRate * 1.6
-  const ir = c.createBuffer(2, len, c.sampleRate)
-  for (let ch = 0; ch < 2; ch++) {
-    const data = ir.getChannelData(ch)
-    for (let i = 0; i < len; i++) {
-      data[i] = (Math.random() * 2 - 1) * (1 - i / len) ** 2.8
+  verb = context.createConvolver()
+  const length = context.sampleRate * 1.6
+  const impulse = context.createBuffer(2, length, context.sampleRate)
+  for (let channel = 0; channel < 2; channel++) {
+    const data = impulse.getChannelData(channel)
+    for (let i = 0; i < length; i++) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / length) ** 2.8
     }
   }
-  verb.buffer = ir
-  const gain = c.createGain()
+  verb.buffer = impulse
+  const gain = context.createGain()
   gain.gain.value = 0.5
-  verb.connect(gain).connect(master as GainNode)
+  verb.connect(gain).connect(master)
   return verb
 }
 
 type ToneSpec = {
-  type?: OscillatorType
-  f?: number
+  shape?: OscillatorType
+  from?: number
   to?: number
-  t?: number
-  g?: number
-  delay?: number
+  duration?: number
+  peak?: number
+  at?: number
   wet?: boolean
 }
 
 function tone(spec: ToneSpec) {
-  if (!enabled) return
+  if (!isEnabled()) return
+  const active = ensure()
+  if (!active) return
   const {
-    type = 'square',
-    f = 440,
+    shape = 'square',
+    from = 440,
     to,
-    t = 0.1,
-    g = 0.08,
-    delay = 0,
+    duration = 0.1,
+    peak = 0.08,
+    at = 0,
     wet,
   } = spec
-  const c = ensure()
-  const now = c.currentTime + delay
-  const osc = c.createOscillator()
-  osc.type = type
-  osc.frequency.setValueAtTime(f, now)
-  if (to) osc.frequency.exponentialRampToValueAtTime(to, now + t)
-  const gain = c.createGain()
-  gain.gain.setValueAtTime(g, now)
-  gain.gain.exponentialRampToValueAtTime(0.0008, now + t)
-  osc.connect(gain).connect(master as GainNode)
-  if (wet) gain.connect(reverb())
-  osc.start(now)
-  osc.stop(now + t + 0.02)
+  const { context, master } = active
+  const start = context.currentTime + at
+  const osc = context.createOscillator()
+  osc.type = shape
+  osc.frequency.setValueAtTime(from, start)
+  if (to) osc.frequency.exponentialRampToValueAtTime(to, start + duration)
+  const gain = context.createGain()
+  gain.gain.setValueAtTime(peak, start)
+  gain.gain.exponentialRampToValueAtTime(0.0008, start + duration)
+  osc.connect(gain).connect(master)
+  if (wet) gain.connect(reverb(active))
+  osc.start(start)
+  osc.stop(start + duration + 0.02)
 }
 
 type NoiseSpec = {
-  t?: number
-  g?: number
-  type?: BiquadFilterType
-  f?: number
+  duration?: number
+  peak?: number
+  filter?: BiquadFilterType
+  frequency?: number
   q?: number
-  delay?: number
+  at?: number
   wet?: boolean
 }
 
 function noise(spec: NoiseSpec) {
-  if (!enabled) return
+  if (!isEnabled()) return
+  const active = ensure()
+  if (!active) return
   const {
-    t = 0.08,
-    g = 0.1,
-    type = 'lowpass',
-    f = 1200,
+    duration = 0.08,
+    peak = 0.1,
+    filter: filterType = 'lowpass',
+    frequency = 1200,
     q = 1,
-    delay = 0,
+    at = 0,
     wet,
   } = spec
-  const c = ensure()
-  const now = c.currentTime + delay
-  const buf = c.createBuffer(1, Math.ceil(c.sampleRate * t) + 1, c.sampleRate)
-  const data = buf.getChannelData(0)
-  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
-  const src = c.createBufferSource()
-  src.buffer = buf
-  const filter = c.createBiquadFilter()
-  filter.type = type
-  filter.frequency.value = f
+  const { context, master } = active
+  const start = context.currentTime + at
+  const { source, offset } = noiseSourceFor(context, duration)
+  const filter = context.createBiquadFilter()
+  filter.type = filterType
+  filter.frequency.value = frequency
   filter.Q.value = q
-  const gain = c.createGain()
-  gain.gain.setValueAtTime(g, now)
-  gain.gain.exponentialRampToValueAtTime(0.0008, now + t)
-  src
-    .connect(filter)
-    .connect(gain)
-    .connect(master as GainNode)
-  if (wet) gain.connect(reverb())
-  src.start(now)
+  const gain = context.createGain()
+  gain.gain.setValueAtTime(peak, start)
+  gain.gain.exponentialRampToValueAtTime(0.0008, start + duration)
+  source.connect(filter).connect(gain).connect(master)
+  if (wet) gain.connect(reverb(active))
+  source.start(start, offset, duration)
 }
 
-const STALL_SFX: Record<StallId, () => void> = {
+const STALL_SFX: Record<BazaarStallId, () => void> = {
   uses: () => {
-    tone({ type: 'sine', f: 220, to: 55, t: 0.18, g: 0.14 })
-    noise({ t: 0.05, g: 0.07, f: 900 })
-    tone({ type: 'sine', f: 162, t: 0.25, g: 0.02, delay: 0.16 })
+    tone({ shape: 'sine', from: 220, to: 55, duration: 0.18, peak: 0.14 })
+    noise({ duration: 0.05, peak: 0.07, frequency: 900 })
+    tone({ shape: 'sine', from: 162, duration: 0.25, peak: 0.02, at: 0.16 })
   },
   games: () => {
-    tone({ f: 660, t: 0.05, g: 0.05 })
-    tone({ f: 880, t: 0.05, g: 0.05, delay: 0.06 })
-    tone({ f: 587, t: 0.08, g: 0.05, delay: 0.12 })
+    tone({ from: 660, duration: 0.05, peak: 0.05 })
+    tone({ from: 880, duration: 0.05, peak: 0.05, at: 0.06 })
+    tone({ from: 587, duration: 0.08, peak: 0.05, at: 0.12 })
   },
   travel: () => {
-    tone({ type: 'sine', f: 1100, to: 1500, t: 0.07, g: 0.05 })
-    tone({ type: 'sine', f: 1400, to: 900, t: 0.09, g: 0.05, delay: 0.09 })
+    tone({ shape: 'sine', from: 1100, to: 1500, duration: 0.07, peak: 0.05 })
+    tone({
+      shape: 'sine',
+      from: 1400,
+      to: 900,
+      duration: 0.09,
+      peak: 0.05,
+      at: 0.09,
+    })
   },
   manual: () => {
-    tone({ type: 'triangle', f: 1568, t: 0.12, g: 0.06 })
-    tone({ type: 'triangle', f: 1662, t: 0.1, g: 0.03 })
-    tone({ type: 'triangle', f: 1568, t: 0.18, g: 0.05, delay: 0.15 })
+    tone({ shape: 'triangle', from: 1568, duration: 0.12, peak: 0.06 })
+    tone({ shape: 'triangle', from: 1662, duration: 0.1, peak: 0.03 })
+    tone({
+      shape: 'triangle',
+      from: 1568,
+      duration: 0.18,
+      peak: 0.05,
+      at: 0.15,
+    })
   },
-  serve: () => {
-    noise({ t: 0.06, g: 0.22, f: 500 })
-    tone({ type: 'sine', f: 150, to: 90, t: 0.09, g: 0.14 })
-    noise({ t: 0.04, g: 0.1, f: 700, delay: 0.11 })
+  console: () => {
+    noise({ duration: 0.06, peak: 0.22, frequency: 500 })
+    tone({ shape: 'sine', from: 150, to: 90, duration: 0.09, peak: 0.14 })
+    noise({ duration: 0.04, peak: 0.1, frequency: 700, at: 0.11 })
   },
-  projects: () => {
-    tone({ type: 'sine', f: 900, to: 320, t: 0.08, g: 0.07 })
-    tone({ type: 'sine', f: 1300, to: 600, t: 0.05, g: 0.03, delay: 0.1 })
+  w98: () => {
+    tone({ shape: 'sine', from: 900, to: 320, duration: 0.08, peak: 0.07 })
+    tone({
+      shape: 'sine',
+      from: 1300,
+      to: 600,
+      duration: 0.05,
+      peak: 0.03,
+      at: 0.1,
+    })
   },
   talks: () => {
-    noise({ t: 0.03, g: 0.14, type: 'highpass', f: 2000 })
-    tone({ type: 'sawtooth', f: 300, to: 1800, t: 0.16, g: 0.025, delay: 0.05 })
+    noise({ duration: 0.03, peak: 0.14, filter: 'highpass', frequency: 2000 })
+    tone({
+      shape: 'sawtooth',
+      from: 300,
+      to: 1800,
+      duration: 0.16,
+      peak: 0.025,
+      at: 0.05,
+    })
   },
   papers: () => {
-    noise({ t: 0.05, g: 0.16, f: 350 })
-    tone({ type: 'sine', f: 110, t: 0.06, g: 0.12 })
-    noise({ t: 0.07, g: 0.2, f: 250, delay: 0.12 })
-    tone({ type: 'sine', f: 75, t: 0.1, g: 0.16, delay: 0.12 })
+    noise({ duration: 0.05, peak: 0.16, frequency: 350 })
+    tone({ shape: 'sine', from: 110, duration: 0.06, peak: 0.12 })
+    noise({ duration: 0.07, peak: 0.2, frequency: 250, at: 0.12 })
+    tone({ shape: 'sine', from: 75, duration: 0.1, peak: 0.16, at: 0.12 })
   },
 }
 
@@ -178,60 +215,83 @@ let doorBuffer: AudioBuffer | null = null
 
 async function loadDoorBuffer(): Promise<AudioBuffer> {
   if (doorBuffer) return doorBuffer
-  const c = ensure()
+  const active = ensure()
+  if (!active) throw new Error('AudioContext unavailable')
   const res = await fetch('/sounds/door.webm')
-  doorBuffer = await c.decodeAudioData(await res.arrayBuffer())
+  doorBuffer = await active.context.decodeAudioData(await res.arrayBuffer())
   return doorBuffer
 }
 
 /* synth fallback if the webm fails to decode (older Safari) */
 function doorSynth() {
-  noise({ t: 0.1, g: 0.12, f: 1400, wet: true })
-  tone({ f: 700, to: 500, t: 0.08, g: 0.035, wet: true })
-  tone({ type: 'sine', f: 75, to: 30, t: 0.6, g: 0.35, delay: 0.22, wet: true })
-  noise({ t: 0.18, g: 0.28, f: 220, delay: 0.22, wet: true })
-  noise({ t: 0.1, g: 0.1, f: 260, delay: 0.5, wet: true })
-  tone({ type: 'sine', f: 60, to: 38, t: 0.25, g: 0.1, delay: 0.5, wet: true })
+  noise({ duration: 0.1, peak: 0.12, frequency: 1400, wet: true })
+  tone({ from: 700, to: 500, duration: 0.08, peak: 0.035, wet: true })
+  tone({
+    shape: 'sine',
+    from: 75,
+    to: 30,
+    duration: 0.6,
+    peak: 0.35,
+    at: 0.22,
+    wet: true,
+  })
+  noise({ duration: 0.18, peak: 0.28, frequency: 220, at: 0.22, wet: true })
+  noise({ duration: 0.1, peak: 0.1, frequency: 260, at: 0.5, wet: true })
+  tone({
+    shape: 'sine',
+    from: 60,
+    to: 38,
+    duration: 0.25,
+    peak: 0.1,
+    at: 0.5,
+    wet: true,
+  })
+}
+
+function playDoorBuffer(buffer: AudioBuffer) {
+  if (!isEnabled()) return
+  const active = ensure()
+  if (!active) return
+  const { context, master } = active
+  const src = context.createBufferSource()
+  src.buffer = buffer
+  const gain = context.createGain()
+  gain.gain.value = 0.6
+  src.connect(gain).connect(master)
+  src.start()
 }
 
 function playDoorFile() {
-  loadDoorBuffer()
-    .then((buffer) => {
-      if (!enabled) return
-      const c = ensure()
-      const src = c.createBufferSource()
-      src.buffer = buffer
-      const gain = c.createGain()
-      gain.gain.value = 0.6
-      src.connect(gain).connect(master as GainNode)
-      src.start()
-    })
-    .catch(doorSynth)
+  loadDoorBuffer().then(playDoorBuffer, doorSynth)
 }
 
 export const sfx = {
-  hover: () => tone({ f: 1200, to: 900, t: 0.035, g: 0.035 }),
+  hover: () => tone({ from: 1200, to: 900, duration: 0.035, peak: 0.035 }),
   click: () => {
-    tone({ f: 660, t: 0.06, g: 0.06 })
-    tone({ f: 990, t: 0.1, g: 0.06, delay: 0.07 })
-  },
-  floor: () => {
-    noise({ t: 0.12, g: 0.2, f: 400 })
-    tone({ type: 'sine', f: 90, to: 55, t: 0.16, g: 0.14 })
+    tone({ from: 660, duration: 0.06, peak: 0.06 })
+    tone({ from: 990, duration: 0.1, peak: 0.06, at: 0.07 })
   },
   door: () => {
-    if (!enabled) return
+    if (!isEnabled()) return
     playDoorFile()
   },
   bus: () => {
-    noise({ t: 0.03, g: 0.09, type: 'highpass', f: 3000 })
-    noise({ t: 0.03, g: 0.09, type: 'highpass', f: 3000, delay: 0.09 })
-    noise({ t: 0.04, g: 0.11, type: 'highpass', f: 2500, delay: 0.2 })
-    tone({ type: 'sine', f: 120, t: 0.5, g: 0.025, delay: 0.28 })
+    noise({ duration: 0.03, peak: 0.09, filter: 'highpass', frequency: 3000 })
+    noise({
+      duration: 0.03,
+      peak: 0.09,
+      filter: 'highpass',
+      frequency: 3000,
+      at: 0.09,
+    })
+    noise({
+      duration: 0.04,
+      peak: 0.11,
+      filter: 'highpass',
+      frequency: 2500,
+      at: 0.2,
+    })
+    tone({ shape: 'sine', from: 120, duration: 0.5, peak: 0.025, at: 0.28 })
   },
-  sign: () => {
-    tone({ type: 'sawtooth', f: 140, t: 0.05, g: 0.04 })
-    noise({ t: 0.04, g: 0.05, type: 'highpass', f: 4000, delay: 0.06 })
-  },
-  stall: (id: StallId) => STALL_SFX[id](),
+  stall: (id: BazaarStallId) => STALL_SFX[id](),
 }

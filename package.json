@@ -9,15 +9,15 @@
     "prebuild": "node scripts/geo/generate-window.mjs && node scripts/snapshot-static-files.ts",
     "build": "next build",
     "ci:crosswords:archive-es": "node scripts/crosswords/archive-spanish.ts",
-    "ci:geo:test": "tsx --test lib/geo/publication-date.test.ts lib/geo/run-variants.test.ts lib/geo/reducer.test.ts lib/geo/text-answer.test.ts lib/geo/equal-earth.test.ts lib/geo/scoring.test.ts lib/geo/distance.test.ts lib/geo/stats.test.ts lib/geo/share.test.ts lib/geo/persistence.test.ts lib/geo/city-options.test.ts",
+    "ci:geo:test": "tsx --test app/meridian/publication-date.test.ts app/meridian/run-variants.test.ts app/meridian/reducer.test.ts app/meridian/text-answer.test.ts app/meridian/equal-earth.test.ts app/meridian/scoring.test.ts services/distance.test.ts app/meridian/stats.test.ts app/meridian/share.test.ts app/meridian/persistence.test.ts app/meridian/city-options.test.ts",
     "ci:geo:validate:challenges": "node scripts/geo/validate-country-lexicon.ts && node scripts/geo/validate-corpus.ts && node scripts/geo/generate-challenge.ts --check && node scripts/geo/validate-challenge.ts",
-    "cli": "node ./internals/cli.mts",
+    "cli": "node ./scripts/cli.mts",
     "predev": "node scripts/geo/generate-challenge.ts && node scripts/snapshot-static-files.ts",
     "dev": "next dev",
     "lint": "biome check .",
     "prepare": "husky",
     "start": "next start",
-    "test": "node --test app/boombox/engine.test.ts app/console/tree.test.ts app/crosswords/crossword-engine.test.ts app/crosswords/spanish-daily.test.ts app/snake/engine.test.ts app/game-of-life/life-audio.test.ts components/music/audio-graph.test.ts app/rubiks/engine.test.ts app/travel/destinations.test.ts app/travel/lunar-position.test.ts app/w98/desktop.test.ts app/w98/paint/raster.test.ts app/w98/paint/fill.test.ts app/w98/paint/history.test.ts app/w98/paint/state.test.ts app/w98/paint/selection.test.ts app/w98/realplayer/tuner.test.ts app/w98/realplayer/tuner-controller.test.ts service/daily-countdown.test.ts && tsx --test app/travel/radio-stations.test.ts && tsc && biome check ."
+    "test": "node --test app/boombox/engine.test.ts app/console/command-shell.test.ts app/console/tree.test.ts app/crosswords/crossword-data.test.ts app/crosswords/crossword-engine.test.ts app/crosswords/spanish-daily.test.ts app/game-of-life/canvas.test.ts app/game-of-life/engine.test.ts app/game-of-life/life-audio.test.ts app/rubiks/engine.test.ts app/snake/engine.test.ts app/snake/sound.test.ts app/travel/destinations.test.ts app/travel/lunar-position.test.ts app/w98/desktop.test.ts app/w98/music/audio-graph.test.ts app/w98/music/bundled-playlist.test.ts app/w98/music/default-playlist.test.ts app/w98/music/player-gauge.test.ts app/w98/paint/fill.test.ts app/w98/paint/history.test.ts app/w98/paint/raster.test.ts app/w98/paint/selection.test.ts app/w98/paint/state.test.ts app/w98/realplayer/tuner-controller.test.ts app/w98/realplayer/tuner.test.ts services/distance.test.ts services/daily-countdown.test.ts services/markdown/paper.mapper.test.ts && tsx --test app/travel/radio-stations.test.ts && tsc && biome check ."
   },
   "dependencies": {
     "@mdx-js/loader": "3.1.1",

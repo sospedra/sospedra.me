@@ -1,23 +1,23 @@
 'use client'
 
-import Shell from 'components/Shell'
-import { readLocal, writeLocal } from 'lib/storage'
 import {
   type KeyboardEvent,
   type PointerEvent,
   useCallback,
   useEffect,
-  useMemo,
   useReducer,
   useRef,
   useState,
 } from 'react'
-import { useGameInput } from 'service/hotkeys'
+import { useGameInput } from 'services/hotkeys'
+import Shell from 'services/shell'
+import { readLocal, writeLocal } from 'services/storage'
 import {
   type Camera,
   cameraForBounds,
   cellAtClientPoint,
   drawLifeCanvas,
+  keepCellInView,
   panCamera,
   zoomCameraAt,
 } from './canvas'
@@ -27,6 +27,7 @@ import {
   type CellSet,
   createLifeState,
   keyOf,
+  type LifeState,
   lifeReducer,
   rasterLine,
 } from './engine'
@@ -36,7 +37,7 @@ import { LifeLayout, type LifeTool } from './life-layouts'
 import {
   DEFAULT_PRESET,
   type InteractiveLifePreset,
-  LIFE_PRESETS,
+  presetById,
 } from './presets'
 import { LIFE_CANVAS_PALETTE } from './themes'
 
@@ -60,6 +61,21 @@ const LIFE_SOUND_KEY = 'game-of-life-sound-v2'
 const INITIAL_CAMERA: Camera = { x: 11, y: 11, zoom: 16 }
 const COMPACT_PRESET_MEDIA =
   '(max-width: 45rem), (max-width: 59.99rem) and (max-height: 32rem) and (orientation: landscape)'
+
+const CURSOR_DIRECTIONS: Record<string, Cell> = {
+  ArrowDown: [0, 1],
+  ArrowLeft: [-1, 0],
+  ArrowRight: [1, 0],
+  ArrowUp: [0, -1],
+}
+
+const statusOf = (state: LifeState, running: boolean) => {
+  if (state.cells.size === 0) {
+    return state.generation > 0 ? 'Extinct' : 'Field empty'
+  }
+  if (running) return 'Running'
+  return state.generation === 0 ? 'Seed ready' : 'Paused'
+}
 
 export default function GameOfLifeView() {
   const [state, dispatch] = useReducer(
@@ -108,21 +124,8 @@ export default function GameOfLifeView() {
     setCanvasNode(node)
   }, [])
 
-  const selectedPreset = useMemo(
-    () => LIFE_PRESETS.find((preset) => preset.id === state.presetId),
-    [state.presetId],
-  )
-  const seedName = selectedPreset?.title ?? 'Custom seed'
-  const status =
-    state.cells.size === 0
-      ? state.generation > 0
-        ? 'Extinct'
-        : 'Field empty'
-      : running
-        ? 'Running'
-        : state.generation === 0
-          ? 'Seed ready'
-          : 'Paused'
+  const seedName = presetById(state.presetId)?.title ?? 'Custom seed'
+  const status = statusOf(state, running)
 
   const fitCells = useCallback(
     (cells: CellSet) => {
@@ -158,22 +161,19 @@ export default function GameOfLifeView() {
     }
     const next = !running
     audio.play('switch')
-    audio.setRunning(next, speed)
     setRunning(next)
     setAnnouncement(next ? 'Simulation running.' : 'Simulation paused.')
-  }, [audio, running, speed, state.cells.size])
+  }, [audio, running, state.cells.size])
 
   const toggleSound = useCallback(() => {
     const next = !soundEnabled
     setSoundEnabled(next)
+    // the enable cue right below needs the flag flipped before effects rerun
     audio.setEnabled(next)
     writeLocal(LIFE_SOUND_KEY, next ? 'on' : 'off')
-    if (next) {
-      audio.play('key')
-      if (running) audio.setRunning(true, speed)
-    }
+    if (next) audio.play('key')
     setAnnouncement(`Mechanical audio ${next ? 'on' : 'off'}.`)
-  }, [audio, running, soundEnabled, speed])
+  }, [audio, soundEnabled])
 
   const stepOnce = useCallback(() => {
     if (state.cells.size === 0) {
@@ -253,8 +253,7 @@ export default function GameOfLifeView() {
   useEffect(() => {
     if (readLocal(LIFE_SOUND_KEY) !== 'off') return
     setSoundEnabled(false)
-    audio.setEnabled(false)
-  }, [audio])
+  }, [])
 
   useEffect(() => {
     audio.setEnabled(soundEnabled)
@@ -329,10 +328,6 @@ export default function GameOfLifeView() {
   ])
 
   useEffect(() => {
-    cameraRef.current = camera
-  }, [camera])
-
-  useEffect(() => {
     if (!canvasNode) return
 
     const handleWheel = (event: globalThis.WheelEvent) => {
@@ -368,7 +363,36 @@ export default function GameOfLifeView() {
     return () => canvasNode.removeEventListener('wheel', handleWheel)
   }, [canvasNode, commitCamera])
 
+  const jumpToPresets = useCallback(() => {
+    if (window.matchMedia(COMPACT_PRESET_MEDIA).matches) {
+      setPatternBayOpen((current) => !current)
+      return
+    }
+    setPatternBayOpen(false)
+    requestAnimationFrame(() => {
+      const rail = document.querySelector<HTMLElement>('#preset-rail')
+      const target =
+        rail?.querySelector<HTMLElement>('[aria-current="true"]') ??
+        rail?.querySelector<HTMLElement>('button, a[href]')
+      target?.focus()
+    })
+  }, [])
+
   useEffect(() => {
+    const shortcuts: Record<
+      string,
+      { cue?: LifeMechanicalSound; keepDefault?: boolean; run: () => void }
+    > = {
+      ' ': { run: toggleRunning },
+      '.': { cue: 'key', run: stepOnce },
+      c: { cue: 'key', run: clearUniverse },
+      d: { cue: 'lever', keepDefault: true, run: () => setTool('draw') },
+      f: { cue: 'knob', keepDefault: true, run: () => fitCells(state.cells) },
+      m: { cue: 'lever', keepDefault: true, run: () => setTool('move') },
+      p: { cue: 'key', run: jumpToPresets },
+      r: { cue: 'key', run: resetUniverse },
+    }
+
     const handleShortcut = (event: globalThis.KeyboardEvent) => {
       if (event.defaultPrevented || event.repeat) return
       if (event.key === 'Escape' && patternBayOpen) {
@@ -386,52 +410,18 @@ export default function GameOfLifeView() {
         return
       }
 
-      if (event.key === ' ') {
-        event.preventDefault()
-        toggleRunning()
-      } else if (event.key === '.') {
-        event.preventDefault()
-        playMechanicalSound('key')
-        stepOnce()
-      } else if (event.key.toLowerCase() === 'r') {
-        event.preventDefault()
-        playMechanicalSound('key')
-        resetUniverse()
-      } else if (event.key.toLowerCase() === 'c') {
-        event.preventDefault()
-        playMechanicalSound('key')
-        clearUniverse()
-      } else if (event.key.toLowerCase() === 'd') {
-        playMechanicalSound('lever')
-        setTool('draw')
-      } else if (event.key.toLowerCase() === 'm') {
-        playMechanicalSound('lever')
-        setTool('move')
-      } else if (event.key.toLowerCase() === 'f') {
-        playMechanicalSound('knob')
-        fitCells(state.cells)
-      } else if (event.key.toLowerCase() === 'p') {
-        event.preventDefault()
-        playMechanicalSound('key')
-        if (window.matchMedia(COMPACT_PRESET_MEDIA).matches) {
-          setPatternBayOpen((current) => !current)
-        } else {
-          setPatternBayOpen(false)
-          requestAnimationFrame(() => {
-            const rail = document.querySelector<HTMLElement>('#preset-rail')
-            const target =
-              rail?.querySelector<HTMLElement>('[aria-current="true"]') ??
-              rail?.querySelector<HTMLElement>('button, a[href]')
-            target?.focus()
-          })
-        }
-      }
+      const shortcut = shortcuts[event.key.toLowerCase()]
+      if (!shortcut) return
+      if (!shortcut.keepDefault) event.preventDefault()
+      if (shortcut.cue) playMechanicalSound(shortcut.cue)
+      shortcut.run()
     }
     window.addEventListener('keydown', handleShortcut)
     return () => window.removeEventListener('keydown', handleShortcut)
   }, [
     clearUniverse,
     fitCells,
+    jumpToPresets,
     playMechanicalSound,
     resetUniverse,
     patternBayOpen,
@@ -523,13 +513,7 @@ export default function GameOfLifeView() {
   const keyCanvas = (event: KeyboardEvent<HTMLCanvasElement>) => {
     if (event.altKey || event.ctrlKey || event.metaKey) return
 
-    const directions: Record<string, Cell> = {
-      ArrowUp: [0, -1],
-      ArrowDown: [0, 1],
-      ArrowLeft: [-1, 0],
-      ArrowRight: [1, 0],
-    }
-    const direction = directions[event.key]
+    const direction = CURSOR_DIRECTIONS[event.key]
     if (direction) {
       event.preventDefault()
       const next: Cell = [cursor[0] + direction[0], cursor[1] + direction[1]]
@@ -538,31 +522,7 @@ export default function GameOfLifeView() {
       const canvas = canvasRef.current
       if (canvas) {
         const rect = canvas.getBoundingClientRect()
-        commitCamera((current) => {
-          const halfWidth = rect.width / (2 * current.zoom)
-          const halfHeight = rect.height / (2 * current.zoom)
-          const marginX = Math.min(2, halfWidth * 0.4)
-          const marginY = Math.min(2, halfHeight * 0.4)
-          const cellX = next[0] + 0.5
-          const cellY = next[1] + 0.5
-          let x = current.x
-          let y = current.y
-
-          if (cellX < current.x - halfWidth + marginX) {
-            x = cellX + halfWidth - marginX
-          } else if (cellX > current.x + halfWidth - marginX) {
-            x = cellX - halfWidth + marginX
-          }
-          if (cellY < current.y - halfHeight + marginY) {
-            y = cellY + halfHeight - marginY
-          } else if (cellY > current.y + halfHeight - marginY) {
-            y = cellY - halfHeight + marginY
-          }
-
-          return x === current.x && y === current.y
-            ? current
-            : { ...current, x, y }
-        })
+        commitCamera((current) => keepCellInView(current, rect, next))
       }
       return
     }

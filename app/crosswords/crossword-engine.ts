@@ -1,6 +1,20 @@
-import type { CrosswordDirection, CrosswordPuzzle } from './crossword-data'
+import {
+  type CrosswordDirection,
+  type CrosswordPuzzle,
+  GRID_LETTERS,
+} from './crossword-data.ts'
 
 export type CrosswordStatus = 'not-started' | 'playing' | 'paused' | 'complete'
+
+const CROSSWORD_STATUSES = {
+  'not-started': true,
+  playing: true,
+  paused: true,
+  complete: true,
+} satisfies Record<CrosswordStatus, true>
+
+const isCrosswordStatus = (value: string): value is CrosswordStatus =>
+  value in CROSSWORD_STATUSES
 
 type GameSnapshot = {
   guesses: string[]
@@ -123,6 +137,35 @@ const stoppedElapsed = (state: CrosswordState, now: number) =>
     ? Math.max(0, now - state.runStartedAt)
     : 0)
 
+const boardLocked = (state: CrosswordState) =>
+  state.status === 'paused' || state.status === 'complete'
+
+type CellEdit = {
+  guess: string
+  pencil: boolean
+  incorrect: boolean
+  checked: boolean
+}
+
+const withCellEdit = (
+  state: CrosswordState,
+  index: number,
+  patch: CellEdit,
+): Pick<
+  CrosswordState,
+  'guesses' | 'pencilCells' | 'incorrectCells' | 'checkedCells'
+> => {
+  const guesses = [...state.guesses]
+  const pencilCells = [...state.pencilCells]
+  const incorrectCells = [...state.incorrectCells]
+  const checkedCells = [...state.checkedCells]
+  guesses[index] = patch.guess
+  pencilCells[index] = patch.pencil
+  incorrectCells[index] = patch.incorrect
+  checkedCells[index] = patch.checked
+  return { guesses, pencilCells, incorrectCells, checkedCells }
+}
+
 export const createCrosswordState = (
   puzzle: CrosswordPuzzle,
 ): CrosswordState => {
@@ -171,42 +214,32 @@ export const crosswordReducer = (
     case 'TOGGLE_PENCIL':
       return { ...state, pencilMode: !state.pencilMode }
     case 'WRITE': {
+      if (boardLocked(state)) return state
       if (state.revealedCells[action.index]) return state
-      const guesses = [...state.guesses]
-      const pencilCells = [...state.pencilCells]
-      const incorrectCells = [...state.incorrectCells]
-      const checkedCells = [...state.checkedCells]
-      guesses[action.index] = action.value
-      pencilCells[action.index] = state.pencilMode
-      incorrectCells[action.index] = action.incorrect
-      checkedCells[action.index] = action.checked
       return withHistory(state, {
         ...startClock(state, action.now),
-        guesses,
-        pencilCells,
-        incorrectCells,
-        checkedCells,
+        ...withCellEdit(state, action.index, {
+          guess: action.value,
+          pencil: state.pencilMode,
+          incorrect: action.incorrect,
+          checked: action.checked,
+        }),
         selectedCell: action.nextIndex,
       })
     }
     case 'CLEAR': {
+      if (boardLocked(state)) return state
       if (state.revealedCells[action.index]) return state
       if (!state.guesses[action.index] && action.index === action.nextIndex) {
         return state
       }
-      const guesses = [...state.guesses]
-      const pencilCells = [...state.pencilCells]
-      const incorrectCells = [...state.incorrectCells]
-      const checkedCells = [...state.checkedCells]
-      guesses[action.index] = ''
-      pencilCells[action.index] = false
-      incorrectCells[action.index] = false
-      checkedCells[action.index] = false
       return withHistory(state, {
-        guesses,
-        pencilCells,
-        incorrectCells,
-        checkedCells,
+        ...withCellEdit(state, action.index, {
+          guess: '',
+          pencil: false,
+          incorrect: false,
+          checked: false,
+        }),
         selectedCell: action.nextIndex,
       })
     }
@@ -389,9 +422,22 @@ export const shareCard = (
   ].join('\n')
 }
 
+const restoredClock = (
+  saved: Partial<PersistedCrosswordState>,
+  status: CrosswordStatus,
+  now: number,
+): number | null => {
+  if (status !== 'playing') return null
+  if (typeof saved.runStartedAt === 'number' && saved.runStartedAt > 0) {
+    return saved.runStartedAt
+  }
+  return now
+}
+
 export const restoreCrosswordState = (
   value: unknown,
   puzzle: CrosswordPuzzle,
+  now: number,
 ): CrosswordState | null => {
   if (!value || typeof value !== 'object') return null
   const saved = value as Partial<PersistedCrosswordState>
@@ -406,21 +452,17 @@ export const restoreCrosswordState = (
 
   const guesses = saved.guesses.map((guess, index) => {
     if (puzzle.cells[index]?.solution === null) return ''
-    return typeof guess === 'string' && /^[A-ZÑ]$/u.test(guess) ? guess : ''
+    return typeof guess === 'string' && GRID_LETTERS.has(guess) ? guess : ''
   })
   const selectedCell =
     Number.isInteger(saved.selectedCell) &&
     puzzle.cells[saved.selectedCell ?? -1]?.solution !== null
       ? (saved.selectedCell as number)
       : createCrosswordState(puzzle).selectedCell
-  const status: CrosswordStatus = [
-    'not-started',
-    'playing',
-    'paused',
-    'complete',
-  ].includes(saved.status ?? '')
-    ? (saved.status as CrosswordStatus)
-    : 'not-started'
+  const status =
+    typeof saved.status === 'string' && isCrosswordStatus(saved.status)
+      ? saved.status
+      : 'not-started'
 
   return {
     ...createCrosswordState(puzzle),
@@ -436,14 +478,7 @@ export const restoreCrosswordState = (
       typeof saved.elapsedMs === 'number' && saved.elapsedMs >= 0
         ? saved.elapsedMs
         : 0,
-    runStartedAt:
-      status === 'playing' &&
-      typeof saved.runStartedAt === 'number' &&
-      saved.runStartedAt > 0
-        ? saved.runStartedAt
-        : status === 'playing'
-          ? Date.now()
-          : null,
+    runStartedAt: restoredClock(saved, status, now),
     autoPaused: false,
   }
 }

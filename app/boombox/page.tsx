@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { BOOMBOX_DESC } from 'service/descriptions'
 import BoomboxView from './boombox-view'
 
 export const metadata: Metadata = {
   title: 'Boombox',
-  description: BOOMBOX_DESC,
+  description:
+    'Heardle on a cassette deck. One mystery tape a day: play the first second, guess the song in six tries, and every miss winds the spool a little further.',
   alternates: { canonical: '/boombox' },
 }
 

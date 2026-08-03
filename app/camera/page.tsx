@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { CAMERA_DESC } from 'service/descriptions'
 import CameraView from './camera-view'
 
 export const metadata: Metadata = {
   title: 'Camera',
-  description: CAMERA_DESC,
+  description:
+    'A private midnight photo booth that turns your camera feed into an instant picture.',
   alternates: { canonical: '/camera' },
 }
 

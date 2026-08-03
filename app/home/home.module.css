@@ -1,0 +1,366 @@
+@reference "../../services/style/global.css";
+
+.world {
+  position: relative;
+  width: 400vw;
+  height: 100dvh;
+  align-self: flex-start;
+  flex: none;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.world[data-driving="true"] {
+  will-change: transform;
+}
+
+.homeRunway {
+  position: relative;
+  z-index: 2;
+  width: 200vw;
+  height: 100dvh;
+}
+
+.homeFrame {
+  display: flex;
+  width: 100vw;
+  height: 100dvh;
+  animation: home-intro 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.main {
+  @apply flex flex-col items-center justify-end flex-1 w-full;
+  position: relative;
+  z-index: 2;
+  padding-bottom: clamp(10rem, 30vh, 20rem);
+}
+
+.menu {
+  @apply relative z-50 flex flex-col items-center justify-center w-full h-64;
+}
+
+.menu a,
+.menu button {
+  @apply relative px-4 -ml-4 text-2xl font-bold transition-colors duration-500;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  background: radial-gradient(rgba(0, 0, 0, 0.2), transparent 80%);
+  color: var(--color-signal-yellow, #ffea00);
+}
+
+.menu a:active,
+.menu button:active,
+.menu a:focus-visible,
+.menu button:focus-visible {
+  color: var(--color-text-strong, white);
+}
+
+.menu a::before,
+.menu button::before {
+  position: absolute;
+  top: 50%;
+  left: -0.75rem;
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+  content: "";
+  background: url("/images/cursor.svg") no-repeat;
+  background-position: center;
+  background-size: contain;
+  image-rendering: pixelated;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, -50%, 0);
+}
+
+.menu a:active::before,
+.menu button:active::before,
+.menu a:focus-visible::before,
+.menu button:focus-visible::before {
+  opacity: 1;
+  animation: swing 0.4s ease-out alternate infinite;
+}
+
+@media (hover: hover) {
+  .menu a:hover,
+  .menu button:hover {
+    color: var(--color-text-strong, white);
+  }
+
+  .menu a:hover::before,
+  .menu button:hover::before {
+    opacity: 1;
+    animation: swing 0.4s ease-out alternate infinite;
+  }
+}
+
+.menu ul {
+  @apply pt-8;
+}
+
+/*
+ * Ori-style foreground silhouettes, fixed above the car (z 150 beats the
+ * departing carDock's 140): the car drives behind them. Content sits past
+ * the resting frame (x > 100vw) so the home screen stays clean. During the
+ * drive each track slides at its own speed against the world's -250vw pan;
+ * the gap track moves at exactly world speed, so its tower stays glued over
+ * the town/bridge joint the whole ride.
+ */
+.foreground {
+  position: fixed;
+  z-index: 150;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 340ms ease-out;
+
+  /* must match driveEase in home-view.tsx or the gap tower drifts */
+  --drive-ease: cubic-bezier(0.4, 0, 0.6, 0.52);
+
+  /* mirrors Sprite/City .city custom props; keep both in sync */
+  --street: clamp(20rem, 54vh, 38rem);
+  --tile: calc(var(--street) * (1659 / 650));
+  --city-end: clamp(var(--tile), round(nearest, 278vw, var(--tile)), 400vw);
+}
+
+/* The world dives 100vh on papers/about; this layer fades with the car. */
+.foreground[data-leaving="true"] {
+  opacity: 0;
+}
+
+.foreground > div {
+  position: absolute;
+  inset: 0;
+}
+
+.fgTrackNear {
+  filter: brightness(0.8);
+}
+
+.fgTrackNearest {
+  filter: brightness(0.55);
+}
+
+.foreground[data-driving="true"] > div {
+  animation-duration: var(--drive-ms, 2900ms);
+  animation-timing-function: var(--drive-ease);
+  animation-fill-mode: both;
+  will-change: transform;
+}
+
+.foreground[data-driving="true"] .fgTrackWorld {
+  animation-name: fg-world;
+}
+
+.foreground[data-driving="true"] .fgTrackNear {
+  animation-name: fg-near;
+}
+
+.foreground[data-driving="true"] .fgTrackNearest {
+  animation-name: fg-nearest;
+}
+
+.fgGapTower,
+.fgNearBlock,
+.fgNearestTower {
+  position: absolute;
+  bottom: -3vh;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 100% 100%;
+}
+
+/*
+ * One lamp mid-tile down the street, in front of the passing car. The two
+ * westmost tiles are skipped so no lamp shows on the resting home screen.
+ */
+.fgLamps {
+  position: absolute;
+  left: calc(-100vw + 2 * var(--tile));
+  bottom: 0;
+  width: max(0vw, calc(var(--city-end) - 2 * var(--tile)));
+  height: var(--street);
+  background:
+    url("/images/streetlamp-row.svg") bottom left / var(--tile) 100% repeat-x;
+  filter: drop-shadow(0 0 0.5rem rgb(255 79 216 / 45%));
+}
+
+.fgGapTower {
+  left: calc(var(--city-end) - 110vw);
+  width: 22vw;
+  height: 66vh;
+  background-image: url("/images/foreground-tower.svg");
+}
+
+.fgNearBlock {
+  left: 170vw;
+  width: 26vw;
+  height: 52vh;
+  background-image: url("/images/foreground-block.svg");
+}
+
+.fgNearestTower {
+  left: 110vw;
+  width: 48vw;
+  height: 88vh;
+  background-image: url("/images/foreground-tower.svg");
+}
+
+/* The ride ends in a quick fade to pitch black right at the route swap. */
+.blackout {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+}
+
+.foreground[data-driving="true"] .blackout {
+  animation: blackout-fade var(--drive-ms, 2500ms) linear both;
+}
+
+/* full black by 86%: the route swap fires at drive-ms minus 360ms */
+@keyframes blackout-fade {
+  0%,
+  78% {
+    opacity: 0;
+  }
+
+  86%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fg-world {
+  to {
+    transform: translate3d(-250vw, 0, 0);
+  }
+}
+
+@keyframes fg-near {
+  to {
+    transform: translate3d(-350vw, 0, 0);
+  }
+}
+
+@keyframes fg-nearest {
+  to {
+    transform: translate3d(-400vw, 0, 0);
+  }
+}
+
+.carDock {
+  position: fixed;
+  z-index: 60;
+  bottom: max(0.65rem, env(safe-area-inset-bottom));
+  left: max(clamp(2rem, 7vw, 6.5rem), env(safe-area-inset-left));
+  filter: drop-shadow(0 0.5rem 1rem rgb(0 0 0 / 34%));
+  will-change: transform, opacity;
+}
+
+.carDock[data-car-state="departing"] {
+  z-index: 140;
+}
+
+.carJourney {
+  transform: translate3d(0, 0, 0);
+}
+
+.carDock[data-car-state="departing"] .carJourney {
+  animation-name: car-departure;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+  will-change: transform;
+}
+
+@keyframes home-intro {
+  from {
+    opacity: 0.82;
+    transform: translate3d(0, 100dvh, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/*
+ * The town hard-ends on a tile boundary near world 178vw (Sprite/City
+ * --city-end) and the bridge deck starts there. The car rolls out slow,
+ * pulls hard ahead while the eased pan winds up behind it, and rides onto
+ * the deck near 60% of the ride. The 60-72vw cruise keeps it on the bridge
+ * until the route swap, where the bazaar arrival continues on the same deck.
+ */
+@keyframes car-departure {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  16% {
+    transform: translate3d(4vw, 0, 0);
+  }
+  50% {
+    transform: translate3d(60vw, 0, 0);
+  }
+  84% {
+    transform: translate3d(72vw, 0, 0);
+  }
+  98%,
+  100% {
+    transform: translate3d(120vw, 0, 0);
+  }
+}
+
+@keyframes swing {
+  0% {
+    transform: translate3d(0, -50%, 0);
+  }
+  100% {
+    transform: translate3d(-0.3rem, -50%, 0);
+  }
+}
+
+@media (max-height: 700px) {
+  .main {
+    padding-bottom: 7rem;
+  }
+}
+
+@media (max-width: 48rem) {
+  .foreground {
+    --street: min(53vh, 29rem);
+  }
+
+  /* vh-sized slabs swallow a portrait screen; scale them to the street */
+  .fgGapTower {
+    width: 18vw;
+    height: 58vh;
+  }
+
+  .fgNearBlock {
+    width: 24vw;
+    height: 30vh;
+  }
+
+  .fgNearestTower {
+    width: 34vw;
+    height: 42vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homeFrame,
+  .foreground > div,
+  .foreground .blackout,
+  .carDock[data-car-state="departing"] .carJourney {
+    animation: none;
+  }
+}
+
+:global(.fx-quiet) .homeFrame,
+:global(.fx-quiet) .foreground > div,
+:global(.fx-quiet) .foreground .blackout,
+:global(.fx-quiet) .carDock[data-car-state="departing"] .carJourney {
+  animation: none;
+}

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import { OFFICIAL_COUNTRY_OPTIONS } from '../../lib/geo/country-lexicon.ts'
-import type { Locale } from '../../lib/geo/model.ts'
+import { OFFICIAL_COUNTRY_OPTIONS } from '../../app/meridian/country-lexicon.ts'
+import type { Locale } from '../../app/meridian/model.ts'
 import {
   rankGeoAutocompleteCandidates,
   resolveExactGeoOptionId,
-} from '../../lib/geo/text-answer.ts'
+} from '../../app/meridian/text-answer.ts'
 
 const EXPECTED_COUNTRY_COUNT = 194
 const locales: Locale[] = ['en', 'es']

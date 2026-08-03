@@ -1,6 +1,6 @@
 import createMDX from '@next/mdx'
 import type { NextConfig } from 'next'
-import rewrites from './service/router/rewrites.json'
+import rewrites from './services/rewrites.json'
 
 const withMDX = createMDX({
   extension: /\.mdx?$/,
@@ -33,12 +33,12 @@ const config: NextConfig = {
   // cache revalidation re-runs fs reads at runtime, and the tracer
   // cannot follow dynamic process.cwd() paths into the function bundle
   outputFileTracingIncludes: {
-    '/crosswords': ['./content/crosswords/challenges/**'],
-    '/meridian': ['./content/geo/challenges/**'],
-    '/papers': ['./content/papers/**'],
-    '/papers/[slug]': ['./content/papers/**'],
-    '/rss.xml': ['./content/papers/**'],
-    '/sitemap.xml': ['./content/papers/**'],
+    '/crosswords': ['./repo/crosswords/challenges/**'],
+    '/meridian': ['./repo/geo/challenges/**'],
+    '/papers': ['./repo/papers/**'],
+    '/papers/[slug]': ['./repo/papers/**'],
+    '/rss.xml': ['./repo/papers/**'],
+    '/sitemap.xml': ['./repo/papers/**'],
   },
   redirects: async () => [
     // the stack screen is gone but inbound links survive

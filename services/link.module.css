@@ -1,0 +1,23 @@
+@reference "./style/global.css";
+
+.back {
+  @apply inline-flex;
+  min-height: 44px;
+  align-items: center;
+  /* reserve the underline so hover doesn't shift the layout below */
+  border-bottom: 1px dashed transparent;
+  color: var(--color-signal-yellow);
+}
+
+.back:hover {
+  border-bottom-color: var(--color-signal-yellow);
+}
+
+.back img {
+  @apply h-5;
+}
+
+.back span {
+  @apply pl-1;
+  text-shadow: 2px 2px 0 var(--color-bg-void);
+}

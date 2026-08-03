@@ -1,11 +1,14 @@
 'use client'
 
-import { readLocalJson, writeLocalJson } from 'lib/storage'
 import { Caveat, Share_Tech_Mono, VT323 } from 'next/font/google'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { type DailyCountdown, useDailyCountdown } from 'service/daily-countdown'
-import { useGameInput } from 'service/hotkeys'
-import { shareText } from 'service/share'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  type DailyCountdown,
+  useDailyCountdown,
+} from 'services/daily-countdown'
+import { useGameInput } from 'services/hotkeys'
+import { shareText } from 'services/share'
+import { readLocalJson, writeLocalJson } from 'services/storage'
 import css from './boombox.module.css'
 import { createDeckSfx, type DeckSfx } from './deck-sfx'
 import {
@@ -13,6 +16,7 @@ import {
   type BoomboxState,
   CLIP_SECONDS,
   dayNumber,
+  FULL_UNLOCK,
   type Guess,
   type GuessScore,
   initialState,
@@ -45,6 +49,8 @@ const shareTechMono = Share_Tech_Mono({
   variable: '--font-micro',
 })
 
+const FONT_VARIABLES = `${caveat.variable} ${vt323.variable} ${shareTechMono.variable}`
+
 const SONGS = songsJson as Song[]
 const BLOB = 'https://2nvntiogo7b5zhfu.public.blob.vercel-storage.com/boombox'
 const STORAGE_KEY = '@@boombox/state-v1'
@@ -55,8 +61,9 @@ const AM_STOPS = ['530', '700', '900', '1100', '1300', '1600']
 const FUNCTIONS = ['tape', 'tuner', 'cd', 'aux']
 const EQ_LABELS = ['60', '250', '1K', '4K', '12K']
 const TICKER_STEPS = [0.06, 0.16, 0.26, 0.36, 0.46, 0.56, 0.66, 0.76, 0.86]
-const FULL_TAPE_SECONDS = 16
 const DOOR_CLOSE_DELAY_MS = 1400
+const FUNCTION_BLINK_MS = 700
+const COPIED_RESET_MS = 2000
 const SHELL_SCREWS = ['tl', 'tr', 'bl', 'br']
 
 const clipUrl = (id: string) => `${BLOB}/clips/${id}.mp3`
@@ -83,11 +90,51 @@ const SCORE_NOTE = {
   year: 'right year!',
 } satisfies Record<GuessScore, string>
 
+const STAGES = {
+  lost: true,
+  play: true,
+  won: true,
+} satisfies Record<BoomboxState['stage'], true>
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null
+
+const isStage = (value: string): value is BoomboxState['stage'] =>
+  value in STAGES
+
+const isGuessScore = (value: string): value is GuessScore =>
+  value in SCORE_LABEL
+
+const restoredGuess = (value: unknown): Guess | null => {
+  if (!isRecord(value)) return null
+  const { label, score, songId } = value
+  if (typeof label !== 'string') return null
+  if (typeof score !== 'string' || !isGuessScore(score)) return null
+  if (songId !== null && typeof songId !== 'string') return null
+  return { label, score, songId }
+}
+
+const restoreBoomboxState = (
+  value: unknown,
+  day: number,
+): BoomboxState | null => {
+  if (!isRecord(value)) return null
+  if (value.day !== day) return null
+  if (typeof value.stage !== 'string' || !isStage(value.stage)) return null
+  if (!Array.isArray(value.guesses)) return null
+  if (value.guesses.length > MAX_GUESSES) return null
+  const guesses = value.guesses
+    .map(restoredGuess)
+    .filter((guess): guess is Guess => guess !== null)
+  if (guesses.length !== value.guesses.length) return null
+  return { day, guesses, stage: value.stage }
+}
+
 const loadState = (day: number): BoomboxState => {
   const loaded = readLocalJson(STORAGE_KEY)
-  const stored =
-    loaded.status === 'ok' ? (loaded.value as BoomboxState | null) : null
-  return stored && stored.day === day ? stored : initialState(day)
+  const restored =
+    loaded.status === 'ok' ? restoreBoomboxState(loaded.value, day) : null
+  return restored ?? initialState(day)
 }
 
 const persistState = (state: BoomboxState) => {
@@ -107,16 +154,20 @@ const useDoorGreeting = () => {
 }
 
 const CHARS = 'aabccddeefghiijklmnnoopqrssttuuvwxyz'
+/* deterministic index-hash: every render and hydration agrees on the mask */
 const scribble = (text: string) =>
-  text
-    .split('')
-    .map((char) =>
-      char === ' ' ? ' ' : CHARS[Math.floor(Math.random() * CHARS.length)],
+  [...text]
+    .map((char, index) =>
+      char === ' '
+        ? ' '
+        : CHARS.charAt(
+            ((char.codePointAt(0) ?? 0) + index * 31) % CHARS.length,
+          ),
     )
     .join('')
 
 const skipSecondsGain = (state: BoomboxState) => {
-  const current = UNLOCKS[state.guesses.length] ?? 16
+  const current = UNLOCKS[state.guesses.length] ?? FULL_UNLOCK
   const next = UNLOCKS[state.guesses.length + 1]
   return next === undefined ? 0 : next - current
 }
@@ -213,8 +264,6 @@ const DbMeter = (props: {
   )
 }
 
-/* the tuner: a backlit glass dial. the fm scale is the attempt ladder and
-   the needle rides stop centers exactly: (attempt + 0.5) sevenths of rail */
 const Tuner = (props: {
   attempts: number
   daily: Song
@@ -279,6 +328,12 @@ const Tuner = (props: {
   )
 }
 
+const countdownLabel = (countdown: DailyCountdown) => {
+  if (countdown.status === 'counting') return countdown.label
+  if (countdown.status === 'ready') return '00:00:00'
+  return '--:--:--'
+}
+
 const Lcd = (props: {
   countdown: DailyCountdown
   daily: Song
@@ -289,7 +344,7 @@ const Lcd = (props: {
   const { stage } = props.state
   const playing = stage === 'play'
 
-  const nextTape = `next tape ${props.countdown.label ?? '--:--:--'}`
+  const nextTape = `next tape ${countdownLabel(props.countdown)}`
   const statusLine = () => {
     if (stage === 'won')
       return `got it in ${props.state.guesses.length} · ${nextTape}`
@@ -309,15 +364,15 @@ const Lcd = (props: {
           <span>boombox #{props.state.day + 1}</span>
           <span>
             {String(props.seconds).padStart(3, '0')}/
-            {playing ? `${props.limit}s` : '30s'}
+            {playing ? `${props.limit}s` : `${CLIP_SECONDS}s`}
           </span>
         </div>
         <div
           className={css.lcdRuler}
           role='img'
-          aria-label={`${props.limit} of 16 seconds unlocked`}
+          aria-label={`${props.limit} of ${FULL_UNLOCK} seconds unlocked`}
         >
-          {Array.from({ length: 16 }, (_, index) => (
+          {Array.from({ length: FULL_UNLOCK }, (_, index) => (
             <span
               key={`seg-${
                 // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length static ruler
@@ -327,7 +382,7 @@ const Lcd = (props: {
               data-tone={segmentTone(
                 index,
                 props.seconds,
-                playing ? props.limit : 16,
+                playing ? props.limit : FULL_UNLOCK,
               )}
             />
           ))}
@@ -347,7 +402,10 @@ const Lcd = (props: {
             aria-hidden
             style={
               {
-                '--remaining': props.countdown.remainingFraction ?? 0,
+                '--remaining':
+                  props.countdown.status === 'counting'
+                    ? props.countdown.remainingFraction
+                    : 0,
               } as React.CSSProperties
             }
           >
@@ -366,11 +424,18 @@ const Lcd = (props: {
 /* pressing a source key answers with two led blinks: green home, red deny */
 const FunctionRow = (props: { onPress: () => void }) => {
   const [blinking, setBlinking] = useState<string | null>(null)
+  const blinkTimerRef = useRef(0)
+
+  useEffect(() => () => window.clearTimeout(blinkTimerRef.current), [])
 
   const press = (name: string) => {
     props.onPress()
     setBlinking(name)
-    setTimeout(() => setBlinking(null), 700)
+    window.clearTimeout(blinkTimerRef.current)
+    blinkTimerRef.current = window.setTimeout(
+      () => setBlinking(null),
+      FUNCTION_BLINK_MS,
+    )
   }
 
   return (
@@ -407,8 +472,6 @@ const Hub = () => (
   </span>
 )
 
-/* the classic D-C90 shell: cream sticker, racing stripe, toothed hubs and
-   a window where the tape discs trade mass as --wound moves */
 const Cassette = (props: {
   daily: Song
   isPlaying: boolean
@@ -416,13 +479,10 @@ const Cassette = (props: {
   stage: BoomboxState['stage']
   wound: number
 }) => {
-  const masked = useMemo(
-    () => ({
-      artist: scribble(props.daily.artist),
-      title: scribble(props.daily.title),
-    }),
-    [props.daily],
-  )
+  const masked = {
+    artist: scribble(props.daily.artist),
+    title: scribble(props.daily.title),
+  }
   const revealed = props.stage !== 'play'
 
   return (
@@ -487,8 +547,6 @@ const Cassette = (props: {
   )
 }
 
-/* the mik pane, literal: door and cassette are siblings that tilt with
-   different perspectives and pivots. the parallax is the whole trick. */
 const CassettePane = (props: {
   daily: Song
   doorOpen: boolean
@@ -545,8 +603,6 @@ type PaperProps = {
   dropdown: React.ReactNode
 }
 
-/* the j-card holds the pen: guesses are tracks on the inner paper, the
-   empty tray shell hangs ajar off its right hinge. both builds seat it */
 const CaseTracklist = (props: PaperProps) => (
   <aside className={css.caseScene} aria-label='Attempts'>
     <div className={css.caseRig}>
@@ -596,8 +652,6 @@ const CaseTracklist = (props: PaperProps) => (
   </aside>
 )
 
-/* the speaker column: a small round tweeter over the big jvc-mesh woofer,
-   both wearing the chrome turned-metal rim */
 const Speaker = (props: { live: boolean; side: 'left' | 'right' }) => (
   <section
     className={`${css.speakerPanel} ${props.side === 'left' ? css.speakerLeft : css.speakerRight}`}
@@ -680,6 +734,11 @@ const VolumeCell = (props: {
   </section>
 )
 
+type TransportKeyName = 'play' | 'stop' | 'rew' | 'skip' | 'share'
+
+const DECK_KEY_ORDER = ['play', 'stop', 'rew', 'skip', 'share'] as const
+const TAD_KEY_ORDER = ['rew', 'play', 'skip', 'stop', 'share'] as const
+
 type TransportProps = {
   canRewind: boolean
   copied: boolean
@@ -692,6 +751,8 @@ type TransportProps = {
   onRewind: () => void
   onSkip: () => void
   onShare: () => void
+  order: readonly TransportKeyName[]
+  size: 'deck' | 'tad'
 }
 
 type LeverSpec = {
@@ -734,48 +795,80 @@ const LeverBank = (props: { size: 'deck' | 'tad'; keys: LeverSpec[] }) => (
   </div>
 )
 
-const Transport = (props: TransportProps) => (
-  <LeverBank
-    size='deck'
-    keys={[
-      {
-        glyph: '▶',
-        word: 'play',
-        on: props.soundPlaying,
-        ariaLabel: 'Play',
-        onPress: props.onPlay,
-        disabled: !props.soundReady,
-      },
-      { glyph: '◼', word: 'stop', ariaLabel: 'Stop', onPress: props.onStop },
-      {
-        glyph: '◀◀',
-        word: 'rew',
-        ariaLabel: 'Rewind to the previous waypoint',
-        onPress: props.onRewind,
-        disabled: !props.canRewind,
-      },
-      {
-        glyph: '▶▶',
-        word: props.skipGain > 0 ? `skip +${props.skipGain}s` : 'skip',
-        ariaLabel: 'Skip attempt',
-        onPress: props.onSkip,
-        disabled: !props.playing,
-      },
-      {
-        glyph: '●',
-        word: props.copied ? 'copied.' : 'rec·share',
-        on: props.copied,
-        red: true,
-        ariaLabel: 'Share result',
-        onPress: props.onShare,
-        disabled: props.playing,
-      },
-    ]}
-  />
-)
+const Transport = (props: TransportProps) => {
+  const keys = {
+    play: {
+      glyph: '▶',
+      word: 'play',
+      on: props.soundPlaying,
+      ariaLabel: 'Play',
+      onPress: props.onPlay,
+      disabled: !props.soundReady,
+    },
+    stop: {
+      glyph: '◼',
+      word: 'stop',
+      ariaLabel: 'Stop',
+      onPress: props.onStop,
+    },
+    rew: {
+      glyph: '◀◀',
+      word: 'rew',
+      ariaLabel: 'Rewind to the previous waypoint',
+      onPress: props.onRewind,
+      disabled: !props.canRewind,
+    },
+    skip: {
+      glyph: '▶▶',
+      word: props.skipGain > 0 ? `skip +${props.skipGain}s` : 'skip',
+      ariaLabel: 'Skip attempt',
+      onPress: props.onSkip,
+      disabled: !props.playing,
+    },
+    share: {
+      glyph: '●',
+      word: props.copied ? 'copied.' : 'rec·share',
+      on: props.copied,
+      red: true,
+      ariaLabel: 'Share result',
+      onPress: props.onShare,
+      disabled: props.playing,
+    },
+  } satisfies Record<TransportKeyName, LeverSpec>
+
+  return (
+    <LeverBank size={props.size} keys={props.order.map((name) => keys[name])} />
+  )
+}
 
 export default function BoomboxView() {
-  const [state, setState] = useState<BoomboxState | null>(null)
+  const [session, setSession] = useState<
+    { status: 'loading' } | { status: 'ready'; state: BoomboxState }
+  >({ status: 'loading' })
+
+  useGameInput()
+
+  useEffect(() => {
+    setSession({ status: 'ready', state: loadState(dayNumber(new Date())) })
+  }, [])
+
+  if (session.status === 'loading') {
+    return (
+      <main className={`${css.room} ${FONT_VARIABLES}`}>
+        <p className={css.loading}>Rewinding today's tape…</p>
+      </main>
+    )
+  }
+
+  return <BoomboxMachine initialState={session.state} />
+}
+
+function BoomboxMachine({
+  initialState: dayOne,
+}: {
+  initialState: BoomboxState
+}) {
+  const [state, setState] = useState(dayOne)
   const [tapeExpired, setTapeExpired] = useState(false)
   const [query, setQuery] = useState('')
   const [cursor, setCursor] = useState(0)
@@ -785,43 +878,29 @@ export default function BoomboxView() {
   )
   const [volume, setVolume] = useState(0.65)
   const sfxRef = useRef<DeckSfx | null>(null)
+  const copiedTimerRef = useRef(0)
   /* the site's dailies count to utc midnight; this tape flips at 02:00 on
      spain's wall clock, so the lcd counts to the engine's own flip instant */
   const countdown = useDailyCountdown(nextFlipAt)
   const doorOpen = useDoorGreeting()
 
-  useGameInput()
+  const daily = songForDay(SONGS, state.day)
+  const limit = unlockedSeconds(state)
+  const playing = state.stage === 'play'
+  const tapeSpan = playing ? FULL_UNLOCK : CLIP_SECONDS
 
-  useEffect(() => {
-    setState(loadState(dayNumber(new Date())))
-  }, [])
-
-  const daily = useMemo(
-    () => (state ? songForDay(SONGS, state.day) : null),
-    [state],
-  )
-  const limit = state ? unlockedSeconds(state) : 1
-  const playing = state?.stage === 'play'
-  const tapeSpan = playing ? FULL_TAPE_SECONDS : CLIP_SECONDS
-
+  /* stable identity: sfx feeds the motor effect below */
   const sfx = useCallback(() => {
     sfxRef.current ??= createDeckSfx()
     return sfxRef.current
   }, [])
 
-  const sound = useClipAudio(daily ? clipUrl(daily.id) : '', {
+  const sound = useClipAudio(clipUrl(daily.id), {
     limit,
     onLimit: () => sfx().clunk(),
+    eqGains,
+    volume,
   })
-
-  /* the graph exists only after the first play; re-apply settings then */
-  // biome-ignore lint/correctness/useExhaustiveDependencies: isPlaying re-applies onto the just-born graph
-  useEffect(() => {
-    for (const [band, gain] of eqGains.entries()) {
-      sound.setBand(band, gain)
-    }
-    sound.setVolume(volume)
-  }, [eqGains, volume, sound.setBand, sound.setVolume, sound.isPlaying])
 
   useEffect(() => {
     if (!sound.isPlaying) return
@@ -829,9 +908,10 @@ export default function BoomboxView() {
     return () => sfxRef.current?.motorOff()
   }, [sound.isPlaying, sfx])
 
+  useEffect(() => () => window.clearTimeout(copiedTimerRef.current), [])
+
   /* the tape flips at 02:00 spain time; playing past it earns a door slip */
   useEffect(() => {
-    if (!state) return
     const check = () => setTapeExpired(dayNumber(new Date()) !== state.day)
     const interval = setInterval(check, 30_000)
     document.addEventListener('visibilitychange', check)
@@ -839,18 +919,18 @@ export default function BoomboxView() {
       clearInterval(interval)
       document.removeEventListener('visibilitychange', check)
     }
-  }, [state])
+  }, [state.day])
 
-  const results = useMemo(() => {
-    if (!state || query.trim().length < 2) return []
-    const guessedIds = state.guesses.map((guess) => guess.songId)
-    return SONGS.filter(
-      (song) => matchesSongQuery(song, query) && !guessedIds.includes(song.id),
-    ).slice(0, MAX_RESULTS)
-  }, [query, state])
+  const guessedIds = state.guesses.map((guess) => guess.songId)
+  const results =
+    query.trim().length < 2
+      ? []
+      : SONGS.filter(
+          (song) =>
+            matchesSongQuery(song, query) && !guessedIds.includes(song.id),
+        ).slice(0, MAX_RESULTS)
 
   const dispatch = (event: BoomboxEvent) => {
-    if (!state || !daily) return
     const next = reduce(state, event, daily)
     persistState(next)
     setState(next)
@@ -892,18 +972,27 @@ export default function BoomboxView() {
   }
 
   const onShare = async () => {
-    if (!state) return
     sfx().click()
     const card = shareCard(state)
-    if ((await shareText({ text: card })) !== 'unsupported') return
+    const outcome = await shareText({ text: card })
+    if (outcome === 'shared' || outcome === 'dismissed') return
     await navigator.clipboard.writeText(card).catch(() => undefined)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    window.clearTimeout(copiedTimerRef.current)
+    copiedTimerRef.current = window.setTimeout(
+      () => setCopied(false),
+      COPIED_RESET_MS,
+    )
   }
 
-  /* state only; the settings effect pushes every change into the graph */
   const onEqGain = (band: number, gainDb: number) => {
     setEqGains((gains) => gains.with(band, gainDb))
+    sound.setBand(band, gainDb)
+  }
+
+  const onVolume = (value: number) => {
+    setVolume(value)
+    sound.setVolume(value)
   }
 
   const onSearchKeyDown = (event: React.KeyboardEvent) => {
@@ -923,16 +1012,6 @@ export default function BoomboxView() {
       return
     }
     if (event.key === 'Escape') setQuery('')
-  }
-
-  const fontVariables = `${caveat.variable} ${vt323.variable} ${shareTechMono.variable}`
-
-  if (!state || !daily) {
-    return (
-      <main className={`${css.room} ${fontVariables}`}>
-        <p className={css.loading}>Rewinding today's tape…</p>
-      </main>
-    )
   }
 
   /* desk and ansaphone each mount one pen and one results slip; unique
@@ -989,7 +1068,7 @@ export default function BoomboxView() {
     )
 
   return (
-    <main className={`${css.room} ${fontVariables}`}>
+    <main className={`${css.room} ${FONT_VARIABLES}`}>
       <h1 className='sr-only'>Boombox, the daily mixtape guessing game</h1>
 
       <div className={css.machineStage}>
@@ -1003,7 +1082,6 @@ export default function BoomboxView() {
           exit
         </a>
 
-        {/* molded top furniture: blank cap stubs and knurled knobs */}
         <div className={css.topRail} aria-hidden>
           <span className={css.topDecoKey}>
             <span className={css.topDecoLed} />
@@ -1090,6 +1168,8 @@ export default function BoomboxView() {
           <section className={css.lowerConsole}>
             <EqBank gains={eqGains} onGain={onEqGain} />
             <Transport
+              size='deck'
+              order={DECK_KEY_ORDER}
               canRewind={sound.seconds > 0 || sound.isPlaying}
               copied={copied}
               playing={playing}
@@ -1102,7 +1182,7 @@ export default function BoomboxView() {
               onSkip={onSkip}
               onShare={onShare}
             />
-            <VolumeCell value={volume} onChange={setVolume} />
+            <VolumeCell value={volume} onChange={onVolume} />
           </section>
 
           <span className={css.screw} data-corner='tl' aria-hidden />
@@ -1112,10 +1192,6 @@ export default function BoomboxView() {
         </div>
       </div>
 
-      {/* the narrow-room build: a tad-2200 answering machine in front
-          elevation. it answers with the mystery tape; you guess who
-          called. the machine never folds: when the keyboard rises the
-          browser scrolls it up intact */}
       <div className={css.ansaphone}>
         <section className={css.tadBody} aria-label='Answering machine'>
           <div className={css.tadBay}>
@@ -1161,50 +1237,20 @@ export default function BoomboxView() {
                 <span className={css.tadVol} aria-hidden />
                 <span className={css.tadGrille} aria-hidden />
               </div>
-              <LeverBank
+              <Transport
                 size='tad'
-                keys={[
-                  {
-                    glyph: '◀◀',
-                    word: 'rew',
-                    ariaLabel: 'Rewind to the previous waypoint',
-                    onPress: onRewind,
-                    disabled: !(sound.seconds > 0 || sound.isPlaying),
-                  },
-                  {
-                    glyph: '▶',
-                    word: 'play',
-                    on: sound.isPlaying,
-                    ariaLabel: 'Play',
-                    onPress: togglePlay,
-                    disabled: !sound.isReady,
-                  },
-                  {
-                    glyph: '▶▶',
-                    word:
-                      skipSecondsGain(state) > 0
-                        ? `skip +${skipSecondsGain(state)}s`
-                        : 'skip',
-                    ariaLabel: 'Skip attempt',
-                    onPress: onSkip,
-                    disabled: !playing,
-                  },
-                  {
-                    glyph: '◼',
-                    word: 'stop',
-                    ariaLabel: 'Stop',
-                    onPress: onStop,
-                  },
-                  {
-                    glyph: '●',
-                    word: copied ? 'copied.' : 'rec·share',
-                    on: copied,
-                    red: true,
-                    ariaLabel: 'Share result',
-                    onPress: onShare,
-                    disabled: playing,
-                  },
-                ]}
+                order={TAD_KEY_ORDER}
+                canRewind={sound.seconds > 0 || sound.isPlaying}
+                copied={copied}
+                playing={playing}
+                soundReady={sound.isReady}
+                soundPlaying={sound.isPlaying}
+                skipGain={skipSecondsGain(state)}
+                onPlay={togglePlay}
+                onStop={onStop}
+                onRewind={onRewind}
+                onSkip={onSkip}
+                onShare={onShare}
               />
             </div>
             <div className={css.tadLip} aria-hidden />

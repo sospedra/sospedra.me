@@ -1,4 +1,9 @@
-import type { ChallengePuzzle, CrosswordChallengeFile } from './crossword-data'
+import {
+  type ChallengePuzzle,
+  type CrosswordChallengeFile,
+  GRID_LETTERS,
+  ISO_DATE,
+} from './crossword-data.ts'
 
 export type SpanishDailyChallenge = {
   publicationDate: string
@@ -9,18 +14,6 @@ type SpanishClueBook = {
   across: Record<string, string>
   down: Record<string, string>
 }
-
-const ENDPOINT = 'https://backend.smartgames.media/api/game/crossword/last'
-
-/* The API gates on the caller's origin; send the one it accepts. */
-const HEADERS = {
-  accept: 'application/vnd.api+json',
-  'accept-language': 'en-US,en;q=0.9,es;q=0.8',
-  'content-type': 'application/vnd.api+json',
-  origin: 'https://www.eldiario.es',
-}
-
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 
 const ACCENT_FOLD: Record<string, string> = {
   Á: 'A',
@@ -36,8 +29,6 @@ const ACCENT_FOLD: Record<string, string> = {
   Ü: 'U',
 }
 
-const GRID_LETTERS = new Set('ABCDEFGHIJKLMNOPQRSTUVWXYZÑ')
-
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null
 
@@ -52,7 +43,6 @@ const normalizeWord = (word: string): string =>
 const isGridCharacter = (character: string): boolean =>
   character === '#' || GRID_LETTERS.has(character)
 
-/* The grid alphabet matches the engine's: A–Z plus Ñ, '#' for blocks. */
 const parseBoard = (board: string): string[] | null => {
   const rows = board
     .split('\n')
@@ -142,17 +132,3 @@ export const withSpanishPuzzle = (
       ? { ...challenge, puzzles: { ...challenge.puzzles, es: spanish.puzzle } }
       : challenge,
   )
-
-export const fetchSpanishDaily =
-  async (): Promise<SpanishDailyChallenge | null> => {
-    try {
-      const response = await fetch(ENDPOINT, {
-        headers: HEADERS,
-        signal: AbortSignal.timeout(10_000),
-      })
-      if (!response.ok) return null
-      return spanishChallengeFromPayload(await response.json())
-    } catch {
-      return null
-    }
-  }

@@ -25,6 +25,7 @@ import { basename, extname, join } from 'node:path'
 import { argv, env, exit } from 'node:process'
 import { promisify } from 'node:util'
 import { del, list, put } from '@vercel/blob'
+import { chunk } from 'es-toolkit'
 import sharp from 'sharp'
 import {
   CLIP_SECONDS,
@@ -41,6 +42,8 @@ const COVER_PX = 600
 const CLIP_BITRATE = '128k'
 const UPLOAD_BATCH = 8
 const ONE_YEAR_SECONDS = 31536000
+const ROTATION_PREVIEW_ROWS = 10
+const MAX_BLOB_PAGES = 20
 const TSV_COLUMNS = [
   'file',
   'start',
@@ -113,22 +116,29 @@ const seededShuffle = <T>(items: T[], seed: number): T[] => {
 
 const reportRotationShift = (before: Song[], after: Song[]) => {
   const today = dayNumber(new Date())
-  if (today < 0) return console.log('Rotation has not started. No day moves.')
+  if (today < 0) {
+    console.log('Rotation has not started. No day moves.')
+    return
+  }
   const moved = []
   for (let day = 0; day <= today; day++) {
     const was = songForDay(before, day)
     const now = songForDay(after, day)
     if (was.id !== now.id) moved.push({ day, was, now })
   }
-  if (moved.length === 0)
-    return console.log(`No played day moves. Today is day ${today}.`)
+  if (moved.length === 0) {
+    console.log(`No played day moves. Today is day ${today}.`)
+    return
+  }
   console.log(`${moved.length} of ${today + 1} played days move:`)
-  for (const { day, was, now } of moved.slice(0, 10)) {
+  for (const { day, was, now } of moved.slice(0, ROTATION_PREVIEW_ROWS)) {
     console.log(
       `  day ${day}: ${was.artist} - ${was.title}  ->  ${now.artist} - ${now.title}`,
     )
   }
-  if (moved.length > 10) console.log(`  ...and ${moved.length - 10} more`)
+  if (moved.length > ROTATION_PREVIEW_ROWS) {
+    console.log(`  ...and ${moved.length - ROTATION_PREVIEW_ROWS} more`)
+  }
 }
 
 const requireToken = () => {
@@ -139,11 +149,6 @@ const requireToken = () => {
 const requireYes = (flags: Set<string>) => {
   if (!flags.has('--yes')) fail('This reorders the rotation. Re-run with --yes')
 }
-
-const chunk = <T>(items: T[], size: number): T[][] =>
-  Array.from({ length: Math.ceil(items.length / size) }, (_, index) =>
-    items.slice(index * size, index * size + size),
-  )
 
 const upload = async (pathname: string, body: Buffer, contentType: string) => {
   await put(pathname, body, {
@@ -357,11 +362,15 @@ const check = async () => {
   const songs = await readSongs()
   const stored = new Set<string>()
   let cursor: string | undefined
-  do {
-    const page = await list({ prefix: `${BLOB_PREFIX}/`, cursor, limit: 1000 })
-    for (const blob of page.blobs) stored.add(blob.pathname)
-    cursor = page.hasMore ? page.cursor : undefined
-  } while (cursor)
+  for (let page = 0; page < MAX_BLOB_PAGES; page++) {
+    const batch = await list({ prefix: `${BLOB_PREFIX}/`, cursor, limit: 1000 })
+    for (const blob of batch.blobs) stored.add(blob.pathname)
+    if (!batch.hasMore) break
+    cursor = batch.cursor
+    if (page === MAX_BLOB_PAGES - 1) {
+      fail(`Blob listing did not finish within ${MAX_BLOB_PAGES} pages.`)
+    }
+  }
   const missing = songs.flatMap((song) =>
     [clipPath(song.id), coverPath(song.id)].filter((path) => !stored.has(path)),
   )

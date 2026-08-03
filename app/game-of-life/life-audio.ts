@@ -1,4 +1,5 @@
-import { audioContextClass, createMasterBus } from '../../service/audio/kit.ts'
+import { audioContextClass, createMasterBus } from '../../services/audio/kit.ts'
+import { createLogger } from '../../services/logger.ts'
 
 export type LifeMechanicalSound =
   | 'cartridge'
@@ -6,6 +7,10 @@ export type LifeMechanicalSound =
   | 'knob'
   | 'lever'
   | 'switch'
+
+const logger = createLogger('game-of-life.audio')
+
+const RESUME_RETRY_MS = 100
 
 type AudioGraph = {
   context: AudioContext
@@ -55,7 +60,7 @@ export const createLifeAudio = (options: LifeAudioOptions = {}) => {
       options.onError(stage, error)
       return
     }
-    console.warn(`[life-audio] ${stage}`, error)
+    logger.warn(stage, { error })
   }
 
   const createGraph = (): AudioGraph | null => {
@@ -104,10 +109,10 @@ export const createLifeAudio = (options: LifeAudioOptions = {}) => {
       return
     }
 
-    const now = Date.now()
-    if (!force && lastResumeAttempt !== 0 && now - lastResumeAttempt < 100) {
-      return
-    }
+    const now = performance.now()
+    const throttled =
+      lastResumeAttempt !== 0 && now - lastResumeAttempt < RESUME_RETRY_MS
+    if (!force && throttled) return
     lastResumeAttempt = now
 
     try {
@@ -378,6 +383,28 @@ export const createLifeAudio = (options: LifeAudioOptions = {}) => {
     motor = { filter, gain, hum, humGain, lfo, lfoDepth, source }
   }
 
+  const cues: Record<LifeMechanicalSound, (graph: AudioGraph) => void> = {
+    cartridge: (graph) => {
+      noise(graph, 520, 0.09, 0.16, 0.65)
+      tone(graph, 180, 65, 0.1, 0.09)
+    },
+    key: (graph) => {
+      noise(graph, 1800 + Math.random() * 420, 0.035, 0.14, 0.8)
+      tone(graph, 240, 105, 0.05, 0.065)
+    },
+    knob: (graph) => {
+      noise(graph, 2600 + Math.random() * 350, 0.026, 0.08, 1.05)
+    },
+    lever: (graph) => {
+      noise(graph, 900, 0.08, 0.16, 0.7)
+      tone(graph, 220, 90, 0.085, 0.09)
+    },
+    switch: (graph) => {
+      noise(graph, 680, 0.095, 0.19, 0.65)
+      tone(graph, 230, 70, 0.11, 0.12)
+    },
+  }
+
   return {
     dispose() {
       shouldRun = false
@@ -398,23 +425,7 @@ export const createLifeAudio = (options: LifeAudioOptions = {}) => {
         lastKnobCue = now
       }
 
-      withAudioGraph((graph) => {
-        if (kind === 'knob') {
-          noise(graph, 2600 + Math.random() * 350, 0.026, 0.08, 1.05)
-        } else if (kind === 'lever') {
-          noise(graph, 900, 0.08, 0.16, 0.7)
-          tone(graph, 220, 90, 0.085, 0.09)
-        } else if (kind === 'switch') {
-          noise(graph, 680, 0.095, 0.19, 0.65)
-          tone(graph, 230, 70, 0.11, 0.12)
-        } else if (kind === 'cartridge') {
-          noise(graph, 520, 0.09, 0.16, 0.65)
-          tone(graph, 180, 65, 0.1, 0.09)
-        } else {
-          noise(graph, 1800 + Math.random() * 420, 0.035, 0.14, 0.8)
-          tone(graph, 240, 105, 0.05, 0.065)
-        }
-      })
+      withAudioGraph(cues[kind])
     },
     playCells(alive: boolean, count = 1) {
       withAudioGraph((graph) => cellSequence(graph, alive, count))

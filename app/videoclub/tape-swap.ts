@@ -21,7 +21,33 @@ type Pose = {
 type Stage = {
   phase: TapeSwapPhase
   keyframes: Keyframe[]
-  options: KeyframeAnimationOptions
+}
+
+const STAGE_TIMING: Record<TapeSwapPhase, KeyframeAnimationOptions> = {
+  pickup: {
+    duration: 190,
+    easing: 'cubic-bezier(0.2, 0.72, 0.28, 1)',
+    fill: 'forwards',
+  },
+  travel: {
+    duration: 390,
+    easing: 'cubic-bezier(0.42, 0, 0.2, 1)',
+    fill: 'forwards',
+  },
+  register: {
+    duration: 210,
+    easing: 'steps(6, end)',
+    fill: 'forwards',
+  },
+  feed: {
+    duration: 300,
+    easing: 'cubic-bezier(0.55, 0, 0.9, 0.55)',
+    fill: 'forwards',
+  },
+  latch: {
+    duration: 130,
+    fill: 'forwards',
+  },
 }
 
 const snap = (value: number): number => {
@@ -116,11 +142,6 @@ const stages = (parts: TapeSwapParts): Stage[] => {
         ),
         frame(lifted),
       ],
-      options: {
-        duration: 190,
-        easing: 'cubic-bezier(0.2, 0.72, 0.28, 1)',
-        fill: 'forwards',
-      },
     },
     {
       phase: 'travel',
@@ -139,11 +160,6 @@ const stages = (parts: TapeSwapParts): Stage[] => {
         ),
         frame(preDock),
       ],
-      options: {
-        duration: 390,
-        easing: 'cubic-bezier(0.42, 0, 0.2, 1)',
-        fill: 'forwards',
-      },
     },
     {
       phase: 'register',
@@ -161,11 +177,6 @@ const stages = (parts: TapeSwapParts): Stage[] => {
         ),
         frame(docked),
       ],
-      options: {
-        duration: 210,
-        easing: 'steps(6, end)',
-        fill: 'forwards',
-      },
     },
     {
       phase: 'feed',
@@ -184,19 +195,10 @@ const stages = (parts: TapeSwapParts): Stage[] => {
         ),
         frame(swallowed, 0),
       ],
-      options: {
-        duration: 300,
-        easing: 'cubic-bezier(0.55, 0, 0.9, 0.55)',
-        fill: 'forwards',
-      },
     },
     {
       phase: 'latch',
       keyframes: [frame(swallowed, 0), frame(swallowed, 0)],
-      options: {
-        duration: 130,
-        fill: 'forwards',
-      },
     },
   ]
 }
@@ -216,7 +218,7 @@ export const runTapeSwap = (
   const play = (stage: Stage): Promise<unknown> => {
     setPhase(stage.phase)
     return parts.ghost
-      .animate(stage.keyframes, stage.options)
+      .animate(stage.keyframes, STAGE_TIMING[stage.phase])
       .finished.catch(() => null)
   }
 

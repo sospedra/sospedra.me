@@ -12,7 +12,7 @@
       "!**/*.svg",
       "!public/vendor",
       "!docs",
-      "!data/crosswords/sources.lock.json"
+      "!repo/crosswords/sources.lock.json"
     ]
   },
   "formatter": {
@@ -39,6 +39,13 @@
     },
     "rules": {
       "preset": "recommended",
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "warn",
+          "options": { "maxAllowedComplexity": 10 }
+        },
+        "noForEach": "error"
+      },
       "correctness": {
         "noUnusedVariables": "error",
         "noUnusedImports": "error",
@@ -46,12 +53,38 @@
         "noUnusedPrivateClassMembers": "error",
         "useExhaustiveDependencies": "warn"
       },
-      "suspicious": {
-        "noImportCycles": "error"
-      },
       "performance": {
-        "noImgElement": "off"
+        "noImgElement": "off",
+        "noBarrelFile": "error",
+        "noReExportAll": "error"
+      },
+      "style": {
+        "noEnum": "error",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": { "requireAscii": false, "filenameCases": ["kebab-case"] }
+        }
+      },
+      "suspicious": {
+        "noImportCycles": "error",
+        "noConsole": "error"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": [
+        "scripts/**",
+        "services/logger.ts",
+        "services/easteregg/log.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    }
+  ]
 }

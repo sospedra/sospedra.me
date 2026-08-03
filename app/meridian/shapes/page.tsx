@@ -1,6 +1,6 @@
-import Shell from 'components/Shell'
 import type { Metadata } from 'next'
-import corpus from '../../../data/geo/generated/countries.json'
+import Shell from 'services/shell'
+import corpus from '../../../repo/geo/generated/countries.json'
 import css from './shapes.module.css'
 
 export const metadata: Metadata = {
@@ -9,8 +9,9 @@ export const metadata: Metadata = {
 }
 
 const TIERS = [1, 2, 3, 4] as const
+type AuditTier = (typeof TIERS)[number]
 
-const TIER_NAMES: Record<(typeof TIERS)[number], string> = {
+const TIER_NAMES: Record<AuditTier, string> = {
   1: 'Tier 1 · unmistakable',
   2: 'Tier 2 · household',
   3: 'Tier 3 · vague geography',
@@ -21,26 +22,28 @@ interface AuditCountry {
   code: string
   name: string
   shapeUrl: string
-  tier: (typeof TIERS)[number]
+  tier: AuditTier
 }
+
+const auditTier = (difficulty: number | undefined): AuditTier =>
+  TIERS.find((tier) => tier === difficulty) ?? 4
 
 const auditCountries = (): AuditCountry[] =>
   corpus.countries
-    .filter(
-      (country) =>
-        country.status === 'active' &&
-        country.eligibility.shape &&
-        country.assets.shapeUrl,
-    )
-    .map((country) => ({
-      code: country.code,
-      name: country.names.en,
-      shapeUrl: country.assets.shapeUrl as string,
-      tier: Math.min(
-        4,
-        Math.max(1, country.difficulty.shape ?? 4),
-      ) as (typeof TIERS)[number],
-    }))
+    .flatMap((country) => {
+      const shapeUrl = country.assets.shapeUrl
+      const playable =
+        country.status === 'active' && country.eligibility.shape && shapeUrl
+      if (!playable) return []
+      return [
+        {
+          code: country.code,
+          name: country.names.en,
+          shapeUrl,
+          tier: auditTier(country.difficulty.shape),
+        },
+      ]
+    })
     .toSorted((left, right) => left.name.localeCompare(right.name))
 
 export default function ShapeAuditPage() {
@@ -52,8 +55,8 @@ export default function ShapeAuditPage() {
         <h1>Meridian shape audit</h1>
         <p>
           Every playable silhouette with its editorial difficulty tier. Source
-          of truth: <code>data/geo/editorial/country-difficulty.json</code>.
-          Temporary page, not linked or indexed.
+          of truth: <code>repo/geo/editorial/country-difficulty.json</code>. Not
+          linked or indexed.
         </p>
       </header>
       {TIERS.map((tier) => {

@@ -1,20 +1,20 @@
-import Link, { LinkBack } from 'components/Link'
-import Page from 'components/Manual/Page'
-import Piece from 'components/Manual/Piece'
-import Step from 'components/Manual/Step'
-import VerificationStamp from 'components/Manual/VerificationStamp'
-import Shell from 'components/Shell'
-import SpriteBust from 'components/Sprite/Bust'
-import SpriteManual from 'components/Sprite/Manual'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
-import { MANUAL_DESC } from 'service/descriptions'
+import SpriteBust from 'services/bust'
+import Link, { LinkBack } from 'services/link'
+import Shell from 'services/shell'
 import css from './manual.module.css'
 import ManualKeys from './manual-keys'
+import Page from './manual-page'
+import Piece from './piece'
+import SpriteManual from './sprites/sprites'
+import Step from './step'
+import VerificationStamp from './verification-stamp'
 
 export const metadata: Metadata = {
   title: 'Manual of instructions',
-  description: MANUAL_DESC,
+  description:
+    'How to work with Rubén Sospedra. A manual of instructions: what I value, how I look at problems, where my blind spots are, and how to earn my trust.',
   alternates: { canonical: '/manual' },
 }
 

@@ -54,6 +54,7 @@ const LUNAR_ORBIT_SAMPLES = 48
 const LUNAR_ORBIT_FRAME_STEP = 2
 const HOVER_FRAME_STEP = 6
 const ZOOM_UI_INTERVAL_MS = 1000 / 30
+const DIAL_IDLE_GRACE_MS = 220
 const MAX_GLOBE_BACKING_PIXELS = 900_000
 const MIN_RENDER_PIXEL_RATIO = 0.75
 
@@ -637,7 +638,7 @@ export function useTravelGlobe({
         return
 
       const [targetPhi, targetTheta] = focusRef.current
-      const frameFactor = elapsed / (1000 / 60)
+      const frameFactor = elapsed / TARGET_FRAME_MS
       const ease = quietRef.current ? 1 : 1 - (1 - EASE) ** frameFactor
       if (focusTimeRef.current > 0) {
         focusTimeRef.current = Math.max(0, focusTimeRef.current - elapsed)
@@ -658,7 +659,7 @@ export function useTravelGlobe({
         thetaRef.current = clampTheta(
           thetaRef.current + velocity.theta * elapsed,
         )
-        const decay = MOMENTUM_FRICTION ** (elapsed / (1000 / 60))
+        const decay = MOMENTUM_FRICTION ** (elapsed / TARGET_FRAME_MS)
         velocity.phi *= decay
         velocity.theta *= decay
         return
@@ -1010,7 +1011,9 @@ export function useTravelGlobe({
     })
   }
 
-  refreshHoverRef.current = refreshHover
+  useEffect(() => {
+    refreshHoverRef.current = refreshHover
+  })
 
   const grabAt = (clientX: number, clientY: number) => {
     const pxPerRadian = zoomTargetRef.current / DRAG_RADIANS_PER_PX
@@ -1173,51 +1176,39 @@ export function useTravelGlobe({
     publishZoomLevel(nextZoom)
   }
 
-  const orbitBy = (knobDelta: number) => {
-    if (
-      !Number.isFinite(knobDelta) ||
-      Math.abs(knobDelta) < 0.001 ||
-      pointersRef.current.size > 0
-    )
-      return
+  const nudgeAxis = (value: number, apply: (value: number) => void) => {
+    if (!Number.isFinite(value) || pointersRef.current.size > 0) return
     focusTimeRef.current = 0
     velocityRef.current = { phi: 0, theta: 0 }
-    phiRef.current =
-      (((phiRef.current + (knobDelta * Math.PI) / 180) % TAU) + TAU) % TAU
-    dialIdleUntilRef.current = performance.now() + 220
+    apply(value)
+    dialIdleUntilRef.current = performance.now() + DIAL_IDLE_GRACE_MS
   }
 
-  const orbitTo = (heading: number) => {
-    if (!Number.isFinite(heading) || pointersRef.current.size > 0) return
-    const normalized = ((heading % 360) + 360) % 360
-    focusTimeRef.current = 0
-    velocityRef.current = { phi: 0, theta: 0 }
-    phiRef.current = (((270 - normalized) * Math.PI) / 180 + TAU) % TAU
-    dialIdleUntilRef.current = performance.now() + 220
+  const orbitBy = (knobDelta: number) => {
+    if (Math.abs(knobDelta) < 0.001) return
+    nudgeAxis(knobDelta, (delta) => {
+      phiRef.current =
+        (((phiRef.current + (delta * Math.PI) / 180) % TAU) + TAU) % TAU
+    })
   }
+
+  const orbitTo = (heading: number) =>
+    nudgeAxis(heading, (value) => {
+      const normalized = ((value % 360) + 360) % 360
+      phiRef.current = (((270 - normalized) * Math.PI) / 180 + TAU) % TAU
+    })
 
   const pitchBy = (knobDelta: number) => {
-    if (
-      !Number.isFinite(knobDelta) ||
-      Math.abs(knobDelta) < 0.001 ||
-      pointersRef.current.size > 0
-    )
-      return
-    focusTimeRef.current = 0
-    velocityRef.current = { phi: 0, theta: 0 }
-    thetaRef.current = clampTheta(
-      thetaRef.current - (knobDelta * Math.PI) / 180,
-    )
-    dialIdleUntilRef.current = performance.now() + 220
+    if (Math.abs(knobDelta) < 0.001) return
+    nudgeAxis(knobDelta, (delta) => {
+      thetaRef.current = clampTheta(thetaRef.current - (delta * Math.PI) / 180)
+    })
   }
 
-  const pitchTo = (latitude: number) => {
-    if (!Number.isFinite(latitude) || pointersRef.current.size > 0) return
-    focusTimeRef.current = 0
-    velocityRef.current = { phi: 0, theta: 0 }
-    thetaRef.current = clampTheta((latitude * Math.PI) / 180)
-    dialIdleUntilRef.current = performance.now() + 220
-  }
+  const pitchTo = (latitude: number) =>
+    nudgeAxis(latitude, (value) => {
+      thetaRef.current = clampTheta((value * Math.PI) / 180)
+    })
 
   const setDialControlActive = (active: boolean) => {
     dialControlCountRef.current = Math.max(
@@ -1230,7 +1221,7 @@ export function useTravelGlobe({
       dialIdleUntilRef.current = Number.POSITIVE_INFINITY
       return
     }
-    dialIdleUntilRef.current = performance.now() + 220
+    dialIdleUntilRef.current = performance.now() + DIAL_IDLE_GRACE_MS
   }
 
   const zoomIn = () => applyZoom(zoomTargetRef.current * ZOOM_STEP)

@@ -6,13 +6,14 @@ import {
   writeFileSync,
 } from 'node:fs'
 import { join } from 'node:path'
+import { ISO_DATE } from '../../app/crosswords/crossword-data.ts'
 
 /* Replays the USA Today archive (xd files, Universal Uclick copyright, see
    sources.lock.json) as daily editions. Weekday-locked, newest-first: our
    Monday serves the k-th newest archive Monday. Deterministic, no AI. */
 
-const ARCHIVE_DIR = 'content/crosswords/puzzles'
-const CHALLENGE_DIR = 'content/crosswords/challenges'
+const ARCHIVE_DIR = 'repo/crosswords/puzzles'
+const CHALLENGE_DIR = 'repo/crosswords/challenges'
 const REPLAY_EPOCH = '2026-07-29'
 
 const args = process.argv.slice(2)
@@ -22,7 +23,9 @@ const argValue = (flag: string) => {
 }
 const from = argValue('--from')
 const days = Number(argValue('--days') ?? '14')
-if (!from || !/^\d{4}-\d{2}-\d{2}$/.test(from) || !Number.isInteger(days)) {
+const argsValid =
+  from !== undefined && ISO_DATE.test(from) && Number.isInteger(days)
+if (!argsValid) {
   console.error('usage: generate-replay.ts --from YYYY-MM-DD --days N')
   process.exit(1)
 }
@@ -50,6 +53,8 @@ const parseXd = (text: string): ArchivePuzzle | null => {
       const [, direction, clueText, answer] = clue
       const side = direction === 'A' ? across : down
       const key = answer.trim().toUpperCase()
+      /* crossword-data keys clues by answer; a repeated answer would make
+         two entries silently share one clue, so reject the puzzle */
       if (key in side) return null
       side[key] = clueText
       continue
@@ -70,22 +75,29 @@ const parseXd = (text: string): ArchivePuzzle | null => {
     gridRows.every((row) => row.length === width) &&
     header.Date !== undefined
   if (!complete) return null
-
-  // Every grid word needs its clue or the edition would render blanks.
-  const gridWords = (rows: string[]) =>
-    rows.flatMap((row) => row.split('#').filter((run) => run.length >= 3))
-  const columns = Array.from({ length: width }, (_, c) =>
-    gridRows.map((row) => row[c]).join(''),
-  )
-  const coveredAcross = gridWords(gridRows).every((word) => word in across)
-  const coveredDown = gridWords(columns).every((word) => word in down)
-  if (!coveredAcross || !coveredDown) return null
+  if (!fullyClued(gridRows, { across, down })) return null
 
   return {
     date: header.Date,
     grid: gridRows,
     clues: { across, down },
   }
+}
+
+// Every grid word needs its clue or the edition would render blanks.
+const fullyClued = (
+  gridRows: string[],
+  clues: ArchivePuzzle['clues'],
+): boolean => {
+  const gridWords = (rows: string[]) =>
+    rows.flatMap((row) => row.split('#').filter((run) => run.length >= 3))
+  const columns = Array.from({ length: gridRows[0]?.length ?? 0 }, (_, c) =>
+    gridRows.map((row) => row[c]).join(''),
+  )
+  return (
+    gridWords(gridRows).every((word) => word in clues.across) &&
+    gridWords(columns).every((word) => word in clues.down)
+  )
 }
 
 const loadPools = () => {
@@ -150,7 +162,7 @@ for (let offset = 0; offset < days; offset += 1) {
   if (pool.length === 0) throw new Error(`empty pool for weekday ${weekday}`)
   const puzzle = pool[weekdayCountSinceEpoch(date) % pool.length]
 
-  // Bare render minimum; provenance lives in data/crosswords, the mapping
+  // Bare render minimum; provenance lives in repo/crosswords, the mapping
   // back to an archive date is the replay formula itself.
   const edition = {
     publicationDate: date,

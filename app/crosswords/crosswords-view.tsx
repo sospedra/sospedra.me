@@ -1,16 +1,6 @@
 'use client'
 
 import cn from 'clsx'
-import DailyCountdownPanel from 'components/DailyCountdownPanel'
-import Link from 'components/Link'
-import Modal from 'components/Modal'
-import Shell from 'components/Shell'
-import {
-  readLocal,
-  readLocalJson,
-  writeLocal,
-  writeLocalJson,
-} from 'lib/storage'
 import {
   type CSSProperties,
   type FormEvent,
@@ -29,19 +19,30 @@ import {
   playCarriageShift,
   playKeyClick,
   playTypewriterBell,
-} from 'service/audio/key-click'
-import { useGameInput } from 'service/hotkeys'
-import { useDocumentLang } from 'service/locale'
-import { shareText } from 'service/share'
-import { useViewportHeightVar } from 'service/viewport'
+} from 'services/audio/key-click'
+import DailyCountdownPanel from 'services/daily-countdown-panel'
+import { useGameInput } from 'services/hotkeys'
+import Link from 'services/link'
+import { useDocumentLang } from 'services/locale'
+import Modal from 'services/modal'
+import { shareText } from 'services/share'
+import Shell from 'services/shell'
 import {
+  readLocal,
+  readLocalJson,
+  writeLocal,
+  writeLocalJson,
+} from 'services/storage'
+import { useViewportHeightVar } from 'services/viewport'
+import {
+  type CrosswordCell,
   type CrosswordChallengeFile,
   type CrosswordDirection,
   type CrosswordEntry,
   type CrosswordLocale,
   type CrosswordPuzzle,
   editionFromChallenge,
-  LEGACY_EDITION,
+  GRID_LETTERS,
   puzzleForDate,
 } from './crossword-data'
 import {
@@ -68,9 +69,26 @@ type GameSettings = {
 type SolveMode = 'guided' | 'standard'
 type SoundLevel = 0 | 1 | 2 | 3
 
-type DialogName = 'help' | 'complete' | null
+type DialogName = 'help' | null
 
 type Scope = 'cell' | 'answer' | 'puzzle'
+
+const MAX_SOUND_LEVEL: SoundLevel = 3
+const SOUND_GAINS = {
+  carriageShift: [0, 0.05, 0.08, 0.11],
+  keyClick: [0, 0.055, 0.09, 0.12],
+  typewriterBell: [0, 0.08, 0.12, 0.16],
+} as const
+
+const SAVE_DEBOUNCE_MS = 180
+/* covers the 640ms solved-word sweep plus its per-cell stagger in crosswords.module.css */
+const WORD_SWEEP_MS = 900
+const REVEAL_DISARM_MS = 5000
+const KNOB_ARC_DEGREES = 264
+const LATEST_EDITION_DATE = '9999-12-31'
+
+const SOLVE_MODES = ['standard', 'guided'] as const
+const SCOPE_VALUES = ['cell', 'answer', 'puzzle'] as const
 
 const DEFAULT_SETTINGS: GameSettings = {
   showTimer: true,
@@ -97,7 +115,11 @@ type SavedSettings = Partial<GameSettings> & { keySounds?: boolean }
 
 const restoredSoundLevel = (saved: SavedSettings): SoundLevel => {
   const { soundLevel } = saved
-  if (typeof soundLevel === 'number' && soundLevel >= 0 && soundLevel <= 3) {
+  if (
+    typeof soundLevel === 'number' &&
+    soundLevel >= 0 &&
+    soundLevel <= MAX_SOUND_LEVEL
+  ) {
     return soundLevel as SoundLevel
   }
   // pre-soundLevel saves stored a keySounds boolean
@@ -457,13 +479,57 @@ const normalizeLetter = (value: string) => {
     .normalize('NFD')
     .replace(/\p{M}/gu, '')
     .replaceAll('\u0000', 'Ñ')
-  return [...normalized].findLast((letter) => /^[A-ZÑ]$/u.test(letter)) ?? ''
+  return [...normalized].findLast((letter) => GRID_LETTERS.has(letter)) ?? ''
 }
 
 const directionLabel = (
   direction: CrosswordDirection,
   locale: CrosswordLocale,
 ) => COPY[locale][direction]
+
+type Copy = (typeof COPY)[CrosswordLocale]
+
+type CellMarks = {
+  pencil: boolean
+  incorrect: boolean
+  checked: boolean
+  revealed: boolean
+}
+
+const proofNote = (marks: CellMarks, copy: Copy) => {
+  if (marks.incorrect) return `${copy.incorrect}.`
+  if (marks.checked) return `${copy.checked}.`
+  return ''
+}
+
+const cellDescription = ({
+  cell,
+  copy,
+  crossingEntry,
+  guess,
+  locale,
+  marks,
+}: {
+  cell: CrosswordCell
+  copy: Copy
+  crossingEntry: CrosswordEntry | undefined
+  guess: string
+  locale: CrosswordLocale
+  marks: CellMarks
+}) =>
+  [
+    `${copy.row} ${cell.row + 1}, ${copy.column} ${cell.column + 1}.`,
+    cell.number ? `${cell.number}.` : '',
+    guess ? `${copy.letter} ${guess}.` : `${copy.blank}.`,
+    marks.pencil ? `${copy.pencilled}.` : '',
+    proofNote(marks, copy),
+    marks.revealed ? `${copy.revealed}.` : '',
+    crossingEntry
+      ? `${copy.intersection} ${crossingEntry.number} ${directionLabel(crossingEntry.direction, locale)}.`
+      : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
 const revealTargetFor = (scope: Scope, cell: number, entryId: string) => {
   if (scope === 'cell') return `cell:${cell}`
@@ -757,7 +823,7 @@ const ParameterKnob = ({
   value: number
   valueText: string
 }) => {
-  const rotation = -132 + (value / Math.max(1, max)) * 264
+  const rotation = (value / Math.max(1, max) - 0.5) * KNOB_ARC_DEGREES
 
   return (
     <label className={css.parameterKnob} data-tone={tone}>
@@ -891,987 +957,50 @@ const ToolbarButton = ({
   </button>
 )
 
-function CrosswordSession({
-  locale,
-  puzzle,
-  hasSpanish,
-  letterFontClassName,
-  setLocale,
-  settings,
+const CrosswordToolbar = ({
+  copy,
+  onCheck,
+  onOpenHelp,
+  onPauseFrom,
+  onRedo,
+  onRequestReveal,
+  onRestart,
+  onResumeFrom,
+  onScopeChange,
+  onTogglePencil,
+  onToggleTimer,
+  onUndo,
+  placement,
+  revealArmed,
   setSettings,
+  settings,
+  state,
+  toolScope,
 }: {
-  locale: CrosswordLocale
-  puzzle: CrosswordPuzzle
-  hasSpanish: boolean
-  letterFontClassName: string
-  setLocale: (locale: CrosswordLocale) => void
-  settings: GameSettings
+  copy: Copy
+  onCheck: () => void
+  onOpenHelp: (button: HTMLButtonElement) => void
+  onPauseFrom: (button: HTMLButtonElement) => void
+  onRedo: () => void
+  onRequestReveal: () => void
+  onRestart: () => void
+  onResumeFrom: (button: HTMLButtonElement) => void
+  onScopeChange: (scope: Scope) => void
+  onTogglePencil: () => void
+  onToggleTimer: () => void
+  onUndo: () => void
+  placement: 'desktop' | 'mobile'
+  revealArmed: boolean
   setSettings: (
     value: GameSettings | ((current: GameSettings) => GameSettings),
   ) => void
-}) {
-  const copy = COPY[locale]
-  const [state, dispatch] = useReducer(
-    crosswordReducer,
-    puzzle,
-    createCrosswordState,
-  )
-  const [hydrated, setHydrated] = useState(false)
-  const [dialog, setDialog] = useState<DialogName>(null)
-  const [mobileClueDirection, setMobileClueDirection] =
-    useState<CrosswordDirection>('across')
-  const [announcement, setAnnouncement] = useState('')
-  const [wordSweep, setWordSweep] = useState<{
-    entryId: string
-    run: number
-  } | null>(null)
-  const [toolScope, setToolScope] = useState<Scope>('answer')
-  const [armedRevealTarget, setArmedRevealTarget] = useState<string | null>(
-    null,
-  )
-  const cellRefs = useRef<Array<HTMLButtonElement | null>>([])
-  const inputRef = useRef<HTMLInputElement>(null)
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const openerRef = useRef<HTMLElement | null>(null)
-  const focusGridRef = useRef(false)
-  const touchHandledRef = useRef(false)
-  const pointerDownCellRef = useRef<number | null>(null)
-  const composingRef = useRef(false)
-  const skipInputRef = useRef(false)
-  const latestStateRef = useRef(state)
-  const fullIncorrectRef = useRef('')
-  const announcementNonceRef = useRef(false)
-  const sweepRunRef = useRef(0)
-  const previousStatusRef = useRef(state.status)
-  const acrossListRef = useRef<HTMLDivElement>(null)
-  const downListRef = useRef<HTMLDivElement>(null)
-  const mobileListRef = useRef<HTMLDivElement>(null)
-
-  const announce = useCallback((message: string) => {
-    announcementNonceRef.current = !announcementNonceRef.current
-    setAnnouncement(`${message}${announcementNonceRef.current ? '\u200B' : ''}`)
-  }, [])
-
-  const bringCellIntoView = useCallback((index: number) => {
-    cellRefs.current[index]?.scrollIntoView({
-      block: 'nearest',
-      inline: 'nearest',
-    })
-  }, [])
-
-  const focusCellAt = useCallback(
-    (index: number) => {
-      cellRefs.current[index]?.focus({ preventScroll: true })
-      bringCellIntoView(index)
-    },
-    [bringCellIntoView],
-  )
-
-  const getAudioContext = useCallback(() => {
-    if (settings.soundLevel === 0) return null
-    try {
-      if (
-        !audioContextRef.current ||
-        audioContextRef.current.state === 'closed'
-      ) {
-        audioContextRef.current = new AudioContext()
-      }
-      const context = audioContextRef.current
-      if (context.state === 'suspended') {
-        void context.resume().catch(() => {})
-      }
-      return context
-    } catch {
-      // Audio is tactile polish; browser restrictions must never block play.
-      return null
-    }
-  }, [settings.soundLevel])
-
-  const clickKey = useCallback(() => {
-    const context = getAudioContext()
-    if (context) {
-      playKeyClick(context, [0, 0.055, 0.09, 0.12][settings.soundLevel])
-    }
-  }, [getAudioContext, settings.soundLevel])
-
-  const ringTypewriterBell = useCallback(() => {
-    const context = getAudioContext()
-    if (context) {
-      playTypewriterBell(context, [0, 0.08, 0.12, 0.16][settings.soundLevel])
-    }
-  }, [getAudioContext, settings.soundLevel])
-
-  const shiftCarriage = useCallback(() => {
-    const context = getAudioContext()
-    if (context) {
-      playCarriageShift(context, [0, 0.05, 0.08, 0.11][settings.soundLevel])
-    }
-  }, [getAudioContext, settings.soundLevel])
-
-  useEffect(
-    () => () => {
-      const context = audioContextRef.current
-      audioContextRef.current = null
-      if (context && context.state !== 'closed') {
-        void context.close().catch(() => {})
-      }
-    },
-    [],
-  )
-
-  const acrossEntries = useMemo(
-    () => puzzle.entries.filter((entry) => entry.direction === 'across'),
-    [puzzle],
-  )
-  const downEntries = useMemo(
-    () => puzzle.entries.filter((entry) => entry.direction === 'down'),
-    [puzzle],
-  )
-  const orderedEntries = useMemo(
-    () => [...acrossEntries, ...downEntries],
-    [acrossEntries, downEntries],
-  )
-  const solvedEntryIds = useMemo(
-    () =>
-      new Set(
-        puzzle.entries
-          .filter((entry) =>
-            entry.cells.every(
-              (index) => state.guesses[index] === puzzle.cells[index]?.solution,
-            ),
-          )
-          .map((entry) => entry.id),
-      ),
-    [puzzle, state.guesses],
-  )
-  const assistFor = useCallback(
-    (entry: CrosswordEntry) => clueAssist(entry, settings.solveMode, locale),
-    [locale, settings.solveMode],
-  )
-  const activeEntry =
-    entryFor(puzzle, state.selectedCell, state.direction) ?? orderedEntries[0]
-  const revealTargetKey = revealTargetFor(
-    toolScope,
-    state.selectedCell,
-    activeEntry.id,
-  )
-  const revealArmed = armedRevealTarget === revealTargetKey
-  const sweepEntry = wordSweep
-    ? puzzle.entries.find((entry) => entry.id === wordSweep.entryId)
-    : undefined
-  const selectedEntryCells = useMemo(
-    () => new Set(activeEntry.cells),
-    [activeEntry],
-  )
-  const whiteIndices = useMemo(
-    () =>
-      puzzle.cells.flatMap((cell) =>
-        cell.solution === null ? [] : [cell.index],
-      ),
-    [puzzle],
-  )
-  const solutions = useMemo(
-    () =>
-      Object.fromEntries(
-        puzzle.cells.flatMap((cell) =>
-          cell.solution === null ? [] : [[cell.index, cell.solution]],
-        ),
-      ),
-    [puzzle],
-  )
-
-  latestStateRef.current = state
-
-  const closeDialog = useCallback(() => {
-    setDialog(null)
-    window.requestAnimationFrame(() => openerRef.current?.focus())
-  }, [])
-
-  const openDialog = useCallback(
-    (name: Exclude<DialogName, null>, opener?: HTMLElement) => {
-      const activeElement =
-        document.activeElement instanceof HTMLElement
-          ? document.activeElement
-          : null
-      inputRef.current?.blur()
-      openerRef.current = opener ?? activeElement
-      setDialog(name)
-    },
-    [],
-  )
-
-  const save = useCallback(
-    (current: CrosswordState) => {
-      writeLocalJson(
-        progressKey(puzzle),
-        serializeCrosswordState(current, puzzle.id),
-      )
-    },
-    [puzzle],
-  )
-
-  const restartPuzzle = useCallback(() => {
-    const freshState = createCrosswordState(puzzle)
-    latestStateRef.current = freshState
-    previousStatusRef.current = freshState.status
-    fullIncorrectRef.current = ''
-    focusGridRef.current = true
-    openerRef.current = null
-    setWordSweep(null)
-    setArmedRevealTarget(null)
-    document.querySelector<HTMLDialogElement>('dialog[open]')?.close()
-    setDialog(null)
-    dispatch({ type: 'HYDRATE', state: freshState })
-    save(freshState)
-    announce(copy.restartedAnnouncement)
-    window.requestAnimationFrame(() => focusCellAt(freshState.selectedCell))
-  }, [announce, copy.restartedAnnouncement, focusCellAt, puzzle, save])
-
-  const startPuzzle = useCallback(() => {
-    focusGridRef.current = true
-    dispatch({ type: 'START', now: Date.now() })
-    announce(copy.startedAnnouncement)
-    window.requestAnimationFrame(() =>
-      focusCellAt(latestStateRef.current.selectedCell),
-    )
-  }, [announce, copy.startedAnnouncement, focusCellAt])
-
-  const resumePuzzle = useCallback(() => {
-    const mobile = window.matchMedia(MOBILE_LAYOUT_MEDIA).matches
-    const selectedCell = latestStateRef.current.selectedCell
-    focusGridRef.current = !mobile
-    announce(copy.resumedAnnouncement)
-    dispatch({ type: 'RESUME', now: Date.now() })
-    window.requestAnimationFrame(() => {
-      if (mobile) {
-        bringCellIntoView(selectedCell)
-        inputRef.current?.focus({ preventScroll: true })
-      } else {
-        focusCellAt(selectedCell)
-      }
-    })
-  }, [announce, bringCellIntoView, copy.resumedAnnouncement, focusCellAt])
-
-  const changeLocale = useCallback(
-    (nextLocale: CrosswordLocale) => {
-      if (nextLocale === locale) return
-      const current = latestStateRef.current
-      const persisted =
-        current.status === 'playing'
-          ? crosswordReducer(current, {
-              type: 'PAUSE',
-              now: Date.now(),
-              automatic: false,
-            })
-          : current
-      save(persisted)
-      setLocale(nextLocale)
-    },
-    [locale, save, setLocale],
-  )
-
-  useEffect(() => {
-    const loaded = readLocalJson(progressKey(puzzle))
-    if (loaded.status === 'ok') {
-      const restored = restoreCrosswordState(loaded.value, puzzle)
-      if (restored) dispatch({ type: 'HYDRATE', state: restored })
-    }
-    setHydrated(true)
-  }, [puzzle])
-
-  useEffect(() => {
-    if (!hydrated) return
-    const timeout = window.setTimeout(() => save(state), 180)
-    return () => window.clearTimeout(timeout)
-  }, [hydrated, save, state])
-
-  useEffect(() => {
-    const flush = () => save(latestStateRef.current)
-    const onVisibility = () => {
-      if (document.hidden) {
-        const current = latestStateRef.current
-        if (current.status === 'playing') {
-          const action = {
-            type: 'PAUSE' as const,
-            now: Date.now(),
-            automatic: true,
-          }
-          const pausedState = crosswordReducer(current, action)
-          latestStateRef.current = pausedState
-          dispatch(action)
-          save(pausedState)
-        } else {
-          save(current)
-        }
-        return
-      }
-      if (
-        latestStateRef.current.status === 'paused' &&
-        latestStateRef.current.autoPaused
-      ) {
-        dispatch({ type: 'RESUME', now: Date.now() })
-      }
-    }
-    window.addEventListener('pagehide', flush)
-    document.addEventListener('visibilitychange', onVisibility)
-    return () => {
-      window.removeEventListener('pagehide', flush)
-      document.removeEventListener('visibilitychange', onVisibility)
-    }
-  }, [save])
-
-  useEffect(() => {
-    bringCellIntoView(state.selectedCell)
-    if (focusGridRef.current) focusCellAt(state.selectedCell)
-  }, [bringCellIntoView, focusCellAt, state.selectedCell])
-
-  useEffect(() => {
-    setMobileClueDirection(activeEntry.direction)
-  }, [activeEntry.direction])
-
-  useEffect(() => {
-    if (!wordSweep) return
-    const timeout = window.setTimeout(() => setWordSweep(null), 900)
-    return () => window.clearTimeout(timeout)
-  }, [wordSweep])
-
-  useEffect(() => {
-    if (!armedRevealTarget) return
-    const timeout = window.setTimeout(() => setArmedRevealTarget(null), 5000)
-    const disarm = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== 'Escape') return
-      setArmedRevealTarget(null)
-      announce(copy.revealDisarmed)
-    }
-    window.addEventListener('keydown', disarm)
-    return () => {
-      window.clearTimeout(timeout)
-      window.removeEventListener('keydown', disarm)
-    }
-  }, [announce, armedRevealTarget, copy.revealDisarmed])
-
-  useEffect(() => {
-    if (armedRevealTarget && armedRevealTarget !== revealTargetKey) {
-      setArmedRevealTarget(null)
-    }
-  }, [armedRevealTarget, revealTargetKey])
-
-  const centerClueInList = useCallback(
-    (
-      list: HTMLDivElement | null,
-      entryId: string,
-      behavior: ScrollBehavior = 'smooth',
-    ) => {
-      const clue = list?.querySelector<HTMLElement>(
-        `[data-clue-id="${entryId}"]`,
-      )
-      if (!list || !clue) return
-      const listBounds = list.getBoundingClientRect()
-      const clueBounds = clue.getBoundingClientRect()
-      const top =
-        list.scrollTop +
-        clueBounds.top -
-        listBounds.top -
-        (list.clientHeight - clueBounds.height) / 2
-      const reducedMotion =
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-        document.documentElement.classList.contains('fx-quiet')
-
-      list.scrollTo({
-        top: Math.max(0, Math.min(top, list.scrollHeight - list.clientHeight)),
-        behavior: reducedMotion ? 'auto' : behavior,
-      })
-    },
-    [],
-  )
-
-  useEffect(() => {
-    const list =
-      activeEntry.direction === 'across'
-        ? acrossListRef.current
-        : downListRef.current
-    const frame = window.requestAnimationFrame(() => {
-      centerClueInList(list, activeEntry.id)
-      if (mobileClueDirection === activeEntry.direction) {
-        centerClueInList(mobileListRef.current, activeEntry.id)
-      }
-    })
-    return () => window.cancelAnimationFrame(frame)
-  }, [activeEntry, centerClueInList, mobileClueDirection])
-
-  useEffect(() => {
-    const mobileLayout = window.matchMedia(MOBILE_LAYOUT_MEDIA)
-    const viewport = window.visualViewport
-    let frame = 0
-    const recenterMobileClue = () => {
-      window.cancelAnimationFrame(frame)
-      frame = window.requestAnimationFrame(() => {
-        if (
-          mobileLayout.matches &&
-          mobileClueDirection === activeEntry.direction
-        ) {
-          centerClueInList(mobileListRef.current, activeEntry.id, 'auto')
-        }
-      })
-    }
-
-    recenterMobileClue()
-    mobileLayout.addEventListener('change', recenterMobileClue)
-    viewport?.addEventListener('resize', recenterMobileClue)
-    viewport?.addEventListener('scroll', recenterMobileClue)
-    window.addEventListener('resize', recenterMobileClue)
-    return () => {
-      window.cancelAnimationFrame(frame)
-      mobileLayout.removeEventListener('change', recenterMobileClue)
-      viewport?.removeEventListener('resize', recenterMobileClue)
-      viewport?.removeEventListener('scroll', recenterMobileClue)
-      window.removeEventListener('resize', recenterMobileClue)
-    }
-  }, [
-    activeEntry.direction,
-    activeEntry.id,
-    centerClueInList,
-    mobileClueDirection,
-  ])
-
-  const focusActiveClue = useCallback(() => {
-    const mobile = window.matchMedia(MOBILE_LAYOUT_MEDIA).matches
-    const list = mobile
-      ? mobileListRef.current
-      : activeEntry.direction === 'across'
-        ? acrossListRef.current
-        : downListRef.current
-    const clue = list?.querySelector<HTMLButtonElement>(
-      `[data-clue-id="${activeEntry.id}"]`,
-    )
-    clue?.focus({ preventScroll: true })
-    centerClueInList(list, activeEntry.id, 'auto')
-  }, [activeEntry.direction, activeEntry.id, centerClueInList])
-
-  useEffect(() => {
-    const filled = whiteIndices.every((index) => state.guesses[index])
-    if (!filled) {
-      fullIncorrectRef.current = ''
-      return
-    }
-    const correct = whiteIndices.every(
-      (index) => state.guesses[index] === puzzle.cells[index]?.solution,
-    )
-    if (correct && state.status !== 'complete') {
-      dispatch({ type: 'COMPLETE', now: Date.now() })
-      return
-    }
-    if (!correct) {
-      const signature = state.guesses.join('')
-      if (fullIncorrectRef.current !== signature) {
-        fullIncorrectRef.current = signature
-        announce(copy.notCorrect)
-      }
-    }
-  }, [
-    announce,
-    copy.notCorrect,
-    puzzle,
-    state.guesses,
-    state.status,
-    whiteIndices,
-  ])
-
-  useEffect(() => {
-    if (
-      state.status === 'complete' &&
-      previousStatusRef.current !== 'complete'
-    ) {
-      save(state)
-      openDialog('complete')
-    }
-    previousStatusRef.current = state.status
-  }, [openDialog, save, state])
-
-  const chooseEntry = useCallback(
-    (entry: CrosswordEntry, keepNativeKeyboard = false) => {
-      const index = firstOpenCell(entry, latestStateRef.current.guesses)
-      focusGridRef.current = !keepNativeKeyboard
-      dispatch({
-        type: 'SELECT',
-        index,
-        direction: entry.direction,
-      })
-      window.requestAnimationFrame(() => {
-        if (keepNativeKeyboard) {
-          bringCellIntoView(index)
-          inputRef.current?.focus({ preventScroll: true })
-        } else {
-          focusCellAt(index)
-        }
-      })
-    },
-    [bringCellIntoView, focusCellAt],
-  )
-
-  const chooseMobileDirection = useCallback(
-    (direction: CrosswordDirection) => {
-      const current = latestStateRef.current
-      const entries = direction === 'across' ? acrossEntries : downEntries
-      const entry =
-        entryFor(puzzle, current.selectedCell, direction) ??
-        entries.find((candidate) =>
-          candidate.cells.some((index) => !current.guesses[index]),
-        ) ??
-        entries[0]
-      if (!entry) return
-      setMobileClueDirection(direction)
-      chooseEntry(entry, true)
-    },
-    [acrossEntries, chooseEntry, downEntries, puzzle],
-  )
-
-  const moveToClue = useCallback(
-    (delta: -1 | 1, keepNativeKeyboard = false) => {
-      const found = orderedEntries.findIndex(
-        (entry) => entry.id === activeEntry.id,
-      )
-      const current = found >= 0 ? found : 0
-      const next =
-        (current + delta + orderedEntries.length) % orderedEntries.length
-      shiftCarriage()
-      chooseEntry(orderedEntries[next], keepNativeKeyboard)
-    },
-    [activeEntry.id, chooseEntry, orderedEntries, shiftCarriage],
-  )
-
-  const advanceWithinEntry = useCallback(
-    (
-      index: number,
-      delta: -1 | 1,
-      skipFilled = settings.skipFilled,
-      guesses = latestStateRef.current.guesses,
-    ): { index: number; direction: CrosswordDirection } => {
-      const entry =
-        entryFor(puzzle, index, latestStateRef.current.direction) ?? activeEntry
-      const position = entry.cells.indexOf(index)
-      const candidates =
-        delta === 1
-          ? entry.cells.slice(position + 1)
-          : entry.cells.slice(0, position).reverse()
-      if (skipFilled) {
-        const open = candidates.find((cellIndex) => !guesses[cellIndex])
-        if (open !== undefined) {
-          return { index: open, direction: entry.direction }
-        }
-      } else {
-        const adjacent = candidates[0]
-        if (adjacent !== undefined) {
-          return { index: adjacent, direction: entry.direction }
-        }
-      }
-
-      const clueIndex = orderedEntries.findIndex(
-        (candidate) => candidate.id === entry.id,
-      )
-      for (let step = 1; step < orderedEntries.length; step += 1) {
-        const nextEntry =
-          orderedEntries[
-            (clueIndex + step * delta + orderedEntries.length) %
-              orderedEntries.length
-          ]
-        const entryCells =
-          delta === 1 ? nextEntry.cells : [...nextEntry.cells].reverse()
-        const nextIndex = skipFilled
-          ? entryCells.find((cellIndex) => !guesses[cellIndex])
-          : entryCells[0]
-        if (nextIndex !== undefined) {
-          return { index: nextIndex, direction: nextEntry.direction }
-        }
-      }
-
-      return { index, direction: entry.direction }
-    },
-    [activeEntry, orderedEntries, puzzle, settings.skipFilled],
-  )
-
-  const writeLetter = useCallback(
-    (value: string) => {
-      if (
-        latestStateRef.current.status === 'paused' ||
-        latestStateRef.current.status === 'complete'
-      ) {
-        return
-      }
-      const letter = normalizeLetter(value)
-      if (!letter) return
-      const current = latestStateRef.current
-      const index = current.selectedCell
-      const currentDirection = current.direction
-      const projectedGuesses = [...current.guesses]
-      projectedGuesses[index] = letter
-      const destination = advanceWithinEntry(
-        index,
-        1,
-        settings.skipFilled,
-        projectedGuesses,
-      )
-      focusGridRef.current = document.activeElement !== inputRef.current
-      if (current.revealedCells[index]) {
-        dispatch({
-          type: 'SELECT',
-          index: destination.index,
-          direction: destination.direction,
-        })
-        return
-      }
-      const solvedEntry = puzzle.cells[index]?.entryIds
-        .map((entryId) =>
-          puzzle.entries.find((candidate) => candidate.id === entryId),
-        )
-        .find((entry) => {
-          if (!entry) return false
-          const wasSolved = entry.cells.every(
-            (cellIndex) =>
-              current.guesses[cellIndex] === puzzle.cells[cellIndex]?.solution,
-          )
-          const isSolved = entry.cells.every(
-            (cellIndex) =>
-              projectedGuesses[cellIndex] === puzzle.cells[cellIndex]?.solution,
-          )
-          return !wasSolved && isSolved
-        })
-      clickKey()
-      dispatch({
-        type: 'WRITE',
-        index,
-        value: letter,
-        nextIndex: destination.index,
-        checked: settings.autoCheck,
-        incorrect:
-          settings.autoCheck && letter !== puzzle.cells[index]?.solution,
-        now: Date.now(),
-      })
-      if (destination.direction !== currentDirection) {
-        dispatch({ type: 'SET_DIRECTION', direction: destination.direction })
-      }
-      if (solvedEntry) {
-        sweepRunRef.current += 1
-        setWordSweep({
-          entryId: solvedEntry.id,
-          run: sweepRunRef.current,
-        })
-        ringTypewriterBell()
-      }
-    },
-    [
-      advanceWithinEntry,
-      clickKey,
-      puzzle,
-      ringTypewriterBell,
-      settings.autoCheck,
-      settings.skipFilled,
-    ],
-  )
-
-  const eraseBackward = useCallback(() => {
-    const current = latestStateRef.current
-    if (current.status === 'paused' || current.status === 'complete') return
-    focusGridRef.current = document.activeElement !== inputRef.current
-
-    const erasable = (index: number) =>
-      Boolean(current.guesses[index]) && !current.revealedCells[index]
-
-    // Erase in place when the selected cell holds a letter; otherwise walk
-    // one cell back per press, erasing only when the target has one. The
-    // walk must not stall on empty or revealed cells.
-    const selected = current.selectedCell
-    const target = erasable(selected)
-      ? { index: selected, direction: current.direction }
-      : advanceWithinEntry(selected, -1, false)
-    if (!erasable(target.index)) {
-      dispatch({
-        type: 'SELECT',
-        index: target.index,
-        direction: target.direction,
-      })
-      return
-    }
-
-    clickKey()
-    dispatch({
-      type: 'CLEAR',
-      index: target.index,
-      nextIndex: target.index,
-      now: Date.now(),
-    })
-    if (target.direction !== current.direction) {
-      dispatch({ type: 'SET_DIRECTION', direction: target.direction })
-    }
-  }, [advanceWithinEntry, clickKey])
-
-  const selectCell = useCallback(
-    (index: number, nativeKeyboard: boolean, reclick: boolean) => {
-      const current = latestStateRef.current
-      const cell = puzzle.cells[index]
-      if (!cell || cell.solution === null) return
-      let direction = availableDirection(puzzle, index, current.direction)
-
-      // Focus fires before click and already moves the selection, so a plain
-      // selectedCell comparison would flip direction on every fresh click.
-      // Only a click on the cell that was selected at pointerdown toggles.
-      if (
-        reclick &&
-        index === current.selectedCell &&
-        cell.entryIds.length > 1
-      ) {
-        direction = current.direction === 'across' ? 'down' : 'across'
-        announce(copy.directionChanged(directionLabel(direction, locale)))
-      }
-      focusGridRef.current = !nativeKeyboard
-      dispatch({ type: 'SELECT', index, direction })
-      if (nativeKeyboard) {
-        inputRef.current?.focus({ preventScroll: true })
-      }
-    },
-    [announce, copy, locale, puzzle],
-  )
-
-  const moveGeometrically = useCallback(
-    (rowDelta: number, columnDelta: number) => {
-      const current = latestStateRef.current
-      const { width, height } = puzzle
-      let row = Math.floor(current.selectedCell / width) + rowDelta
-      let column = (current.selectedCell % width) + columnDelta
-      while (row >= 0 && row < height && column >= 0 && column < width) {
-        const index = row * width + column
-        if (puzzle.cells[index]?.solution !== null) {
-          const requested: CrosswordDirection =
-            columnDelta === 0 ? 'down' : 'across'
-          const direction = availableDirection(puzzle, index, requested)
-          focusGridRef.current = true
-          dispatch({ type: 'SELECT', index, direction })
-          return
-        }
-        row += rowDelta
-        column += columnDelta
-      }
-    },
-    [puzzle],
-  )
-
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLElement>) => {
-      if (event.nativeEvent.isComposing || composingRef.current) return
-      const current = latestStateRef.current
-      const hasCommand = event.metaKey || event.ctrlKey
-      const lower = event.key.toLowerCase()
-
-      if (hasCommand && lower === 'z') {
-        event.preventDefault()
-        dispatch({ type: event.shiftKey ? 'REDO' : 'UNDO' })
-        return
-      }
-      if (event.altKey || (hasCommand && !['home', 'end'].includes(lower))) {
-        return
-      }
-
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault()
-        moveGeometrically(0, -1)
-      } else if (event.key === 'ArrowRight') {
-        event.preventDefault()
-        moveGeometrically(0, 1)
-      } else if (event.key === 'ArrowUp') {
-        event.preventDefault()
-        moveGeometrically(-1, 0)
-      } else if (event.key === 'ArrowDown') {
-        event.preventDefault()
-        moveGeometrically(1, 0)
-      } else if (event.key === 'Enter') {
-        const cell = puzzle.cells[current.selectedCell]
-        if (cell && cell.entryIds.length > 1) {
-          event.preventDefault()
-          const direction = current.direction === 'across' ? 'down' : 'across'
-          dispatch({ type: 'SET_DIRECTION', direction })
-          announce(copy.directionChanged(directionLabel(direction, locale)))
-        }
-      } else if (event.key === 'Backspace') {
-        event.preventDefault()
-        eraseBackward()
-      } else if (event.key === 'Delete') {
-        event.preventDefault()
-        if (current.status === 'paused' || current.status === 'complete') return
-        if (
-          current.guesses[current.selectedCell] &&
-          !current.revealedCells[current.selectedCell]
-        ) {
-          clickKey()
-        }
-        dispatch({
-          type: 'CLEAR',
-          index: current.selectedCell,
-          nextIndex: current.selectedCell,
-          now: Date.now(),
-        })
-      } else if (event.key === ' ') {
-        event.preventDefault()
-        if (current.status === 'paused' || current.status === 'complete') return
-        if (!current.guesses[current.selectedCell]) {
-          dispatch({ type: 'TOGGLE_DIRECTION' })
-        } else {
-          const destination = advanceWithinEntry(current.selectedCell, 1)
-          if (!current.revealedCells[current.selectedCell]) clickKey()
-          dispatch({
-            type: 'CLEAR',
-            index: current.selectedCell,
-            nextIndex: destination.index,
-            now: Date.now(),
-          })
-          if (destination.direction !== current.direction) {
-            dispatch({
-              type: 'SET_DIRECTION',
-              direction: destination.direction,
-            })
-          }
-        }
-      } else if (event.key === 'Tab') {
-        event.preventDefault()
-        focusGridRef.current = true
-        moveToClue(event.shiftKey ? -1 : 1)
-      } else if (event.key === '[' || event.key === ']') {
-        event.preventDefault()
-        focusGridRef.current = true
-        moveToClue(event.key === '[' ? -1 : 1)
-      } else if (event.key === 'Home' || event.key === 'End') {
-        event.preventDefault()
-        const entry =
-          entryFor(puzzle, current.selectedCell, current.direction) ??
-          activeEntry
-        const index = hasCommand
-          ? event.key === 'Home'
-            ? whiteIndices[0]
-            : (whiteIndices.at(-1) ?? current.selectedCell)
-          : event.key === 'Home'
-            ? entry.cells[0]
-            : (entry.cells.at(-1) ?? current.selectedCell)
-        focusGridRef.current = true
-        dispatch({
-          type: 'SELECT',
-          index,
-          direction: availableDirection(puzzle, index, current.direction),
-        })
-      } else if (event.key === 'Escape') {
-        event.preventDefault()
-        focusGridRef.current = false
-        focusActiveClue()
-      } else if (event.key === '?') {
-        event.preventDefault()
-        openDialog('help', event.currentTarget)
-      } else if (!hasCommand && !event.altKey && event.key.length === 1) {
-        // Named keys ('Shift', 'CapsLock', 'Dead', 'F1'…) must never reach
-        // the normalizer: it keeps the last A-Z glyph, so SHIFT typed a T.
-        const letter = normalizeLetter(event.key)
-        if (letter) {
-          event.preventDefault()
-          writeLetter(letter)
-        }
-      }
-    },
-    [
-      activeEntry,
-      advanceWithinEntry,
-      announce,
-      clickKey,
-      copy,
-      eraseBackward,
-      focusActiveClue,
-      locale,
-      moveGeometrically,
-      moveToClue,
-      openDialog,
-      puzzle,
-      whiteIndices,
-      writeLetter,
-    ],
-  )
-
-  const indicesFor = useCallback(
-    (scope: Scope) => {
-      if (scope === 'cell') return [latestStateRef.current.selectedCell]
-      if (scope === 'answer') return [...activeEntry.cells]
-      return whiteIndices
-    },
-    [activeEntry.cells, whiteIndices],
-  )
-
-  const check = (scope: Scope) => {
-    const indices = indicesFor(scope)
-    dispatch({ type: 'CHECK', indices, solutions })
-    const count = indices.filter(
-      (index) =>
-        latestStateRef.current.guesses[index] &&
-        latestStateRef.current.guesses[index] !== solutions[index],
-    ).length
-    announce(count > 0 ? copy.errorsFound(count) : copy.noErrors)
-  }
-
-  const reveal = (scope: Scope) => {
-    dispatch({
-      type: 'REVEAL',
-      indices: indicesFor(scope),
-      solutions,
-      now: Date.now(),
-    })
-    announce(copy.revealDone)
-  }
-
-  const requestReveal = () => {
-    if (!revealArmed) {
-      setArmedRevealTarget(revealTargetKey)
-      announce(copy.revealArmed)
-      return
-    }
-    setArmedRevealTarget(null)
-    reveal(toolScope)
-  }
-
-  const publicationDate = new Intl.DateTimeFormat(
-    locale === 'en' ? 'en-US' : 'es-ES',
-    {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      timeZone: 'UTC',
-    },
-  ).format(new Date(`${puzzle.publicationDate}T12:00:00Z`))
+  settings: GameSettings
+  state: CrosswordState
+  toolScope: Scope
+}) => {
   const paused = state.status === 'paused'
   const complete = state.status === 'complete'
-  const showStart = hydrated && state.status === 'not-started'
-  const gridSizeLabel = `${puzzle.width}×${puzzle.height}`
-
-  useEffect(() => {
-    if (showStart) {
-      document.getElementById('crossword-start-key')?.focus()
-    }
-  }, [showStart])
-  const checksUsed = state.checkedCells.some(Boolean)
-  const revealsUsed = state.revealedCells.some(Boolean)
-  const filingStatus = !hydrated
-    ? copy.progressLoading
-    : complete
-      ? copy.allFiled
-      : copy.clueProgress(solvedEntryIds.size, puzzle.entries.length)
-
-  const shareResult = async () => {
-    const card = shareCard(puzzle, state)
-    if ((await shareText({ text: card })) !== 'unsupported') return
-    try {
-      await navigator.clipboard.writeText(card)
-      announce(copy.resultCopied)
-    } catch {
-      announce(card.replaceAll('\n', '. '))
-    }
-  }
-
-  const solveModes = ['standard', 'guided'] as const
-  const scopeValues = ['cell', 'answer', 'puzzle'] as const
+  const boardLocked = paused || complete
   const solveModeLabels = [copy.standardMode, copy.guidedMode] as const
   const scopeLabels = [
     copy.cellScope,
@@ -1879,7 +1008,7 @@ function CrosswordSession({
     copy.puzzleScope,
   ] as const
   const scopeLabel =
-    scopeLabels[scopeValues.indexOf(toolScope)] ?? copy.answerScope
+    scopeLabels[SCOPE_VALUES.indexOf(toolScope)] ?? copy.answerScope
   const soundLabels = [
     copy.soundOff,
     copy.soundLow,
@@ -1887,7 +1016,7 @@ function CrosswordSession({
     copy.soundHigh,
   ] as const
 
-  const renderToolbar = (placement: 'desktop' | 'mobile') => (
+  return (
     <fieldset
       className={cn(
         css.toolbar,
@@ -1900,11 +1029,7 @@ function CrosswordSession({
         type='button'
         className={css.timerTool}
         aria-pressed={settings.showTimer}
-        onClick={() => {
-          const showTimer = !settings.showTimer
-          setSettings((current) => ({ ...current, showTimer }))
-          announce(showTimer ? copy.timerShown : copy.timerHidden)
-        }}
+        onClick={onToggleTimer}
       >
         <span>{copy.timer}</span>
         <strong>
@@ -1923,30 +1048,27 @@ function CrosswordSession({
       <div className={css.parameterBank}>
         <ParameterSlider
           label={copy.assistControl}
-          max={solveModes.length - 1}
-          value={solveModes.indexOf(settings.solveMode)}
+          max={SOLVE_MODES.length - 1}
+          value={SOLVE_MODES.indexOf(settings.solveMode)}
           valueText={
-            solveModeLabels[solveModes.indexOf(settings.solveMode)] ??
+            solveModeLabels[SOLVE_MODES.indexOf(settings.solveMode)] ??
             copy.standardMode
           }
           tone='blue'
           onChange={(value) =>
             setSettings((current) => ({
               ...current,
-              solveMode: solveModes[value] ?? 'standard',
+              solveMode: SOLVE_MODES[value] ?? 'standard',
             }))
           }
         />
         <ParameterSlider
           label={copy.scopeControl}
-          max={scopeValues.length - 1}
-          value={scopeValues.indexOf(toolScope)}
+          max={SCOPE_VALUES.length - 1}
+          value={SCOPE_VALUES.indexOf(toolScope)}
           valueText={scopeLabel}
           tone='ivory'
-          onChange={(value) => {
-            setArmedRevealTarget(null)
-            setToolScope(scopeValues[value] ?? 'answer')
-          }}
+          onChange={(value) => onScopeChange(SCOPE_VALUES[value] ?? 'answer')}
         />
         <ParameterKnob
           label={copy.soundControl}
@@ -1957,7 +1079,10 @@ function CrosswordSession({
           onChange={(value) =>
             setSettings((current) => ({
               ...current,
-              soundLevel: Math.max(0, Math.min(3, value)) as SoundLevel,
+              soundLevel: Math.max(
+                0,
+                Math.min(MAX_SOUND_LEVEL, value),
+              ) as SoundLevel,
             }))
           }
         />
@@ -2021,19 +1146,13 @@ function CrosswordSession({
           disabled={state.status === 'not-started'}
           onClick={(button) => {
             if (complete) {
-              restartPuzzle()
+              onRestart()
               return
             }
-            openerRef.current = button
             if (paused) {
-              resumePuzzle()
+              onResumeFrom(button)
             } else {
-              announce(copy.pausedAnnouncement)
-              dispatch({
-                type: 'PAUSE',
-                now: Date.now(),
-                automatic: false,
-              })
+              onPauseFrom(button)
             }
           }}
         >
@@ -2060,7 +1179,7 @@ function CrosswordSession({
           label={copy.undo}
           className={css.compactTool}
           disabled={complete || state.undoStack.length === 0}
-          onClick={() => dispatch({ type: 'UNDO' })}
+          onClick={onUndo}
         >
           <span aria-hidden='true'>↶</span>
           <span>{copy.undo}</span>
@@ -2069,7 +1188,7 @@ function CrosswordSession({
           label={copy.redo}
           className={css.compactTool}
           disabled={complete || state.redoStack.length === 0}
-          onClick={() => dispatch({ type: 'REDO' })}
+          onClick={onRedo}
         >
           <span aria-hidden='true'>↷</span>
           <span>{copy.redo}</span>
@@ -2079,11 +1198,8 @@ function CrosswordSession({
           descriptionId='crossword-pencil-hint'
           className={css.pencilTool}
           active={state.pencilMode}
-          disabled={paused || complete}
-          onClick={() => {
-            announce(state.pencilMode ? copy.pencilOff : copy.pencilOn)
-            dispatch({ type: 'TOGGLE_PENCIL' })
-          }}
+          disabled={boardLocked}
+          onClick={onTogglePencil}
         >
           <span className={css.toolGlyph} aria-hidden='true'>
             <svg viewBox='0 0 16 16' aria-hidden='true'>
@@ -2097,8 +1213,8 @@ function CrosswordSession({
           label={`${copy.checkLabel}: ${scopeLabel}`}
           descriptionId='crossword-check-hint'
           className={css.checkTool}
-          disabled={paused || complete}
-          onClick={() => check(toolScope)}
+          disabled={boardLocked}
+          onClick={onCheck}
         >
           <span className={css.toolGlyph} aria-hidden='true'>
             <svg viewBox='0 0 16 16' aria-hidden='true'>
@@ -2113,8 +1229,8 @@ function CrosswordSession({
           descriptionId='crossword-reveal-hint'
           className={cn(css.revealTool, css.guardTool)}
           active={revealArmed}
-          disabled={paused || complete}
-          onClick={requestReveal}
+          disabled={boardLocked}
+          onClick={onRequestReveal}
         >
           <span className={css.toolGlyph} aria-hidden='true'>
             <svg viewBox='0 0 16 16' aria-hidden='true'>
@@ -2128,7 +1244,7 @@ function CrosswordSession({
           label={copy.help}
           hasPopup
           className={css.compactTool}
-          onClick={(button) => openDialog('help', button)}
+          onClick={onOpenHelp}
         >
           <span aria-hidden='true'>?</span>
           <span>{copy.help}</span>
@@ -2138,6 +1254,958 @@ function CrosswordSession({
       <span className={css.speakerGrille} aria-hidden='true' />
     </fieldset>
   )
+}
+
+function CrosswordSession({
+  locale,
+  puzzle,
+  hasSpanish,
+  letterFontClassName,
+  setLocale,
+  settings,
+  setSettings,
+}: {
+  locale: CrosswordLocale
+  puzzle: CrosswordPuzzle
+  hasSpanish: boolean
+  letterFontClassName: string
+  setLocale: (locale: CrosswordLocale) => void
+  settings: GameSettings
+  setSettings: (
+    value: GameSettings | ((current: GameSettings) => GameSettings),
+  ) => void
+}) {
+  const copy = COPY[locale]
+  const [state, dispatch] = useReducer(
+    crosswordReducer,
+    puzzle,
+    createCrosswordState,
+  )
+  const [hydrated, setHydrated] = useState(false)
+  const [dialog, setDialog] = useState<DialogName>(null)
+  const [completionDismissed, setCompletionDismissed] = useState(false)
+  const [announcement, setAnnouncement] = useState('')
+  const [wordSweep, setWordSweep] = useState<{
+    entryId: string
+    run: number
+  } | null>(null)
+  const [toolScope, setToolScope] = useState<Scope>('answer')
+  const [armedRevealTarget, setArmedRevealTarget] = useState<string | null>(
+    null,
+  )
+  const cellRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const inputRef = useRef<HTMLInputElement>(null)
+  const audioContextRef = useRef<AudioContext | null>(null)
+  const openerRef = useRef<HTMLElement | null>(null)
+  const focusGridRef = useRef(false)
+  const touchHandledRef = useRef(false)
+  const pointerDownCellRef = useRef<number | null>(null)
+  const composingRef = useRef(false)
+  const skipInputRef = useRef(false)
+  const latestStateRef = useRef(state)
+  const announcementNonceRef = useRef(false)
+  const sweepRunRef = useRef(0)
+  const acrossListRef = useRef<HTMLDivElement>(null)
+  const downListRef = useRef<HTMLDivElement>(null)
+  const mobileListRef = useRef<HTMLDivElement>(null)
+
+  const announce = useCallback((message: string) => {
+    announcementNonceRef.current = !announcementNonceRef.current
+    setAnnouncement(`${message}${announcementNonceRef.current ? '\u200B' : ''}`)
+  }, [])
+
+  const bringCellIntoView = (index: number) => {
+    cellRefs.current[index]?.scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest',
+    })
+  }
+
+  const focusCellAt = (index: number) => {
+    cellRefs.current[index]?.focus({ preventScroll: true })
+    bringCellIntoView(index)
+  }
+
+  const getAudioContext = () => {
+    if (settings.soundLevel === 0) return null
+    try {
+      if (
+        !audioContextRef.current ||
+        audioContextRef.current.state === 'closed'
+      ) {
+        audioContextRef.current = new AudioContext()
+      }
+      const context = audioContextRef.current
+      if (context.state === 'suspended') {
+        void context.resume().catch(() => {})
+      }
+      return context
+    } catch {
+      // Audio is tactile polish; browser restrictions must never block play.
+      return null
+    }
+  }
+
+  const clickKey = () => {
+    const context = getAudioContext()
+    if (context) {
+      playKeyClick(context, SOUND_GAINS.keyClick[settings.soundLevel])
+    }
+  }
+
+  const ringTypewriterBell = () => {
+    const context = getAudioContext()
+    if (context) {
+      playTypewriterBell(
+        context,
+        SOUND_GAINS.typewriterBell[settings.soundLevel],
+      )
+    }
+  }
+
+  const shiftCarriage = () => {
+    const context = getAudioContext()
+    if (context) {
+      playCarriageShift(context, SOUND_GAINS.carriageShift[settings.soundLevel])
+    }
+  }
+
+  useEffect(
+    () => () => {
+      const context = audioContextRef.current
+      audioContextRef.current = null
+      if (context && context.state !== 'closed') {
+        void context.close().catch(() => {})
+      }
+    },
+    [],
+  )
+
+  const acrossEntries = puzzle.entries.filter(
+    (entry) => entry.direction === 'across',
+  )
+  const downEntries = puzzle.entries.filter(
+    (entry) => entry.direction === 'down',
+  )
+  const orderedEntries = [...acrossEntries, ...downEntries]
+  const solvedEntryIds = new Set(
+    puzzle.entries
+      .filter((entry) =>
+        entry.cells.every(
+          (index) => state.guesses[index] === puzzle.cells[index]?.solution,
+        ),
+      )
+      .map((entry) => entry.id),
+  )
+  const assistFor = useCallback(
+    (entry: CrosswordEntry) => clueAssist(entry, settings.solveMode, locale),
+    [locale, settings.solveMode],
+  )
+  const activeEntry =
+    entryFor(puzzle, state.selectedCell, state.direction) ?? orderedEntries[0]
+  const mobileClueDirection = activeEntry.direction
+  const revealTargetKey = revealTargetFor(
+    toolScope,
+    state.selectedCell,
+    activeEntry.id,
+  )
+  const revealArmed = armedRevealTarget === revealTargetKey
+  const sweepEntry = wordSweep
+    ? puzzle.entries.find((entry) => entry.id === wordSweep.entryId)
+    : undefined
+  const selectedEntryCells = new Set(activeEntry.cells)
+  const whiteIndices = useMemo(
+    () =>
+      puzzle.cells.flatMap((cell) =>
+        cell.solution === null ? [] : [cell.index],
+      ),
+    [puzzle],
+  )
+  const solutions = useMemo(
+    () =>
+      Object.fromEntries(
+        puzzle.cells.flatMap((cell) =>
+          cell.solution === null ? [] : [[cell.index, cell.solution]],
+        ),
+      ),
+    [puzzle],
+  )
+  const paused = state.status === 'paused'
+  const complete = state.status === 'complete'
+  const boardLocked = paused || complete
+
+  useEffect(() => {
+    latestStateRef.current = state
+  }, [state])
+
+  const closeDialog = () => {
+    setDialog(null)
+    window.requestAnimationFrame(() => openerRef.current?.focus())
+  }
+
+  const openDialog = (
+    name: Exclude<DialogName, null>,
+    opener?: HTMLElement,
+  ) => {
+    const activeElement =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+    inputRef.current?.blur()
+    openerRef.current = opener ?? activeElement
+    setDialog(name)
+  }
+
+  const save = useCallback(
+    (current: CrosswordState) => {
+      writeLocalJson(
+        progressKey(puzzle),
+        serializeCrosswordState(current, puzzle.id),
+      )
+    },
+    [puzzle],
+  )
+
+  const settleBoard = useCallback(
+    (guesses: string[]) => {
+      const filled = whiteIndices.every((index) => guesses[index])
+      if (!filled) return
+      const correct = whiteIndices.every(
+        (index) => guesses[index] === solutions[index],
+      )
+      if (correct) {
+        inputRef.current?.blur()
+        dispatch({ type: 'COMPLETE', now: Date.now() })
+        return
+      }
+      announce(copy.notCorrect)
+    },
+    [announce, copy.notCorrect, solutions, whiteIndices],
+  )
+
+  const restartPuzzle = () => {
+    const freshState = createCrosswordState(puzzle)
+    latestStateRef.current = freshState
+    focusGridRef.current = true
+    openerRef.current = null
+    setWordSweep(null)
+    setArmedRevealTarget(null)
+    setCompletionDismissed(false)
+    document.querySelector<HTMLDialogElement>('dialog[open]')?.close()
+    setDialog(null)
+    dispatch({ type: 'HYDRATE', state: freshState })
+    save(freshState)
+    announce(copy.restartedAnnouncement)
+    window.requestAnimationFrame(() => focusCellAt(freshState.selectedCell))
+  }
+
+  const startPuzzle = () => {
+    focusGridRef.current = true
+    dispatch({ type: 'START', now: Date.now() })
+    announce(copy.startedAnnouncement)
+    window.requestAnimationFrame(() =>
+      focusCellAt(latestStateRef.current.selectedCell),
+    )
+  }
+
+  const resumePuzzle = () => {
+    const mobile = window.matchMedia(MOBILE_LAYOUT_MEDIA).matches
+    const selectedCell = latestStateRef.current.selectedCell
+    focusGridRef.current = !mobile
+    announce(copy.resumedAnnouncement)
+    dispatch({ type: 'RESUME', now: Date.now() })
+    window.requestAnimationFrame(() => {
+      if (mobile) {
+        bringCellIntoView(selectedCell)
+        inputRef.current?.focus({ preventScroll: true })
+      } else {
+        focusCellAt(selectedCell)
+      }
+    })
+  }
+
+  const changeLocale = (nextLocale: CrosswordLocale) => {
+    if (nextLocale === locale) return
+    const current = latestStateRef.current
+    const persisted =
+      current.status === 'playing'
+        ? crosswordReducer(current, {
+            type: 'PAUSE',
+            now: Date.now(),
+            automatic: false,
+          })
+        : current
+    save(persisted)
+    setLocale(nextLocale)
+  }
+
+  useEffect(() => {
+    const loaded = readLocalJson(progressKey(puzzle))
+    if (loaded.status === 'ok') {
+      const restored = restoreCrosswordState(loaded.value, puzzle, Date.now())
+      if (restored) {
+        dispatch({ type: 'HYDRATE', state: restored })
+        settleBoard(restored.guesses)
+      }
+    }
+    setHydrated(true)
+  }, [puzzle, settleBoard])
+
+  useEffect(() => {
+    if (!hydrated) return
+    const timeout = window.setTimeout(() => save(state), SAVE_DEBOUNCE_MS)
+    return () => window.clearTimeout(timeout)
+  }, [hydrated, save, state])
+
+  useEffect(() => {
+    const flush = () => save(latestStateRef.current)
+    const onVisibility = () => {
+      if (document.hidden) {
+        const current = latestStateRef.current
+        if (current.status === 'playing') {
+          const action = {
+            type: 'PAUSE' as const,
+            now: Date.now(),
+            automatic: true,
+          }
+          const pausedState = crosswordReducer(current, action)
+          latestStateRef.current = pausedState
+          dispatch(action)
+          save(pausedState)
+        } else {
+          save(current)
+        }
+        return
+      }
+      if (
+        latestStateRef.current.status === 'paused' &&
+        latestStateRef.current.autoPaused
+      ) {
+        dispatch({ type: 'RESUME', now: Date.now() })
+      }
+    }
+    window.addEventListener('pagehide', flush)
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      window.removeEventListener('pagehide', flush)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [save])
+
+  useEffect(() => {
+    bringCellIntoView(state.selectedCell)
+    if (focusGridRef.current) focusCellAt(state.selectedCell)
+  }, [bringCellIntoView, focusCellAt, state.selectedCell])
+
+  useEffect(() => {
+    if (!wordSweep) return
+    const timeout = window.setTimeout(() => setWordSweep(null), WORD_SWEEP_MS)
+    return () => window.clearTimeout(timeout)
+  }, [wordSweep])
+
+  useEffect(() => {
+    if (!armedRevealTarget) return
+    const timeout = window.setTimeout(
+      () => setArmedRevealTarget(null),
+      REVEAL_DISARM_MS,
+    )
+    const disarm = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setArmedRevealTarget(null)
+      announce(copy.revealDisarmed)
+    }
+    window.addEventListener('keydown', disarm)
+    return () => {
+      window.clearTimeout(timeout)
+      window.removeEventListener('keydown', disarm)
+    }
+  }, [announce, armedRevealTarget, copy.revealDisarmed])
+
+  const centerClueInList = useCallback(
+    (
+      list: HTMLDivElement | null,
+      entryId: string,
+      behavior: ScrollBehavior = 'smooth',
+    ) => {
+      const clue = list?.querySelector<HTMLElement>(
+        `[data-clue-id="${entryId}"]`,
+      )
+      if (!list || !clue) return
+      const listBounds = list.getBoundingClientRect()
+      const clueBounds = clue.getBoundingClientRect()
+      const top =
+        list.scrollTop +
+        clueBounds.top -
+        listBounds.top -
+        (list.clientHeight - clueBounds.height) / 2
+      const reducedMotion =
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        document.documentElement.classList.contains('fx-quiet')
+
+      list.scrollTo({
+        top: Math.max(0, Math.min(top, list.scrollHeight - list.clientHeight)),
+        behavior: reducedMotion ? 'auto' : behavior,
+      })
+    },
+    [],
+  )
+
+  useEffect(() => {
+    const list =
+      activeEntry.direction === 'across'
+        ? acrossListRef.current
+        : downListRef.current
+    const frame = window.requestAnimationFrame(() => {
+      centerClueInList(list, activeEntry.id)
+      centerClueInList(mobileListRef.current, activeEntry.id)
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [activeEntry, centerClueInList])
+
+  useEffect(() => {
+    const mobileLayout = window.matchMedia(MOBILE_LAYOUT_MEDIA)
+    const viewport = window.visualViewport
+    let frame = 0
+    const recenterMobileClue = () => {
+      window.cancelAnimationFrame(frame)
+      frame = window.requestAnimationFrame(() => {
+        if (mobileLayout.matches) {
+          centerClueInList(mobileListRef.current, activeEntry.id, 'auto')
+        }
+      })
+    }
+
+    recenterMobileClue()
+    mobileLayout.addEventListener('change', recenterMobileClue)
+    viewport?.addEventListener('resize', recenterMobileClue)
+    viewport?.addEventListener('scroll', recenterMobileClue)
+    window.addEventListener('resize', recenterMobileClue)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      mobileLayout.removeEventListener('change', recenterMobileClue)
+      viewport?.removeEventListener('resize', recenterMobileClue)
+      viewport?.removeEventListener('scroll', recenterMobileClue)
+      window.removeEventListener('resize', recenterMobileClue)
+    }
+  }, [activeEntry.id, centerClueInList])
+
+  const focusActiveClue = () => {
+    const mobile = window.matchMedia(MOBILE_LAYOUT_MEDIA).matches
+    const list = mobile
+      ? mobileListRef.current
+      : activeEntry.direction === 'across'
+        ? acrossListRef.current
+        : downListRef.current
+    const clue = list?.querySelector<HTMLButtonElement>(
+      `[data-clue-id="${activeEntry.id}"]`,
+    )
+    clue?.focus({ preventScroll: true })
+    centerClueInList(list, activeEntry.id, 'auto')
+  }
+
+  const chooseEntry = (entry: CrosswordEntry, keepNativeKeyboard = false) => {
+    const index = firstOpenCell(entry, latestStateRef.current.guesses)
+    focusGridRef.current = !keepNativeKeyboard
+    dispatch({
+      type: 'SELECT',
+      index,
+      direction: entry.direction,
+    })
+    window.requestAnimationFrame(() => {
+      if (keepNativeKeyboard) {
+        bringCellIntoView(index)
+        inputRef.current?.focus({ preventScroll: true })
+      } else {
+        focusCellAt(index)
+      }
+    })
+  }
+
+  const chooseMobileDirection = (direction: CrosswordDirection) => {
+    const current = latestStateRef.current
+    const entries = direction === 'across' ? acrossEntries : downEntries
+    const entry =
+      entryFor(puzzle, current.selectedCell, direction) ??
+      entries.find((candidate) =>
+        candidate.cells.some((index) => !current.guesses[index]),
+      ) ??
+      entries[0]
+    if (!entry) return
+    chooseEntry(entry, true)
+  }
+
+  const moveToClue = (delta: -1 | 1, keepNativeKeyboard = false) => {
+    const found = orderedEntries.findIndex(
+      (entry) => entry.id === activeEntry.id,
+    )
+    const current = found >= 0 ? found : 0
+    const next =
+      (current + delta + orderedEntries.length) % orderedEntries.length
+    shiftCarriage()
+    chooseEntry(orderedEntries[next], keepNativeKeyboard)
+  }
+
+  const advanceWithinEntry = useCallback(
+    (
+      index: number,
+      delta: -1 | 1,
+      skipFilled = settings.skipFilled,
+      guesses = latestStateRef.current.guesses,
+    ): { index: number; direction: CrosswordDirection } => {
+      const entry =
+        entryFor(puzzle, index, latestStateRef.current.direction) ?? activeEntry
+      const position = entry.cells.indexOf(index)
+      const candidates =
+        delta === 1
+          ? entry.cells.slice(position + 1)
+          : entry.cells.slice(0, position).reverse()
+      if (skipFilled) {
+        const open = candidates.find((cellIndex) => !guesses[cellIndex])
+        if (open !== undefined) {
+          return { index: open, direction: entry.direction }
+        }
+      } else {
+        const adjacent = candidates[0]
+        if (adjacent !== undefined) {
+          return { index: adjacent, direction: entry.direction }
+        }
+      }
+
+      const clueIndex = orderedEntries.findIndex(
+        (candidate) => candidate.id === entry.id,
+      )
+      for (let step = 1; step < orderedEntries.length; step += 1) {
+        const nextEntry =
+          orderedEntries[
+            (clueIndex + step * delta + orderedEntries.length) %
+              orderedEntries.length
+          ]
+        const entryCells =
+          delta === 1 ? nextEntry.cells : [...nextEntry.cells].reverse()
+        const nextIndex = skipFilled
+          ? entryCells.find((cellIndex) => !guesses[cellIndex])
+          : entryCells[0]
+        if (nextIndex !== undefined) {
+          return { index: nextIndex, direction: nextEntry.direction }
+        }
+      }
+
+      return { index, direction: entry.direction }
+    },
+    [activeEntry, orderedEntries, puzzle, settings.skipFilled],
+  )
+
+  const writeLetter = (value: string) => {
+    if (boardLocked) return
+    const letter = normalizeLetter(value)
+    if (!letter) return
+    const current = latestStateRef.current
+    const index = current.selectedCell
+    const currentDirection = current.direction
+    const projectedGuesses = [...current.guesses]
+    projectedGuesses[index] = letter
+    const destination = advanceWithinEntry(
+      index,
+      1,
+      settings.skipFilled,
+      projectedGuesses,
+    )
+    focusGridRef.current = document.activeElement !== inputRef.current
+    if (current.revealedCells[index]) {
+      dispatch({
+        type: 'SELECT',
+        index: destination.index,
+        direction: destination.direction,
+      })
+      return
+    }
+    const solvedEntry = puzzle.cells[index]?.entryIds
+      .map((entryId) =>
+        puzzle.entries.find((candidate) => candidate.id === entryId),
+      )
+      .find((entry) => {
+        if (!entry) return false
+        const wasSolved = entry.cells.every(
+          (cellIndex) =>
+            current.guesses[cellIndex] === puzzle.cells[cellIndex]?.solution,
+        )
+        const isSolved = entry.cells.every(
+          (cellIndex) =>
+            projectedGuesses[cellIndex] === puzzle.cells[cellIndex]?.solution,
+        )
+        return !wasSolved && isSolved
+      })
+    clickKey()
+    dispatch({
+      type: 'WRITE',
+      index,
+      value: letter,
+      nextIndex: destination.index,
+      checked: settings.autoCheck,
+      incorrect: settings.autoCheck && letter !== puzzle.cells[index]?.solution,
+      now: Date.now(),
+    })
+    if (destination.direction !== currentDirection) {
+      dispatch({ type: 'SET_DIRECTION', direction: destination.direction })
+    }
+    if (solvedEntry) {
+      sweepRunRef.current += 1
+      setWordSweep({
+        entryId: solvedEntry.id,
+        run: sweepRunRef.current,
+      })
+      ringTypewriterBell()
+    }
+    settleBoard(projectedGuesses)
+  }
+
+  const eraseBackward = () => {
+    const current = latestStateRef.current
+    if (boardLocked) return
+    focusGridRef.current = document.activeElement !== inputRef.current
+
+    const erasable = (index: number) =>
+      Boolean(current.guesses[index]) && !current.revealedCells[index]
+
+    const selected = current.selectedCell
+    const target = erasable(selected)
+      ? { index: selected, direction: current.direction }
+      : advanceWithinEntry(selected, -1, false)
+    if (!erasable(target.index)) {
+      dispatch({
+        type: 'SELECT',
+        index: target.index,
+        direction: target.direction,
+      })
+      return
+    }
+
+    clickKey()
+    dispatch({
+      type: 'CLEAR',
+      index: target.index,
+      nextIndex: target.index,
+      now: Date.now(),
+    })
+    if (target.direction !== current.direction) {
+      dispatch({ type: 'SET_DIRECTION', direction: target.direction })
+    }
+  }
+
+  const undoMove = () => {
+    const previous = latestStateRef.current.undoStack.at(-1)
+    dispatch({ type: 'UNDO' })
+    if (previous) settleBoard(previous.guesses)
+  }
+
+  const redoMove = () => {
+    const next = latestStateRef.current.redoStack[0]
+    dispatch({ type: 'REDO' })
+    if (next) settleBoard(next.guesses)
+  }
+
+  const selectCell = (
+    index: number,
+    nativeKeyboard: boolean,
+    reclick: boolean,
+  ) => {
+    const current = latestStateRef.current
+    const cell = puzzle.cells[index]
+    if (!cell || cell.solution === null) return
+    let direction = availableDirection(puzzle, index, current.direction)
+
+    // Focus fires before click and already moves the selection, so a plain
+    // selectedCell comparison would flip direction on every fresh click.
+    // Only a click on the cell that was selected at pointerdown toggles.
+    if (reclick && index === current.selectedCell && cell.entryIds.length > 1) {
+      direction = current.direction === 'across' ? 'down' : 'across'
+      announce(copy.directionChanged(directionLabel(direction, locale)))
+    }
+    focusGridRef.current = !nativeKeyboard
+    dispatch({ type: 'SELECT', index, direction })
+    if (nativeKeyboard) {
+      inputRef.current?.focus({ preventScroll: true })
+    }
+  }
+
+  const moveGeometrically = (rowDelta: number, columnDelta: number) => {
+    const current = latestStateRef.current
+    const { width, height } = puzzle
+    let row = Math.floor(current.selectedCell / width) + rowDelta
+    let column = (current.selectedCell % width) + columnDelta
+    while (row >= 0 && row < height && column >= 0 && column < width) {
+      const index = row * width + column
+      if (puzzle.cells[index]?.solution !== null) {
+        const requested: CrosswordDirection =
+          columnDelta === 0 ? 'down' : 'across'
+        const direction = availableDirection(puzzle, index, requested)
+        focusGridRef.current = true
+        dispatch({ type: 'SELECT', index, direction })
+        return
+      }
+      row += rowDelta
+      column += columnDelta
+    }
+  }
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.nativeEvent.isComposing || composingRef.current) return
+    const current = latestStateRef.current
+    const hasCommand = event.metaKey || event.ctrlKey
+    const lower = event.key.toLowerCase()
+
+    if (hasCommand && lower === 'z') {
+      event.preventDefault()
+      if (event.shiftKey) {
+        redoMove()
+      } else {
+        undoMove()
+      }
+      return
+    }
+    if (event.altKey || (hasCommand && !['home', 'end'].includes(lower))) {
+      return
+    }
+
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      moveGeometrically(0, -1)
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      moveGeometrically(0, 1)
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      moveGeometrically(-1, 0)
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      moveGeometrically(1, 0)
+    } else if (event.key === 'Enter') {
+      const cell = puzzle.cells[current.selectedCell]
+      if (cell && cell.entryIds.length > 1) {
+        event.preventDefault()
+        const direction = current.direction === 'across' ? 'down' : 'across'
+        dispatch({ type: 'SET_DIRECTION', direction })
+        announce(copy.directionChanged(directionLabel(direction, locale)))
+      }
+    } else if (event.key === 'Backspace') {
+      event.preventDefault()
+      eraseBackward()
+    } else if (event.key === 'Delete') {
+      event.preventDefault()
+      if (boardLocked) return
+      if (
+        current.guesses[current.selectedCell] &&
+        !current.revealedCells[current.selectedCell]
+      ) {
+        clickKey()
+      }
+      dispatch({
+        type: 'CLEAR',
+        index: current.selectedCell,
+        nextIndex: current.selectedCell,
+        now: Date.now(),
+      })
+    } else if (event.key === ' ') {
+      event.preventDefault()
+      if (boardLocked) return
+      if (!current.guesses[current.selectedCell]) {
+        dispatch({ type: 'TOGGLE_DIRECTION' })
+      } else {
+        const destination = advanceWithinEntry(current.selectedCell, 1)
+        if (!current.revealedCells[current.selectedCell]) clickKey()
+        dispatch({
+          type: 'CLEAR',
+          index: current.selectedCell,
+          nextIndex: destination.index,
+          now: Date.now(),
+        })
+        if (destination.direction !== current.direction) {
+          dispatch({
+            type: 'SET_DIRECTION',
+            direction: destination.direction,
+          })
+        }
+      }
+    } else if (event.key === 'Tab') {
+      event.preventDefault()
+      focusGridRef.current = true
+      moveToClue(event.shiftKey ? -1 : 1)
+    } else if (event.key === '[' || event.key === ']') {
+      event.preventDefault()
+      focusGridRef.current = true
+      moveToClue(event.key === '[' ? -1 : 1)
+    } else if (event.key === 'Home' || event.key === 'End') {
+      event.preventDefault()
+      const entry =
+        entryFor(puzzle, current.selectedCell, current.direction) ?? activeEntry
+      const index = hasCommand
+        ? event.key === 'Home'
+          ? whiteIndices[0]
+          : (whiteIndices.at(-1) ?? current.selectedCell)
+        : event.key === 'Home'
+          ? entry.cells[0]
+          : (entry.cells.at(-1) ?? current.selectedCell)
+      focusGridRef.current = true
+      dispatch({
+        type: 'SELECT',
+        index,
+        direction: availableDirection(puzzle, index, current.direction),
+      })
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      focusGridRef.current = false
+      focusActiveClue()
+    } else if (event.key === '?') {
+      event.preventDefault()
+      openDialog('help', event.currentTarget)
+    } else if (!hasCommand && !event.altKey && event.key.length === 1) {
+      // Named keys ('Shift', 'CapsLock', 'Dead', 'F1'…) must never reach
+      // the normalizer: it keeps the last A-Z glyph, so SHIFT typed a T.
+      const letter = normalizeLetter(event.key)
+      if (letter) {
+        event.preventDefault()
+        writeLetter(letter)
+      }
+    }
+  }
+
+  const indicesFor = (scope: Scope) => {
+    if (scope === 'cell') return [latestStateRef.current.selectedCell]
+    if (scope === 'answer') return [...activeEntry.cells]
+    return whiteIndices
+  }
+
+  const check = (scope: Scope) => {
+    const indices = indicesFor(scope)
+    dispatch({ type: 'CHECK', indices, solutions })
+    const count = indices.filter(
+      (index) =>
+        latestStateRef.current.guesses[index] &&
+        latestStateRef.current.guesses[index] !== solutions[index],
+    ).length
+    announce(count > 0 ? copy.errorsFound(count) : copy.noErrors)
+  }
+
+  const reveal = (scope: Scope) => {
+    const indices = indicesFor(scope)
+    dispatch({
+      type: 'REVEAL',
+      indices,
+      solutions,
+      now: Date.now(),
+    })
+    announce(copy.revealDone)
+    const projectedGuesses = [...latestStateRef.current.guesses]
+    for (const index of indices) {
+      const solution = solutions[index]
+      if (solution) projectedGuesses[index] = solution
+    }
+    settleBoard(projectedGuesses)
+  }
+
+  const requestReveal = () => {
+    if (!revealArmed) {
+      setArmedRevealTarget(revealTargetKey)
+      announce(copy.revealArmed)
+      return
+    }
+    setArmedRevealTarget(null)
+    reveal(toolScope)
+  }
+
+  const publicationDate = new Intl.DateTimeFormat(
+    locale === 'en' ? 'en-US' : 'es-ES',
+    {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'UTC',
+    },
+  ).format(new Date(`${puzzle.publicationDate}T12:00:00Z`))
+  const showStart = hydrated && state.status === 'not-started'
+  const gridSizeLabel = `${puzzle.width}×${puzzle.height}`
+
+  useEffect(() => {
+    if (showStart) {
+      document.getElementById('crossword-start-key')?.focus()
+    }
+  }, [showStart])
+  const checksUsed = state.checkedCells.some(Boolean)
+  const revealsUsed = state.revealedCells.some(Boolean)
+  const filingStatus = !hydrated
+    ? copy.progressLoading
+    : complete
+      ? copy.allFiled
+      : copy.clueProgress(solvedEntryIds.size, puzzle.entries.length)
+
+  const shareResult = async () => {
+    const card = shareCard(puzzle, state)
+    const outcome = await shareText({ text: card })
+    if (outcome === 'shared' || outcome === 'dismissed') return
+    try {
+      await navigator.clipboard.writeText(card)
+      announce(copy.resultCopied)
+    } catch {
+      announce(card.replaceAll('\n', '. '))
+    }
+  }
+
+  const changeToolScope = (scope: Scope) => {
+    setArmedRevealTarget(null)
+    setToolScope(scope)
+  }
+
+  const toggleTimer = () => {
+    const showTimer = !settings.showTimer
+    setSettings((current) => ({ ...current, showTimer }))
+    announce(showTimer ? copy.timerShown : copy.timerHidden)
+  }
+
+  const pauseFrom = (button: HTMLButtonElement) => {
+    openerRef.current = button
+    announce(copy.pausedAnnouncement)
+    dispatch({ type: 'PAUSE', now: Date.now(), automatic: false })
+  }
+
+  const resumeFrom = (button: HTMLButtonElement) => {
+    openerRef.current = button
+    resumePuzzle()
+  }
+
+  const togglePencil = () => {
+    announce(state.pencilMode ? copy.pencilOff : copy.pencilOn)
+    dispatch({ type: 'TOGGLE_PENCIL' })
+  }
+
+  const toolbarProps = {
+    copy,
+    onCheck: () => check(toolScope),
+    onOpenHelp: (button: HTMLButtonElement) => openDialog('help', button),
+    onPauseFrom: pauseFrom,
+    onRedo: redoMove,
+    onRequestReveal: requestReveal,
+    onRestart: restartPuzzle,
+    onResumeFrom: resumeFrom,
+    onScopeChange: changeToolScope,
+    onTogglePencil: togglePencil,
+    onToggleTimer: toggleTimer,
+    onUndo: undoMove,
+    revealArmed,
+    setSettings,
+    settings,
+    state,
+    toolScope,
+  }
+
+  const completionOpen = complete && !completionDismissed
+
+  const dismissCompletion = () => {
+    setCompletionDismissed(true)
+    window.requestAnimationFrame(() =>
+      focusCellAt(latestStateRef.current.selectedCell),
+    )
+  }
 
   return (
     <div
@@ -2261,29 +2329,25 @@ function CrosswordSession({
                                 puzzle.entries.find((entry) => entry.id === id),
                               )
                               .find((entry) => entry?.id !== activeEntry.id)
-                            const cellName = [
-                              `${copy.row} ${cell.row + 1}, ${copy.column} ${cell.column + 1}.`,
-                              cell.number ? `${cell.number}.` : '',
-                              guess
-                                ? `${copy.letter} ${guess}.`
-                                : `${copy.blank}.`,
-                              state.pencilCells[cell.index]
-                                ? `${copy.pencilled}.`
-                                : '',
-                              state.incorrectCells[cell.index]
-                                ? `${copy.incorrect}.`
-                                : state.checkedCells[cell.index]
-                                  ? `${copy.checked}.`
-                                  : '',
-                              state.revealedCells[cell.index]
-                                ? `${copy.revealed}.`
-                                : '',
-                              crossingEntry
-                                ? `${copy.intersection} ${crossingEntry.number} ${directionLabel(crossingEntry.direction, locale)}.`
-                                : '',
-                            ]
-                              .filter(Boolean)
-                              .join(' ')
+                            const cellName = cellDescription({
+                              cell,
+                              copy,
+                              crossingEntry,
+                              guess,
+                              locale,
+                              marks: {
+                                pencil: Boolean(state.pencilCells[cell.index]),
+                                incorrect: Boolean(
+                                  state.incorrectCells[cell.index],
+                                ),
+                                checked: Boolean(
+                                  state.checkedCells[cell.index],
+                                ),
+                                revealed: Boolean(
+                                  state.revealedCells[cell.index],
+                                ),
+                              },
+                            })
 
                             return (
                               <td key={cell.index} className={css.cellShell}>
@@ -2465,7 +2529,7 @@ function CrosswordSession({
         </aside>
       </div>
 
-      {renderToolbar('desktop')}
+      <CrosswordToolbar placement='desktop' {...toolbarProps} />
 
       <aside className={css.mobileClues} aria-label={copy.clueList}>
         <fieldset className={css.clueTabs}>
@@ -2507,7 +2571,7 @@ function CrosswordSession({
         </div>
       </aside>
 
-      {renderToolbar('mobile')}
+      <CrosswordToolbar placement='mobile' {...toolbarProps} />
 
       <label className={css.inputProxy}>
         <span>{copy.inputLabel}</span>
@@ -2649,12 +2713,12 @@ function CrosswordSession({
       </Modal>
 
       <Modal
-        open={dialog === 'complete'}
-        close={closeDialog}
+        open={completionOpen}
+        close={dismissCompletion}
         labelId='complete-title'
         className={cn(css.dialog, css.completionDialog)}
       >
-        {dialog === 'complete' && <ConfettiBurst />}
+        {completionOpen && <ConfettiBurst />}
         <div className={css.completionMark} aria-hidden='true'>
           <span>C</span>
           <span>W</span>
@@ -2696,7 +2760,7 @@ function CrosswordSession({
             <button type='button' data-initial-focus onClick={shareResult}>
               {copy.copyResult}
             </button>
-            <button type='button' onClick={closeDialog}>
+            <button type='button' onClick={dismissCompletion}>
               {copy.close}
             </button>
           </div>
@@ -2710,6 +2774,10 @@ function CrosswordSession({
   )
 }
 
+type ClientTakeover =
+  | { phase: 'server' }
+  | { phase: 'client'; editionDate: string }
+
 export default function CrosswordsView({
   challenges,
   letterFontClassName,
@@ -2720,26 +2788,13 @@ export default function CrosswordsView({
   useGameInput()
   const [locale, setLocale] = useState<CrosswordLocale>('en')
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS)
-  const [preferencesReady, setPreferencesReady] = useState(false)
-  const [editionDate, setEditionDate] = useState<string | null>(null)
+  const [takeover, setTakeover] = useState<ClientTakeover>({ phase: 'server' })
 
-  const editions = useMemo(
-    () =>
-      [LEGACY_EDITION, ...challenges.map(editionFromChallenge)].toSorted(
-        (a, b) => a.en.publicationDate.localeCompare(b.en.publicationDate),
-      ),
-    [challenges],
-  )
-
-  // Editions roll at server (UTC) midnight for everyone; SSR and the first
-  // client render both use the latest edition.
-  useEffect(() => {
-    setEditionDate(new Date().toISOString().slice(0, 10))
-  }, [])
-  const puzzles = useMemo(
-    () => puzzleForDate(editions, editionDate ?? '9999-12-31'),
-    [editions, editionDate],
-  )
+  const editions = challenges
+    .map(editionFromChallenge)
+    .toSorted((a, b) =>
+      a.en.publicationDate.localeCompare(b.en.publicationDate),
+    )
 
   useEffect(() => {
     const savedLocale = readLocal(LOCALE_KEY)
@@ -2748,17 +2803,28 @@ export default function CrosswordsView({
     }
     const loaded = readLocalJson(SETTINGS_KEY)
     if (loaded.status === 'ok') setSettings(parseSavedSettings(loaded.value))
-    setPreferencesReady(true)
+    setTakeover({
+      phase: 'client',
+      editionDate: new Date().toISOString().slice(0, 10),
+    })
   }, [])
 
   useDocumentLang(locale)
   useViewportHeightVar('--crossword-viewport-height')
 
   useEffect(() => {
-    if (!preferencesReady) return
+    if (takeover.phase !== 'client') return
     writeLocal(LOCALE_KEY, locale)
     writeLocalJson(SETTINGS_KEY, settings)
-  }, [locale, preferencesReady, settings])
+  }, [locale, takeover.phase, settings])
+
+  // Editions roll at server (UTC) midnight for everyone; SSR and the first
+  // client render both use the latest edition.
+  const puzzles = puzzleForDate(
+    editions,
+    takeover.phase === 'client' ? takeover.editionDate : LATEST_EDITION_DATE,
+  )
+  if (!puzzles) return null
 
   const activeLocale = puzzles.es ? locale : 'en'
   const puzzle = activeLocale === 'es' && puzzles.es ? puzzles.es : puzzles.en

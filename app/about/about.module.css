@@ -1,4 +1,4 @@
-@reference "../../service/style/global.css";
+@reference "../../services/style/global.css";
 
 .content {
   @apply flex flex-col mb-32 font-sans text-lg leading-7 break-words align-baseline;

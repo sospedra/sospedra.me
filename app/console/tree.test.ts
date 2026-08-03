@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { complete } from './shell.ts'
 import { buildFileTree } from './tree.ts'
 
 const paths = [
@@ -27,7 +26,7 @@ test('builds a sorted directory-first tree with recursive totals', () => {
 
   const src = tree.children[0]
   assert.equal(src?.kind, 'directory')
-  if (src?.kind !== 'directory') return
+  if (src?.kind !== 'directory') throw new Error('src must be a directory')
 
   assert.deepEqual(
     src.children.map((node) => node.name),
@@ -36,7 +35,7 @@ test('builds a sorted directory-first tree with recursive totals', () => {
 
   const app = src.children[0]
   assert.equal(app?.kind, 'directory')
-  if (app?.kind !== 'directory') return
+  if (app?.kind !== 'directory') throw new Error('app must be a directory')
 
   assert.deepEqual(
     app.children.map((node) => node.name),
@@ -55,35 +54,4 @@ test('scopes a tree to the requested directory', () => {
     tree.children.map((node) => node.name),
     ['app', 'lib'],
   )
-})
-
-test('completes tree commands and arguments with directories only', () => {
-  const context = {
-    paths: [...paths, '/images/hero.png'],
-    links: [
-      {
-        source: '/go/readme',
-        title: 'Read me',
-        destination: 'https://example.com',
-      },
-    ],
-    cwd: [],
-  }
-  const options = {
-    directoryOnlyCommands: ['tree'],
-    extraCommandNames: ['tree'],
-  }
-
-  assert.deepEqual(complete(context, 'tr', options), {
-    value: 'tree ',
-    options: [],
-  })
-  assert.deepEqual(complete(context, 'tree im', options), {
-    value: 'tree images/',
-    options: [],
-  })
-  assert.deepEqual(complete(context, 'tree R', options), {
-    value: 'tree R',
-    options: [],
-  })
 })

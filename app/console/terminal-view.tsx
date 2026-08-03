@@ -1,191 +1,37 @@
 'use client'
 
 import cn from 'clsx'
-import Shell from 'components/Shell'
 import { clamp } from 'es-toolkit'
-import { readLocal, writeLocal } from 'lib/storage'
 import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { playKeyClick } from 'service/audio/key-click'
-import { useGameInput } from 'service/hotkeys'
+import { playKeyClick } from 'services/audio/key-click'
+import { useGameInput } from 'services/hotkeys'
+import Shell from 'services/shell'
+import { readLocal, writeLocal } from 'services/storage'
 import {
   codeOf,
-  complete,
   type Effect,
-  EYE_ART,
-  HACKER_SOURCE,
   HELP,
-  joinPath,
   type LinkEntry,
   type Output,
-  resolvePath,
   runCommand,
-  type Tone,
-} from './shell'
+} from './command-shell'
+import { EYE_ART, HACKER_SOURCE } from './console-art'
+import { complete } from './console-complete'
+import { buildIntroOps } from './console-intro'
+import { resolvePath } from './console-path'
+import {
+  type ConsoleOutput,
+  type ConsoleResult,
+  initialState,
+  promptFor,
+  reduce,
+} from './console-reducer'
 import css from './terminal.module.css'
-import { TreeView } from './tree-view'
-
-type TreeOutput = { kind: 'tree'; segments: string[] }
-type ConsoleOutput = Output | TreeOutput
-type ConsoleResult = {
-  output: ConsoleOutput[]
-  cwd: string[]
-  effect?: Effect
-}
-type Entry = {
-  id: number
-  prompt?: string
-  command?: string
-  output: ConsoleOutput[]
-}
-type State = { seq: number; cwd: string[]; entries: Entry[] }
-type Event =
-  | { type: 'ran'; prompt: string; command: string; result: ConsoleResult }
-  | { type: 'note'; output: ConsoleOutput[] }
-  | { type: 'clear' }
+import TreeView from './tree-view'
 
 type Execute = (commands: string[]) => void
-
-const promptFor = (cwd: string[]) => `S:${joinPath(cwd).toUpperCase()}>`
-
-const append = (state: State, entry: Omit<Entry, 'id'>): State => ({
-  ...state,
-  seq: state.seq + 1,
-  entries: [...state.entries, { ...entry, id: state.seq }],
-})
-
-const reduce = (state: State, event: Event): State => {
-  switch (event.type) {
-    case 'ran':
-      return {
-        ...append(state, {
-          prompt: event.prompt,
-          command: event.command,
-          output: event.result.output,
-        }),
-        cwd: event.result.cwd,
-      }
-    case 'note':
-      return append(state, { output: event.output })
-    case 'clear':
-      return { ...state, entries: [] }
-  }
-}
-
-// an intro op prints a line (eye/text) or clears to the next screen; `hold`
-// is the pause after it. The three screens sum to roughly 12 seconds.
-type Op = {
-  kind: 'eye' | 'text' | 'clear'
-  text?: string
-  tone?: Tone
-  hold: number
-}
-
-const EYE_LINES = EYE_ART.split('\n')
-
-// award-bios style ascii table, fixed width so columns align in any font.
-// inner width TW = left col (29) + right col (25) + 2 padding spaces
-const TW = 56
-const rule = () => `+${'-'.repeat(TW)}+`
-const barTitle = (title: string) => {
-  const label = `[ ${title} ]`
-  const pad = TW - label.length
-  const left = Math.floor(pad / 2)
-  return `+${'='.repeat(left)}${label}${'='.repeat(pad - left)}+`
-}
-const trow = (left: string, right: string) =>
-  `| ${left.padEnd(29)}${right.padEnd(25)} |`
-
-const buildIntroOps = (assetCount: number, linkCount: number): Op[] => [
-  // screen 1 — the eye opens
-  ...EYE_LINES.map((text): Op => ({ kind: 'eye', text, hold: 70 })),
-  { kind: 'text', text: '', hold: 140 },
-  {
-    kind: 'text',
-    text: 'S O S P E D R A   I N D U S T R I E S',
-    tone: 'bright',
-    hold: 480,
-  },
-  {
-    kind: 'text',
-    text: 'phosphor systems division · est 2013',
-    tone: 'dim',
-    hold: 1900,
-  },
-  { kind: 'clear', hold: 550 },
-  // screen 2 — post and the system configuration table
-  { kind: 'text', text: 'PHOSPHOR BIOS v5.150', tone: 'bright', hold: 340 },
-  {
-    kind: 'text',
-    text: 'Detecting processor ......... Pentium(R) OverDrive 66',
-    hold: 440,
-  },
-  { kind: 'text', text: 'Detecting coprocessor ....... Present', hold: 340 },
-  { kind: 'text', text: 'Memory test ................. 640K OK', hold: 460 },
-  { kind: 'text', text: '', hold: 180 },
-  {
-    kind: 'text',
-    text: barTitle('SYSTEM CONFIGURATION'),
-    tone: 'dim',
-    hold: 150,
-  },
-  {
-    kind: 'text',
-    text: trow('Main Processor : Pentium 66', 'Base Memory  : 640K'),
-    hold: 130,
-  },
-  {
-    kind: 'text',
-    text: trow('Numeric Copro. : Present', 'Ext. Memory  : 15M'),
-    hold: 130,
-  },
-  {
-    kind: 'text',
-    text: trow('Floppy Drive A : 1.44M 3.5"', 'Cache Memory : 256K'),
-    hold: 130,
-  },
-  {
-    kind: 'text',
-    text: trow('Display Type   : EGA / VGA', 'Serial Port  : 03F8'),
-    hold: 130,
-  },
-  {
-    kind: 'text',
-    text: trow(
-      `Drive S:       : R/O ${assetCount}`,
-      `Link Registry: ${linkCount}`,
-    ),
-    hold: 130,
-  },
-  { kind: 'text', text: rule(), tone: 'dim', hold: 1500 },
-  { kind: 'clear', hold: 550 },
-  // screen 3 — the os takes over
-  { kind: 'text', text: 'Starting S-DOS...', tone: 'bright', hold: 620 },
-  { kind: 'text', text: 'Loading PHOSPHOR.SYS ........ OK', hold: 340 },
-  { kind: 'text', text: 'Loading S-DOS kernel ........ OK', hold: 340 },
-  {
-    kind: 'text',
-    text: `Mounting S:/ ................ ${assetCount} files`,
-    hold: 340,
-  },
-  { kind: 'text', text: 'Starting command shell ...... OK', hold: 560 },
-  { kind: 'text', text: '', hold: 150 },
-  {
-    kind: 'text',
-    text: 'SOSPEDRA IND. PERSONAL SYSTEM /S',
-    tone: 'bright',
-    hold: 240,
-  },
-  {
-    kind: 'text',
-    text: 'TAB completes · type HELP for the index',
-    tone: 'dim',
-    hold: 500,
-  },
-]
-
-const initialState = (): State => ({ seq: 0, cwd: [], entries: [] })
 
 const FKEYS = [
   ['F1', 'Help', 'help'],
@@ -341,7 +187,7 @@ function OutputView(props: {
         <p
           className={cn(css.line, props.output.tone && css[props.output.tone])}
         >
-          {props.output.text || ' '}
+          {props.output.text || ' '}
         </p>
       )
     case 'listing':
@@ -423,12 +269,13 @@ export default function TerminalView(props: {
   const [ready, setReady] = useState(false)
   // true when autoplay was blocked: we wait for a keypress to boot with sound
   const [gated, setGated] = useState(false)
-  const [muted, setMuted] = useState(() => readLocal(MUTE_KEY) === '1')
+  const [muted, setMuted] = useState(false)
   // null = shell mode, a number = hackertyper mode at that many chars typed
   const [hackerPos, setHackerPos] = useState<number | null>(null)
   const [anim, setAnim] = useState<{ frames: string[]; index: number } | null>(
     null,
   )
+  const [introOps] = useState(() => buildIntroOps(paths.length, links.length))
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -444,8 +291,6 @@ export default function TerminalView(props: {
   hackingRef.current = hacking
   const animatingRef = useRef(false)
   animatingRef.current = animating
-
-  const INTRO_OPS = buildIntroOps(paths.length, links.length)
 
   const note = (output: ConsoleOutput[]) => dispatch({ type: 'note', output })
 
@@ -466,19 +311,31 @@ export default function TerminalView(props: {
 
   const applyEffect = (effect?: Effect) => {
     if (!effect) return
-    if (effect.kind === 'open') window.open(effect.href, '_blank', 'noopener')
-    if (effect.kind === 'copy') void copyToClipboard(effect.text)
-    if (effect.kind === 'clear') dispatch({ type: 'clear' })
-    if (effect.kind === 'exit') router.push('/')
-    if (effect.kind === 'hacker') {
-      setHackerPos(0)
-      inputRef.current?.blur()
+    switch (effect.kind) {
+      case 'open':
+        window.open(effect.href, '_blank', 'noopener')
+        return
+      case 'copy':
+        void copyToClipboard(effect.text)
+        return
+      case 'clear':
+        dispatch({ type: 'clear' })
+        return
+      case 'exit':
+        router.push('/')
+        return
+      case 'hacker':
+        setHackerPos(0)
+        inputRef.current?.blur()
+        return
+      case 'animate':
+        setAnim({ frames: effect.frames, index: 0 })
+        inputRef.current?.blur()
+        return
+      case 'toggle-audio':
+        toggleAudio()
+        return
     }
-    if (effect.kind === 'animate') {
-      setAnim({ frames: effect.frames, index: 0 })
-      inputRef.current?.blur()
-    }
-    if (effect.kind === 'toggle-audio') toggleAudio()
   }
 
   const execute: Execute = (commands) => {
@@ -524,15 +381,14 @@ export default function TerminalView(props: {
   const executeRef = useRef(execute)
   executeRef.current = execute
 
-  // walk the intro ops on a timer chain, then hand off to the shell with ls
   const runSequence = () => {
     clearTimeout(seqTimer.current)
     let shown = 0
     const tick = () => {
       shown += 1
       setIntro(shown)
-      const hold = INTRO_OPS[shown - 1].hold
-      if (shown < INTRO_OPS.length) {
+      const hold = introOps[shown - 1].hold
+      if (shown < introOps.length) {
         seqTimer.current = setTimeout(tick, hold)
         return
       }
@@ -554,7 +410,6 @@ export default function TerminalView(props: {
     playKeyClick(ctx)
   }
 
-  // the boot chime ends, the drive hum takes over and loops
   const startHdd = () => {
     const hdd = hddRef.current
     if (!hdd) return
@@ -704,6 +559,12 @@ export default function TerminalView(props: {
     }
   }, [])
 
+  useEffect(() => {
+    const storedMute = readLocal(MUTE_KEY) === '1'
+    mutedRef.current = storedMute
+    setMuted(storedMute)
+  }, [])
+
   // boot on load with sound. reduced motion skips straight to the shell.
   // audio needs a user gesture: after an in-app click autoplay is allowed, so
   // we try it; if the browser blocks it we gate on a keypress instead.
@@ -735,18 +596,15 @@ export default function TerminalView(props: {
 
   const showScroll = !hacking && !animating && !gated
 
-  // the audio elements keep playing; muting just silences them instantly
   useEffect(() => {
     if (audioRef.current) audioRef.current.muted = muted
     if (hddRef.current) hddRef.current.muted = muted
   }, [muted])
 
-  // refocus when the prompt (re)mounts: after boot, or leaving hacker/animate
   useEffect(() => {
     if (ready && showScroll) inputRef.current?.focus({ preventScroll: true })
   }, [ready, showScroll])
 
-  // cycle animation frames until a key or click stops it
   useEffect(() => {
     if (!animating) return
     const timer = setInterval(() => {
@@ -772,11 +630,9 @@ export default function TerminalView(props: {
     : ''
 
   // only the current screen is on the tube: start after the last clear shown
-  const screenStart = INTRO_OPS.slice(0, intro).reduce(
-    (start, op, index) => (op.kind === 'clear' ? index + 1 : start),
-    0,
-  )
-  const screenOps = INTRO_OPS.slice(screenStart, intro)
+  const shownOps = introOps.slice(0, intro)
+  const screenStart = shownOps.findLastIndex((op) => op.kind === 'clear') + 1
+  const screenOps = shownOps.slice(screenStart)
 
   return (
     <Shell className={css.page}>
@@ -828,101 +684,107 @@ export default function TerminalView(props: {
             </div>
           )}
 
-          {hacking && (
+          {(hacking || showScroll) && (
             <div className={css.scroll} ref={scrollRef}>
-              <p className='sr-only'>
-                Hacker mode. Any key types code, Escape exits.
-              </p>
-              <pre className={css.hackerFeed} aria-hidden='true'>
-                {hackerText}
-                <span className={css.cursor}>█</span>
-              </pre>
+              {hacking && (
+                <>
+                  <p className='sr-only'>
+                    Hacker mode. Any key types code, Escape exits.
+                  </p>
+                  <pre className={css.hackerFeed} aria-hidden='true'>
+                    {hackerText}
+                    <span className={css.cursor}>█</span>
+                  </pre>
+                </>
+              )}
+
+              {showScroll && (
+                <>
+                  <div className={css.intro} aria-hidden='true'>
+                    {screenOps.map((op, index) =>
+                      op.kind === 'eye' ? (
+                        // biome-ignore lint/suspicious/noArrayIndexKey: intro is a fixed ordered script
+                        <p className={css.eyeLine} key={index}>
+                          {op.text}
+                        </p>
+                      ) : (
+                        <p
+                          // biome-ignore lint/suspicious/noArrayIndexKey: intro is a fixed ordered script
+                          key={index}
+                          className={cn(css.line, op.tone && css[op.tone])}
+                        >
+                          {op.text || ' '}
+                        </p>
+                      ),
+                    )}
+                  </div>
+
+                  <div role='log' aria-live='polite'>
+                    {state.entries.map((entry) => (
+                      <div className={css.entry} key={entry.id}>
+                        {entry.prompt !== undefined && (
+                          <p className={css.line}>
+                            <span className={css.promptLabel}>
+                              {entry.prompt}{' '}
+                            </span>
+                            {entry.command}
+                          </p>
+                        )}
+                        {entry.output.map((output, index) => (
+                          <OutputView
+                            // biome-ignore lint/suspicious/noArrayIndexKey: entries append once and never reorder
+                            key={index}
+                            output={output}
+                            paths={paths}
+                            links={links}
+                            execute={execute}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+
+                  {ready && (
+                    <div className={css.promptRow}>
+                      <span className={css.promptLabel}>
+                        {promptFor(state.cwd)}{' '}
+                      </span>
+                      <span className={css.echo} aria-hidden='true'>
+                        {value}
+                      </span>
+                      <span className={css.cursor} aria-hidden='true'>
+                        █
+                      </span>
+                      <input
+                        ref={inputRef}
+                        className={css.input}
+                        value={value}
+                        onChange={(event) => setValue(event.target.value)}
+                        onKeyDown={onKeyDown}
+                        aria-label='Terminal input. Type help for commands'
+                        autoCapitalize='none'
+                        autoComplete='off'
+                        autoCorrect='off'
+                        spellCheck={false}
+                        enterKeyHint='go'
+                      />
+                    </div>
+                  )}
+
+                  <noscript>
+                    <p className={cn(css.line, css.dim)}>
+                      This console needs JavaScript — the assets stay served at
+                      their urls.
+                    </p>
+                  </noscript>
+                </>
+              )}
             </div>
           )}
           {hacking && hackerPos >= GRANTED_AT && (
             <p className={css.granted} aria-hidden='true'>
               ACCESS GRANTED
             </p>
-          )}
-
-          {showScroll && (
-            <div className={css.scroll} ref={scrollRef}>
-              <div className={css.intro} aria-hidden='true'>
-                {screenOps.map((op, index) =>
-                  op.kind === 'eye' ? (
-                    // biome-ignore lint/suspicious/noArrayIndexKey: intro is a fixed ordered script
-                    <p className={css.eyeLine} key={index}>
-                      {op.text}
-                    </p>
-                  ) : (
-                    <p
-                      // biome-ignore lint/suspicious/noArrayIndexKey: intro is a fixed ordered script
-                      key={index}
-                      className={cn(css.line, op.tone && css[op.tone])}
-                    >
-                      {op.text || ' '}
-                    </p>
-                  ),
-                )}
-              </div>
-
-              <div role='log' aria-live='polite'>
-                {state.entries.map((entry) => (
-                  <div className={css.entry} key={entry.id}>
-                    {entry.prompt !== undefined && (
-                      <p className={css.line}>
-                        <span className={css.promptLabel}>{entry.prompt} </span>
-                        {entry.command}
-                      </p>
-                    )}
-                    {entry.output.map((output, index) => (
-                      <OutputView
-                        // biome-ignore lint/suspicious/noArrayIndexKey: entries append once and never reorder
-                        key={index}
-                        output={output}
-                        paths={paths}
-                        links={links}
-                        execute={execute}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
-
-              {ready && (
-                <div className={css.promptRow}>
-                  <span className={css.promptLabel}>
-                    {promptFor(state.cwd)}{' '}
-                  </span>
-                  <span className={css.echo} aria-hidden='true'>
-                    {value}
-                  </span>
-                  <span className={css.cursor} aria-hidden='true'>
-                    █
-                  </span>
-                  <input
-                    ref={inputRef}
-                    className={css.input}
-                    value={value}
-                    onChange={(event) => setValue(event.target.value)}
-                    onKeyDown={onKeyDown}
-                    aria-label='Terminal input. Type help for commands'
-                    autoCapitalize='none'
-                    autoComplete='off'
-                    autoCorrect='off'
-                    spellCheck={false}
-                    enterKeyHint='go'
-                  />
-                </div>
-              )}
-
-              <noscript>
-                <p className={cn(css.line, css.dim)}>
-                  This console needs JavaScript — the assets stay served at
-                  their urls.
-                </p>
-              </noscript>
-            </div>
           )}
         </div>
 

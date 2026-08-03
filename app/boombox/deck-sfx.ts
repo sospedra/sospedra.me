@@ -1,6 +1,6 @@
 'use client'
 
-import { createSfxKit, type SfxBed } from 'service/audio/kit'
+import { createSfxKit, type SfxBed } from 'services/audio/kit'
 
 /* synthesized tape-deck foley; no recorded samples yet */
 

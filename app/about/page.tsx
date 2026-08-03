@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
-import { yearsSinceCareerStart } from 'service/career'
-import { ABOUT_DESC } from 'service/descriptions'
+import { yearsSinceCareerStart } from 'services/career'
 import AboutView from './about-view'
 
 export const metadata: Metadata = {
   title: 'About',
-  description: ABOUT_DESC,
+  description: 'javascript hacker ▼ principal engineer',
   alternates: { canonical: '/about' },
 }
 

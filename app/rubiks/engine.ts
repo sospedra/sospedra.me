@@ -127,11 +127,18 @@ export const compress = (moves: readonly Move[]): Move[] => {
 export const solutionFor = (history: readonly Move[]): Move[] =>
   compress(history).toReversed().map(inverse)
 
+// pick indexes the 5-face list with the previous face removed
+const scrambleFace = (previous: Face | undefined, roll: number): Face => {
+  if (previous === undefined) return FACES[Math.floor(roll * FACES.length)]
+  const previousIndex = FACES.indexOf(previous)
+  const pick = Math.floor(roll * (FACES.length - 1))
+  return FACES[pick < previousIndex ? pick : pick + 1]
+}
+
 export const randomScramble = (length: number, roll: () => number): Move[] => {
   const moves: Move[] = []
-  while (moves.length < length) {
-    const face = FACES[Math.floor(roll() * FACES.length)]
-    if (moves.at(-1)?.face === face) continue
+  for (let index = 0; index < length; index += 1) {
+    const face = scrambleFace(moves.at(-1)?.face, roll())
     moves.push({ face, prime: roll() < 0.5 })
   }
   return moves
@@ -261,8 +268,7 @@ const settle = (state: GameState, now: number): GameState => {
   if (state.phase === 'scrambling') {
     return { ...state, phase: 'idle', armed: true }
   }
-  const stopClock = state.timerStart !== null && isSolved(state.stickers)
-  if (stopClock && state.timerStart !== null) {
+  if (state.timerStart !== null && isSolved(state.stickers)) {
     return {
       ...state,
       phase: 'idle',

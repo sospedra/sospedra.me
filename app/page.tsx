@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import HomeView from './home-view'
+import HomeView from './home/home-view'
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },

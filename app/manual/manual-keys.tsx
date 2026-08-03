@@ -1,8 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { useEffect } from 'react'
-import { scrollMarkedScene, useHotkeys } from 'service/hotkeys'
+import { scrollMarkedScene, useHotkeys } from 'services/hotkeys'
+import Link from 'services/link'
 import css from './manual.module.css'
 
 const PAGE_SELECTOR = '[data-manual-page]'
@@ -56,39 +56,44 @@ function BlueprintExitNotes() {
   )
 }
 
-// `[` / `]` flip between the manual's authored sheets
-export default function ManualKeys() {
+function useAutoCheckOnScroll(id: string) {
   useEffect(() => {
-    const input = document.getElementById(FIRST_COMMISSIONING_CHECK)
+    const input = document.getElementById(id)
     if (!(input instanceof HTMLInputElement)) return
 
     const target = input.closest('li') ?? input
-    let hasInteracted = false
     let markTimer: number | undefined
 
-    const noteInteraction = () => {
-      hasInteracted = true
-    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return
         observer.disconnect()
         markTimer = window.setTimeout(() => {
-          if (!hasInteracted) input.checked = true
+          // uncontrolled art-direction checkbox: the DOM is the only state owner
+          input.checked = true
         }, 500)
       },
       { threshold: 0 },
     )
 
-    input.addEventListener('change', noteInteraction)
+    const cancelAutoCheck = () => {
+      observer.disconnect()
+      window.clearTimeout(markTimer)
+    }
+
+    input.addEventListener('change', cancelAutoCheck)
     observer.observe(target)
 
     return () => {
-      observer.disconnect()
-      input.removeEventListener('change', noteInteraction)
-      if (markTimer !== undefined) window.clearTimeout(markTimer)
+      cancelAutoCheck()
+      input.removeEventListener('change', cancelAutoCheck)
     }
-  }, [])
+  }, [id])
+}
+
+// `[` / `]` flip between the manual's authored sheets
+export default function ManualKeys() {
+  useAutoCheckOnScroll(FIRST_COMMISSIONING_CHECK)
 
   useHotkeys([
     [
@@ -136,7 +141,7 @@ export default function ManualKeys() {
           </li>
         ))}
         <li className={css.indexHome}>
-          <Link href='/' className={css.blueprintExit}>
+          <Link url='/' className={css.blueprintExit}>
             <b>Exit</b>
             <span>Go back home</span>
             <BlueprintExitNotes />

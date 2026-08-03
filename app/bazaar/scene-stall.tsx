@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import styles from './scene.module.css'
 import {
   type BazaarStallId,
@@ -52,6 +52,13 @@ const hoverStepFile = (
   return hover[Math.min(step, hover.length - 1)] ?? null
 }
 
+const reducedFile = (layer: StallLayer, active: boolean): string => {
+  if (layer.role === 'char' && active) {
+    return layer.hover[layer.hover.length - 1].file
+  }
+  return restFile(layer)
+}
+
 type Timers = { ids: number[] }
 
 const schedule = (timers: Timers, fn: () => void, ms: number) => {
@@ -65,10 +72,81 @@ function loopFrames(
 ) {
   const tick = (i: number) => {
     show(frames[i].file)
-    schedule(timers, () => tick((i + 1) % frames.length), frames[i].ms || 200)
+    schedule(timers, () => tick((i + 1) % frames.length), frames[i].ms ?? 200)
   }
   tick(0)
 }
+
+type LayerContext = {
+  active: boolean
+  layers: StallLayer[]
+  show: (index: number, file: string) => void
+  timers: Timers
+}
+
+type LayerOfRole<Role extends StallLayer['role']> = Extract<
+  StallLayer,
+  { role: Role }
+>
+
+const greet = (
+  layer: LayerOfRole<'char'>,
+  index: number,
+  ctx: LayerContext,
+) => {
+  const stepTo = (step: number) => {
+    ctx.show(index, layer.hover[step].file)
+    for (const [otherIndex, other] of ctx.layers.entries()) {
+      if (other.role === 'prop' && other.hover) {
+        ctx.show(otherIndex, hoverStepFile(other.hover, step) ?? other.rest)
+      }
+      if (other.role === 'effect' && other.hover) {
+        ctx.show(
+          otherIndex,
+          hoverStepFile(other.hover, step) ?? other.frames[0].file,
+        )
+      }
+    }
+    if (step < layer.hover.length - 1) {
+      schedule(ctx.timers, () => stepTo(step + 1), HOVER_STEP_MS)
+    }
+  }
+  stepTo(0)
+}
+
+const ROLE_DRIVERS: {
+  [Role in StallLayer['role']]: (
+    layer: LayerOfRole<Role>,
+    index: number,
+    ctx: LayerContext,
+  ) => void
+} = {
+  plate: () => {},
+  effect: (layer, index, ctx) => {
+    if (!ctx.active || !layer.hover) {
+      loopFrames(ctx.timers, layer.frames, (file) => ctx.show(index, file))
+      return
+    }
+    ctx.show(index, hoverStepFile(layer.hover, 0) ?? restFile(layer))
+  },
+  prop: (layer, index, ctx) => {
+    if (!ctx.active) ctx.show(index, layer.rest)
+  },
+  char: (layer, index, ctx) => {
+    if (!ctx.active) {
+      loopFrames(ctx.timers, layer.idle, (file) => ctx.show(index, file))
+      return
+    }
+    greet(layer, index, ctx)
+  },
+}
+
+const driveLayer = <Role extends StallLayer['role']>(
+  role: Role,
+  layer: LayerOfRole<Role>,
+  index: number,
+  ctx: LayerContext,
+) => ROLE_DRIVERS[role](layer, index, ctx)
 
 /** One r17 stall: plate + effect loops + props + char, driven by `active`.
     All frames render once; animation only flips opacity — zero refetching. */
@@ -96,7 +174,7 @@ export default function SceneStall(props: {
   }, [])
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: breakpointTick re-arms timers when the visible tree changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!rootRef.current || rootRef.current.offsetParent === null) return
     const reduced = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
@@ -109,54 +187,16 @@ export default function SceneStall(props: {
         if (img) img.style.opacity = frame === file ? '1' : '0'
       }
     }
+    const ctx: LayerContext = { active, layers, show, timers }
 
-    layers.forEach((layer, index) => {
-      if (layer.role === 'plate') return
+    for (const [index, layer] of layers.entries()) {
+      if (layer.role === 'plate') continue
       if (reduced) {
-        show(
-          index,
-          layer.role === 'char' && active
-            ? layer.hover[layer.hover.length - 1].file
-            : restFile(layer),
-        )
-        return
+        show(index, reducedFile(layer, active))
+        continue
       }
-      if (layer.role === 'effect') {
-        if (!active || !layer.hover) {
-          loopFrames(timers, layer.frames, (f) => show(index, f))
-          return
-        }
-        show(index, hoverStepFile(layer.hover, 0) ?? restFile(layer))
-        return
-      }
-      if (layer.role === 'prop') {
-        if (!active) show(index, layer.rest)
-        return
-      }
-      /* char: idle loop at rest, 4-step greeting held while active */
-      if (!active) {
-        loopFrames(timers, layer.idle, (f) => show(index, f))
-        return
-      }
-      const stepTo = (step: number) => {
-        show(index, layer.hover[step].file)
-        layers.forEach((other, otherIndex) => {
-          if (other.role === 'prop' && other.hover) {
-            show(otherIndex, hoverStepFile(other.hover, step) ?? other.rest)
-          }
-          if (other.role === 'effect' && other.hover) {
-            show(
-              otherIndex,
-              hoverStepFile(other.hover, step) ?? other.frames[0].file,
-            )
-          }
-        })
-        if (step < layer.hover.length - 1) {
-          schedule(timers, () => stepTo(step + 1), HOVER_STEP_MS)
-        }
-      }
-      stepTo(0)
-    })
+      driveLayer(layer.role, layer, index, ctx)
+    }
 
     return () => {
       for (const timer of timers.ids) window.clearTimeout(timer)
@@ -177,7 +217,6 @@ export default function SceneStall(props: {
             alt=''
             draggable={false}
             loading={layer.role === 'plate' ? 'eager' : 'lazy'}
-            style={{ opacity: file === restFile(layer) ? 1 : 0 }}
           />
         ))
         /* the hologram flickers as a GROUP: an animation on the imgs

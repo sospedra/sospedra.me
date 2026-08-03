@@ -17,14 +17,14 @@ import type {
   GeneratedCityRecord,
   GeneratedCountryCorpus,
   GeneratedCountryCorpusRecord,
-} from '../../lib/geo/corpus-model.ts'
-import { OFFICIAL_COUNTRY_OPTIONS } from '../../lib/geo/country-lexicon.ts'
+} from '../../app/meridian/corpus-model.ts'
+import { OFFICIAL_COUNTRY_OPTIONS } from '../../app/meridian/country-lexicon.ts'
 import type {
   CountryDifficulty,
   CountryRecord,
   Difficulty,
   LocalizedText,
-} from '../../lib/geo/model.ts'
+} from '../../app/meridian/model.ts'
 
 const root = resolve(process.cwd())
 const pathFromRoot = (path: string) => resolve(root, path)
@@ -241,19 +241,19 @@ interface CountryDifficultyDocument {
 }
 
 const roster = readJson<RosterDocument>(
-  'data/geo/editorial/country-roster.json',
+  'repo/geo/editorial/country-roster.json',
 )
 const policy = readJson<CoveragePolicy>(
-  'data/geo/editorial/city-coverage-policy.json',
+  'repo/geo/editorial/city-coverage-policy.json',
 )
 const overrideDocument = readJson<CityOverrideDocument>(
-  'data/geo/editorial/city-overrides.json',
+  'repo/geo/editorial/city-overrides.json',
 )
 const countryDifficultyDocument = readJson<CountryDifficultyDocument>(
-  'data/geo/editorial/country-difficulty.json',
+  'repo/geo/editorial/country-difficulty.json',
 )
 const sourceLock = readJson<CorpusSourceLock>(
-  'data/geo/corpus-sources.lock.json',
+  'repo/geo/corpus-sources.lock.json',
 )
 
 const fail = (message: string): never => {
@@ -954,7 +954,7 @@ const main = async () => {
     countries,
   }
   const existingCountryCorpus = readJson<ExistingCountryCorpus>(
-    'data/geo/generated/countries.json',
+    'repo/geo/generated/countries.json',
   )
   const reviewedByCode = new Map(
     existingCountryCorpus.countries
@@ -1132,9 +1132,9 @@ const main = async () => {
     countries: gameCountries,
   }
 
-  writeJsonAtomically('data/geo/generated/cities.json', cityCorpus)
-  writeJsonAtomically('data/geo/generated/country-corpus.json', countryCorpus)
-  writeJsonAtomically('data/geo/generated/countries.json', gameCountryCorpus)
+  writeJsonAtomically('repo/geo/generated/cities.json', cityCorpus)
+  writeJsonAtomically('repo/geo/generated/country-corpus.json', countryCorpus)
+  writeJsonAtomically('repo/geo/generated/countries.json', gameCountryCorpus)
 
   const shortfalls = countries.filter((country) => country.coverage.shortfall)
   const missingPopulation = countries.filter(

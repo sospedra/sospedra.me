@@ -94,18 +94,39 @@ test('write respects pencil mode and revealed cells', () => {
   assert.equal(crosswordReducer(revealed, blocked), revealed)
 })
 
-test('writing while paused never restarts the clock', () => {
+test('write and clear are ignored while paused or complete', () => {
   const paused = apply(initial, [
     { type: 'START', now: 0 },
     { type: 'PAUSE', now: 10, automatic: false },
   ])
-  const s = crosswordReducer(
+  const pausedWrite = crosswordReducer(
     paused,
     write({ index: 1, value: 'A', next: 2, now: 20 }),
   )
-  assert.equal(s.status, 'paused')
-  assert.equal(s.runStartedAt, null)
-  assert.equal(s.guesses[1], 'A')
+  assert.equal(pausedWrite, paused)
+  assert.equal(pausedWrite.guesses[1], '')
+
+  const filled = crosswordReducer(
+    initial,
+    write({ index: 1, value: 'A', next: 2 }),
+  )
+  const pausedFilled = apply(filled, [
+    { type: 'PAUSE', now: 10, automatic: false },
+  ])
+  const clear: CrosswordAction = {
+    type: 'CLEAR',
+    index: 1,
+    nextIndex: 1,
+    now: 20,
+  }
+  assert.equal(crosswordReducer(pausedFilled, clear), pausedFilled)
+
+  const complete = crosswordReducer(filled, { type: 'COMPLETE', now: 30 })
+  assert.equal(
+    crosswordReducer(complete, write({ index: 2, value: 'B', next: 3 })),
+    complete,
+  )
+  assert.equal(crosswordReducer(complete, clear), complete)
 })
 
 test('clear wipes a cell and its flags', () => {
@@ -250,7 +271,7 @@ test('serialize and restore round-trip a paused game', () => {
   assert.deepEqual(persisted.checkedCells, [2])
   assert.deepEqual(persisted.revealedCells, [3])
 
-  const restored = restoreCrosswordState(persisted, puzzle)
+  const restored = restoreCrosswordState(persisted, puzzle, 2000)
   assert.ok(restored)
   assert.deepEqual(restored.guesses, played.guesses)
   assert.deepEqual(restored.pencilCells, played.pencilCells)
@@ -264,14 +285,14 @@ test('serialize and restore round-trip a paused game', () => {
 
 test('restore rejects other puzzles, schemas and shapes', () => {
   const persisted = serializeCrosswordState(initial, puzzle.id)
-  assert.equal(restoreCrosswordState(null, puzzle), null)
-  assert.equal(restoreCrosswordState('nope', puzzle), null)
+  assert.equal(restoreCrosswordState(null, puzzle, 0), null)
+  assert.equal(restoreCrosswordState('nope', puzzle, 0), null)
   const foreign = { ...persisted, puzzleId: 'es:1999-01-01' }
-  assert.equal(restoreCrosswordState(foreign, puzzle), null)
+  assert.equal(restoreCrosswordState(foreign, puzzle, 0), null)
   const future = { ...persisted, schemaVersion: 2 }
-  assert.equal(restoreCrosswordState(future, puzzle), null)
+  assert.equal(restoreCrosswordState(future, puzzle, 0), null)
   const short = { ...persisted, guesses: ['A'] }
-  assert.equal(restoreCrosswordState(short, puzzle), null)
+  assert.equal(restoreCrosswordState(short, puzzle, 0), null)
 })
 
 test('restore scrubs hostile payload fields', () => {
@@ -289,7 +310,7 @@ test('restore scrubs hostile payload fields', () => {
     elapsedMs: -5,
     runStartedAt: -100,
   }
-  const restored = restoreCrosswordState(hostile, puzzle)
+  const restored = restoreCrosswordState(hostile, puzzle, 0)
   assert.ok(restored)
   assert.deepEqual(restored.guesses, ['', '', '', 'Ñ'])
   assert.deepEqual(restored.pencilCells, [false, true, false, false])
@@ -309,17 +330,18 @@ test('a playing save keeps a valid clock and restarts a broken one', () => {
   const kept = restoreCrosswordState(
     { ...persisted, status: 'playing', runStartedAt: 12_345 },
     puzzle,
+    99_999,
   )
   assert.equal(kept?.runStartedAt, 12_345)
 
-  const before = Date.now()
   const repaired = restoreCrosswordState(
     { ...persisted, status: 'playing', runStartedAt: null },
     puzzle,
+    77_777,
   )
   assert.ok(repaired)
   assert.equal(repaired.status, 'playing')
-  assert.ok((repaired.runStartedAt ?? 0) >= before)
+  assert.equal(repaired.runStartedAt, 77_777)
 })
 
 test('formatTime renders minutes and grows an hour part on demand', () => {

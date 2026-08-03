@@ -1,0 +1,59 @@
+@reference "../../services/style/global.css";
+
+.bg {
+  /* Reading band stays desaturated navy, darker than the /papers purple:
+     purple behind body text halates. The purple sky begins below the paper. */
+  --sky-paper: #10161f;
+  --sky-upper: #161b28;
+  --sky-papers: #290d37;
+  --sky-home: #37113f;
+  --sky-about-wash: rgb(128 13 121 / 18%);
+  --sky-bazaar-wash: rgb(0 86 98 / 44%);
+  --sky-scan: rgb(255 255 255 / 1.4%);
+  @apply absolute;
+  background:
+    repeating-linear-gradient(0deg, var(--sky-scan) 0 1px, transparent 1px 4px),
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 20%,
+      var(--sky-about-wash) 29%,
+      var(--sky-about-wash) 42%,
+      transparent 52%,
+      transparent 68%,
+      var(--sky-bazaar-wash) 84%,
+      var(--sky-bazaar-wash) 100%
+    ),
+    linear-gradient(
+      180deg,
+      var(--sky-paper) 0%,
+      var(--sky-upper) 30%,
+      var(--sky-papers) 60%,
+      var(--sky-home) 100%
+    );
+  contain: strict;
+  height: 500dvh;
+  transform-origin: left top;
+  width: 400vw;
+}
+
+.moving {
+  will-change: transform;
+}
+
+.wrapper {
+  @apply absolute inset-0 overflow-hidden;
+  contain: strict;
+  height: 100dvh;
+  pointer-events: none;
+  width: 100%;
+  z-index: 0;
+}
+
+.provider {
+  @apply fixed inset-0 overflow-hidden;
+  height: 100dvh;
+  overscroll-behavior: contain;
+  width: 100%;
+  z-index: 1;
+}

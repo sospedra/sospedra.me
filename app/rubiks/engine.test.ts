@@ -100,6 +100,15 @@ test('randomScramble honors length and never repeats a face', () => {
   }
 })
 
+test('randomScramble terminates on a degenerate constant roll', () => {
+  const moves = randomScramble(8, () => 0)
+  assert.equal(moves.length, 8)
+  for (const [index, scrambleMove] of moves.entries()) {
+    assert.equal(FACES.includes(scrambleMove.face), true)
+    if (index > 0) assert.notEqual(scrambleMove.face, moves[index - 1].face)
+  }
+})
+
 test('play buffers turns and records history', () => {
   const one = reduce(initialState, { type: 'PLAY', move: move('R'), now: 0 })
   assert.deepEqual(one.turning, { move: move('R'), kind: 'play' })

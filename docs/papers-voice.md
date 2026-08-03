@@ -1,6 +1,6 @@
 # Papers voice
 
-Papers live in `content/papers/<slug>/index.mdx`. No frontmatter, no title in the body. The title lives outside the MDX. The reader is an advanced engineer with no patience for filler.
+Papers live in `repo/papers/<slug>/index.mdx`. No frontmatter, no title in the body. The title lives outside the MDX. The reader is an advanced engineer with no patience for filler.
 
 ## Two registers
 
@@ -51,7 +51,7 @@ An unbroken paragraph column is a defect. Interrupt it with the MDX kit:
 - `---` between movements.
 - Code blocks, images, live demo components from `components/papers/<Name>`.
 
-Components live in `service/markdown/Pull` and `service/markdown/Aside`. Mermaid is not supported.
+Components live in `services/markdown/pull` and `services/markdown/aside`. Mermaid is not supported.
 
 ## Code
 

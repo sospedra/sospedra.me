@@ -1,21 +1,28 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { fetchSpanishDailyPayload } from '../../app/crosswords/spanish-daily.server-fetcher.ts'
 import {
-  fetchSpanishDaily,
+  spanishChallengeFromPayload,
   withSpanishPuzzle,
 } from '../../app/crosswords/spanish-daily.ts'
 
 /* The feed serves only its latest puzzle, so each day gets one archive
    shot; the challenge file keeps it after the feed rolls over. */
 
-const spanish = await fetchSpanishDaily()
-if (!spanish) {
+const payload = await fetchSpanishDailyPayload().catch(() => null)
+if (payload === null) {
   console.log('spanish daily: feed unavailable, nothing archived')
   process.exit(0)
 }
 
+const spanish = spanishChallengeFromPayload(payload)
+if (!spanish) {
+  console.log('spanish daily: feed answered without a valid puzzle')
+  process.exit(0)
+}
+
 const target = join(
-  'content/crosswords/challenges',
+  'repo/crosswords/challenges',
   `${spanish.publicationDate}.json`,
 )
 const stored = await readFile(target, 'utf8').catch(() => null)

@@ -1,19 +1,18 @@
-import ArrowNav from 'components/ArrowNav'
-import Icon from 'components/Icon'
-import Link from 'components/Link'
-import { pizzaSlices, readingLabel } from 'components/Meta'
-import RouteHeader from 'components/RouteHeader'
-import Shell from 'components/Shell'
 import type { Metadata, Route } from 'next'
 import type React from 'react'
-import { PAPERS_DESC } from 'service/descriptions'
-import { fetchPapers, type Paper } from 'service/markdown/files'
-import glitchCss from 'service/style/glitch.module.css'
+import ArrowNav from 'services/arrow-nav'
+import Link from 'services/link'
+import { Reading } from 'services/markdown/meta'
+import { fetchPapers } from 'services/markdown/paper.server-snapshot'
+import type { Paper } from 'services/markdown/paper.types'
+import RouteHeader from 'services/route-header'
+import Shell from 'services/shell'
+import glitchCss from 'services/style/glitch.module.css'
 import css from './papers.module.css'
 
 export const metadata: Metadata = {
   title: 'Papers',
-  description: `Personal blog by Rubén Sospedra. ${PAPERS_DESC}`,
+  description: `Personal blog by Rubén Sospedra. ${"Papers on JavaScript, TypeScript, the web platform and the occasional politics of software. Not your usual blog: dense over long, niche over SEO chum. Words are my own. It's dangerous to go unknowing, take some pills 💊"}`,
   alternates: { canonical: '/papers' },
 }
 
@@ -28,20 +27,6 @@ const stampFormat = new Intl.DateTimeFormat('en-US', {
 })
 
 const stamp = (iso: string) => stampFormat.format(new Date(iso)).toUpperCase()
-
-function PizzaTime(props: { paper: Paper }) {
-  const icons = pizzaSlices(props.paper.minutes)
-  const label = readingLabel(props.paper.minutes)
-
-  return (
-    <span className={css.slices} role='img' title={label} aria-label={label}>
-      {icons.map((name, idx) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: identical static slices
-        <Icon name={name} key={idx} />
-      ))}
-    </span>
-  )
-}
 
 const FASTEXT_KEYS = [
   { color: 'var(--color-signal-cyan, #6df7ea)', label: 'Home', url: '/' },
@@ -78,7 +63,8 @@ function BroadcastRow(props: { paper: Paper; index: number }) {
           </h2>
           <span className={css.leader} aria-hidden='true' />
           <span className={css.rowMeta}>
-            <PizzaTime paper={props.paper} /> · {stamp(props.paper.createdAt)}
+            <Reading minutes={props.paper.minutes} className={css.slices} /> ·{' '}
+            {stamp(props.paper.createdAt)}
           </span>
         </div>
         <p className={css.rowExcerpt}>{props.paper.excerpt}</p>
@@ -87,9 +73,43 @@ function BroadcastRow(props: { paper: Paper; index: number }) {
   )
 }
 
+function Headline(props: { paper: Paper }) {
+  return (
+    <Link
+      url={`/papers/${props.paper.slug}` as Route}
+      className={`${css.headline} ${glitchCss.trigger}`}
+      data-arrow-item=''
+      prefetchOnFocus={false}
+    >
+      <p className={css.headlineTag}>
+        <span>
+          <span className={css.blink} aria-hidden='true'>
+            ▓
+          </span>{' '}
+          LATEST TRANSMISSION
+        </span>
+        <span className={css.leader} aria-hidden='true' />
+        <span className={css.rowMeta}>
+          <Reading minutes={props.paper.minutes} className={css.slices} /> ·{' '}
+          {stamp(props.paper.createdAt)}
+        </span>
+      </p>
+      <h2
+        aria-label={props.paper.title}
+        data-text={props.paper.title}
+        className={glitchCss.glitch}
+      >
+        {props.paper.title}
+      </h2>
+      <p className={css.headlineExcerpt}>{props.paper.excerpt}</p>
+    </Link>
+  )
+}
+
 export default async function PapersPage() {
   const papers = await fetchPapers()
-  const [headline, ...archive] = papers
+  const headline = papers.at(0)
+  const archive = papers.slice(1)
 
   return (
     <Shell className={css.frame}>
@@ -99,7 +119,9 @@ export default async function PapersPage() {
           title='Papers'
           sector='02'
           status='On air'
-          description={PAPERS_DESC}
+          description={
+            "Papers on JavaScript, TypeScript, the web platform and the occasional politics of software. Not your usual blog: dense over long, niche over SEO chum. Words are my own. It's dangerous to go unknowing, take some pills 💊"
+          }
         >
           <div className={css.signalMeter} aria-hidden='true'>
             <span />
@@ -120,33 +142,18 @@ export default async function PapersPage() {
             <span>{papers.length} FILES</span>
           </p>
 
-          <Link
-            url={`/papers/${headline.slug}` as Route}
-            className={`${css.headline} ${glitchCss.trigger}`}
-            data-arrow-item=''
-            prefetchOnFocus={false}
-          >
+          {headline ? (
+            <Headline paper={headline} />
+          ) : (
             <p className={css.headlineTag}>
               <span>
                 <span className={css.blink} aria-hidden='true'>
                   ▓
                 </span>{' '}
-                LATEST TRANSMISSION
-              </span>
-              <span className={css.leader} aria-hidden='true' />
-              <span className={css.rowMeta}>
-                <PizzaTime paper={headline} /> · {stamp(headline.createdAt)}
+                NO TRANSMISSIONS ON FILE
               </span>
             </p>
-            <h2
-              aria-label={headline.title}
-              data-text={headline.title}
-              className={glitchCss.glitch}
-            >
-              {headline.title}
-            </h2>
-            <p className={css.headlineExcerpt}>{headline.excerpt}</p>
-          </Link>
+          )}
 
           <ol className={css.rows}>
             {archive.map((paper, index) => (

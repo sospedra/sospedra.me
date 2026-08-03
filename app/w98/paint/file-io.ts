@@ -31,7 +31,7 @@ export const savePng = (canvas: HTMLCanvasElement): Promise<boolean> =>
       anchor.href = url
       anchor.download = 'untitled.png'
       anchor.click()
-      URL.revokeObjectURL(url)
+      setTimeout(() => URL.revokeObjectURL(url), 0)
       resolve(true)
     }, 'image/png')
   })

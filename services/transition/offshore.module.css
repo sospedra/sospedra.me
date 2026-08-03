@@ -1,0 +1,45 @@
+@reference "../../services/style/global.css";
+
+.cloud {
+  @apply fixed bottom-0 right-0 z-10 w-screen origin-bottom;
+  animation: cloud var(--cloud-duration, 1s) linear forwards;
+  contain: layout paint style;
+  height: 100dvh;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0) scale(1);
+  will-change: opacity, transform;
+}
+
+@keyframes cloud {
+  0% {
+    opacity: 0;
+    transform: translate3d(100vw, 0, 0) scale(1.5);
+  }
+  25% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(2.5);
+  }
+  50% {
+    transform: translate3d(-100vw, 0, 0) scale(3);
+  }
+  75% {
+    transform: translate3d(-150vw, 10%, 0) scale(2.5);
+  }
+  100% {
+    transform: translate3d(-200vw, 20%, 0) scale(0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud {
+    animation: none;
+    opacity: 0;
+    will-change: auto;
+  }
+}
+
+:global(.fx-quiet) .cloud {
+  animation: none;
+  opacity: 0;
+  will-change: auto;
+}

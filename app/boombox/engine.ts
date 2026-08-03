@@ -33,8 +33,9 @@ export type BoomboxState = {
 export type BoomboxEvent = { type: 'guess'; candidate: Song } | { type: 'skip' }
 
 export const MAX_GUESSES = 6
+export const FULL_UNLOCK = 16
 /* Heardle's unlock ladder: seconds audible after n failed attempts */
-export const UNLOCKS = [1, 2, 4, 7, 11, 16] as const
+export const UNLOCKS = [1, 2, 4, 7, 11, FULL_UNLOCK] as const
 export const CLIP_SECONDS = 30
 /* first tape spun on launch day; the tape flips for everyone at the same
    instant: 02:00 on Spain's wall clock, whatever utc offset that is */
@@ -88,7 +89,9 @@ export const nextFlipAt = (now: Date): Date => {
 
 export const songForDay = (songs: Song[], day: number): Song => {
   const index = ((day % songs.length) + songs.length) % songs.length
-  return songs[index] as Song
+  const song = songs.at(index)
+  if (!song) throw new Error('The song catalogue is empty.')
+  return song
 }
 
 const splitArtists = (artist: string) =>
@@ -136,18 +139,22 @@ export const reduce = (
 ): BoomboxState => {
   if (state.stage !== 'play') return state
 
-  const score =
-    event.type === 'skip' ? 'skip' : scoreGuess(daily, event.candidate)
-  const guess =
-    event.type === 'skip' ? SKIP_GUESS : guessOf(event.candidate, score)
-  const guesses = [...state.guesses, guess]
-
-  return { ...state, guesses, stage: stageAfter(guesses, score) }
+  switch (event.type) {
+    case 'guess': {
+      const score = scoreGuess(daily, event.candidate)
+      const guesses = [...state.guesses, guessOf(event.candidate, score)]
+      return { ...state, guesses, stage: stageAfter(guesses, score) }
+    }
+    case 'skip': {
+      const guesses = [...state.guesses, SKIP_GUESS]
+      return { ...state, guesses, stage: stageAfter(guesses, 'skip') }
+    }
+  }
 }
 
 export const unlockedSeconds = (state: BoomboxState): number => {
   if (state.stage !== 'play') return CLIP_SECONDS
-  return UNLOCKS[state.guesses.length] ?? UNLOCKS[UNLOCKS.length - 1] ?? 16
+  return UNLOCKS[state.guesses.length] ?? FULL_UNLOCK
 }
 
 const normalize = (text: string) =>

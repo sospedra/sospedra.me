@@ -1,10 +1,10 @@
 'use client'
 
-import GeoGame, { type GeoGameMode } from 'components/geo/GeoGame'
-import type { DailyGeoChallenge } from 'lib/geo'
-import { readLocal, writeLocal } from 'lib/storage'
-import type { GeoLocale } from 'messages/geo'
 import { useEffect, useState } from 'react'
+import { readLocal, writeLocal } from 'services/storage'
+import GeoGame, { type GeoGameMode } from './geo-game'
+import type { GeoLocale } from './geo-messages'
+import type { DailyGeoChallenge } from './model'
 
 const MERIDIAN_LOCALE_KEY = 'meridian:locale'
 

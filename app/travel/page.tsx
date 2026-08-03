@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { TRAVEL_DESC } from 'service/descriptions'
 import TravelView from './travel-view'
 
 export const metadata: Metadata = {
   title: 'Travel',
-  description: TRAVEL_DESC,
+  description:
+    'The ship log. Every destination pinned on a low-orbit globe, every region a frequency on the signalscope. Twenty-two minutes to supernova.',
   alternates: { canonical: '/travel' },
 }
 

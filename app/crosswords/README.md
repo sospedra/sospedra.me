@@ -5,10 +5,10 @@ runtime content API, no cron.
 
 ## Content
 
-English editions ship with the repository. `content/crosswords/challenges/`
+English editions ship with the repository. `repo/crosswords/challenges/`
 holds one JSON file per date, 1,617 files, `2026-07-29` through `2030-12-31`.
 Each grid is 15×15 in the American convention. The clues come from the USA
-Today crossword archive. `data/crosswords/sources.lock.json` and `CREDITS.txt`
+Today crossword archive. `repo/crosswords/sources.lock.json` and `CREDITS.txt`
 record the provenance and the license.
 
 Spanish arrives at request time. `spanish-daily.ts` fetches one puzzle from
@@ -113,7 +113,7 @@ app/crosswords/
   crossword-engine.ts  reducer, timer, serialization, share card
   crossword-data.ts    types, puzzle builder, the 2026-07-27 edition
   spanish-daily.ts     Spanish feed fetch, validation, merge
-content/crosswords/challenges/*.json
-data/crosswords/sources.lock.json
+repo/crosswords/challenges/*.json
+repo/crosswords/sources.lock.json
 scripts/crosswords/generate-replay.ts
 ```

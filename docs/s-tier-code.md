@@ -1,6 +1,6 @@
 # S-tier code
 
-This document is a doctrine for production-grade code. The rules come from large production systems. The domain specifics are gone. Each rule carries its reason. Adopt the document whole, or lift sections into your agent docs and lint config. The web examples assume a server-rendered app with streaming, a query cache, and client stores. The principles port to other stacks.
+This document is a doctrine for production-grade code. The rules come from large production systems. The domain specifics are gone. Each rule carries its reason. Adopt the document whole, or lift sections into your agent docs and lint config. The examples are TypeScript. The rendering, data, live-data, security, and component sections assume a server-rendered web app with streaming, a query cache, and client stores. The other sections are stack-free.
 
 ## 1. First principles
 
@@ -20,7 +20,7 @@ Two approaches both look valid? These principles break the tie.
 
 1. Single responsibility. One component, one concern. One hook, one behavior. One module, one owner.
 2. Composability. New behavior arrives as new composition, never as new internal branches.
-3. Substitution. One function returns one shape for every variant, so consumers never branch on the variant.
+3. Substitution. One function returns one shape for every variant, so consumers never branch on the variant. A variant with real behavior differences rides a discriminated union, switched in one place (section 7).
 4. Narrow surfaces. Each module exposes a small public API. Restricted-import lint enforces the boundary, not a barrel file.
 5. One owner per datum. Copies can exist, but each piece of data has one canonical write path.
 6. Partition by access pattern. Group code by product usage, not by technical category. A terms page and a checkout page share a navbar and nothing else.
@@ -29,7 +29,7 @@ Two approaches both look valid? These principles break the tie.
 
 ### One pattern per problem
 
-Pick one sanctioned pattern for each recurring problem and document it. Reviewers reject alternatives. State every rule in four parts: the rule, the reason, the enforcement, the sanctioned exemptions. An escape hatch always carries a TODO and a tracking issue.
+Pick one sanctioned pattern for each recurring problem and document it. Reviewers reject alternatives. In the agent doc, state every rule in four parts: the rule, the reason, the enforcement, the sanctioned exemptions. An escape hatch always carries a TODO and a tracking issue.
 
 ### Measure, then decide
 
@@ -37,7 +37,7 @@ Budgets, timeouts, and retry policies derive from infrastructure numbers and pro
 
 ## 2. Classify data first
 
-Every value belongs to one of three classes. Classify before you pick storage, transport, or rendering. The home follows from the class.
+Every piece of server-sourced data belongs to one of three classes. Classify before you pick storage, transport, or rendering. The home follows from the class. Client interaction state stays outside these classes (section 5).
 
 | Class | Nature | Examples | Home | Shared cache |
 | --- | --- | --- | --- | --- |
@@ -60,14 +60,14 @@ Every page is three layers. Each layer has one owner and one transport.
 The rules:
 
 - Regions get strategies. Routes do not. Decide per region: cacheable, request-time, or live.
-- Never push the live layer through the server. A server render of a live value is stale on arrival. Seed it in the shell, and let the stream own it from there.
+- Never push the live layer through the server. A server render of a live value is stale on arrival. Ship it in the shell as a display seed, and let the stream own the live value from there.
 - Cacheability decides the wrap. Cacheable data bakes into the shell. Request-time data sits behind a streaming boundary. A boundary around cacheable data trades the fast paint for a skeleton flash.
 - No route-level loading state. The prerendered shell is the transition state. Put an inline skeleton next to each hole and shape it like the real content.
 - First paint is never blank. Seed every island from the shell. Verify with curl: the seeds must appear in the HTML.
 - The first streamed byte commits the status code. Decide real 404 and redirect outcomes before the stream starts.
-- A hole holds the response open, so hole fetches fail fast: zero retries, tight timeout. Retry ladders belong to background work.
+- A hole holds the response open, so hole fetches fail fast: zero retries and a timeout near ten seconds. Retry ladders belong to background work.
 - Expected absences are values, not exceptions. A missing entity returns a status value, so the cache stores the miss verdict too. Prove the miss through the upstream contract. A bare 404 from the edge proves nothing. Transient failures still throw, and rejections are never cached.
-- Cache directives live in exactly one file type: the snapshot. Not in pages, not in layouts, not in fetchers.
+- Cache directives keep one home, the snapshot layer (section 4). Not in pages, not in layouts, not in fetchers.
 - Cache honesty. A plain in-memory cache is per instance, so warm means warm on that instance. Tag entries before any invalidation endpoint exists. Push invalidation becomes one endpoint later.
 - Keep shared layouts cheap. A slow await in a shared layout taxes every page below it.
 - Defer below-the-fold and non-critical work. It never blocks the shell.
@@ -90,11 +90,12 @@ data/event/
 - The fetcher owns API integration and nothing else. It returns narrow API-shaped data for one use case. It is a replaceable boundary. A better endpoint ships? Only the fetcher changes. The mapper and UI stay put.
 - Treat every external field as nullable, missing, or malformed. API-shaped types admit null and missing. View-model types are clean and use undefined for optionals.
 - The mapper owns correctness: validation, coercion, normalization, calculations, and logging. It returns view models, never raw records. It logs normalization issues with context, so the team sees upstream drift early.
-- Mappers are pure. They test without network, framework, or UI.
+- Mappers are deterministic, and the log context arrives injected. They test without network, framework, or UI.
 - The snapshot is the only home for cache directives. It composes fetcher plus mapper, so the cache stores the serialized view model.
 - Read request-scoped values (cookies, headers, params) above the cache boundary and pass them in as arguments.
 - Authenticated per-request reads get a separate loader file, intentionally uncached.
 - Client code imports the types file, never the runtime data module.
+- Collapse the layers into one thin loader file when the upstream already returns the view shape. The layered module earns its place with a real mapper.
 
 Change guide by symptom: the endpoint changed, start in the fetcher. Values render wrong, fix the mapper and extend its tests. Cache lifetime or invalidation, edit the snapshot. A new UI field walks five steps: fetcher contract, mapper normalization, view-model type, UI consumption, mapper tests.
 
@@ -157,7 +158,7 @@ Client stores:
 - Run hot pipelines off the main thread: dial, decode, validate, and coalesce in a worker. Keep the newest value per resource and flush once per animation frame with a timeout backstop. The main thread receives one batched store write per frame, independent of message rate.
 - Validate every frame before it reaches a store. The decoder states a fact: update, ignore, remove, or resync. The engine decides the consequence. An invalid payload is never written.
 - Reactive layers detect change by reference. Produce new objects for what changed and keep references for the rest, or the UI stops updating, or updates far too much.
-- Sequence numbers detect duplicates and never detect loss. The server signals loss with an explicit resync control. On resync, invalidate and reseed.
+- Sequence numbers promise what the contract says. In this model they dedupe only, and the server signals loss with an explicit resync control. On resync, invalidate and reseed. Never infer a gap without a contiguity guarantee.
 - Reconnect means refetch. Pull the full snapshot, then resume live updates. Never resume deltas after a gap.
 - Seed, then take over. First paint shows the shell seed. The first live frame wins from there. A stale seed beats a loader, so update it in place and never cover it with a skeleton.
 - Guard against stale frames. Drop updates older than the current value. Never move a terminal state back to live without an explicit upstream contract.
@@ -248,19 +249,19 @@ One fetch boundary:
 - Keep script-src report-only until the evidence allows more. Streaming server rendering emits per-request inline scripts, and no build-time hash covers them. A per-request nonce forces dynamic rendering and defeats the caching model. Tighten only after the violation-report stream stays quiet across every vendor flow. Treat that stream as a standing task.
 - Trusted types ride report-only with one default policy. One vendor host list feeds both the header and the policy, so the two cannot drift.
 - Subresource integrity fails behind a body-rewriting proxy: the hashes stop matching your own chunks, and the browser refuses them all. Verify on a real deployment first.
-- Set the boring headers once: deny framing, no MIME sniffing, strict referrer policy, and a permissions policy with deny by default plus documented exceptions. Force no-store on every API response. Those responses carry per-session data.
+- Set the boring headers once: deny framing, no MIME sniffing, strict referrer policy, and a permissions policy with deny by default plus documented exceptions. Force no-store on session-bound API responses. Public data rides the cached rendering path, never those routes.
 
 ### Write safety
 
 Retry semantics correct for a read double-apply a write.
 
-- Zero retries on mutations. The shared caller may retry reads with backoff, never writes.
+- Zero transport retries on mutations. The shared caller may retry reads with backoff, never writes. The auth-refresh replay is the one sanctioned re-send.
 - Never pass a component abort signal to a write. A write must outlive unmount.
-- Idempotency keys ride a request header. The domain lifecycle picks and recycles the key, so the single auth-refresh replay reuses it.
+- Idempotency keys ride a request header. The domain lifecycle picks and recycles the key, so the auth-refresh replay reuses it.
 - Classify failures by structured error code plus a dispatch stamp, never by HTTP status. No dispatch stamp means the request never left the app. Never read it as "maybe it landed".
-- Route handlers keep a fixed order: parse and validate input, authenticate, authorize, perform the effect, respond. The happy path appears once, at the end.
+- Route handlers keep a fixed order: parse and validate input, authenticate, check coarse permission, perform the effect, respond. The happy path appears once, at the end.
 - Treat every mutation endpoint as public. Direct requests can reach it, so require a session, validate the body, and let the backend authorize by token.
-- Authorization lives upstream. The app does not re-check ownership. A response without token scoping is a backend contract bug, not app code.
+- Resource ownership lives upstream. The handler gates the session and the role. The backend scopes every read and write by token, and a response without that scoping is a backend contract bug, not app code.
 
 ### Leaks
 
@@ -300,7 +301,7 @@ Configuration:
 - All environment reads live in two modules: one universal, one server-only. The server module fails the client build on import.
 - Access values by full name through one object. A re-aliased constant hides provenance.
 - Derive over configure. Hosts derive from one environment switch. Per-URL variables split-brain client and server routing.
-- A missing variable degrades instead of throwing, and the doc states the fallback consequence. Absence means local.
+- Required configuration fails the boot. Optional configuration degrades, and the doc states the fallback consequence. Platform detection reads absence as local.
 - Sanctioned raw reads live in one lint override, each with a written reason.
 
 ## 10. Organization and naming
@@ -317,7 +318,7 @@ One unified writing style:
 - Files: `<domain>.<suffix>.ts`. Symbols: `<domain><Verb>()` or `use<Domain><Thing>()`. One glance gives the domain and the role.
 - A suffix is a contract, not a style. Each suffix names one responsibility and its import rules, published in the agent doc. Examples: `.mapper.ts` owns validation to view models. `.server-snapshot.ts` is the only cache home. `.store.ts` is the domain's one client store. `.types.ts` carries contracts with zero runtime imports.
 - `server` in a filename means server-only. `client` means browser-safe. Build-time fences enforce it, and the name makes it readable.
-- One data file per route. One store per domain. One options file per domain.
+- One data home per route. One store per domain. One options file per domain.
 
 Boundaries:
 
@@ -332,7 +333,7 @@ Optimize for cognitive complexity: reader effort, never path count.
 
 The cost model. Each branch, loop, or catch costs one. Each nesting level adds one more, and callbacks count as nesting. A switch costs one in total. Early returns, optional chaining, and nullish coalescing are free. Consequences: flat is cheap, nested is expensive, a lookup beats a switch, a switch beats an else-if chain, early returns beat else.
 
-Budgets per function: cognitive complexity 10 hard and 5 target, nesting depth 3 hard and 2 target, parameters 3 hard and 2 target, length soft at about 60 lines. Length is a symptom. Complexity is the rule. Over budget: extract, restructure, or flag it. Never obfuscate to pass.
+Budgets per function: cognitive complexity 10 hard and 5 target, nesting depth 3 hard and 2 target, parameters 3 hard and 2 target, length soft at about 60 lines. The numbers are tunable defaults, not measurements. Length is a symptom. Complexity is the rule. Over budget: extract, restructure, or flag it. Never obfuscate to pass.
 
 Control flow:
 
@@ -518,6 +519,7 @@ Specs:
 - Two or more domains: yes, with sign-off from the owners.
 - Architecture changes: yes.
 - Auth or money settlement: always.
+- Risk beats size. A small auth fix still gets the spec.
 
 A spec holds the problem, the approach, the alternatives, the affected domains, and the open questions. Implementation details belong in the PR. Write for humans.
 
@@ -591,9 +593,6 @@ Each line names a forbidden move. The sections above hold the sanctioned alterna
 - A raw fetch-and-parse without status checks or a schema.
 - Inline query keys. Scattered stale-time literals. Auth-expiry teardown in five places.
 - Console calls in app code. Logging inside an error constructor. Branching on error message strings.
-- Parallel booleans encoding phases.
-- A boolean parameter switching behavior.
-- A comment restating the next line.
 - A hand-rolled copy of a kit component.
 - First-party barrel files.
 - Hand-written memoization under a compiler.

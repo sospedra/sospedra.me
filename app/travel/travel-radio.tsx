@@ -1,5 +1,6 @@
 'use client'
 
+import { clamp } from 'es-toolkit'
 import type { CSSProperties } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { getRadioStations } from './radio-stations'
@@ -20,19 +21,16 @@ const STATUS_COPY: Record<PlaybackState, string> = {
 
 const buildDataTrace = (bitrateKbps: number | null): string => {
   if (!bitrateKbps) return `M0 9 H${TRACE_WIDTH}`
-  const pulseCount = Math.max(2, Math.min(16, Math.round(bitrateKbps / 16)))
+  const pulseCount = clamp(Math.round(bitrateKbps / 16), 2, 16)
   const pulseWidth = TRACE_WIDTH / pulseCount
-  let path = 'M0 13'
-
-  for (let index = 0; index < pulseCount; index += 1) {
+  const pulses = Array.from({ length: pulseCount }, (_, index) => {
     const start = index * pulseWidth
     const rise = start + pulseWidth * 0.18
     const fall = start + pulseWidth * 0.58
     const end = start + pulseWidth
-    path += ` H${rise.toFixed(2)} V5 H${fall.toFixed(2)} V13 H${end.toFixed(2)}`
-  }
-
-  return path
+    return ` H${rise.toFixed(2)} V5 H${fall.toFixed(2)} V13 H${end.toFixed(2)}`
+  })
+  return `M0 13${pulses.join('')}`
 }
 
 type TravelRadioProps = {
@@ -128,6 +126,7 @@ export default function TravelRadio({
       const handlePlaying = () => {
         if (!isCurrentAttempt()) return
         clearStartupTimer()
+        attemptedRef.current.clear()
         travelAudio.stopReceiverStatic()
         setPlayback('playing')
       }
@@ -143,16 +142,15 @@ export default function TravelRadio({
         if (!wantsPlaybackRef.current) setPlayback('paused')
       }
 
+      // 'stalled' is deliberately unhandled: fetching can stall while buffered playback continues
       audio.addEventListener('playing', handlePlaying)
       audio.addEventListener('waiting', handleWaiting)
-      audio.addEventListener('stalled', handleWaiting)
       audio.addEventListener('ended', recoverCurrentAttempt)
       audio.addEventListener('error', recoverCurrentAttempt)
       audio.addEventListener('pause', handlePause)
       mediaCleanupRef.current = () => {
         audio.removeEventListener('playing', handlePlaying)
         audio.removeEventListener('waiting', handleWaiting)
-        audio.removeEventListener('stalled', handleWaiting)
         audio.removeEventListener('ended', recoverCurrentAttempt)
         audio.removeEventListener('error', recoverCurrentAttempt)
         audio.removeEventListener('pause', handlePause)
@@ -311,11 +309,13 @@ export default function TravelRadio({
     if (shouldResume) startStation(nextIndex, true)
   }
 
+  // biome-ignore lint/a11y/useMediaCaption: Live third-party radio streams do not expose timed caption tracks.
+  const streamAudio = <audio ref={audioRef} preload='none' />
+
   if (!station) {
     return (
       <div className={css.radioModule} data-state='error'>
-        {/* biome-ignore lint/a11y/useMediaCaption: Live third-party radio streams do not expose timed caption tracks. */}
-        <audio ref={audioRef} preload='none' />
+        {streamAudio}
         <div className={css.radioScreen}>
           <span>LOCAL SIGNAL / {destinationCode}</span>
           <strong>Nothing answering yet.</strong>
@@ -331,11 +331,12 @@ export default function TravelRadio({
   const dataTraceLabel = station.bitrateKbps
     ? `IP DATA · ${station.bitrateKbps} KBPS`
     : 'IP DATA · RATE UNKNOWN'
+  const dialPosition =
+    stations.length === 1 ? 50 : (stationIndex / (stations.length - 1)) * 100
 
   return (
     <div className={css.radioModule} data-state={playback}>
-      {/* biome-ignore lint/a11y/useMediaCaption: Live third-party radio streams do not expose timed caption tracks. */}
-      <audio ref={audioRef} preload='none' />
+      {streamAudio}
 
       <div className={css.radioScreen}>
         <span>
@@ -365,15 +366,7 @@ export default function TravelRadio({
           </svg>
           <span>{dataTraceLabel}</span>
           <i
-            style={
-              {
-                '--radio-position': `${
-                  stations.length === 1
-                    ? 50
-                    : (stationIndex / (stations.length - 1)) * 100
-                }%`,
-              } as CSSProperties
-            }
+            style={{ '--radio-position': `${dialPosition}%` } as CSSProperties}
           />
         </div>
       </div>

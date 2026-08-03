@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
-import { W98_DESC } from 'service/descriptions'
 import Windows98View from './w98-view'
 
 export const metadata: Metadata = {
   title: 'Windows 98',
-  description: W98_DESC,
+  description:
+    'A Windows 98 desktop in the browser. Sweep a responsive Minesweeper field, draw in Paint, play your library through Winamp and tune live disco radio in RealPlayer.',
   alternates: { canonical: '/w98' },
 }
 

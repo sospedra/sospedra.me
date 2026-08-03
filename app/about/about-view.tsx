@@ -1,16 +1,16 @@
 'use client'
 
-import External from 'components/External'
-import Link from 'components/Link'
-import Role from 'components/Role'
-import RouteHeader from 'components/RouteHeader'
-import Row from 'components/Row'
-import Shell from 'components/Shell'
-import SpriteBust from 'components/Sprite/Bust'
 import { useCallback, useState } from 'react'
-import neonCss from 'service/style/neon.module.css'
+import SpriteBust from 'services/bust'
+import External, { X_PROFILE_URL } from 'services/external'
+import Link from 'services/link'
+import RouteHeader from 'services/route-header'
+import Row from 'services/row'
+import Shell from 'services/shell'
+import neonCss from 'services/style/neon.module.css'
 import css from './about.module.css'
 import NeonTattoos from './neon-tattoos'
+import Role from './role'
 import VaporFooter from './vapor-footer'
 
 export default function AboutView(props: { years: number }) {
@@ -56,9 +56,8 @@ export default function AboutView(props: { years: number }) {
                 . It's the skill behind every other skill.
               </p>
               <p>
-                Want more? Let's{' '}
-                <External href='https://x.com/sospedra_r'>chat</External>, read
-                my{' '}
+                Want more? Let's <External href={X_PROFILE_URL}>chat</External>,
+                read my{' '}
                 <Link url='/manual' className={neonCss.neon}>
                   user-guide manual
                 </Link>
@@ -222,7 +221,7 @@ export default function AboutView(props: { years: number }) {
                   </External>
                 </li>
                 <li>
-                  <External href='https://x.com/sospedra_r'>x.com</External>
+                  <External href={X_PROFILE_URL}>x.com</External>
                 </li>
                 <li>
                   <External href='https://sospedra.me/serve/cv.pdf'>

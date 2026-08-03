@@ -1,30 +1,34 @@
 import cn from 'clsx'
-import ArrowNav from 'components/ArrowNav'
-import External, { X } from 'components/External'
-import Link, { LinkBack } from 'components/Link'
-import Shell from 'components/Shell'
 import type { Route } from 'next'
+import ArrowNav from 'services/arrow-nav'
+import External, { X_PROFILE_URL } from 'services/external'
+import Link, { LinkBack } from 'services/link'
+import Shell from 'services/shell'
 import css from './ramen.module.css'
 import uses from './uses.json'
 
-type Item = (typeof uses)[number]['items'][number]
+type RawSection = (typeof uses)[number]
+type RawItem = RawSection['items'][number]
 
-/* the price is the verdict: yen encode the tier, the story explains it */
+type Verdict = 'goat' | 'buy' | 'fine' | 'cheap'
+
 const PRICE = {
   goat: '¥1,300',
   buy: '¥980',
   fine: '¥750',
   cheap: '¥380',
-} as Record<string, string>
+} satisfies Record<Verdict, string>
 
 const VERDICT_SR = {
   goat: 'goat tier, house special',
   buy: 'buy tier',
   fine: 'fine tier',
   cheap: 'go-cheap tier',
-} as Record<string, string>
+} satisfies Record<Verdict, string>
 
-/* hardware holds the meal, daily drivers are the base, apps season it */
+type Course = { numeral: string; kanji: string; name: string; note: string }
+type CourseTitle = 'Workstation' | 'Editor + Terminal' | 'Desktop Apps'
+
 const COURSES = {
   Workstation: {
     numeral: '其の一',
@@ -44,24 +48,68 @@ const COURSES = {
     name: 'The toppings',
     note: 'small extras, strong flavor',
   },
-} as Record<
-  string,
-  { numeral: string; kanji: string; name: string; note: string }
->
+} satisfies Record<CourseTitle, Course>
 
-const ITEMS = uses.flatMap((section) => section.items)
-const DISH_COUNT = ITEMS.length
-const SPECIAL_COUNT = ITEMS.filter((item) => item.verdict === 'goat').length
+const isVerdict = (value: string): value is Verdict => value in PRICE
+const isCourseTitle = (value: string): value is CourseTitle => value in COURSES
+
+type DishLink =
+  | { kind: 'external'; href: string }
+  | { kind: 'internal'; href: Route }
+
+type Dish = {
+  title: string
+  description: string
+  slot: string
+  verdict: Verdict
+  link: DishLink
+}
+
+type MenuCourse = {
+  title: CourseTitle
+  course: Course
+  dishes: Dish[]
+}
+
+const toDish = (item: RawItem): Dish => {
+  if (!isVerdict(item.verdict)) {
+    throw new Error(`Unknown verdict in uses.json — ${item.verdict}`)
+  }
+  return {
+    title: item.title,
+    description: item.description,
+    slot: item.slot,
+    verdict: item.verdict,
+    link: item.url.startsWith('http')
+      ? { kind: 'external', href: item.url }
+      : { kind: 'internal', href: item.url as Route },
+  }
+}
+
+const toMenuCourse = (section: RawSection): MenuCourse => {
+  if (!isCourseTitle(section.title)) {
+    throw new Error(`Unknown course in uses.json — ${section.title}`)
+  }
+  return {
+    title: section.title,
+    course: COURSES[section.title],
+    dishes: section.items.map(toDish),
+  }
+}
+
+const MENU = uses.map(toMenuCourse)
+const DISHES = MENU.flatMap((section) => section.dishes)
+const DISH_COUNT = DISHES.length
+const SPECIAL_COUNT = DISHES.filter((dish) => dish.verdict === 'goat').length
 
 const FLAPS = [...'ABCDEFGHIJKLMNOPQRSTUV']
 
-/* red-pen marks the owner left on his own menu */
 const PEN_RING_SLOT = 'keyboard'
 const PEN_ARROW_SLOT = 'shell'
-const PEN_NOTES = {
+const PEN_NOTES: Partial<Record<string, string>> = {
   laptop: 'since 2014!',
   chair: "chef's fav",
-} as Record<string, string>
+}
 
 function PenRing() {
   return (
@@ -219,7 +267,7 @@ function NotebookFilters() {
   )
 }
 
-function DishBody(props: { item: Item }) {
+function DishBody(props: { item: Dish }) {
   return (
     <>
       <span className={css.dishLine}>
@@ -246,7 +294,7 @@ function DishBody(props: { item: Item }) {
   )
 }
 
-function DishRow(props: { item: Item }) {
+function DishRow(props: { item: Dish }) {
   const shared = {
     className: css.dish,
     'data-arrow-item': '',
@@ -269,21 +317,20 @@ function DishRow(props: { item: Item }) {
       <DishBody item={props.item} />
     </>
   )
-  if (props.item.url.startsWith('http')) {
+  if (props.item.link.kind === 'external') {
     return (
-      <External href={props.item.url} {...shared}>
+      <External href={props.item.link.href} {...shared}>
         {body}
       </External>
     )
   }
   return (
-    <Link url={props.item.url as Route} {...shared}>
+    <Link url={props.item.link.href} {...shared}>
       {body}
     </Link>
   )
 }
 
-/* the one bowl nobody orders; 86'd but it stays on the wall */
 function DeadDish() {
   return (
     <span className={css.dishDead}>
@@ -312,7 +359,6 @@ function DeadDish() {
   )
 }
 
-/* hand-bent katakana in a gunmetal frame, cables run to the roof */
 function NeonRamen() {
   return (
     <div className={css.marquee} aria-hidden='true'>
@@ -379,7 +425,6 @@ function Lantern(props: { className: string; glyph: string }) {
   )
 }
 
-/* the margin menagerie: stickers and charms collected over the years */
 function Charms() {
   return (
     <>
@@ -516,46 +561,39 @@ export default function RamenView(props: { level: number }) {
             </p>
           </header>
 
-          {uses.map((section) => {
-            const course = COURSES[section.title]
-            return (
-              <section key={section.title} className={css.course}>
-                <header className={css.banner}>
-                  <span
-                    className={css.bannerKanji}
-                    lang='ja'
-                    aria-hidden='true'
-                  >
-                    {course.kanji}
-                  </span>
-                  <h2 className={css.bannerTitle}>
-                    {course.name}
-                    <span className={css.bannerSub}> · {section.title}</span>
-                  </h2>
-                  <span
-                    className={css.bannerNumeral}
-                    lang='ja'
-                    aria-hidden='true'
-                  >
-                    {course.numeral}
-                  </span>
-                </header>
-                <p className={css.courseNote}>{course.note}</p>
-                <ul className={css.dishes}>
-                  {section.items.map((item) => (
-                    <li key={item.title}>
-                      <DishRow item={item} />
-                    </li>
-                  ))}
-                  {section.title === 'Workstation' && (
-                    <li>
-                      <DeadDish />
-                    </li>
-                  )}
-                </ul>
-              </section>
-            )
-          })}
+          {MENU.map((section) => (
+            <section key={section.title} className={css.course}>
+              <header className={css.banner}>
+                <span className={css.bannerKanji} lang='ja' aria-hidden='true'>
+                  {section.course.kanji}
+                </span>
+                <h2 className={css.bannerTitle}>
+                  {section.course.name}
+                  <span className={css.bannerSub}> · {section.title}</span>
+                </h2>
+                <span
+                  className={css.bannerNumeral}
+                  lang='ja'
+                  aria-hidden='true'
+                >
+                  {section.course.numeral}
+                </span>
+              </header>
+              <p className={css.courseNote}>{section.course.note}</p>
+              <ul className={css.dishes}>
+                {section.dishes.map((item) => (
+                  <li key={item.title}>
+                    <DishRow item={item} />
+                  </li>
+                ))}
+                {section.title === 'Workstation' && (
+                  <li>
+                    <DeadDish />
+                  </li>
+                )}
+              </ul>
+            </section>
+          ))}
 
           <footer className={css.chit}>
             <p>
@@ -566,7 +604,7 @@ export default function RamenView(props: { level: number }) {
             </p>
             <p>
               complaints at the counter:{' '}
-              <External className={css.chitLink} href={X}>
+              <External className={css.chitLink} href={X_PROFILE_URL}>
                 fight me
               </External>
             </p>

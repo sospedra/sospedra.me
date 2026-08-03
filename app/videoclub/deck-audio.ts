@@ -1,4 +1,4 @@
-import { createSfxKit, type SfxBed } from 'service/audio/kit'
+import { createSfxKit, type SfxBed } from 'services/audio/kit'
 
 const SAMPLE_URLS = {
   button: '/talks/sfx/button',

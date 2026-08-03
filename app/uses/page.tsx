@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-import { yearsSinceCareerStart } from 'service/career'
-import { USES_DESC } from 'service/descriptions'
+import { yearsSinceCareerStart } from 'services/career'
 import RamenView from './ramen-view'
 
 export const metadata: Metadata = {
   title: 'Uses',
-  description: USES_DESC,
+  description:
+    'The exact hardware and software I work with, served as a late-night ramen menu: the bowls, the broth, the toppings. Prices in verdict-yen. Highly opinionated.',
   alternates: { canonical: '/uses' },
 }
 

@@ -1,0 +1,513 @@
+@reference "../services/style/global.css";
+
+.notfound {
+  --tuner-size: clamp(13rem, calc(18vh + 18vw), 31rem);
+  --crt-scan: rgb(255 255 255 / 1.4%);
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(0deg, var(--crt-scan) 0 1px, transparent 1px 4px),
+    radial-gradient(
+      ellipse at bottom,
+      var(--color-bg-plasma, #800d79) 0%,
+      var(--color-bg-void, #0e141b) 100%
+    );
+  color: var(--color-text, #fff);
+}
+
+.message {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0.86;
+  pointer-events: none;
+}
+
+.message p {
+  height: 25dvh;
+  margin: 0;
+  color: var(--color-text, #fff);
+  font-size: clamp(4rem, calc(8vw + 8vh), 12rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.08em;
+}
+
+.messageEnd {
+  align-self: flex-end;
+}
+
+.messageCode {
+  text-align: center;
+}
+
+.tunerConsole {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  padding: 5.5rem 1rem 8rem;
+  pointer-events: none;
+}
+
+.tuner {
+  position: relative;
+  width: var(--tuner-size);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--color-signal-cyan, var(--cyan, #6df7ea));
+  aspect-ratio: 4 / 3;
+  background: var(--color-bg-void, var(--black, #0e141b));
+  box-shadow:
+    0 0 0 0.3rem rgb(14 20 27 / 72%),
+    0 0 1.25rem rgb(109 247 234 / 22%);
+  pointer-events: auto;
+  transition:
+    width 360ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 150ms ease;
+}
+
+.tuner::after {
+  position: absolute;
+  inset: 0;
+  border: 0.35rem solid rgb(14 20 27 / 45%);
+  content: "";
+  pointer-events: none;
+}
+
+.tuner:hover:not(:disabled) {
+  border-color: var(--color-signal-yellow, var(--yellow, #ffea00));
+}
+
+.tuner:focus-visible {
+  border-color: var(--color-focus, var(--yellow, #ffea00));
+  outline: 3px solid var(--color-focus, var(--yellow, #ffea00));
+  outline-offset: 0.45rem;
+}
+
+.tuner:disabled {
+  cursor: wait;
+  opacity: 1;
+}
+
+.expand {
+  --tuner-size: clamp(15rem, calc(23vh + 20vw), 37rem);
+}
+
+.locked {
+  border-color: var(--color-signal-yellow, var(--yellow, #ffea00));
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.frameLabel {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.55rem;
+  padding: 0.3rem 0.45rem;
+  color: var(--color-signal-yellow, var(--yellow, #ffea00));
+  background: rgb(14 20 27 / 82%);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+}
+
+.preload {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav {
+  position: absolute;
+  z-index: 4;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  display: flex;
+  max-width: calc(100% - 2rem);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.nav a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid currentColor;
+  background: var(--color-surface, rgb(14 20 27 / 84%));
+  font-weight: 600;
+  text-decoration: none;
+  filter: drop-shadow(0 0 0.6rem currentColor);
+}
+
+.nav .homeLink {
+  --liquid-layer-a: #fff;
+  --liquid-layer-b: #00f;
+  --liquid-base: #f00;
+  --liquid-inset: #558;
+  --liquid-preroll: 20s;
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  overflow: visible;
+  min-width: 2.75rem;
+  padding: 0;
+  place-items: center;
+  border: 2px solid rgb(255 255 255 / 72%);
+  border-radius: 2rem;
+  color: var(--color-bg-void, #0e141b);
+  background: var(--liquid-base);
+  box-shadow: 0 0 1rem rgb(87 120 255 / 44%);
+  filter: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.homeLinkClip {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  overflow: hidden;
+  align-self: stretch;
+  justify-self: stretch;
+  border-radius: calc(2rem - 2px);
+  background: var(--liquid-base);
+  clip-path: inset(0 round calc(2rem - 2px));
+  contain: paint;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+.homeLiquidScene {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  filter: saturate(0.82) brightness(1.45);
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+}
+
+.homeLiquidBase {
+  position: relative;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(2rem - 2px);
+  background: var(--liquid-base);
+  box-shadow: inset 0 0 10px 9px var(--liquid-inset);
+  mix-blend-mode: color-dodge;
+}
+
+.homeLiquidSurface {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: calc(2rem - 2px);
+  box-shadow:
+    inset 0 -4px 4px rgb(0 0 0 / 27%),
+    inset 0 4px 4px rgb(255 255 255 / 33%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  animation: liquidOpacityPulse 5s ease infinite;
+}
+
+.homeLinkText {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.72rem 0.9rem;
+  place-items: center;
+  border-radius: inherit;
+  color: var(--color-bg-void, #0e141b);
+  font: inherit;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 0 4px var(--color-text-strong, #fff);
+  -webkit-text-stroke: 0.2px currentColor;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transition: transform 300ms ease;
+}
+
+.homeLinkLabel {
+  display: flex;
+  gap: 0.28em;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.homeLinkWord {
+  display: inline-block;
+}
+
+.homeLiquidLayer {
+  position: absolute;
+  top: 50%;
+  left: -115%;
+  width: 500%;
+  aspect-ratio: 1;
+  background: radial-gradient(
+    ellipse at 65% 180%,
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a)
+  );
+  mix-blend-mode: difference;
+  pointer-events: none;
+  translate: 0 -50%;
+  animation: liquidRotate var(--liquid-duration) linear
+    calc(var(--liquid-delay) - var(--liquid-preroll)) infinite;
+}
+
+.homeLiquidLight {
+  position: absolute;
+  z-index: 1;
+  width: 80%;
+  height: 1.9rem;
+  aspect-ratio: 1;
+  border-radius: 2rem;
+  background: rgb(255 255 255 / 33%);
+  filter: blur(5px);
+  pointer-events: none;
+  animation: liquidLightPulse 3s ease-in-out infinite;
+}
+
+.nav a:focus-visible,
+.nav a:hover {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  text-decoration: line-through;
+}
+
+.nav a.homeLink:hover {
+  outline: none;
+  text-decoration: none;
+}
+
+.nav a.homeLink:focus-visible {
+  outline: 2px solid var(--color-text-strong, #fff);
+  outline-offset: 4px;
+  text-decoration: none;
+}
+
+.nav a.homeLink:hover .homeLinkText {
+  transform: scale(1.06);
+}
+
+.nav a.homeLink:active .homeLinkText {
+  transform: scale(0.95);
+}
+
+.shake {
+  animation: shake 4s ease-in-out infinite;
+}
+
+@keyframes shake {
+  10% {
+    transform: translate(1px, -2px) rotate(1.5deg);
+    opacity: 0.95;
+  }
+  20% {
+    transform: translate(-4px, 5px) rotate(-0.5deg);
+    opacity: 0.8;
+  }
+  30% {
+    transform: translate(4px, -2px) rotate(-1.5deg);
+    opacity: 0.62;
+  }
+  40% {
+    transform: translate(-1px, 2px) rotate(-1.5deg);
+    opacity: 0.97;
+  }
+  50% {
+    transform: translate(5px, 0) rotate(1.5deg);
+    opacity: 0.97;
+  }
+  60% {
+    transform: translate(2px, -4px) rotate(1.5deg);
+    opacity: 0.24;
+  }
+  70% {
+    transform: translate(-3px, 3px) rotate(1.5deg);
+    opacity: 0.59;
+  }
+  80% {
+    transform: translate(2px, -2px) rotate(-0.5deg);
+    opacity: 0.03;
+  }
+  90% {
+    transform: translate(2px, -4px) rotate(-0.5deg);
+    opacity: 0.05;
+  }
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+}
+
+@keyframes liquidRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes liquidLightPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.1;
+  }
+}
+
+@keyframes liquidOpacityPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (min-width: 768px) {
+  .nav {
+    top: max(2.25rem, env(safe-area-inset-top));
+    right: max(2.25rem, env(safe-area-inset-right));
+    bottom: auto;
+    flex-direction: column;
+    align-items: stretch;
+    font-size: 0.8rem;
+  }
+
+  .nav .homeLink {
+    --home-link-height: 21rem;
+
+    width: 5rem;
+    height: var(--home-link-height);
+  }
+
+  .homeLiquidScene {
+    width: 13rem;
+    height: 5rem;
+    transform: translate(-50%, -50%) rotate(90deg) scaleX(1.6154);
+  }
+
+  .homeLinkLabel {
+    flex-direction: column;
+    gap: 0.35rem;
+    text-transform: uppercase;
+  }
+
+  .homeLinkWord {
+    line-height: 1;
+    text-orientation: upright;
+    writing-mode: vertical-rl;
+  }
+}
+
+@media (min-width: 768px) and (max-height: 420px) {
+  .nav .homeLink {
+    --home-link-height: calc(100dvh - 4.5rem);
+  }
+
+  .homeLinkLabel {
+    gap: 0.2rem;
+  }
+}
+
+@media (max-height: 580px) {
+  .notfound {
+    --tuner-size: clamp(10rem, 45vh, 17rem);
+  }
+
+  .expand {
+    --tuner-size: clamp(11rem, 52vh, 20rem);
+  }
+
+  .tunerConsole {
+    padding-block: 4.5rem 4rem;
+  }
+
+  .nav {
+    font-size: 0.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shake {
+    animation: none;
+  }
+
+  .tuner {
+    transition: none;
+  }
+
+  .homeLinkText {
+    transition: none;
+  }
+
+  .homeLinkText,
+  .homeLiquidSurface,
+  .homeLiquidLayer,
+  .homeLiquidLight {
+    animation: none;
+  }
+
+  .homeLiquidLayer {
+    transform: rotate(0deg);
+  }
+
+  .nav a.homeLink:hover .homeLinkText,
+  .nav a.homeLink:active .homeLinkText {
+    transform: none;
+  }
+}

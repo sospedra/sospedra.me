@@ -1,6 +1,6 @@
-import Component404 from 'components/404'
-import Shell from 'components/Shell'
 import type { Metadata } from 'next'
+import Shell from 'services/shell'
+import NotFoundView from './not-found-view'
 
 export const metadata: Metadata = {
   title: '404',
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <Shell className='relative w-full min-h-dvh overflow-hidden text-white'>
-      <Component404 />
+      <NotFoundView />
     </Shell>
   )
 }

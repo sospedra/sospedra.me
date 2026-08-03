@@ -1,0 +1,107 @@
+@reference "../../services/style/global.css";
+
+/*
+ * Pixel-art disc with an SVG shadow overlay. The PNG alpha is the moon's
+ * silhouette: the shadow svg is masked by it, so the jagged limb survives
+ * and no circle clip shaves the pixels. Phase technique after
+ * https://dev.to/madsstoumann/phases-of-the-moon-in-css-2lbo
+ */
+.moon {
+  position: absolute;
+  z-index: 3;
+  top: clamp(3.5rem, 11vh, 7rem);
+  left: 69vw;
+  width: clamp(4.25rem, 8.5vw, 6.5rem);
+  aspect-ratio: 1;
+  margin: 0;
+  border-radius: 50%;
+  box-shadow:
+    0 0 1.5rem rgb(255 244 200 / 14%),
+    0 0 3rem rgb(109 247 234 / 8%);
+  rotate: var(--moon-tilt, 0deg);
+  animation:
+    moon-rise 1400ms ease-out both,
+    moon-glow 5200ms ease-in-out 1400ms infinite alternate;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: rotate 1200ms ease;
+}
+
+.moon:active {
+  cursor: grabbing;
+}
+
+.moon:focus-visible {
+  outline: 2px solid var(--color-focus, #ffea00);
+  outline-offset: 4px;
+}
+
+.moon::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background-image: image-set(
+    url("/images/moon.webp") 1x,
+    url("/images/moon@2x.webp") 2x
+  );
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  image-rendering: pixelated;
+}
+
+.moon svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  mask: url("/images/moon@2x.webp") center / cover no-repeat;
+}
+
+.moon path {
+  fill: rgb(2 5 16 / 94%);
+}
+
+@keyframes moon-rise {
+  from {
+    opacity: 0;
+    translate: 0 0.6rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes moon-glow {
+  from {
+    box-shadow:
+      0 0 1.5rem rgb(255 244 200 / 14%),
+      0 0 3rem rgb(109 247 234 / 8%);
+  }
+  to {
+    box-shadow:
+      0 0 2.25rem rgb(255 244 200 / 26%),
+      0 0 4.5rem rgb(109 247 234 / 14%);
+  }
+}
+
+@media (max-width: 48rem) {
+  .moon {
+    top: clamp(4.5rem, 14vh, 8rem);
+    left: 72vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moon {
+    animation: none;
+    transition: none;
+  }
+}
+
+:global(.fx-quiet) .moon {
+  animation: none;
+  transition: none;
+}

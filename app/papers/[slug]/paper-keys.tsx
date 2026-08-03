@@ -2,7 +2,7 @@
 
 import type { Route } from 'next'
 import { useRouter } from 'next/navigation'
-import { useHotkeys } from 'service/hotkeys'
+import { useHotkeys } from 'services/hotkeys'
 
 // `[` / `]` walk the archive in board order: `[` is the newer paper
 // (one row up on /papers), `]` the older one

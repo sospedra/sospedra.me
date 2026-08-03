@@ -1,3 +1,4 @@
+import { audioContextClass } from '../../services/audio/kit.ts'
 import type { Phase } from './engine'
 
 export type SoundName = 'key' | 'start' | 'eat' | 'pause' | 'over'
@@ -27,13 +28,18 @@ let context: AudioContext | null = null
 
 // first call always rides a user gesture, so autoplay policy lets it run
 const ensureContext = () => {
-  if (context === null) context = new AudioContext()
+  if (context === null) {
+    const AudioContextClass = audioContextClass()
+    if (!AudioContextClass) return null
+    context = new AudioContextClass()
+  }
   if (context.state === 'suspended') void context.resume()
   return context
 }
 
 export const play = (name: SoundName) => {
   const audio = ensureContext()
+  if (!audio) return
   const zero = audio.currentTime + 0.01
   for (const [frequency, at, duration] of TUNES[name]) {
     const osc = audio.createOscillator()

@@ -144,3 +144,6 @@ export const LIFE_PRESETS: readonly LifePreset[] = [
 ]
 
 export const DEFAULT_PRESET = R_PENTOMINO
+
+export const presetById = (id: string): LifePreset | undefined =>
+  LIFE_PRESETS.find((preset) => preset.id === id)

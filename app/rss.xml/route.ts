@@ -1,56 +1,61 @@
-import { escape as escapeHtml } from 'es-toolkit'
-import { cacheLife } from 'next/cache'
-import { fetchPapers, type Paper } from 'service/markdown/files'
-import { SITE_URL } from 'service/site'
+import { escape as escapeXml } from 'es-toolkit'
+import { cacheLife, cacheTag } from 'next/cache'
+import { fetchPapers } from 'services/markdown/paper.server-snapshot'
+import type { Paper } from 'services/markdown/paper.types'
+import { SITE_URL } from 'services/site'
 
-const createItem = (meta: Paper) => {
-  const title = escapeHtml(meta.title)
-  const excerpt = escapeHtml(meta.excerpt)
-  const pubdate = new Date(meta.updatedAt).toUTCString()
-  const categories = meta.categories.map(
-    (category) => `<category>${escapeHtml(category)}</category>`,
+const createItem = (paper: Paper) => {
+  const description = escapeXml(
+    `<img src="${SITE_URL}${paper.og}" /><p>${paper.excerpt}</p>`,
+  )
+  const categories = paper.categories.map(
+    (category) => `<category>${escapeXml(category)}</category>`,
   )
 
   return `
     <item>
-    <title><![CDATA[${title}]]></title>
-    <pubDate>${pubdate}</pubDate>
-    <link>${SITE_URL}/papers/${meta.slug}</link>
-    <guid isPermaLink="false">${SITE_URL}/papers/${meta.slug}</guid>
-    <description>
-      <![CDATA[
-        <img src="${SITE_URL}${meta.og}" />
-        <p>${excerpt}</p>
-      ]]>
-    </description>
+    <title>${escapeXml(paper.title)}</title>
+    <pubDate>${new Date(paper.updatedAt).toUTCString()}</pubDate>
+    <link>${SITE_URL}/papers/${paper.slug}</link>
+    <guid isPermaLink="false">${SITE_URL}/papers/${paper.slug}</guid>
+    <description>${description}</description>
     ${categories.join('')}
     </item>
   `
 }
 
-const createRSS = (papers: Paper[]) => `<?xml version="1.0" encoding="UTF-8"?>
+const createRSS = (papers: Paper[]) => {
+  const newestUpdate = papers
+    .map((paper) => paper.updatedAt)
+    .toSorted()
+    .at(-1)
+  const lastBuild = newestUpdate ? new Date(newestUpdate) : new Date(0)
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
 <channel>
-<title><![CDATA[Rubén Sospedra papers]]></title>
+<title>Rubén Sospedra papers</title>
 <link>${SITE_URL}/rss.xml</link>
 <image>
   <url>${SITE_URL}/sospedra.png</url>
   <title>Rubén Sospedra papers</title>
   <link>${SITE_URL}/rss.xml</link>
 </image>
-<description><![CDATA[Highly curated content about JavaScript, clients development, the Internet, and occasionally, philosophy. Not your usual blog. Favour valuable content over long and boring SEO-focused posts. Words are my own. It's dangerous to go unknowing, take some pills 💊]]></description>
+<description>${escapeXml("Highly curated content about JavaScript, clients development, the Internet, and occasionally, philosophy. Not your usual blog. Favour valuable content over long and boring SEO-focused posts. Words are my own. It's dangerous to go unknowing, take some pills 💊")}</description>
 <language>en-us</language>
-<copyright>Copyright ${new Date().getFullYear()} Rubén Sospedra. The contents of this feed are available for non-commercial use only.</copyright>
+<copyright>Copyright ${lastBuild.getUTCFullYear()} Rubén Sospedra. The contents of this feed are available for non-commercial use only.</copyright>
 <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />
-<lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+<lastBuildDate>${lastBuild.toUTCString()}</lastBuildDate>
   ${papers.map(createItem).join('')}
 </channel>
 </rss>`
+}
 
-// cached, so the feed and its build dates prerender into the shell
+// the whole feed derives from committed content, so its dates do too
 const buildFeed = async () => {
   'use cache'
   cacheLife('max')
+  cacheTag('papers')
   const papers = await fetchPapers()
   return createRSS(papers)
 }

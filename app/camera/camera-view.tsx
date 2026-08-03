@@ -1,10 +1,11 @@
 'use client'
 
-import Link, { LinkBack } from 'components/Link'
-import Shell from 'components/Shell'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTheme } from 'service/theme'
+import Link, { LinkBack } from 'services/link'
+import Shell from 'services/shell'
+import { useTheme } from 'services/theme'
 import css from './camera.module.css'
+import { developInstantFilmCanvas } from './instant-film'
 
 const PHOTO_SIZE = 1200
 const DEVELOP_DURATION = 1450
@@ -27,9 +28,9 @@ const CAMERA_CONSTRAINTS: MediaStreamConstraints = {
 }
 
 function stopStream(stream: MediaStream | null) {
-  stream?.getTracks().forEach((track) => {
+  for (const track of stream?.getTracks() ?? []) {
     track.stop()
-  })
+  }
 }
 
 function cameraFault(error: unknown): CameraFault {
@@ -77,6 +78,7 @@ function cameraFault(error: unknown): CameraFault {
 function captureSquare(
   video: HTMLVideoElement,
   canvas: HTMLCanvasElement,
+  seed: number,
 ): boolean {
   const sourceWidth = video.videoWidth
   const sourceHeight = video.videoHeight
@@ -105,6 +107,7 @@ function captureSquare(
     PHOTO_SIZE,
   )
   context.restore()
+  developInstantFilmCanvas(context, PHOTO_SIZE, PHOTO_SIZE, seed)
   return true
 }
 
@@ -117,6 +120,16 @@ function formatCaptureTime(date: Date) {
   }).format(date)
 }
 
+function revealMobileActions(element: HTMLElement, motionAllowed: boolean) {
+  if (!window.matchMedia('(max-width: 820px)').matches) return
+  if (element.getBoundingClientRect().bottom <= window.innerHeight - 16) return
+
+  element.scrollIntoView({
+    behavior: motionAllowed ? 'smooth' : 'auto',
+    block: 'end',
+  })
+}
+
 export default function CameraView() {
   const { fxMode, osReducedMotion } = useTheme()
   const [cameraState, setCameraState] = useState<CameraState>('requesting')
@@ -127,6 +140,7 @@ export default function CameraView() {
   const [captureId, setCaptureId] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const photoActionsRef = useRef<HTMLDivElement>(null)
   const shutterRef = useRef<HTMLButtonElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const photoUrlRef = useRef<string | null>(null)
@@ -219,6 +233,17 @@ export default function CameraView() {
     }
   }, [clearDevelopTimer, requestCamera])
 
+  useEffect(() => {
+    const photoActions = photoActionsRef.current
+    if (printState !== 'ready' || !photoActions) return
+
+    const frame = window.requestAnimationFrame(() => {
+      revealMobileActions(photoActions, motionAllowed)
+    })
+
+    return () => window.cancelAnimationFrame(frame)
+  }, [motionAllowed, printState])
+
   const finishDeveloping = useCallback(() => {
     clearDevelopTimer()
     setPrintState('ready')
@@ -227,18 +252,18 @@ export default function CameraView() {
   const takePhoto = useCallback(() => {
     const video = videoRef.current
     const canvas = canvasRef.current
+    const nextCaptureId = captureIdRef.current + 1
     if (
       cameraState !== 'ready' ||
       printState === 'printing' ||
       !video ||
       !canvas ||
-      !captureSquare(video, canvas)
+      !captureSquare(video, canvas, nextCaptureId)
     ) {
       return
     }
 
     clearDevelopTimer()
-    const nextCaptureId = captureIdRef.current + 1
     captureIdRef.current = nextCaptureId
     setCaptureId(nextCaptureId)
     setPrintState('printing')
@@ -354,7 +379,11 @@ export default function CameraView() {
           </dl>
         </div>
 
-        <div className={css.booth}>
+        <div
+          className={css.booth}
+          data-has-photo={photoUrl ? 'true' : 'false'}
+          data-print-state={printState}
+        >
           <div
             className={css.machine}
             data-camera-state={cameraState}
@@ -363,31 +392,6 @@ export default function CameraView() {
             <div className={css.cameraRig}>
               <div className={css.cameraShadow} aria-hidden='true' />
 
-              {photoUrl && (
-                <figure
-                  key={captureId}
-                  className={css.print}
-                  aria-label='Your developed instant picture'
-                >
-                  <div className={css.photoSurface}>
-                    <img
-                      src={photoUrl}
-                      alt='Your mirrored camera portrait'
-                      draggable={false}
-                    />
-                    <span className={css.developWash} aria-hidden='true' />
-                  </div>
-                  <figcaption>
-                    <span>midnight / {String(captureId).padStart(2, '0')}</span>
-                    <time dateTime={capturedAt?.toISOString()}>
-                      {capturedAt
-                        ? formatCaptureTime(capturedAt)
-                        : 'developing'}
-                    </time>
-                  </figcaption>
-                </figure>
-              )}
-
               <div className={css.camera}>
                 <div className={css.cameraTop}>
                   <div className={css.flash} aria-hidden='true'>
@@ -395,6 +399,7 @@ export default function CameraView() {
                   </div>
                   <div className={css.timer} aria-hidden='true' />
                   <div className={css.sensor} aria-hidden='true' />
+                  <div className={css.opticsPlate} aria-hidden='true' />
 
                   <div className={css.lens} aria-hidden='true'>
                     <div className={css.lensGlass} />
@@ -441,68 +446,112 @@ export default function CameraView() {
                     </div>
                   </div>
 
-                  <div className={css.topToggleContainer} aria-hidden='true'>
-                    <div className={css.topToggle} />
+                  <div className={css.filmRatchetHousing} aria-hidden='true'>
+                    <div className={css.filmRatchet} />
                   </div>
                   <div className={css.power} aria-hidden='true' />
-                  <div className={css.cameraTitle} aria-hidden='true' />
+                  <div className={css.cameraTitle} aria-hidden='true'>
+                    Midnight I/O
+                  </div>
                 </div>
 
                 <div className={css.cameraBottom}>
-                  <div className={css.bottomToggleContainer} aria-hidden='true'>
-                    <div className={css.bottomToggle}>
-                      <div className={css.toggleHandle} />
+                  <div className={css.feedRailHousing} aria-hidden='true'>
+                    <div className={css.feedRail}>
+                      <div className={css.feedCarriage} />
                     </div>
                   </div>
                   <div className={css.printer} aria-hidden='true' />
                   <div className={css.labels} aria-hidden='true'>
                     <div className={css.rainbow} />
-                    <div className={css.logo}>Polaroid</div>
-                    <div className={css.cameraType} />
+                    <div className={css.logo}>Sospedroid</div>
+                    <div className={css.cameraType}>CAM-01 · LOCAL</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className={css.controlDeck}>
-            <p className={css.liveStatus} aria-live='polite' aria-atomic='true'>
-              {liveMessage}
-            </p>
+          <div className={css.outputDock}>
+            <div className={css.outputHeader} aria-hidden='true'>
+              <span>Chemistry bay</span>
+              <span>Output / 01</span>
+            </div>
 
-            {cameraState === 'error' && (
-              <div className={css.errorPanel}>
-                <p>{fault?.detail}</p>
-                <button
-                  type='button'
-                  className={css.deckButton}
-                  onClick={() => void requestCamera()}
+            <div className={css.printBay}>
+              {photoUrl ? (
+                <figure
+                  key={captureId}
+                  className={css.print}
+                  aria-label='Your developed instant picture'
                 >
-                  <span>Retry camera</span>
-                </button>
-              </div>
-            )}
+                  <div className={css.photoSurface}>
+                    <img
+                      src={photoUrl}
+                      alt='Your mirrored camera portrait'
+                      draggable={false}
+                    />
+                    <span className={css.developWash} aria-hidden='true' />
+                  </div>
+                  <figcaption>
+                    <span>midnight / {String(captureId).padStart(2, '0')}</span>
+                    <time dateTime={capturedAt?.toISOString()}>
+                      {capturedAt
+                        ? formatCaptureTime(capturedAt)
+                        : 'developing'}
+                    </time>
+                  </figcaption>
+                </figure>
+              ) : (
+                <div className={css.paperGuide} aria-hidden='true'>
+                  <span>Awaiting exposure</span>
+                </div>
+              )}
+            </div>
 
-            {photoUrl && printState === 'ready' && (
-              <div className={css.photoActions}>
-                <button
-                  type='button'
-                  className={css.deckButton}
-                  data-tone='neutral'
-                  onClick={resetPhoto}
-                >
-                  <span>Try again</span>
-                </button>
-                <a
-                  className={css.deckButton}
-                  data-tone='pink'
-                  href={photoUrl}
-                  download={`midnight-photo-${captureId}.jpg`}
-                >
-                  <span>Download photo</span>
-                </a>
-              </div>
-            )}
+            <div className={css.controlDeck}>
+              <p
+                className={css.liveStatus}
+                aria-live='polite'
+                aria-atomic='true'
+              >
+                {liveMessage}
+              </p>
+
+              {cameraState === 'error' && (
+                <div className={css.errorPanel}>
+                  <p>{fault?.detail}</p>
+                  <button
+                    type='button'
+                    className={css.deckButton}
+                    onClick={() => void requestCamera()}
+                  >
+                    <span>Retry camera</span>
+                  </button>
+                </div>
+              )}
+
+              {photoUrl && printState === 'ready' && (
+                <div ref={photoActionsRef} className={css.photoActions}>
+                  <button
+                    type='button'
+                    className={css.deckButton}
+                    data-tone='neutral'
+                    onClick={resetPhoto}
+                  >
+                    <span>Try again</span>
+                  </button>
+                  <a
+                    className={css.deckButton}
+                    data-tone='pink'
+                    href={photoUrl}
+                    download={`midnight-photo-${captureId}.jpg`}
+                  >
+                    <span>Download photo</span>
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>

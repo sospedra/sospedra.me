@@ -1,4 +1,3 @@
-import Link, { LinkBack } from 'components/Link'
 import {
   type ComponentPropsWithoutRef,
   type CSSProperties,
@@ -13,6 +12,8 @@ import {
   useRef,
   useState,
 } from 'react'
+import Link, { LinkBack } from 'services/link'
+import { MAX_ZOOM, MIN_ZOOM } from './canvas'
 import controls from './controls.module.css'
 import type { LifeState } from './engine'
 import css from './game-of-life.module.css'
@@ -21,6 +22,7 @@ import {
   type InteractiveLifePreset,
   LIFE_PRESETS,
   type LifePreset,
+  presetById,
 } from './presets'
 
 export type LifeTool = 'draw' | 'move'
@@ -64,25 +66,20 @@ export type LifeLayoutProps = {
   unlockAudio: () => void
 }
 
-const METER_SEGMENTS = [
-  '01',
-  '02',
-  '03',
-  '04',
-  '05',
-  '06',
-  '07',
-  '08',
-  '09',
-  '10',
-  '11',
-  '12',
-] as const
+const METER_SEGMENT_COUNT = 12
+const METER_SEGMENTS = Array.from({ length: METER_SEGMENT_COUNT }, (_, index) =>
+  String(index + 1).padStart(2, '0'),
+)
+
+const KNOB_MIN_ANGLE = -135
+const KNOB_SWEEP = 270
+const SPEED_MIN = 1
+const SPEED_MAX = 30
 
 const formatCount = (value: number) => value.toLocaleString('en-US')
 const padGeneration = (value: number, length = 4) =>
   String(value).padStart(length, '0')
-const meterLevel = (value: number, segments: number = METER_SEGMENTS.length) =>
+const meterLevel = (value: number, segments: number = METER_SEGMENT_COUNT) =>
   value <= 0 ? 0 : Math.min(segments, Math.ceil(Math.log2(value + 1)))
 
 const tracePoints = (history: readonly number[]) => {
@@ -237,15 +234,55 @@ const clampPilotOffset = (x: number, y: number) => {
   return { x: x * scale, y: y * scale }
 }
 
-const pilotDirection = (x: number, y: number): PilotDirection | 'idle' => {
-  const horizontal = Math.abs(x) < 1 ? '' : x > 0 ? 'east' : 'west'
-  const vertical = Math.abs(y) < 1 ? '' : y > 0 ? 'south' : 'north'
+type AxisSign = -1 | 0 | 1
 
-  if (vertical && horizontal) {
-    return `${vertical}-${horizontal}` as PilotDirection
-  }
-  return (vertical || horizontal || 'idle') as PilotDirection | 'idle'
+const PILOT_DIRECTIONS: Record<
+  `${AxisSign},${AxisSign}`,
+  PilotDirection | 'idle'
+> = {
+  '-1,-1': 'north-west',
+  '-1,0': 'west',
+  '-1,1': 'south-west',
+  '0,-1': 'north',
+  '0,0': 'idle',
+  '0,1': 'south',
+  '1,-1': 'north-east',
+  '1,0': 'east',
+  '1,1': 'south-east',
 }
+
+const axisSign = (value: number): AxisSign => {
+  if (Math.abs(value) < 1) return 0
+  return value > 0 ? 1 : -1
+}
+
+const pilotDirection = (x: number, y: number): PilotDirection | 'idle' =>
+  PILOT_DIRECTIONS[`${axisSign(x)},${axisSign(y)}`]
+
+const CHEVRON_PATH =
+  'M512 330.666667c14.933333 0 29.866667 4.266667 40.533333 14.933333l277.33333399 234.666667c27.733333 23.466667 29.866667 64 8.53333301 89.6-23.466667 27.733333-64 29.866667-89.6 8.53333299L512 477.866667l-236.8 200.53333299c-27.733333 23.466667-68.266667 19.19999999-89.6-8.53333299-23.466667-27.733333-19.19999999-68.266667 8.53333301-89.6l277.33333399-234.666667c10.666667-10.666667 25.6-14.933333 40.533333-14.933333z'
+
+const CHEVRON_ANGLES = { east: 90, north: 0, south: 180, west: 270 } as const
+
+/* rotation rides the path attribute: .icon centers itself with a CSS transform */
+const Chevron = ({
+  active,
+  heading,
+}: {
+  active: boolean
+  heading: keyof typeof CHEVRON_ANGLES
+}) => (
+  <svg
+    className={`${controls.icon} ${active ? controls.active : ''}`}
+    viewBox='0 0 1024 1024'
+    aria-hidden='true'
+  >
+    <path
+      d={CHEVRON_PATH}
+      transform={`rotate(${CHEVRON_ANGLES[heading]} 512 512)`}
+    />
+  </svg>
+)
 
 const GridPilot = ({
   canvas,
@@ -329,13 +366,16 @@ const GridPilot = ({
     }
   }
 
-  const zoomProgress = Math.max(0, Math.min(1, (canvas.zoom - 2) / 32))
+  const zoomProgress = Math.max(
+    0,
+    Math.min(1, (canvas.zoom - MIN_ZOOM) / (MAX_ZOOM - MIN_ZOOM)),
+  )
   const pilotStyle = {
     '--pilot-x': `${offset.x}px`,
     '--pilot-y': `${offset.y}px`,
     '--pilot-tilt-x': `${offset.y * -0.55}deg`,
     '--pilot-tilt-y': `${offset.x * 0.55}deg`,
-    '--pilot-zoom-angle': `${-135 + zoomProgress * 270}deg`,
+    '--pilot-zoom-angle': `${KNOB_MIN_ANGLE + zoomProgress * KNOB_SWEEP}deg`,
   } as CSSProperties
 
   return (
@@ -380,48 +420,10 @@ const GridPilot = ({
               </span>
             </span>
 
-            <svg
-              className={`${controls.icon} ${
-                direction.includes('north') ? controls.active : ''
-              }`}
-              viewBox='0 0 1024 1024'
-              aria-hidden='true'
-            >
-              <path d='M512 330.666667c14.933333 0 29.866667 4.266667 40.533333 14.933333l277.33333399 234.666667c27.733333 23.466667 29.866667 64 8.53333301 89.6-23.466667 27.733333-64 29.866667-89.6 8.53333299L512 477.866667l-236.8 200.53333299c-27.733333 23.466667-68.266667 19.19999999-89.6-8.53333299-23.466667-27.733333-19.19999999-68.266667 8.53333301-89.6l277.33333399-234.666667c10.666667-10.666667 25.6-14.933333 40.533333-14.933333z' />
-            </svg>
-            <svg
-              className={`${controls.icon} ${
-                direction.includes('east') ? controls.active : ''
-              }`}
-              viewBox='0 0 200 200'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-              aria-hidden='true'
-            >
-              <path d='M135.417 100C135.417 102.917 134.583 105.833 132.5 107.917L86.6667 162.083C82.0833 167.5 74.1667 167.917 69.1667 163.75C63.75 159.167 63.3333 151.25 67.5 146.25L106.667 100L67.5 53.75C62.9167 48.3333 63.75 40.4167 69.1667 36.25C74.5833 31.6667 82.5 32.5 86.6667 37.9167L132.5 92.0833C134.583 94.1667 135.417 97.0833 135.417 100Z' />
-            </svg>
-            <svg
-              className={`${controls.icon} ${
-                direction.includes('south') ? controls.active : ''
-              }`}
-              viewBox='0 0 200 200'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-              aria-hidden='true'
-            >
-              <path d='M100 135.417C97.0833 135.417 94.1667 134.583 92.0833 132.5L37.9167 86.6667C32.5 82.0833 32.0833 74.1667 36.25 69.1667C40.8333 63.75 48.75 63.3333 53.75 67.5L100 106.667L146.25 67.5C151.667 62.9167 159.583 63.75 163.75 69.1667C168.333 74.5833 167.5 82.5 162.083 86.6667L107.917 132.5C105.833 134.583 102.917 135.417 100 135.417Z' />
-            </svg>
-            <svg
-              className={`${controls.icon} ${
-                direction.includes('west') ? controls.active : ''
-              }`}
-              viewBox='0 0 200 200'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-              aria-hidden='true'
-            >
-              <path d='M64.5833 100C64.5833 97.0833 65.4167 94.1667 67.5 92.0833L113.333 37.9167C117.917 32.5 125.833 32.0833 130.833 36.25C136.25 40.8333 136.667 48.75 132.5 53.75L93.3333 100L132.5 146.25C137.083 151.667 136.25 159.583 130.833 163.75C125.417 168.333 117.5 167.5 113.333 162.083L67.5 107.917C65.4167 105.833 64.5833 102.917 64.5833 100Z' />
-            </svg>
+            <Chevron heading='north' active={direction.includes('north')} />
+            <Chevron heading='east' active={direction.includes('east')} />
+            <Chevron heading='south' active={direction.includes('south')} />
+            <Chevron heading='west' active={direction.includes('west')} />
           </span>
         </span>
       </button>
@@ -502,8 +504,8 @@ const SpeedControl = ({
   speed: number
   setSpeed: (speed: number) => void
 }) => {
-  const progress = ((speed - 1) / 29) * 100
-  const knobAngle = -135 + progress * 2.7
+  const progress = ((speed - SPEED_MIN) / (SPEED_MAX - SPEED_MIN)) * 100
+  const knobAngle = KNOB_MIN_ANGLE + (progress / 100) * KNOB_SWEEP
   const style = {
     '--throttle': `${progress}%`,
     '--knob-angle': `${knobAngle}deg`,
@@ -533,8 +535,8 @@ const SpeedControl = ({
         <input
           id='cycle-throttle'
           type='range'
-          min='1'
-          max='30'
+          min={SPEED_MIN}
+          max={SPEED_MAX}
           step='1'
           value={speed}
           aria-valuetext={`${speed} ${speed === 1 ? 'generation' : 'generations'} per second`}
@@ -1092,6 +1094,12 @@ const PatternTrigger = ({
   </button>
 )
 
+const isDisabledControl = (control: HTMLElement) =>
+  control.matches(':disabled') ||
+  control.getAttribute('aria-disabled') === 'true' ||
+  control.getAttribute('data-disabled') === 'true' ||
+  control.querySelector(':disabled') !== null
+
 export const LifeLayout = ({
   canvas,
   clearUniverse,
@@ -1112,9 +1120,10 @@ export const LifeLayout = ({
   toggleRunning,
   unlockAudio,
 }: LifeLayoutProps) => {
-  const selectedIndex = LIFE_PRESETS.findIndex(
-    (preset) => preset.id === state.presetId,
-  )
+  const selectedPreset = presetById(state.presetId)
+  const selectedIndex = selectedPreset
+    ? LIFE_PRESETS.indexOf(selectedPreset)
+    : -1
   const selectedNumber =
     selectedIndex < 0 ? '--' : String(selectedIndex + 1).padStart(2, '0')
   const deckPatternHandleRef = useRef<HTMLButtonElement>(null)
@@ -1234,14 +1243,7 @@ export const LifeLayout = ({
     const control =
       declared ?? origin.closest<HTMLElement>('button:not(:disabled), a[href]')
     if (!control || control.classList.contains(css.patternScrim)) return
-    if (
-      control.matches(':disabled') ||
-      control.getAttribute('aria-disabled') === 'true' ||
-      control.getAttribute('data-disabled') === 'true' ||
-      control.querySelector(':disabled')
-    ) {
-      return
-    }
+    if (isDisabledControl(control)) return
 
     const kind = (declared?.dataset.lifeSfx ?? 'key') as LifeMechanicalSound
     playMechanicalSound(kind)

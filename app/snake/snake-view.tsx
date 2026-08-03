@@ -1,12 +1,12 @@
 'use client'
 
-import Link, { LinkBack } from 'components/Link'
-import Row from 'components/Row'
-import Shell from 'components/Shell'
-import { readLocal, writeLocal } from 'lib/storage'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { useGameInput } from 'service/hotkeys'
+import { useGameInput } from 'services/hotkeys'
+import Link, { LinkBack } from 'services/link'
+import Row from 'services/row'
+import Shell from 'services/shell'
+import { readLocal, writeLocal } from 'services/storage'
 import {
   type Dir,
   type GameEvent,
@@ -70,35 +70,41 @@ const spotForKey = (key: string) => {
   return KEY_SELECT.has(key) ? '5' : null
 }
 
-// percent rects measured over public/images/nokia-3310.webp
-type Hotspot = {
-  id: string
-  x: number
-  y: number
-  w: number
-  h: number
-  label?: string
-  dir?: Dir
-  select?: boolean
-}
+type HotspotZone = { id: string; x: number; y: number; w: number; h: number }
 
+type Hotspot =
+  | (HotspotZone & { kind: 'key' })
+  | (HotspotZone & { kind: 'select'; label: string })
+  | (HotspotZone & { kind: 'dir'; label: string; dir: Dir })
+
+// percent rects measured over public/images/nokia-3310.webp
 const HOTSPOTS: Hotspot[] = [
   {
     id: 'navi',
+    kind: 'select',
     x: 29.5,
     y: 50.3,
     w: 41,
     h: 5.5,
     label: 'Start or pause',
-    select: true,
   },
-  { id: 'soft-left', x: 13.3, y: 53.7, w: 21.9, h: 8.7 },
-  { id: 'soft-right', x: 54.2, y: 56.2, w: 26, h: 7.5 },
-  { id: '1', x: 10.2, y: 65.5, w: 21, h: 6.2 },
-  { id: '2', x: 39.1, y: 67.2, w: 21, h: 6.2, label: 'Steer up', dir: 'up' },
-  { id: '3', x: 68.8, y: 65.1, w: 21, h: 6.2 },
+  { id: 'soft-left', kind: 'key', x: 13.3, y: 53.7, w: 21.9, h: 8.7 },
+  { id: 'soft-right', kind: 'key', x: 54.2, y: 56.2, w: 26, h: 7.5 },
+  { id: '1', kind: 'key', x: 10.2, y: 65.5, w: 21, h: 6.2 },
+  {
+    id: '2',
+    kind: 'dir',
+    x: 39.1,
+    y: 67.2,
+    w: 21,
+    h: 6.2,
+    label: 'Steer up',
+    dir: 'up',
+  },
+  { id: '3', kind: 'key', x: 68.8, y: 65.1, w: 21, h: 6.2 },
   {
     id: '4',
+    kind: 'dir',
     x: 11.7,
     y: 72.5,
     w: 21,
@@ -108,15 +114,16 @@ const HOTSPOTS: Hotspot[] = [
   },
   {
     id: '5',
+    kind: 'select',
     x: 39.8,
     y: 74.2,
     w: 21,
     h: 6.2,
     label: 'Start or pause',
-    select: true,
   },
   {
     id: '6',
+    kind: 'dir',
     x: 68,
     y: 72.2,
     w: 21,
@@ -124,9 +131,10 @@ const HOTSPOTS: Hotspot[] = [
     label: 'Steer right',
     dir: 'right',
   },
-  { id: '7', x: 13.3, y: 79.6, w: 21, h: 6.2 },
+  { id: '7', kind: 'key', x: 13.3, y: 79.6, w: 21, h: 6.2 },
   {
     id: '8',
+    kind: 'dir',
     x: 39.8,
     y: 81.3,
     w: 21,
@@ -134,10 +142,10 @@ const HOTSPOTS: Hotspot[] = [
     label: 'Steer down',
     dir: 'down',
   },
-  { id: '9', x: 67.2, y: 79.2, w: 21, h: 6.2 },
-  { id: 'star', x: 14.1, y: 86.6, w: 21, h: 6.2 },
-  { id: '0', x: 39.8, y: 87.7, w: 21, h: 6.2 },
-  { id: 'hash', x: 66.4, y: 86.3, w: 21, h: 6.2 },
+  { id: '9', kind: 'key', x: 67.2, y: 79.2, w: 21, h: 6.2 },
+  { id: 'star', kind: 'key', x: 14.1, y: 86.6, w: 21, h: 6.2 },
+  { id: '0', kind: 'key', x: 39.8, y: 87.7, w: 21, h: 6.2 },
+  { id: 'hash', kind: 'key', x: 66.4, y: 86.3, w: 21, h: 6.2 },
 ]
 
 // taps act on pointerdown; the trailing click (detail >= 1) is skipped so
@@ -153,6 +161,8 @@ type Dispatch = React.Dispatch<GameEvent>
 type SetPressed = React.Dispatch<React.SetStateAction<ReadonlySet<string>>>
 
 const useStoredProgress = (state: GameState, dispatch: Dispatch) => {
+  const levelPersistReady = useRef(false)
+
   useEffect(() => {
     const top = Number(readLocal(TOP_KEY))
     if (top > 0) dispatch({ type: 'TOP', top })
@@ -166,7 +176,12 @@ const useStoredProgress = (state: GameState, dispatch: Dispatch) => {
     }
   }, [state.phase, state.top])
 
+  // skip the mount pass: writing the default would clobber the stored level
   useEffect(() => {
+    if (!levelPersistReady.current) {
+      levelPersistReady.current = true
+      return
+    }
     writeLocal(LEVEL_KEY, String(state.level))
   }, [state.level])
 }
@@ -250,13 +265,19 @@ const useTransitionSounds = (state: GameState) => {
   }, [state])
 }
 
-const HotspotButton: React.FC<{
+function HotspotButton({
+  spot,
+  down,
+  act,
+  press,
+}: {
   spot: Hotspot
   down: boolean
   act: () => void
   press: (down: boolean) => void
-}> = ({ spot, down, act, press }) => {
+}) {
   const props = pressProps(act)
+  const label = spot.kind === 'key' ? undefined : spot.label
   return (
     <button
       type='button'
@@ -268,9 +289,9 @@ const HotspotButton: React.FC<{
         width: `${spot.w}%`,
         height: `${spot.h}%`,
       }}
-      aria-label={spot.label}
-      aria-hidden={spot.label ? undefined : 'true'}
-      tabIndex={spot.label ? undefined : -1}
+      aria-label={label}
+      aria-hidden={label ? undefined : 'true'}
+      tabIndex={label ? undefined : -1}
       onClick={props.onClick}
       onPointerDown={() => {
         press(true)
@@ -302,15 +323,19 @@ export default function SnakeView() {
   const select = () => dispatch({ type: 'SELECT', roll: Math.random() })
 
   const hotspotAction = (spot: Hotspot): (() => void) => {
-    const { dir } = spot
-    if (dir) {
-      return () => {
-        play('key')
-        steer(dir)
+    switch (spot.kind) {
+      case 'dir': {
+        const { dir } = spot
+        return () => {
+          play('key')
+          steer(dir)
+        }
       }
+      case 'select':
+        return select
+      case 'key':
+        return () => play('key')
     }
-    if (spot.select) return select
-    return () => play('key')
   }
 
   useStoredProgress(state, dispatch)

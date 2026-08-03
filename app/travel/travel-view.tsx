@@ -1,10 +1,7 @@
 'use client'
 
 import cn from 'clsx'
-import Link from 'components/Link'
-import Shell from 'components/Shell'
 import { clamp } from 'es-toolkit'
-import { haversineDistanceKm } from 'lib/geo/distance'
 import type {
   CSSProperties,
   KeyboardEvent as ReactKeyboardEvent,
@@ -13,9 +10,16 @@ import type {
   RefObject,
 } from 'react'
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
-import { useHotkeys } from 'service/hotkeys'
-import { useTheme } from 'service/theme'
-import { useTransition } from 'service/transition'
+import { haversineDistanceKm } from 'services/distance'
+import { sceneTrap, useHotkeys } from 'services/hotkeys'
+import Link from 'services/link'
+import Shell from 'services/shell'
+import { useTheme } from 'services/theme'
+import { useRouteTransition } from 'services/transition/context'
+import {
+  fetchVisitorLocation,
+  type VisitorLocation,
+} from 'services/visitor-location'
 import {
   DESTINATIONS,
   type Destination,
@@ -40,6 +44,7 @@ import {
 const SCENE_ZOOM_MAX = TRAVEL_ZOOM_MAX * 2
 // 120ms rocker settle + 400ms CRT collapse + a beat of dead screen
 const POWER_OFF_EXIT_MS = 850
+const ZOOM_KEY_SETTLE_MS = 170
 const CITY_PIN_LANDINGS = [
   { rotate: '-18deg', x: '0%', y: '0%' },
   { rotate: '9deg', x: '28%', y: '0%' },
@@ -178,47 +183,77 @@ const uplinkReducer = (state: UplinkState, event: UplinkEvent): UplinkState => {
   }
 }
 
-const fetchVisitor = async (signal: AbortSignal): Promise<Visitor | null> => {
-  const response = await fetch('/api/geo', { cache: 'no-store', signal })
-  if (!response.ok) return null
-  const data = await response.json()
-  return data?.located ? data : null
+const visitorFrom = (location: VisitorLocation | null): Visitor | null => {
+  if (!location?.located) return null
+  if (location.lat === undefined || location.lon === undefined) return null
+  return {
+    lat: location.lat,
+    lon: location.lon,
+    city: location.city ?? null,
+    country: location.country ?? null,
+  }
 }
 
 const useVisitor = () => {
   const [state, dispatch] = useReducer(uplinkReducer, { status: 'idle' })
-  const controllerRef = useRef<AbortController | null>(null)
-
-  useEffect(() => () => controllerRef.current?.abort(), [])
 
   const locate = useCallback(async () => {
-    controllerRef.current?.abort()
-    const controller = new AbortController()
-    controllerRef.current = controller
     dispatch({ type: 'locate' })
-    try {
-      const visitor = await fetchVisitor(controller.signal)
-      dispatch(visitor ? { type: 'located', visitor } : { type: 'unavailable' })
-    } catch (error) {
-      if ((error as Error).name !== 'AbortError')
-        dispatch({ type: 'unavailable' })
-    }
+    const visitor = visitorFrom(await fetchVisitorLocation())
+    dispatch(visitor ? { type: 'located', visitor } : { type: 'unavailable' })
   }, [])
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      void locate()
-    }, 0)
-    return () => window.clearTimeout(timer)
+    void locate()
   }, [locate])
 
   const visitor = state.status === 'located' ? state.visitor : null
-  return { visitor, status: state.status, locate }
+  return { locate, state, visitor }
+}
+
+type VisitorNote = { title: string; detail: string }
+
+const SEARCHING_NOTE: VisitorNote = {
+  title: 'Finding this patch of Earth…',
+  detail: 'Listening for nearby towers…',
+}
+
+const UNLOCATED_NOTES: Record<
+  'idle' | 'locating' | 'unavailable',
+  VisitorNote
+> = {
+  idle: SEARCHING_NOTE,
+  locating: SEARCHING_NOTE,
+  unavailable: {
+    title: 'Position signal went quiet.',
+    detail: 'Still on Earth. Probably.',
+  },
+}
+
+const visitorNoteFor = (state: UplinkState): VisitorNote => {
+  if (state.status !== 'located') return UNLOCATED_NOTES[state.status]
+  const { visitor } = state
+  const country = visitor.country ? formatCountry(visitor.country) : null
+  return {
+    title: `Woke up in ${visitor.city ?? country ?? 'a familiar place'}.`,
+    detail: `${formatCoords(visitor)} · roughly`,
+  }
 }
 
 const DIAL_DEGREES_PER_PIXEL = 0.42
 const DIAL_KEY_STEP = 2
 const DIAL_PAGE_STEP = 15
+
+type DialKeyTurn = { dir: -1 | 1; step: number; horizontalOnly?: boolean }
+
+const DIAL_KEY_TURNS: Record<string, DialKeyTurn> = {
+  ArrowUp: { dir: 1, step: DIAL_KEY_STEP },
+  ArrowRight: { dir: 1, step: DIAL_KEY_STEP, horizontalOnly: true },
+  ArrowDown: { dir: -1, step: DIAL_KEY_STEP },
+  ArrowLeft: { dir: -1, step: DIAL_KEY_STEP, horizontalOnly: true },
+  PageUp: { dir: 1, step: DIAL_PAGE_STEP },
+  PageDown: { dir: -1, step: DIAL_PAGE_STEP },
+}
 
 type AxisDialDrag = {
   angle: number | null
@@ -392,53 +427,34 @@ function AxisDial(props: {
     event.stopPropagation()
   }
 
+  const snapToLimit = (
+    event: ReactKeyboardEvent<HTMLDivElement>,
+    value: number,
+    tick: -1 | 1,
+  ) => {
+    event.preventDefault()
+    if (Number(event.currentTarget.getAttribute('aria-valuenow')) === value)
+      return
+    armAudio()
+    onSetValue(value)
+    playRotaryTick(tick)
+  }
+
   const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
-    let valueDirection: -1 | 1 | null = null
-    let step = DIAL_KEY_STEP
-    switch (event.key) {
-      case 'ArrowUp':
-        valueDirection = 1
-        break
-      case 'ArrowRight':
-        if (orientation === 'vertical') return
-        valueDirection = 1
-        break
-      case 'ArrowDown':
-        valueDirection = -1
-        break
-      case 'ArrowLeft':
-        if (orientation === 'vertical') return
-        valueDirection = -1
-        break
-      case 'PageUp':
-        valueDirection = 1
-        step = DIAL_PAGE_STEP
-        break
-      case 'PageDown':
-        valueDirection = -1
-        step = DIAL_PAGE_STEP
-        break
-      case 'Home':
-        event.preventDefault()
-        if (Number(event.currentTarget.getAttribute('aria-valuenow')) !== min) {
-          armAudio()
-          onSetValue(min)
-          playRotaryTick(increaseKnobDirection === 1 ? -1 : 1)
-        }
-        return
-      case 'End':
-        event.preventDefault()
-        if (Number(event.currentTarget.getAttribute('aria-valuenow')) !== max) {
-          armAudio()
-          onSetValue(max)
-          playRotaryTick(increaseKnobDirection)
-        }
-        return
+    if (event.key === 'Home') {
+      snapToLimit(event, min, increaseKnobDirection === 1 ? -1 : 1)
+      return
     }
-    if (valueDirection === null) return
+    if (event.key === 'End') {
+      snapToLimit(event, max, increaseKnobDirection)
+      return
+    }
+    const turn = DIAL_KEY_TURNS[event.key]
+    if (!turn) return
+    if (turn.horizontalOnly && orientation === 'vertical') return
     event.preventDefault()
     armAudio()
-    turnDial(valueDirection * increaseKnobDirection * step)
+    turnDial(turn.dir * increaseKnobDirection * turn.step)
   }
 
   return (
@@ -599,9 +615,9 @@ export default function TravelView() {
   const [activeRegion, setActiveRegion] = useState(HOME.region)
   const [pinLanding, setPinLanding] = useState(0)
   const [pinPoint, setPinPoint] = useState<CityPinPoint | null>(null)
-  const { visitor, status: visitorStatus, locate: locateVisitor } = useVisitor()
+  const { locate: locateVisitor, state: uplink, visitor } = useVisitor()
   const { fxMode } = useTheme()
-  const transition = useTransition()
+  const transition = useRouteTransition()
   const [travelAudio] = useState(createTravelAudio)
   const [pressedZoom, setPressedZoom] = useState<'in' | 'out' | null>(null)
   const [poweredOff, setPoweredOff] = useState(false)
@@ -669,7 +685,7 @@ export default function TravelView() {
     zoomPressTimerRef.current = setTimeout(() => {
       setPressedZoom(null)
       zoomPressTimerRef.current = null
-    }, 170)
+    }, ZOOM_KEY_SETTLE_MS)
   }
   const supernova = useSupernovaLoop({
     quiet: fxMode === 'quiet',
@@ -683,20 +699,9 @@ export default function TravelView() {
   const activeRegionIndex = REGIONS.findIndex(
     (region) => region.id === activeRegion,
   )
-  const visitorPlace =
-    visitor?.city ?? (visitor?.country ? formatCountry(visitor.country) : null)
-  const visitorNoteTitle = visitor
-    ? `Woke up in ${visitorPlace ?? 'a familiar place'}.`
-    : visitorStatus === 'unavailable'
-      ? 'Position signal went quiet.'
-      : 'Finding this patch of Earth…'
-  const visitorNoteDetail = visitor
-    ? `${formatCoords(visitor)} · roughly`
-    : visitorStatus === 'unavailable'
-      ? 'Still on Earth. Probably.'
-      : 'Listening for nearby towers…'
+  const visitorNote = visitorNoteFor(uplink)
   const visitorNoteBusy =
-    visitorStatus === 'idle' || visitorStatus === 'locating'
+    uplink.status === 'idle' || uplink.status === 'locating'
   const armTravelAudio = useCallback(() => {
     if (fxMode !== 'quiet') travelAudio.arm()
   }, [fxMode, travelAudio])
@@ -784,13 +789,11 @@ export default function TravelView() {
     if (fxMode !== 'quiet') playRegionSignal(next.id)
   }
 
-  const radarTrap =
-    (press: () => void) =>
-    (event: KeyboardEvent): void => {
-      event.preventDefault()
+  const radarTrap = (press: () => void) =>
+    sceneTrap(() => {
       playTravelButtonPress()
       press()
-    }
+    })
 
   useHotkeys([
     ['[', radarTrap(() => trackSibling(-1))],
@@ -850,8 +853,8 @@ export default function TravelView() {
             }
           >
             <span className={css.headerStickyLabel}>NOTE TO SELF</span>
-            <strong>{visitorNoteTitle}</strong>
-            <small>{visitorNoteDetail}</small>
+            <strong>{visitorNote.title}</strong>
+            <small>{visitorNote.detail}</small>
             <span className={css.headerStickyAction}>
               {visitorNoteBusy ? '… CHECKING' : '↻ CHECK AGAIN'}
             </span>

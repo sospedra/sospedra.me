@@ -37,7 +37,7 @@ guess.
 
 ## Local state
 
-One localStorage key, `@@boombox/state-v1`, written through `lib/storage.ts`.
+One localStorage key, `@@boombox/state-v1`, written through `services/storage.ts`.
 It holds `{ day, guesses, stage }`. `loadState` drops the value when its `day`
 does not match today, so a stale round never bleeds into a new one.
 

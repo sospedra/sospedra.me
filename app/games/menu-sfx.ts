@@ -1,6 +1,6 @@
 'use client'
 
-import { createSfxKit } from 'service/audio/kit'
+import { createSfxKit } from 'services/audio/kit'
 
 /* synthesized PS2 browser foley; no recorded samples */
 

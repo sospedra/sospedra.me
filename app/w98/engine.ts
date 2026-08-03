@@ -1,4 +1,4 @@
-import { mulberry32 } from 'lib/random'
+import { mulberry32 } from 'services/random'
 
 // The board is sized by the view: rows and cols come from the screen fit.
 export type Level = { rows: number; cols: number; mines: number }

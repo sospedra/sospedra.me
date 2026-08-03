@@ -5,9 +5,9 @@ import { resolve } from 'node:path'
 import type {
   GeneratedCityCorpus,
   GeneratedCountryCorpus,
-} from '../../lib/geo/corpus-model.ts'
-import { OFFICIAL_COUNTRY_OPTIONS } from '../../lib/geo/country-lexicon.ts'
-import type { CountryRecord } from '../../lib/geo/model.ts'
+} from '../../app/meridian/corpus-model.ts'
+import { OFFICIAL_COUNTRY_OPTIONS } from '../../app/meridian/country-lexicon.ts'
+import type { CountryRecord } from '../../app/meridian/model.ts'
 
 interface RosterDocument {
   schemaVersion: 1
@@ -88,28 +88,28 @@ const readJson = <Value>(path: string): Value =>
   JSON.parse(readFileSync(resolve(root, path), 'utf8')) as Value
 
 const roster = readJson<RosterDocument>(
-  'data/geo/editorial/country-roster.json',
+  'repo/geo/editorial/country-roster.json',
 )
 const policy = readJson<CoveragePolicy>(
-  'data/geo/editorial/city-coverage-policy.json',
+  'repo/geo/editorial/city-coverage-policy.json',
 )
 const overrides = readJson<OverrideDocument>(
-  'data/geo/editorial/city-overrides.json',
+  'repo/geo/editorial/city-overrides.json',
 )
-const sourceLock = readJson<SourceLock>('data/geo/corpus-sources.lock.json')
+const sourceLock = readJson<SourceLock>('repo/geo/corpus-sources.lock.json')
 const countryDifficulty = readJson<{ shapeHolds?: string[] }>(
-  'data/geo/editorial/country-difficulty.json',
+  'repo/geo/editorial/country-difficulty.json',
 )
 const shapeHeldCodes = new Set(countryDifficulty.shapeHolds ?? [])
-const mainSourceLock = readJson<MainSourceLock>('data/geo/sources.lock.json')
+const mainSourceLock = readJson<MainSourceLock>('repo/geo/sources.lock.json')
 const cityCorpus = readJson<GeneratedCityCorpus>(
-  'data/geo/generated/cities.json',
+  'repo/geo/generated/cities.json',
 )
 const countryCorpus = readJson<GeneratedCountryCorpus>(
-  'data/geo/generated/country-corpus.json',
+  'repo/geo/generated/country-corpus.json',
 )
 const gameCorpus = readJson<GameCountryCorpus>(
-  'data/geo/generated/countries.json',
+  'repo/geo/generated/countries.json',
 )
 
 const errors: string[] = []

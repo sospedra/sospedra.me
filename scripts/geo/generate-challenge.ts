@@ -4,111 +4,43 @@ import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { buildCityAutocompleteOptions } from '../../lib/geo/city-options.ts'
-
-type Locale = 'en' | 'es'
-type RoundType = 'shape' | 'flag' | 'capital' | 'map'
-type Difficulty = 1 | 2 | 3 | 4
-type LocalizedText = Record<Locale, string>
-
-type Country = {
-  code: string
-  names: LocalizedText
-  continent: string
-  subregion: string
-  capital: {
-    names: LocalizedText
-    latitude: number
-    longitude: number
-  }
-  assets: {
-    shapeUrl?: string
-    flagUrl?: string
-  }
-  eligibility: Record<RoundType, boolean>
-  difficulty: Partial<Record<RoundType, Difficulty>>
-  status: 'active' | 'review' | 'excluded'
-}
+import { buildCityAutocompleteOptions } from '../../app/meridian/city-options.ts'
+import type {
+  GeneratedCityCorpus,
+  GeneratedCityRecord,
+} from '../../app/meridian/corpus-model.ts'
+import type {
+  ChoiceQuestion,
+  CountryRecord,
+  Difficulty,
+  Locale,
+  LocalizedOption,
+  LocalizedText,
+  MapQuestion,
+  Question,
+  Round,
+  RoundType,
+} from '../../app/meridian/model.ts'
 
 type CountryCorpus = {
   schemaVersion: number
   sourceRevision: string
-  countries: Country[]
-}
-
-type City = {
-  geonamesId: number
-  countryCode: string
-  names: LocalizedText
-  acceptedNames: Record<Locale, string[]>
-  latitude: number
-  longitude: number
-  population: number
-  populationRank: number
-  featureCode: string
-  isCapital: boolean
-  difficulty: Difficulty
-  sourceRevision: string
-}
-
-type CityCorpus = {
-  schemaVersion: number
-  sourceRevision: string
-  policyRevision: string
-  cities: City[]
+  countries: CountryRecord[]
 }
 
 type MapTarget = {
   id: string
-  country: Country
+  country: CountryRecord
   names: LocalizedText
   latitude: number
   longitude: number
   difficulty: Difficulty
 }
 
-type Option = {
-  id: string
-  label: LocalizedText
-}
-
-type ChoiceQuestion = {
-  id: string
-  type: 'shape' | 'flag' | 'capital'
-  countryCode: string
-  difficulty: Difficulty
-  prompt: LocalizedText
-  assetUrl?: string
-  options: Option[]
-  correctOptionId: string
-}
-
-type MapQuestion = {
-  id: string
-  type: 'map'
-  countryCode: string
-  difficulty: Difficulty
-  prompt: LocalizedText
-  answerCoordinate: {
-    latitude: number
-    longitude: number
-  }
-}
-
-type Question = ChoiceQuestion | MapQuestion
-
-type Round = {
-  id: string
-  type: RoundType
-  questionLimitMs: number
-  roundLimitMs: number
-  questions: Question[]
-}
-
 const SCRIPT_DIRECTORY = dirname(fileURLToPath(import.meta.url))
 const REPOSITORY_ROOT = resolve(SCRIPT_DIRECTORY, '../..')
-const CORPUS_PATH = join(REPOSITORY_ROOT, 'data/geo/generated/countries.json')
-const CITIES_PATH = join(REPOSITORY_ROOT, 'data/geo/generated/cities.json')
+const CORPUS_PATH = join(REPOSITORY_ROOT, 'repo/geo/generated/countries.json')
+const CITIES_PATH = join(REPOSITORY_ROOT, 'repo/geo/generated/cities.json')
 const GENERATOR_VERSION = '6.0.0'
 const RULES_VERSION = 'geo-v7'
 const ROUND_TYPES: RoundType[] = ['shape', 'flag', 'capital', 'map']
@@ -142,21 +74,21 @@ const sortByHash = <Value>(
   )
 
 const optionAt = (
-  correct: Option,
-  distractors: Option[],
+  correct: LocalizedOption,
+  distractors: LocalizedOption[],
   correctIndex: number,
-): Option[] => {
+): LocalizedOption[] => {
   const options = [...distractors]
   options.splice(correctIndex, 0, correct)
   return options
 }
 
-const countryOption = (country: Country): Option => ({
+const countryOption = (country: CountryRecord): LocalizedOption => ({
   id: `country-${country.code.toLocaleLowerCase('en')}`,
   label: country.names,
 })
 
-const capitalOption = (country: Country): Option => ({
+const capitalOption = (country: CountryRecord): LocalizedOption => ({
   id: `capital-${country.code.toLocaleLowerCase('en')}`,
   label: country.capital.names,
 })
@@ -165,7 +97,7 @@ const capitalOption = (country: Country): Option => ({
 const withSentencePeriod = (name: string): string =>
   name.endsWith('.') ? name : `${name}.`
 
-const optionLabelsAreUnique = (options: Option[]): boolean =>
+const optionLabelsAreUnique = (options: LocalizedOption[]): boolean =>
   (['en', 'es'] as Locale[]).every(
     (locale) =>
       new Set(
@@ -184,12 +116,12 @@ const assert: (condition: unknown, message: string) => asserts condition = (
 
 const corpus = readJson<CountryCorpus>(CORPUS_PATH)
 const cityCorpus = existsSync(CITIES_PATH)
-  ? readJson<CityCorpus>(CITIES_PATH)
+  ? readJson<GeneratedCityCorpus>(CITIES_PATH)
   : null
 assert(cityCorpus, 'The retained city corpus is required')
 assert(cityCorpus.schemaVersion === 1, 'Unsupported city-corpus schema')
 
-const capitalCityByCountry = new Map<string, City>()
+const capitalCityByCountry = new Map<string, GeneratedCityRecord>()
 for (const city of cityCorpus.cities) {
   if (!city.isCapital) continue
   assert(
@@ -218,7 +150,7 @@ assert(
 const checkOnly = process.argv.includes('--check')
 const challengePath = join(
   REPOSITORY_ROOT,
-  'content/geo/challenges',
+  'repo/geo/challenges',
   `${publicationDate}.json`,
 )
 const sourceSeedRevision = `${corpus.sourceRevision}:${cityCorpus.sourceRevision}:${cityCorpus.policyRevision}`
@@ -226,7 +158,7 @@ const seed = hash(
   `geo:${publicationDate}:${GENERATOR_VERSION}:${sourceSeedRevision}:${RULES_VERSION}`,
 )
 
-const countriesForRound = (roundType: RoundType): Country[] => {
+const countriesForRound = (roundType: RoundType): CountryRecord[] => {
   const countries = DIFFICULTIES.flatMap((difficulty) =>
     sortByHash(
       corpus.countries.filter(
@@ -244,12 +176,12 @@ const countriesForRound = (roundType: RoundType): Country[] => {
 }
 
 const distractorCountries = (
-  answer: Country,
+  answer: CountryRecord,
   roundType: RoundType,
-  pool: Country[],
+  pool: CountryRecord[],
   namespace: string,
-  optionFor: (country: Country) => Option,
-): Country[] => {
+  optionFor: (country: CountryRecord) => LocalizedOption,
+): CountryRecord[] => {
   const answerDifficulty = answer.difficulty[roundType]
   assert(answerDifficulty, `${answer.code} lacks ${roundType} difficulty`)
   const candidates = [...pool]
@@ -279,7 +211,7 @@ const distractorCountries = (
           .toLocaleLowerCase(locale)}`,
     ),
   )
-  const distractors: Country[] = []
+  const distractors: CountryRecord[] = []
   for (const candidate of candidates) {
     const option = optionFor(candidate)
     const labels = (['en', 'es'] as Locale[]).map(
@@ -302,8 +234,8 @@ const distractorCountries = (
 
 const makeChoiceQuestion = (
   roundType: 'shape' | 'flag' | 'capital',
-  country: Country,
-  pool: Country[],
+  country: CountryRecord,
+  pool: CountryRecord[],
   questionIndex: number,
   choiceIndex: number,
 ): ChoiceQuestion => {
@@ -396,7 +328,7 @@ const makeMapQuestion = (target: MapTarget): MapQuestion => ({
  * feeds the capital-round autocomplete lexicon. Locating a capital means
  * locating its country, so the prompt inherits the country map difficulty.
  */
-const mapTargetsForRound = (countries: Country[]): MapTarget[] => {
+const mapTargetsForRound = (countries: CountryRecord[]): MapTarget[] => {
   const targets = countries.map((country): MapTarget => {
     const capital = capitalCityByCountry.get(country.code)
     assert(capital, `${country.code} has no retained capital city`)

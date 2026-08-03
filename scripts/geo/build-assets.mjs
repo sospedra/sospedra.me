@@ -16,7 +16,7 @@ import { gzipSync } from 'node:zlib'
 import {
   EQUAL_EARTH_ASPECT,
   equalEarthForward,
-} from '../../lib/geo/equal-earth.ts'
+} from '../../app/meridian/equal-earth.ts'
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url))
 const REPOSITORY_ROOT = resolve(SCRIPT_DIR, '../..')
@@ -37,7 +37,7 @@ const SVG_WIDTH = 1000
 const SVG_HEIGHT = 700
 const SHAPE_PADDING = 42
 const DEGREES_TO_RADIANS = Math.PI / 180
-const CORPUS_PATH = join(REPOSITORY_ROOT, 'data/geo/generated/countries.json')
+const CORPUS_PATH = join(REPOSITORY_ROOT, 'repo/geo/generated/countries.json')
 const GENERATED_ASSET_FILENAME = /^[a-f0-9]{20}\.svg$/u
 
 const SHAPE_AREA_RATIO_OVERRIDES = {
@@ -545,7 +545,7 @@ if (missingFlagCodes.length > 0) {
 const shapeDirectory = join(REPOSITORY_ROOT, 'public/games/geo/assets/shapes')
 const flagDirectory = join(REPOSITORY_ROOT, 'public/games/geo/assets/flags')
 const mapDirectory = join(REPOSITORY_ROOT, 'public/games/geo/assets/map')
-const manifestPath = join(REPOSITORY_ROOT, 'data/geo/generated/assets.json')
+const manifestPath = join(REPOSITORY_ROOT, 'repo/geo/generated/assets.json')
 for (const directory of [shapeDirectory, flagDirectory, mapDirectory]) {
   ensureDirectory(directory)
 }

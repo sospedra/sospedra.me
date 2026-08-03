@@ -34,6 +34,8 @@ export type LifeAction =
   | { type: 'clear' }
 
 const HISTORY_LENGTH = 64
+const RLE_HEADER = /^x\s*=/i
+const WHITESPACE = /\s/g
 
 export const keyOf = (x: number, y: number): CellKey => `${x},${y}`
 
@@ -51,11 +53,11 @@ export const parseRle = (source: string): CellSet => {
       return (
         trimmed.length > 0 &&
         !trimmed.startsWith('#') &&
-        !/^x\s*=/i.test(trimmed)
+        !RLE_HEADER.test(trimmed)
       )
     })
     .join('')
-    .replaceAll(/\s/g, '')
+    .replaceAll(WHITESPACE, '')
 
   const cells = new Set<CellKey>()
   let x = 0
@@ -124,6 +126,7 @@ export const boundsOf = (cells: CellSet): Bounds => {
   }
 }
 
+// Bresenham line walk; every pass advances an axis, so dx + dy passes suffice
 export const rasterLine = (from: Cell, to: Cell): Cell[] => {
   const points: Cell[] = []
   let [x, y] = from
@@ -134,7 +137,7 @@ export const rasterLine = (from: Cell, to: Cell): Cell[] => {
   const stepY = y < targetY ? 1 : -1
   let error = dx - dy
 
-  while (true) {
+  for (let step = 0; step <= dx + dy; step += 1) {
     points.push([x, y])
     if (x === targetX && y === targetY) break
     const doubled = error * 2
@@ -238,14 +241,12 @@ export const lifeReducer = (
         }
       }
 
-      if (
+      const unchanged =
         next.size === state.cells.size &&
         action.cells.every(
           ([x, y]) => state.cells.has(keyOf(x, y)) === action.alive,
         )
-      ) {
-        return state
-      }
+      if (unchanged) return state
 
       return {
         cells: next,

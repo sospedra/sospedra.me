@@ -6,10 +6,10 @@ node_modules
 .env.local
 *.tsbuildinfo
 /work/raw-data/
-# raw USA Today xd archive; served content lives in content/crosswords/challenges
-/content/crosswords/puzzles/
+# raw USA Today xd archive; served content lives in repo/crosswords/challenges
+/repo/crosswords/puzzles/
 # meridian challenges are deterministic build artifacts, prebuild regenerates them
-/content/geo/challenges/
+/repo/geo/challenges/
 .env*
 
 # image-generation scratch
