@@ -1,5 +1,9 @@
 @reference "../../services/style/global.css";
 
+.page {
+  overflow-x: clip;
+}
+
 .content {
   @apply flex flex-col mb-32 font-sans text-lg leading-7 break-words align-baseline;
   text-shadow: 2px 2px 0 var(--black);
@@ -132,7 +136,7 @@
 .tattoo {
   position: absolute;
   z-index: -1;
-  display: none;
+  display: block;
   pointer-events: none;
   animation:
     tattoo-buzz 9s step-end infinite,
@@ -160,8 +164,8 @@
 .tattooHeart {
   --tilt: -7deg;
   top: 21rem;
-  left: -13rem;
-  width: 9rem;
+  left: -5.55rem;
+  width: 7rem;
   color: var(--color-signal-pink-hot, #ff4fd8);
   filter: drop-shadow(0 0 0.4rem rgb(255 79 216 / 75%))
     drop-shadow(0 0 1.2rem rgb(255 79 216 / 30%));
@@ -170,8 +174,8 @@
 .tattooSnake {
   --tilt: 6deg;
   top: 60rem;
-  left: -12rem;
-  width: 8rem;
+  left: -4.8rem;
+  width: 6rem;
   color: #48ff6a;
   filter: drop-shadow(0 0 0.4rem rgb(72 255 106 / 70%))
     drop-shadow(0 0 1.2rem rgb(72 255 106 / 28%));
@@ -181,8 +185,8 @@
 .tattooBolt {
   --tilt: 9deg;
   top: 9rem;
-  right: -11rem;
-  width: 6.5rem;
+  right: -4.1rem;
+  width: 5.4rem;
   color: var(--color-signal-yellow, #ffea00);
   filter: drop-shadow(0 0 0.4rem rgb(255 234 0 / 70%))
     drop-shadow(0 0 1.2rem rgb(255 234 0 / 28%));
@@ -197,10 +201,25 @@
   stroke: var(--color-signal-cyan, #6df7ea);
 }
 
-/* content column is 56rem: the side alleys only exist from 80rem up */
+/* content column is 56rem: show only edge peeks until the side alleys exist */
 @media (min-width: 80rem) {
-  .tattoo {
-    display: block;
+  .page {
+    overflow-x: visible;
+  }
+
+  .tattooHeart {
+    left: -13rem;
+    width: 9rem;
+  }
+
+  .tattooSnake {
+    left: -12rem;
+    width: 8rem;
+  }
+
+  .tattooBolt {
+    right: -11rem;
+    width: 6.5rem;
   }
 }
 
@@ -534,6 +553,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .tattoo,
+  .vaporSun,
+  .vaporGrid,
   .pixelGhostBody,
   .pixelGhostFootA,
   .pixelGhostFootB,
@@ -543,6 +565,9 @@
   }
 }
 
+:global(.fx-quiet) .tattoo,
+:global(.fx-quiet) .vaporSun,
+:global(.fx-quiet) .vaporGrid,
 :global(.fx-quiet) .pixelGhostBody,
 :global(.fx-quiet) .pixelGhostFootA,
 :global(.fx-quiet) .pixelGhostFootB,

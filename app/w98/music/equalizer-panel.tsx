@@ -48,6 +48,10 @@ export default function EqualizerPanel({
         alt=''
         draggable={false}
       />
+      <span
+        className={`${css.dragHandle} ${css.equalizerDragHandle}`}
+        aria-hidden='true'
+      />
 
       <p className={css.srOnly} aria-live='polite'>
         {processingEnabled

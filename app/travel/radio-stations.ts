@@ -1,3 +1,4 @@
+import { groupBy } from 'es-toolkit'
 import stationData from './radio-stations.json'
 
 export type RadioStationFormat = 'AAC' | 'HLS' | 'MP3' | 'OGG'
@@ -25,14 +26,11 @@ export type RadioStation = {
 
 export const RADIO_STATIONS = stationData as RadioStation[]
 
-const stationsByDestination = new Map<string, RadioStation[]>()
-
-for (const station of RADIO_STATIONS) {
-  const stations = stationsByDestination.get(station.destinationCode)
-  if (stations) stations.push(station)
-  else stationsByDestination.set(station.destinationCode, [station])
-}
+const stationsByDestination = groupBy(
+  RADIO_STATIONS,
+  (station) => station.destinationCode,
+)
 
 export const getRadioStations = (
   destinationCode: string,
-): readonly RadioStation[] => stationsByDestination.get(destinationCode) ?? []
+): readonly RadioStation[] => stationsByDestination[destinationCode] ?? []

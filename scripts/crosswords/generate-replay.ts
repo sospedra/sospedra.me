@@ -6,6 +6,7 @@ import {
   writeFileSync,
 } from 'node:fs'
 import { join } from 'node:path'
+import { groupBy, isNotNil, mapValues } from 'es-toolkit'
 import { ISO_DATE } from '../../app/crosswords/crossword-data.ts'
 
 /* Replays the USA Today archive (xd files, Universal Uclick copyright, see
@@ -100,39 +101,39 @@ const fullyClued = (
   )
 }
 
-const loadPools = () => {
-  const pools = new Map<number, ArchivePuzzle[]>()
-  let rejected = 0
-  for (const year of readdirSync(ARCHIVE_DIR).sort()) {
-    const yearDir = join(ARCHIVE_DIR, year)
-    let names: string[] = []
-    try {
-      names = readdirSync(yearDir).filter((name) => name.endsWith('.xd'))
-    } catch {
-      continue
-    }
-    for (const name of names.sort()) {
-      const puzzle = parseXd(readFileSync(join(yearDir, name), 'utf8'))
-      if (!puzzle) {
-        rejected += 1
-        continue
+const archivePaths = () =>
+  readdirSync(ARCHIVE_DIR)
+    .sort()
+    .flatMap((year) => {
+      const yearDir = join(ARCHIVE_DIR, year)
+      try {
+        return readdirSync(yearDir)
+          .filter((name) => name.endsWith('.xd'))
+          .sort()
+          .map((name) => join(yearDir, name))
+      } catch {
+        return []
       }
-      const weekday = new Date(`${puzzle.date}T00:00:00Z`).getUTCDay()
-      const pool = pools.get(weekday) ?? []
-      pool.push(puzzle)
-      pools.set(weekday, pool)
-    }
-  }
-  for (const pool of pools.values()) {
-    pool.sort((a, b) => b.date.localeCompare(a.date))
-  }
-  return { pools, rejected }
+    })
+
+const loadPools = () => {
+  const parsed = archivePaths().map((path) =>
+    parseXd(readFileSync(path, 'utf8')),
+  )
+  const puzzles = parsed.filter(isNotNil)
+  const byWeekday = groupBy(puzzles, (puzzle) =>
+    new Date(`${puzzle.date}T00:00:00Z`).getUTCDay(),
+  )
+  const pools = mapValues(byWeekday, (pool) =>
+    pool.toSorted((a, b) => b.date.localeCompare(a.date)),
+  )
+  return { pools, rejected: parsed.length - puzzles.length }
 }
 
 const { pools, rejected } = loadPools()
 console.log(
-  `pools: ${[...pools.entries()]
-    .map(([day, pool]) => `${'SMTWTFS'[day]}=${pool.length}`)
+  `pools: ${Object.entries(pools)
+    .map(([day, pool]) => `${'SMTWTFS'[Number(day)]}=${pool.length}`)
     .join(' ')} (rejected ${rejected})`,
 )
 
@@ -157,7 +158,7 @@ for (let offset = 0; offset < days; offset += 1) {
   if (existsSync(target)) continue
 
   const weekday = new Date(`${date}T00:00:00Z`).getUTCDay()
-  const pool = pools.get(weekday) ?? []
+  const pool = pools[weekday] ?? []
   if (pool.length === 0) throw new Error(`empty pool for weekday ${weekday}`)
   const puzzle = pool[weekdayCountSinceEpoch(date) % pool.length]
 

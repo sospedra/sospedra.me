@@ -1,5 +1,9 @@
+saveExact: true
+
 allowBuilds:
   esbuild: true
   sharp: true
+minimumReleaseAgeExclude:
+  - temporal-polyfill@1.0.3
 overrides:
   postcss: '>=8.5.10'

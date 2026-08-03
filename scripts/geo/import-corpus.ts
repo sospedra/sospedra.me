@@ -11,6 +11,7 @@ import {
 } from 'node:fs'
 import { resolve } from 'node:path'
 import { createInterface } from 'node:readline'
+import { groupBy, sumBy, uniqBy } from 'es-toolkit'
 import type {
   CityOverrideAction,
   GeneratedCityCorpus,
@@ -29,7 +30,7 @@ import type {
 const root = resolve(process.cwd())
 const pathFromRoot = (path: string) => resolve(root, path)
 
-interface RosterDocument {
+type RosterDocument = {
   schemaVersion: 1
   rosterRevision: string
   recognitionBasis: {
@@ -38,7 +39,7 @@ interface RosterDocument {
   countryCodes: string[]
 }
 
-interface CoveragePolicy {
+type CoveragePolicy = {
   schemaVersion: 1
   policyRevision: string
   countryPopulation: {
@@ -68,7 +69,7 @@ interface CoveragePolicy {
   }
 }
 
-interface CityOverrideDocument {
+type CityOverrideDocument = {
   schemaVersion: 1
   policyRevision: string
   overrides: CityOverrideAction[]
@@ -79,16 +80,16 @@ interface CityOverrideDocument {
   }[]
 }
 
-interface LockedFile {
+type LockedFile = {
   path: string
   sha256: string
 }
 
-interface ArchiveFile extends LockedFile {
+type ArchiveFile = LockedFile & {
   archiveEntry: string
 }
 
-interface CorpusSourceLock {
+type CorpusSourceLock = {
   schemaVersion: 1
   sourceRevision: string
   importReady: boolean
@@ -110,21 +111,21 @@ interface CorpusSourceLock {
   }
 }
 
-interface CountryInfo {
+type CountryInfo = {
   code: string
   iso3: string
   capitalName: string
   continent: string
 }
 
-interface WorldBankPopulation {
+type WorldBankPopulation = {
   code: string
   iso3: string
   year: number
   value: number | null
 }
 
-interface CityCandidate {
+type CityCandidate = {
   geonamesId: number
   countryCode: string
   name: string
@@ -137,12 +138,12 @@ interface CityCandidate {
   isCapital: boolean
 }
 
-interface RankBasis {
+type RankBasis = {
   geonamesId: number
   population: number
 }
 
-interface CountryBucket {
+type CountryBucket = {
   eligibleCandidateAvailable: number
   topCandidates: CityCandidate[]
   featureCapitals: Map<number, CityCandidate>
@@ -152,20 +153,20 @@ interface CountryBucket {
   rankBasis: RankBasis[]
 }
 
-interface AlternateName {
+type AlternateName = {
   id: number
   name: string
   preferred: boolean
   short: boolean
 }
 
-interface AlternateNames {
+type AlternateNames = {
   en: AlternateName[]
   es: AlternateName[]
   wikidataId?: string
 }
 
-interface NaturalEarthProperties {
+type NaturalEarthProperties = {
   ISO_A2?: string
   ISO_A2_EH?: string
   ISO_A3_EH?: string
@@ -179,7 +180,7 @@ interface NaturalEarthProperties {
   FORMAL_EN?: string
 }
 
-interface NaturalEarthFeature {
+type NaturalEarthFeature = {
   properties: NaturalEarthProperties
   geometry: {
     type: string
@@ -187,12 +188,12 @@ interface NaturalEarthFeature {
   } | null
 }
 
-interface NaturalEarthDocument {
+type NaturalEarthDocument = {
   type: 'FeatureCollection'
   features: NaturalEarthFeature[]
 }
 
-interface ExistingCountryCorpus {
+type ExistingCountryCorpus = {
   schemaVersion: number
   sourceRevision: string
   countries: CountryRecord[]
@@ -231,7 +232,7 @@ const writeJsonAtomically = (path: string, value: unknown) => {
   renameSync(temporaryPath, outputPath)
 }
 
-interface CountryDifficultyDocument {
+type CountryDifficultyDocument = {
   schemaVersion: number
   revision: string
   description: string
@@ -350,7 +351,7 @@ const parseCountryInfo = (path: string) => {
   return countries
 }
 
-interface WorldBankRow {
+type WorldBankRow = {
   indicator?: { id?: string }
   country?: { id?: string }
   countryiso3code?: string
@@ -430,17 +431,15 @@ const cityDifficulty = (
     : difficulty
 }
 
+const usableName = (value: string) =>
+  Boolean(value) && !/^https?:/iu.test(value) && normalizeName(value) !== ''
+
 const uniqueNames = (preferred: string, values: string[]) => {
   const normalizedPreferred = normalizedCurrentName(preferred)
-  const byNormalized = new Map<string, string>()
-  for (const rawValue of [normalizedPreferred, ...values]) {
-    const value = normalizedCurrentName(rawValue)
-    if (!value || /^https?:/iu.test(value)) continue
-    const key = normalizeName(value)
-    if (!key || byNormalized.has(key)) continue
-    byNormalized.set(key, value)
-  }
-  const remainder = [...byNormalized.values()]
+  const candidates = [normalizedPreferred, ...values]
+    .map(normalizedCurrentName)
+    .filter(usableName)
+  const remainder = uniqBy(candidates, normalizeName)
     .filter((value) => value !== normalizedPreferred)
     .sort(compareText)
   return [normalizedPreferred, ...remainder]
@@ -496,7 +495,7 @@ const coordinatePointCount = (value: unknown): number => {
   ) {
     return 1
   }
-  return value.reduce((total, child) => total + coordinatePointCount(child), 0)
+  return sumBy(value, coordinatePointCount)
 }
 
 const hasRobustCountryGeometry = (feature: NaturalEarthFeature | undefined) =>
@@ -517,12 +516,10 @@ const pickDisplayName = (names: AlternateName[], fallback: string) => {
   return eligible[0]?.name || fallback
 }
 
-const overridesById = new Map<number, CityOverrideAction[]>()
-for (const override of overrideDocument.overrides) {
-  const existing = overridesById.get(override.geonamesId) ?? []
-  existing.push(override)
-  overridesById.set(override.geonamesId, existing)
-}
+const overridesById = groupBy(
+  overrideDocument.overrides,
+  (override) => override.geonamesId,
+)
 
 const excludedIds = new Set(
   overrideDocument.overrides
@@ -842,9 +839,9 @@ const main = async () => {
       const enName = pickDisplayName(alternate.en, candidate.name)
       const esName = pickDisplayName(alternate.es, candidate.name)
       const names: LocalizedText = { en: enName, es: esName }
-      const namesOverride = overridesById
-        .get(candidate.geonamesId)
-        ?.find((override) => override.action === 'names')
+      const namesOverride = overridesById[candidate.geonamesId]?.find(
+        (override) => override.action === 'names',
+      )
       if (namesOverride?.action === 'names') {
         Object.assign(names, namesOverride.names)
       }

@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+import { groupBy } from 'es-toolkit'
 import { DESTINATIONS } from '../../app/travel/destinations.ts'
 import {
   contentTypeOf,
@@ -42,7 +43,6 @@ const errors: string[] = []
 const destinationCodes = new Set(
   DESTINATIONS.map((destination) => destination.code),
 )
-const stationsByDestination = new Map<string, StationRecord[]>()
 const allStreamUrls = new Set<string>()
 const allStationUuids = new Set<string>()
 
@@ -114,14 +114,14 @@ for (const [index, station] of stations.entries()) {
     }
     allStationUuids.add(station.stationUuid)
   }
-
-  const grouped = stationsByDestination.get(station.destinationCode)
-  if (grouped) grouped.push(station)
-  else stationsByDestination.set(station.destinationCode, [station])
 }
 
+const stationsByDestination = groupBy(
+  stations,
+  (station) => station.destinationCode,
+)
 for (const destination of DESTINATIONS) {
-  const grouped = stationsByDestination.get(destination.code) ?? []
+  const grouped = stationsByDestination[destination.code] ?? []
   if (grouped.length < 3 || grouped.length > 5) {
     errors.push(
       `${destination.code}: expected 3–5 stations, found ${grouped.length}`,

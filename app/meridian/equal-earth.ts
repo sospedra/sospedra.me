@@ -35,7 +35,7 @@ const RAW_Y_MAX = yPolynomial(Math.asin(M))
 
 export const EQUAL_EARTH_ASPECT = (2 * RAW_X_MAX) / (2 * RAW_Y_MAX)
 
-export interface NormalizedPoint {
+export type NormalizedPoint = {
   /** 0 at 180°W, 1 at 180°E. */
   x: number
   /** 0 at the north pole edge, 1 at the south pole edge. */

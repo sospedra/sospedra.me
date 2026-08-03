@@ -327,6 +327,13 @@
   }
 }
 
+@media (max-width: 56rem) and (max-height: 26rem) and (orientation: landscape) {
+  .main {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+    padding-bottom: max(3rem, env(safe-area-inset-bottom));
+  }
+}
+
 @media (max-width: 48rem) {
   .foreground {
     --street: min(53vh, 29rem);

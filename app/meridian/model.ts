@@ -13,7 +13,7 @@ export type RunKind = 'official' | 'practice'
 export type LocalizedText = Record<Locale, string>
 export type LocalizedPrompt = LocalizedText
 
-export interface LocalizedOption {
+export type LocalizedOption = {
   id: string
   label: LocalizedText
 }
@@ -22,7 +22,7 @@ export type CityAutocompleteOptionId =
   | `capital-${string}`
   | `city-${string}-${number}`
 
-export interface CityAutocompleteOption extends LocalizedOption {
+export type CityAutocompleteOption = LocalizedOption & {
   id: CityAutocompleteOptionId
 }
 
@@ -30,21 +30,21 @@ import type { GeoCoordinate } from 'services/distance'
 
 export type { GeoCoordinate } from 'services/distance'
 
-export interface CountryDifficulty {
+export type CountryDifficulty = {
   shape?: Difficulty
   flag?: Difficulty
   capital?: Difficulty
   map?: Difficulty
 }
 
-export interface RoundEligibility {
+export type RoundEligibility = {
   shape: boolean
   flag: boolean
   capital: boolean
   map: boolean
 }
 
-export interface CountryRecord {
+export type CountryRecord = {
   code: ISOAlpha2
   iso3: string
   wikidataId: string
@@ -72,7 +72,7 @@ export interface CountryRecord {
   sourceRevision: string
 }
 
-export interface ChoiceQuestion {
+export type ChoiceQuestion = {
   id: string
   type: 'shape' | 'flag' | 'capital'
   countryCode?: ISOAlpha2
@@ -83,7 +83,7 @@ export interface ChoiceQuestion {
   correctOptionId: string
 }
 
-export interface MapQuestion {
+export type MapQuestion = {
   id: string
   type: 'map'
   countryCode?: ISOAlpha2
@@ -94,7 +94,7 @@ export interface MapQuestion {
 
 export type Question = ChoiceQuestion | MapQuestion
 
-export interface Round {
+export type Round = {
   id: string
   type: RoundType
   /**
@@ -152,7 +152,7 @@ export const roundQuestionForAttempt = (
     : (round.questions[questionIndex] ?? null)
 }
 
-export interface GeoChallengeRules {
+export type GeoChallengeRules = {
   choice: {
     min: number
     max: number
@@ -174,7 +174,7 @@ export interface GeoChallengeRules {
   roundSummaryMs: number
 }
 
-export interface DailyGeoChallenge {
+export type DailyGeoChallenge = {
   schemaVersion: typeof GEO_SCHEMA_VERSION
   generatorVersion: string
   rulesVersion: string
@@ -201,7 +201,7 @@ export type MapDistanceBand =
   | 'miss'
   | 'expired'
 
-interface AnswerResultBase {
+type AnswerResultBase = {
   questionId: string
   roundId: string
   roundType: RoundType
@@ -235,7 +235,7 @@ interface AnswerResultBase {
   answeredAt: string
 }
 
-export interface ChoiceAnswerResult extends AnswerResultBase {
+export type ChoiceAnswerResult = AnswerResultBase & {
   kind: 'choice'
   selectedOptionId: string | null
   correctOptionId: string
@@ -243,7 +243,7 @@ export interface ChoiceAnswerResult extends AnswerResultBase {
   submittedText?: string
 }
 
-export interface MapPinAnswerResult extends AnswerResultBase {
+export type MapPinAnswerResult = AnswerResultBase & {
   kind: 'map-pin'
   submittedCoordinate: GeoCoordinate | null
   answerCoordinate: GeoCoordinate
@@ -253,7 +253,7 @@ export interface MapPinAnswerResult extends AnswerResultBase {
 
 export type AnswerResult = ChoiceAnswerResult | MapPinAnswerResult
 
-export interface PersistedGeoRun {
+export type PersistedGeoRun = {
   schemaVersion: typeof GEO_SCHEMA_VERSION
   challengeId: string
   rulesVersion: string
@@ -281,13 +281,13 @@ export interface PersistedGeoRun {
   feedbackPending?: boolean
 }
 
-export interface GeoSettings {
+export type GeoSettings = {
   schemaVersion: typeof GEO_SCHEMA_VERSION
   sound: boolean
   reducedMotion: boolean
 }
 
-export interface OfficialGeoRunRecord {
+export type OfficialGeoRunRecord = {
   challengeId: string
   publicationDate: string
   rulesVersion: string
@@ -298,7 +298,7 @@ export interface OfficialGeoRunRecord {
   bestStreak: number
 }
 
-export interface PersistedGeoStats {
+export type PersistedGeoStats = {
   schemaVersion: typeof GEO_SCHEMA_VERSION
   runs: OfficialGeoRunRecord[]
 }

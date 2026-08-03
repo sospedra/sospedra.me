@@ -1,3 +1,5 @@
+import { range } from 'es-toolkit'
+import * as z from 'zod/mini'
 import {
   type CrosswordDirection,
   type CrosswordPuzzle,
@@ -5,16 +7,6 @@ import {
 } from './crossword-data.ts'
 
 export type CrosswordStatus = 'not-started' | 'playing' | 'paused' | 'complete'
-
-const CROSSWORD_STATUSES = {
-  'not-started': true,
-  playing: true,
-  paused: true,
-  complete: true,
-} satisfies Record<CrosswordStatus, true>
-
-const isCrosswordStatus = (value: string): value is CrosswordStatus =>
-  value in CROSSWORD_STATUSES
 
 type GameSnapshot = {
   guesses: string[]
@@ -360,13 +352,16 @@ export const serializeCrosswordState = (
   runStartedAt: state.runStartedAt,
 })
 
-const restoreFlags = (value: unknown, cellCount: number) => {
+const isCellIndex = (value: unknown, cellCount: number): value is number =>
+  typeof value === 'number' &&
+  Number.isInteger(value) &&
+  value >= 0 &&
+  value < cellCount
+
+const restoreFlags = (value: readonly unknown[], cellCount: number) => {
   const flags = blankFlags(cellCount)
-  if (!Array.isArray(value)) return flags
   for (const index of value) {
-    if (Number.isInteger(index) && index >= 0 && index < cellCount) {
-      flags[index] = true
-    }
+    if (isCellIndex(index, cellCount)) flags[index] = true
   }
   return flags
 }
@@ -408,9 +403,7 @@ export const shareCard = (
   puzzle: CrosswordPuzzle,
   state: CrosswordState,
 ): string => {
-  const rows = Array.from({ length: puzzle.height }, (_, row) =>
-    rowSymbol(puzzle, state, row),
-  )
+  const rows = range(puzzle.height).map((row) => rowSymbol(puzzle, state, row))
   const brand = puzzle.locale === 'es' ? 'CRUCIGRAMA' : 'CROSSWORDS'
 
   return [
@@ -420,16 +413,33 @@ export const shareCard = (
   ].join('\n')
 }
 
+/* The gate rejects only foreign saves; every other field self-heals so one
+   corrupt flag never wipes a filled grid. */
+const savedGameSchema = z.object({
+  schemaVersion: z.literal(1),
+  puzzleId: z.string(),
+  guesses: z.array(z.unknown()),
+  pencilCells: z.catch(z.array(z.unknown()), []),
+  checkedCells: z.catch(z.array(z.unknown()), []),
+  revealedCells: z.catch(z.array(z.unknown()), []),
+  incorrectCells: z.catch(z.array(z.unknown()), []),
+  selectedCell: z.catch(z.nullable(z.int()), null),
+  direction: z.catch(z.enum(['across', 'down']), 'across'),
+  status: z.catch(
+    z.enum(['not-started', 'playing', 'paused', 'complete']),
+    'not-started',
+  ),
+  elapsedMs: z.catch(z.number().check(z.nonnegative()), 0),
+  runStartedAt: z.catch(z.nullable(z.number().check(z.positive())), null),
+})
+
 const restoredClock = (
-  saved: Partial<PersistedCrosswordState>,
+  runStartedAt: number | null,
   status: CrosswordStatus,
   now: number,
 ): number | null => {
   if (status !== 'playing') return null
-  if (typeof saved.runStartedAt === 'number' && saved.runStartedAt > 0) {
-    return saved.runStartedAt
-  }
-  return now
+  return runStartedAt ?? now
 }
 
 export const restoreCrosswordState = (
@@ -437,12 +447,11 @@ export const restoreCrosswordState = (
   puzzle: CrosswordPuzzle,
   now: number,
 ): CrosswordState | null => {
-  if (!value || typeof value !== 'object') return null
-  const saved = value as Partial<PersistedCrosswordState>
+  const parsed = savedGameSchema.safeParse(value)
+  if (!parsed.success) return null
+  const saved = parsed.data
   if (
-    saved.schemaVersion !== 1 ||
     saved.puzzleId !== puzzle.id ||
-    !Array.isArray(saved.guesses) ||
     saved.guesses.length !== puzzle.cells.length
   ) {
     return null
@@ -453,14 +462,10 @@ export const restoreCrosswordState = (
     return typeof guess === 'string' && GRID_LETTERS.has(guess) ? guess : ''
   })
   const selectedCell =
-    Number.isInteger(saved.selectedCell) &&
-    puzzle.cells[saved.selectedCell ?? -1]?.solution !== null
-      ? (saved.selectedCell as number)
+    saved.selectedCell !== null &&
+    puzzle.cells[saved.selectedCell]?.solution !== null
+      ? saved.selectedCell
       : createCrosswordState(puzzle).selectedCell
-  const status =
-    typeof saved.status === 'string' && isCrosswordStatus(saved.status)
-      ? saved.status
-      : 'not-started'
 
   return {
     ...createCrosswordState(puzzle),
@@ -470,13 +475,10 @@ export const restoreCrosswordState = (
     revealedCells: restoreFlags(saved.revealedCells, puzzle.cells.length),
     incorrectCells: restoreFlags(saved.incorrectCells, puzzle.cells.length),
     selectedCell,
-    direction: saved.direction === 'down' ? 'down' : 'across',
-    status,
-    elapsedMs:
-      typeof saved.elapsedMs === 'number' && saved.elapsedMs >= 0
-        ? saved.elapsedMs
-        : 0,
-    runStartedAt: restoredClock(saved, status, now),
+    direction: saved.direction,
+    status: saved.status,
+    elapsedMs: saved.elapsedMs,
+    runStartedAt: restoredClock(saved.runStartedAt, saved.status, now),
     autoPaused: false,
   }
 }

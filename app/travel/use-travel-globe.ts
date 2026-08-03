@@ -265,10 +265,7 @@ const renderPixelRatioForSize = (
   const pixelBudgetRatio = Math.sqrt(
     MAX_GLOBE_BACKING_PIXELS / (size.width * size.height),
   )
-  return Math.min(
-    deviceRatio,
-    Math.max(MIN_RENDER_PIXEL_RATIO, pixelBudgetRatio),
-  )
+  return clamp(pixelBudgetRatio, MIN_RENDER_PIXEL_RATIO, deviceRatio)
 }
 
 const supportsWebGL = (): boolean => {

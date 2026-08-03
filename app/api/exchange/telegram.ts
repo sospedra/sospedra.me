@@ -1,4 +1,6 @@
+import 'server-only'
 import { serverEnv } from 'services/env.server'
+import { http } from 'services/http'
 
 const CHAT_ID = '-259122205'
 
@@ -6,8 +8,8 @@ export type TelegramSendOutcome = 'sent' | 'missing-token' | 'upstream-error'
 
 const callTelegram = async (url: URL): Promise<TelegramSendOutcome> => {
   try {
-    const response = await fetch(url, { signal: AbortSignal.timeout(10_000) })
-    return response.ok ? 'sent' : 'upstream-error'
+    await http(url)
+    return 'sent'
   } catch {
     return 'upstream-error'
   }

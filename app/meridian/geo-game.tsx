@@ -1,5 +1,6 @@
 'use client'
 
+import { clamp, sumBy, uniq } from 'es-toolkit'
 import type {
   CSSProperties,
   FormEvent,
@@ -86,7 +87,7 @@ import {
 } from './text-answer'
 
 export type GeoGameMode = 'daily' | 'practice'
-export interface GeoGameProps {
+export type GeoGameProps = {
   challenge: DailyGeoChallenge
   locale: GeoLocale
   mode?: GeoGameMode
@@ -450,9 +451,7 @@ function PlanetInstrument({
   challenge: DailyGeoChallenge
   copy: GeoMessages
 }) {
-  const durations = [
-    ...new Set(challenge.rounds.map((round) => roundSeconds(round))),
-  ]
+  const durations = uniq(challenge.rounds.map((round) => roundSeconds(round)))
   const durationReadout =
     durations.length === 1
       ? `${challenge.rounds.length}×${formatRoundClock(durations[0] * 1000)}`
@@ -498,9 +497,9 @@ const briefingTimingNotice = (
   copy: GeoMessages,
 ) =>
   formatGeoMessage(copy.timingNotice, {
-    seconds: [
-      ...new Set(challenge.rounds.map((round) => roundSeconds(round))),
-    ].join('/'),
+    seconds: uniq(challenge.rounds.map((round) => roundSeconds(round))).join(
+      '/',
+    ),
   })
 
 function BriefingFrame({
@@ -681,9 +680,10 @@ function DifficultyMeter({
   label: string
   shortLabel: string
 }) {
-  const displayedDifficulty = Math.min(
+  const displayedDifficulty = clamp(
+    Math.round(difficulty),
+    1,
     DIFFICULTY_TIERS.length,
-    Math.max(1, Math.round(difficulty)),
   )
 
   return (
@@ -1190,7 +1190,7 @@ function RoundSummary({
   const round = currentRound(state)
   if (!round) return null
   const answers = state.answers.filter((answer) => answer.roundId === round.id)
-  const score = answers.reduce((total, answer) => total + answer.score, 0)
+  const score = sumBy(answers, (answer) => answer.score)
   const correct = answers.filter((answer) => answer.correct).length
   const timedOut = state.roundElapsedMs >= roundTimeLimitMs(round)
 
@@ -1714,8 +1714,11 @@ function GeoSession({
     questionElapsedRef.current = baseElapsed
 
     const update = (now: number) => {
-      const nextElapsed = Math.max(0, baseElapsed + now - startedAt)
-      const cappedElapsed = Math.min(round.questionLimitMs, nextElapsed)
+      const cappedElapsed = clamp(
+        baseElapsed + now - startedAt,
+        0,
+        round.questionLimitMs,
+      )
       questionElapsedRef.current = cappedElapsed
       if (cappedElapsed >= round.questionLimitMs) return
       frame = window.requestAnimationFrame(update)
@@ -1736,8 +1739,7 @@ function GeoSession({
     roundElapsedRef.current = baseElapsed
 
     const update = (now: number) => {
-      const nextElapsed = Math.max(0, baseElapsed + now - startedAt)
-      const cappedElapsed = Math.min(limitMs, nextElapsed)
+      const cappedElapsed = clamp(baseElapsed + now - startedAt, 0, limitMs)
       setRoundElapsedMs(cappedElapsed)
       roundElapsedRef.current = cappedElapsed
 

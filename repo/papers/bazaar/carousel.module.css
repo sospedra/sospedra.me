@@ -39,6 +39,10 @@
   display: none;
 }
 
+.track:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-signal-cyan, #6df7ea);
+}
+
 .slide {
   width: 100%;
   height: auto;
@@ -97,4 +101,11 @@
 .button:focus-visible {
   outline: 2px solid var(--color-signal-cyan, #6df7ea);
   outline-offset: 2px;
+}
+
+@media (max-width: 48rem), (pointer: coarse) {
+  .button {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
 }

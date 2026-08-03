@@ -5,6 +5,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
+import { groupBy, isNotNil, sumBy } from 'es-toolkit'
 import { buildCityAutocompleteOptions } from '../../app/meridian/city-options.ts'
 import type { GeneratedCityCorpus } from '../../app/meridian/corpus-model.ts'
 import type {
@@ -390,16 +391,14 @@ for (const [index, expected] of expectedCityOptions.entries()) {
   )
 }
 for (const locale of ['en', 'es'] as const) {
-  const optionIdsByLabel = new Map<string, string[]>()
-  for (const option of cityOptions) {
-    const normalizedLabel = normalizeGeoAnswer(option.label[locale], locale)
-    optionIdsByLabel.set(normalizedLabel, [
-      ...(optionIdsByLabel.get(normalizedLabel) ?? []),
-      option.id,
-    ])
-  }
+  const optionsByLabel = groupBy(cityOptions, (option) =>
+    normalizeGeoAnswer(option.label[locale], locale),
+  )
 
-  for (const [normalizedLabel, optionIds] of optionIdsByLabel) {
+  for (const [normalizedLabel, labelOptions] of Object.entries(
+    optionsByLabel,
+  )) {
+    const optionIds = labelOptions.map((option) => option.id)
     const matches = rankGeoAutocompleteCandidates(
       normalizedLabel,
       cityOptions,
@@ -709,7 +708,6 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
     `${round.type} round must contain all ${expectedQuestionCount} eligible source questions`,
   )
 
-  const continentCounts = new Map<string, number>()
   const roundAnswerCountryCodes = new Set<string>()
   const seenDifficulties = new Set<number>()
   let previousDifficulty = 0
@@ -763,10 +761,6 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
     check(
       country.difficulty[round.type] === question.difficulty,
       `${question.countryCode} difficulty differs from the corpus`,
-    )
-    continentCounts.set(
-      country.continent,
-      (continentCounts.get(country.continent) ?? 0) + 1,
     )
 
     if (question.type === 'map') {
@@ -936,16 +930,20 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
       difficulties.every((difficulty) => seenDifficulties.has(difficulty)),
     `${round.type} round must span all four difficulty levels`,
   )
+  const continents = new Set(
+    round.questions
+      .map((question) => countryByCode.get(question.countryCode)?.continent)
+      .filter(isNotNil),
+  )
   check(
-    continentCounts.size >= 5,
+    continents.size >= 5,
     `${round.type} round must represent at least five continents`,
   )
 }
 
-const expectedQuestionCount = expectedRoundTypes.reduce(
-  (total, roundType) =>
-    total + (eligibleCountriesByRound.get(roundType)?.size ?? 0),
-  0,
+const expectedQuestionCount = sumBy(
+  expectedRoundTypes,
+  (roundType) => eligibleCountriesByRound.get(roundType)?.size ?? 0,
 )
 check(
   questionIds.size === expectedQuestionCount,

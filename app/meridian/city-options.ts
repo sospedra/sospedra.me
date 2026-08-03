@@ -5,7 +5,7 @@ import type {
   LocalizedText,
 } from './model'
 
-export interface CityAutocompleteSource {
+export type CityAutocompleteSource = {
   geonamesId: number
   countryCode: string
   names: LocalizedText

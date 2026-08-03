@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { cacheLife, cacheTag } from 'next/cache'

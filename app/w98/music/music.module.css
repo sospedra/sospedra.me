@@ -42,6 +42,35 @@
   cursor: grabbing;
 }
 
+.dragHandle {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  min-height: 1.875rem;
+  cursor: grab;
+  touch-action: none;
+}
+
+.panel[data-dragging="true"] .dragHandle {
+  cursor: grabbing;
+}
+
+.playerDragHandle {
+  top: 4.5%;
+  left: 38%;
+  width: 27%;
+  height: 11%;
+  border-radius: 45%;
+}
+
+.equalizerDragHandle,
+.tracklistDragHandle {
+  top: 2.5%;
+  left: 3%;
+  width: 66%;
+  height: 13%;
+}
+
 .playerPanel {
   top: 15.49%;
   left: 2.532141%;
@@ -751,7 +780,7 @@
 
 @media (max-width: 47.99rem) {
   .stage {
-    width: min(100cqw, 48rem);
+    width: min(100cqw, calc(100cqh * 0.526316), 48rem);
     aspect-ratio: 100 / 190;
   }
 
@@ -771,6 +800,31 @@
     top: 70%;
     left: 2%;
     width: 96%;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 35rem) {
+  .stage {
+    width: min(100cqw, calc(100cqh * 1.510784));
+    aspect-ratio: 1541 / 1020;
+  }
+
+  .playerPanel {
+    top: 15.49%;
+    left: 2.532141%;
+    width: 40.69%;
+  }
+
+  .equalizerPanel {
+    top: 1.469216%;
+    left: 43.477859%;
+    width: 52.82%;
+  }
+
+  .tracklistPanel {
+    top: 48.040784%;
+    left: 44.257859%;
+    width: 52.17%;
   }
 }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { clamp } from 'es-toolkit'
+import { clamp, range } from 'es-toolkit'
 import type { CSSProperties } from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { createRadioController } from './radio-controller'
@@ -43,7 +43,7 @@ const buildDataTrace = (bitrateKbps: number | null): string => {
   if (!bitrateKbps) return `M0 9 H${TRACE_WIDTH}`
   const pulseCount = clamp(Math.round(bitrateKbps / 16), 2, 16)
   const pulseWidth = TRACE_WIDTH / pulseCount
-  const pulses = Array.from({ length: pulseCount }, (_, index) => {
+  const pulses = range(pulseCount).map((index) => {
     const start = index * pulseWidth
     const rise = start + pulseWidth * 0.18
     const fall = start + pulseWidth * 0.58

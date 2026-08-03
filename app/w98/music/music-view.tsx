@@ -1,5 +1,6 @@
 'use client'
 
+import { sumBy, uniqBy } from 'es-toolkit'
 import Script from 'next/script'
 import {
   useCallback,
@@ -9,6 +10,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { fetchJson, HTTPError } from 'services/http'
 import {
   BUNDLED_PLAYLIST_MANIFEST_URL,
   parseBundledPlaylist,
@@ -156,21 +158,20 @@ const soundCloudPlayerFeed = (
   position: soundCloud.position,
 })
 
-const bundledPlaylistFailure = (error: unknown): string =>
-  error instanceof Error
+const bundledPlaylistFailure = (error: unknown): string => {
+  if (error instanceof HTTPError) {
+    return `The default playlist could not be loaded (${error.response.status}).`
+  }
+  return error instanceof Error
     ? error.message
     : 'The default playlist could not be loaded.'
+}
 
 const mergeBundledTracks = (
   current: LocalMusicTrack[],
   bundledTracks: LocalMusicTrack[],
-): LocalMusicTrack[] => {
-  const existingIds = new Set(current.map((track) => track.id))
-  return [
-    ...current,
-    ...bundledTracks.filter((track) => !existingIds.has(track.id)),
-  ]
-}
+): LocalMusicTrack[] =>
+  uniqBy([...current, ...bundledTracks], (track) => track.id)
 
 const probeDuration = async (
   track: LocalMusicTrack,
@@ -309,7 +310,7 @@ export default function MusicView({
     (track) => track.id === selectedTrackId,
   )
   const totalDuration = useMemo(
-    () => tracks.reduce((total, track) => total + track.duration, 0),
+    () => sumBy(tracks, (track) => track.duration),
     [tracks],
   )
   const soundCloudError =
@@ -484,22 +485,14 @@ export default function MusicView({
   useEffect(() => {
     const controller = new AbortController()
 
-    const fetchBundledPlaylist = async (): Promise<LocalMusicTrack[]> => {
-      const response = await fetch(BUNDLED_PLAYLIST_MANIFEST_URL, {
-        signal: controller.signal,
-      })
-      if (!response.ok) {
-        throw new Error(
-          `The default playlist could not be loaded (${response.status}).`,
-        )
-      }
-      return parseBundledPlaylist(await response.json())
-    }
-
     const loadBundledPlaylist = async () => {
       let bundledTracks: LocalMusicTrack[]
       try {
-        bundledTracks = await fetchBundledPlaylist()
+        bundledTracks = await fetchJson(
+          BUNDLED_PLAYLIST_MANIFEST_URL,
+          { parse: parseBundledPlaylist },
+          { signal: controller.signal },
+        )
       } catch (error) {
         if (controller.signal.aborted) return
         setBundledPlaylistError(bundledPlaylistFailure(error))

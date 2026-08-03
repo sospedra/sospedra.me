@@ -1,5 +1,7 @@
 // Linear undo history capped by bytes, not entries: 24 MB holds 23 default-
 // size snapshots and fewer after a canvas grow.
+import { sumBy } from 'es-toolkit'
+
 export type Snapshot = {
   data: Uint8ClampedArray<ArrayBuffer>
   width: number
@@ -21,7 +23,7 @@ export const createHistory = (cap: number = HISTORY_CAP): History => ({
 })
 
 const bytes = (snapshots: readonly Snapshot[]): number =>
-  snapshots.reduce((sum, snapshot) => sum + snapshot.data.byteLength, 0)
+  sumBy(snapshots, (snapshot) => snapshot.data.byteLength)
 
 export const push = (history: History, snapshot: Snapshot): History => {
   const past = [...history.past, snapshot]

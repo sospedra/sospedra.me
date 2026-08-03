@@ -110,6 +110,10 @@ export default function Player({
         alt=''
         draggable={false}
       />
+      <span
+        className={`${css.dragHandle} ${css.playerDragHandle}`}
+        aria-hidden='true'
+      />
 
       <div className={css.playerDisplay}>
         <i

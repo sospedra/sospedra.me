@@ -1,3 +1,4 @@
+import { groupBy, mapValues, uniq } from 'es-toolkit'
 import type { Locale, LocalizedOption } from './model'
 
 export type GeoAutocompleteMatch =
@@ -7,14 +8,14 @@ export type GeoAutocompleteMatch =
   | 'token-prefix'
   | 'substring'
 
-export interface GeoAutocompleteCandidate {
+export type GeoAutocompleteCandidate = {
   optionId: string
   label: string
   normalizedLabel: string
   match: GeoAutocompleteMatch
 }
 
-export interface GeoAutocompleteOptions {
+export type GeoAutocompleteOptions = {
   minimumCharacters?: number
   maxResults?: number
 }
@@ -92,15 +93,13 @@ const indexOptions = (
 }
 
 const uniquelyResolvableOptions = (options: readonly IndexedOption[]) => {
-  const idsByLabel = new Map<string, Set<string>>()
-  for (const option of options) {
-    const ids = idsByLabel.get(option.normalizedLabel) ?? new Set<string>()
-    ids.add(option.optionId)
-    idsByLabel.set(option.normalizedLabel, ids)
-  }
+  const idCountByLabel = mapValues(
+    groupBy(options, (option) => option.normalizedLabel),
+    (group) => uniq(group.map((option) => option.optionId)).length,
+  )
 
   return options.filter(
-    (option) => idsByLabel.get(option.normalizedLabel)?.size === 1,
+    (option) => idCountByLabel[option.normalizedLabel] === 1,
   )
 }
 
@@ -138,7 +137,7 @@ const MATCH_RANK: Record<GeoAutocompleteMatch, number> = {
   substring: 4,
 }
 
-export interface GeoAutocompleteIndex {
+export type GeoAutocompleteIndex = {
   locale: Locale
   resolvable: readonly IndexedOption[]
 }
@@ -224,13 +223,11 @@ export const resolveExactGeoOptionId = (
   const normalizedInput = normalizeGeoAnswer(input, locale)
   if (!normalizedInput) return null
 
-  const matchingIds = new Set(
+  const matchingIds = uniq(
     indexOptions(options, locale)
       .filter((option) => option.normalizedLabel === normalizedInput)
       .map((option) => option.optionId),
   )
 
-  return matchingIds.size === 1
-    ? (matchingIds.values().next().value ?? null)
-    : null
+  return matchingIds.length === 1 ? (matchingIds[0] ?? null) : null
 }

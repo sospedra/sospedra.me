@@ -1,6 +1,6 @@
 'use client'
 
-import { partition } from 'es-toolkit'
+import { clamp, partition } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useGameInput } from 'services/hotkeys'
@@ -202,7 +202,7 @@ const useOrbitAndTap = (dispatch: Dispatch) => {
     drag.x = event.clientX
     drag.y = event.clientY
     setOrbit((prev) => ({
-      rotateX: Math.max(-80, Math.min(80, prev.rotateX - deltaY * 0.4)),
+      rotateX: clamp(prev.rotateX - deltaY * 0.4, -80, 80),
       rotateY: prev.rotateY + deltaX * 0.4,
     }))
   }

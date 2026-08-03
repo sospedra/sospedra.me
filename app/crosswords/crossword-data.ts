@@ -1,4 +1,4 @@
-import { takeWhile } from 'es-toolkit'
+import { range, takeWhile } from 'es-toolkit'
 
 export type CrosswordLocale = 'en' | 'es'
 export type CrosswordDirection = 'across' | 'down'
@@ -116,10 +116,7 @@ const entryCellIndices = (
   const reach =
     direction === 'across' ? grid.width - start.column : grid.height - start.row
   const step = direction === 'across' ? 1 : grid.width
-  const along = Array.from(
-    { length: reach },
-    (_, offset) => start.index + offset * step,
-  )
+  const along = range(reach).map((offset) => start.index + offset * step)
   return takeWhile(along, (index) => grid.cells[index]?.solution !== null)
 }
 

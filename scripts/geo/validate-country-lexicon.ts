@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { groupBy } from 'es-toolkit'
 import { OFFICIAL_COUNTRY_OPTIONS } from '../../app/meridian/country-lexicon.ts'
 import type { Locale } from '../../app/meridian/model.ts'
 import {
@@ -64,13 +65,12 @@ for (const option of OFFICIAL_COUNTRY_OPTIONS) {
 }
 
 for (const locale of locales) {
-  const idsByLabel = new Map<string, string[]>()
-  for (const option of OFFICIAL_COUNTRY_OPTIONS) {
-    const label = normalizedLabel(option.label[locale], locale)
-    idsByLabel.set(label, [...(idsByLabel.get(label) ?? []), option.id])
-  }
+  const optionsByLabel = groupBy(OFFICIAL_COUNTRY_OPTIONS, (option) =>
+    normalizedLabel(option.label[locale], locale),
+  )
 
-  for (const [label, matchingIds] of idsByLabel) {
+  for (const [label, matching] of Object.entries(optionsByLabel)) {
+    const matchingIds = matching.map((option) => option.id)
     check(
       matchingIds.length === 1,
       `Ambiguous ${locale} label "${label}": ${matchingIds.join(', ')}`,

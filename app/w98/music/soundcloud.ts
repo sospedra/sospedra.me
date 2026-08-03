@@ -61,6 +61,7 @@ type SoundCloudWidgetFactory = {
 }
 
 declare global {
+  // biome-ignore lint/style/useConsistentTypeDefinitions: augmenting Window needs declaration merging
   interface Window {
     SC?: {
       Widget: SoundCloudWidgetFactory

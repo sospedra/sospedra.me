@@ -1,6 +1,7 @@
 'use client'
 
 import cn from 'clsx'
+import { clamp, isNotNil, mapValues, sum, sumBy } from 'es-toolkit'
 import type { Route } from 'next'
 import { Press_Start_2P } from 'next/font/google'
 import {
@@ -34,12 +35,10 @@ const DIALOG_SIZE = {
   desktop: { maxWidth: 300, viewportShare: 0.76 },
 }
 
-const DIMS = Object.fromEntries(
-  (Object.keys(SIM_DIMS) as BazaarStallId[]).map((id) => [
-    id,
-    { width: SIM_DIMS[id].dispW, height: SIM_DIMS[id].dispH },
-  ]),
-) as Record<BazaarStallId, { width: number; height: number }>
+const DIMS = mapValues(SIM_DIMS, ({ dispW, dispH }) => ({
+  width: dispW,
+  height: dispH,
+}))
 
 function StreetFloor({ onDoor }: { onDoor: () => void }) {
   return (
@@ -243,8 +242,7 @@ const sliceCharacters = (value: string, length: number) =>
 
 function getDialogCharacterCount(desc: string, links: readonly StallLink[]) {
   return (
-    countCharacters(desc) +
-    links.reduce((total, link) => total + countCharacters(link.label), 0)
+    countCharacters(desc) + sumBy(links, (link) => countCharacters(link.label))
   )
 }
 
@@ -253,7 +251,7 @@ function getVisibleCharacters(
   start: number,
   length: number,
 ) {
-  return Math.min(length, Math.max(0, timelinePosition - start))
+  return clamp(timelinePosition - start, 0, length)
 }
 
 function useTypewriter(active: boolean, totalCharacters: number) {
@@ -299,9 +297,7 @@ function DialogContent(props: {
   const descVisibleChars = Math.min(visibleChars, descLength)
   const linkLengths = links.map((link) => countCharacters(link.label))
   const linkStarts = linkLengths.map(
-    (_, index) =>
-      descLength +
-      linkLengths.slice(0, index).reduce((total, length) => total + length, 0),
+    (_, index) => descLength + sum(linkLengths.slice(0, index)),
   )
 
   return (
@@ -495,8 +491,7 @@ function GamesDialogs(props: {
     ),
   )
   const totalCharacters =
-    turnLengths.reduce((total, length) => total + length, 0) +
-    GAMES_TURN_PAUSE_CHARS * lastTurnIndex
+    sum(turnLengths) + GAMES_TURN_PAUSE_CHARS * lastTurnIndex
   const { finish, visibleChars } = useTypewriter(active, totalCharacters)
   useViewportClamp(dialogRef, active, position)
 
@@ -516,10 +511,7 @@ function GamesDialogs(props: {
       {GAMES_CONVERSATION.map((turn, index) => {
         const links = index === lastTurnIndex ? spec.links : []
         const turnStart =
-          turnLengths
-            .slice(0, index)
-            .reduce((total, length) => total + length, 0) +
-          GAMES_TURN_PAUSE_CHARS * index
+          sum(turnLengths.slice(0, index)) + GAMES_TURN_PAUSE_CHARS * index
         const started = visibleChars >= turnStart
         const turnVisibleChars = getVisibleCharacters(
           visibleChars,
@@ -559,7 +551,7 @@ const focusNextStall = (wrap: HTMLElement): boolean => {
   const target = siblings
     .slice(siblings.indexOf(wrap) + 1)
     .map((sibling) => sibling.querySelector<HTMLAnchorElement>('a[href]'))
-    .find((link) => link !== null)
+    .find(isNotNil)
   target?.focus()
   return Boolean(target)
 }
@@ -589,9 +581,10 @@ function Stall({ id }: { id: BazaarStallId }) {
     )
     const half = maxWidth / 2
     setDialogPosition({
-      left: Math.min(
+      left: clamp(
+        rect.left + rect.width / 2,
+        half + VIEWPORT_GUTTER,
         window.innerWidth - half - VIEWPORT_GUTTER,
-        Math.max(half + VIEWPORT_GUTTER, rect.left + rect.width / 2),
       ),
       top: rect.top,
     })
@@ -779,7 +772,7 @@ const MOBILE_FLOORS: MobileFloor[] = [
 ]
 
 function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
-  const sum = spec.stalls.reduce((total, id) => total + DIMS[id].width, 0)
+  const totalWidth = sumBy(spec.stalls, (id) => DIMS[id].width)
   const stairs = <div className={css.stairs} aria-hidden />
   const band = (
     <div className={css.band}>
@@ -793,7 +786,12 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
       className={cn(css.floor, spec.stairsRight && css.floorR)}
       data-floor=''
       data-market-index={index}
-      style={{ '--sum': sum, '--n': spec.stalls.length } as React.CSSProperties}
+      style={
+        {
+          '--sum': totalWidth,
+          '--n': spec.stalls.length,
+        } as React.CSSProperties
+      }
     >
       {spec.stairsRight ? band : stairs}
       {spec.stairsRight ? stairs : band}

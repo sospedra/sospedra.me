@@ -1,5 +1,6 @@
 'use client'
 
+import { uniq } from 'es-toolkit'
 import type React from 'react'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { readLocalJson, writeLocalJson } from 'services/storage'
@@ -41,7 +42,7 @@ export function SystemProvider(props: { children: React.ReactNode }) {
     const stored = readLocalJson(STORAGE_KEY)
     if (stored.status !== 'ok' || !Array.isArray(stored.value)) return
     const valid = stored.value.filter(isAnomalyId)
-    setAnomalies((current) => [...new Set([...valid, ...current])])
+    setAnomalies((current) => uniq([...valid, ...current]))
   }, [])
 
   useEffect(() => {

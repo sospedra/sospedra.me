@@ -1,3 +1,5 @@
+import { HTTPError, http } from '../../services/http.ts'
+
 const ENDPOINT = 'https://backend.smartgames.media/api/game/crossword/last'
 
 /* The API gates on the caller's origin; send the one it accepts. */
@@ -21,10 +23,12 @@ export class SpanishFeedError extends Error {
 /* Hole policy: one attempt, ten-second timeout. A transient failure throws,
    so the caller never caches it as a missing edition. */
 export const fetchSpanishDailyPayload = async (): Promise<unknown> => {
-  const response = await fetch(ENDPOINT, {
-    headers: HEADERS,
-    signal: AbortSignal.timeout(10_000),
-  })
-  if (!response.ok) throw new SpanishFeedError(response.status)
-  return response.json()
+  try {
+    return await http(ENDPOINT, { headers: HEADERS }).json()
+  } catch (error) {
+    if (error instanceof HTTPError) {
+      throw new SpanishFeedError(error.response.status)
+    }
+    throw error
+  }
 }

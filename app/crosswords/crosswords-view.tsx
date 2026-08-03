@@ -1,6 +1,7 @@
 'use client'
 
 import cn from 'clsx'
+import { partition, range } from 'es-toolkit'
 import {
   type CSSProperties,
   type FormEvent,
@@ -87,6 +88,7 @@ const WORD_SWEEP_MS = 900
 const REVEAL_DISARM_MS = 5000
 const KNOB_ARC_DEGREES = 264
 const LATEST_EDITION_DATE = '9999-12-31'
+const SHORT_VIEWPORT_HEIGHT_PX = 480
 
 const SOLVE_MODES = ['standard', 'guided'] as const
 const SCOPE_VALUES = ['cell', 'answer', 'puzzle'] as const
@@ -146,7 +148,7 @@ const PROGRESS_VERSION = 'v2'
 const MOBILE_LAYOUT_MEDIA =
   '(max-width: 52rem), (max-width: 64rem) and (max-height: 36rem)'
 const gridRowKeys = (height: number) =>
-  Array.from({ length: height }, (_, row) => `row-${row + 1}`)
+  range(height).map((row) => `row-${row + 1}`)
 
 const COPY = {
   en: {
@@ -641,7 +643,7 @@ const CONFETTI_TONES = [
 
 /* Deterministic scatter: index-hashed values dodge Math.random so every
    render (and any hydration) agrees on the same burst. */
-const CONFETTI_PIECES = Array.from({ length: 26 }, (_, index) => ({
+const CONFETTI_PIECES = range(26).map((index) => ({
   id: `piece-${index + 1}`,
   x: (((index * 7) % 13) / 12 - 0.5) * 34,
   peak: -(3.4 + ((index * 53) % 40) / 10),
@@ -1292,6 +1294,7 @@ function CrosswordSession({
   const [armedRevealTarget, setArmedRevealTarget] = useState<string | null>(
     null,
   )
+  const [shortViewport, setShortViewport] = useState(false)
   const cellRefs = useRef<Array<HTMLButtonElement | null>>([])
   const inputRef = useRef<HTMLInputElement>(null)
   const audioContextRef = useRef<AudioContext | null>(null)
@@ -1308,22 +1311,59 @@ function CrosswordSession({
   const downListRef = useRef<HTMLDivElement>(null)
   const mobileListRef = useRef<HTMLDivElement>(null)
 
+  useEffect(() => {
+    const mobileLayout = window.matchMedia(MOBILE_LAYOUT_MEDIA)
+    const viewport = window.visualViewport
+    let frame = 0
+    const update = () => {
+      window.cancelAnimationFrame(frame)
+      frame = window.requestAnimationFrame(() => {
+        const height = viewport?.height ?? window.innerHeight
+        setShortViewport(
+          mobileLayout.matches && height <= SHORT_VIEWPORT_HEIGHT_PX,
+        )
+      })
+    }
+
+    update()
+    mobileLayout.addEventListener('change', update)
+    viewport?.addEventListener('resize', update)
+    window.addEventListener('resize', update)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      mobileLayout.removeEventListener('change', update)
+      viewport?.removeEventListener('resize', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+
   const announce = useCallback((message: string) => {
     announcementNonceRef.current = !announcementNonceRef.current
     setAnnouncement(`${message}${announcementNonceRef.current ? '\u200B' : ''}`)
   }, [])
 
-  const bringCellIntoView = (index: number) => {
+  const bringCellIntoView = useCallback((index: number) => {
     cellRefs.current[index]?.scrollIntoView({
       block: 'nearest',
       inline: 'nearest',
     })
-  }
+  }, [])
 
-  const focusCellAt = (index: number) => {
-    cellRefs.current[index]?.focus({ preventScroll: true })
-    bringCellIntoView(index)
-  }
+  const focusCellAt = useCallback(
+    (index: number) => {
+      cellRefs.current[index]?.focus({ preventScroll: true })
+      bringCellIntoView(index)
+    },
+    [bringCellIntoView],
+  )
+
+  useEffect(() => {
+    if (!shortViewport) return
+    const frame = window.requestAnimationFrame(() => {
+      bringCellIntoView(latestStateRef.current.selectedCell)
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [bringCellIntoView, shortViewport])
 
   const getAudioContext = () => {
     if (settings.soundLevel === 0) return null
@@ -1380,11 +1420,9 @@ function CrosswordSession({
     [],
   )
 
-  const acrossEntries = puzzle.entries.filter(
+  const [acrossEntries, downEntries] = partition(
+    puzzle.entries,
     (entry) => entry.direction === 'across',
-  )
-  const downEntries = puzzle.entries.filter(
-    (entry) => entry.direction === 'down',
   )
   const orderedEntries = [...acrossEntries, ...downEntries]
   const solvedEntryIds = new Set(
@@ -1669,6 +1707,7 @@ function CrosswordSession({
       window.cancelAnimationFrame(frame)
       frame = window.requestAnimationFrame(() => {
         if (mobileLayout.matches) {
+          bringCellIntoView(latestStateRef.current.selectedCell)
           centerClueInList(mobileListRef.current, activeEntry.id, 'auto')
         }
       })
@@ -1686,7 +1725,7 @@ function CrosswordSession({
       viewport?.removeEventListener('scroll', recenterMobileClue)
       window.removeEventListener('resize', recenterMobileClue)
     }
-  }, [activeEntry.id, centerClueInList])
+  }, [activeEntry.id, bringCellIntoView, centerClueInList])
 
   const focusActiveClue = () => {
     const mobile = window.matchMedia(MOBILE_LAYOUT_MEDIA).matches
@@ -2212,6 +2251,7 @@ function CrosswordSession({
       lang={locale}
       data-large-text={settings.largeText}
       data-high-contrast={settings.highContrast}
+      data-short-viewport={shortViewport || undefined}
       style={{ '--cw-grid-cols': puzzle.width } as CSSProperties}
     >
       <span id='crossword-pencil-hint' hidden>

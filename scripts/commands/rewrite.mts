@@ -1,5 +1,6 @@
 import * as clack from '@clack/prompts'
 import * as cheerio from 'cheerio'
+import { isNotNil } from 'es-toolkit'
 import Sqids from 'sqids'
 import { absolute, readJson, writeJson } from '../io.mts'
 import { type Context, unwrap } from '../prompts.mts'
@@ -61,7 +62,7 @@ const codeSequence = (source: string) => {
 const nextSource = (rewrites: Rewrite[]) => {
   const sequences = rewrites
     .map((entry) => codeSequence(entry.source))
-    .filter((sequence): sequence is number => sequence !== null)
+    .filter(isNotNil)
   return `/r/${tiny.encode([Math.max(-1, ...sequences) + 1])}`
 }
 

@@ -1,3 +1,4 @@
+import { clamp } from 'es-toolkit'
 import {
   DEFAULT_OPTIONS,
   type Magnification,
@@ -95,8 +96,8 @@ export const normalizeRect = (a: Point, b: Point): Rect => ({
 export type Size = { width: number; height: number }
 
 const clampPoint = (at: Point, size: Size): Point => ({
-  x: Math.min(Math.max(at.x, 0), size.width - 1),
-  y: Math.min(Math.max(at.y, 0), size.height - 1),
+  x: clamp(at.x, 0, size.width - 1),
+  y: clamp(at.y, 0, size.height - 1),
 })
 
 export const prospectiveSize = (

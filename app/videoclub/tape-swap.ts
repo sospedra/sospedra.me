@@ -1,3 +1,5 @@
+import { clamp } from 'es-toolkit'
+
 export type TapeSwapParts = {
   ghost: HTMLElement
   slot: HTMLElement
@@ -77,7 +79,7 @@ const stages = (parts: TapeSwapParts): Stage[] => {
 
   const computed = window.getComputedStyle(parts.source)
   const sourceTilt = Number.parseFloat(computed.getPropertyValue('--tip')) || 0
-  const mouthInsetX = Math.max(8, Math.min(16, slot.width * 0.035))
+  const mouthInsetX = clamp(slot.width * 0.035, 8, 16)
   const mouthWidth = slot.width - mouthInsetX * 2
 
   // the scale stays uniform: a cassette never flattens, it only slides

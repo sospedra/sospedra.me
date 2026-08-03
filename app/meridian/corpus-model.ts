@@ -7,13 +7,13 @@ export type CityCoverageReason =
   | 'europe-plus'
   | 'population-over-10m'
 
-export interface GeoCorpusSourceReference {
+export type GeoCorpusSourceReference = {
   sourceRevision: string
   geonamesSnapshotDate: string
   worldBankPopulationYear: number
 }
 
-export interface GeneratedCityRecord {
+export type GeneratedCityRecord = {
   geonamesId: number
   wikidataId?: string
   countryCode: ISOAlpha2
@@ -29,7 +29,7 @@ export interface GeneratedCityRecord {
   sourceRevision: string
 }
 
-export interface CountryCityCoverage {
+export type CountryCityCoverage = {
   reasons: CityCoverageReason[]
   rankedNonCapitalTarget: number
   rankedNonCapitalSelected: number
@@ -37,7 +37,7 @@ export interface CountryCityCoverage {
   shortfall: boolean
 }
 
-export interface GeneratedCountryCorpusRecord {
+export type GeneratedCountryCorpusRecord = {
   code: ISOAlpha2
   iso3: string
   names: LocalizedText
@@ -50,7 +50,7 @@ export interface GeneratedCountryCorpusRecord {
   sourceRevision: string
 }
 
-export interface GeneratedCityCorpus {
+export type GeneratedCityCorpus = {
   schemaVersion: typeof GEO_CORPUS_SCHEMA_VERSION
   sourceRevision: string
   policyRevision: string
@@ -58,7 +58,7 @@ export interface GeneratedCityCorpus {
   cities: GeneratedCityRecord[]
 }
 
-export interface GeneratedCountryCorpus {
+export type GeneratedCountryCorpus = {
   schemaVersion: typeof GEO_CORPUS_SCHEMA_VERSION
   sourceRevision: string
   policyRevision: string

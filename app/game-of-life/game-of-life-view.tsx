@@ -1,5 +1,6 @@
 'use client'
 
+import { clamp } from 'es-toolkit'
 import {
   type KeyboardEvent,
   type PointerEvent,
@@ -340,7 +341,7 @@ export default function GameOfLifeView() {
           : event.deltaMode === globalThis.WheelEvent.DOM_DELTA_PAGE
             ? canvasNode.clientHeight
             : 1
-      const delta = Math.max(-240, Math.min(240, event.deltaY * deltaUnit))
+      const delta = clamp(event.deltaY * deltaUnit, -240, 240)
       if (delta === 0) return
 
       const current = cameraRef.current

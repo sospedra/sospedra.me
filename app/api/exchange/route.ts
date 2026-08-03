@@ -1,27 +1,20 @@
 import { connection } from 'next/server'
-import { isRecord } from 'services/is-record'
+import { fetchJson } from 'services/http'
 import { DAY_MS, utcDayString } from 'services/time'
+import * as z from 'zod/mini'
 import { sendMessage } from './telegram'
 
 const RATE_THRESHOLD = 0.85
 
-const eurRateFrom = (payload: unknown): number | null => {
-  if (!isRecord(payload) || !isRecord(payload.rates)) return null
-  const eur = payload.rates.EUR
-  return typeof eur === 'number' && Number.isFinite(eur) ? eur : null
-}
+const eurRateSchema = z.object({ rates: z.object({ EUR: z.number() }) })
 
-const fetchRate = async (date: Date): Promise<number | null> => {
-  const day = utcDayString(date)
-  const response = await fetch(
-    `https://api.exchangeratesapi.io/${day}?base=USD&symbols=EUR`,
-    { signal: AbortSignal.timeout(10_000) },
-  ).catch(() => null)
-  if (!response?.ok) return null
-
-  const payload: unknown = await response.json().catch(() => null)
-  return eurRateFrom(payload)
-}
+const fetchRate = (date: Date): Promise<number | null> =>
+  fetchJson(
+    `https://api.exchangeratesapi.io/${utcDayString(date)}?base=USD&symbols=EUR`,
+    eurRateSchema,
+  )
+    .then((payload) => payload.rates.EUR)
+    .catch(() => null)
 
 export async function GET() {
   // the fetch must run per request, never at build

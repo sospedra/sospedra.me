@@ -1,3 +1,5 @@
+import { clamp, range } from 'es-toolkit'
+
 export const COLS = 20
 export const ROWS = 10
 export const MIN_LEVEL = 1
@@ -65,16 +67,13 @@ export const initialState: GameState = {
   top: 0,
 }
 
-const clampLevel = (level: number) =>
-  Math.min(MAX_LEVEL, Math.max(MIN_LEVEL, level))
+const clampLevel = (level: number) => clamp(level, MIN_LEVEL, MAX_LEVEL)
 
 const cellKey = (cell: Vec) => cell.y * COLS + cell.x
 
 const spawnFood = (snake: Vec[], roll: number): Vec => {
   const taken = new Set(snake.map(cellKey))
-  const free = Array.from({ length: COLS * ROWS }, (_, key) => key).filter(
-    (key) => !taken.has(key),
-  )
+  const free = range(COLS * ROWS).filter((key) => !taken.has(key))
   if (free.length === 0) return { x: -1, y: -1 }
 
   const key = free[Math.min(free.length - 1, Math.floor(roll * free.length))]

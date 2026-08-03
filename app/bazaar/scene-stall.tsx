@@ -1,5 +1,6 @@
 'use client'
 
+import { uniq } from 'es-toolkit'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import styles from './scene.module.css'
 import {
@@ -29,17 +30,15 @@ const layerFiles = (layer: StallLayer): string[] => {
       : layer.hover
         ? [layer.hover]
         : []
-    return [...new Set([...layer.frames.map((frame) => frame.file), ...hover])]
+    return uniq([...layer.frames.map((frame) => frame.file), ...hover])
   }
   if (layer.role === 'prop') {
-    return [...new Set([layer.rest, ...(layer.hover ?? [])])]
+    return uniq([layer.rest, ...(layer.hover ?? [])])
   }
-  return [
-    ...new Set([
-      ...layer.idle.map((frame) => frame.file),
-      ...layer.hover.map((frame) => frame.file),
-    ]),
-  ]
+  return uniq([
+    ...layer.idle.map((frame) => frame.file),
+    ...layer.hover.map((frame) => frame.file),
+  ])
 }
 
 const hoverStepFile = (

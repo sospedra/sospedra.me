@@ -1,3 +1,4 @@
+import { clamp, range } from 'es-toolkit'
 import { DAY_MS } from '../../services/time.ts'
 
 const JULIAN_UNIX_EPOCH = 2_440_587.5
@@ -193,11 +194,9 @@ export const lunarOrbitAtVisit = (
   const rightAscension = wrapDegrees(
     degrees(Math.atan2(equatorial.vector[1], equatorial.vector[0])),
   )
-  const declination = degrees(
-    Math.asin(Math.max(-1, Math.min(1, equatorial.vector[2]))),
-  )
+  const declination = degrees(Math.asin(clamp(equatorial.vector[2], -1, 1)))
   const current = orbitPointAt(observedAt, siderealAngle)
-  const orbit = Array.from({ length: sampleCount }, (_, index) => {
+  const orbit = range(sampleCount).map((index) => {
     const offset = (index / sampleCount) * SIDEREAL_MONTH_MS
     return orbitPointAt(new Date(observedAt.getTime() + offset), siderealAngle)
   })

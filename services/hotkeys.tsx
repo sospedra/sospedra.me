@@ -304,7 +304,7 @@ const scrollSceneSequence = (
   surface: HTMLElement,
 ) => {
   const current = nearestSceneIndex(scenes, surface.getBoundingClientRect().top)
-  const next = Math.max(0, Math.min(scenes.length - 1, current + direction))
+  const next = clamp(current + direction, 0, scenes.length - 1)
   if (next === current) return false
 
   scenes[next]?.scrollIntoView({

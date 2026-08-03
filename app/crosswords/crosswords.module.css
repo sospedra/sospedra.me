@@ -2415,12 +2415,26 @@
 
 .inputProxy {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 1px;
   height: 1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+.inputProxy input {
+  position: absolute;
+  inset: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px;
 }
 
 .srOnly {
@@ -2608,6 +2622,8 @@
     --cw-glass-pad: 0.45rem;
     --cw-pan-pad: 0.28rem;
     --cw-pan-side: max(12rem, calc(var(--cw-mobile-board) - 1.86rem));
+    --cw-touch-grid: clamp(28rem, 128vw, 31rem);
+    --cw-cell: calc(var(--cw-touch-grid) / var(--cw-grid-cols, 15));
     --cw-letter-ratio: 0.72;
 
     width: 100%;
@@ -2696,7 +2712,17 @@
   }
 
   .gridPan {
+    overflow: auto;
+    overscroll-behavior: contain;
     border-radius: 0.32rem;
+    scrollbar-color: var(--cw-blue-deep) transparent;
+    scrollbar-width: thin;
+    touch-action: pan-x pan-y;
+  }
+
+  .gridSurface {
+    width: var(--cw-touch-grid);
+    height: var(--cw-touch-grid);
   }
 
   .pauseCurtain {
@@ -3074,6 +3100,50 @@
     grid-template-rows: repeat(2, 3.5rem);
     overflow: visible;
   }
+}
+
+/* The software keyboard can leave less than half a phone screen available.
+   Keep the solving surface, active clue and actions inside that visual
+   viewport; the full masthead and control bank return when it expands. */
+.game[data-short-viewport="true"] {
+  height: min(100dvh, var(--crossword-viewport-height, 100dvh));
+  min-height: 0;
+  grid-template-rows:
+    minmax(0, 1fr) 3rem
+    calc(3.35rem + var(--safe-area-bottom));
+  gap: 0.25rem;
+  overflow: hidden;
+}
+
+.game[data-short-viewport="true"] .masthead {
+  display: none;
+}
+
+.game[data-short-viewport="true"] .mobileClues {
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "list";
+}
+
+.game[data-short-viewport="true"] .clueTabs {
+  display: none;
+}
+
+.game[data-short-viewport="true"] .gridPan {
+  width: 100%;
+  height: 100%;
+}
+
+.game[data-short-viewport="true"] .mobileToolbar {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "actions";
+  padding: 0.18rem max(0.42rem, var(--safe-area-right))
+    max(0.18rem, var(--safe-area-bottom)) max(0.42rem, var(--safe-area-left));
+}
+
+.game[data-short-viewport="true"] .mobileToolbar .parameterBank,
+.game[data-short-viewport="true"] .mobileToolbar .switchBank {
+  display: none;
 }
 
 @media (min-width: 52.01rem) and (min-height: 36.01rem) and (max-height: 42rem),

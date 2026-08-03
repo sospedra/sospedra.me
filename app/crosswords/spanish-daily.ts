@@ -1,4 +1,4 @@
-import { isRecord } from '../../services/is-record.ts'
+import * as z from 'zod/mini'
 import {
   type ChallengePuzzle,
   type CrosswordChallengeFile,
@@ -57,18 +57,21 @@ const parseBoard = (board: string): string[] | null => {
   return valid ? rows : null
 }
 
-const cluePair = (entry: unknown): readonly [string, string] | null => {
-  if (!isRecord(entry)) return null
-  const text = typeof entry.clue === 'string' ? entry.clue.trim() : ''
-  if (text.length === 0 || typeof entry.answer !== 'string') return null
-  return [normalizeWord(entry.answer), text]
-}
+const clueEntrySchema = z.object({
+  clue: z.string().check(z.trim(), z.minLength(1)),
+  answer: z.string(),
+})
+
+const looseRecordSchema = z.catch(z.record(z.string(), z.unknown()), {})
 
 const clueBookSide = (side: unknown): Record<string, string> => {
-  if (!isRecord(side)) return {}
-  const pairs = Object.values(side)
-    .map(cluePair)
-    .filter((pair): pair is readonly [string, string] => pair !== null)
+  const pairs = Object.values(looseRecordSchema.parse(side)).flatMap(
+    (entry) => {
+      const parsed = clueEntrySchema.safeParse(entry)
+      if (!parsed.success) return []
+      return [[normalizeWord(parsed.data.answer), parsed.data.clue] as const]
+    },
+  )
   return Object.fromEntries(pairs)
 }
 
@@ -88,30 +91,29 @@ const fullyClued = (rows: string[], clues: SpanishClueBook): boolean =>
     .flatMap(wordsIn)
     .every((word) => clues.down[word] !== undefined)
 
-const attributesOf = (payload: unknown): Record<string, unknown> | null => {
-  if (!isRecord(payload)) return null
-  const data = payload.data
-  if (!isRecord(data)) return null
-  const attributes = data.attributes
-  return isRecord(attributes) ? attributes : null
-}
+const feedPayloadSchema = z.object({
+  data: z.object({
+    attributes: z.object({
+      publicationDate: z.string().check(z.regex(ISO_DATE)),
+      config: z.object({
+        board: z.string(),
+        entries: z.unknown(),
+      }),
+    }),
+  }),
+})
 
 export const spanishChallengeFromPayload = (
   payload: unknown,
 ): SpanishDailyChallenge | null => {
-  const attributes = attributesOf(payload)
-  const config = attributes?.config
-  if (!attributes || !isRecord(config)) return null
-
-  const publicationDate = attributes.publicationDate
-  if (typeof publicationDate !== 'string' || !ISO_DATE.test(publicationDate))
-    return null
-  if (typeof config.board !== 'string') return null
+  const parsed = feedPayloadSchema.safeParse(payload)
+  if (!parsed.success) return null
+  const { config, publicationDate } = parsed.data.data.attributes
 
   const solution = parseBoard(config.board)
   if (!solution) return null
 
-  const entries = isRecord(config.entries) ? config.entries : {}
+  const entries = looseRecordSchema.parse(config.entries)
   const clues = {
     across: clueBookSide(entries.across),
     down: clueBookSide(entries.down),

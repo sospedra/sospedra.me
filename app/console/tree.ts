@@ -1,3 +1,5 @@
+import { sumBy } from 'es-toolkit'
+
 export type FileTreeFile = {
   kind: 'file'
   name: string
@@ -80,13 +82,8 @@ const finalizeDirectory = (directory: MutableDirectory): FileTreeDirectory => {
     name: directory.name,
     path: directory.path,
     children: [...directories, ...files],
-    directoryCount: directories.reduce(
-      (count, child) => count + child.directoryCount + 1,
-      0,
-    ),
-    fileCount:
-      files.length +
-      directories.reduce((count, child) => count + child.fileCount, 0),
+    directoryCount: sumBy(directories, (child) => child.directoryCount + 1),
+    fileCount: files.length + sumBy(directories, (child) => child.fileCount),
   }
 }
 

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { range } from 'es-toolkit'
 import {
   COLS,
   type Dir,
@@ -160,7 +161,7 @@ test('the vacated tail cell is legal to enter', () => {
 })
 
 test('a full board parks the food sentinel off-grid', () => {
-  const cells = Array.from({ length: COLS * ROWS }, (_, key) => ({
+  const cells = range(COLS * ROWS).map((key) => ({
     x: key % COLS,
     y: Math.floor(key / COLS),
   }))

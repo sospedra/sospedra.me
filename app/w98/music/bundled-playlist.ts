@@ -1,94 +1,90 @@
-import { isRecord } from '../../../services/is-record.ts'
+import * as z from 'zod/mini'
 import { extensionOf } from './format.ts'
 import type { LocalMusicTrack } from './types'
 
 export const BUNDLED_PLAYLIST_MANIFEST_URL =
   '/music/bonfire/playlist.json' as const
 
-type BundledPlaylistEntry = {
-  artist: string
-  durationMs: number
-  fileUrl: string
-  id: number | string
-  title: string
-}
-
-const playlistEntries = (value: unknown): unknown[] => {
-  if (Array.isArray(value)) return value
-  if (isRecord(value) && Array.isArray(value.tracks)) return value.tracks
-  throw new Error('The default playlist manifest has an invalid shape.')
-}
-
-const requireString = (
-  entry: Record<string, unknown>,
-  key: keyof BundledPlaylistEntry,
-  index: number,
-): string => {
-  const value = entry[key]
-  if (typeof value !== 'string' || value.trim() === '') {
-    throw new Error(
-      `Default playlist track ${index + 1} has an invalid ${key}.`,
-    )
-  }
-  return value.trim()
-}
-
 const fileNameOf = (fileUrl: string): string => {
   const path = fileUrl.split('?', 1)[0].split('#', 1)[0]
   return path.split('/').at(-1) ?? ''
 }
 
-const parseEntry = (value: unknown, index: number): LocalMusicTrack => {
-  if (!isRecord(value)) {
-    throw new Error(`Default playlist track ${index + 1} is invalid.`)
-  }
+const requiredText = z.string().check(z.trim(), z.minLength(1))
 
-  const rawId = value.id
-  if (
-    (typeof rawId !== 'string' && typeof rawId !== 'number') ||
-    String(rawId).trim() === ''
-  ) {
-    throw new Error(`Default playlist track ${index + 1} has an invalid id.`)
-  }
+const bundledEntrySchema = z.pipe(
+  z.object({
+    artist: requiredText,
+    durationMs: z.number().check(z.gte(0)),
+    fileUrl: requiredText,
+    id: z
+      .union([z.string(), z.number()])
+      .check(z.refine((id) => String(id).trim() !== '')),
+    title: requiredText,
+  }),
+  z.transform(
+    (entry): LocalMusicTrack => ({
+      album: '',
+      artist: entry.artist,
+      duration: Math.round(entry.durationMs),
+      id: `bundled:${String(entry.id).trim()}`,
+      kind: 'local',
+      src: entry.fileUrl,
+      title: entry.title,
+      type: extensionOf(fileNameOf(entry.fileUrl)),
+    }),
+  ),
+)
 
-  const durationMs = value.durationMs
-  if (
-    typeof durationMs !== 'number' ||
-    !Number.isFinite(durationMs) ||
-    durationMs < 0
-  ) {
-    throw new Error(
-      `Default playlist track ${index + 1} has an invalid durationMs.`,
-    )
+const firstRepeatedId = (tracks: LocalMusicTrack[]): string | undefined => {
+  const seen = new Set<string>()
+  for (const track of tracks) {
+    if (seen.has(track.id)) return track.id
+    seen.add(track.id)
   }
+  return undefined
+}
 
-  const fileUrl = requireString(value, 'fileUrl', index)
+const manifestEntries = z.pipe(
+  z.union(
+    [z.array(z.unknown()), z.object({ tracks: z.array(z.unknown()) })],
+    'The default playlist manifest has an invalid shape.',
+  ),
+  z.transform((manifest: unknown[] | { tracks: unknown[] }) =>
+    Array.isArray(manifest) ? manifest : manifest.tracks,
+  ),
+)
 
-  return {
-    album: '',
-    artist: requireString(value, 'artist', index),
-    duration: Math.round(durationMs),
-    id: `bundled:${String(rawId).trim()}`,
-    kind: 'local',
-    src: fileUrl,
-    title: requireString(value, 'title', index),
-    type: extensionOf(fileNameOf(fileUrl)),
+const bundledPlaylistSchema = z.pipe(
+  manifestEntries,
+  z.array(bundledEntrySchema).check(
+    z.refine(
+      (tracks) => tracks.length > 0,
+      'The default playlist contains no tracks.',
+    ),
+    z.refine(
+      (tracks: LocalMusicTrack[]) => firstRepeatedId(tracks) === undefined,
+      {
+        error: (issue) =>
+          `The default playlist repeats track id "${firstRepeatedId(
+            issue.input as LocalMusicTrack[],
+          )}".`,
+      },
+    ),
+  ),
+)
+
+const trackFailure = (issue: z.core.$ZodIssue): string => {
+  const [index, field] = issue.path
+  if (typeof index !== 'number') return issue.message
+  if (field === undefined) {
+    return `Default playlist track ${index + 1} is invalid.`
   }
+  return `Default playlist track ${index + 1} has an invalid ${String(field)}.`
 }
 
 export const parseBundledPlaylist = (value: unknown): LocalMusicTrack[] => {
-  const entries = playlistEntries(value)
-  if (entries.length === 0) {
-    throw new Error('The default playlist contains no tracks.')
-  }
-
-  const tracks = entries.map(parseEntry)
-  const ids = new Set<string>()
-  for (const track of tracks) {
-    if (ids.has(track.id)) {
-      throw new Error(`The default playlist repeats track id "${track.id}".`)
-    }
-    ids.add(track.id)
-  }
-  return tracks
+  const result = bundledPlaylistSchema.safeParse(value)
+  if (result.success) return result.data
+  throw new Error(trackFailure(result.error.issues[0]))
 }

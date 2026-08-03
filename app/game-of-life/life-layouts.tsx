@@ -1,3 +1,4 @@
+import { clamp, range } from 'es-toolkit'
 import {
   type ComponentPropsWithoutRef,
   type CSSProperties,
@@ -68,7 +69,7 @@ export type LifeLayoutProps = {
 }
 
 const METER_SEGMENT_COUNT = 12
-const METER_SEGMENTS = Array.from({ length: METER_SEGMENT_COUNT }, (_, index) =>
+const METER_SEGMENTS = range(METER_SEGMENT_COUNT).map((index) =>
   String(index + 1).padStart(2, '0'),
 )
 
@@ -366,9 +367,10 @@ const GridPilot = ({
     }
   }
 
-  const zoomProgress = Math.max(
+  const zoomProgress = clamp(
+    (canvas.zoom - MIN_ZOOM) / (MAX_ZOOM - MIN_ZOOM),
     0,
-    Math.min(1, (canvas.zoom - MIN_ZOOM) / (MAX_ZOOM - MIN_ZOOM)),
+    1,
   )
   const pilotStyle = {
     '--pilot-x': `${offset.x}px`,

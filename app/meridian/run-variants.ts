@@ -1,3 +1,4 @@
+import { clamp, groupBy } from 'es-toolkit'
 import { createRng, shuffleWith } from '../../services/random.ts'
 import type {
   DailyGeoChallenge,
@@ -34,7 +35,7 @@ const RAMP_QUOTAS: Record<DifficultyTier, number> = {
  * the four-tier scale.
  */
 const tierFor = (difficulty: Difficulty): DifficultyTier =>
-  Math.min(4, Math.max(1, Number(difficulty))) as DifficultyTier
+  clamp(Number(difficulty), 1, 4) as DifficultyTier
 
 const nonceKey = (nonce: RunNonce): string => {
   if (typeof nonce === 'number') {
@@ -86,13 +87,13 @@ const seededOrder = <Value>(
   namespace: string,
 ): Value[] => shuffleWith(createRng(namespace), values)
 
-interface CountryQuestionGroup {
+type CountryQuestionGroup = {
   countryKey: string
   roundIndex: number
   questions: Question[]
 }
 
-interface CountryQuestionPool {
+type CountryQuestionPool = {
   countryKey: string
   groups: CountryQuestionGroup[]
 }
@@ -167,13 +168,17 @@ const assignCountryPools = (
 const orderRoundQuestions = (
   questions: readonly Question[],
   namespace: string,
-): Question[] =>
-  DIFFICULTY_TIERS.flatMap((tier) =>
-    seededOrder(
-      questions.filter((question) => tierFor(question.difficulty) === tier),
-      `${namespace}:tier-${tier}`,
-    ).slice(0, RAMP_QUOTAS[tier]),
+): Question[] => {
+  const questionsByTier = groupBy(questions, (question) =>
+    tierFor(question.difficulty),
   )
+  return DIFFICULTY_TIERS.flatMap((tier) =>
+    seededOrder(questionsByTier[tier] ?? [], `${namespace}:tier-${tier}`).slice(
+      0,
+      RAMP_QUOTAS[tier],
+    ),
+  )
+}
 
 /**
  * Countries in the source pool are assigned to one eligible minigame, each

@@ -1,3 +1,4 @@
+import { maxBy, sumBy, uniq } from 'es-toolkit'
 import { DAY_MS } from 'services/time'
 import type {
   AnswerResult,
@@ -8,14 +9,14 @@ import type {
 } from './model'
 import { isUtcPublicationDate } from './publication-date'
 
-export interface RoundStatistics {
+export type RoundStatistics = {
   type: RoundType
   score: number
   correctAnswers: number
   totalQuestions: number
 }
 
-export interface GeoRunStatistics {
+export type GeoRunStatistics = {
   totalScore: number
   correctAnswers: number
   totalQuestions: number
@@ -75,17 +76,14 @@ export const calculateRunStatistics = (
 
     return {
       type: round.type,
-      score: roundAnswers.reduce((total, answer) => total + answer.score, 0),
+      score: sumBy(roundAnswers, (answer) => answer.score),
       correctAnswers: roundAnswers.filter((answer) => answer.correct).length,
       totalQuestions: roundAnswers.length,
     }
   })
 
   return {
-    totalScore: orderedAnswers.reduce(
-      (total, answer) => total + answer.score,
-      0,
-    ),
+    totalScore: sumBy(orderedAnswers, (answer) => answer.score),
     correctAnswers,
     totalQuestions,
     accuracyPercentage:
@@ -145,14 +143,12 @@ const utcDayNumber = (date: string) => {
 export const calculateDailyPlayStreak = (
   runs: readonly OfficialGeoRunRecord[],
 ) => {
-  const days = [
-    ...new Set(
-      runs.flatMap((run) => {
-        const day = utcDayNumber(run.publicationDate)
-        return day === null ? [] : [day]
-      }),
-    ),
-  ].sort((left, right) => right - left)
+  const days = uniq(
+    runs.flatMap((run) => {
+      const day = utcDayNumber(run.publicationDate)
+      return day === null ? [] : [day]
+    }),
+  ).sort((left, right) => right - left)
   if (days.length === 0) return 0
 
   let streak = 1
@@ -167,10 +163,7 @@ export const personalBestFor = (
   runs: readonly OfficialGeoRunRecord[],
   rulesVersion: string,
 ) =>
-  runs
-    .filter((run) => run.rulesVersion === rulesVersion)
-    .reduce<number | null>(
-      (best, run) =>
-        best === null ? run.totalScore : Math.max(best, run.totalScore),
-      null,
-    )
+  maxBy(
+    runs.filter((run) => run.rulesVersion === rulesVersion),
+    (run) => run.totalScore,
+  )?.totalScore ?? null

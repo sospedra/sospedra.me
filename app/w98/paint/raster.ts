@@ -1,3 +1,4 @@
+import { clamp } from 'es-toolkit'
 import type { BrushShape } from './options.ts'
 import type { Rgba } from './palette.ts'
 
@@ -359,7 +360,7 @@ export const drawCurve = (bitmap: Bitmap, spec: CurveSpec): void => {
     distance(spec.from, spec.c1) +
     distance(spec.c1, spec.c2) +
     distance(spec.c2, spec.to)
-  const segments = Math.min(512, Math.max(8, Math.ceil(arc)))
+  const segments = clamp(Math.ceil(arc), 8, 512)
   let previous = spec.from
   for (let i = 1; i <= segments; i++) {
     const next = cubicAt(spec, i / segments)

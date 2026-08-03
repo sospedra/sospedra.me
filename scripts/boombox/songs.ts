@@ -7,7 +7,7 @@ import { basename, extname, join } from 'node:path'
 import { argv, env, exit } from 'node:process'
 import { promisify } from 'node:util'
 import { del, list, put } from '@vercel/blob'
-import { chunk } from 'es-toolkit'
+import { chunk, partition, range } from 'es-toolkit'
 import sharp from 'sharp'
 import {
   CLIP_SECONDS,
@@ -102,12 +102,13 @@ const reportRotationShift = (before: Song[], after: Song[]) => {
     console.log('Rotation has not started. No day moves.')
     return
   }
-  const moved = []
-  for (let day = 0; day <= today; day++) {
-    const was = songForDay(before, day)
-    const now = songForDay(after, day)
-    if (was.id !== now.id) moved.push({ day, was, now })
-  }
+  const moved = range(today + 1)
+    .map((day) => ({
+      day,
+      was: songForDay(before, day),
+      now: songForDay(after, day),
+    }))
+    .filter(({ was, now }) => was.id !== now.id)
   if (moved.length === 0) {
     console.log(`No played day moves. Today is day ${today}.`)
     return
@@ -295,8 +296,7 @@ const add = async (args: string[], flags: Set<string>) => {
       }),
     )
   }
-  const replaced = incoming.filter((item) => item.replaces)
-  const appended = incoming.filter((item) => !item.replaces)
+  const [replaced, appended] = partition(incoming, (item) => item.replaces)
   if (dryRun) {
     console.log(
       `dry run: would append ${appended.length}, replace ${replaced.length}. Listen to the clips, then re-run without --dry-run.`,

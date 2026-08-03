@@ -1,5 +1,6 @@
 'use client'
 
+import { range } from 'es-toolkit'
 import { Caveat, Share_Tech_Mono, VT323 } from 'next/font/google'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -7,9 +8,9 @@ import {
   useDailyCountdown,
 } from 'services/daily-countdown'
 import { useGameInput } from 'services/hotkeys'
-import { isRecord } from 'services/is-record'
 import { shareHandled, shareText } from 'services/share'
 import { readLocalJson, writeLocalJson } from 'services/storage'
+import * as z from 'zod/mini'
 import css from './boombox.module.css'
 import { createDeckSfx, type DeckSfx } from './deck-sfx'
 import {
@@ -90,41 +91,25 @@ const SCORE_NOTE = {
   year: 'right year!',
 } satisfies Record<GuessScore, string>
 
-const STAGES = {
-  lost: true,
-  play: true,
-  won: true,
-} satisfies Record<BoomboxState['stage'], true>
+const savedGuessSchema = z.object({
+  label: z.string(),
+  score: z.enum(['album', 'artist', 'decade', 'hit', 'miss', 'skip', 'year']),
+  songId: z.nullable(z.string()),
+})
 
-const isStage = (value: string): value is BoomboxState['stage'] =>
-  value in STAGES
-
-const isGuessScore = (value: string): value is GuessScore =>
-  value in SCORE_LABEL
-
-const restoredGuess = (value: unknown): Guess | null => {
-  if (!isRecord(value)) return null
-  const { label, score, songId } = value
-  if (typeof label !== 'string') return null
-  if (typeof score !== 'string' || !isGuessScore(score)) return null
-  if (songId !== null && typeof songId !== 'string') return null
-  return { label, score, songId }
-}
+const savedStateSchema = z.object({
+  day: z.number(),
+  guesses: z.array(savedGuessSchema).check(z.maxLength(MAX_GUESSES)),
+  stage: z.enum(['lost', 'play', 'won']),
+})
 
 const restoreBoomboxState = (
   value: unknown,
   day: number,
 ): BoomboxState | null => {
-  if (!isRecord(value)) return null
-  if (value.day !== day) return null
-  if (typeof value.stage !== 'string' || !isStage(value.stage)) return null
-  if (!Array.isArray(value.guesses)) return null
-  if (value.guesses.length > MAX_GUESSES) return null
-  const guesses = value.guesses
-    .map(restoredGuess)
-    .filter((guess): guess is Guess => guess !== null)
-  if (guesses.length !== value.guesses.length) return null
-  return { day, guesses, stage: value.stage }
+  const parsed = savedStateSchema.safeParse(value)
+  if (!parsed.success || parsed.data.day !== day) return null
+  return parsed.data
 }
 
 const loadState = (day: number): BoomboxState => {
@@ -367,15 +352,12 @@ const Lcd = (props: {
           role='img'
           aria-label={`${props.limit} of ${FULL_UNLOCK} seconds unlocked`}
         >
-          {Array.from({ length: FULL_UNLOCK }, (_, index) => (
+          {range(FULL_UNLOCK).map((segment) => (
             <span
-              key={`seg-${
-                // biome-ignore lint/suspicious/noArrayIndexKey: fixed-length static ruler
-                index
-              }`}
+              key={`seg-${segment}`}
               className={css.lcdSegment}
               data-tone={segmentTone(
-                index,
+                segment,
                 props.seconds,
                 playing ? props.limit : FULL_UNLOCK,
               )}
@@ -606,16 +588,13 @@ const CaseTracklist = (props: PaperProps) => (
         </h2>
         <p className={css.caseRule}>side a · type i · c-90</p>
         <ol className={css.trackRows}>
-          {Array.from({ length: MAX_GUESSES }, (_, index) => {
-            const guess = props.guesses[index]
+          {range(MAX_GUESSES).map((slot) => {
+            const guess = props.guesses[slot]
             const active =
-              props.stage === 'play' && index === props.guesses.length
+              props.stage === 'play' && slot === props.guesses.length
             return (
               <li
-                key={`track-${
-                  // biome-ignore lint/suspicious/noArrayIndexKey: fixed six-line card
-                  index
-                }`}
+                key={`track-${slot}`}
                 data-long={(guess?.label.length ?? 0) > 22}
                 data-active={active}
               >
@@ -866,6 +845,7 @@ function BoomboxMachine({
   const [tapeExpired, setTapeExpired] = useState(false)
   const [query, setQuery] = useState('')
   const [cursor, setCursor] = useState(0)
+  const [mobileEntryOpen, setMobileEntryOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [eqGains, setEqGains] = useState<number[]>(() =>
     Array(EQ_BANDS.length).fill(0),
@@ -1024,6 +1004,9 @@ function BoomboxMachine({
       aria-controls={resultsId}
       autoComplete='off'
       spellCheck={false}
+      onFocus={() => {
+        if (!autoFocus) setMobileEntryOpen(true)
+      }}
       onChange={(event) => {
         setQuery(event.target.value)
         setCursor(0)
@@ -1184,7 +1167,27 @@ function BoomboxMachine({
         </div>
       </div>
 
-      <div className={css.ansaphone}>
+      <div
+        className={css.ansaphone}
+        data-entry-open={mobileEntryOpen}
+        onClickCapture={(event) => {
+          if (!mobileEntryOpen) return
+          const target = event.target
+          if (!(target instanceof Element)) return
+          if (target.closest('[role="option"]')) return
+          if (target.closest('button')) setMobileEntryOpen(false)
+        }}
+        onBlurCapture={(event) => {
+          const nextTarget = event.relatedTarget
+          if (
+            nextTarget instanceof Node &&
+            event.currentTarget.contains(nextTarget)
+          ) {
+            return
+          }
+          setMobileEntryOpen(false)
+        }}
+      >
         <section className={css.tadBody} aria-label='Answering machine'>
           <div className={css.tadBay}>
             <Cassette

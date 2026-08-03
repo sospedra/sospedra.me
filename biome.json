@@ -42,7 +42,9 @@
       "complexity": {
         "noExcessiveCognitiveComplexity": {
           "level": "warn",
-          "options": { "maxAllowedComplexity": 10 }
+          "options": {
+            "maxAllowedComplexity": 10
+          }
         },
         "noForEach": "error"
       },
@@ -62,7 +64,16 @@
         "noEnum": "error",
         "useFilenamingConvention": {
           "level": "error",
-          "options": { "requireAscii": false, "filenameCases": ["kebab-case"] }
+          "options": {
+            "requireAscii": false,
+            "filenameCases": ["kebab-case"]
+          }
+        },
+        "useConsistentTypeDefinitions": {
+          "level": "error",
+          "options": {
+            "style": "type"
+          }
         }
       },
       "suspicious": {

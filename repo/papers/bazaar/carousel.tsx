@@ -1,6 +1,7 @@
+// biome-ignore-all lint/a11y/noNoninteractiveTabindex: Scrollable carousel tracks must be keyboard-focusable.
 'use client'
 
-import { throttle } from 'es-toolkit'
+import { clamp, throttle } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import css from './carousel.module.css'
@@ -25,7 +26,7 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
         const node = track.current
         if (!node) return
         const raw = Math.round(node.scrollLeft / node.clientWidth)
-        setIndex(Math.min(props.items.length - 1, Math.max(0, raw)))
+        setIndex(clamp(raw, 0, props.items.length - 1))
       }, SCROLL_THROTTLE_MS),
     [props.items.length],
   )
@@ -39,6 +40,13 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
     })
   }
 
+  const handleTrackKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault()
+      scrollBySlide(event.key === 'ArrowLeft' ? -1 : 1)
+    }
+  }
+
   return (
     <section
       aria-label={props.label}
@@ -46,7 +54,14 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
       className={css.carousel}
     >
       <span className={css.label}>{props.label}</span>
-      <div className={css.track} onScroll={handleScroll} ref={track}>
+      <section
+        aria-label={`${props.label} shots`}
+        className={css.track}
+        onKeyDown={handleTrackKeyDown}
+        onScroll={handleScroll}
+        ref={track}
+        tabIndex={0}
+      >
         {props.items.map((item) => (
           <img
             alt={item.alt}
@@ -60,7 +75,7 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
             width={SLIDE_WIDTH}
           />
         ))}
-      </div>
+      </section>
       <div className={css.deck}>
         <span className={css.counter}>
           {pad(index + 1)}&nbsp;/&nbsp;{pad(props.items.length)}

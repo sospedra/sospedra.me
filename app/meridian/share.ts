@@ -47,7 +47,7 @@ const answerSymbol = (roundType: RoundType, answer?: AnswerResult) => {
   return mapDistanceBandShareSymbol(answer.distanceBand)
 }
 
-export interface ShareCardInput {
+export type ShareCardInput = {
   challenge: DailyGeoChallenge
   answers: readonly AnswerResult[]
   locale: Locale

@@ -1,3 +1,4 @@
+import { clamp } from 'es-toolkit'
 import { haversineDistanceKm, isGeoCoordinate } from 'services/distance'
 import type {
   AnswerResult,
@@ -31,7 +32,7 @@ export type GeoGameOverlay = 'settings' | 'help' | null
 export type CountdownReason = 'run-start' | 'round-start' | 'resume'
 export type VisibilityReturnPhase = 'question' | 'feedback'
 
-export interface GeoGameState {
+export type GeoGameState = {
   challenge: DailyGeoChallenge
   runKind: RunKind
   /**
@@ -109,7 +110,7 @@ export type GeoGameAction =
   | { type: 'OPEN_OVERLAY'; overlay: Exclude<GeoGameOverlay, null> }
   | { type: 'CLOSE_OVERLAY' }
 
-export interface CreateGeoGameOptions {
+export type CreateGeoGameOptions = {
   runKind?: RunKind
   timed?: boolean
 }
@@ -119,7 +120,7 @@ const normalizeElapsed = (
   limitMs: number,
 ): number | null => {
   if (!Number.isFinite(elapsedMs)) return null
-  return Math.min(Math.max(0, elapsedMs), Math.max(0, limitMs))
+  return clamp(elapsedMs, 0, Math.max(0, limitMs))
 }
 
 const assertNever = (value: never): never => {
@@ -270,13 +271,13 @@ const answerClocks = (
   }
 }
 
-interface AnswerAttempt {
+type AnswerAttempt = {
   elapsedMs: number
   roundElapsedMs?: number
   answeredAt: string
 }
 
-interface AnswerWindow {
+type AnswerWindow = {
   round: Round
   question: Question
   responseElapsedMs: number

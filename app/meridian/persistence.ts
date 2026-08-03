@@ -1,5 +1,6 @@
-import { haversineDistanceKm, isGeoCoordinate } from 'services/distance'
-import { isRecord } from 'services/is-record'
+import { sumBy } from 'es-toolkit'
+import { haversineDistanceKm } from 'services/distance'
+import * as z from 'zod/mini'
 import {
   readJson,
   type StorageLike,
@@ -12,13 +13,10 @@ import type {
   DailyGeoChallenge,
   GeoChallengeRules,
   GeoSettings,
-  MapDistanceBand,
-  OfficialGeoRunRecord,
   PersistedGeoRun,
   PersistedGeoStats,
   Question,
   Round,
-  RoundType,
 } from './model'
 import {
   isIsoDateTime,
@@ -48,104 +46,81 @@ export const DEFAULT_GEO_SETTINGS: GeoSettings = {
   reducedMotion: false,
 }
 
-const isNonEmptyString = (value: unknown): value is string =>
-  typeof value === 'string' && value.length > 0
+const nonEmptyString = z.string().check(z.minLength(1))
+const finiteNonNegative = z.number().check(z.nonnegative())
+const nonNegativeInt = z.int().check(z.nonnegative())
+const isoDateTime = z.string().check(z.refine(isIsoDateTime))
+const isoDate = z.string().check(z.refine(isUtcPublicationDate))
 
-const isFiniteNonNegative = (value: unknown): value is number =>
-  typeof value === 'number' && Number.isFinite(value) && value >= 0
+const geoCoordinateSchema = z.object({
+  latitude: z.number().check(z.gte(-90), z.lte(90)),
+  longitude: z.number().check(z.gte(-180), z.lte(180)),
+})
 
-const isNonNegativeInteger = (value: unknown): value is number =>
-  isFiniteNonNegative(value) && Number.isInteger(value)
+const answerBaseShape = {
+  questionId: nonEmptyString,
+  roundId: nonEmptyString,
+  roundType: z.enum(['shape', 'flag', 'capital', 'map']),
+  attemptIndex: z.optional(nonNegativeInt),
+  difficulty: z.literal([1, 2, 3, 4]),
+  elapsedMs: finiteNonNegative,
+  roundElapsedMs: z.optional(finiteNonNegative),
+  questionLimitMs: finiteNonNegative,
+  remainingMs: finiteNonNegative,
+  correct: z.boolean(),
+  expired: z.boolean(),
+  skipped: z.optional(z.boolean()),
+  baseScore: nonNegativeInt,
+  streakBefore: nonNegativeInt,
+  streakAfter: nonNegativeInt,
+  streakMultiplier: finiteNonNegative,
+  score: nonNegativeInt,
+  answeredAt: isoDateTime,
+}
 
-const isIsoDate = (value: unknown): value is string =>
-  typeof value === 'string' && isUtcPublicationDate(value)
+const choiceAnswerSchema = z.object({
+  ...answerBaseShape,
+  kind: z.literal('choice'),
+  selectedOptionId: z.nullable(nonEmptyString),
+  correctOptionId: nonEmptyString,
+  submittedText: z.optional(nonEmptyString),
+})
 
-const isRoundType = (value: unknown): value is RoundType =>
-  value === 'shape' ||
-  value === 'flag' ||
-  value === 'capital' ||
-  value === 'map'
+const mapPinAnswerSchema = z.object({
+  ...answerBaseShape,
+  kind: z.literal('map-pin'),
+  submittedCoordinate: z.nullable(geoCoordinateSchema),
+  answerCoordinate: geoCoordinateSchema,
+  distanceKm: z.nullable(finiteNonNegative),
+  distanceBand: z.enum([
+    'within-100',
+    'within-300',
+    'within-750',
+    'within-1500',
+    'within-3000',
+    'miss',
+    'expired',
+  ]),
+})
 
-const isMapDistanceBand = (value: unknown): value is MapDistanceBand =>
-  value === 'within-100' ||
-  value === 'within-300' ||
-  value === 'within-750' ||
-  value === 'within-1500' ||
-  value === 'within-3000' ||
-  value === 'miss' ||
-  value === 'expired'
+const answerResultSchema = z
+  .discriminatedUnion('kind', [choiceAnswerSchema, mapPinAnswerSchema])
+  .check(
+    z.refine((answer) => answer.remainingMs <= answer.questionLimitMs),
+    z.refine((answer) => !(answer.expired && answer.skipped)),
+  )
+
+export const isAnswerResult = (value: unknown): value is AnswerResult =>
+  answerResultSchema.safeParse(value).success
+
+const geoSettingsSchema = z.object({
+  schemaVersion: z.literal(1),
+  sound: z.boolean(),
+  reducedMotion: z.boolean(),
+})
 
 const nearlyEqual = (left: number, right: number, tolerance: number) =>
   Math.abs(left - right) <= tolerance
-
-const answerBaseIsValid = (answer: Record<string, unknown>) =>
-  isNonEmptyString(answer.questionId) &&
-  isNonEmptyString(answer.roundId) &&
-  isRoundType(answer.roundType) &&
-  (answer.attemptIndex === undefined ||
-    isNonNegativeInteger(answer.attemptIndex)) &&
-  isNonNegativeInteger(answer.difficulty) &&
-  answer.difficulty >= 1 &&
-  answer.difficulty <= 4 &&
-  isFiniteNonNegative(answer.elapsedMs) &&
-  isFiniteNonNegative(answer.questionLimitMs) &&
-  isFiniteNonNegative(answer.remainingMs) &&
-  answer.remainingMs <= answer.questionLimitMs &&
-  (answer.roundElapsedMs === undefined ||
-    isFiniteNonNegative(answer.roundElapsedMs)) &&
-  typeof answer.correct === 'boolean' &&
-  typeof answer.expired === 'boolean' &&
-  (answer.skipped === undefined || typeof answer.skipped === 'boolean') &&
-  !(answer.expired === true && answer.skipped === true) &&
-  isNonNegativeInteger(answer.baseScore) &&
-  isNonNegativeInteger(answer.streakBefore) &&
-  isNonNegativeInteger(answer.streakAfter) &&
-  isFiniteNonNegative(answer.streakMultiplier) &&
-  isNonNegativeInteger(answer.score) &&
-  isIsoDateTime(answer.answeredAt)
-
-export const isAnswerResult = (value: unknown): value is AnswerResult => {
-  if (!isRecord(value) || !answerBaseIsValid(value)) return false
-
-  if (value.kind === 'choice') {
-    return (
-      (value.selectedOptionId === null ||
-        isNonEmptyString(value.selectedOptionId)) &&
-      isNonEmptyString(value.correctOptionId) &&
-      (value.submittedText === undefined ||
-        isNonEmptyString(value.submittedText))
-    )
-  }
-
-  if (value.kind === 'map-pin') {
-    return (
-      (value.submittedCoordinate === null ||
-        isGeoCoordinate(value.submittedCoordinate)) &&
-      isGeoCoordinate(value.answerCoordinate) &&
-      (value.distanceKm === null || isFiniteNonNegative(value.distanceKm)) &&
-      isMapDistanceBand(value.distanceBand)
-    )
-  }
-
-  return false
-}
-
-const parseGeoSettings = (value: unknown): GeoSettings | null => {
-  if (
-    !isRecord(value) ||
-    value.schemaVersion !== 1 ||
-    typeof value.sound !== 'boolean' ||
-    typeof value.reducedMotion !== 'boolean'
-  ) {
-    return null
-  }
-
-  return {
-    schemaVersion: 1,
-    sound: value.sound,
-    reducedMotion: value.reducedMotion,
-  }
-}
 
 export const loadGeoSettings = (
   storage: StorageLike | null,
@@ -155,9 +130,9 @@ export const loadGeoSettings = (
     return { status: loaded.status, value: { ...DEFAULT_GEO_SETTINGS } }
   }
 
-  const settings = parseGeoSettings(loaded.value)
-  return settings
-    ? { status: 'ok', value: settings }
+  const parsed = geoSettingsSchema.safeParse(loaded.value)
+  return parsed.success
+    ? { status: 'ok', value: parsed.data }
     : { status: 'invalid', value: { ...DEFAULT_GEO_SETTINGS } }
 }
 
@@ -166,53 +141,23 @@ export const saveGeoSettings = (
   settings: GeoSettings,
 ) => writeJson(storage, GEO_SETTINGS_STORAGE_KEY, settings)
 
-const parseOfficialRunRecord = (
-  value: unknown,
-): OfficialGeoRunRecord | null => {
-  if (
-    !isRecord(value) ||
-    !isNonEmptyString(value.challengeId) ||
-    !isIsoDate(value.publicationDate) ||
-    !isNonEmptyString(value.rulesVersion) ||
-    !isIsoDateTime(value.completedAt) ||
-    !isNonNegativeInteger(value.totalScore) ||
-    !isNonNegativeInteger(value.correctAnswers) ||
-    !isNonNegativeInteger(value.totalQuestions) ||
-    value.correctAnswers > value.totalQuestions ||
-    !isNonNegativeInteger(value.bestStreak)
-  ) {
-    return null
-  }
+const officialRunRecordSchema = z
+  .object({
+    challengeId: nonEmptyString,
+    publicationDate: isoDate,
+    rulesVersion: nonEmptyString,
+    completedAt: isoDateTime,
+    totalScore: nonNegativeInt,
+    correctAnswers: nonNegativeInt,
+    totalQuestions: nonNegativeInt,
+    bestStreak: nonNegativeInt,
+  })
+  .check(z.refine((record) => record.correctAnswers <= record.totalQuestions))
 
-  return {
-    challengeId: value.challengeId,
-    publicationDate: value.publicationDate,
-    rulesVersion: value.rulesVersion,
-    completedAt: value.completedAt,
-    totalScore: value.totalScore,
-    correctAnswers: value.correctAnswers,
-    totalQuestions: value.totalQuestions,
-    bestStreak: value.bestStreak,
-  }
-}
-
-const parseGeoStats = (value: unknown): PersistedGeoStats | null => {
-  if (
-    !isRecord(value) ||
-    value.schemaVersion !== 1 ||
-    !Array.isArray(value.runs)
-  ) {
-    return null
-  }
-
-  const runs = value.runs.map(parseOfficialRunRecord)
-  if (runs.some((run) => run === null)) return null
-
-  return {
-    schemaVersion: 1,
-    runs: runs as OfficialGeoRunRecord[],
-  }
-}
+const geoStatsSchema = z.object({
+  schemaVersion: z.literal(1),
+  runs: z.array(officialRunRecordSchema),
+})
 
 export const loadGeoStats = (
   storage: StorageLike | null,
@@ -225,9 +170,9 @@ export const loadGeoStats = (
     }
   }
 
-  const stats = parseGeoStats(loaded.value)
-  return stats
-    ? { status: 'ok', value: stats }
+  const parsed = geoStatsSchema.safeParse(loaded.value)
+  return parsed.success
+    ? { status: 'ok', value: parsed.data }
     : { status: 'invalid', value: { schemaVersion: 1, runs: [] } }
 }
 
@@ -431,7 +376,7 @@ const answerMatchesQuestion = (
   return pinAnswerMatches(answer, question, rules)
 }
 
-interface NormalizedRunPosition {
+type NormalizedRunPosition = {
   status: PersistedGeoRun['status']
   roundIndex: number
   questionIndex: number
@@ -491,9 +436,10 @@ const normalizeLegacyRun = ({
     !oldPositionWasAnswered
       ? (candidate.questionElapsedMs ?? 0)
       : 0
-  const elapsedAnsweredInRound = answers
-    .filter((answer) => answer.roundId === unansweredRound.id)
-    .reduce((total, answer) => total + answer.elapsedMs, 0)
+  const elapsedAnsweredInRound = sumBy(
+    answers.filter((answer) => answer.roundId === unansweredRound.id),
+    (answer) => answer.elapsedMs,
+  )
   return {
     ...base,
     roundIndex: firstUnanswered.roundIndex,
@@ -508,39 +454,46 @@ const normalizeLegacyRun = ({
   }
 }
 
+const persistedGeoRunSchema = z
+  .object({
+    schemaVersion: z.literal(1),
+    challengeId: z.string(),
+    rulesVersion: z.string(),
+    status: z.enum(['started', 'completed']),
+    roundIndex: nonNegativeInt,
+    questionIndex: nonNegativeInt,
+    answers: z.array(answerResultSchema),
+    score: nonNegativeInt,
+    currentStreak: nonNegativeInt,
+    bestStreak: nonNegativeInt,
+    startedAt: isoDateTime,
+    completedAt: z.optional(isoDateTime),
+    questionElapsedMs: z.optional(finiteNonNegative),
+    roundElapsedMs: z.optional(finiteNonNegative),
+    roundComplete: z.optional(z.boolean()),
+    feedbackPending: z.optional(z.boolean()),
+  })
+  .check(
+    z.refine(
+      (run) => !(run.roundComplete === true && run.feedbackPending === true),
+    ),
+  )
+
 export const validatePersistedGeoRun = (
   value: unknown,
   challenge: DailyGeoChallenge,
 ): PersistedGeoRun | null => {
+  const parsed = persistedGeoRunSchema.safeParse(value)
+  if (!parsed.success) return null
+
+  const candidate = parsed.data
   if (
-    !isRecord(value) ||
-    value.schemaVersion !== 1 ||
-    value.challengeId !== challenge.id ||
-    value.rulesVersion !== challenge.rulesVersion ||
-    (value.status !== 'started' && value.status !== 'completed') ||
-    !isNonNegativeInteger(value.roundIndex) ||
-    !isNonNegativeInteger(value.questionIndex) ||
-    !Array.isArray(value.answers) ||
-    !value.answers.every(isAnswerResult) ||
-    !isNonNegativeInteger(value.score) ||
-    !isNonNegativeInteger(value.currentStreak) ||
-    !isNonNegativeInteger(value.bestStreak) ||
-    !isIsoDateTime(value.startedAt) ||
-    (value.completedAt !== undefined && !isIsoDateTime(value.completedAt)) ||
-    (value.questionElapsedMs !== undefined &&
-      !isFiniteNonNegative(value.questionElapsedMs)) ||
-    (value.roundElapsedMs !== undefined &&
-      !isFiniteNonNegative(value.roundElapsedMs)) ||
-    (value.roundComplete !== undefined &&
-      typeof value.roundComplete !== 'boolean') ||
-    (value.feedbackPending !== undefined &&
-      typeof value.feedbackPending !== 'boolean') ||
-    (value.roundComplete === true && value.feedbackPending === true)
+    candidate.challengeId !== challenge.id ||
+    candidate.rulesVersion !== challenge.rulesVersion
   ) {
     return null
   }
 
-  const candidate = value as unknown as PersistedGeoRun
   const questions = challengeQuestions(challenge)
   const answers = candidate.answers
   const legacyTimerRecord =
@@ -681,7 +634,7 @@ export const validatePersistedGeoRun = (
 
   const streaks = expectedStreaks(answers)
   if (!streaks) return null
-  const answerScore = answers.reduce((total, answer) => total + answer.score, 0)
+  const answerScore = sumBy(answers, (answer) => answer.score)
   const deadlineEndedWithUnanswered =
     normalized.roundComplete &&
     normalized.questionIndex === currentRoundAnswerCount

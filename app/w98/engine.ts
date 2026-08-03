@@ -1,3 +1,4 @@
+import { range } from 'es-toolkit'
 import { mulberry32 } from 'services/random'
 
 export type Level = { rows: number; cols: number; mines: number }
@@ -69,7 +70,7 @@ const neighborsOf = (index: number, level: Level): number[] => {
 // first click is never a mine: the safe index leaves the candidate pool
 const pickMines = (level: Level, safe: number, seed: number): Set<number> => {
   const random = mulberry32(seed)
-  const picked = Array.from({ length: level.rows * level.cols }, (_, i) => i)
+  const picked = range(level.rows * level.cols)
     .filter((index) => index !== safe)
     .map((index) => ({ index, key: random() }))
     .toSorted((a, b) => a.key - b.key)

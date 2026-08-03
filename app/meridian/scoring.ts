@@ -34,13 +34,13 @@ export type ScoringRules = Pick<
   'choice' | 'streak' | 'mapBands'
 >
 
-export interface ScoreBreakdown {
+export type ScoreBreakdown = {
   baseScore: number
   streakMultiplier: number
   score: number
 }
 
-export interface ChoiceScoreInput {
+export type ChoiceScoreInput = {
   correct: boolean
   elapsedMs: number
   questionLimitMs: number
@@ -48,13 +48,13 @@ export interface ChoiceScoreInput {
   rules?: ScoringRules
 }
 
-export interface ChoiceScore extends ScoreBreakdown {
+export type ChoiceScore = ScoreBreakdown & {
   elapsedMs: number
   remainingMs: number
   speedRatio: number
 }
 
-export interface MapBaseScore {
+export type MapBaseScore = {
   baseScore: number
   distanceBand: Exclude<MapDistanceBand, 'expired'>
 }
@@ -78,7 +78,7 @@ export const scoreChoiceAnswer = ({
 }: ChoiceScoreInput): ChoiceScore => {
   const limit = nonNegativeFinite(questionLimitMs)
   const elapsed = Number.isFinite(elapsedMs)
-    ? clamp(Math.max(0, elapsedMs), 0, limit)
+    ? clamp(elapsedMs, 0, limit)
     : limit
   const remainingMs = Math.max(0, limit - elapsed)
   const speedRatio = limit > 0 ? clamp(remainingMs / limit, 0, 1) : 0

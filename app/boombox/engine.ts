@@ -1,4 +1,4 @@
-import { DAY_MS } from '../../services/time.ts'
+import { Temporal } from 'temporal-polyfill'
 
 export type Song = {
   album: string
@@ -41,51 +41,32 @@ export const UNLOCKS = [1, 2, 4, 7, 11, FULL_UNLOCK] as const
 export const CLIP_SECONDS = 30
 /* first tape spun on launch day; the tape flips for everyone at the same
    instant: 02:00 on Spain's wall clock, whatever utc offset that is */
-const EPOCH_UTC = Date.UTC(2026, 6, 28)
+const TIME_ZONE = 'Europe/Madrid'
+const EPOCH_DATE = Temporal.PlainDate.from('2026-07-28')
 const FLIP_HOUR = 2
 
-const SPAIN_CLOCK = new Intl.DateTimeFormat('en-CA', {
-  timeZone: 'Europe/Madrid',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-  hour: '2-digit',
-  hourCycle: 'h23',
-})
-
-const spainWallClock = (now: Date) => {
-  const parts = Object.fromEntries(
-    SPAIN_CLOCK.formatToParts(now).map((part) => [part.type, part.value]),
+const spainClock = (now: Date) =>
+  Temporal.Instant.fromEpochMilliseconds(now.getTime()).toZonedDateTimeISO(
+    TIME_ZONE,
   )
-  return {
-    date: Date.UTC(
-      Number(parts.year),
-      Number(parts.month) - 1,
-      Number(parts.day),
-    ),
-    hour: Number(parts.hour),
-  }
-}
 
 export const dayNumber = (now: Date) => {
-  const spain = spainWallClock(now)
-  const calendarDays = Math.round((spain.date - EPOCH_UTC) / DAY_MS)
+  const spain = spainClock(now)
+  const calendarDays = EPOCH_DATE.until(spain.toPlainDate()).days
   return spain.hour < FLIP_HOUR ? calendarDays - 1 : calendarDays
 }
 
-/* the exact instant the next tape loads; dayNumber is a step function of
-   time, so binary-search its next step within the coming 26 hours */
 export const nextFlipAt = (now: Date): Date => {
-  const today = dayNumber(now)
-  let lo = now.getTime()
-  let hi = lo + 26 * 3_600_000
-
-  while (hi - lo > 1000) {
-    const mid = lo + Math.floor((hi - lo) / 2)
-    if (dayNumber(new Date(mid)) > today) hi = mid
-    else lo = mid
-  }
-  return new Date(Math.ceil(hi / 1000) * 1000)
+  const spain = spainClock(now)
+  const flipDate =
+    spain.hour < FLIP_HOUR
+      ? spain.toPlainDate()
+      : spain.toPlainDate().add({ days: 1 })
+  const flip = flipDate.toZonedDateTime({
+    timeZone: TIME_ZONE,
+    plainTime: { hour: FLIP_HOUR },
+  })
+  return new Date(flip.epochMilliseconds)
 }
 
 export const songForDay = (songs: Song[], day: number): Song => {

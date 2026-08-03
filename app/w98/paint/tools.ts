@@ -1,3 +1,5 @@
+import { keyBy } from 'es-toolkit'
+
 export type ToolId =
   | 'select'
   | 'eraser'
@@ -131,6 +133,4 @@ export const TOOLS: readonly ToolDescriptor[] = [
   },
 ]
 
-export const toolById = Object.fromEntries(
-  TOOLS.map((tool) => [tool.id, tool]),
-) as Record<ToolId, ToolDescriptor>
+export const toolById = keyBy(TOOLS, (tool) => tool.id)

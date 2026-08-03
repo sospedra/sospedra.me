@@ -18,7 +18,7 @@ const TIER_NAMES: Record<AuditTier, string> = {
   4: 'Tier 4 · quiz-only',
 }
 
-interface AuditCountry {
+type AuditCountry = {
   code: string
   name: string
   shapeUrl: string

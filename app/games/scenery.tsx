@@ -1,3 +1,4 @@
+import { range } from 'es-toolkit'
 import type { CSSProperties } from 'react'
 import css from './games.module.css'
 
@@ -9,7 +10,7 @@ type ColumnStyle = CSSProperties & {
 
 const COLUMN_COUNT = 14 * 8
 const COLUMN_GAPS = new Set([39, 40, 45, 46, 47, 93, 94, 100, 101])
-const COLUMNS = Array.from({ length: COLUMN_COUNT }, (_, index) => {
+const COLUMNS = range(COLUMN_COUNT).map((index) => {
   const seed = ((index + 1) * 47 + 13) % 101
   const style: ColumnStyle = {
     '--column-hue': `${224 + (seed % 16)}`,

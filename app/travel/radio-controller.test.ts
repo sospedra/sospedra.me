@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { sumBy } from 'es-toolkit'
 import {
   createRadioController,
   type RadioAudioElement,
@@ -56,7 +57,7 @@ const createFakeAudio = (): FakeAudio => {
       for (const handler of listeners.get(name) ?? []) handler()
     },
     listenerCount: () =>
-      [...listeners.values()].reduce((total, bucket) => total + bucket.size, 0),
+      sumBy([...listeners.values()], (bucket) => bucket.size),
   }
   return fake
 }

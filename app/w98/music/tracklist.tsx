@@ -121,12 +121,17 @@ export default function Tracklist({
         alt=''
         draggable={false}
       />
+      <span
+        className={`${css.dragHandle} ${css.tracklistDragHandle}`}
+        aria-hidden='true'
+      />
 
       <input
         ref={fileInputRef}
         className={css.srOnly}
         type='file'
         accept='audio/*,.flac,.m4a,.mp3,.oga,.ogg,.opus,.wav,.webm'
+        aria-label='Choose local audio files'
         multiple
         onChange={changeFiles}
       />

@@ -1,4 +1,6 @@
-export interface GeoCoordinate {
+import { clamp } from 'es-toolkit'
+
+export type GeoCoordinate = {
   latitude: number
   longitude: number
 }
@@ -38,7 +40,7 @@ export const haversineDistanceKm = (from: GeoCoordinate, to: GeoCoordinate) => {
     Math.cos(fromLatitude) *
       Math.cos(toLatitude) *
       Math.sin(longitudeDelta / 2) ** 2
-  const normalizedHaversine = Math.min(1, Math.max(0, haversine))
+  const normalizedHaversine = clamp(haversine, 0, 1)
   const centralAngle =
     2 *
     Math.atan2(

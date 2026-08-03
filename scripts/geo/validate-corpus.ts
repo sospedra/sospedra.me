@@ -9,7 +9,7 @@ import type {
 import { OFFICIAL_COUNTRY_OPTIONS } from '../../app/meridian/country-lexicon.ts'
 import type { CountryRecord } from '../../app/meridian/model.ts'
 
-interface RosterDocument {
+type RosterDocument = {
   schemaVersion: 1
   rosterRevision: string
   recognitionBasis: {
@@ -18,7 +18,7 @@ interface RosterDocument {
   countryCodes: string[]
 }
 
-interface CoveragePolicy {
+type CoveragePolicy = {
   schemaVersion: 1
   policyRevision: string
   runtime: {
@@ -43,7 +43,7 @@ interface CoveragePolicy {
   }
 }
 
-interface OverrideDocument {
+type OverrideDocument = {
   schemaVersion: 1
   policyRevision: string
   overrides: unknown[]
@@ -54,7 +54,7 @@ interface OverrideDocument {
   }[]
 }
 
-interface SourceLock {
+type SourceLock = {
   schemaVersion: 1
   sourceRevision: string
   importReady: boolean
@@ -70,14 +70,14 @@ interface SourceLock {
   }
 }
 
-interface MainSourceLock {
+type MainSourceLock = {
   sourceRevision: string
   corpus?: {
     runtimeNetworkRequestsAllowed?: boolean
   }
 }
 
-interface GameCountryCorpus {
+type GameCountryCorpus = {
   schemaVersion: 1
   sourceRevision: string
   countries: CountryRecord[]

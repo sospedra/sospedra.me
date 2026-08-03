@@ -1,3 +1,5 @@
+import { range } from 'es-toolkit'
+
 export const STARTUP_TIMEOUT_MS = 12_000
 
 export type RadioPhase =
@@ -51,12 +53,7 @@ const assertNever = (value: never): never => {
 const nextUnattempted = (
   attempted: ReadonlySet<number>,
   stationCount: number,
-): number => {
-  for (let index = 0; index < stationCount; index += 1) {
-    if (!attempted.has(index)) return index
-  }
-  return -1
-}
+): number => range(stationCount).find((index) => !attempted.has(index)) ?? -1
 
 const retune = (
   state: RadioState,

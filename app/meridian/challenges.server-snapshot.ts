@@ -1,9 +1,11 @@
+import 'server-only'
+
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { cacheLife, cacheTag } from 'next/cache'
 import { serverEnv } from 'services/env.server'
-import { isRecord } from 'services/is-record'
 import { createLogger } from 'services/logger'
+import * as z from 'zod/mini'
 import type { DailyGeoChallenge } from './model'
 import {
   latestPublicationDateOnOrBefore,
@@ -23,14 +25,15 @@ export class GeoChallengeFileError extends Error {
 
 /* Shape gate only. The deep contract runs in CI through
    scripts/geo/validate-challenge.ts before any file lands here. */
+const challengeShapeSchema = z.object({
+  publicationDate: z.string(),
+  rounds: z
+    .array(z.object({ questions: z.array(z.unknown()) }))
+    .check(z.minLength(1)),
+})
+
 const isDailyGeoChallenge = (value: unknown): value is DailyGeoChallenge =>
-  isRecord(value) &&
-  typeof value.publicationDate === 'string' &&
-  Array.isArray(value.rounds) &&
-  value.rounds.length > 0 &&
-  value.rounds.every(
-    (round) => isRecord(round) && Array.isArray(round.questions),
-  )
+  challengeShapeSchema.safeParse(value).success
 
 /* Revalidation re-picks the newest published edition, so rollover needs no
    cron and no rebuild. Correctness needs cache expire (1 day) <= the window

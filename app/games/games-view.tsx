@@ -1,5 +1,6 @@
 'use client'
 
+import { clamp } from 'es-toolkit'
 import { useEffect, useRef, useState } from 'react'
 import { isEditableTarget, useGameInput } from 'services/hotkeys'
 import Link from 'services/link'
@@ -102,7 +103,7 @@ export default function GamesView() {
   }
 
   const focusGame = (index: number) => {
-    const next = Math.max(0, Math.min(GAMES.length - 1, index))
+    const next = clamp(index, 0, GAMES.length - 1)
     selectGame(next)
     links.current[next]?.focus()
   }
