@@ -1,0 +1,223 @@
+@reference "../../service/style/global.css";
+
+/* Windows 98 chrome primitives. The --win-* tokens cascade from the app frame. */
+
+.bevelOut {
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  box-shadow:
+    inset 1px 1px 0 var(--win-face),
+    inset -1px -1px 0 var(--win-shadow),
+    0.35rem 0.35rem 0 rgb(0 0 0 / 28%);
+  color: var(--win-ink);
+}
+
+.bevelIn {
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+}
+
+.titlebar {
+  display: flex;
+  min-height: 1.35rem;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 2px;
+  padding: 2px;
+  background: var(--win-title);
+  touch-action: none;
+  user-select: none;
+}
+
+.titlebar strong {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: white;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.windowControls {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2px;
+}
+
+.windowControls > button,
+.windowControls > span {
+  display: grid;
+  width: 1.05rem;
+  height: 1rem;
+  place-items: center;
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  color: #000;
+  font-family: Arial, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 0.7;
+}
+
+.windowControls > button {
+  padding: 0;
+}
+
+.windowControls > button:active {
+  border-top-color: var(--win-dark);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-dark);
+}
+
+.windowControls > button:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.menubar {
+  position: relative;
+  z-index: 30;
+  display: flex;
+  gap: 0.1rem;
+  margin: 0 2px;
+  padding: 0.05rem 0.16rem 0.12rem;
+  background: var(--win-face);
+}
+
+.menuTrigger {
+  min-height: 1.55rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--win-ink);
+  font-family: inherit;
+  font-size: 0.74rem;
+}
+
+.menuTrigger:hover,
+.menuTrigger:focus-visible,
+.menuTrigger[aria-expanded="true"] {
+  border-color: var(--win-light) var(--win-shadow) var(--win-shadow)
+    var(--win-light);
+  background: var(--win-face);
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+.menu {
+  position: absolute;
+  z-index: 31;
+  top: 100%;
+  left: 0;
+  display: flex;
+  min-width: 13rem;
+  flex-direction: column;
+  padding: 2px;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-dark);
+  border-bottom-color: var(--win-dark);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  box-shadow: 3px 3px 0 rgb(0 0 0 / 35%);
+}
+
+.menu hr {
+  width: 100%;
+  height: 2px;
+  margin: 2px 0;
+  border: 0;
+  border-top: 1px solid var(--win-mid);
+  border-bottom: 1px solid var(--win-light);
+}
+
+.menu kbd {
+  font-family: "Courier New", monospace;
+  font-size: 0.68rem;
+}
+
+.menuItem {
+  display: flex;
+  min-height: 1.55rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.16rem 0.45rem;
+  border: 0;
+  background: transparent;
+  color: var(--win-ink);
+  font-family: inherit;
+  font-size: 0.74rem;
+  text-align: left;
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
+.menuItem:hover,
+.menuItem:focus-visible {
+  background: var(--win-title);
+  color: white;
+  outline: 0;
+}
+
+.menuItem:disabled {
+  background: transparent;
+  color: var(--win-mid);
+  text-shadow: 1px 1px 0 var(--win-light);
+}
+
+.field {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  padding: 0.45rem;
+  padding-top: 0.2rem;
+}
+
+.face {
+  display: grid;
+  width: 2.45rem;
+  height: 2.45rem;
+  place-items: center;
+  padding: 0;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-shadow);
+  border-bottom-color: var(--win-shadow);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  color: #000;
+  font-family: Arial, sans-serif;
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+.face:active {
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+  transform: translate(1px, 1px);
+}

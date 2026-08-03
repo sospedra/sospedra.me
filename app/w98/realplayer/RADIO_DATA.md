@@ -14,7 +14,7 @@ runtime.
 - Editorial order: the nine Disco Paradise label channels first, then dance,
   then lounge closes the dial.
 - `verification` stores the probe result that admitted the stream. Re-verify
-  with `pnpm w98:radio:verify` before touching the corpus.
+  with `pnpm cli w98:radio:verify` before touching the corpus.
 
 ## Runtime behavior
 

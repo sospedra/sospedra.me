@@ -233,24 +233,8 @@
   pointer-events: auto;
 }
 
-.window,
-.paintWindow,
-.helpWindow {
-  border-width: 2px;
-  border-style: solid;
-  border-top-color: var(--win-light);
-  border-right-color: var(--win-dark);
-  border-bottom-color: var(--win-dark);
-  border-left-color: var(--win-light);
-  background: var(--win-face);
-  box-shadow:
-    inset 1px 1px 0 var(--win-face),
-    inset -1px -1px 0 var(--win-shadow),
-    0.35rem 0.35rem 0 rgb(0 0 0 / 28%);
-  color: var(--win-ink);
-}
-
 .window {
+  composes: bevelOut from "./chrome.module.css";
   display: flex;
   max-width: 100%;
   max-height: 100%;
@@ -260,6 +244,7 @@
 }
 
 .paintWindow {
+  composes: bevelOut from "./chrome.module.css";
   display: flex;
   width: 100%;
   height: 100%;
@@ -271,28 +256,7 @@
 }
 
 .titlebar {
-  display: flex;
-  min-height: 1.35rem;
-  align-items: center;
-  gap: 0.25rem;
-  margin: 2px;
-  padding: 2px;
-  background: var(--win-title);
-  touch-action: none;
-  user-select: none;
-}
-
-.titlebar strong {
-  min-width: 0;
-  flex: 1;
-  overflow: hidden;
-  color: white;
-  font-size: 0.74rem;
-  font-weight: 700;
-  line-height: 1;
-  text-align: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  composes: titlebar from "./chrome.module.css";
 }
 
 .programArea[data-active="false"] .titlebar,
@@ -366,55 +330,11 @@
 }
 
 .windowControls {
-  display: flex;
-  flex: 0 0 auto;
-  gap: 2px;
-}
-
-.windowControls > button,
-.windowControls > span {
-  display: grid;
-  width: 1.05rem;
-  height: 1rem;
-  place-items: center;
-  border-width: 1px;
-  border-style: solid;
-  border-top-color: var(--win-light);
-  border-right-color: var(--win-dark);
-  border-bottom-color: var(--win-dark);
-  border-left-color: var(--win-light);
-  background: var(--win-face);
-  color: #000;
-  font-family: Arial, sans-serif;
-  font-size: 0.68rem;
-  font-weight: 700;
-  line-height: 0.7;
-}
-
-.windowControls > button {
-  padding: 0;
-}
-
-.windowControls > button:active {
-  border-top-color: var(--win-dark);
-  border-right-color: var(--win-light);
-  border-bottom-color: var(--win-light);
-  border-left-color: var(--win-dark);
-}
-
-.windowControls > button:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
+  composes: windowControls from "./chrome.module.css";
 }
 
 .menubar {
-  position: relative;
-  z-index: 30;
-  display: flex;
-  gap: 0.1rem;
-  margin: 0 2px;
-  padding: 0.05rem 0.16rem 0.12rem;
-  background: var(--win-face);
+  composes: menubar from "./chrome.module.css";
 }
 
 .menuSlot {
@@ -422,23 +342,7 @@
 }
 
 .menuTrigger {
-  min-height: 1.55rem;
-  padding: 0.1rem 0.45rem;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--win-ink);
-  font-family: inherit;
-  font-size: 0.74rem;
-}
-
-.menuTrigger:hover,
-.menuTrigger:focus-visible,
-.menuTrigger[aria-expanded="true"] {
-  border-color: var(--win-light) var(--win-shadow) var(--win-shadow)
-    var(--win-light);
-  background: var(--win-face);
-  outline: 1px dotted #000;
-  outline-offset: -4px;
+  composes: menuTrigger from "./chrome.module.css";
 }
 
 .menuBackdrop {
@@ -451,60 +355,11 @@
 }
 
 .menu {
-  position: absolute;
-  z-index: 31;
-  top: 100%;
-  left: 0;
-  display: flex;
-  min-width: 13rem;
-  flex-direction: column;
-  padding: 2px;
-  border-width: 2px;
-  border-style: solid;
-  border-top-color: var(--win-light);
-  border-right-color: var(--win-dark);
-  border-bottom-color: var(--win-dark);
-  border-left-color: var(--win-light);
-  background: var(--win-face);
-  box-shadow: 3px 3px 0 rgb(0 0 0 / 35%);
-}
-
-.menu hr {
-  width: 100%;
-  height: 2px;
-  margin: 2px 0;
-  border: 0;
-  border-top: 1px solid var(--win-mid);
-  border-bottom: 1px solid var(--win-light);
+  composes: menu from "./chrome.module.css";
 }
 
 .menuItem {
-  display: flex;
-  min-height: 1.55rem;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding: 0.16rem 0.45rem;
-  border: 0;
-  background: transparent;
-  color: var(--win-ink);
-  font-family: inherit;
-  font-size: 0.74rem;
-  text-align: left;
-  text-decoration: none;
-  text-transform: capitalize;
-}
-
-.menuItem:hover,
-.menuItem:focus-visible {
-  background: var(--win-title);
-  color: white;
-  outline: 0;
-}
-
-.menu kbd {
-  font-family: "Courier New", monospace;
-  font-size: 0.68rem;
+  composes: menuItem from "./chrome.module.css";
 }
 
 .menuNote {
@@ -519,7 +374,7 @@
 
 /* start menu grows up from the taskbar, above every window */
 .startMenu {
-  composes: menu;
+  composes: menu from "./chrome.module.css";
   z-index: 60;
   top: auto;
   bottom: calc(100% + 0.2rem);
@@ -556,7 +411,7 @@
 }
 
 .programsMenu {
-  composes: menu;
+  composes: menu from "./chrome.module.css";
   z-index: 61;
   top: -2px;
   left: calc(100% - 2px);
@@ -564,7 +419,7 @@
 
 /* seven rows near the taskbar: flip up like real Win98 submenus */
 .gamesMenu {
-  composes: menu;
+  composes: menu from "./chrome.module.css";
   z-index: 61;
   top: auto;
   bottom: -2px;
@@ -572,13 +427,13 @@
 }
 
 .programItem {
-  composes: menuItem;
+  composes: menuItem from "./chrome.module.css";
   justify-content: flex-start;
   gap: 0.45rem;
 }
 
 .shutdownItem {
-  composes: menuItem;
+  composes: menuItem from "./chrome.module.css";
   background: #f0c400;
 }
 
@@ -588,57 +443,8 @@
   color: #000;
 }
 
-.paintFrame {
-  position: relative;
-  min-width: 0;
-  min-height: 0;
-  flex: 1;
-  margin: 0 2px;
-  overflow: hidden;
-  border-width: 2px;
-  border-style: solid;
-  border-top-color: var(--win-mid);
-  border-right-color: var(--win-light);
-  border-bottom-color: var(--win-light);
-  border-left-color: var(--win-mid);
-  background: white;
-}
-
-.paintIframe {
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-  border: 0;
-  background: white;
-}
-
-.paintStatus {
-  display: flex;
-  min-height: 1.55rem;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin: 2px;
-  padding: 0.1rem 0.35rem;
-  border-width: 1px;
-  border-style: solid;
-  border-top-color: var(--win-mid);
-  border-right-color: var(--win-light);
-  border-bottom-color: var(--win-light);
-  border-left-color: var(--win-mid);
-  font-size: 0.66rem;
-}
-
 .field {
-  display: flex;
-  min-width: 0;
-  min-height: 0;
-  flex-direction: column;
-  padding: 0.45rem;
-  padding-top: 0.2rem;
+  composes: field from "./chrome.module.css";
 }
 
 .hud {
@@ -674,30 +480,7 @@
 }
 
 .face {
-  display: grid;
-  width: 2.45rem;
-  height: 2.45rem;
-  place-items: center;
-  padding: 0;
-  border-width: 2px;
-  border-style: solid;
-  border-top-color: var(--win-light);
-  border-right-color: var(--win-shadow);
-  border-bottom-color: var(--win-shadow);
-  border-left-color: var(--win-light);
-  background: var(--win-face);
-  color: #000;
-  font-family: Arial, sans-serif;
-  font-size: 1.65rem;
-  line-height: 1;
-}
-
-.face:active {
-  border-top-color: var(--win-shadow);
-  border-right-color: var(--win-light);
-  border-bottom-color: var(--win-light);
-  border-left-color: var(--win-shadow);
-  transform: translate(1px, 1px);
+  composes: face from "./chrome.module.css";
 }
 
 .face:focus-visible,
@@ -839,6 +622,7 @@
 }
 
 .statusBar {
+  composes: bevelIn from "./chrome.module.css";
   display: flex;
   min-height: 2rem;
   flex: 0 0 auto;
@@ -847,24 +631,8 @@
   gap: 0.5rem;
   margin-top: 0.38rem;
   padding-left: 0.35rem;
-  border-width: 2px;
-  border-style: solid;
-  border-top-color: var(--win-mid);
-  border-right-color: var(--win-light);
-  border-bottom-color: var(--win-light);
-  border-left-color: var(--win-mid);
   color: #202020;
   font-size: 0.68rem;
-}
-
-.statusBar[data-status="lost"] > span {
-  color: #a00000;
-  font-weight: 700;
-}
-
-.statusBar[data-status="won"] > span {
-  color: #005b00;
-  font-weight: 700;
 }
 
 .modeSwitch {
@@ -904,6 +672,7 @@
 }
 
 .helpWindow {
+  composes: bevelOut from "./chrome.module.css";
   position: absolute;
   z-index: 40;
   top: clamp(1.25rem, 12vh, 5rem);
@@ -1203,4 +972,14 @@
     animation: none;
     transition: none;
   }
+}
+
+.statusBar[data-status="lost"] > span {
+  color: #a00000;
+  font-weight: 700;
+}
+
+.statusBar[data-status="won"] > span {
+  color: #005b00;
+  font-weight: 700;
 }

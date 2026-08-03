@@ -8,9 +8,11 @@ import MusicView, {
 import Shell from 'components/Shell'
 import { clamp } from 'es-toolkit'
 import { readLocal, writeLocal } from 'lib/storage'
+import type { Route } from 'next'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useHotkeys } from 'service/hotkeys'
+import { useTransition } from 'service/transition'
 import { GAMES } from '../games/catalogue'
 import {
   type AppId,
@@ -27,12 +29,12 @@ import {
   minesLeft,
   reduce,
 } from './engine'
+import PaintWindow, { type PaintHandle } from './paint/paint-view'
 import RealPlayerWindow from './realplayer/realplayer-view'
 import { createSweepAudio, type SweepAudio } from './sweep-audio'
 import css from './w98.module.css'
 
 const SOUND_KEY = 'g-mines-sound'
-const JSPAINT_URL = '/vendor/jspaint/index.html'
 
 type Density = 'beginner' | 'intermediate' | 'expert'
 type InputMode = 'sweep' | 'flag'
@@ -436,32 +438,6 @@ const CLOSED_WINAMP_PANELS: WinampPanelVisibility = {
   tracklist: false,
 }
 
-const PaintWindow: React.FC<{
-  drag: WindowDrag
-  minimize: () => void
-  close: () => void
-}> = ({ drag, minimize, close }) => (
-  <section className={css.paintWindow} style={drag.style} aria-label='Paint'>
-    <header className={css.titlebar} {...drag.handle}>
-      <span className={css.paintAppIcon} aria-hidden='true' />
-      <strong>untitled - Paint</strong>
-      <WindowControls appName='Paint' minimize={minimize} close={close} />
-    </header>
-    <div className={css.paintFrame}>
-      <iframe
-        className={css.paintIframe}
-        src={JSPAINT_URL}
-        title='JS Paint application'
-        allow='clipboard-read; clipboard-write; fullscreen'
-        allowFullScreen
-      />
-    </div>
-    <footer className={css.paintStatus}>
-      <span>Ready</span>
-    </footer>
-  </section>
-)
-
 type IconId = 'msdos' | 'recycle' | 'mines' | 'paint' | 'winamp' | 'realplayer'
 
 // W98 icon ritual: a mouse click only selects, the double click opens;
@@ -528,11 +504,13 @@ export default function Windows98View() {
   const [audio] = useState(createSweepAudio)
   const deskRef = useRef<HTMLDivElement>(null)
   const workAreaRef = useRef<HTMLDivElement>(null)
+  const paintRef = useRef<PaintHandle | null>(null)
   const gameDrag = useWindowDrag(workAreaRef)
   const paintDrag = useWindowDrag(workAreaRef)
   const realDrag = useWindowDrag(workAreaRef)
   const helpDrag = useWindowDrag(workAreaRef)
   const icons = useDesktopShortcuts()
+  const transition = useTransition()
 
   const { sound, toggle: toggleSoundPref } = useSoundPref(audio)
   useSweepCues(state, audio)
@@ -548,6 +526,17 @@ export default function Windows98View() {
   const launchApp = (app: AppId) => {
     setMenu(null)
     desktopDispatch({ type: 'launch', app })
+  }
+
+  // a dirty canvas guards every desktop exit: hold the navigation, restore
+  // the paint window, and let its save dialog decide
+  const guardNav = (event: React.MouseEvent, url: Route) => {
+    const paint = paintRef.current
+    if (!paintWindow.open || !paint?.isDirty()) return
+    event.preventDefault()
+    setStartMenu('closed')
+    desktopDispatch({ type: 'launch', app: 'paint' })
+    paint.confirmExit(() => transition.navigateLater(url, 360))
   }
 
   useEffect(() => {
@@ -665,6 +654,8 @@ export default function Windows98View() {
   ])
 
   const face = pressing && live ? '○' : FACES[state.status]
+  const msdosPress = icons.press('msdos')
+  const recyclePress = icons.press('recycle')
 
   return (
     <Shell className={css.frame}>
@@ -674,7 +665,7 @@ export default function Windows98View() {
         onPointerDown={icons.clear}
       >
         <h1 className='sr-only'>
-          Windows 98 desktop with Minesweeper, JS Paint, Winamp, and RealPlayer
+          Windows 98 desktop with Minesweeper, Paint, Winamp, and RealPlayer
         </h1>
 
         <div className={css.desktopIcons}>
@@ -683,7 +674,11 @@ export default function Windows98View() {
             className={css.desktopShortcut}
             aria-label='Open the console'
             data-selected={icons.selected === 'msdos'}
-            {...icons.press('msdos')}
+            {...msdosPress}
+            onClick={(event) => {
+              msdosPress.onClick(event)
+              if (!event.defaultPrevented) guardNav(event, '/console')
+            }}
           >
             <span className={css.msdosIcon} aria-hidden='true' />
             <span>MS-DOS</span>
@@ -693,7 +688,11 @@ export default function Windows98View() {
             className={css.desktopShortcut}
             aria-label='Open the recycle bin'
             data-selected={icons.selected === 'recycle'}
-            {...icons.press('recycle')}
+            {...recyclePress}
+            onClick={(event) => {
+              recyclePress.onClick(event)
+              if (!event.defaultPrevented) guardNav(event, '/recycle-bin')
+            }}
           >
             <span className={css.recycleIcon} aria-hidden='true' />
             <span>Recycle Bin</span>
@@ -911,7 +910,10 @@ export default function Windows98View() {
           >
             {paintWindow.open && (
               <PaintWindow
-                drag={paintDrag}
+                ref={paintRef}
+                dragStyle={paintDrag.style}
+                dragHandle={paintDrag.handle}
+                active={desktop.active === 'paint' && !paintWindow.minimized}
                 minimize={() =>
                   desktopDispatch({ type: 'minimize', app: 'paint' })
                 }
@@ -1026,6 +1028,7 @@ export default function Windows98View() {
                         url='/console'
                         role='menuitem'
                         className={css.programItem}
+                        onClick={(event) => guardNav(event, '/console')}
                       >
                         <span className={css.msdosAppIcon} aria-hidden='true' />
                         MS-DOS
@@ -1118,6 +1121,7 @@ export default function Windows98View() {
                             url={game.href}
                             role='menuitem'
                             className={css.programItem}
+                            onClick={(event) => guardNav(event, game.href)}
                           >
                             <span
                               className={css.gameIcon}
@@ -1137,6 +1141,7 @@ export default function Windows98View() {
                   role='menuitem'
                   className={css.shutdownItem}
                   aria-label='Shut down and return home'
+                  onClick={(event) => guardNav(event, '/')}
                 >
                   Shut Down…
                 </Link>

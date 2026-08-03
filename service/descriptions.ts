@@ -27,7 +27,7 @@ export const MANUAL_DESC =
   'How to work with Rubén Sospedra. A manual of instructions: what I value, how I look at problems, where my blind spots are, and how to earn my trust.'
 
 export const W98_DESC =
-  'A Windows 98 desktop in the browser. Sweep a responsive Minesweeper field, paint with JS Paint, play your library through Winamp and tune live disco radio in RealPlayer.'
+  'A Windows 98 desktop in the browser. Sweep a responsive Minesweeper field, draw in Paint, play your library through Winamp and tune live disco radio in RealPlayer.'
 
 export const PAPERS_DESC =
   "Papers on JavaScript, TypeScript, the web platform and the occasional politics of software. Not your usual blog: dense over long, niche over SEO chum. Words are my own. It's dangerous to go unknowing, take some pills 💊"

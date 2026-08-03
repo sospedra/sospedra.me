@@ -1,0 +1,417 @@
+@reference "../../../service/style/global.css";
+
+/* Paint: toolbox, canvas area, palette, and status bar inside the W98 window. */
+
+.thinIn {
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+}
+
+.body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  margin: 0 2px;
+}
+
+.toolbox {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+}
+
+.toolGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 25px);
+}
+
+.toolButton {
+  display: grid;
+  width: 25px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  background: var(--win-face);
+  place-items: center;
+}
+
+.toolButton img {
+  image-rendering: pixelated;
+}
+
+.toolButton:hover {
+  border-color: var(--win-light) var(--win-shadow) var(--win-shadow)
+    var(--win-light);
+}
+
+.toolButton:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.toolButton:active,
+.toolButton[aria-pressed="true"] {
+  border-color: var(--win-shadow) var(--win-light) var(--win-light)
+    var(--win-shadow);
+}
+
+.toolButton[aria-pressed="true"] {
+  background:
+    radial-gradient(#fff 0.6px, transparent 0.8px) 0 0 / 3px 3px,
+    #d6d6d6;
+}
+
+.optionsBox {
+  composes: thinIn;
+  display: flex;
+  width: 52px;
+  min-height: 70px;
+  min-inline-size: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  margin: 0;
+  padding: 3px 2px;
+}
+
+.optionButton {
+  display: grid;
+  width: 42px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--win-ink);
+  font-family: inherit;
+  place-items: center;
+}
+
+.optionButton[aria-pressed="true"] {
+  background: var(--win-title);
+  color: white;
+}
+
+.optionButton:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -2px;
+}
+
+.strokeMark,
+.eraserMark,
+.brushMark {
+  background: currentColor;
+}
+
+.strokeMark {
+  width: 34px;
+}
+
+.brushGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 11px);
+  grid-auto-rows: 11px;
+}
+
+.brushCell {
+  display: grid;
+  width: 11px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--win-ink);
+  place-items: center;
+}
+
+.brushCell[aria-pressed="true"] {
+  background: var(--win-title);
+  color: white;
+}
+
+.brushCell:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -1px;
+}
+
+.brushMark[data-shape="circle"] {
+  border-radius: 50%;
+}
+
+.brushMark[data-shape="diagonal"] {
+  transform: rotate(-45deg);
+}
+
+.brushMark[data-shape="reverseDiagonal"] {
+  transform: rotate(45deg);
+}
+
+.sprayMark {
+  border-radius: 50%;
+  background-image: radial-gradient(currentColor 0.7px, transparent 0.9px);
+  background-size: 3px 3px;
+}
+
+.magLabel {
+  font-size: 0.62rem;
+}
+
+.fillMark {
+  width: 34px;
+  height: 10px;
+}
+
+.fillMark[data-style="outline"] {
+  border: 1px solid currentColor;
+}
+
+.fillMark[data-style="both"] {
+  border: 1px solid currentColor;
+  background: var(--win-mid);
+}
+
+.fillMark[data-style="fill"] {
+  background: currentColor;
+}
+
+.canvasArea {
+  composes: bevelIn from "../chrome.module.css";
+  position: relative;
+  min-width: 0;
+  flex: 1;
+  overflow: auto;
+  background: var(--win-mid);
+}
+
+.canvasStage {
+  position: relative;
+  width: fit-content;
+  margin: 3px;
+}
+
+.bitmap {
+  display: block;
+  background: white;
+  image-rendering: pixelated;
+  touch-action: none;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.nub {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  padding: 0;
+  border: 0;
+  background: var(--win-title);
+}
+
+.nubE {
+  composes: nub;
+  top: calc(50% - 2px);
+  left: calc(100% + 2px);
+  cursor:
+    url("/images/w98/paint/ew-resize.png") 16 16,
+    ew-resize;
+}
+
+.nubS {
+  composes: nub;
+  top: calc(100% + 2px);
+  left: calc(50% - 2px);
+  cursor:
+    url("/images/w98/paint/ns-resize.png") 16 16,
+    ns-resize;
+}
+
+.nubSE {
+  composes: nub;
+  top: calc(100% + 2px);
+  left: calc(100% + 2px);
+  cursor:
+    url("/images/w98/paint/nwse-resize.png") 16 16,
+    nwse-resize;
+}
+
+.palette {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 4px;
+  margin: 2px;
+}
+
+.currentColors {
+  composes: thinIn;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+}
+
+.fgSwatch,
+.bgSwatch {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+}
+
+.fgSwatch {
+  z-index: 1;
+  top: 4px;
+  left: 4px;
+}
+
+.bgSwatch {
+  right: 4px;
+  bottom: 4px;
+}
+
+.swatches {
+  display: grid;
+  min-inline-size: 0;
+  grid-auto-rows: 16px;
+  grid-template-columns: repeat(14, 16px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.swatch {
+  composes: thinIn;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+}
+
+.swatch:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -3px;
+}
+
+.statusBar {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2px;
+  margin: 2px;
+}
+
+.statusCell {
+  composes: thinIn;
+  display: flex;
+  min-height: 1.55rem;
+  align-items: center;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.66rem;
+  white-space: nowrap;
+}
+
+.statusText {
+  composes: statusCell;
+  min-width: 0;
+  flex: 1;
+}
+
+.statusCoords {
+  composes: statusCell;
+  flex: 0 0 7.5rem;
+}
+
+.statusSize {
+  composes: statusCell;
+  flex: 0 0 7.5rem;
+}
+
+.resizePreview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px dashed var(--win-shadow);
+  pointer-events: none;
+}
+
+.fileInput {
+  display: none;
+}
+
+.dialogShield {
+  position: fixed;
+  z-index: 69;
+  inset: 0;
+}
+
+.dialog {
+  composes: bevelOut from "../chrome.module.css";
+  position: fixed;
+  z-index: 70;
+  top: 38%;
+  left: 50%;
+  display: flex;
+  width: min(20rem, 90vw);
+  flex-direction: column;
+  transform: translate(-50%, -50%);
+}
+
+.dialogBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem 0.8rem;
+  font-size: 0.74rem;
+}
+
+.dialogBody p {
+  margin: 0;
+}
+
+.dialogButtons {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.dialogButton {
+  min-width: 5rem;
+  min-height: 1.75rem;
+  padding: 0.12rem 0.8rem;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-shadow);
+  border-bottom-color: var(--win-shadow);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  color: var(--win-ink);
+  font-family: inherit;
+  font-size: 0.74rem;
+}
+
+.dialogButton:active {
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+}
+
+.dialogButton:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
