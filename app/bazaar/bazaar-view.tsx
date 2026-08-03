@@ -19,21 +19,21 @@ import LayoutEditor from './layout-editor'
 import scene from './scene.module.css'
 import SceneStall from './scene-stall'
 import { type StallId, setSoundEnabled, sfx } from './sounds'
-import { type Bazaar4StallId, SIM_DIMS } from './stalls-manifest'
+import { type BazaarStallId, SIM_DIMS } from './stalls-manifest'
 
 const pixelFont = Press_Start_2P({ weight: '400', subsets: ['latin'] })
 
-const STREET = '/images/bazaar4/street'
+const STREET = '/images/bazaar/street'
 
 /* stalls that render one static image instead of r17 layers: none today —
    the console's v2 animated kit shipped 2026-08-01 */
 const STATIC_STALLS: Partial<
-  Record<Bazaar4StallId, { src: string; w: number; h: number }>
+  Record<BazaarStallId, { src: string; w: number; h: number }>
 > = {}
 
 /* stall sim dims: SIM_DIMS display contract, static overrides on top */
 const DIMS = Object.fromEntries(
-  (Object.keys(SIM_DIMS) as Bazaar4StallId[]).map((id) => {
+  (Object.keys(SIM_DIMS) as BazaarStallId[]).map((id) => {
     const stat = STATIC_STALLS[id]
     return [
       id,
@@ -42,7 +42,7 @@ const DIMS = Object.fromEntries(
         : { w: SIM_DIMS[id].dispW, h: SIM_DIMS[id].dispH },
     ]
   }),
-) as Record<Bazaar4StallId, { w: number; h: number }>
+) as Record<BazaarStallId, { w: number; h: number }>
 
 /* ---------- street floor: the r18 kit, no stage props ---------- */
 
@@ -118,9 +118,9 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
   )
 }
 
-/* ---------- stalls: bazaar4 dialog machinery on bazaar5 boxes ---------- */
+/* ---------- stalls: dialog machinery on the layout boxes ---------- */
 
-const SFX_ID: Record<Bazaar4StallId, StallId> = {
+const SFX_ID: Record<BazaarStallId, StallId> = {
   uses: 'uses',
   games: 'games',
   travel: 'travel',
@@ -188,7 +188,7 @@ const GAMES_CONVERSATION = [
   { speaker: 'brother', text: 'I choose.' },
 ] as const
 
-const STALLS: Record<Bazaar4StallId, StallSpec> = {
+const STALLS: Record<BazaarStallId, StallSpec> = {
   uses: {
     label: 'uses',
     href: '/uses',
@@ -565,7 +565,7 @@ function GamesDialogs(props: {
   )
 }
 
-function Stall({ id }: { id: Bazaar4StallId }) {
+function Stall({ id }: { id: BazaarStallId }) {
   const spec = STALLS[id]
   const dims = DIMS[id]
   const [open, setOpen] = useState(false)
@@ -775,9 +775,9 @@ function Stall({ id }: { id: Bazaar4StallId }) {
 
 /* ---------- floors ---------- */
 
-type DesktopFloor = { stalls: Bazaar4StallId[]; stairsRight: boolean }
+type DesktopFloor = { stalls: BazaarStallId[]; stairsRight: boolean }
 type MobileFloor = {
-  stalls: [Bazaar4StallId, Bazaar4StallId]
+  stalls: [BazaarStallId, BazaarStallId]
   smRight: boolean
 }
 
@@ -912,11 +912,11 @@ export default function BazaarView() {
         </div>
         {DESKTOP_FLOORS.map((spec, i) => (
           <Fragment key={spec.stalls[0]}>
-            <div className={css.sep} data-bz5-sep={i} />
+            <div className={css.sep} data-bazaar-sep={i} />
             <MarketFloor spec={spec} index={i} />
           </Fragment>
         ))}
-        <div className={css.sep} data-bz5-sep={3} />
+        <div className={css.sep} data-bazaar-sep={3} />
         <div className={css.bottomPad} />
       </div>
 

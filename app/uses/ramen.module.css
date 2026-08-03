@@ -1891,7 +1891,6 @@
   z-index: 1;
 }
 
-/* Rustic notebook interaction adapted from AatreyuShau's Uiverse component. */
 .notebookFilters {
   position: absolute;
   width: 0;

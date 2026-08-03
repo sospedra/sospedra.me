@@ -49,7 +49,7 @@ mv .env .env.local apps/web/                             # Next auto-loads .env*
 rm -rf .next node_modules tsconfig.tsbuildinfo
 ```
 
-Stays at root: `.husky/`, `.github/`, `.tool-versions`, `.npmrc`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `README.md`, `THIRD_PARTY_NOTICES.md`, `.vercel/` (untracked).
+Stays at root: `.husky/`, `.github/`, `.tool-versions`, `.npmrc`, `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `README.md`, `CREDITS.txt`, `.vercel/` (untracked).
 
 ## Phase 2: new root files
 

@@ -14,12 +14,5 @@
   "license": "Copyright Universal Uclick / USA Today",
   "sha256": "17cf5f3a374c2c4e4b327da41f7ffb5612b8d2e76548b40db1b7069a75eb0c2f",
   "notes": "sha256 is over the sorted list of per-file sha256s. All 15x15. 21 files rejected at parse (incomplete grids or duplicate answers). Raw archive is re-downloaded on demand (content/crosswords/data.txt keeps the URL); editions in content/crosswords/challenges carry solution and clues only, and the replay formula maps each date back to its archive original."
- },
- "nytClueArchive": {
-  "dataset": "NYT crossword clues and answers, 1993-2021 (nytcrosswords.csv)",
-  "retrievedAt": "2026-07-29",
-  "license": "NYT content license held by site owner; clue text reproduced under that license",
-  "sha256": "0ea4f164eefcbd830084664439fc80954bdcd55755ce717f22c3e6cb5e444f4e",
-  "notes": "781,573 clues, 63,314 answers, 10,207 puzzles. Self-referential clues (cross-references, theme and circled-square mentions) filtered at import. Raw CSV and full lookup stay out of git; usage counts in nyt-usage.json."
  }
 }

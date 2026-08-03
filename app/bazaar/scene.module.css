@@ -103,7 +103,7 @@
 .streetBg {
   position: absolute;
   inset: 0 0 20svh 0;
-  background: url("/images/bazaar4/street/bg.png") left bottom repeat-x;
+  background: url("/images/bazaar/street/bg.png") left bottom repeat-x;
   background-size: auto 96%;
   image-rendering: pixelated;
 }
@@ -139,7 +139,7 @@
   position: absolute;
   inset: auto 0 0 0;
   height: 20svh;
-  background: url("/images/bazaar4/street/floor.png") left bottom repeat-x;
+  background: url("/images/bazaar/street/floor.png") left bottom repeat-x;
   background-size: auto 100%;
   image-rendering: pixelated;
   z-index: 1;
@@ -231,9 +231,9 @@
   );
   clip-path: inset(13% 0 0);
   -webkit-mask:
-    url("/images/bazaar4/street/building-cd.png") center / 100% 100% no-repeat;
+    url("/images/bazaar/street/building-cd.png") center / 100% 100% no-repeat;
   mask:
-    url("/images/bazaar4/street/building-cd.png") center / 100% 100% no-repeat;
+    url("/images/bazaar/street/building-cd.png") center / 100% 100% no-repeat;
 }
 
 .sCDImg {
@@ -607,7 +607,7 @@
   position: relative;
   z-index: 9;
   height: calc(var(--su) * 225);
-  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-image: url("/images/bazaar/arch/beam-h-tile.png");
   background-size: calc(var(--su) * 120) calc(var(--su) * 225);
   background-repeat: repeat-x;
   background-position: left bottom;
@@ -661,11 +661,11 @@
 /* ---------- market floors ---------- */
 /* per-floor WF variants (all carry the approved floor strip) */
 .floorMkt[data-market-index="1"] {
-  background-image: url("/images/bazaar4/arch/wf-min-a2.png");
+  background-image: url("/images/bazaar/arch/wf-min-a2.png");
 }
 
 .floorMkt[data-market-index="2"] {
-  background-image: url("/images/bazaar4/arch/wf-min-b2.png");
+  background-image: url("/images/bazaar/arch/wf-min-b2.png");
 }
 
 /* r15 architecture: floor = 597 sim px of WF wall+walkway tile */
@@ -674,7 +674,7 @@
   scroll-snap-align: center;
   overflow: visible; /* dialogs pop past the floor edge */
   z-index: 7; /* stage overhang (signs in the sep zone) paints over .sep */
-  background-image: url("/images/bazaar4/arch/wf-tile.png");
+  background-image: url("/images/bazaar/arch/wf-tile.png");
   background-size: calc(var(--su) * 300) calc(var(--su) * 597);
   background-repeat: repeat-x;
   background-position: left bottom;
@@ -775,7 +775,7 @@
   position: absolute;
   inset: auto 0 0 0;
   height: calc(var(--su) * 60);
-  background-image: url("/images/bazaar4/arch/wf-strip.png");
+  background-image: url("/images/bazaar/arch/wf-strip.png");
   background-size: calc(var(--su) * 300) calc(var(--su) * 60);
   background-repeat: repeat-x;
   background-position: left bottom;
@@ -891,7 +891,7 @@
   image-rendering: pixelated;
   pointer-events: none;
   z-index: 7;
-  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-image: url("/images/bazaar/arch/beam-h-tile.png");
   background-repeat: repeat-x;
   background-position: center;
   background-size: calc(25vw * 120 / 225) 25vw;
@@ -1597,7 +1597,7 @@
   translate: -50% 0;
   width: 100vw;
   height: calc(var(--su) * 60);
-  background-image: url("/images/bazaar4/arch/wf-strip.png");
+  background-image: url("/images/bazaar/arch/wf-strip.png");
   background-size: calc(var(--su) * 300) calc(var(--su) * 60);
   background-repeat: repeat-x;
   background-position: left bottom;
@@ -1653,7 +1653,7 @@
   pointer-events: none;
 }
 
-:global(body.bz4-editing) .glowSpot {
+:global(body.bazaar-editing) .glowSpot {
   pointer-events: auto;
 }
 

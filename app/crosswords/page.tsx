@@ -10,7 +10,7 @@ import {
   fetchSpanishDaily,
   type SpanishDailyChallenge,
   withSpanishPuzzle,
-} from './eldiario'
+} from './spanish-daily'
 
 const courierPrime = Courier_Prime({
   subsets: ['latin'],
@@ -51,7 +51,7 @@ async function loadRecentChallenges(): Promise<CrosswordChallengeFile[]> {
   )
 }
 
-/* The eldiario feed publishes one Spanish 13×13 per day. A failed fetch or
+/* The feed publishes one Spanish 13×13 per day. A failed fetch or
    a date outside the shipped window degrades that day to English-only. */
 async function loadSpanishDaily(): Promise<SpanishDailyChallenge | null> {
   'use cache'

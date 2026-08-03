@@ -1,4 +1,4 @@
-/* bazaar5 — the LAYOUT_HANDOFF system, ported from public/bz4-layout-proto.html.
+/* The LAYOUT_HANDOFF system.
    Street level + stall internals + dialogs + editor chrome come from
    scene.module.css (imported by the view); THIS file owns only the
    validated layout: su law, regimes A/B, mobile SM floors. */
@@ -39,9 +39,9 @@
   display: none;
 }
 
-/* the street keeps bazaar4's own variable context: it is its own animal.
-   The wrapper carries bazaar4's .scene class for the vars; these overrides
-   turn off its scroll shell so it nests inside bazaar5's scroller. */
+/* the street keeps the scene's own variable context: it is its own animal.
+   The wrapper carries the .scene class for the vars; these overrides
+   turn off its scroll shell so it nests inside the page scroller. */
 .scene .streetHost {
   height: 100svh;
   overflow: visible;
@@ -60,7 +60,7 @@
 /* ---------- desktop market floors: regime B (full bleed) by default ---------- */
 
 .floor {
-  --wf: url("/images/bazaar4/arch/wf-tile.png");
+  --wf: url("/images/bazaar/arch/wf-tile.png");
   --ml: 0px;
   position: relative;
   display: flex;
@@ -81,11 +81,11 @@
 
 /* per-floor WF variants */
 .floor[data-market-index="1"] {
-  --wf: url("/images/bazaar4/arch/wf-min-b2.png");
+  --wf: url("/images/bazaar/arch/wf-min-b2.png");
 }
 
 .floor[data-market-index="2"] {
-  --wf: url("/images/bazaar4/arch/wf-min-b2.png");
+  --wf: url("/images/bazaar/arch/wf-min-b2.png");
 }
 
 .floor .stairs {
@@ -114,7 +114,7 @@
   width: var(--s-w);
   height: 110%; /* test: +10% vertical stretch, bottom stays pinned */
   background:
-    url("/images/bazaar4/arch/stairs.png") center / 100% 100% no-repeat;
+    url("/images/bazaar/arch/stairs.png") center / 100% 100% no-repeat;
   image-rendering: pixelated;
 }
 
@@ -170,7 +170,7 @@
   position: relative;
   z-index: 5;
   height: calc(var(--su) * 225);
-  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-image: url("/images/bazaar/arch/beam-h-tile.png");
   background-size: calc(var(--su) * 120) calc(var(--su) * 225);
   background-repeat: repeat-x;
   background-position: left bottom;
@@ -186,7 +186,7 @@
   background: #000;
 }
 
-/* ---------- stall boxes: the proto's .a, carrying bazaar4 internals ---------- */
+/* ---------- stall boxes carrying the scene internals ---------- */
 
 .stallWrap {
   position: relative;
@@ -216,7 +216,7 @@
 /* ---------- mobile: one floor = one SM spanning two stories ---------- */
 
 .mfloor {
-  background-image: url("/images/bazaar4/arch/wf-tile.png");
+  background-image: url("/images/bazaar/arch/wf-tile.png");
   background-size: calc(var(--mfloor-h) * 0.5 / 597 * 300)
     calc(var(--mfloor-h) * 0.5);
   background-repeat: repeat;
@@ -246,7 +246,7 @@
   width: var(--sm-w);
   height: 100%;
   margin-left: calc(-1 * var(--shift-m));
-  background: url("/images/bazaar4/arch/sm.png") center / 100% 100% no-repeat;
+  background: url("/images/bazaar/arch/sm.png") center / 100% 100% no-repeat;
   image-rendering: pixelated;
 }
 
@@ -282,7 +282,7 @@
 
 .sepM {
   height: 4svh;
-  background-image: url("/images/bazaar4/arch/beam-h-tile.png");
+  background-image: url("/images/bazaar/arch/beam-h-tile.png");
   background-size: auto 100%;
   background-repeat: repeat-x;
   background-position: left bottom;

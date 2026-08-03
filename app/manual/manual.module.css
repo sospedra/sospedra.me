@@ -193,10 +193,6 @@
   color: var(--manual-ink);
 }
 
-/*
- * Blueprint callouts adapt barisdogansutcu's MIT-licensed anatomy button:
- * https://uiverse.io/barisdogansutcu/proud-lion-79
- */
 .sectionIndex .blueprintExit {
   transition:
     background-color var(--motion-micro, 160ms) ease,

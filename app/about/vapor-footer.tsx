@@ -33,8 +33,6 @@ const GHOST_FEET = [
   { area: 'an18', phase: 0 },
 ] as const
 
-// Adapted from BlackisPlay's MIT-licensed Uiverse Pac-Man Ghost Loader.
-// Full notice: THIRD_PARTY_NOTICES.md.
 function PixelGhost() {
   return (
     <span aria-hidden='true' className={css.pixelGhost}>

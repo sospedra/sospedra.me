@@ -25,7 +25,7 @@
       }
     ]
   },
-  "exclude": ["node_modules", "BAZAAR3_TAKEOVER", "docs", "tmp", "output"],
+  "exclude": ["node_modules", "docs", "tmp", "output"],
   "include": [
     "**/*.ts",
     "**/*.tsx",

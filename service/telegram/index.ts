@@ -1,11 +1,8 @@
 const TELEGRAM_TOKEN = process.env.SOSPEDRA_BOT
 const CHAT_ID = '-259122205'
-const PROSOQUE_ID = '@prosoque'
-
-type ChatID = typeof CHAT_ID | typeof PROSOQUE_ID
 
 const callTelegram = async (
-  method: 'sendMessage' | 'sendPhoto',
+  method: 'sendMessage',
   params: Record<string, string>,
 ) => {
   const url = new URL(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`)
@@ -17,24 +14,6 @@ const callTelegram = async (
   return response
 }
 
-export const sendMessage = ({
-  text,
-  chatID = CHAT_ID,
-}: {
-  text: string
-  chatID?: ChatID
-}) => {
-  return callTelegram('sendMessage', { chat_id: chatID, text })
-}
-
-export const sendPhoto = ({
-  caption,
-  photo,
-  chatID = CHAT_ID,
-}: {
-  caption: string
-  photo: string
-  chatID?: ChatID
-}) => {
-  return callTelegram('sendPhoto', { chat_id: chatID, caption, photo })
+export const sendMessage = ({ text }: { text: string }) => {
+  return callTelegram('sendMessage', { chat_id: CHAT_ID, text })
 }

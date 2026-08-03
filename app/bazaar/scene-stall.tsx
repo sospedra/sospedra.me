@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import styles from './scene.module.css'
 import {
-  type Bazaar4StallId,
+  type BazaarStallId,
   type FxFrame,
   STALL_SCENES,
   type StallLayer,
@@ -73,7 +73,7 @@ function loopFrames(
 /** One r17 stall: plate + effect loops + props + char, driven by `active`.
     All frames render once; animation only flips opacity — zero refetching. */
 export default function SceneStall(props: {
-  id: Bazaar4StallId
+  id: BazaarStallId
   active: boolean
 }) {
   const { id, active } = props
@@ -173,7 +173,7 @@ export default function SceneStall(props: {
               if (el) imgRefs.current.set(`${index}:${file}`, el)
               else imgRefs.current.delete(`${index}:${file}`)
             }}
-            src={`/images/bazaar4/${id}/${file}`}
+            src={`/images/bazaar/${id}/${file}`}
             alt=''
             draggable={false}
             loading={layer.role === 'plate' ? 'eager' : 'lazy'}

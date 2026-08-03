@@ -1,4 +1,4 @@
-/* bazaar4 stage layout — baked from the 2026-07-31 editor session.
+/* Stage layout, baked from the 2026-07-31 editor session.
    One absolute stage per floor: stalls, props and signs share a single
    stacking context so every z works, negatives behind stalls included.
    Coordinates in sim units, band-local (band = 1483 wide, floor = 597

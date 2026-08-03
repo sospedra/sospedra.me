@@ -13,7 +13,7 @@ type HandleKind = 'tl' | 'tr' | 'bl' | 'br' | 't' | 'b' | 'l' | 'r'
 /* a full element-width drag changes scale by 40%: relaxed on purpose */
 const SCALE_DAMP = 0.4
 
-const DECO = '/images/bazaar4/deco'
+const DECO = '/images/bazaar/deco'
 
 type SpawnKind = 'deco' | 'glow' | 'shadow'
 
@@ -36,7 +36,7 @@ const SPAWN_DEFAULTS: Record<SpawnKind, { w: number; h: number; z: number }> = {
   shadow: { w: 220, h: 110, z: 4 },
 }
 
-/* spawn heights in su, baked from the bazaar4 editor session (the sizes
+/* spawn heights in su, baked from the editor session (the sizes
    that made each prop's art-pixel grain sit right in the scene) */
 const SPAWN_H: Record<string, number> = {
   'archive-box': 120,
@@ -109,11 +109,11 @@ const targetHost = (target: string) => {
   if (target === 'street') return streetFloor()
   const [kind, index] = target.split(':')
   if (kind === 'floor') return marketFloors()[Number(index)] ?? null
-  return document.querySelector<HTMLElement>(`[data-bz5-sep="${index}"]`)
+  return document.querySelector<HTMLElement>(`[data-bazaar-sep="${index}"]`)
 }
 
-/** the street keeps bazaar4's own su; measure whatever var(--su) resolves
-    to inside the host instead of assuming the bazaar5 scale */
+/** the street keeps its own su; measure whatever var(--su) resolves
+    to inside the host instead of assuming the page scale */
 const hostSu = (host: HTMLElement) => {
   const probe = document.createElement('div')
   probe.style.cssText =
@@ -134,8 +134,8 @@ const centerHost = () => {
     )
     if (floor)
       return { host: floor, target: `floor:${floor.dataset.marketIndex}` }
-    const sep = (hit as HTMLElement).closest<HTMLElement>('[data-bz5-sep]')
-    if (sep) return { host: sep, target: `sep:${sep.dataset.bz5Sep}` }
+    const sep = (hit as HTMLElement).closest<HTMLElement>('[data-bazaar-sep]')
+    if (sep) return { host: sep, target: `sep:${sep.dataset.bazaarSep}` }
     const street = (hit as HTMLElement).closest<HTMLElement>('[data-floor]')
     if (street && street.dataset.marketIndex === undefined) {
       return { host: street, target: 'street' }
@@ -207,7 +207,7 @@ type LayoutEntry = {
 
 const layoutEntry = (el: HTMLElement, su: number): LayoutEntry => {
   const floor = el.closest<HTMLElement>('[data-floor]')
-  const sep = el.closest<HTMLElement>('[data-bz5-sep]')
+  const sep = el.closest<HTMLElement>('[data-bazaar-sep]')
   const street = floor && floor.dataset.marketIndex === undefined ? floor : null
   const rect = el.getBoundingClientRect()
   const stageRect = floor
@@ -238,7 +238,7 @@ const layoutEntry = (el: HTMLElement, su: number): LayoutEntry => {
       ) || 1,
     z: el.style.zIndex === '' ? null : Number.parseInt(el.style.zIndex, 10),
   }
-  if (sep) entry.host = `sep:${sep.dataset.bz5Sep}`
+  if (sep) entry.host = `sep:${sep.dataset.bazaarSep}`
   if (street) entry.host = 'street'
   if (el.dataset.editSpawn) entry.spawn = el.dataset.editSpawn
   const anchorId = el.dataset.editAnchor
@@ -257,13 +257,13 @@ const layoutEntry = (el: HTMLElement, su: number): LayoutEntry => {
 }
 
 const GLOBAL_CSS = `
-body.bz5-editing [data-edit-id] {
+body.bazaar-editing [data-edit-id] {
   outline: 1px dashed rgb(55 247 224 / 0.55);
   outline-offset: 1px;
   cursor: move;
   pointer-events: auto !important;
 }
-body.bz5-editing [data-edit-id]:hover {
+body.bazaar-editing [data-edit-id]:hover {
   outline-color: rgb(255 210 107 / 0.9);
 }
 `
@@ -338,8 +338,8 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
 
   useEffect(() => {
     if (!enabled) return
-    document.body.classList.add('bz5-editing')
-    return () => document.body.classList.remove('bz5-editing')
+    document.body.classList.add('bazaar-editing')
+    return () => document.body.classList.remove('bazaar-editing')
   }, [enabled])
 
   useEffect(() => {
@@ -614,7 +614,7 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
       placeAtCenter(kind, ref, defaults.w, defaults.h, defaults.w)
       return
     }
-    /* deco spawns at its approved bazaar4 size; unknowns via median ratio */
+    /* deco spawns at its approved size; unknowns via median ratio */
     const probe = new Image()
     probe.onload = () => {
       const h =
@@ -644,7 +644,7 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
       2,
     )
     navigator.clipboard.writeText(payload)
-    console.log('[bazaar5 layout]', payload)
+    console.log('[bazaar layout]', payload)
   }
 
   const resetSelected = () => {

@@ -481,8 +481,6 @@ export default function RamenView(props: { level: number }) {
           <i className={css.stainSplat} aria-hidden='true' />
           <i className={css.stainRun} aria-hidden='true' />
           <Charms />
-          {/* Notebook interaction adapted from AatreyuShau's MIT-licensed
-              Uiverse component. Full notice: THIRD_PARTY_NOTICES.md. */}
           <NotebookFilters />
 
           <header className={css.masthead}>

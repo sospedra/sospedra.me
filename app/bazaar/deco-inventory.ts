@@ -1,4 +1,4 @@
-// GENERATED from public/images/bazaar4/deco — the prop inventory.
+// GENERATED from public/images/bazaar/deco — the prop inventory.
 
 export const DECO_INVENTORY = [
   'ac-cluster',

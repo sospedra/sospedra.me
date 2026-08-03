@@ -686,10 +686,7 @@ if (existsSync(wikidataQueryPath)) {
     'Wikidata query checksum differs from the source lock',
   )
 }
-check(
-  existsSync(join(REPOSITORY_ROOT, 'data/geo/THIRD_PARTY_DATA.md')),
-  'Missing THIRD_PARTY_DATA.md',
-)
+check(existsSync(join(REPOSITORY_ROOT, 'CREDITS.txt')), 'Missing CREDITS.txt')
 check(
   approval.reviewBasis === 'automated-source-and-policy-validation',
   'Approval must describe its automated review basis honestly',

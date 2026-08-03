@@ -11,12 +11,10 @@
       "!next-env.d.ts",
       "!**/*.svg",
       "!public/vendor",
-      "!app/bazaar3/references",
       "!scripts/boombox/codex-skin-reference.html",
       "!docs",
       "!public/boombox-808-proto.html",
       "!public/console-anim-preview",
-      "!data/crosswords/generated",
       "!data/crosswords/sources.lock.json"
     ]
   },

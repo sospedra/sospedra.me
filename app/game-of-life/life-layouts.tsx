@@ -13,6 +13,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import controls from './controls.module.css'
 import type { LifeState } from './engine'
 import css from './game-of-life.module.css'
 import type { LifeMechanicalSound } from './life-audio'
@@ -21,7 +22,6 @@ import {
   LIFE_PRESETS,
   type LifePreset,
 } from './presets'
-import controls from './uiverse-controls.module.css'
 
 export type LifeTool = 'draw' | 'move'
 

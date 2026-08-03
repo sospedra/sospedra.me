@@ -4,22 +4,6 @@
 window imports it at build time and never calls a station directory at
 runtime.
 
-## Provenance
-
-The station list started from the default corpus of mikbox74/boombox, a
-retro boombox web player:
-
-- Upstream file: `src/data/stations.json`
-- Repository: https://github.com/mikbox74/boombox
-- Pinned commit: `c629dede4ec7d0adf7af3bc69136790d6e521c69` (2022-11-10)
-- Retrieved: 2026-07-28
-
-The upstream repository declares no license. This snapshot takes only facts
-from it: station names and public stream endpoints. Every stream was probed
-independently on retrieval day. All display names, taglines, badges, bitrate
-values, and verification stamps in `stations.json` were authored for this
-repository from our own probe headers (`icy-name`, `icy-br`, content type).
-
 ## Curation rules
 
 - HTTPS direct MP3 streams only. No HLS, no playlists, no tokens.

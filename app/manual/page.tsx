@@ -44,7 +44,6 @@ function CommissioningCheck({
             height='50'
           />
           <g transform='translate(0,-952.36222)'>
-            {/* Scribble adapted from PriyanshuGupta28's MIT-licensed checkbox. */}
             <path
               className={css.commissioningMark}
               d='m 56,963 c -102,122 6,9 7,9 17,-5 -66,69 -38,52 122,-77 -7,14 18,4 29,-11 45,-43 23,-4'

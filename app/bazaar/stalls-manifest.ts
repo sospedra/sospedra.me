@@ -301,7 +301,7 @@ export const STALL_SCENES = {
   },
 } satisfies Record<string, StallScene>
 
-export type Bazaar4StallId = keyof typeof STALL_SCENES
+export type BazaarStallId = keyof typeof STALL_SCENES
 
 /* r15 sim composition law — all values in sim units (--su scales them) */
 export const SIM_DIMS = {
@@ -354,7 +354,7 @@ export const SIM_DIMS = {
     dispH: 480,
   },
 } satisfies Record<
-  Bazaar4StallId,
+  BazaarStallId,
   { artW: number; artH: number; dispW: number; dispH: number }
 >
 

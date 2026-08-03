@@ -278,10 +278,6 @@
   transform-origin: top left;
 }
 
-/*
- * Camera anatomy and surface treatment ported from Sarah Fossheim's
- * CSS Polaroid Camera: https://fossheim.io/writing/posts/css-polaroid-camera/
- */
 .camera {
   position: absolute;
   z-index: 10;

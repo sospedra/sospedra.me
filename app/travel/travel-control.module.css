@@ -6590,8 +6590,8 @@
 }
 
 /* The console exists only while powered. The rocker therefore rests in the
-   checked/ON geometry from the supplied Nawsome switch and rocks toward OFF
-   only for the brief active press before navigation removes the console. */
+   checked/ON geometry and rocks toward OFF only for the brief active press
+   before navigation removes the console. */
 @media (max-width: 899px) {
   .console {
     grid-template-rows: 7.55rem minmax(0, 1fr) 14.5rem;
