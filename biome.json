@@ -11,10 +11,7 @@
       "!next-env.d.ts",
       "!**/*.svg",
       "!public/vendor",
-      "!scripts/boombox/codex-skin-reference.html",
       "!docs",
-      "!public/boombox-808-proto.html",
-      "!public/console-anim-preview",
       "!data/crosswords/sources.lock.json"
     ]
   },
@@ -37,7 +34,8 @@
   "linter": {
     "domains": {
       "react": "recommended",
-      "next": "recommended"
+      "next": "recommended",
+      "project": "recommended"
     },
     "rules": {
       "preset": "recommended",
@@ -47,6 +45,9 @@
         "noUnusedFunctionParameters": "error",
         "noUnusedPrivateClassMembers": "error",
         "useExhaustiveDependencies": "warn"
+      },
+      "suspicious": {
+        "noImportCycles": "error"
       },
       "performance": {
         "noImgElement": "off"
