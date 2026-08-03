@@ -42,13 +42,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Verify the timed geography engine
-        run: pnpm geo:test
+        run: pnpm ci:geo:test
 
       - name: Generate and build the UTC edition
         run: pnpm build
 
       - name: Validate the generated edition and locked corpus
-        run: pnpm geo:validate:challenges
+        run: pnpm ci:geo:validate:challenges
 
       - name: Trigger the connected static deployment
         run: |

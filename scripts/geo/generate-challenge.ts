@@ -497,7 +497,7 @@ if (checkOnly) {
   const committed = readFileSync(challengePath, 'utf8')
   assert(
     committed === output,
-    `${relative(REPOSITORY_ROOT, challengePath)} is stale; run pnpm geo:generate`,
+    `${relative(REPOSITORY_ROOT, challengePath)} is stale; run pnpm cli geo:generate`,
   )
   console.log(
     `Deterministic challenge matches ${relative(REPOSITORY_ROOT, challengePath)}`,

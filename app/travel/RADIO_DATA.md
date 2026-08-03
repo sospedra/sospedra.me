@@ -51,13 +51,13 @@ the fallback stations as local.
 Run the offline corpus checks:
 
 ```sh
-pnpm travel:radio:validate
+pnpm cli travel:radio:validate
 ```
 
 Re-check every direct stream against the live network:
 
 ```sh
-pnpm travel:radio:verify
+pnpm cli travel:radio:verify
 ```
 
 Live verification is deliberately separate from `build`; remote network

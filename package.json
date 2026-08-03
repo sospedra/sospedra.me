@@ -8,23 +8,15 @@
   "scripts": {
     "prebuild": "node scripts/geo/generate-window.mjs && node scripts/snapshot-static-files.ts",
     "build": "next build",
+    "ci:geo:test": "tsx --test lib/geo/publication-date.test.ts lib/geo/run-variants.test.ts lib/geo/reducer.test.ts lib/geo/text-answer.test.ts lib/geo/equal-earth.test.ts lib/geo/scoring.test.ts lib/geo/distance.test.ts lib/geo/stats.test.ts lib/geo/share.test.ts lib/geo/persistence.test.ts lib/geo/city-options.test.ts",
+    "ci:geo:validate:challenges": "node scripts/geo/validate-country-lexicon.ts && node scripts/geo/validate-corpus.ts && node scripts/geo/generate-challenge.ts --check && node scripts/geo/validate-challenge.ts",
     "cli": "node ./internals/cli.mts",
-    "predev": "pnpm geo:generate && node scripts/snapshot-static-files.ts",
+    "predev": "node scripts/geo/generate-challenge.ts && node scripts/snapshot-static-files.ts",
     "dev": "next dev",
-    "geo:data:build": "node scripts/geo/build-assets.mjs",
-    "geo:data:import": "node scripts/geo/import-corpus.ts",
-    "geo:data:validate": "node scripts/geo/validate-country-lexicon.ts && node scripts/geo/validate-corpus.ts && node scripts/geo/validate-challenge.ts",
-    "geo:generate": "node scripts/geo/generate-challenge.ts",
-    "geo:test": "tsx --test lib/geo/publication-date.test.ts lib/geo/run-variants.test.ts lib/geo/reducer.test.ts lib/geo/text-answer.test.ts lib/geo/equal-earth.test.ts lib/geo/scoring.test.ts lib/geo/distance.test.ts lib/geo/stats.test.ts lib/geo/share.test.ts lib/geo/persistence.test.ts lib/geo/city-options.test.ts",
-    "geo:validate:challenges": "node scripts/geo/validate-country-lexicon.ts && node scripts/geo/validate-corpus.ts && node scripts/geo/generate-challenge.ts --check && node scripts/geo/validate-challenge.ts",
     "lint": "biome check .",
     "prepare": "husky",
     "start": "next start",
-    "test": "node --test app/console/tree.test.ts app/crosswords/crossword-engine.test.ts app/crosswords/spanish-daily.test.ts app/snake/engine.test.ts app/game-of-life/life-audio.test.ts components/music/audio-graph.test.ts app/rubiks/engine.test.ts app/travel/destinations.test.ts app/travel/lunar-position.test.ts app/w98/desktop.test.ts app/w98/realplayer/tuner.test.ts app/w98/realplayer/tuner-controller.test.ts service/daily-countdown.test.ts && tsx --test app/travel/radio-stations.test.ts && tsc && biome check .",
-    "travel:radio:validate": "node scripts/travel/verify-radio-streams.ts",
-    "travel:radio:verify": "node scripts/travel/verify-radio-streams.ts --live",
-    "w98:radio:validate": "node scripts/w98/verify-realplayer-streams.ts",
-    "w98:radio:verify": "node scripts/w98/verify-realplayer-streams.ts --live"
+    "test": "node --test app/boombox/engine.test.ts app/console/tree.test.ts app/crosswords/crossword-engine.test.ts app/crosswords/spanish-daily.test.ts app/snake/engine.test.ts app/game-of-life/life-audio.test.ts components/music/audio-graph.test.ts app/rubiks/engine.test.ts app/travel/destinations.test.ts app/travel/lunar-position.test.ts app/w98/desktop.test.ts app/w98/paint/raster.test.ts app/w98/paint/fill.test.ts app/w98/paint/history.test.ts app/w98/paint/state.test.ts app/w98/paint/selection.test.ts app/w98/realplayer/tuner.test.ts app/w98/realplayer/tuner-controller.test.ts service/daily-countdown.test.ts && tsx --test app/travel/radio-stations.test.ts && tsc && biome check ."
   },
   "dependencies": {
     "@mdx-js/loader": "3.1.1",

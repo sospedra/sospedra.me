@@ -3,6 +3,7 @@ import * as p from '@clack/prompts'
 export type Context = {
   arg?: string
   hidden: boolean
+  rest: string[]
 }
 
 export const ALL_PAPERS = '*'

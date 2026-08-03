@@ -25,7 +25,7 @@ export async function loadCurrentGeoChallenge(): Promise<DailyGeoChallenge> {
   const current = latestPublicationDateOnOrBefore(dates, today)
   if (!current) {
     throw new Error(
-      `No Meridian challenge on or before ${today}. Run "pnpm geo:generate ${today}" first.`,
+      `No Meridian challenge on or before ${today}. Run "pnpm cli geo:generate ${today}" first.`,
     )
   }
   if (current !== today) {
