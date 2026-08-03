@@ -2,6 +2,16 @@ import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { openPng, savePng } from './file-io.ts'
 import { floodFill } from './fill.ts'
+import {
+  clipRect,
+  handleAt,
+  handlePoints,
+  handleTolerance,
+  insideRect,
+  type Point,
+  type Rect,
+  rectFromPoints,
+} from './geometry.ts'
 import { createHistory, push, redo, type Snapshot, undo } from './history.ts'
 import type { Magnification } from './options.ts'
 import { type Rgba, toRgba } from './palette.ts'
@@ -16,30 +26,18 @@ import {
   drawRect,
   drawRoundedRect,
   getPixel,
-  type Point,
-  type Rect,
   type ShapeStyle,
+  scaleNearest,
   setPixel,
   spray,
 } from './raster.ts'
-import {
-  clipRect,
-  fillRect,
-  handleAt,
-  handlePoints,
-  handleTolerance,
-  insideRect,
-  lift,
-  scaleNearest,
-  stamp,
-} from './selection.ts'
+import { fillRect, lift, stamp } from './selection.ts'
 import {
   type Button,
   INITIAL_HEIGHT,
   INITIAL_PAINT,
   INITIAL_WIDTH,
   type Nub,
-  normalizeRect,
   type PaintEvent,
   type PaintState,
   prospectiveSize,
@@ -193,7 +191,7 @@ const renderSelection = (
 const renderPreview = (scratch: Bitmap, state: PaintState, at: Point): void => {
   const mode = state.mode
   if (mode.kind === 'selecting') {
-    dashedRect(scratch, normalizeRect(mode.from, at))
+    dashedRect(scratch, rectFromPoints(mode.from, at))
     return
   }
   if (mode.kind === 'shaping') {
@@ -718,7 +716,7 @@ export const usePaint = () => {
       return
     }
     if (mode.kind === 'selecting') {
-      const rect = normalizeRect(mode.from, mode.to)
+      const rect = rectFromPoints(mode.from, mode.to)
       if (rect.width === 1 && rect.height === 1) clearOverlay()
       else drawSelection(rect, true)
       return

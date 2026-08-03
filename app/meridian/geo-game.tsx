@@ -1452,18 +1452,28 @@ function Completion({
 
 function GameDialogs({
   copy,
+  locale,
   onClose,
+  onLocaleChange,
+  onModeChange,
   onSettingsChange,
   opener,
+  mode,
   settings,
   state,
+  timedState,
 }: {
   copy: GeoMessages
+  locale: GeoLocale
   onClose: () => void
+  onLocaleChange: (locale: GeoLocale) => void
+  onModeChange: (mode: GeoGameMode) => void
   onSettingsChange: (settings: GeoSettings) => void
   opener: MutableRefObject<HTMLElement | null>
+  mode: GeoGameMode
   settings: GeoSettings
   state: GeoGameState
+  timedState: boolean
 }) {
   const close = () => {
     onClose()
@@ -1491,6 +1501,56 @@ function GameDialogs({
         />
         <div className={css.dialogBody}>
           <ul className={css.settingsList}>
+            <li className={`${css.settingRow} ${css.mobileSettingRow}`}>
+              <span>{copy.edition}</span>
+              <fieldset className={css.settingChoices}>
+                <legend className={css.srOnly}>{copy.edition}</legend>
+                <button
+                  type='button'
+                  className={css.settingChoice}
+                  data-active={mode === 'daily'}
+                  aria-pressed={mode === 'daily'}
+                  disabled={timedState}
+                  onClick={() => onModeChange('daily')}
+                >
+                  {copy.daily}
+                </button>
+                <button
+                  type='button'
+                  className={css.settingChoice}
+                  data-active={mode === 'practice'}
+                  aria-pressed={mode === 'practice'}
+                  disabled={timedState}
+                  onClick={() => onModeChange('practice')}
+                >
+                  {copy.practice}
+                </button>
+              </fieldset>
+            </li>
+            <li className={`${css.settingRow} ${css.mobileSettingRow}`}>
+              <span>{copy.language}</span>
+              <fieldset className={css.settingChoices}>
+                <legend className={css.srOnly}>{copy.language}</legend>
+                <button
+                  type='button'
+                  className={css.settingChoice}
+                  data-active={locale === 'en'}
+                  aria-pressed={locale === 'en'}
+                  onClick={() => onLocaleChange('en')}
+                >
+                  EN
+                </button>
+                <button
+                  type='button'
+                  className={css.settingChoice}
+                  data-active={locale === 'es'}
+                  aria-pressed={locale === 'es'}
+                  onClick={() => onLocaleChange('es')}
+                >
+                  ES
+                </button>
+              </fieldset>
+            </li>
             {(
               [
                 ['sound', copy.sound],
@@ -2346,11 +2406,16 @@ function GeoSession({
 
       <GameDialogs
         copy={copy}
+        locale={locale}
+        mode={mode}
         onClose={() => dispatch({ type: 'CLOSE_OVERLAY' })}
+        onLocaleChange={onLocaleChange}
+        onModeChange={onModeChange}
         onSettingsChange={onSettingsChange}
         opener={openerRef}
         settings={settings}
         state={state}
+        timedState={timedState}
       />
       <p className={css.liveRegion} aria-live='polite' aria-atomic='true'>
         {announcement}

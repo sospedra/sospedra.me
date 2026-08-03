@@ -243,6 +243,13 @@
   z-index: 10;
 }
 
+@media (max-width: 700px) {
+  .sBus {
+    left: max(0.5rem, var(--safe-area-left));
+    height: min(28.8svh, 9rem);
+  }
+}
+
 /* overlay sprites sit exactly on the baked door/neon geometry of CD:
    neon plate x118-289 y353-423, door x148-302 y444-770 (of 1113x776) */
 .sNeon {
@@ -916,14 +923,15 @@
 /* ---------- hud ---------- */
 .hud {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: max(1rem, var(--safe-area-top));
+  right: max(1rem, var(--safe-area-right));
   z-index: 10;
   display: flex;
   gap: 0.5rem;
 }
 
 .hudBtn {
+  min-height: 44px;
   padding: 0.45rem 0.7rem;
   border: 2px solid #37f7e0;
   background: rgb(6 7 13 / 0.85);

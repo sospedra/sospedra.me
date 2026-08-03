@@ -6,6 +6,12 @@ import { isEditableTarget, useGameInput } from 'services/hotkeys'
 import w98 from '../w98.module.css'
 import { useBeforeUnloadGuard } from './exit-guard.ts'
 import {
+  type Handle,
+  handleAt,
+  handleTolerance,
+  insideRect,
+} from './geometry.ts'
+import {
   AIRBRUSH_SIZES,
   BRUSH_CELLS,
   type BrushCell,
@@ -21,8 +27,7 @@ import {
 } from './options.ts'
 import css from './paint.module.css'
 import { PALETTE } from './palette.ts'
-import { handleAt, handleTolerance, insideRect } from './selection.ts'
-import { type Handle, type Mode, prospectiveSize } from './state.ts'
+import { type Mode, prospectiveSize } from './state.ts'
 import { TOOLS, type ToolId, toolById } from './tools.ts'
 import { type Paint, usePaint } from './use-paint.ts'
 

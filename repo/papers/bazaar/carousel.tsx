@@ -17,7 +17,7 @@ const SLIDE_HEIGHT = 805
 const SCROLL_THROTTLE_MS = 100
 
 const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
-  const track = useRef<HTMLDivElement>(null)
+  const track = useRef<HTMLElement>(null)
   const [index, setIndex] = useState(0)
 
   const handleScroll = useMemo(
@@ -40,7 +40,7 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
     })
   }
 
-  const handleTrackKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleTrackKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault()
       scrollBySlide(event.key === 'ArrowLeft' ? -1 : 1)

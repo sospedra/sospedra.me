@@ -39,7 +39,7 @@
   display: none;
 }
 
-.track:focus-visible {
+.carousel.carousel .track:focus-visible {
   box-shadow: inset 0 0 0 2px var(--color-signal-cyan, #6df7ea);
 }
 

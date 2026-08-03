@@ -16,8 +16,8 @@ import {
   spray,
   stampBrush,
   stampDisc,
-  traceLine,
 } from './raster.ts'
+import { traceLine } from './spans.ts'
 
 const BLACK: Rgba = [0, 0, 0, 255]
 const RED: Rgba = [255, 0, 0, 255]

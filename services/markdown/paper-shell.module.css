@@ -5,7 +5,8 @@
   max-width: var(--measure-reading, 42rem);
   min-height: 100%;
   margin-inline: auto;
-  padding: max(1rem, env(safe-area-inset-top)) 1rem 6rem;
+  padding: max(1rem, var(--safe-area-top)) max(1rem, var(--safe-area-right))
+    6rem max(1rem, var(--safe-area-left));
   color: var(--color-text, rgb(255 255 255 / 90%));
 }
 

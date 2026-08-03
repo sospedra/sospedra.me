@@ -6156,11 +6156,17 @@
 .radioPresets {
   display: grid;
   min-width: 0;
-  grid-template-columns: repeat(var(--radio-preset-count, 3), minmax(0, 1fr));
+  grid-template-columns: repeat(
+      var(--radio-preset-count, 3),
+      minmax(2.75rem, 1fr)
+    );
   gap: 0.2rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
   margin: 0;
   padding: 0;
   border: 0;
+  touch-action: pan-x;
 }
 
 .radioPresets button {
@@ -6899,5 +6905,17 @@
 
   .panorama {
     grid-template-rows: minmax(0, 1fr) 3.5rem;
+  }
+
+  /* The short bay is exactly tall enough for the 44px radio controls. The
+     section title and hint live in the wider layouts; keeping them here would
+     collapse the control row to zero and clip every station button. */
+  .starboardWing {
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .starboardWing > header,
+  .radioHint {
+    display: none;
   }
 }

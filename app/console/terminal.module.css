@@ -8,7 +8,10 @@
   --crt-ink: #1c0e00;
   display: flex;
   height: 100dvh;
-  padding: clamp(0.5rem, 2vw, 1.25rem);
+  padding: max(clamp(0.5rem, 2vw, 1.25rem), var(--safe-area-top))
+    max(clamp(0.5rem, 2vw, 1.25rem), var(--safe-area-right))
+    max(clamp(0.5rem, 2vw, 1.25rem), var(--safe-area-bottom))
+    max(clamp(0.5rem, 2vw, 1.25rem), var(--safe-area-left));
   background: #050403;
 }
 

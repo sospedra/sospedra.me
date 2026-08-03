@@ -3380,6 +3380,85 @@
     margin-bottom: 2px;
   }
 
+  /* The transport and the writing line are one focused workstation. Keep the
+     active line pinned immediately below the folded machine; otherwise the
+     paper retains its document position and scrolls beneath the sticky deck. */
+  .ansaphone[data-entry-open="true"] .caseScene {
+    position: sticky;
+    z-index: 41;
+    top: calc(max(8px, var(--safe-area-top)) + 11.95rem);
+    height: 3.25rem;
+    perspective: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .caseScene::before,
+  .ansaphone[data-entry-open="true"] .caseTitle,
+  .ansaphone[data-entry-open="true"] .caseRule,
+  .ansaphone[data-entry-open="true"] .caseFoot,
+  .ansaphone[data-entry-open="true"] .caseSpine,
+  .ansaphone[data-entry-open="true"] .caseArm {
+    display: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .caseRig,
+  .ansaphone[data-entry-open="true"] .casePaper {
+    position: relative;
+    inset: auto;
+    height: 100%;
+    transform: none;
+    animation: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .casePaper {
+    overflow: visible;
+    padding: 4px 12px;
+  }
+
+  .ansaphone[data-entry-open="true"] .trackRows {
+    height: 44px;
+    margin: 0;
+  }
+
+  .ansaphone[data-entry-open="true"] .trackRows li:not([data-active="true"]),
+  .ansaphone[data-entry-open="true"] .trackRows li::before {
+    display: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .trackRows li[data-active="true"] {
+    height: 44px;
+    padding-left: 0;
+    border: 0;
+    line-height: 44px;
+    transform: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .noteInput {
+    height: 44px;
+    font-size: 20px;
+    line-height: 44px;
+  }
+
+  .ansaphone[data-entry-open="true"] .searchDropdown {
+    max-height: clamp(
+      44px,
+      calc(
+        100dvh -
+        max(8px, var(--safe-area-top)) -
+        15.45rem -
+        var(--safe-area-bottom)
+      ),
+      12rem
+    );
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    transform: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .songRow {
+    height: 44px;
+    line-height: 44px;
+  }
+
   .noteInput {
     scroll-margin-block: 11rem 2rem;
   }

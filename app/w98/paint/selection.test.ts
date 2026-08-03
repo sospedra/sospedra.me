@@ -1,16 +1,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { clipRect, handleAt, insideRect } from './geometry.ts'
 import type { Rgba } from './palette.ts'
-import { createBitmap, getPixel, setPixel } from './raster.ts'
-import {
-  clipRect,
-  fillRect,
-  handleAt,
-  insideRect,
-  lift,
-  scaleNearest,
-  stamp,
-} from './selection.ts'
+import { createBitmap, getPixel, scaleNearest, setPixel } from './raster.ts'
+import { fillRect, lift, stamp } from './selection.ts'
 
 const BLACK: Rgba = [0, 0, 0, 255]
 const RED: Rgba = [255, 0, 0, 255]

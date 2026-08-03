@@ -2,6 +2,8 @@
 
 .page {
   overflow-x: clip;
+  padding-right: max(1rem, var(--safe-area-right));
+  padding-left: max(1rem, var(--safe-area-left));
 }
 
 .content {

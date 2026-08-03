@@ -1,5 +1,6 @@
+import type { Point } from './geometry.ts'
 import type { Rgba } from './palette.ts'
-import type { Bitmap, Point } from './raster.ts'
+import type { Bitmap } from './raster.ts'
 
 // Scanline flood fill on exact RGBA match. Each pixel paints once, so the
 // stack drains in O(width * height).

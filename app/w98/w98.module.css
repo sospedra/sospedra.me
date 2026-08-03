@@ -12,6 +12,7 @@
   --win-ink: #000000;
   --desktop: #008080;
   --taskbar-h: 2.75rem;
+  --taskbar-safe-h: calc(var(--taskbar-h) + var(--safe-area-bottom));
   position: relative;
   width: 100%;
   height: 100dvh;
@@ -36,7 +37,7 @@
 
 .desktopWorkArea {
   position: absolute;
-  inset: 0 0 var(--taskbar-h);
+  inset: 0 0 var(--taskbar-safe-h);
   overflow: hidden;
 }
 
@@ -735,10 +736,11 @@
   bottom: 0;
   left: 0;
   display: flex;
-  height: var(--taskbar-h);
+  height: var(--taskbar-safe-h);
   align-items: center;
   gap: 0.25rem;
-  padding: 0.2rem 0.25rem max(0.2rem, var(--safe-area-bottom));
+  padding: 0.2rem max(0.25rem, var(--safe-area-right))
+    max(0.2rem, var(--safe-area-bottom)) max(0.25rem, var(--safe-area-left));
   border-top: 2px solid var(--win-light);
   background: var(--win-face);
   box-shadow: inset 0 1px 0 var(--win-face);
@@ -854,18 +856,23 @@
 }
 
 @media (max-width: 47.99rem) {
+  .frame {
+    --taskbar-safe-h: calc(3.35rem + var(--safe-area-bottom));
+  }
+
   .programArea,
   .paintArea,
   .realplayerArea {
-    inset: clamp(4.75rem, 12vh, 6.25rem) 0.45rem 0.45rem;
+    inset: clamp(4.75rem, 12vh, 6.25rem) max(0.45rem, var(--safe-area-right))
+      0.45rem max(0.45rem, var(--safe-area-left));
     max-width: none;
     max-height: none;
   }
 
   .desktopIcons {
-    top: 0.45rem;
-    left: 0.25rem;
-    right: 0.25rem;
+    top: max(0.45rem, var(--safe-area-top));
+    left: max(0.25rem, var(--safe-area-left));
+    right: max(0.25rem, var(--safe-area-right));
     grid-template-columns: repeat(6, minmax(0, 1fr));
     width: auto;
     gap: 0.25rem;
@@ -939,7 +946,9 @@
   .programArea,
   .paintArea,
   .realplayerArea {
-    inset: 0.35rem;
+    inset: max(0.35rem, var(--safe-area-top))
+      max(0.35rem, var(--safe-area-right)) 0.35rem
+      max(0.35rem, var(--safe-area-left));
   }
 
   .statusBar > span {

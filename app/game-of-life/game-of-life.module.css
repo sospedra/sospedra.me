@@ -4645,7 +4645,7 @@
     min-height: 26rem;
     grid-column: 1;
     grid-row: 2;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(9.5rem, 1fr) minmax(0, 1fr);
     grid-template-rows:
       minmax(8.7rem, auto) minmax(6.6rem, auto)
       minmax(8rem, auto);
@@ -4666,6 +4666,16 @@
 
   .opticsKeys {
     min-height: 0;
+  }
+
+  .opticsKeys > div {
+    gap: 1px;
+    padding: 1px;
+  }
+
+  .opticsKeys.opticsKeys button {
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .gridPilot {
@@ -4805,7 +4815,9 @@
     min-height: 0;
     grid-column: 2;
     grid-row: 1;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns:
+      minmax(9.5rem, 1.9fr) minmax(0, 1fr)
+      minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr) minmax(4.8rem, 0.7fr) 44px;
     gap: 0.28rem;
     padding: 0.34rem;

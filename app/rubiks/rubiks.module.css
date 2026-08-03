@@ -17,7 +17,9 @@
   flex-direction: column;
   overflow: hidden;
   padding-top: max(0.55rem, var(--safe-area-top));
+  padding-right: max(1rem, var(--safe-area-right));
   padding-bottom: max(0.7rem, var(--safe-area-bottom));
+  padding-left: max(1rem, var(--safe-area-left));
 }
 
 /* the only room on the site lit by six colors: each sticker family

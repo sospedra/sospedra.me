@@ -288,12 +288,15 @@ function HotspotButton({
       type='button'
       data-hotspot={spot.id}
       className={down ? `${css.hotspot} ${css.down}` : css.hotspot}
-      style={{
-        left: `${spot.x}%`,
-        top: `${spot.y}%`,
-        width: `${spot.width}%`,
-        height: `${spot.height}%`,
-      }}
+      style={
+        {
+          '--hotspot-left': `${spot.x}%`,
+          '--hotspot-top': `${spot.y}%`,
+          '--hotspot-width': `${spot.width}%`,
+          '--hotspot-height': `${spot.height}%`,
+          '--hotspot-bottom': `${spot.y + spot.height}%`,
+        } as React.CSSProperties
+      }
       aria-label={label}
       aria-hidden={label ? undefined : 'true'}
       tabIndex={label ? undefined : -1}

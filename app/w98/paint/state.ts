@@ -1,11 +1,16 @@
 import { clamp } from 'es-toolkit'
 import {
+  type Handle,
+  type Point,
+  type Rect,
+  rectFromPoints,
+} from './geometry.ts'
+import {
   DEFAULT_OPTIONS,
   type Magnification,
   type ToolOptions,
 } from './options.ts'
 import { DEFAULT_BG, DEFAULT_FG } from './palette.ts'
-import type { Point, Rect } from './raster.ts'
 import { type ToolId, toolById } from './tools.ts'
 
 export const INITIAL_WIDTH = 683
@@ -14,8 +19,6 @@ export const INITIAL_HEIGHT = 384
 export type Button = 'left' | 'right'
 
 export type Nub = 'e' | 's' | 'se'
-
-export type Handle = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw'
 
 export type CurvePhase = 'line' | 'c1' | 'c2'
 
@@ -85,13 +88,6 @@ export const INITIAL_PAINT: PaintState = {
 }
 
 const samePoint = (a: Point, b: Point): boolean => a.x === b.x && a.y === b.y
-
-export const normalizeRect = (a: Point, b: Point): Rect => ({
-  x: Math.min(a.x, b.x),
-  y: Math.min(a.y, b.y),
-  width: Math.abs(b.x - a.x) + 1,
-  height: Math.abs(b.y - a.y) + 1,
-})
 
 export type Size = { width: number; height: number }
 
@@ -226,7 +222,7 @@ const upPolygon = (
 }
 
 const upSelecting = (state: PaintState, from: Point, to: Point): PaintState => {
-  const rect = normalizeRect(from, to)
+  const rect = rectFromPoints(from, to)
   if (rect.width === 1 && rect.height === 1) return { ...state, mode: IDLE }
   return { ...state, mode: { kind: 'selected', rect } }
 }
