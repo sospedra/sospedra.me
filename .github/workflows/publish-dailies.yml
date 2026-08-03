@@ -1,4 +1,4 @@
-name: Meridian daily static rebuild
+name: Publish dailies
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: meridian-daily-publication
+  group: publish-dailies
   cancel-in-progress: false
 
 jobs:
@@ -41,6 +41,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Archive the Spanish crossword
+        continue-on-error: true
+        run: pnpm ci:crosswords:archive-es
+
       - name: Verify the timed geography engine
         run: pnpm ci:geo:test
 
@@ -50,9 +54,10 @@ jobs:
       - name: Validate the generated edition and locked corpus
         run: pnpm ci:geo:validate:challenges
 
-      - name: Trigger the connected static deployment
+      - name: Commit the dailies and trigger the deployment
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit --allow-empty -m "chore(geo): publish Meridian ${MERIDIAN_PUBLICATION_DATE}"
+          git add content/crosswords/challenges
+          git commit --allow-empty -m "chore: publish dailies ${MERIDIAN_PUBLICATION_DATE}"
           git push origin "HEAD:${GITHUB_REF_NAME}"

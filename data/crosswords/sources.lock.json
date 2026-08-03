@@ -14,5 +14,12 @@
   "license": "Copyright Universal Uclick / USA Today",
   "sha256": "17cf5f3a374c2c4e4b327da41f7ffb5612b8d2e76548b40db1b7069a75eb0c2f",
   "notes": "sha256 is over the sorted list of per-file sha256s. All 15x15. 21 files rejected at parse (incomplete grids or duplicate answers). Raw archive is re-downloaded on demand (content/crosswords/data.txt keeps the URL); editions in content/crosswords/challenges carry solution and clues only, and the replay formula maps each date back to its archive original."
+ },
+ "eldiarioDaily": {
+  "dataset": "eldiario.es daily Spanish crossword, 13x13, one puzzle per day",
+  "url": "https://backend.smartgames.media/api/game/crossword/last",
+  "retrievedAt": "rolling, archived daily since 2026-08-03",
+  "license": "Copyright eldiario.es / Smart Games Media",
+  "notes": "The publish-dailies workflow runs scripts/crosswords/archive-spanish.ts once per day and merges puzzles.es (solution and clues only) into the matching content/crosswords/challenges edition. The feed serves only its latest puzzle, so a day missed by the workflow stays missing."
  }
 }

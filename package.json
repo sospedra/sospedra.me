@@ -8,6 +8,7 @@
   "scripts": {
     "prebuild": "node scripts/geo/generate-window.mjs && node scripts/snapshot-static-files.ts",
     "build": "next build",
+    "ci:crosswords:archive-es": "node scripts/crosswords/archive-spanish.ts",
     "ci:geo:test": "tsx --test lib/geo/publication-date.test.ts lib/geo/run-variants.test.ts lib/geo/reducer.test.ts lib/geo/text-answer.test.ts lib/geo/equal-earth.test.ts lib/geo/scoring.test.ts lib/geo/distance.test.ts lib/geo/stats.test.ts lib/geo/share.test.ts lib/geo/persistence.test.ts lib/geo/city-options.test.ts",
     "ci:geo:validate:challenges": "node scripts/geo/validate-country-lexicon.ts && node scripts/geo/validate-corpus.ts && node scripts/geo/generate-challenge.ts --check && node scripts/geo/validate-challenge.ts",
     "cli": "node ./internals/cli.mts",

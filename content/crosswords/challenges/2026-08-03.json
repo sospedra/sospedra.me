@@ -103,6 +103,81 @@
           "RED": "Like hearts and diamonds"
         }
       }
+    },
+    "es": {
+      "solution": [
+        "OJOTA#HARALDV",
+        "PE#ONEAL#CUPO",
+        "INPUT#MELON#L",
+        "ASESINAR#MAME",
+        "C#D#TESORERIA",
+        "EVITES#SIT#M#",
+        "OIDOS###BECAS",
+        "#R#TIA#TORERO",
+        "AGRESIVOS#L#P",
+        "LOOK#RECORDAR",
+        "E#DICEN#MOANA",
+        "XMEN#AGRAS#DN",
+        "ABOGARA#SOLEO"
+      ],
+      "clues": {
+        "across": {
+          "OJOTA": "Sandalia de cuero o filamento vegetal.",
+          "HARALDV": "El Rey de Noruega.",
+          "PE": "Nombre de la letra \"P\".",
+          "ONEAL": "\"Shaquille...\" exjugador de baloncesto estadounidense.",
+          "CUPO": "Plaza, por ejemplo para un colegio.",
+          "INPUT": "Conjunto de datos que se introducen en un sistema (voz inglesa).",
+          "MELON": "Fruto que se cultiva en un melonar.",
+          "ASESINAR": "Quitar la vida.",
+          "MAME": "Chupe la leche de los pechos.",
+          "TESORERIA": "Área de una empresa donde se gestiona el dinero.",
+          "EVITES": "Evadas su mirada.",
+          "SIT": "Sistema de Información Territorial.",
+          "OIDOS": "Órganos que sirven para la audición.",
+          "BECAS": "Concesión de estipendio para estudios.",
+          "TIA": "Hermana de mi madre.",
+          "TORERO": "Hombre que por profesión ejerce el arte del toreo.",
+          "AGRESIVOS": "Personas que tienden a la violencia (masc).",
+          "LOOK": "Cambio de estilo, cambio de... (voz inglesa).",
+          "RECORDAR": "Pasar a tener en la mente algo del pasado.",
+          "DICEN": "Comentan, hablan.",
+          "MOANA": "Primera princesa Disney de la Polinesia (Vaiana en España).",
+          "XMEN": "Personajes de historieta publicados por Marvel Comics.",
+          "AGRAS": "Desuso. Que son ácidas.",
+          "DN": "Diámetro Nominal.",
+          "ABOGARA": "Defenderá en un juicio legal.",
+          "SOLEO": "Músculo cercano al gemelo, cuya función es la extensión del pie y la elevación del talón."
+        },
+        "down": {
+          "OPIACEO": "Compuesto obtenido a partir del opio.",
+          "JENS": "Comuna suiza del cantón de Berna.",
+          "TOUS": "Marca de joyería española cuyo ícono es un oso.",
+          "ANTITESIS": "Filosofía. Oposición de dos juicios.",
+          "HAMAS": "Grupo político y militar palestino que gobierna Gaza.",
+          "ALEROS": "Parte inferior del tejado, que sale fuera de la pared (pl).",
+          "ACOMETER": "Atacar con ímpetu.",
+          "LUNAR": "Pequeña mancha en el rostro.",
+          "DP": "Distrito Postal.",
+          "VOLEA": "Golpea la pelota antes de que caiga al suelo.",
+          "PEDID": "Requerid algo, exigidlo como necesario.",
+          "NES": "2.ª consola de sobremesa de Nintendo.",
+          "MIMAR": "Abrazar, consentir y jugar con el bebé.",
+          "RIBOSOMAS": "Orgánulo celular en el que tiene lugar la síntesis de proteínas.",
+          "VIRGO": "Signo del zodíaco.",
+          "TOTEKING": "Rapero y escritor español, considerado un referente.",
+          "CELDA": "Aposento de una cárcel.",
+          "SOPRANO": "Voz aguda femenina en música.",
+          "AIREAR": "Poner al aire o ventilar algo.",
+          "TOC": "Trastorno Obsesivo Compulsivo.",
+          "ALEXA": "La asistente virtual de Amazon.",
+          "RODEO": "Deporte que consiste en montar a pelo potros salvajes.",
+          "VENGA": "No hay mal que por bien no...",
+          "ROSO": "Raído, sin pelo.",
+          "ANDE": "Camine, marche.",
+          "MB": "Megabyte."
+        }
+      }
     }
   }
 }
