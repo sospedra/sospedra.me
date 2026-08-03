@@ -15,7 +15,6 @@ import {
 } from 'react'
 import { createPortal } from 'react-dom'
 import css from './bazaar.module.css'
-import LayoutEditor from './layout-editor'
 import scene from './scene.module.css'
 import SceneStall from './scene-stall'
 import { type StallId, setSoundEnabled, sfx } from './sounds'
@@ -713,7 +712,6 @@ function Stall({ id }: { id: BazaarStallId }) {
         } as React.CSSProperties
       }
       data-stall={id}
-      data-edit-id={id}
       onMouseEnter={openOnHover}
       onMouseLeave={closeAfterHover}
       onFocusCapture={() => {
@@ -800,7 +798,7 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
   const sum = spec.stalls.reduce((total, id) => total + DIMS[id].w, 0)
   const stairs = <div className={css.stairs} aria-hidden />
   const band = (
-    <div className={css.band} data-stage=''>
+    <div className={css.band}>
       {spec.stalls.map((id) => (
         <Stall key={id} id={id} />
       ))}
@@ -829,7 +827,7 @@ function MobileMarketFloor({
   const armin = Math.min(...spec.stalls.map((id) => DIMS[id].w / DIMS[id].h))
   const sm = <div className={css.sm} aria-hidden />
   const stack = (
-    <div className={css.stack} data-stage=''>
+    <div className={css.stack}>
       {spec.stalls.map((id) => (
         <div key={id} className={css.storyRow}>
           <Stall id={id} />
@@ -856,7 +854,6 @@ export default function BazaarView() {
   const sceneRef = useRef<HTMLDivElement>(null)
   const [sound, setSound] = useState(false)
   const [hitbox, setHitbox] = useState(false)
-  const [editor, setEditor] = useState(false)
 
   useEffect(() => {
     if (localStorage.getItem('bazaar-sound') !== 'on') return
@@ -896,15 +893,7 @@ export default function BazaarView() {
         >
           {hitbox ? 'HITBOX ON' : 'HITBOX OFF'}
         </button>
-        <button
-          type='button'
-          className={scene.hudBtn}
-          onClick={() => setEditor((p) => !p)}
-        >
-          {editor ? 'EDITOR ON' : 'EDITOR OFF'}
-        </button>
       </div>
-      <LayoutEditor enabled={editor} />
 
       <div className={css.desktopTree}>
         <div className={cn(scene.scene, css.streetHost)}>
