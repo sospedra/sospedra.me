@@ -1,12 +1,20 @@
-.prop {
+.prop,
+.hideBelow700,
+.hideBelow1690 {
   position: absolute;
-  display: none;
   pointer-events: none;
 }
 
-/* the mobile tree builds its own floors; props dress the desktop bands */
-@media (min-width: 700px) {
-  .prop {
-    display: block;
+/* per-prop visibility floor: the manifest's hideBelow keeps it off narrow viewports */
+@media (max-width: 699px) {
+  .hideBelow700 {
+    display: none;
+  }
+}
+
+/* below the regime-A boundary (--vstar 1690) the container cap is off */
+@media (max-width: 1689px) {
+  .hideBelow1690 {
+    display: none;
   }
 }

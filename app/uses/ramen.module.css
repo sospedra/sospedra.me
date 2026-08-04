@@ -41,112 +41,6 @@
   overscroll-behavior-y: none !important;
 }
 
-/* ---- valance: the stall's fabric flaps off a wooden beam ---- */
-
-.valance {
-  position: absolute;
-  z-index: 5;
-  top: 0;
-  right: 0;
-  left: 0;
-  display: flex;
-  height: calc(var(--safe-area-top) + 3.4rem);
-  align-items: flex-start;
-  padding-top: calc(var(--safe-area-top) + 0.4rem);
-  gap: 2px;
-  filter: drop-shadow(0 5px 7px rgb(0 0 0 / 50%));
-}
-
-.valance::before {
-  position: absolute;
-  top: var(--safe-area-top);
-  right: 0;
-  left: 0;
-  height: 0.5rem;
-  background: linear-gradient(180deg, #5a3d22, #3a2412 55%, #241408);
-  box-shadow: 0 2px 4px rgb(0 0 0 / 55%);
-  content: "";
-}
-
-.valance i {
-  position: relative;
-  display: flex;
-  height: 100%;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  animation: flap-sway 6s ease-in-out infinite;
-  border-radius: 0 0 4px 4px;
-  transform-origin: 50% 0;
-}
-
-.valance i:nth-child(odd) {
-  background:
-    linear-gradient(180deg, rgb(0 0 0 / 30%), transparent 32%),
-    repeating-linear-gradient(
-      90deg,
-      rgb(255 255 255 / 2.5%) 0 1px,
-      transparent 1px 4px
-    ),
-    linear-gradient(180deg, #b3251a, #8f1c10);
-  border-bottom: 4px solid rgb(0 0 0 / 32%);
-  color: var(--washi);
-}
-
-.valance i:nth-child(even) {
-  height: 90%;
-  background:
-    linear-gradient(180deg, rgb(0 0 0 / 24%), transparent 32%),
-    repeating-linear-gradient(
-      90deg,
-      rgb(0 0 0 / 2.5%) 0 1px,
-      transparent 1px 4px
-    ),
-    linear-gradient(180deg, #efe4cc, #ddcba4);
-  border-bottom: 4px solid rgb(0 0 0 / 20%);
-}
-
-.valance i:nth-child(3n) {
-  height: 96%;
-  animation-delay: -2.1s;
-}
-
-.valance i:nth-child(4n) {
-  height: 104%;
-}
-
-.valance i:nth-child(3n + 1) {
-  animation-delay: -4.3s;
-}
-
-.valance i:nth-child(7n) {
-  height: 86%;
-}
-
-/* stitched hems */
-.valance i::after {
-  position: absolute;
-  right: 8%;
-  bottom: 0.45rem;
-  left: 8%;
-  border-top: 1px dashed rgb(255 255 255 / 30%);
-  content: "";
-}
-
-.valance i:nth-child(even)::after {
-  border-top-color: rgb(0 0 0 / 18%);
-}
-
-@keyframes flap-sway {
-  0%,
-  100% {
-    transform: rotate(0.6deg);
-  }
-  50% {
-    transform: rotate(-0.6deg) skewX(-0.6deg);
-  }
-}
-
 /* ---- the scene ---- */
 
 .scene {
@@ -369,12 +263,6 @@
     padding-top: calc(var(--safe-area-top) + 2.8rem);
   }
 
-  .valance {
-    height: calc(var(--safe-area-top) + 2.6rem);
-    padding-top: calc(var(--safe-area-top) + 0.3rem);
-    gap: 1px;
-  }
-
   .lanternA {
     top: -0.6rem;
     right: -0.4rem;
@@ -393,7 +281,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .scene,
-  .valance i,
   .homePlaque,
   .lanternA,
   .lanternB,

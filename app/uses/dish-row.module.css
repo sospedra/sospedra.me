@@ -81,65 +81,6 @@
   letter-spacing: 0.05em;
 }
 
-/* ---- red-pen marks ---- */
-
-.penRing {
-  position: absolute;
-  inset: -0.55rem -0.75rem -0.5rem -0.65rem;
-  width: calc(100% + 1.4rem);
-  height: calc(100% + 1.05rem);
-  fill: none;
-  opacity: 0.85;
-  pointer-events: none;
-  stroke: #c22413;
-  stroke-linecap: round;
-  stroke-width: 3.2;
-}
-
-.penArrow {
-  position: absolute;
-  top: 0.5rem;
-  left: -3.5rem;
-  width: 3rem;
-  fill: none;
-  opacity: 0.9;
-  pointer-events: none;
-  stroke: #c22413;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 3.4;
-}
-
-/* scribbles in the owner's hand, same marker as the rings */
-.penNote {
-  position: absolute;
-  z-index: 2;
-  color: #c22413;
-  font: 400 1.05rem / 1 var(--font-signage, cursive);
-  letter-spacing: 0.05em;
-  opacity: 0.85;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.penNote[data-note="laptop"] {
-  top: -0.55rem;
-  right: 1.2rem;
-  rotate: -4deg;
-}
-
-.penNote[data-note="chair"] {
-  top: -0.6rem;
-  right: 4.8rem;
-  rotate: 3deg;
-}
-
-.penNote[data-note="gpu"] {
-  top: -0.7rem;
-  right: 5.2rem;
-  rotate: -5deg;
-}
-
 /* ---- the 86'd bowl ---- */
 
 .dishDead {
@@ -182,17 +123,7 @@
   rotate: 5deg;
 }
 
-@media (max-width: 899px) {
-  .penArrow {
-    display: none;
-  }
-}
-
 @media (max-width: 559px) {
-  .penNote {
-    display: none;
-  }
-
   .dishLine {
     flex-wrap: wrap;
     gap: 0.4rem;

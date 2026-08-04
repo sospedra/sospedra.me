@@ -5,6 +5,7 @@ import css from './dish-row.module.css'
 import { type Dish, PRICE, VERDICT_SR } from './menu-data'
 import { NotebookDishEffect } from './notebook-ink'
 import notebook from './notebook-ink.module.css'
+import pen from './pen-marks.module.css'
 
 const PEN_RING_SLOT = 'keyboard'
 const PEN_ARROW_SLOT = 'shell'
@@ -16,7 +17,7 @@ const PEN_NOTES: Partial<Record<string, string>> = {
 function PenRing() {
   return (
     <svg
-      className={css.penRing}
+      className={pen.penRing}
       viewBox='0 0 120 44'
       aria-hidden='true'
       xmlns='http://www.w3.org/2000/svg'
@@ -29,7 +30,7 @@ function PenRing() {
 function PenArrow() {
   return (
     <svg
-      className={css.penArrow}
+      className={pen.penArrow}
       viewBox='0 0 60 40'
       aria-hidden='true'
       xmlns='http://www.w3.org/2000/svg'
@@ -81,7 +82,7 @@ export function DishRow(props: { item: Dish }) {
       {props.item.slot === PEN_ARROW_SLOT && <PenArrow />}
       {note && (
         <span
-          className={css.penNote}
+          className={pen.penNote}
           data-note={props.item.slot}
           aria-hidden='true'
         >
@@ -108,7 +109,7 @@ export function DishRow(props: { item: Dish }) {
 export function DeadDish() {
   return (
     <span className={css.dishDead}>
-      <span className={css.penNote} data-note='gpu' aria-hidden='true'>
+      <span className={pen.penNote} data-note='gpu' aria-hidden='true'>
         only today!
       </span>
       <span className={css.dishLine}>

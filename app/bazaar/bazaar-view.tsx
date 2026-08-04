@@ -13,6 +13,7 @@ import Stall from './market-stall'
 import scene from './scene.module.css'
 import { sfx, soundPreference } from './sounds'
 import { DIMS } from './stall-catalog'
+import { StairsProps } from './stall-props'
 import type { BazaarStallId } from './stalls-manifest'
 import street from './street-backdrop.module.css'
 
@@ -28,6 +29,7 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
         alt=''
         className={street.sTower}
         aria-hidden
+        data-edit-id='street:tower'
       />
       <div className={street.streetBg} />
       <div className={street.sAlleySigns} aria-hidden>
@@ -54,6 +56,7 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
           type='button'
           className={cn(scene.hit, scene.sDoor)}
           data-label='door'
+          data-edit-id='street:door'
           aria-label='enter the market'
           onMouseEnter={() => sfx.hover()}
           onClick={() => {
@@ -87,6 +90,12 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
       >
         <img src={`${STREET}/bus.png`} alt='' />
         <img src={`${STREET}/bus-on.png`} alt='' data-on='' />
+        <div className={scene.sBusPost}>
+          <img src={`${STREET}/bus-post.png`} alt='' />
+          <div className={scene.sBusPostOn}>
+            <img src={`${STREET}/bus-post-on.png`} alt='' />
+          </div>
+        </div>
       </Link>
     </section>
   )
@@ -115,9 +124,13 @@ const MOBILE_FLOORS: MobileFloor[] = [
 
 function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
   const totalWidth = sumBy(spec.stalls, (id) => DIMS[id].width)
-  const stairs = <div className={css.stairs} aria-hidden />
+  const stairs = (
+    <div className={css.stairs} aria-hidden data-edit-id={`stairs:${index}`}>
+      <StairsProps floor={index} />
+    </div>
+  )
   const band = (
-    <div className={css.band} data-stage=''>
+    <div className={css.band} data-stage='' data-edit-id={`band:${index}`}>
       {spec.stalls.map((id) => (
         <Stall key={id} id={id} />
       ))}
@@ -135,6 +148,18 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
         } as React.CSSProperties
       }
     >
+      <div className={css.wallDim} aria-hidden data-edit-id={`wall:${index}`} />
+      {index === 0 && (
+        <div className={css.ratLane} aria-hidden data-edit-id={`rat:${index}`}>
+          <div className={css.ratView}>
+            <img
+              className={css.ratStrip}
+              src='/images/bazaar/ambient/rat-run.png'
+              alt=''
+            />
+          </div>
+        </div>
+      )}
       {spec.stairsRight ? band : stairs}
       {spec.stairsRight ? stairs : band}
     </section>
@@ -154,6 +179,7 @@ function MobileMarketFloor({
   const sm = <div className={css.sm} aria-hidden />
   const stack = (
     <div className={css.stack} data-stage=''>
+      <div className={css.deckM} aria-hidden data-edit-id={`deck:${index}`} />
       {spec.stalls.map((id) => (
         <div key={id} className={css.storyRow}>
           <Stall id={id} />
@@ -241,11 +267,15 @@ export default function BazaarView() {
           </div>
           {DESKTOP_FLOORS.map((spec, i) => (
             <Fragment key={spec.stalls[0]}>
-              <div className={css.sep} data-bazaar-sep={i} />
+              <div
+                className={css.sep}
+                data-bazaar-sep={i}
+                data-edit-id={`sep:${i}`}
+              />
               <MarketFloor spec={spec} index={i} />
             </Fragment>
           ))}
-          <div className={css.sep} data-bazaar-sep={3} />
+          <div className={css.sep} data-bazaar-sep={3} data-edit-id='sep:3' />
           <div className={css.bottomPad} />
         </div>
 

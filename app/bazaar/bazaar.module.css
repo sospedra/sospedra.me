@@ -85,11 +85,100 @@
 }
 
 .floor[data-market-index="2"] {
-  --wf: url("/images/bazaar/arch/wf-min-b2.png");
+  --wf: url("/images/bazaar/arch/wf-wood-c.png");
 }
 
 .floor .stairs {
   margin-left: calc(-1 * var(--shift));
+}
+
+/* editor-dimmable wall veil: spans the WF wall, stops above the walkway
+   strip (177 of the tile's 955 rows = 110.65 of 597 su); opacity is the
+   knob, 0 at rest. Doubles as the viewport-left anchor target. */
+.wallDim {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: calc(var(--su) * 110.65);
+  left: calc(-1 * var(--ml, 0px));
+  width: 100vw;
+  background: #000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* session: floor 2's wood wall reads at bright 0.2 (veil = 1 - bright) */
+.floor[data-market-index="2"] .wallDim {
+  opacity: 0.8;
+}
+
+/* ambient rat: 5-frame strip (2,4,3,5,7) at 80ms/frame; art feet sit
+   23/224 of the cell above its bottom, hence the 40.3su lane bottom */
+.ratLane {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--su) * 40.3);
+  height: calc(var(--su) * 36);
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* explicit sizes only: aspect-ratio + auto width collapse on some engines
+   and preflight img{max-width:100%} squashes auto-width strips */
+.ratView {
+  position: absolute;
+  width: calc(var(--su) * 119.5);
+  height: 100%;
+  overflow: hidden;
+  animation: rat-cross 9s linear infinite;
+}
+
+.ratStrip {
+  display: block;
+  width: 500%;
+  height: 100%;
+  max-width: none;
+  image-rendering: pixelated;
+  animation: rat-run 0.3s steps(5) infinite;
+}
+
+.ratView::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  bottom: 0;
+  width: 64%;
+  height: 16%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(0 0 0 / 0.45),
+    transparent 68%
+  );
+}
+
+@keyframes rat-run {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* the pass takes 60% of the cycle; parked offscreen-left the rest */
+@keyframes rat-cross {
+  0% {
+    left: 100%;
+  }
+  60%,
+  100% {
+    left: calc(var(--su) * -120);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ratLane {
+    display: none;
+  }
 }
 
 .floorR {
@@ -263,6 +352,7 @@
 }
 
 .stack {
+  position: relative;
   flex: 1;
   min-width: 0;
   display: grid;
@@ -271,9 +361,29 @@
 }
 
 .storyRow {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: flex-end;
   min-height: 0;
+}
+
+/* the halfway deck: continues SM's exit deck as a tileable floor line;
+   top edge = the story split, 76/1518 of SM's height tall. Session z:
+   the deck fronts the upper story's stall feet; the x-stretch bleeds
+   the tile seam past the scene's overflow clip */
+.deckM {
+  position: absolute;
+  z-index: 13;
+  left: 0;
+  right: 0;
+  top: calc(var(--sm-split, 0.5) * 100%);
+  height: calc(var(--mfloor-h) * 0.05);
+  background:
+    url("/images/bazaar/arch/deck-m.png") left top / auto 100% repeat-x;
+  image-rendering: pixelated;
+  pointer-events: none;
+  scale: 1.063 1;
 }
 
 @media (max-width: 699px) {

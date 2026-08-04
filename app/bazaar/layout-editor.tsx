@@ -5,12 +5,15 @@ import { createPortal } from 'react-dom'
 import EditorPanel, { type HandleKind } from './editor-panel'
 import scene from './layout-editor.module.css'
 import {
+  ARCH,
   DECO,
   FALLBACK_PX_PER_SU,
+  SEP_SKINS,
   SPAWN_DEFAULTS,
   SPAWN_H,
   type SpawnItem,
   type SpawnKind,
+  WALL_SKINS,
 } from './spawn-catalog'
 import SpawnLayer from './spawn-layer'
 import SpawnTray from './spawn-tray'
@@ -247,9 +250,55 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
 
   const nudgeOpacity = (delta: number) => {
     if (!sel) return
-    const current = Number.parseFloat(sel.el.style.opacity || '1') || 1
-    const next = Math.min(1, Math.max(0.05, current + delta))
+    const parsed = Number.parseFloat(sel.el.style.opacity)
+    const fallback = Number.parseFloat(getComputedStyle(sel.el).opacity)
+    const current = Number.isFinite(parsed) ? parsed : fallback
+    const next = Math.min(1, Math.max(0, current + delta))
     sel.el.style.opacity = String(Math.round(next * 100) / 100)
+    touched.current.add(sel.el)
+    bump((n) => n + 1)
+  }
+
+  /* visibility cycle: everywhere → hide <1690 (regime B) → hide <700 (mobile) */
+  const cycleHideBelow = () => {
+    if (!sel) return
+    const cur = sel.el.dataset.editHideBelow
+    if (cur === '700') delete sel.el.dataset.editHideBelow
+    else sel.el.dataset.editHideBelow = cur === '1690' ? '700' : '1690'
+    touched.current.add(sel.el)
+    bump((n) => n + 1)
+  }
+
+  const cycleWallSkin = () => {
+    if (!sel) return
+    const floor = sel.el.closest<HTMLElement>('[data-floor]')
+    if (!floor) return
+    const currentVar =
+      floor.style.getPropertyValue('--wf') ||
+      getComputedStyle(floor).getPropertyValue('--wf')
+    const current = /\/([\w-]+)\.png/.exec(currentVar)?.[1]
+    const index = WALL_SKINS.indexOf(
+      (current ?? WALL_SKINS[0]) as (typeof WALL_SKINS)[number],
+    )
+    const next = WALL_SKINS[(index + 1) % WALL_SKINS.length]
+    floor.style.setProperty('--wf', `url("${ARCH}/${next}.png")`)
+    sel.el.dataset.editSkin = next
+    touched.current.add(sel.el)
+    bump((n) => n + 1)
+  }
+
+  const cycleSkin = () => {
+    if (!sel) return
+    if (sel.el.dataset.editId?.startsWith('wall:')) {
+      cycleWallSkin()
+      return
+    }
+    const current = /\/([\w-]+)\.png/.exec(sel.el.style.backgroundImage)?.[1]
+    const index = SEP_SKINS.indexOf(
+      (current ?? SEP_SKINS[0]) as (typeof SEP_SKINS)[number],
+    )
+    const next = SEP_SKINS[(index + 1) % SEP_SKINS.length]
+    sel.el.style.backgroundImage = `url("${ARCH}/${next}.png")`
     touched.current.add(sel.el)
     bump((n) => n + 1)
   }
@@ -303,11 +352,11 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
 
   const spawn = (kind: SpawnKind, ref: string) => {
     const defaults = SPAWN_DEFAULTS[kind]
-    if (kind !== 'deco') {
+    if (kind === 'glow' || kind === 'shadow') {
       placeAtCenter(kind, ref, defaults.w, defaults.h, defaults.w)
       return
     }
-    /* deco spawns at its approved size; unknowns via median ratio */
+    /* deco and arch spawn at their approved size; unknowns via median ratio */
     const probe = new Image()
     probe.onload = () => {
       const h =
@@ -315,11 +364,11 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
         Math.min(420, Math.round(probe.naturalHeight / FALLBACK_PX_PER_SU)) ??
         defaults.h
       const centerW = Math.round((h * probe.naturalWidth) / probe.naturalHeight)
-      placeAtCenter('deco', ref, 0, h, centerW)
+      placeAtCenter(kind, ref, 0, h, centerW)
     }
     probe.onerror = () =>
-      placeAtCenter('deco', ref, 0, SPAWN_H[ref] ?? defaults.h, defaults.h)
-    probe.src = `${DECO}/${ref}.png`
+      placeAtCenter(kind, ref, 0, SPAWN_H[ref] ?? defaults.h, defaults.h)
+    probe.src = `${kind === 'arch' ? ARCH : DECO}/${ref}.png`
   }
 
   const copyLayout = () => {
@@ -348,6 +397,8 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
     sel.el.style.zIndex = ''
     sel.el.style.filter = ''
     sel.el.style.opacity = ''
+    sel.el.style.backgroundImage = ''
+    delete sel.el.dataset.editHideBelow
     touched.current.delete(sel.el)
     bump((n) => n + 1)
   }
@@ -374,6 +425,8 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
       el.style.zIndex = ''
       el.style.filter = ''
       el.style.opacity = ''
+      el.style.backgroundImage = ''
+      delete el.dataset.editHideBelow
     }
     touched.current.clear()
     bump((n) => n + 1)
@@ -390,6 +443,8 @@ export default function LayoutEditor({ enabled }: { enabled: boolean }) {
           anchorPicking={anchorPick.current !== null}
           onSetAnchor={toggleAnchorPick}
           onUnanchor={clearAnchor}
+          onCycleHideBelow={cycleHideBelow}
+          onCycleSkin={cycleSkin}
           nudgeBright={nudgeBright}
           nudgeOpacity={nudgeOpacity}
           nudgeZ={nudgeZ}

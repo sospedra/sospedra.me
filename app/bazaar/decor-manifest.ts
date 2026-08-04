@@ -1,31 +1,39 @@
-/* Stall prop constellations, baked from the 2026-08-04 editor session.
+/* Stall prop constellations, baked from the 2026-08-04 editor sessions.
    Every prop anchors to a stall wrap: x/y are sim units from the wrap's
    top-left, so props ride the flex layout through both regimes and every
-   viewport. Spawn-to-spawn anchor chains from the session are composed
-   down to the stall here. z: -1 paints behind the stall art, 1 in front;
-   glows always sit on top (screen blending commutes, order is free). */
+   viewport. Spawn-to-spawn anchor chains from the sessions are composed
+   down to the stall here. z bands: -1 behind the stall art, 1 in front,
+   glows 2, arch frames 3, 4+ rides over the glow wash. */
 
 import type { BazaarStallId } from './stalls-manifest'
 
-export type StallProp =
-  | {
-      kind: 'deco'
-      ref: string
-      x: number
-      y: number
-      h: number
-      z: -1 | 1
-      bright: number
-    }
-  | {
-      kind: 'glow'
-      ref: string
-      x: number
-      y: number
-      w: number
-      h: number
-      bright: number
-    }
+/* visibility floor: the prop hides under this viewport width;
+   1690 = the regime-A boundary where the 1400px container caps growth */
+export type HideBelow = 700 | 1690
+
+export type ImageProp = {
+  kind: 'deco' | 'arch'
+  ref: string
+  x: number
+  y: number
+  h: number
+  z: number
+  bright: number
+  hideBelow?: HideBelow
+}
+
+type GlowSpot = {
+  kind: 'glow'
+  ref: string
+  x: number
+  y: number
+  w: number
+  h: number
+  bright: number
+  hideBelow?: HideBelow
+}
+
+export type StallProp = ImageProp | GlowSpot
 
 const deco = (
   ref: string,
@@ -33,7 +41,7 @@ const deco = (
   y: number,
   h: number,
   bright = 1,
-): StallProp => ({ kind: 'deco', z: -1, ref, x, y, h, bright })
+): ImageProp => ({ kind: 'deco', z: -1, ref, x, y, h, bright })
 
 const front = (
   ref: string,
@@ -41,7 +49,18 @@ const front = (
   y: number,
   h: number,
   bright = 1,
-): StallProp => ({ kind: 'deco', z: 1, ref, x, y, h, bright })
+  z = 1,
+): ImageProp => ({ kind: 'deco', z, ref, x, y, h, bright })
+
+const arch = (ref: string, x: number, y: number, h: number): ImageProp => ({
+  kind: 'arch',
+  z: 3,
+  ref,
+  x,
+  y,
+  h,
+  bright: 1,
+})
 
 const glow = (
   ref: string,
@@ -63,7 +82,6 @@ export const STALL_PROPS = {
   ],
   papers: [
     deco('archive-box', -40.5, 251.7, 120),
-    deco('duct-straps', 414.1, -135.7, 142, 0.7),
     glow('cyan', 100.9, 63.5, 260.9, 197.8, 0.8),
   ],
   manual: [
@@ -101,13 +119,14 @@ export const STALL_PROPS = {
     glow('red', -115.2, 295.1, 165.9, 172.5, 1.4),
   ],
   games: [
-    front('plush-pile', 61.5, 415.3, 81.5),
-    front('joystick-bin', -6.4, 430.1, 65.3),
+    front('plush-pile', -18.6, 435.5, 81.5, 1, 4),
+    front('joystick-bin', 76.2, 435.9, 65.3, 1, 2),
     glow('cyan', 39.4, 163.6, 143.7, 183, 0.8),
     glow('red', -5.8, 20.7, 369.2, 220),
+    arch('beam-v-pipe', -43.4, -85.4, 597),
+    arch('beam-v-pipe', 338, -90.6, 597),
   ],
   travel: [
-    deco('junction-led', 342.4, -63.4, 96.9),
     deco('crate-stack', -69.8, 262.2, 180, 0.8),
     deco('cable-spool', 282.2, 300.6, 136.4, 0.8),
     front('map-barrel', 276.7, 348, 141.7, 0.9),
@@ -117,6 +136,14 @@ export const STALL_PROPS = {
     glow('amber', 167.8, 251.2, 106.5, 106.5),
   ],
 } satisfies Record<BazaarStallId, StallProp[]>
+
+/* stairs-anchored props: x/y in su from the stairs box top-left (110% of
+   floor height, bottom-pinned). Desktop only: the mobile tree has no
+   stairs. Floor 1's stairs are mirrored; props there would flip. */
+export const STAIRS_PROPS: Record<number, ImageProp[]> = {
+  0: [deco('duct-straps', -241, 53.6, 142, 0.7)],
+  2: [deco('junction-led', -98, 55.9, 96.9)],
+}
 
 /* per-stall lift off the band floor (su) and art dim, same session */
 export const STALL_TUNE: Record<BazaarStallId, { lift: number; dim?: number }> =

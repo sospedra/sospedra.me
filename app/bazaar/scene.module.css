@@ -106,6 +106,54 @@
   }
 }
 
+/* mobile swaps the shelter for the flag post: right edge of the same
+   box, the edge nearest the screen center */
+.sBusPost {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  aspect-ratio: 254 / 1334;
+}
+
+@media (max-width: 700px) {
+  .sBus > img {
+    display: none;
+  }
+
+  .sBusPost {
+    display: block;
+  }
+}
+
+/* lit lamp + its glow in one animated wrapper, same law as .sNeonOn;
+   negative delay so the two signs never blink in lockstep */
+.sBusPostOn {
+  position: absolute;
+  inset: 0;
+  animation: neonBlink 8s steps(1, end) -3.7s infinite;
+}
+
+/* ambient halo around the tube: lamp is x47-206 y31-66 of the 254x1334 art */
+.sBusPostOn::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 3.6%;
+  width: 200%;
+  aspect-ratio: 2 / 1;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgb(242 241 238 / 0.3),
+    rgb(242 241 238 / 0.1) 55%,
+    transparent 75%
+  );
+  mix-blend-mode: screen;
+  filter: blur(5px);
+}
+
 /* overlay sprites sit exactly on the baked door/neon geometry of CD:
    neon plate x118-289 y353-423, door x148-302 y444-770 (of 1113x776) */
 .sNeon {

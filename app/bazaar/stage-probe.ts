@@ -1,3 +1,5 @@
+import type { HideBelow } from './decor-manifest'
+
 export const translateOf = (el: HTMLElement) => {
   const [x = '0', y = '0'] = el.style.translate.split(' ')
   return { x: Number.parseFloat(x) || 0, y: Number.parseFloat(y) || 0 }
@@ -109,9 +111,46 @@ export type LayoutEntry = {
   z: number | null
   bright: number
   opacity: number
+  hideBelow?: HideBelow
+  skin?: string
   anchor?: string
   ax?: number
   ay?: number
+}
+
+type Rel = (v: number) => number
+
+/* spawn origin, visibility floor, and the sep/wall skin, read off the element */
+const editFlags = (el: HTMLElement) => {
+  const flags: Pick<LayoutEntry, 'spawn' | 'hideBelow' | 'skin'> = {}
+  if (el.dataset.editSpawn) flags.spawn = el.dataset.editSpawn
+  const hideBelow = Number(el.dataset.editHideBelow)
+  if (hideBelow === 700 || hideBelow === 1690) flags.hideBelow = hideBelow
+  const skinUrl = /url\("([^"]+)"\)/.exec(el.style.backgroundImage)?.[1]
+  const skin =
+    skinUrl?.split('/').pop()?.replace('.png', '') ?? el.dataset.editSkin
+  if (skin) flags.skin = skin
+  return flags
+}
+
+const anchorFields = (
+  el: HTMLElement,
+  floor: HTMLElement | null,
+  rect: DOMRect,
+  rel: Rel,
+): Pick<LayoutEntry, 'anchor' | 'ax' | 'ay'> => {
+  const anchorId = el.dataset.editAnchor
+  if (!anchorId) return {}
+  const target =
+    floor?.querySelector<HTMLElement>(`[data-edit-id="${anchorId}"]`) ??
+    document.querySelector<HTMLElement>(`[data-edit-id="${anchorId}"]`)
+  if (!target) return {}
+  const ar = target.getBoundingClientRect()
+  return {
+    anchor: anchorId,
+    ax: rel(rect.left - ar.left),
+    ay: rel(rect.top - ar.top),
+  }
 }
 
 export const layoutEntry = (el: HTMLElement, su: number): LayoutEntry => {
@@ -127,7 +166,7 @@ export const layoutEntry = (el: HTMLElement, su: number): LayoutEntry => {
     (stageRect && stageRect.width > 0 ? stageRect : undefined) ??
     floor?.getBoundingClientRect()
   const localSu = street ? hostSu(street) : su
-  const rel = (v: number) => Math.round((v / localSu) * 10) / 10
+  const rel: Rel = (v) => Math.round((v / localSu) * 10) / 10
   const entry: LayoutEntry = {
     id: el.dataset.editId ?? '?',
     floor: floor ? visibleFloors().indexOf(floor) : -1,
@@ -146,21 +185,10 @@ export const layoutEntry = (el: HTMLElement, su: number): LayoutEntry => {
         el.style.scale.split(' ')[1] ?? el.style.scale.split(' ')[0] ?? '1',
       ) || 1,
     z: el.style.zIndex === '' ? null : Number.parseInt(el.style.zIndex, 10),
+    ...editFlags(el),
+    ...anchorFields(el, floor, rect, rel),
   }
   if (sep) entry.host = `sep:${sep.dataset.bazaarSep}`
   if (street) entry.host = 'street'
-  if (el.dataset.editSpawn) entry.spawn = el.dataset.editSpawn
-  const anchorId = el.dataset.editAnchor
-  if (anchorId) {
-    const target =
-      floor?.querySelector<HTMLElement>(`[data-edit-id="${anchorId}"]`) ??
-      document.querySelector<HTMLElement>(`[data-edit-id="${anchorId}"]`)
-    if (target) {
-      const ar = target.getBoundingClientRect()
-      entry.anchor = anchorId
-      entry.ax = rel(rect.left - ar.left)
-      entry.ay = rel(rect.top - ar.top)
-    }
-  }
   return entry
 }

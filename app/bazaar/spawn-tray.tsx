@@ -4,7 +4,61 @@ import { useState } from 'react'
 import { DECO_INVENTORY } from './deco-inventory'
 import { GLOW_COLORS } from './decor-manifest'
 import scene from './layout-editor.module.css'
-import { DECO, GLOW_KEYS, type SpawnKind } from './spawn-catalog'
+import {
+  ARCH,
+  ARCH_INVENTORY,
+  DECO,
+  GLOW_KEYS,
+  type SpawnKind,
+} from './spawn-catalog'
+
+function SpawnCell({
+  id,
+  kind,
+  spawn,
+}: {
+  id: string
+  kind: SpawnKind
+  spawn: (kind: SpawnKind, ref: string) => void
+}) {
+  const base = kind === 'arch' ? ARCH : DECO
+  return (
+    <button
+      type='button'
+      title={`${id} — spawns at viewport center`}
+      style={{
+        padding: 3,
+        background: kind === 'arch' ? '#1b2214' : '#141827',
+        border: '1px solid #333',
+        cursor: 'pointer',
+        color: '#8b93a2',
+      }}
+      onClick={() => spawn(kind, id)}
+    >
+      <img
+        src={`${base}/${id}.png`}
+        alt={id}
+        loading='lazy'
+        style={{
+          width: '100%',
+          height: 72,
+          objectFit: 'contain',
+        }}
+      />
+      <div
+        style={{
+          fontSize: 9,
+          lineHeight: '11px',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {id}
+      </div>
+    </button>
+  )
+}
 
 export default function SpawnTray({
   spawn,
@@ -14,6 +68,7 @@ export default function SpawnTray({
   const [showList, setShowList] = useState(true)
   const [filter, setFilter] = useState('')
 
+  const shownArch = ARCH_INVENTORY.filter((id) => id.includes(filter))
   const shownProps = DECO_INVENTORY.filter((id) => id.includes(filter))
 
   return (
@@ -73,42 +128,11 @@ export default function SpawnTray({
               overflowY: 'auto',
             }}
           >
+            {shownArch.map((id) => (
+              <SpawnCell key={id} id={id} kind='arch' spawn={spawn} />
+            ))}
             {shownProps.map((id) => (
-              <button
-                key={id}
-                type='button'
-                title={`${id} — spawns at viewport center`}
-                style={{
-                  padding: 3,
-                  background: '#141827',
-                  border: '1px solid #333',
-                  cursor: 'pointer',
-                  color: '#8b93a2',
-                }}
-                onClick={() => spawn('deco', id)}
-              >
-                <img
-                  src={`${DECO}/${id}.png`}
-                  alt={id}
-                  loading='lazy'
-                  style={{
-                    width: '100%',
-                    height: 72,
-                    objectFit: 'contain',
-                  }}
-                />
-                <div
-                  style={{
-                    fontSize: 9,
-                    lineHeight: '11px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {id}
-                </div>
-              </button>
+              <SpawnCell key={id} id={id} kind='deco' spawn={spawn} />
             ))}
           </div>
         </>

@@ -1,8 +1,49 @@
 import { GLOW_COLORS } from './decor-manifest'
 
 export const DECO = '/images/bazaar/deco'
+export const ARCH = '/images/bazaar/arch'
 
-export type SpawnKind = 'deco' | 'glow' | 'shadow'
+/* structural pieces spawnable as loose props */
+export const ARCH_INVENTORY = [
+  'beam-v',
+  'beam-v-thin',
+  'beam-v-lattice',
+  'beam-v-pipe',
+  'beam-v-timber',
+  'beam-h-tile',
+  'beam-h-alt-a',
+  'beam-h-alt-b',
+  'beam-h-alt-c',
+  'beam-h-cable',
+  'beam-h-catwalk',
+  'stairs',
+  'sm',
+  'deck-m',
+  'wf-tile',
+  'wf-min-a2',
+  'wf-min-b2',
+  'wf-wood-c',
+] as const
+
+/* the in-between band skins the editor cycles through */
+export const SEP_SKINS = [
+  'beam-h-tile',
+  'beam-h-alt-a',
+  'beam-h-alt-b',
+  'beam-h-alt-c',
+  'beam-h-cable',
+  'beam-h-catwalk',
+] as const
+
+/* the WF wall skins the editor cycles through (sets the floor's --wf) */
+export const WALL_SKINS = [
+  'wf-tile',
+  'wf-min-a2',
+  'wf-min-b2',
+  'wf-wood-c',
+] as const
+
+export type SpawnKind = 'deco' | 'arch' | 'glow' | 'shadow'
 
 export type SpawnItem = {
   key: string
@@ -22,6 +63,7 @@ export const SPAWN_DEFAULTS: Record<
   { w: number; h: number; z: number }
 > = {
   deco: { w: 0, h: 160, z: 2 },
+  arch: { w: 0, h: 300, z: 2 },
   glow: { w: 220, h: 220, z: 4 },
   shadow: { w: 220, h: 110, z: 4 },
 }
@@ -29,6 +71,24 @@ export const SPAWN_DEFAULTS: Record<
 /* spawn heights in su, baked from the editor session (the sizes
    that made each prop's art-pixel grain sit right in the scene) */
 export const SPAWN_H: Record<string, number> = {
+  'beam-v': 597,
+  'beam-v-thin': 597,
+  'beam-v-lattice': 597,
+  'beam-v-pipe': 597,
+  'beam-v-timber': 597,
+  'beam-h-tile': 225,
+  'beam-h-alt-a': 225,
+  'beam-h-alt-b': 225,
+  'beam-h-alt-c': 225,
+  'beam-h-cable': 225,
+  'beam-h-catwalk': 225,
+  stairs: 657,
+  sm: 597,
+  'deck-m': 60,
+  'wf-tile': 597,
+  'wf-min-a2': 597,
+  'wf-min-b2': 597,
+  'wf-wood-c': 597,
   'archive-box': 120,
   'barrel-dented': 152,
   'bowl-tower': 83,

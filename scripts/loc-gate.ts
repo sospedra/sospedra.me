@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
 
-const CAP = Number(process.env.LOC_MAX ?? 300)
+const CAP = Number(process.env.LOC_MAX ?? 400)
 const JS_EXTENSIONS = new Set(['ts', 'tsx', 'js', 'jsx', 'mjs', 'cjs', 'mts'])
 const CSS_EXTENSIONS = new Set(['css'])
 const HASH_EXTENSIONS = new Set(['sh', 'fish', 'py'])

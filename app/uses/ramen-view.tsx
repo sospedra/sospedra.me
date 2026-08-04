@@ -12,6 +12,8 @@ import paper from './menu-sheet.module.css'
 import { NeonRamen } from './neon-marquee'
 import { NotebookFilters } from './notebook-ink'
 import css from './ramen.module.css'
+import wear from './sheet-stains.module.css'
+import valance from './valance-flaps.module.css'
 
 const FLAPS = [...'ABCDEFGHIJKLMNOPQRSTUV']
 
@@ -37,7 +39,7 @@ export default function RamenView(props: { level: number }) {
         fight me.
       </p>
 
-      <div className={cn(css.valance, fx.valance)} aria-hidden='true'>
+      <div className={cn(valance.valance, fx.valance)} aria-hidden='true'>
         {FLAPS.map((flap) => (
           <i key={flap} />
         ))}
@@ -60,12 +62,12 @@ export default function RamenView(props: { level: number }) {
           <i className={cn(paper.tape, paper.tapeRight)} aria-hidden='true' />
           <i className={cn(paper.tape, paper.tapeSideL)} aria-hidden='true' />
           <i className={cn(paper.tape, paper.tapeSideR)} aria-hidden='true' />
-          <i className={paper.wear} aria-hidden='true' />
-          <i className={paper.stainRing} aria-hidden='true' />
-          <i className={paper.stainDrops} aria-hidden='true' />
-          <i className={paper.stainBowl} aria-hidden='true' />
-          <i className={paper.stainSplat} aria-hidden='true' />
-          <i className={paper.stainRun} aria-hidden='true' />
+          <i className={wear.wear} aria-hidden='true' />
+          <i className={wear.stainRing} aria-hidden='true' />
+          <i className={wear.stainDrops} aria-hidden='true' />
+          <i className={wear.stainBowl} aria-hidden='true' />
+          <i className={wear.stainSplat} aria-hidden='true' />
+          <i className={wear.stainRun} aria-hidden='true' />
           <Charms />
           <NotebookFilters />
 

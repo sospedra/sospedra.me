@@ -7,12 +7,14 @@
   image-rendering: pixelated;
 }
 
-/* the lone red tower: the tallest silhouette, appears exactly once */
+/* the lone red tower: the tallest silhouette, appears exactly once.
+   Centering via margin, not translate: the editor owns translate. */
 .sTower {
   position: absolute;
-  /* right of the bazaar door, deep behind the skyline, tallest peak */
+  /* right of the bazaar door, deep behind the skyline, tallest peak;
+     art is 317x1510, so width = 64svh * 0.2099 and margin = half */
   left: 63vw;
-  translate: -50% 0;
+  margin-left: -6.72svh;
   bottom: 34svh;
   height: 64svh;
   pointer-events: none;

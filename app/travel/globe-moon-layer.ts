@@ -5,6 +5,7 @@ import {
   viewRotation,
 } from './globe-projection'
 import { lunarOrbitAtVisit } from './lunar-position'
+import { orbitPaths } from './orbit-paths'
 
 const LUNAR_SVG_SIZE = 1000
 const LUNAR_ORBIT_SAMPLES = 48
@@ -64,44 +65,18 @@ export const createMoonPainter = (moonRef: MoonRef) => {
     const rotation = viewRotation(view.phi, view.theta)
 
     if (hasLunarOrbit && updateOrbit) {
-      let backPath = ''
-      let frontPath = ''
-      let previous: { front: boolean; x: number; y: number } | undefined
-
-      for (const point of lunarVisit.orbit) {
-        const projected = projectLunarPoint(point, view, rotation)
-        const next = {
-          front: projected.z >= 0,
-          x: projected.x * LUNAR_SVG_SIZE,
-          y: projected.y * LUNAR_SVG_SIZE,
-        }
-        const coordinate = `${next.x.toFixed(1)} ${next.y.toFixed(1)}`
-
-        if (!previous) {
-          if (next.front) frontPath = `M ${coordinate}`
-          else backPath = `M ${coordinate}`
-          previous = next
-          continue
-        }
-
-        if (previous.front === next.front) {
-          if (next.front) frontPath += ` L ${coordinate}`
-          else backPath += ` L ${coordinate}`
-        } else {
-          const previousCoordinate = `${previous.x.toFixed(1)} ${previous.y.toFixed(1)}`
-          if (previous.front) {
-            frontPath += ` L ${coordinate}`
-            backPath += ` M ${previousCoordinate} L ${coordinate}`
-          } else {
-            backPath += ` L ${coordinate}`
-            frontPath += ` M ${previousCoordinate} L ${coordinate}`
+      const trails = orbitPaths(
+        lunarVisit.orbit.map((point) => {
+          const projected = projectLunarPoint(point, view, rotation)
+          return {
+            front: projected.z >= 0,
+            x: projected.x * LUNAR_SVG_SIZE,
+            y: projected.y * LUNAR_SVG_SIZE,
           }
-        }
-        previous = next
-      }
-
-      back.orbit?.current?.setAttribute('d', backPath)
-      front.orbit?.current?.setAttribute('d', frontPath)
+        }),
+      )
+      back.orbit?.current?.setAttribute('d', trails.back)
+      front.orbit?.current?.setAttribute('d', trails.front)
     }
 
     const current = projectLunarPoint(lunarVisit.current, view, rotation)

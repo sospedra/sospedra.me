@@ -28,6 +28,48 @@ export function NotebookDishEffect() {
   )
 }
 
+type NoiseFilterSpec = {
+  id: string
+  overscan: number
+  scale: number
+  seed?: number
+}
+
+const NOISE_FILTERS: NoiseFilterSpec[] = [
+  { id: 'usesNotebookNoise', overscan: 20, scale: 3 },
+  { id: 'usesNotebookNoiseAlt', overscan: 20, scale: 3, seed: 1010 },
+  { id: 'usesNotebookNoisePress', overscan: 30, scale: 6 },
+  { id: 'usesNotebookNoisePressAlt', overscan: 30, scale: 6, seed: 1010 },
+]
+
+function NoiseFilter({ id, overscan, scale, seed }: NoiseFilterSpec) {
+  const span = `${100 + overscan * 2}%`
+  return (
+    <filter
+      id={id}
+      x={`-${overscan}%`}
+      y={`-${overscan}%`}
+      width={span}
+      height={span}
+    >
+      <feTurbulence
+        result='noise'
+        numOctaves='8'
+        baseFrequency='0.1'
+        seed={seed}
+        type='fractalNoise'
+      />
+      <feDisplacementMap
+        in='SourceGraphic'
+        in2='noise'
+        scale={scale}
+        xChannelSelector='R'
+        yChannelSelector='G'
+      />
+    </filter>
+  )
+}
+
 export function NotebookFilters() {
   return (
     <svg
@@ -39,92 +81,9 @@ export function NotebookFilters() {
       xmlns='http://www.w3.org/2000/svg'
     >
       <defs>
-        <filter
-          id='usesNotebookNoise'
-          x='-20%'
-          y='-20%'
-          width='140%'
-          height='140%'
-        >
-          <feTurbulence
-            result='noise'
-            numOctaves='8'
-            baseFrequency='0.1'
-            type='fractalNoise'
-          />
-          <feDisplacementMap
-            in='SourceGraphic'
-            in2='noise'
-            scale='3'
-            xChannelSelector='R'
-            yChannelSelector='G'
-          />
-        </filter>
-        <filter
-          id='usesNotebookNoiseAlt'
-          x='-20%'
-          y='-20%'
-          width='140%'
-          height='140%'
-        >
-          <feTurbulence
-            result='noise'
-            numOctaves='8'
-            baseFrequency='0.1'
-            seed='1010'
-            type='fractalNoise'
-          />
-          <feDisplacementMap
-            in='SourceGraphic'
-            in2='noise'
-            scale='3'
-            xChannelSelector='R'
-            yChannelSelector='G'
-          />
-        </filter>
-        <filter
-          id='usesNotebookNoisePress'
-          x='-30%'
-          y='-30%'
-          width='160%'
-          height='160%'
-        >
-          <feTurbulence
-            result='noise'
-            numOctaves='8'
-            baseFrequency='0.1'
-            type='fractalNoise'
-          />
-          <feDisplacementMap
-            in='SourceGraphic'
-            in2='noise'
-            scale='6'
-            xChannelSelector='R'
-            yChannelSelector='G'
-          />
-        </filter>
-        <filter
-          id='usesNotebookNoisePressAlt'
-          x='-30%'
-          y='-30%'
-          width='160%'
-          height='160%'
-        >
-          <feTurbulence
-            result='noise'
-            numOctaves='8'
-            baseFrequency='0.1'
-            seed='1010'
-            type='fractalNoise'
-          />
-          <feDisplacementMap
-            in='SourceGraphic'
-            in2='noise'
-            scale='6'
-            xChannelSelector='R'
-            yChannelSelector='G'
-          />
-        </filter>
+        {NOISE_FILTERS.map((spec) => (
+          <NoiseFilter key={spec.id} {...spec} />
+        ))}
       </defs>
     </svg>
   )

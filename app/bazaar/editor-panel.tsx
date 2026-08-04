@@ -29,6 +29,39 @@ const HANDLES: { kind: HandleKind; cursor: string }[] = [
   { kind: 'br', cursor: 'nwse-resize' },
 ]
 
+const hideLabel = (hideBelow: LayoutEntry['hideBelow']) =>
+  hideBelow ? `hide <${hideBelow} ▸` : 'show all ▸'
+
+function SelectedInfo({ selected }: { selected: LayoutEntry | null }) {
+  if (!selected) {
+    return <div className={scene.editPanelSel}>click anything outlined</div>
+  }
+  return (
+    <div className={scene.editPanelSel}>
+      <strong>{selected.id}</strong> f{selected.floor}
+      {selected.host && <> {selected.host}</>}
+      <br />x {selected.x} · y {selected.y}
+      <br />w {selected.w} · h {selected.h} · s {selected.scale}×
+      {selected.scaleY}
+      {selected.z !== null && <> · z {selected.z}</>}
+      {selected.hideBelow !== undefined && (
+        <>
+          {' '}
+          · hide {'<'}
+          {selected.hideBelow}
+        </>
+      )}
+      {selected.skin && <> · {selected.skin}</>}
+      {selected.anchor && (
+        <>
+          <br />
+          anchor {selected.anchor} +{selected.ax},{selected.ay}
+        </>
+      )}
+    </div>
+  )
+}
+
 const handlePos = (kind: HandleKind, r: DOMRect) => {
   const cx = r.left + r.width / 2 - 5
   const cy = r.top + r.height / 2 - 5
@@ -52,6 +85,8 @@ export default function EditorPanel(props: {
   anchorPicking: boolean
   onSetAnchor: () => void
   onUnanchor: () => void
+  onCycleHideBelow: () => void
+  onCycleSkin: () => void
   nudgeBright: (delta: number) => void
   nudgeOpacity: (delta: number) => void
   nudgeZ: (delta: number) => void
@@ -69,6 +104,8 @@ export default function EditorPanel(props: {
     anchorPicking,
     onSetAnchor,
     onUnanchor,
+    onCycleHideBelow,
+    onCycleSkin,
     nudgeBright,
     nudgeOpacity,
     nudgeZ,
@@ -151,24 +188,7 @@ export default function EditorPanel(props: {
           layout editor v5 ⠿
         </div>
         <div>drag = move · corners = scale · edges = one axis</div>
-        {selected ? (
-          <div className={scene.editPanelSel}>
-            <strong>{selected.id}</strong> f{selected.floor}
-            {selected.host && <> {selected.host}</>}
-            <br />x {selected.x} · y {selected.y}
-            <br />w {selected.w} · h {selected.h} · s {selected.scale}×
-            {selected.scaleY}
-            {selected.z !== null && <> · z {selected.z}</>}
-            {selected.anchor && (
-              <>
-                <br />
-                anchor {selected.anchor} +{selected.ax},{selected.ay}
-              </>
-            )}
-          </div>
-        ) : (
-          <div className={scene.editPanelSel}>click anything outlined</div>
-        )}
+        <SelectedInfo selected={selected} />
         <div className={scene.editPanelRow}>
           <button type='button' onClick={onSetAnchor}>
             {anchorPicking ? 'click target…' : 'set anchor'}
@@ -201,6 +221,15 @@ export default function EditorPanel(props: {
           </button>
         </div>
         <div className={scene.editPanelRow}>
+          <button type='button' onClick={onCycleHideBelow}>
+            {hideLabel(selected?.hideBelow)}
+          </button>
+          {(selected?.id.startsWith('sep:') ||
+            selected?.id.startsWith('wall:')) && (
+            <button type='button' onClick={onCycleSkin}>
+              skin ▸
+            </button>
+          )}
           <button type='button' onClick={deleteSelected}>
             delete
           </button>

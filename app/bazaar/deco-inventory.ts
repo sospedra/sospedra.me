@@ -26,6 +26,8 @@ export const DECO_INVENTORY = [
   'dead-lamp',
   'dead-vending',
   'desk-lamp',
+  'dirt-flat',
+  'dirt-mound',
   'down-off',
   'down-on',
   'drone-perch',
