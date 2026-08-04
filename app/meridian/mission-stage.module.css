@@ -1,0 +1,394 @@
+.missionGrid {
+  display: grid;
+  width: min(100%, 78rem);
+  height: 100%;
+  min-height: 0;
+  margin-inline: auto;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  padding: clamp(0.8rem, 2vh, 1.35rem)
+    max(1rem, calc(var(--safe-area-right) + 0.6rem))
+    max(0.85rem, calc(var(--safe-area-bottom) + 0.6rem))
+    max(1rem, calc(var(--safe-area-left) + 0.6rem));
+  gap: clamp(0.55rem, 1vh, 0.8rem);
+}
+
+.roundRail {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  border-right: 1px solid var(--geo-line);
+  padding-right: clamp(0.65rem, 1.3vw, 1.2rem);
+}
+
+.railHeader {
+  display: flex;
+  min-height: 2.8rem;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--geo-line);
+  color: var(--geo-sand-muted);
+  font: 600 0.55rem / 1 var(--font-code);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.railHeader strong {
+  color: var(--geo-amber-bright);
+  font-size: 0.72rem;
+}
+
+.roundList {
+  display: grid;
+  margin: 0;
+  padding: clamp(0.75rem, 2vh, 1.2rem) 0;
+  gap: 0.35rem;
+  list-style: none;
+}
+
+.roundItem {
+  position: relative;
+  display: grid;
+  min-height: 4.4rem;
+  align-content: center;
+  grid-template-columns: 2.2rem 1fr;
+  padding: 0.5rem 0.45rem;
+  border-left: 2px solid transparent;
+  color: var(--geo-sand-muted);
+  gap: 0.6rem;
+}
+
+.roundItem[data-state="active"] {
+  border-left-color: var(--geo-amber);
+  background: linear-gradient(90deg, rgb(221 145 72 / 12%), transparent);
+  color: var(--geo-sand-bright);
+}
+
+.roundItem[data-state="complete"] {
+  color: var(--geo-olive);
+}
+
+.roundIndex {
+  display: grid;
+  width: 2.1rem;
+  height: 2.1rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font: 700 0.62rem / 1 var(--font-code);
+}
+
+.roundItem[data-state="active"] .roundIndex {
+  border-color: var(--geo-amber);
+  color: var(--geo-amber-bright);
+  box-shadow: inset 0 0 0 0.25rem var(--geo-panel);
+  background: var(--geo-amber-deep);
+}
+
+.roundItem strong,
+.roundItem small {
+  display: block;
+}
+
+.roundItem strong {
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.roundItem small {
+  margin-top: 0.26rem;
+  color: inherit;
+  font: 0.52rem / 1 var(--font-code);
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  text-transform: uppercase;
+}
+
+.railTelemetry {
+  display: grid;
+  margin-top: auto;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--geo-line);
+  gap: 0.7rem;
+}
+
+.telemetryDatum {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  color: var(--geo-sand-muted);
+  font: 600 0.52rem / 1 var(--font-code);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.telemetryDatum strong {
+  color: var(--geo-sand-bright);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.questionDeck {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.questionHeader {
+  display: grid;
+  min-height: 4.4rem;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 0.45rem 0.2rem 0.7rem;
+  border-bottom: 1px solid var(--geo-line);
+  gap: 1rem;
+}
+
+.questionHeaderCopy {
+  composes: questionHeaderCopy from "./geo-game.module.css";
+  min-width: 0;
+}
+
+.questionHeaderCopy p,
+.questionHeaderCopy h2 {
+  margin: 0;
+}
+
+.questionHeaderCopy p {
+  color: var(--geo-signal-bright);
+  font: 700 0.56rem / 1.2 var(--font-code);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.questionHeaderCopy h2 {
+  margin-top: 0.35rem;
+  overflow: hidden;
+  color: var(--geo-sand-bright);
+  font-size: clamp(1rem, 2vw, 1.45rem);
+  font-weight: 600;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  text-wrap: balance;
+}
+
+.feedbackSlot {
+  min-height: 4.4rem;
+}
+
+.missionGrid {
+  padding-top: clamp(0.95rem, 2.2vh, 1.5rem);
+}
+
+.questionDeck {
+  padding: 0.65rem;
+  border: var(--geo-outline);
+  background: #201b42;
+  box-shadow:
+    5px 5px 0 var(--geo-pink),
+    9px 9px 0 var(--geo-arcade-ink);
+}
+
+.questionHeader {
+  min-height: 4.65rem;
+  padding: 0.35rem 0 0.65rem;
+  border-bottom: 3px solid var(--geo-arcade-ink);
+}
+
+.questionHeaderCopy p {
+  display: inline-flex;
+  padding: 0.3rem 0.45rem;
+  border: 2px solid var(--geo-arcade-ink);
+  background: var(--geo-signal);
+  color: var(--geo-arcade-ink);
+  font-weight: 800;
+  box-shadow: 2px 2px 0 var(--geo-arcade-ink);
+}
+
+.questionHeaderCopy h2 {
+  color: var(--geo-paper-bright);
+  font-weight: 800;
+}
+
+@media (max-width: 1120px) {
+  .missionGrid {
+    width: min(100%, 72rem);
+  }
+
+  .roundItem {
+    grid-template-columns: 1.8rem 1fr;
+    padding-inline: 0.25rem;
+    gap: 0.4rem;
+  }
+
+  .roundIndex {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .missionGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    padding: 0.45rem max(0.7rem, calc(var(--safe-area-right) + 0.45rem))
+      max(0.55rem, calc(var(--safe-area-bottom) + 0.4rem))
+      max(0.7rem, calc(var(--safe-area-left) + 0.45rem));
+    gap: 0.45rem;
+  }
+
+  .roundRail {
+    display: block;
+    border-right: 0;
+    padding-right: 0;
+  }
+
+  .railHeader,
+  .railTelemetry {
+    display: none;
+  }
+
+  .roundList {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 0;
+    gap: 0.2rem;
+  }
+
+  .roundItem {
+    min-height: 2rem;
+    grid-template-columns: auto 1fr;
+    padding: 0.2rem 0.3rem;
+    border-top: 2px solid transparent;
+    border-left: 0;
+  }
+
+  .roundItem[data-state="active"] {
+    border-top-color: var(--geo-amber);
+  }
+
+  .roundIndex {
+    width: 1.3rem;
+    height: 1.3rem;
+    font-size: 0.5rem;
+  }
+
+  .roundItem strong {
+    overflow: hidden;
+    font: 600 0.54rem / 1 var(--font-code);
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .roundItem small {
+    display: none;
+  }
+
+  .questionDeck {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .questionHeader {
+    min-height: 3.85rem;
+    padding: 0.35rem 0.15rem 0.45rem;
+    gap: 0.45rem;
+  }
+
+  .questionHeaderCopy p {
+    font-size: 0.48rem;
+  }
+
+  .questionHeaderCopy h2 {
+    margin-top: 0.25rem;
+    font-size: clamp(0.82rem, 3.8vw, 1.05rem);
+  }
+
+  .feedbackSlot {
+    min-height: 3.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .roundItem strong {
+    font-size: 0.46rem;
+  }
+
+  .questionHeaderCopy h2 {
+    max-width: 16rem;
+  }
+}
+
+@media (max-height: 650px) and (min-width: 801px) {
+  .missionGrid {
+    padding-block: 0.55rem;
+  }
+
+  .roundItem {
+    min-height: 3.4rem;
+  }
+
+  .questionHeader,
+  .consoleHud {
+    min-height: 3.5rem;
+  }
+}
+
+@media (max-width: 800px) and (max-height: 540px) and (orientation: landscape) {
+  /* An empty feedback reservation was consuming half the artifact window.
+     Collapse it until feedback exists, then size the circular shape stage by
+     available viewport height so the silhouette cannot live below the clip. */
+  .feedbackSlot:empty {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 800px) {
+  .questionDeck {
+    padding: 0.4rem;
+    box-shadow:
+      3px 3px 0 var(--geo-pink),
+      6px 6px 0 var(--geo-arcade-ink);
+  }
+
+  .questionHeader {
+    border-bottom-width: 2px;
+  }
+
+  .questionHeaderCopy p {
+    padding: 0.22rem 0.32rem;
+    box-shadow: 1px 1px 0 var(--geo-arcade-ink);
+  }
+}
+
+@media (max-width: 480px) {
+  .questionDeck {
+    box-shadow:
+      2px 2px 0 var(--geo-pink),
+      4px 4px 0 var(--geo-arcade-ink);
+  }
+}
+
+@media (max-height: 650px) and (min-width: 801px) {
+  .questionDeck {
+    padding: 0.4rem;
+  }
+}
+
+/* portrait phones: telemetry takes its own row, the question keeps the
+   full line instead of ellipsizing beside a 200px cluster */
+@media (max-width: 559px) and (min-height: 621px) {
+  .questionHeader {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.4rem;
+  }
+
+  .questionHeaderCopy h2 {
+    max-width: none;
+  }
+}

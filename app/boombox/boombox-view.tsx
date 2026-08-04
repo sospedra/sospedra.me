@@ -31,6 +31,7 @@ import {
   UNLOCKS,
   unlockedSeconds,
 } from './engine'
+import pen from './guess-line.module.css'
 import songsJson from './songs.json'
 import { SCORE_LABEL } from './tracklist-card'
 import { EQ_BANDS, useClipAudio } from './use-clip-audio'
@@ -308,7 +309,7 @@ function BoomboxMachine({
      ids keep the combobox wiring valid while css shows a single surface */
   const guessInput = (resultsId: string, desk: boolean) => (
     <input
-      className={css.noteInput}
+      className={pen.noteInput}
       type='text'
       value={query}
       placeholder='artist or title…'
@@ -336,7 +337,7 @@ function BoomboxMachine({
   const guessDropdown = (resultsId: string) =>
     results.length > 0 && (
       <div
-        className={css.searchDropdown}
+        className={pen.searchDropdown}
         id={resultsId}
         role='listbox'
         /* picking a result must not blur the pen: blur would drop the
@@ -351,7 +352,7 @@ function BoomboxMachine({
             role='option'
             tabIndex={-1}
             aria-selected={index === cursor}
-            className={css.songRow}
+            className={pen.songRow}
             data-cursor={index === cursor}
             onMouseEnter={() => setCursor(index)}
             onClick={() => onGuess(song)}

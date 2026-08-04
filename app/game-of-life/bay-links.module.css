@@ -1,0 +1,192 @@
+@reference "../../services/style/global.css";
+
+.patternClose,
+.protocolLink,
+.sourceLink {
+  transform: translateY(-0.08rem);
+  transition:
+    transform 70ms steps(2, end),
+    box-shadow 70ms steps(2, end),
+    filter 70ms linear;
+}
+.patternClose:active,
+.protocolLink:active,
+.sourceLink:active {
+  box-shadow: var(--life-key-pressed);
+  filter: brightness(0.92);
+  transform: translateY(0.3rem);
+}
+
+.protocolLink,
+.patternClose {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-radius: 0.18rem;
+  padding: 0.45rem 0.7rem;
+  font: 800 0.45rem / 1 var(--font-code);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.protocolLink {
+  --life-key-base: #020a0e;
+  --life-key-edge: #102a32;
+
+  border-color: #315361 #07161c #061318 #274852;
+  color: var(--life-cyan);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 9%), transparent 36%), #0b1e28;
+  box-shadow: var(--life-key-raised);
+}
+
+.patternClose {
+  --life-key-edge: #747262;
+
+  gap: 0.5rem;
+  border-color: #f4edd2 #706f63 #5d5d53 #e4dec4;
+  color: var(--life-panel-ink);
+  background:
+    radial-gradient(circle at 22% 15%, rgb(255 255 255 / 55%), transparent 30%),
+    linear-gradient(145deg, #e8e3cd, var(--life-bone) 64%, #b3b09c);
+  box-shadow: var(--life-key-raised);
+}
+
+.patternClose span {
+  color: var(--life-red);
+  font-size: 0.9rem;
+}
+
+.sourceLink {
+  --life-key-base: #030a0d;
+  --life-key-edge: #0d2329;
+
+  display: inline-flex;
+  min-width: 3.8rem;
+  min-height: 44px;
+  grid-column: 2;
+  grid-row: 1;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-color: #375159 #0c1d22 #09191d #30494f;
+  border-radius: 0.14rem;
+  padding: 0.2rem 0.35rem;
+  color: #8da29f;
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 7%), transparent 38%), #13262c;
+  box-shadow: var(--life-key-raised);
+  font: 800 0.38rem / 1 var(--font-code);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.sourceLink {
+  border-color: #4f5149;
+}
+
+.protocolLink {
+  --life-key-base: #171814;
+  --life-key-edge: #5b5e55;
+
+  border-color: #74776e #22231e #171814 #66685f;
+  color: var(--life-cyan);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 10%), transparent 36%), #292b25;
+}
+
+.patternClose {
+  --life-key-edge: #777163;
+  --life-key-base: #24251f;
+
+  border-color: #f4edd7 #706b60 #5d594f #e4dbc7;
+  background:
+    radial-gradient(circle at 22% 15%, rgb(255 255 255 / 60%), transparent 30%),
+    linear-gradient(145deg, #ebe3d0, #cec5b0 64%, #aaa28e);
+}
+
+.sourceLink {
+  --life-key-base: #171814;
+  --life-key-edge: #55574f;
+
+  border-color: #72746b #23241f #181914 #64665e;
+  color: var(--life-cyan);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 9%), transparent 36%), #292a25;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sourceLink:hover,
+  .protocolLink:hover {
+    filter: brightness(1.12);
+  }
+}
+
+@media (max-width: 45rem) {
+  .protocolLink {
+    width: 44px;
+    min-width: 44px;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .protocolLink::before {
+    font-size: 0.52rem;
+    content: "B3";
+  }
+
+  .patternClose {
+    padding-inline: 0.55rem;
+  }
+
+  .sourceLink {
+    min-width: 54px;
+    min-height: 44px;
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: center;
+    padding-inline: 0.35rem;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .protocolLink {
+    width: 44px;
+    min-width: 44px;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .protocolLink::before {
+    font-size: 0.5rem;
+    content: "B3";
+  }
+
+  .sourceLink {
+    min-width: 48px;
+    min-height: 44px;
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: center;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .sourceLink {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .patternClose,
+  .protocolLink,
+  .sourceLink {
+    transition: none;
+  }
+}

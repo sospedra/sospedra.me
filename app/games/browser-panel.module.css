@@ -1,0 +1,265 @@
+.browserPanel {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  width: min(92vw, calc(88dvh * 4 / 3), 68rem);
+  aspect-ratio: 4 / 3;
+  grid-template-rows: minmax(7.5rem, 24%) 1fr minmax(4.75rem, 14%);
+  overflow: hidden;
+  padding: clamp(1.25rem, 3.4vmin, 2.7rem);
+  color: var(--games-label);
+  background:
+    radial-gradient(
+      circle at 38% 25%,
+      rgb(246 247 252 / 82%) 0 2%,
+      rgb(222 224 232 / 50%) 8%,
+      transparent 27%
+    ),
+    radial-gradient(
+      ellipse at 85% 18%,
+      rgb(151 105 84 / 36%) 0,
+      transparent 46%
+    ),
+    radial-gradient(ellipse at 16% 88%, rgb(41 60 99 / 42%) 0, transparent 55%),
+    linear-gradient(135deg, #92959e 0%, #858582 48%, #6f6965 100%);
+  box-shadow:
+    0 0 0 1px rgb(224 230 255 / 13%),
+    0 1.6rem 6rem rgb(0 0 0 / 78%),
+    0 0 7rem rgb(58 96 224 / 12%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0, 0.35rem, 0);
+  transition:
+    opacity 820ms ease,
+    transform 1050ms var(--games-ease);
+  will-change: opacity, transform;
+}
+
+.browserPanel::before {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(255 255 255 / 1.8%) 0 1px,
+      transparent 1px 4px
+    ),
+    radial-gradient(
+      ellipse at center,
+      transparent 28%,
+      rgb(20 16 20 / 36%) 100%
+    );
+  pointer-events: none;
+}
+
+.browserPanel::after {
+  position: absolute;
+  z-index: 0;
+  content: "";
+  inset: 0;
+  background:
+    repeating-conic-gradient(
+      from 5deg at 50% 52%,
+      transparent 0 12deg,
+      rgb(37 80 169 / 8%) 12.5deg 13.5deg,
+      transparent 14deg 30deg
+    ),
+    linear-gradient(104deg, transparent 0 72%, rgb(255 221 180 / 4%) 100%),
+    radial-gradient(circle at 50% 50%, transparent 56%, rgb(7 9 18 / 28%));
+  box-shadow: inset 0 0 3.5rem rgb(22 23 31 / 28%);
+  pointer-events: none;
+}
+
+.menuLoading {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  color: rgb(245 245 248 / 92%);
+  font-size: clamp(0.9rem, 2vmin, 1.25rem);
+  font-weight: 600;
+  letter-spacing: 0.015em;
+  pointer-events: none;
+  text-shadow:
+    0 1px 2px rgb(23 24 31 / 92%),
+    0 0 0.8rem rgb(238 243 255 / 28%);
+  animation: menu-loading 2.3s ease both;
+}
+
+.browserHeader {
+  position: relative;
+  z-index: 1;
+}
+
+.browserHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 1.15fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.archiveLabel h1,
+.archiveLabel p,
+.selectionLabel p {
+  margin: 0;
+}
+
+.archiveLabel h1 {
+  color: #f0f0f5;
+  font-family: var(--font-body);
+  font-size: clamp(1.08rem, 2.25vmin, 1.7rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 1px rgb(21 23 31 / 68%);
+  text-shadow:
+    0 2px 2px rgb(16 18 25 / 76%),
+    0 0 0.75rem rgb(255 255 255 / 18%);
+}
+
+.archiveLabel p {
+  margin-top: 0.22rem;
+  color: rgb(244 244 248 / 90%);
+  font-size: clamp(0.78rem, 1.6vmin, 1.04rem);
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  text-shadow: 0 1px 2px rgb(16 18 25 / 88%);
+}
+
+.selectionLabel {
+  justify-self: end;
+  max-width: 30rem;
+  text-align: right;
+}
+
+.selectedTitle {
+  min-height: 1.15em;
+  color: var(--games-title);
+  font-size: clamp(1.28rem, 3.2vmin, 2.25rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 1.2px rgb(38 29 23 / 75%);
+  text-shadow:
+    0 2px 2px rgb(28 23 24 / 76%),
+    0 0 1.1rem rgb(231 210 90 / 20%);
+}
+
+.selectionLabel .selectedCategory {
+  margin-top: 0.35rem;
+  color: rgb(246 246 248);
+  font-family: var(--font-code);
+  font-size: clamp(0.65rem, 1.35vmin, 0.83rem);
+  letter-spacing: 0.06em;
+  text-shadow: 0 1px 2px rgb(20 21 27 / 96%);
+}
+
+.selectionLabel .selectedDescription {
+  max-width: 40ch;
+  margin-top: 0.55rem;
+  margin-left: auto;
+  color: rgb(250 250 252 / 96%);
+  font-size: clamp(0.7rem, 1.45vmin, 0.88rem);
+  line-height: 1.35;
+  text-shadow: 0 1px 2px rgb(20 21 27 / 96%);
+}
+
+@keyframes menu-loading {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, calc(-50% + 0.3rem), 0) scale(0.98);
+  }
+
+  12%,
+  68% {
+    opacity: 0.92;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, calc(-50% - 0.2rem), 0) scale(1);
+  }
+}
+
+@media (max-width: 700px) {
+  .browserPanel {
+    width: calc(100vw - 0.9rem);
+    height: calc(100dvh - 0.9rem);
+    aspect-ratio: auto;
+    grid-template-rows: minmax(6.7rem, 22%) 1fr minmax(4rem, 13%);
+    padding: max(1rem, var(--safe-area-top))
+      max(0.85rem, var(--safe-area-right)) max(0.65rem, var(--safe-area-bottom))
+      max(0.85rem, var(--safe-area-left));
+  }
+
+  .browserHeader {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 0.65rem;
+  }
+
+  .archiveLabel h1 {
+    max-width: none;
+    font-size: clamp(0.98rem, 4.1vw, 1.1rem);
+    white-space: nowrap;
+  }
+
+  .archiveLabel p {
+    font-size: clamp(0.7rem, 3.3vw, 0.9rem);
+  }
+
+  .selectedTitle {
+    font-size: clamp(1.1rem, 5.6vw, 1.65rem);
+  }
+
+  .selectionLabel .selectedCategory {
+    font-size: clamp(0.58rem, 2.6vw, 0.75rem);
+  }
+
+  .selectionLabel .selectedDescription {
+    display: -webkit-box;
+    max-width: 25ch;
+    margin-top: 0.35rem;
+    overflow: hidden;
+    font-size: clamp(0.63rem, 2.55vw, 0.76rem);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+@media (max-width: 350px) {
+  .archiveLabel h1 {
+    max-width: 8rem;
+    white-space: normal;
+  }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+  .browserPanel {
+    width: min(94vw, calc(94dvh * 4 / 3));
+    grid-template-rows: minmax(5rem, 23%) 1fr minmax(3.25rem, 14%);
+    padding: 0.8rem 1.25rem 0.4rem;
+  }
+
+  .selectionLabel .selectedDescription {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menuLoading {
+    display: none;
+  }
+
+  .browserPanel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    transition: none;
+  }
+}

@@ -204,6 +204,17 @@ export function useGlobeRenderer({
       return
     }
 
+    // cobe returns a stub instead of throwing when the real context request
+    // fails, so probe the canvas: an existing context comes back as-is
+    const liveContext =
+      canvas.getContext('webgl2') ?? canvas.getContext('webgl')
+    if (!liveContext) {
+      observer.disconnect()
+      globe.destroy()
+      setStatus('unavailable')
+      return
+    }
+
     // Cobe 2.0.1 maintains CSS anchors for optional marker IDs. This globe
     // does not use IDs, so leaving its empty style node connected would force
     // a global style invalidation on every update.

@@ -1,0 +1,328 @@
+@reference "../../services/style/global.css";
+
+.cockpit {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100dvh;
+  min-height: 46rem;
+  grid-template-rows: 4.65rem minmax(0, 1fr) 10.4rem;
+  gap: 0.48rem;
+  overflow: hidden;
+  padding: max(0.65rem, var(--safe-area-top))
+    max(0.72rem, var(--safe-area-right)) max(0.65rem, var(--safe-area-bottom))
+    max(0.72rem, var(--safe-area-left));
+  background:
+    radial-gradient(circle at 50% 34%, rgb(23 61 120 / 31%), transparent 40%),
+    linear-gradient(115deg, rgb(88 239 212 / 4%), transparent 32%),
+    var(--life-void);
+}
+
+.cockpit::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 5.5rem,
+      rgb(216 211 188 / 3%) 5.5rem 5.55rem
+    ),
+    linear-gradient(
+      165deg,
+      transparent 0 72%,
+      rgb(255 73 59 / 5%) 72% 72.5%,
+      transparent 72.5%
+    );
+  content: "";
+}
+.forwardBay {
+  position: relative;
+  z-index: 2;
+}
+
+.forwardBay {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns:
+    minmax(13.5rem, 1.15fr) minmax(24rem, 5.4fr)
+    minmax(10.5rem, 0.9fr);
+  gap: 0.45rem;
+}
+
+.forwardBay::before {
+  position: absolute;
+  z-index: -1;
+  right: 6%;
+  bottom: -1.8rem;
+  left: 6%;
+  height: 4.8rem;
+  border: 0.9rem solid #1c2e35;
+  border-bottom: 0;
+  clip-path: polygon(3% 0, 97% 0, 100% 100%, 0 100%);
+  filter: drop-shadow(0 -0.15rem 0 #66787a)
+    drop-shadow(0 0.7rem 0.65rem rgb(0 0 0 / 55%));
+  content: "";
+}
+
+.screw {
+  position: absolute;
+  z-index: 5;
+  width: 0.38rem;
+  height: 0.38rem;
+  border: 1px solid #1b292e;
+  border-radius: 50%;
+  background:
+    linear-gradient(45deg, transparent 44%, #26383d 45% 55%, transparent 56%),
+    #81908e;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 30%),
+    0 1px 1px rgb(0 0 0 / 45%);
+}
+
+.screw[data-position="nw"] {
+  top: 0.45rem;
+  left: 0.45rem;
+}
+
+.screw[data-position="ne"] {
+  top: 0.45rem;
+  right: 0.45rem;
+}
+
+.screw[data-position="sw"] {
+  bottom: 0.45rem;
+  left: 0.45rem;
+}
+
+.screw[data-position="se"] {
+  right: 0.45rem;
+  bottom: 0.45rem;
+}
+
+/* Retro laboratory instrument: structural controls and material synthesis. */
+.cockpit {
+  background:
+    radial-gradient(circle at 53% 34%, rgb(71 101 52 / 24%), transparent 38%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 8rem,
+      rgb(222 214 194 / 2.5%) 8rem 8.04rem
+    ),
+    linear-gradient(145deg, #20221c, #10110e 72%);
+}
+
+.cockpit::before {
+  opacity: 0.22;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 4rem,
+      rgb(240 169 58 / 8%) 4rem 4.04rem
+    ),
+    linear-gradient(
+      120deg,
+      transparent 0 67%,
+      rgb(228 73 47 / 10%) 67% 67.3%,
+      transparent 67.3%
+    );
+}
+
+.forwardBay::before {
+  border-color: #706d62;
+  filter: drop-shadow(0 -0.15rem 0 #d8d0bd)
+    drop-shadow(0 0.7rem 0.65rem rgb(0 0 0 / 42%));
+}
+
+.screw {
+  border-color: #3c3d37;
+  background:
+    linear-gradient(45deg, transparent 44%, #4a4b44 45% 55%, transparent 56%),
+    #aaa99d;
+}
+
+@media (max-width: 74rem) {
+  .cockpit {
+    grid-template-rows: 4.3rem minmax(0, 1fr) 10.4rem;
+  }
+
+  .forwardBay {
+    grid-template-columns: 11.5rem minmax(21rem, 1fr) 9.2rem;
+  }
+}
+
+@media (max-width: 45rem) {
+  .cockpit {
+    height: auto;
+    min-height: 100svh;
+    grid-template-rows: auto auto auto;
+    gap: 0.4rem;
+    overflow: visible;
+    padding: max(0.45rem, var(--safe-area-top))
+      max(0.48rem, var(--safe-area-right)) max(0.55rem, var(--safe-area-bottom))
+      max(0.48rem, var(--safe-area-left));
+  }
+
+  .forwardBay {
+    grid-template-columns: 1fr;
+    grid-template-rows: clamp(18rem, 42dvh, 23rem) 5.2rem;
+    gap: 0.35rem;
+  }
+
+  .forwardBay::before {
+    display: none;
+  }
+}
+
+@media (max-width: 24rem) {
+  .forwardBay {
+    grid-template-rows: clamp(13.5rem, 40dvh, 17rem) 5.2rem;
+  }
+}
+
+@media (max-width: 45rem) and (max-height: 42rem) {
+  .forwardBay {
+    display: block;
+    height: clamp(13rem, calc(40dvh - 0.5rem), 16.5rem);
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .cockpit {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    grid-template-columns: 3.4rem minmax(0, 1fr) minmax(16rem, 30vw);
+    grid-template-rows: minmax(0, 1fr);
+    gap: 0.35rem;
+    overflow: hidden;
+    padding: max(0.35rem, var(--safe-area-top))
+      max(0.35rem, var(--safe-area-right)) max(0.35rem, var(--safe-area-bottom))
+      max(0.35rem, var(--safe-area-left));
+  }
+
+  .forwardBay {
+    display: block;
+    height: 100%;
+    min-height: 0;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .forwardBay::before {
+    display: none;
+  }
+}
+
+/* Final instrument architecture: full-height preset rail + docked controls. */
+
+.cockpit {
+  grid-template-rows: 4.65rem minmax(0, 1fr);
+}
+.workbench {
+  position: relative;
+  z-index: 2;
+}
+
+.workbench {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: minmax(13.5rem, 1.15fr) minmax(0, 6.3fr);
+  grid-template-rows: minmax(0, 1fr) 10.8rem;
+  gap: 0.45rem;
+}
+
+.forwardBay {
+  grid-column: 2;
+  grid-row: 1;
+  grid-template-columns: minmax(0, 1fr) minmax(9.5rem, 0.18fr);
+}
+
+@media (max-width: 74rem) {
+  .cockpit {
+    grid-template-rows: 4.3rem minmax(0, 1fr);
+  }
+
+  .workbench {
+    grid-template-columns: 11.5rem minmax(0, 1fr);
+  }
+
+  .forwardBay {
+    grid-template-columns: minmax(0, 1fr) 9.2rem;
+  }
+}
+
+@media (max-width: 45rem) {
+  .cockpit {
+    grid-template-rows: auto auto;
+  }
+
+  .workbench {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 0.4rem;
+  }
+
+  .forwardBay {
+    grid-column: 1;
+    grid-row: 1;
+    grid-template-columns: 1fr;
+    grid-template-rows: clamp(18rem, 42dvh, 23rem) 5.2rem;
+  }
+}
+
+@media (max-width: 24rem) {
+  .forwardBay {
+    grid-template-rows: clamp(13.5rem, 40dvh, 17rem) 5.2rem;
+  }
+}
+
+@media (max-width: 45rem) and (max-height: 42rem) {
+  .forwardBay {
+    display: block;
+    height: clamp(13rem, calc(40dvh - 0.5rem), 16.5rem);
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .cockpit {
+    grid-template-columns: 3.4rem minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .workbench {
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 42vw);
+    grid-template-rows: minmax(0, 1fr);
+    gap: 0.35rem;
+  }
+
+  .forwardBay {
+    display: block;
+    width: auto;
+    height: 100%;
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+@media (min-width: 45.01rem) and (min-height: 32.01rem) and (max-height: 46rem) {
+  .cockpit {
+    height: auto;
+    min-height: 46rem;
+    overflow: visible;
+  }
+}

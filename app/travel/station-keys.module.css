@@ -1,0 +1,389 @@
+.stations {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.2rem;
+}
+
+.stations button {
+  display: grid;
+  min-width: 0;
+  min-height: 2.75rem;
+  grid-template-areas:
+    "freq"
+    "label";
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 0.2rem 0.25rem;
+  padding: 0.25rem 0.3rem;
+  border: 1px solid rgb(226 98 43 / 20%);
+  background: #120d08;
+  color: rgb(242 233 216 / 58%);
+  font: 700 0.48rem / 1 var(--font-code, monospace);
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.stations button b {
+  grid-area: freq;
+  color: #ffa14a;
+  font-size: 0.44rem;
+  text-shadow: 0 1px rgb(0 0 0 / 55%);
+}
+
+.stations button span {
+  overflow: hidden;
+  grid-area: label;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.stations button[aria-pressed="true"] {
+  border-color: var(--travel-campfire);
+  color: var(--travel-campfire);
+  box-shadow: inset 0 -2px 0 var(--travel-campfire);
+}
+
+.stations button[aria-pressed="true"] b {
+  color: var(--travel-campfire);
+}
+
+@media (max-width: 899px) {
+  .stations button {
+    grid-template-areas: "label";
+    grid-template-columns: minmax(0, 1fr);
+    font-size: 0.48rem;
+  }
+
+  .stations button b {
+    display: none;
+  }
+}
+
+.stations button {
+  border: 2px solid #725127;
+  background-color: #36220e;
+  background-image: var(--v2-brushed-brass);
+  color: #ffd08b;
+  text-shadow: 1px 1px #160b03;
+  box-shadow:
+    inset 2px 2px 0 rgb(255 224 160 / 20%),
+    inset -2px -2px 0 #1a0e04,
+    0 var(--v2-px) 0 #080402;
+  transition:
+    transform 80ms steps(2, end),
+    box-shadow 80ms steps(2, end);
+}
+
+.stations button:active {
+  box-shadow:
+    inset 2px 2px var(--v2-px) rgb(0 0 0 / 64%),
+    inset -1px -1px 0 rgb(255 222 155 / 8%);
+  transform: translateY(var(--v2-px));
+}
+
+.stations button[aria-pressed="true"] {
+  border-color: #f2bd68;
+  background-color: #6f471c;
+  color: #ffe0a8;
+  box-shadow:
+    inset 2px 2px 0 rgb(255 232 184 / 28%),
+    inset -2px -2px 0 #2b1707,
+    0 var(--v2-px) 0 #090502,
+    0 0 0.65rem rgb(255 161 74 / 15%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stations button {
+    transition: none;
+  }
+}
+
+.stations {
+  --station-travel: 6px;
+  gap: 0.42rem;
+  padding: 0.52rem 0.46rem 0.62rem;
+  overflow: visible;
+  border: 1px solid #262820;
+  background: var(--cockpit-grain), linear-gradient(145deg, #9b9888, #66685f);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 13%),
+    inset -2px -2px rgb(0 0 0 / 24%);
+  perspective: 18rem;
+}
+
+.stations button {
+  --switch-front-a: #5f6159;
+  --switch-front-b: #3d403b;
+  --switch-depth-a: #555850;
+  --switch-depth-b: #30332e;
+  appearance: none;
+  position: relative;
+  isolation: isolate;
+  display: block;
+  min-height: 3.1rem;
+  margin: 0;
+  padding: 0 4px calc(var(--station-travel) + 4px);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+  color: #e0d9bf;
+  transform: none;
+}
+
+.stations button:nth-child(2) {
+  --switch-front-a: #5f5c54;
+  --switch-front-b: #3e3c38;
+  --switch-depth-a: #57534c;
+  --switch-depth-b: #322f2b;
+}
+
+.stations button:nth-child(3) {
+  --switch-front-a: #595d58;
+  --switch-front-b: #3a3f3b;
+  --switch-depth-a: #505750;
+  --switch-depth-b: #2d332f;
+}
+
+.stations button:nth-child(4) {
+  --switch-front-a: #5c5a5d;
+  --switch-front-b: #3c3b3d;
+  --switch-depth-a: #555255;
+  --switch-depth-b: #312f31;
+}
+
+.stations button > .stationTop {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-height: 2.55rem;
+  grid-template-areas:
+    "freq"
+    "label";
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
+  gap: 0.2rem 0.25rem;
+  padding: 0.32rem 0.42rem;
+  overflow: visible;
+  grid-area: auto;
+  color: inherit;
+  text-align: left;
+  transform: translateY(-0.16rem) rotateX(3deg);
+  transform-origin: center bottom;
+  transform-style: preserve-3d;
+  transition: transform 120ms cubic-bezier(0.2, 0.82, 0.24, 1);
+  user-select: none;
+  white-space: normal;
+}
+
+.stations button > .stationTop::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border: 1px solid #292b25;
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(
+      174deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px
+    ),
+    var(--cockpit-grain),
+    linear-gradient(145deg, var(--switch-front-a), var(--switch-front-b));
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 16%),
+    inset -2px -2px rgb(0 0 0 / 26%),
+    0 1px 2px rgb(255 255 255 / 10%);
+  content: "";
+  pointer-events: none;
+  transition:
+    inset 110ms steps(3, end),
+    border-radius 110ms steps(3, end);
+}
+
+.stations button > .stationBottom {
+  position: absolute;
+  z-index: 1;
+  bottom: 4px;
+  left: 4px;
+  display: block;
+  width: calc(100% - 8px);
+  height: calc(100% - 12px);
+  box-sizing: content-box;
+  padding-top: var(--station-travel);
+  overflow: hidden;
+  grid-area: auto;
+  border-radius: 7px / 11px 11px 7px 7px;
+  background:
+    radial-gradient(
+      4px 8px at 4px calc(100% - 7px),
+      rgb(255 255 255 / 16%),
+      transparent
+    ),
+    radial-gradient(
+      4px 8px at calc(100% - 4px) calc(100% - 7px),
+      rgb(255 255 255 / 14%),
+      transparent
+    ),
+    radial-gradient(14px at -3px 0, rgb(255 255 255 / 20%), transparent),
+    radial-gradient(
+      14px at calc(100% + 3px) 0,
+      rgb(255 255 255 / 17%),
+      transparent
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 4%) 0 1px,
+      transparent 1px 5px
+    ),
+    linear-gradient(180deg, var(--switch-depth-a), var(--switch-depth-b));
+  box-shadow:
+    0 2px 3px rgb(0 0 0 / 48%),
+    inset 0 -2px 3px 2px rgb(0 0 0 / 32%);
+  pointer-events: none;
+  transition:
+    padding-top 110ms steps(3, end),
+    border-radius 110ms steps(3, end);
+  white-space: normal;
+}
+
+.stations button > .stationBase {
+  position: absolute;
+  z-index: 0;
+  top: 3px;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: calc(100% - 4px);
+  overflow: hidden;
+  grid-area: auto;
+  border-radius: 9px;
+  background: var(--cockpit-grain), rgb(28 30 27 / 58%);
+  box-shadow:
+    0 1px 1px rgb(255 255 255 / 42%),
+    inset 0 2px 2px rgb(0 0 0 / 36%);
+  pointer-events: none;
+  white-space: normal;
+}
+
+.stations button .stationTop > b {
+  grid-area: freq;
+}
+
+.stations button .stationLabel {
+  overflow: hidden;
+  grid-area: label;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.stations button .stationTop > i {
+  position: absolute;
+  z-index: 2;
+  top: 0.34rem;
+  right: 0.3rem;
+  width: 0.42rem;
+  height: 0.42rem;
+  border: 2px solid #22231e;
+  border-radius: 50%;
+  background: #392c23;
+  box-shadow: inset 1px 1px rgb(255 255 255 / 7%);
+}
+
+.stations button[aria-pressed="true"] {
+  border: 0;
+  background: transparent;
+  background-image: none;
+  color: #f1e4b7;
+  box-shadow: none;
+  transform: none;
+}
+
+.stations button:active {
+  box-shadow: none;
+  transform: none;
+}
+
+.stations button:active .stationTop,
+.stations button[aria-pressed="true"] .stationTop {
+  transform: translateY(var(--station-travel)) rotateX(-2deg);
+}
+
+.stations button:active .stationTop::after {
+  inset-inline: -2px;
+  border-radius: 5px;
+}
+
+.stations button[aria-pressed="true"] .stationTop::after {
+  inset-inline: -2px;
+  border-color: #5c4328;
+  border-radius: 5px;
+  background:
+    linear-gradient(rgb(190 119 57 / 18%), rgb(190 119 57 / 18%)),
+    repeating-linear-gradient(
+      174deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px
+    ),
+    var(--cockpit-grain),
+    linear-gradient(145deg, var(--switch-front-a), var(--switch-front-b));
+}
+
+.stations button:active .stationBottom,
+.stations button[aria-pressed="true"] .stationBottom {
+  padding-top: 0;
+  border-radius: 8px 8px 7px 7px / 7px;
+}
+
+.stations button[aria-pressed="true"] .stationTop > i {
+  background: #d58448;
+  box-shadow: inset 0 0 0 1px rgb(255 238 181 / 30%);
+}
+
+.stations button[aria-pressed="true"] .stationTop > b {
+  color: #f0c277;
+}
+
+@media (max-width: 899px) {
+  .stations {
+    --station-travel: 5px;
+    gap: 0.3rem;
+    padding: 0.46rem 0.4rem 0.56rem;
+  }
+}
+
+@media (max-height: 700px) and (min-width: 650px) and (max-width: 899px) {
+  .stations {
+    --station-travel: 4px;
+    padding-block: 0.38rem 0.46rem;
+  }
+}
+
+@media (max-height: 700px) and (max-width: 649px) {
+  .stations {
+    --station-travel: 4px;
+    padding-block: 0.34rem 0.42rem;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .stations button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgb(233 225 183 / 22%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stations button,
+  .stations button > .stationTop,
+  .stations button > .stationBottom {
+    transition: none;
+  }
+}
+
+.stations button,
+.stations button b {
+  font-size: var(--cockpit-type-value);
+}

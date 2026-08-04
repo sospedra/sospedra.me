@@ -1,0 +1,182 @@
+.scroll {
+  z-index: 1;
+  overflow: hidden auto;
+  flex: 1;
+  animation: flicker 5s steps(1) infinite;
+  overscroll-behavior: contain;
+  padding: clamp(0.7rem, 2vw, 1.2rem) clamp(0.9rem, 3vw, 1.8rem) 0.8rem;
+}
+
+@keyframes flicker {
+  7% {
+    opacity: 0.94;
+  }
+  9% {
+    opacity: 1;
+  }
+  38% {
+    opacity: 0.97;
+  }
+  40% {
+    opacity: 1;
+  }
+  71% {
+    opacity: 0.95;
+  }
+  73% {
+    opacity: 1;
+  }
+}
+
+/* ---- boot intro: the eye scans in, then the post log ---- */
+
+.intro {
+  margin-bottom: 0.25em;
+}
+
+.eyeLine {
+  margin: 0;
+  color: var(--crt-hot);
+  font-family: "DejaVu Sans Mono", "Menlo", "Cascadia Mono", monospace;
+  font-size: clamp(0.5rem, 0.3rem + 0.9vw, 0.9rem);
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 0 3px rgb(255 200 120 / 45%);
+  white-space: pre;
+}
+
+/* ---- animation stage ---- */
+
+.animStage {
+  z-index: 3;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.animArt {
+  margin: 0;
+  color: var(--crt-hot);
+  font-size: clamp(1rem, 0.7rem + 1.4vw, 1.8rem);
+  line-height: 1.15;
+  text-align: left;
+  text-shadow: 0 0 4px rgb(255 200 120 / 45%);
+  white-space: pre;
+}
+
+/* ---- autoplay gate: shown only when the browser blocks the boot sound ---- */
+
+.gate {
+  z-index: 8;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  padding: 2rem;
+  border: 0;
+  background: none;
+  color: var(--crt);
+  font: inherit;
+  text-shadow: inherit;
+}
+
+.gateEye {
+  color: var(--crt-hot);
+  font-family: "DejaVu Sans Mono", "Menlo", "Cascadia Mono", monospace;
+  font-size: clamp(0.5rem, 0.3rem + 0.9vw, 0.9rem);
+  line-height: 1;
+  text-shadow: 0 0 3px rgb(255 200 120 / 45%);
+  white-space: pre;
+}
+
+.gatePrompt {
+  animation: blink 1.1s step-end infinite;
+  color: var(--crt-hot);
+  font-size: clamp(1rem, 0.8rem + 0.9vw, 1.5rem);
+  letter-spacing: 0.22em;
+  text-shadow: 0 0 4px rgb(255 210 140 / 55%);
+}
+
+.gateHint {
+  color: var(--crt-dim);
+  font-size: 0.8em;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.promptRow {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  padding-top: 0.15em;
+  padding-bottom: 0.5rem;
+}
+
+.echo {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.cursor {
+  animation: blink 1.06s step-end infinite;
+  color: var(--crt);
+  text-shadow: 0 0 3px rgb(255 190 110 / 55%);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  caret-color: transparent;
+  color: transparent;
+  font: inherit;
+
+  /* ios refuses to zoom-jump when the focused control is 16px+ */
+  font-size: 16px;
+}
+
+/* ---- hackertyper ---- */
+
+.hackerFeed {
+  margin: 0;
+  font: inherit;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.granted {
+  position: absolute;
+  z-index: 8;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  padding: 0.8em 1.6em;
+  border: 4px double var(--crt);
+  animation: blink 0.9s step-end infinite;
+  background: rgb(23 12 2 / 88%);
+  color: var(--crt-hot);
+  font-size: clamp(1.2rem, 4vw, 2.2rem);
+  letter-spacing: 0.3em;
+  text-shadow: 0 0 4px rgb(255 210 140 / 55%);
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll,
+  .cursor {
+    animation: none;
+  }
+}

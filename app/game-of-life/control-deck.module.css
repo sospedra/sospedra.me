@@ -1,0 +1,244 @@
+@reference "../../services/style/global.css";
+
+.controlDeck {
+  position: relative;
+  z-index: 2;
+}
+
+.controlDeck {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: 1.05fr 1.55fr 1.2fr;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 0.42rem;
+  border: 1px solid #718182;
+  border-top-width: 0.28rem;
+  border-radius: 1.1rem 1.1rem 0.25rem 0.25rem;
+  padding: 0.52rem 0.7rem 0.45rem;
+  background:
+    linear-gradient(155deg, rgb(255 255 255 / 12%), transparent 24%),
+    linear-gradient(180deg, #465d63, #263a42);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 20%),
+    0 -0.32rem 0 #172a31,
+    var(--life-shadow);
+}
+
+.controlDeck::before,
+.controlDeck::after {
+  position: absolute;
+  top: 0.7rem;
+  width: 2.6rem;
+  height: 0.48rem;
+  border: 1px solid #16272d;
+  border-radius: 99px;
+  background: #182b31;
+  box-shadow: inset 0 0.15rem 0.25rem rgb(0 0 0 / 58%);
+  content: "";
+}
+
+.controlDeck::before {
+  left: 1.1rem;
+}
+
+.controlDeck::after {
+  right: 1.1rem;
+}
+
+.controlModule {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid #16272d;
+  border-radius: 0.28rem;
+  padding: 0.44rem;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 5%), transparent), #20343b;
+  box-shadow: var(--life-cavity);
+}
+
+.controlModule > header {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
+  color: #b2c1bd;
+  font: 800 0.42rem / 1 var(--font-code);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.controlModule > header output {
+  overflow: hidden;
+  color: var(--life-cyan);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.controlDeck {
+  grid-template-columns: 1.08fr 1.35fr 1fr;
+  border-color: #706c61;
+  border-top-color: #494942;
+  border-radius: 0.4rem 0.4rem 0.12rem 0.12rem;
+  background:
+    linear-gradient(155deg, rgb(255 255 255 / 35%), transparent 24%),
+    linear-gradient(180deg, #d8d0bd, #aaa491);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 50%),
+    0 -0.3rem 0 #656259,
+    var(--life-shadow);
+}
+
+.controlDeck::before,
+.controlDeck::after {
+  border-color: #3b3c36;
+  border-radius: 0.08rem;
+  background: #45463f;
+}
+
+.controlModule {
+  border-color: #55564f;
+  border-radius: 0.12rem;
+  color: var(--life-panel-ink);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 14%), transparent), #a9aa9e;
+  box-shadow:
+    inset 0 0 0 2px rgb(39 39 36 / 18%),
+    inset 0 0.65rem 1rem rgb(39 39 36 / 10%);
+}
+
+.controlModule > header {
+  color: #272724;
+}
+
+.controlModule > header output {
+  color: #63251e;
+}
+
+@media (max-width: 74rem) {
+  .controlDeck {
+    grid-template-columns: 1fr 1.3fr 1fr;
+  }
+}
+
+@media (max-width: 45rem) {
+  .controlDeck {
+    min-height: 17rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: minmax(7.3rem, auto) minmax(5.6rem, auto) 2.75rem;
+    border-radius: 0.7rem 0.7rem 0.2rem 0.2rem;
+    padding: 0.48rem;
+  }
+}
+
+@media (max-width: 24rem) {
+  .controlDeck {
+    min-height: 0;
+    grid-template-rows:
+      minmax(5.5rem, auto) minmax(5.5rem, auto)
+      minmax(5rem, auto);
+  }
+}
+
+@media (max-width: 24rem) and (max-height: 46rem) {
+  .controlDeck {
+    grid-template-rows: 5.25rem 4.8rem 5.2rem;
+    gap: 0.3rem;
+    padding: 0.35rem;
+  }
+
+  .controlModule {
+    padding: 0.32rem;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .controlDeck {
+    display: flex;
+    min-height: 0;
+    grid-column: 3;
+    grid-row: 1;
+    flex-direction: column;
+    gap: 0.3rem;
+    border-radius: 0.55rem;
+    padding: 0.4rem;
+  }
+
+  .controlDeck::before,
+  .controlDeck::after {
+    display: none;
+  }
+
+  .controlModule {
+    flex: 1;
+    padding: 0.32rem;
+  }
+
+  .controlModule > header {
+    margin-bottom: 0.22rem;
+    font-size: 0.35rem;
+  }
+}
+
+.controlDeck {
+  grid-column: 2;
+  grid-row: 2;
+  grid-template-columns: 1.05fr 0.85fr 1.36fr 0.74fr;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+@media (max-width: 74rem) {
+  .controlDeck {
+    grid-template-columns: 1fr 0.82fr 1.28fr 0.72fr;
+    padding-inline: 0.5rem;
+  }
+}
+
+@media (max-width: 45rem) {
+  .controlDeck {
+    min-height: 26rem;
+    grid-column: 1;
+    grid-row: 2;
+    grid-template-columns: minmax(9.5rem, 1fr) minmax(0, 1fr);
+    grid-template-rows:
+      minmax(8.7rem, auto) minmax(6.6rem, auto)
+      minmax(8rem, auto);
+    gap: 0.38rem;
+  }
+}
+
+@media (max-width: 24rem) {
+  .controlDeck {
+    grid-template-rows: 8.3rem 6.2rem 7.4rem;
+    gap: 0.32rem;
+    padding: 0.38rem;
+  }
+}
+
+@media (max-width: 24rem) and (max-height: 46rem) {
+  .controlDeck {
+    grid-template-rows: 7.7rem 5.6rem 6.7rem;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .controlDeck {
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns:
+      minmax(9.5rem, 1.9fr) minmax(0, 1fr)
+      minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(4.8rem, 0.7fr) 44px;
+    gap: 0.28rem;
+    padding: 0.34rem;
+  }
+}

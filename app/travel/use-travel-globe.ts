@@ -22,6 +22,8 @@ export type { TravelMoonRefs } from './globe-moon-layer'
 export type { TravelGlobeStatus } from './globe-view-state'
 export { TRAVEL_PITCH_MAX, TRAVEL_ZOOM_MAX, TRAVEL_ZOOM_MIN }
 
+export type TravelGlobe = ReturnType<typeof useTravelGlobe>
+
 type TravelGlobeOptions = {
   tracked: Destination
   quiet: boolean

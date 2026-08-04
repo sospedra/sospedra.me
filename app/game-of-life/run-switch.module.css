@@ -1,0 +1,348 @@
+/* biome-ignore-all lint: source-faithful control CSS retains its authored declarations. */
+
+.switch {
+  display: inline-block;
+  margin: 10em 2em;
+  position: relative;
+  border-radius: 3.5em;
+  -webkit-box-shadow: 0 0 0.5em rgba(2, 255, 255, 0.2);
+  -moz-box-shadow: 0 0 0.5em rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0.5em rgba(255, 255, 255, 0.2);
+}
+
+.switch label {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.switch input {
+  display: none;
+}
+
+.switch span {
+  display: block;
+  -webkit-transition: top 0.2s;
+  -moz-transition: top 0.2s;
+  -ms-transition: top 0.2s;
+  -o-transition: top 0.2s;
+  transition: top 0.2s;
+}
+
+.switch-handle-left,
+.switch-handle-right {
+  content: "";
+  display: block;
+  width: 3.6em;
+  height: 0;
+  position: absolute;
+  top: 6.6em;
+  z-index: 2;
+  border-bottom: 4.5em solid #111;
+  border-left: 0.7em solid transparent;
+  border-right: 0.7em solid transparent;
+  border-radius: 0;
+}
+
+.switch-handle-left {
+  left: 0.8em;
+}
+
+.switch-handle-right {
+  right: 0.8em;
+}
+
+.switch-handle {
+  width: 3.6em;
+  height: 4.5em;
+  position: absolute;
+  top: 6.6em;
+  left: 1.5em;
+  z-index: 3;
+  background: #333;
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(#111),
+    color-stop(0.4, #777),
+    color-stop(0.5, #888),
+    color-stop(0.6, #777),
+    to(#111)
+  );
+  background-image: -webkit-linear-gradient(
+    left,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  background-image: -moz-linear-gradient(
+    left,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  background-image: -ms-linear-gradient(
+    left,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  background-image: -o-linear-gradient(
+    left,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  background-image: linear-gradient(
+    to right,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  border-radius: 0;
+}
+
+.switch-handle-top {
+  width: 5em;
+  height: 5em;
+  position: absolute;
+  top: 8.5em;
+  left: 0.8em;
+  z-index: 4;
+  background-color: #555;
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(#5f5f5f),
+    to(#878787)
+  );
+  background-image: -webkit-linear-gradient(left, #5f5f5f, #878787);
+  background-image: -moz-linear-gradient(left, #5f5f5f, #878787);
+  background-image: -ms-linear-gradient(left, #5f5f5f, #878787);
+  background-image: -o-linear-gradient(left, #5f5f5f, #878787);
+  background-image: linear-gradient(to right, #5f5f5f, #878787);
+  border-top: 0.2em solid #aeb2b3;
+  border-radius: 2.5em;
+}
+
+.switch-handle-bottom {
+  width: 3.6em;
+  height: 3.6em;
+  position: absolute;
+  top: 4.7em;
+  left: 1.5em;
+  z-index: 3;
+  background: #333;
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(#111),
+    color-stop(0.4, #777),
+    color-stop(0.5, #888),
+    color-stop(0.6, #777),
+    to(#111)
+  );
+  background-image: -webkit-linear-gradient(
+    left,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  background-image: -moz-linear-gradient(
+    left,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  background-image: -ms-linear-gradient(
+    left,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  background-image: -o-linear-gradient(
+    left,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  background-image: linear-gradient(
+    to right,
+    #111,
+    #777 40%,
+    #888,
+    #777 60%,
+    #111
+  );
+  border-top: 0.2em solid #141414;
+  border-radius: 1.8em;
+}
+
+.switch-handle-base {
+  width: 4.2em;
+  height: 4.2em;
+  position: absolute;
+  top: 3.8em;
+  left: 1.2em;
+  z-index: 2;
+  border-top: 0.2em solid rgba(255, 255, 255, 0.35);
+  border-radius: 2.1em;
+  -webkit-box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.8) inset;
+  -moz-box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.8) inset;
+  box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.8) inset;
+}
+
+/* Switch on */
+
+.switch input:checked ~ .switch-handle-left,
+.switch input:checked ~ .switch-handle-right {
+  top: 1.5em;
+  border-bottom: 0;
+  border-top: 4.5em solid #111;
+}
+
+.switch input:checked ~ .switch-handle {
+  top: 1.5em;
+}
+
+.switch input:checked ~ .switch-handle-top {
+  top: -1em;
+  border-top: 0;
+  border-bottom: 0.2em solid #aeb2b3;
+}
+
+.switch input:checked ~ .switch-handle-bottom {
+  top: 4.2em;
+  border-top: 0;
+  border-bottom: 0.2em solid #141414;
+}
+
+.switch input:checked ~ .switch-handle-base {
+  top: 4.5em;
+  border-top: 0;
+  border-bottom: 0.2em solid rgba(255, 255, 255, 0.35);
+}
+
+.switch input:checked ~ .switch-led-green {
+  -webkit-box-shadow: 0 0 3em rgb(0, 161, 75);
+  -moz-box-shadow: 0 0 3em rgb(0, 161, 75);
+  box-shadow: 0 0 3em rgb(0, 161, 75);
+}
+
+.switch input:checked ~ .switch-led-green .switch-led-glow {
+  background: #fff;
+  background: rgba(255, 255, 255, 0.4);
+  /* Legacy source declaration: filter: alpha(opacity=40); */
+}
+
+.switch input:checked ~ .switch-led-red {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+
+.switch input:checked ~ .switch-led-red .switch-led-glow {
+  background: rgba(255, 255, 255, 0);
+  /* Legacy source declaration: filter: alpha(opacity=0); */
+}
+
+.switch.runSwitch {
+  align-self: center;
+  justify-self: center;
+  margin: 0;
+  font-size: 0.36rem;
+}
+
+/* Keep the source checkbox keyboard-accessible. */
+
+.switch.runSwitch input {
+  display: block;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.switch.runSwitch label {
+  cursor: pointer;
+}
+
+.switch.runSwitch[data-disabled="true"] {
+  opacity: 0.38;
+}
+
+.switch.runSwitch[data-disabled="true"] label {
+  cursor: not-allowed;
+}
+
+@media (max-width: 74rem) {
+  .switch.runSwitch {
+    font-size: 0.32rem;
+  }
+}
+
+@media (max-width: 45rem) {
+  .switch.runSwitch {
+    margin: 0;
+    font-size: 0.29rem;
+  }
+}
+
+@media (max-width: 24rem) {
+  .switch.runSwitch {
+    margin: 0;
+    font-size: 0.27rem;
+  }
+}
+
+@media (max-width: 24rem) and (max-height: 46rem) {
+  .switch.runSwitch {
+    margin: 0;
+    font-size: 0.24rem;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .switch.runSwitch {
+    margin: 0;
+    font-size: 0.22rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch span {
+    transition: none;
+  }
+}

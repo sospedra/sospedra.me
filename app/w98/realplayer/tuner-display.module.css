@@ -1,0 +1,194 @@
+@reference "../../../services/style/global.css";
+
+/* display */
+
+.display {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 12.4rem;
+  flex: 1;
+  place-content: center;
+  place-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  background: #000;
+}
+
+.realMark {
+  display: grid;
+  width: 7.4rem;
+  height: 4.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 38% 30%,
+    #2f86f2 0%,
+    #1257c4 52%,
+    #0a3585 100%
+  );
+  box-shadow:
+    0 0 0 0.28rem #000,
+    0 0 0 0.34rem #14243c;
+  color: white;
+  font-size: 1.9rem;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  rotate: -6deg;
+}
+
+.display[data-phase="idle"] .realMark,
+.display[data-phase="paused"] .realMark {
+  opacity: 0.72;
+}
+
+.display[data-phase="connecting"] .realMark {
+  opacity: 0.55;
+}
+
+.displayHint,
+.displayLive,
+.displayAlert {
+  margin: 0;
+  max-width: 100%;
+  font-size: 0.66rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.displayHint {
+  color: #8f8f8f;
+}
+
+.displayLive {
+  overflow: hidden;
+  max-width: 11rem;
+  color: #21d321;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.displayAlert {
+  color: #e8b23c;
+}
+
+/* status bar */
+
+.statusBar {
+  display: flex;
+  min-height: 1.6rem;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 2px 2px;
+  padding: 0.14rem 0.4rem;
+  border-top: 1px solid var(--win-shadow);
+  background: #000;
+}
+
+.statusWell {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex: 0 0 auto;
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: #3d3d3d;
+  border-right-color: #101010;
+  border-bottom-color: #101010;
+  border-left-color: #3d3d3d;
+  background: #1a1a1a;
+}
+
+.lcd {
+  overflow: hidden;
+  min-width: 0;
+  flex: 1;
+  color: #21d321;
+  font-family: "Courier New", monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 0.3rem rgb(33 211 33 / 55%);
+  white-space: nowrap;
+}
+
+.lcd[data-align="right"] {
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.g2 {
+  flex: 0 0 auto;
+  padding: 0 0.28rem;
+  border: 1px solid rgb(33 211 33 / 45%);
+  border-radius: 999px;
+  color: #21d321;
+  font-size: 0.66rem;
+  font-style: italic;
+  font-weight: 700;
+  text-shadow: 0 0 0.3rem rgb(33 211 33 / 55%);
+}
+
+.beacon {
+  width: 0.42rem;
+  height: 0.42rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #0c4a0c;
+}
+
+.beacon[data-live="true"] {
+  background: #2ee52e;
+  box-shadow: 0 0 0.35rem rgb(46 229 46 / 80%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .display[data-phase="playing"] .realMark {
+    animation: rp-logo-pulse 2.6s ease-in-out infinite;
+  }
+}
+
+@keyframes rp-logo-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0.28rem #000,
+      0 0 0 0.34rem #14243c;
+  }
+  50% {
+    box-shadow:
+      0 0 0 0.28rem #000,
+      0 0 0 0.34rem #14243c,
+      0 0 1.6rem 0.1rem rgb(31 87 196 / 45%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .display[data-phase="playing"] .realMark {
+    animation: none;
+  }
+}
+
+/* short viewports: shrink the display floor so the LCD bar stays visible */
+
+@media (max-height: 35rem) {
+  .display {
+    min-height: 5.5rem;
+  }
+
+  .realMark {
+    width: 5.4rem;
+    height: 3.3rem;
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .display {
+    min-height: 8.5rem;
+    flex-basis: 100%;
+    border-top: 1px solid #2c2c2c;
+  }
+}

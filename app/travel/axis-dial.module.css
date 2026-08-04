@@ -1,0 +1,242 @@
+.axisDial {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  place-items: center;
+}
+
+.axisDial::after {
+  position: absolute;
+  z-index: 6;
+  top: 0.18rem;
+  left: 50%;
+  width: 0.3rem;
+  height: 0.1rem;
+  border: 1px solid #342d18;
+  border-radius: 50%;
+  background: #b49a39;
+  box-shadow: 0 0 0.22rem rgb(229 194 72 / 42%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.axisDial + .axisDial {
+  border-left: 1px solid rgb(36 38 32 / 34%);
+}
+
+.rangeDialLimit {
+  position: absolute;
+  z-index: 5;
+  bottom: 0.16rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #35372f;
+  font: 900 0.34rem / 1 var(--font-code, monospace);
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 1px rgb(238 232 205 / 24%),
+    0 -1px rgb(0 0 0 / 62%);
+  text-transform: uppercase;
+}
+
+.rangeDialLimit[data-side="left"] {
+  left: 0.16rem;
+}
+
+.rangeDialLimit[data-side="right"] {
+  right: 0.16rem;
+}
+
+.rangeDialWell {
+  position: relative;
+  display: grid;
+  width: 3.45rem;
+  height: 3.45rem;
+  place-items: center;
+  perspective: 12rem;
+}
+
+.rangeDialInput {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: grab;
+  opacity: 0;
+  touch-action: none;
+}
+
+.rangeDialInput[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+.rangeKnob {
+  --range-angle: 0deg;
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  width: 3.3rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid #252720;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #0d0f0d 0 53%,
+    #1a1c18 54% 61%,
+    #c3b99a 62% 66%,
+    #686960 67% 75%,
+    #272a24 76% 100%
+  );
+  box-shadow:
+    inset 0.22rem 0.2rem 0.3rem rgb(0 0 0 / 62%),
+    inset -0.08rem -0.08rem rgb(236 229 199 / 11%),
+    0 0.16rem 0 #1b1d19,
+    0 0.3rem 0.36rem rgb(0 0 0 / 38%);
+  transition: filter 100ms linear;
+}
+
+.rangeKnob::before,
+.rangeKnob::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0.05rem;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+  -webkit-mask: radial-gradient(
+    circle,
+    transparent 0 71%,
+    #000 72% 78%,
+    transparent 79%
+  );
+  mask: radial-gradient(
+    circle,
+    transparent 0 71%,
+    #000 72% 78%,
+    transparent 79%
+  );
+}
+
+.rangeKnob::before {
+  background: repeating-conic-gradient(
+    from -135deg,
+    #e0d5ac 0 1.3deg,
+    transparent 1.3deg 15deg
+  );
+  opacity: 0.58;
+}
+
+.rangeKnob::after {
+  background: conic-gradient(
+    from -2deg,
+    #d79543 0 4deg,
+    transparent 4deg 360deg
+  );
+  filter: drop-shadow(0 0 1px rgb(218 149 70 / 50%));
+}
+
+.rangeKnobShaft {
+  position: absolute;
+  z-index: 1;
+  width: 2.28rem;
+  aspect-ratio: 1;
+  border: 1px solid #171915;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(from 2deg, #54574f 0 5deg, #2f322c 5deg 10deg),
+    #383b35;
+  box-shadow:
+    inset 0.12rem 0.08rem rgb(255 255 255 / 10%),
+    inset -0.18rem -0.16rem 0.24rem rgb(0 0 0 / 44%),
+    0 0.3rem 0 #141612,
+    0 0.46rem 0.42rem rgb(0 0 0 / 48%);
+  transform: translateY(0.08rem);
+  transition:
+    transform 90ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 90ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.rangeKnobFace {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 2.16rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid #0d0f0d;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 32% 25%,
+      rgb(233 229 198 / 34%) 0 0.11rem,
+      transparent 0.13rem
+    ),
+    radial-gradient(circle at 50% 46%, transparent 0 36%, rgb(0 0 0 / 24%) 68%),
+    repeating-conic-gradient(from 4deg, #3a3c34 0 6deg, #242721 6deg 12deg);
+  box-shadow:
+    inset 0.18rem 0.15rem 0.2rem rgb(255 255 255 / 13%),
+    inset -0.25rem -0.24rem 0.3rem rgb(0 0 0 / 58%),
+    0 0.14rem 0 #20231e,
+    0 0.24rem 0.24rem rgb(0 0 0 / 42%);
+  transform: translateY(-0.16rem) rotate(var(--range-angle));
+  transition: transform 70ms linear;
+  will-change: transform;
+}
+
+.rangeKnobFace::after {
+  width: 0.34rem;
+  aspect-ratio: 1;
+  border: 1px solid #10120f;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #6e7166, #20231f 72%);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 11%),
+    0 1px 1px rgb(0 0 0 / 38%);
+  content: "";
+}
+
+.rangeKnobFace i {
+  position: absolute;
+  top: 0.13rem;
+  left: 50%;
+  width: 0.18rem;
+  height: 0.6rem;
+  border: 1px solid #6a411f;
+  border-radius: 0.08rem;
+  background: linear-gradient(90deg, #8a5525, #e2a153 52%, #7b491f);
+  box-shadow:
+    0 0 0 1px rgb(25 23 18 / 28%),
+    0 0 3px rgb(226 155 75 / 38%);
+  transform: translateX(-50%);
+}
+
+.rangeDialInput:hover + .rangeKnob {
+  filter: brightness(1.08);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .rangeDialInput {
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rangeKnob,
+  .rangeKnobShaft,
+  .rangeKnobFace {
+    transition: none;
+  }
+}

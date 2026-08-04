@@ -1,0 +1,336 @@
+.briefingCopy {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.briefingLead,
+.briefingControls {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.briefingBody {
+  max-width: 36rem;
+  margin: 1.35rem 0 0;
+  color: var(--geo-sand);
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  line-height: 1.6;
+}
+
+.briefingMeta {
+  display: grid;
+  max-width: 36rem;
+  margin-block: 1.1rem;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--geo-line);
+  border-bottom: 1px solid var(--geo-line);
+}
+
+.briefingMeta p {
+  margin: 0;
+  padding: 0.8rem 0.9rem 0.8rem 0;
+  color: var(--geo-sand-muted);
+  font: 0.75rem / 1.5 var(--font-code);
+}
+
+.briefingMeta p + p {
+  padding-left: 0.9rem;
+  border-left: 1px solid var(--geo-line);
+}
+
+.practiceControls {
+  display: grid;
+  max-width: 36rem;
+  margin-bottom: 0.8rem;
+  grid-template-columns: minmax(0, 1fr) minmax(10rem, 0.7fr);
+  gap: 0.55rem;
+}
+
+.selectField,
+.practiceTiming {
+  display: grid;
+  min-height: 3.7rem;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--geo-line);
+  background: rgb(217 197 157 / 3%);
+  color: var(--geo-sand);
+  font-size: 0.74rem;
+  font-weight: 600;
+  gap: 0.7rem;
+}
+
+.selectField {
+  position: relative;
+}
+
+.selectField > span {
+  color: var(--geo-sand-muted);
+  font: 600 0.56rem / 1 var(--font-code);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.selectField select {
+  min-width: 8.6rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 1.6rem 0.35rem 0.5rem;
+  border: 1px solid var(--geo-line-strong);
+  border-radius: 0;
+  background: var(--geo-panel);
+  color: var(--geo-sand-bright);
+  font: 600 0.66rem / 1 var(--font-code);
+}
+
+.practiceTiming {
+  text-align: left;
+}
+
+.practiceTiming[data-active="true"] {
+  border-color: var(--geo-cyan-deep);
+}
+
+.briefingCopy {
+  align-self: center;
+  max-height: calc(100% - 1rem);
+  padding: clamp(1.1rem, 2.8vw, 2rem);
+  border: var(--geo-outline);
+  background: var(--geo-paper);
+  box-shadow:
+    7px 7px 0 var(--geo-pink),
+    12px 12px 0 var(--geo-cyan),
+    16px 16px 0 var(--geo-arcade-ink);
+  color: var(--geo-arcade-ink);
+}
+
+.briefingBody {
+  color: #3d354a;
+  font-weight: 600;
+}
+
+.briefingMeta {
+  border: 3px solid var(--geo-arcade-ink);
+  background: var(--geo-paper-bright);
+  box-shadow: 3px 3px 0 var(--geo-arcade-ink);
+}
+
+.briefingMeta p {
+  color: #4a4054;
+  font-weight: 700;
+}
+
+.briefingMeta p + p {
+  border-left: 3px solid var(--geo-arcade-ink);
+}
+
+.selectField,
+.practiceTiming {
+  border: var(--geo-outline);
+  background: var(--geo-amber);
+  box-shadow: var(--geo-hard-shadow-sm);
+  color: var(--geo-arcade-ink);
+}
+
+.selectField > span {
+  color: #443949;
+  font-weight: 800;
+}
+
+.selectField select {
+  border: 2px solid var(--geo-arcade-ink);
+  background: var(--geo-paper-bright);
+  color: var(--geo-arcade-ink);
+  font-weight: 800;
+}
+
+.practiceTiming[data-active="true"] {
+  border-color: var(--geo-arcade-ink);
+  background: var(--geo-cyan);
+}
+
+@media (max-width: 800px) {
+  .selectField select {
+    font-size: 1rem;
+  }
+
+  .briefingCopy {
+    justify-content: flex-start;
+  }
+
+  .briefingBody {
+    margin-top: 0.65rem;
+    font-size: 0.93rem;
+    line-height: 1.45;
+  }
+
+  .briefingMeta {
+    margin-block: 0.7rem;
+  }
+
+  .briefingMeta p {
+    padding-block: 0.55rem;
+    font-size: 0.66rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .practiceControls {
+    grid-template-columns: 1fr;
+  }
+
+  .briefingMeta {
+    grid-template-columns: 1fr;
+  }
+
+  .briefingMeta p + p {
+    padding-top: 0;
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+@media (max-width: 559px) and (max-height: 620px) {
+  .briefingBody {
+    margin-top: 0.4rem;
+    font-size: 0.82rem;
+    line-height: 1.35;
+  }
+
+  .briefingMeta {
+    display: none;
+  }
+
+  .selectField,
+  .practiceTiming {
+    min-height: 3rem;
+    padding-block: 0.4rem;
+  }
+}
+
+@media (min-width: 801px) {
+  .briefingCopy {
+    overflow-y: auto;
+    justify-content: safe center;
+  }
+}
+
+@media (max-height: 820px) and (min-width: 560px) and (orientation: landscape) {
+  .briefingCopy {
+    display: grid;
+    width: min(100%, 68rem);
+    margin: auto;
+    grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+  }
+
+  .briefingLead,
+  .briefingControls {
+    justify-content: center;
+  }
+
+  .briefingBody {
+    margin-top: 0.7rem;
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+
+  .briefingMeta {
+    margin-block: 0.65rem 0;
+  }
+
+  .briefingMeta p {
+    padding-block: 0.5rem;
+    font-size: 0.62rem;
+    line-height: 1.35;
+  }
+
+  .briefingControls .practiceControls {
+    margin-bottom: 0.55rem;
+  }
+}
+
+@media (max-height: 820px) and (min-width: 560px) and (max-width: 700px) and (
+    orientation: landscape
+  ) {
+  .briefingControls .practiceControls {
+    grid-template-columns: minmax(0, 1fr) minmax(6rem, 0.65fr);
+  }
+
+  .briefingControls .selectField {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .briefingControls .selectField select {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (min-width: 801px) and (min-height: 821px) {
+  .briefingCopy {
+    max-height: 100%;
+    padding: clamp(1rem, 2vw, 1.45rem);
+  }
+
+  .briefingBody {
+    max-width: 38rem;
+    margin-top: 0.85rem;
+    font-size: clamp(0.92rem, 1.15vw, 1.05rem);
+    line-height: 1.45;
+  }
+
+  .briefingMeta {
+    max-width: 38rem;
+    margin-block: 0.75rem;
+  }
+
+  .briefingMeta p {
+    padding-block: 0.6rem;
+    font-size: 0.68rem;
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 800px) {
+  .briefingCopy {
+    max-height: none;
+    padding: 1rem;
+    box-shadow:
+      4px 4px 0 var(--geo-pink),
+      7px 7px 0 var(--geo-cyan),
+      10px 10px 0 var(--geo-arcade-ink);
+  }
+}
+
+@media (max-width: 480px) {
+  .briefingCopy {
+    padding: 0.8rem;
+  }
+
+  .briefingMeta {
+    box-shadow: 2px 2px 0 var(--geo-arcade-ink);
+  }
+}
+
+@media (max-width: 559px) and (max-height: 620px) {
+  .briefingCopy {
+    padding: 0.55rem;
+    box-shadow:
+      3px 3px 0 var(--geo-pink),
+      5px 5px 0 var(--geo-cyan),
+      7px 7px 0 var(--geo-arcade-ink);
+  }
+
+  .briefingBody {
+    margin-top: 0.3rem;
+    font-size: 0.78rem;
+    line-height: 1.28;
+  }
+}

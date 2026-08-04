@@ -1,0 +1,332 @@
+/* ══ tuner: the mik radio pane, verbatim structure ══ */
+
+.tuner {
+  position: absolute;
+  z-index: 4;
+  top: 44px;
+  left: 18px;
+  right: 18px;
+  height: 112px;
+  display: flex;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 2px solid #25292b;
+  border-top-color: #777b7c;
+  border-radius: 3px;
+  font-size: 10px;
+  color: #ccc;
+  background: linear-gradient(#090909, #090909);
+  box-shadow:
+    inset 0 4px 0 #020303,
+    inset 0 -3px 0 #292c2d,
+    0 2px 0 rgb(255 255 255 / 55%);
+}
+
+.tunerCluster {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 116px;
+  flex-shrink: 0;
+}
+
+.indicatorLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 4px;
+  border: 1px solid #1c3a4a;
+  background: linear-gradient(#123244, #0a2230);
+  color: #bfe3ec;
+  font:
+    700 10px / 1 Arial,
+    Helvetica,
+    sans-serif;
+  text-transform: uppercase;
+}
+
+.ledBorder {
+  display: block;
+  width: 20px;
+  aspect-ratio: 2 / 1;
+  background: #000;
+  border: 1px solid;
+  border-color: #000 #000 #111 #111;
+}
+
+.tunerLed {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.12;
+}
+
+.tunerLedRed {
+  color: #f00;
+  background-color: currentcolor;
+  background-image: radial-gradient(rgb(255 255 255 / 33%), transparent);
+}
+
+.tunerLed[data-on="true"] {
+  opacity: 0.9;
+  box-shadow: 0 0 20px 2px rgb(255 0 0 / 70%);
+}
+
+.radioTuning {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #1c3a4a;
+  background: linear-gradient(#123244, #0a2230);
+  color: #bfe3ec;
+  font:
+    700 10px / 1 Arial,
+    Helvetica,
+    sans-serif;
+  text-transform: uppercase;
+}
+
+/* the mik tuning thumbwheel: black slot, two half-wheel spans whose
+   white band is the lit crown of the cylinder */
+.wheel {
+  display: flex;
+  width: 100px;
+  height: 18px;
+  overflow: hidden;
+  border: solid;
+  border-color: #111 #000 #000 #111;
+  border-width: 1px 2px;
+  border-radius: 3px;
+  background: #000;
+  box-shadow: -2px 2px 6px -1px #000;
+}
+
+.wheel span {
+  position: relative;
+  border: 0;
+  outline: 0;
+  height: 100%;
+  width: 50%;
+  cursor: pointer;
+  padding: 0;
+}
+
+.wheel span:nth-child(1) {
+  border-radius: 2px 0 0 2px;
+  background-image:
+    linear-gradient(
+      transparent 0 24%,
+      rgb(255 255 255 / 40%) 26% 74%,
+      transparent 76%
+    ),
+    linear-gradient(90deg, #000 0%, rgb(0 0 0 / 60%) 80% 100%);
+}
+
+.wheel span:nth-child(2) {
+  border-radius: 0 2px 2px 0;
+  background-image:
+    linear-gradient(
+      transparent 0 24%,
+      rgb(255 255 255 / 40%) 26% 74%,
+      transparent 76%
+    ),
+    linear-gradient(270deg, #000 0%, rgb(0 0 0 / 60%) 80% 100%);
+}
+
+.wheel[data-live="true"] span {
+  animation: wheel-shimmer 0.9s linear infinite alternate;
+}
+
+@keyframes wheel-shimmer {
+  to {
+    filter: brightness(1.5);
+  }
+}
+
+/* ── the dial glass: a backlit window, combed scales, a red needle ── */
+
+.dialGlass {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 92px;
+  margin-top: 2px;
+  overflow: hidden;
+  border: 2px solid #2b3134;
+  border-radius: 4px;
+  background:
+    linear-gradient(
+      115deg,
+      rgb(255 255 255 / 8%) 0 22%,
+      transparent 23% 34%,
+      rgb(255 255 255 / 3.5%) 35% 38%,
+      transparent 39%
+    ),
+    radial-gradient(120% 90% at 50% 8%, #12303e, var(--navy) 70%, #04101a);
+  box-shadow:
+    inset 0 2px 8px rgb(0 0 0 / 70%),
+    inset 0 0 0 1px rgb(113 239 255 / 8%);
+  transition: filter 320ms ease;
+}
+
+.dialGlass[data-live="true"] {
+  box-shadow:
+    inset 0 2px 8px rgb(0 0 0 / 70%),
+    inset 0 0 24px rgb(113 239 255 / 10%);
+}
+
+.dialRow {
+  position: absolute;
+  left: 0;
+  right: 8px;
+  height: 24px;
+  display: flex;
+  align-items: flex-start;
+  transition: opacity 320ms ease;
+}
+
+.dialFm {
+  top: 6px;
+}
+
+.dialAm {
+  top: 39px;
+  opacity: 0.52;
+}
+
+.dialCap {
+  width: 64px;
+  flex-shrink: 0;
+  padding-left: 10px;
+  color: var(--tuner-teal);
+  font: 700 9px / 12px var(--micro);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.dialStops {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+.dialStops i {
+  text-align: center;
+  color: #cfe9ef;
+  font:
+    italic 700 11px / 12px Arial,
+    Helvetica,
+    sans-serif;
+  text-shadow: 0 0 4px rgb(113 239 255 / 35%);
+}
+
+.dialAm .dialStops i {
+  color: #d8c49a;
+  font-size: 10px;
+  text-shadow: 0 0 4px rgb(230 166 66 / 30%);
+}
+
+/* the tick comb under each scale */
+.dialRow::after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: 64px;
+  right: 0;
+  height: 7px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(207 233 239 / 55%) 0 1px,
+      transparent 1px 9px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(207 233 239 / 28%) 0 1px,
+      transparent 1px 3px
+    );
+  background-size:
+    100% 100%,
+    100% 55%;
+  background-repeat: no-repeat;
+}
+
+.dialAm::after {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(216 196 154 / 45%) 0 1px,
+      transparent 1px 11px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(216 196 154 / 22%) 0 1px,
+      transparent 1px 3px
+    );
+  background-size:
+    100% 100%,
+    100% 55%;
+  background-repeat: no-repeat;
+}
+
+.nowStrip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  padding: 0 10px;
+  color: var(--cyan);
+  font: 10px / 12px var(--micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 0 5px rgb(255 84 36 / 55%);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* the needle rides fm stop centers: (attempt + 0.5) sevenths of the rail,
+   the rail being exactly the stops grid (left 64px cap, right 8px inset) */
+.dialNeedle {
+  position: absolute;
+  z-index: 3;
+  top: 4px;
+  bottom: 18px;
+  left: calc(64px + (100% - 72px) * ((var(--dial, 0) + 0.5) / 7));
+  width: 2px;
+  margin-left: -1px;
+  background: linear-gradient(#ff8d84, #e5484d 30%, #e5484d);
+  box-shadow:
+    0 0 6px rgb(229 72 77 / 80%),
+    0 0 1px #fff;
+  transition: left 700ms ease;
+}
+
+.dialNeedle::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffd7d3, #e5484d 60%);
+  box-shadow: 0 0 6px rgb(229 72 77 / 70%);
+  translate: -50% 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wheel[data-live="true"] span {
+    animation: none;
+  }
+
+  .dialNeedle,
+  .dialGlass {
+    transition: none;
+  }
+}

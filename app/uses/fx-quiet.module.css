@@ -1,0 +1,22 @@
+:global(.fx-quiet) .scene,
+:global(.fx-quiet) .valance i,
+:global(.fx-quiet) .homePlaque,
+:global(.fx-quiet) .neonSign,
+:global(.fx-quiet) .neonAccent,
+:global(.fx-quiet) .neonLoose,
+:global(.fx-quiet) .steam i,
+:global(.fx-quiet) .lanternA,
+:global(.fx-quiet) .lanternB,
+:global(.fx-quiet) .chochin,
+:global(.fx-quiet) .charm,
+:global(.fx-quiet) .sticker,
+:global(.fx-quiet) .fuurinStrip,
+:global(.fx-quiet) .notebookHighlight,
+:global(.fx-quiet) .notebookFlourish {
+  animation: none;
+}
+
+:global(.fx-quiet) .notebookHighlight,
+:global(.fx-quiet) .notebookFlourish {
+  transition: none;
+}

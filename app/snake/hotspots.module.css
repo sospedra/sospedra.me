@@ -1,0 +1,31 @@
+.hotspot {
+  position: absolute;
+  top: var(--hotspot-top);
+  left: var(--hotspot-left);
+  width: var(--hotspot-width);
+  height: var(--hotspot-height);
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hotspot:active,
+.hotspot.down {
+  background: radial-gradient(closest-side, rgb(164 205 3 / 20%), transparent);
+}
+
+@media (max-width: 47.99rem) and (orientation: landscape) {
+  /* The image-map keys become shallow when the handset is cropped into a
+     short landscape viewport. Grow actionable zones upward from each key's
+     measured lower edge: centers stay faithful and the bottom row stays safe. */
+  .hotspot[aria-label] {
+    top: calc(var(--hotspot-bottom) - 44px);
+    height: 44px;
+    min-width: 44px;
+  }
+}

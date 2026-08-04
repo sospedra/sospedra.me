@@ -1,0 +1,218 @@
+.gameGrid {
+  position: relative;
+  z-index: 1;
+}
+
+.gameGrid {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: center;
+  padding: 0 clamp(0.25rem, 2vmin, 1.5rem);
+}
+
+.gameLink {
+  --icon-size: clamp(4.9rem, 10.6vmin, 7.1rem);
+  --icon-rest-y: 0rem;
+  --reveal-delay: 180ms;
+  position: relative;
+  display: grid;
+  min-width: 44px;
+  min-height: clamp(8.5rem, 22vmin, 13rem);
+  grid-template-rows: 1fr auto 0.9rem;
+  place-items: center;
+  padding: 0.35rem;
+  border-radius: 0.25rem;
+  color: var(--games-label);
+  text-decoration: none;
+}
+
+.iconStage {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  opacity: 0;
+  transform: translate3d(0, 0.35rem, 0) scale(0.001);
+  transform-origin: 50% 72%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.gameLink:nth-child(1) {
+  --icon-size: clamp(5.2rem, 11.3vmin, 7.4rem);
+  --icon-rest-y: 0.6rem;
+  --reveal-delay: 180ms;
+}
+
+.gameLink:nth-child(2) {
+  --icon-size: clamp(4.6rem, 10.1vmin, 6.6rem);
+  --icon-rest-y: -0.55rem;
+  --reveal-delay: 460ms;
+}
+
+.gameLink:nth-child(3) {
+  --icon-size: clamp(5rem, 10.8vmin, 7.2rem);
+  --icon-rest-y: 0.15rem;
+  --reveal-delay: 740ms;
+}
+
+.gameLink:nth-child(4) {
+  --icon-size: clamp(4.8rem, 10.3vmin, 6.8rem);
+  --icon-rest-y: -0.35rem;
+  --reveal-delay: 1020ms;
+}
+
+.gameLink:nth-child(5) {
+  --icon-size: clamp(5.3rem, 11.5vmin, 7.6rem);
+  --icon-rest-y: 0.45rem;
+  --reveal-delay: 1300ms;
+}
+
+.gameLink:nth-child(6) {
+  --icon-size: clamp(4.9rem, 10.4vmin, 6.9rem);
+  --icon-rest-y: -0.2rem;
+  --reveal-delay: 1580ms;
+}
+
+.gameLink:nth-child(7) {
+  --icon-size: clamp(5.1rem, 11vmin, 7.3rem);
+  --icon-rest-y: 0.35rem;
+  --reveal-delay: 1860ms;
+}
+
+.iconWrap {
+  position: relative;
+  display: block;
+  width: var(--icon-size);
+  max-width: 100%;
+  aspect-ratio: 1;
+  opacity: 0.78;
+  transform: translate3d(0, var(--icon-rest-y), 0) scale(0.92);
+  transform-origin: 50% 75%;
+  transition:
+    filter var(--games-fast) ease,
+    opacity var(--games-fast) ease,
+    transform 420ms var(--games-ease);
+}
+
+.iconWrap::before {
+  position: absolute;
+  z-index: -1;
+  content: "";
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(238 246 255 / 86%), transparent 68%);
+  filter: blur(9px);
+  opacity: 0;
+  transform: scale(0.68);
+  transition:
+    opacity 320ms ease,
+    transform 500ms var(--games-ease);
+}
+
+.gameLink[data-active="true"] .iconWrap {
+  opacity: 1;
+  transform: translate3d(0, calc(var(--icon-rest-y) - 0.55rem), 0) scale(1.08);
+}
+
+.gameLink[data-active="true"] .iconWrap::before {
+  opacity: 0.74;
+  transform: scale(1.2);
+}
+
+.gameName {
+  max-width: 100%;
+  overflow: hidden;
+  color: rgb(248 248 251 / 92%);
+  font-size: clamp(0.68rem, 1.4vmin, 0.86rem);
+  font-weight: 600;
+  line-height: 1;
+  opacity: 0;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 0.65px rgb(24 26 33 / 72%);
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 2px rgb(21 22 29 / 82%);
+  transform: translateY(0.2rem);
+  transition:
+    opacity var(--games-fast) ease,
+    transform var(--games-fast) var(--games-ease);
+  white-space: nowrap;
+}
+
+.gameLink[data-active="true"] .gameName {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cursor {
+  position: absolute;
+  z-index: 4;
+  bottom: -0.12rem;
+  left: 50%;
+  width: 0.42rem;
+  height: 0.42rem;
+  border: 1px solid rgb(255 255 255 / 92%);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0.2rem rgb(255 255 255 / 100%),
+    0 0 0.65rem 0.18rem rgb(234 242 255 / 72%),
+    0 0 1.2rem 0.35rem rgb(152 190 255 / 28%);
+  opacity: 0;
+  transform: translate3d(-50%, 0.35rem, 0) scale(0.45);
+  transition:
+    opacity var(--games-fast) ease,
+    transform 360ms var(--games-ease);
+}
+
+.gameLink[data-active="true"] .cursor {
+  opacity: 1;
+  transform: translate3d(-50%, 0, 0) scale(1);
+}
+
+.gameLink:hover .iconWrap {
+  opacity: 1;
+}
+
+@media (max-width: 700px) {
+  .gameGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    padding: 0 0.15rem;
+  }
+
+  .gameGrid .gameLink {
+    --icon-size: min(20vw, 5.4rem);
+    --icon-rest-y: 0rem;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr) auto 0.7rem;
+    padding: 0.2rem;
+  }
+
+  .gameName {
+    max-width: 25vw;
+    font-size: clamp(0.62rem, 2.8vw, 0.76rem);
+  }
+
+  .cursor {
+    bottom: -0.05rem;
+    width: 0.36rem;
+    height: 0.36rem;
+  }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+  .gameGrid .gameLink {
+    --icon-size: min(13vh, 5rem);
+    min-height: 5.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iconStage {
+    opacity: 1;
+    transform: none;
+  }
+}

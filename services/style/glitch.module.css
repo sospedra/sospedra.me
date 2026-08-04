@@ -42,7 +42,6 @@
 }
 
 .trigger:hover .glitch,
-.trigger:focus-visible .glitch,
 .trigger:active .glitch {
   color: var(--color-text-strong, #fff);
   text-shadow:
@@ -54,7 +53,6 @@
 }
 
 .trigger:hover .glitch::before,
-.trigger:focus-visible .glitch::before,
 .trigger:active .glitch::before {
   opacity: 0.75;
   animation: title-glitch-cyan 520ms steps(2, end) infinite;
@@ -62,7 +60,6 @@
 }
 
 .trigger:hover .glitch::after,
-.trigger:focus-visible .glitch::after,
 .trigger:active .glitch::after {
   opacity: 0.75;
   animation: title-glitch-pink 520ms steps(2, end) infinite;
@@ -152,7 +149,6 @@
 }
 
 .legacyTrigger:hover .legacyGlitch,
-.legacyTrigger:focus-visible .legacyGlitch,
 .legacyTrigger:active .legacyGlitch {
   color: var(--color-text-strong, #fff);
   animation: legacy-underline 1s 1s infinite;
@@ -160,8 +156,6 @@
 
 .legacyTrigger:hover .legacyGlitch::before,
 .legacyTrigger:hover .legacyGlitch::after,
-.legacyTrigger:focus-visible .legacyGlitch::before,
-.legacyTrigger:focus-visible .legacyGlitch::after,
 .legacyTrigger:active .legacyGlitch::before,
 .legacyTrigger:active .legacyGlitch::after {
   position: absolute;
@@ -371,14 +365,12 @@
   }
 
   .trigger:hover .glitch,
-  .trigger:focus-visible .glitch,
   .trigger:active .glitch {
     animation: none;
     transform: none;
   }
 
   .trigger:hover .glitch::before,
-  .trigger:focus-visible .glitch::before,
   .trigger:active .glitch::before {
     animation: none;
     opacity: 0.55;
@@ -386,7 +378,6 @@
   }
 
   .trigger:hover .glitch::after,
-  .trigger:focus-visible .glitch::after,
   .trigger:active .glitch::after {
     animation: none;
     opacity: 0.55;
@@ -394,7 +385,6 @@
   }
 
   .legacyTrigger:hover .legacyGlitch,
-  .legacyTrigger:focus-visible .legacyGlitch,
   .legacyTrigger:active .legacyGlitch {
     text-decoration: underline;
     text-decoration-style: dashed;
@@ -403,8 +393,6 @@
 
   .legacyTrigger:hover .legacyGlitch::before,
   .legacyTrigger:hover .legacyGlitch::after,
-  .legacyTrigger:focus-visible .legacyGlitch::before,
-  .legacyTrigger:focus-visible .legacyGlitch::after,
   .legacyTrigger:active .legacyGlitch::before,
   .legacyTrigger:active .legacyGlitch::after {
     content: none;

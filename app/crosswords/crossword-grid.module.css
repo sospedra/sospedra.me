@@ -1,0 +1,305 @@
+@reference "../../services/style/global.css";
+
+.leadStory {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 50%);
+  border-radius: 0.55rem;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 62%), transparent 30%), #c6cacf;
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 78%),
+    inset -1px -1px 0 rgb(69 71 78 / 14%),
+    -5px -5px 12px rgb(255 255 255 / 55%),
+    6px 8px 16px rgb(45 49 56 / 16%);
+}
+
+.leadStory::after {
+  display: none;
+}
+
+.gridRegion {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+  place-items: center;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0.48rem;
+
+  /* One value on purpose: the pan centers in the region, so uniform padding
+     plus the 96% fit reads as equal air on the tight axis. */
+  padding: var(--cw-glass-pad);
+  background:
+    radial-gradient(
+      circle clamp(8rem, 24vmin, 15rem) at 13% 88%,
+      rgb(215 101 60 / 58%) 0 97%,
+      transparent 100%
+    ),
+    linear-gradient(rgb(96 143 180 / 60%), rgb(96 143 180 / 60%)) no-repeat 92%
+    -12% / 9% 62%,
+    radial-gradient(30% 26% at 62% 82%, rgb(98 169 150 / 26%), transparent 75%),
+    linear-gradient(160deg, #1a1d24, #0f1116 56%, #14161c);
+  box-shadow:
+    inset 0 0.85rem 1.9rem rgb(0 0 0 / 40%),
+    inset 0 -1px 0 rgb(255 255 255 / 5%);
+}
+
+/* Smoked-glass pane: blurs the aurora underlay painted on the region itself. */
+.gridRegion::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      105deg,
+      transparent 34%,
+      rgb(255 255 255 / 4%) 44%,
+      rgb(255 255 255 / 11%) 50%,
+      rgb(255 255 255 / 4%) 56%,
+      transparent 66%
+    ),
+    linear-gradient(
+      118deg,
+      rgb(255 255 255 / 10%),
+      rgb(255 255 255 / 2%) 24%,
+      transparent 44%
+    ),
+    rgb(15 17 22 / 46%);
+
+  /* Standard property only: Lightning CSS emits the -webkit- alias itself,
+     and hand-writing both collapses to webkit-only, which Chrome ignores. */
+  backdrop-filter: blur(14px) saturate(1.35);
+  box-shadow:
+    inset 0 1.5px 0 rgb(255 255 255 / 20%),
+    inset 1px 0 0 rgb(255 255 255 / 7%),
+    inset -1px 0 0 rgb(255 255 255 / 5%),
+    inset 0 -1px 0 rgb(0 0 0 / 65%);
+  content: "";
+  pointer-events: none;
+}
+
+@supports not (
+    (backdrop-filter: blur(1px)) or
+    (-webkit-backdrop-filter: blur(1px))
+  ) {
+  .gridRegion::before {
+    background: rgb(15 17 22 / 86%);
+  }
+}
+
+.gridRegion::after {
+  position: absolute;
+  z-index: 2;
+  top: 0.65rem;
+  right: 0.72rem;
+  width: 0.34rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--cw-green);
+  box-shadow:
+    0 0 0 2px rgb(255 255 255 / 12%),
+    0 0 0.55rem rgb(98 169 150 / 75%);
+  content: "";
+  pointer-events: none;
+}
+
+.gridPan {
+  position: relative;
+  z-index: 1;
+  width: var(--cw-pan-side);
+  height: var(--cw-pan-side);
+  padding: var(--cw-pan-pad);
+  border: 1px solid rgb(174 177 182 / 82%);
+  border-radius: 0.42rem;
+  background:
+    linear-gradient(135deg, var(--cw-shell-light), var(--cw-shell) 64%),
+    var(--cw-shell);
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    inset -1px -1px 0 rgb(56 58 65 / 20%),
+    0 0.18rem 0 rgb(126 130 138 / 45%),
+    0 0.7rem 1.5rem rgb(0 0 0 / 42%);
+}
+
+.gridPan::before,
+.gridPan::after {
+  display: none;
+}
+
+.gridSurface {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  overflow: visible;
+}
+
+.grid {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #111216;
+  border-radius: 0.16rem;
+  background: #16171b;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 5%);
+}
+
+.grid > tbody {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+}
+
+.gridRow {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+}
+
+.gridRow > :last-child {
+  border-right: 0;
+}
+
+.pauseCurtain {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.62rem;
+  padding: 1rem;
+  color: var(--cw-display-ink);
+  background: rgb(17 19 24 / 82%);
+  backdrop-filter: blur(14px) saturate(1.2);
+  text-align: center;
+}
+
+@supports not (
+    (backdrop-filter: blur(1px)) or
+    (-webkit-backdrop-filter: blur(1px))
+  ) {
+  .pauseCurtain {
+    background: rgb(21 23 28 / 97%);
+  }
+}
+
+.pauseCurtain > span {
+  display: grid;
+  width: 3rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--cw-orange);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 30%),
+    0 5px 12px rgb(164 63 29 / 60%);
+  font: 750 1.1rem / 1 var(--font-code);
+}
+
+.pauseCurtain svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.pauseCurtain strong {
+  font: 750 1.1rem / 1 var(--font-body);
+  letter-spacing: -0.02em;
+}
+
+.pauseCurtain p {
+  margin: 0;
+  color: #b7b8bd;
+  font-size: 0.82rem;
+}
+
+.pauseCurtain button {
+  min-width: 7rem;
+  min-height: 44px;
+  border: 0;
+  border-radius: 0.32rem;
+  color: var(--cw-ink);
+  background: linear-gradient(135deg, var(--cw-key-light), var(--cw-key));
+  box-shadow: var(--cw-key-shadow);
+  font: 750 0.58rem / 1 var(--font-code);
+  text-transform: uppercase;
+}
+
+.game[data-high-contrast="true"] .gridRegion {
+  background: #000;
+}
+
+.game[data-high-contrast="true"] .gridRegion::before {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+@media (max-width: 52rem), (max-width: 64rem) and (max-height: 36rem) {
+  .leadStory {
+    height: 100%;
+    border-radius: 0.48rem;
+  }
+
+  .gridRegion {
+    height: 100%;
+    padding: var(--cw-glass-pad);
+  }
+
+  .gridPan {
+    overflow: auto;
+    overscroll-behavior: contain;
+    border-radius: 0.32rem;
+    scrollbar-color: var(--cw-blue-deep) transparent;
+    scrollbar-width: thin;
+    touch-action: pan-x pan-y;
+  }
+
+  .gridSurface {
+    width: var(--cw-touch-grid);
+    height: var(--cw-touch-grid);
+  }
+
+  .pauseCurtain {
+    inset: 0;
+  }
+}
+
+.game[data-short-viewport="true"] .gridPan {
+  width: 100%;
+  height: 100%;
+}
+
+@media (forced-colors: active) {
+  .leadStory {
+    color: CanvasText;
+    background: Canvas;
+  }
+  .grid,
+  .gridRegion {
+    color: CanvasText;
+    background: Canvas;
+    forced-color-adjust: none;
+  }
+}

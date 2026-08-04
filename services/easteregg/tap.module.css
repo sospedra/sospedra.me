@@ -5,11 +5,6 @@
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-.tap:focus-visible {
-  outline: 3px solid var(--color-focus);
-  outline-offset: -6px;
-}
-
 .count {
   @apply flex items-center justify-center w-48 h-48 font-serif text-6xl;
   margin-left: calc(25% - 6rem);

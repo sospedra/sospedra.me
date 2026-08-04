@@ -1,0 +1,381 @@
+.completionLead {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.completionScore {
+  display: flex;
+  align-items: baseline;
+  margin-top: 1.5rem;
+  gap: 0.7rem;
+}
+
+.completionScore strong {
+  color: var(--geo-amber-bright);
+  font: 400 clamp(3.3rem, 7vw, 6.4rem) / 0.82 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+}
+
+.completionScore span {
+  color: var(--geo-sand-muted);
+  font: 600 0.62rem / 1 var(--font-code);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.completionStatus {
+  display: inline-flex;
+  align-self: flex-start;
+  margin-top: 1.2rem;
+  padding: 0.45rem 0.6rem;
+  border-left: 2px solid var(--geo-cyan);
+  background: rgb(112 221 209 / 7%);
+  color: var(--geo-cyan);
+  font: 600 0.6rem / 1.3 var(--font-code);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.nextGame {
+  display: grid;
+  width: min(320px, 100%);
+  align-self: flex-start;
+  margin-top: 0.6rem;
+  gap: 0.4rem;
+}
+
+.nextGameReadout {
+  display: flex;
+  align-items: baseline;
+  margin: 0;
+  gap: 0.55rem;
+}
+
+.nextGameReadout span {
+  color: var(--geo-sand-muted);
+  font: 600 0.6rem / 1.3 var(--font-code);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.nextGameReadout strong {
+  color: var(--geo-sand-bright);
+  font: 700 1.15rem / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+}
+
+.nextGameTrack {
+  display: block;
+  overflow: hidden;
+  height: 8px;
+  border: 1px solid var(--geo-line);
+  background: rgb(255 255 255 / 6%);
+}
+
+.nextGameTrack span {
+  display: block;
+  width: calc(var(--remaining, 0) * 100%);
+  height: 100%;
+  background: var(--geo-signal);
+  transition: width 900ms linear;
+}
+
+.nextGameReady {
+  align-self: flex-start;
+  margin-top: 0.6rem;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--geo-signal);
+  background: none;
+  color: var(--geo-signal);
+  cursor: pointer;
+  font: 700 0.62rem / 1.3 var(--font-code);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.resultsPanel {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  align-content: center;
+  gap: 0.9rem;
+}
+
+.roundResults {
+  display: grid;
+  border-top: 1px solid var(--geo-line-strong);
+}
+
+.roundResult {
+  display: grid;
+  min-height: 3.8rem;
+  align-items: center;
+  grid-template-columns: minmax(6.5rem, 0.75fr) minmax(8rem, 1.3fr) auto;
+  border-bottom: 1px solid var(--geo-line);
+  gap: 1rem;
+}
+
+.roundResult strong {
+  color: var(--geo-sand);
+  font-size: 0.8rem;
+}
+
+.resultCells {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 0.18rem;
+}
+
+.resultCell {
+  composes: resultCell from "./geo-game.module.css";
+  width: 0.38rem;
+  height: 0.72rem;
+  flex: 0 0 0.38rem;
+  background: var(--geo-panel-3);
+  transform: skewX(-10deg);
+}
+
+.resultCell[data-correct="true"] {
+  background: var(--geo-success);
+}
+
+.resultCell[data-correct="false"] {
+  background: var(--geo-error);
+}
+
+.roundResult span:last-child {
+  color: var(--geo-sand-muted);
+  font: 600 0.68rem / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--geo-line);
+}
+
+.statCard {
+  min-width: 0;
+  min-height: 5.2rem;
+  padding: 0.8rem;
+}
+
+.statCard:not(:nth-child(3n + 1)) {
+  border-left: 1px solid var(--geo-line);
+}
+
+.statCard:nth-child(n + 4) {
+  border-top: 1px solid var(--geo-line);
+}
+
+.statCard span,
+.statCard strong {
+  display: block;
+}
+
+.statCard span {
+  color: var(--geo-sand-muted);
+  font: 600 0.5rem / 1.3 var(--font-code);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.statCard strong {
+  margin-top: 0.55rem;
+  overflow: hidden;
+  color: var(--geo-sand-bright);
+  font: 700 clamp(0.86rem, 1.5vw, 1.15rem) / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.completionLead {
+  align-self: center;
+  padding: clamp(1rem, 2.5vw, 1.8rem);
+  border: var(--geo-outline);
+  background: var(--geo-amber);
+  box-shadow:
+    7px 7px 0 var(--geo-pink),
+    12px 12px 0 var(--geo-arcade-ink);
+  color: var(--geo-arcade-ink);
+  transform: rotate(-0.5deg);
+}
+
+.completionScore strong {
+  color: var(--geo-arcade-ink);
+  font-weight: 800;
+  text-shadow: 4px 4px 0 var(--geo-pink);
+}
+
+.completionScore span {
+  color: #50434b;
+  font-weight: 800;
+}
+
+.completionStatus {
+  border: 2px solid var(--geo-arcade-ink);
+  background: var(--geo-cyan);
+  box-shadow: var(--geo-hard-shadow-sm);
+  color: var(--geo-arcade-ink);
+  font-weight: 800;
+}
+
+.nextGameReadout span {
+  color: #50434b;
+  font-weight: 800;
+}
+
+.nextGameReadout strong {
+  color: var(--geo-arcade-ink);
+  text-shadow: 2px 2px 0 var(--geo-cyan);
+}
+
+.nextGameTrack {
+  border: 2px solid var(--geo-arcade-ink);
+  background: var(--geo-paper-bright);
+  box-shadow: var(--geo-hard-shadow-sm);
+}
+
+.nextGameTrack span {
+  background: var(--geo-cyan);
+}
+
+.nextGameReady {
+  border: 2px solid var(--geo-arcade-ink);
+  background: var(--geo-lime);
+  box-shadow: var(--geo-hard-shadow-sm);
+  color: var(--geo-arcade-ink);
+  font-weight: 800;
+}
+
+.resultsPanel {
+  align-self: center;
+  padding: clamp(0.8rem, 2vw, 1.2rem);
+  border: var(--geo-outline);
+  background: #211c42;
+  box-shadow:
+    7px 7px 0 var(--geo-cyan),
+    12px 12px 0 var(--geo-arcade-ink);
+}
+
+.roundResults {
+  border-top: 3px solid var(--geo-paper);
+}
+
+.roundResult {
+  border-bottom: 2px solid var(--geo-line-strong);
+}
+
+.roundResult strong {
+  color: var(--geo-paper-bright);
+  font-weight: 800;
+}
+
+.resultCell {
+  border: 1px solid var(--geo-arcade-ink);
+  transform: none;
+}
+
+.roundResult span:last-child {
+  color: var(--geo-paper);
+}
+
+.statsGrid {
+  border: 3px solid var(--geo-arcade-ink);
+  background: var(--geo-paper);
+}
+
+.statCard:not(:nth-child(3n + 1)) {
+  border-left: 2px solid var(--geo-arcade-ink);
+}
+
+.statCard:nth-child(n + 4) {
+  border-top: 2px solid var(--geo-arcade-ink);
+}
+
+.statCard:nth-child(6n + 2),
+.statCard:nth-child(6n + 4),
+.statCard:nth-child(6n + 6) {
+  background: var(--geo-cyan);
+}
+
+.statCard span {
+  color: #504657;
+  font-weight: 800;
+}
+
+.statCard strong {
+  color: var(--geo-arcade-ink);
+}
+
+@media (max-width: 800px) {
+  .completionLead {
+    justify-content: flex-start;
+  }
+
+  .completionScore strong {
+    font-size: clamp(3.2rem, 16vw, 5.5rem);
+  }
+
+  .resultsPanel {
+    align-content: start;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .statCard:not(:nth-child(3n + 1)) {
+    border-left: 0;
+  }
+
+  .statCard:nth-child(2n) {
+    border-left: 1px solid var(--geo-line);
+  }
+
+  .statCard:nth-child(n + 3) {
+    border-top: 1px solid var(--geo-line);
+  }
+
+  .roundResult {
+    grid-template-columns: minmax(5.5rem, 0.8fr) 1fr auto;
+    gap: 0.5rem;
+  }
+
+  .resultCell {
+    width: 0.32rem;
+    flex-basis: 0.32rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .completionLead,
+  .resultsPanel {
+    box-shadow:
+      4px 4px 0 var(--geo-cyan),
+      8px 8px 0 var(--geo-arcade-ink);
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    border-width: 2px;
+  }
+
+  .statCard:nth-child(2n) {
+    border-left: 2px solid var(--geo-arcade-ink);
+  }
+
+  .statCard:nth-child(n + 3) {
+    border-top: 2px solid var(--geo-arcade-ink);
+  }
+}

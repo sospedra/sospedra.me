@@ -1,0 +1,143 @@
+.tattoos {
+  display: contents;
+}
+
+.tattoo {
+  position: absolute;
+  z-index: -1;
+  display: block;
+  pointer-events: none;
+  animation:
+    tattoo-buzz 9s step-end infinite,
+    tattoo-drift 8s ease-in-out infinite alternate;
+}
+
+.tattoo svg {
+  overflow: visible;
+  width: 100%;
+  height: auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tattoo text {
+  fill: currentColor;
+  stroke: none;
+  font-family: var(--font-display, monospace);
+  font-size: 1.75rem;
+}
+
+.tattooHeart {
+  --tilt: -7deg;
+  top: 21rem;
+  left: -5.55rem;
+  width: 7rem;
+  color: var(--color-signal-pink-hot, #ff4fd8);
+  filter: drop-shadow(0 0 0.4rem rgb(255 79 216 / 75%))
+    drop-shadow(0 0 1.2rem rgb(255 79 216 / 30%));
+}
+
+.tattooSnake {
+  --tilt: 6deg;
+  top: 60rem;
+  left: -4.8rem;
+  width: 6rem;
+  color: #48ff6a;
+  filter: drop-shadow(0 0 0.4rem rgb(72 255 106 / 70%))
+    drop-shadow(0 0 1.2rem rgb(72 255 106 / 28%));
+  animation-delay: -3s, -2s;
+}
+
+.tattooBolt {
+  --tilt: 9deg;
+  top: 9rem;
+  right: -4.1rem;
+  width: 5.4rem;
+  color: var(--color-signal-yellow, #ffea00);
+  filter: drop-shadow(0 0 0.4rem rgb(255 234 0 / 70%))
+    drop-shadow(0 0 1.2rem rgb(255 234 0 / 28%));
+  animation-delay: -6s, -4s;
+}
+
+.tattooTongue {
+  stroke: #ff2f4f;
+}
+
+.tattooSpark {
+  stroke: var(--color-signal-cyan, #6df7ea);
+}
+
+/* under 559px there are no side alleys: pull the glyphs inward so they
+   read as neon doodles instead of clipped slivers */
+@media (max-width: 559px) {
+  .tattooHeart {
+    left: -1.75rem;
+    width: 5.5rem;
+  }
+
+  .tattooSnake {
+    left: -1.5rem;
+    width: 5rem;
+  }
+
+  .tattooBolt {
+    right: -1.25rem;
+    width: 4.5rem;
+  }
+}
+
+@keyframes tattoo-drift {
+  from {
+    transform: translate3d(0, -0.4rem, 0) rotate(var(--tilt, 0deg));
+  }
+  to {
+    transform: translate3d(0, 0.5rem, 0) rotate(calc(var(--tilt, 0deg) + 4deg));
+  }
+}
+
+@keyframes tattoo-buzz {
+  0%,
+  9%,
+  49%,
+  100% {
+    opacity: 0.92;
+  }
+  8%,
+  47% {
+    opacity: 0.3;
+  }
+  48% {
+    opacity: 0.7;
+  }
+}
+
+/* content column is 56rem: show only edge peeks until the side alleys exist */
+@media (min-width: 80rem) {
+  .tattooHeart {
+    left: -13rem;
+    width: 9rem;
+  }
+
+  .tattooSnake {
+    left: -12rem;
+    width: 8rem;
+  }
+
+  .tattooBolt {
+    right: -11rem;
+    width: 6.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tattoo {
+    animation: none;
+  }
+}
+
+:global(.fx-quiet) .tattoo {
+  animation: none;
+}

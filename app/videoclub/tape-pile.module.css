@@ -1,0 +1,386 @@
+.stack {
+  grid-area: stack;
+}
+
+/* ── Tape pile ───────────────────────────────────────────── */
+
+.stack {
+  position: relative;
+  left: -3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-self: stretch;
+  gap: 0.3rem;
+  width: clamp(17rem, 24vw, 22rem);
+  padding-bottom: 0.6rem;
+  contain: inline-size;
+}
+
+/* Black enamel housing with separate neon tubes, lit only while broadcasting. */
+.onAir {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  box-sizing: border-box;
+  inline-size: clamp(10.5rem, 17vw, 13.5rem);
+  aspect-ratio: 3 / 1;
+  place-items: center;
+  align-self: center;
+  margin-bottom: auto;
+  padding: 0.72rem 1rem 0.65rem;
+  border: 0.16rem solid #11100f;
+  border-radius: 0.78rem;
+  background:
+    linear-gradient(112deg, rgb(255 255 255 / 5%), transparent 31% 72%),
+    radial-gradient(85% 125% at 50% 44%, #171313, #030303 72%);
+  color: #736d66;
+  font-family: "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+  font-size: clamp(1.05rem, 2vw, 1.48rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-indent: 0.1em;
+  text-shadow: 0 1px 0 #000;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 5%),
+    inset 0 -0.25rem 0.5rem rgb(0 0 0 / 78%),
+    0 0.18rem 0 #020202,
+    0 0.5rem 1.1rem rgb(0 0 0 / 62%);
+  transition:
+    color var(--motion-route) var(--ease-signal),
+    text-shadow var(--motion-route) var(--ease-signal);
+}
+
+.onAir::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0.38rem;
+  border: 0.22rem solid #62191a;
+  border-radius: 0.52rem;
+  box-shadow:
+    inset 0 0 0.16rem rgb(104 13 15 / 40%),
+    0 0 0.12rem rgb(104 13 15 / 32%);
+  content: "";
+  transition:
+    border-color var(--motion-route) var(--ease-signal),
+    box-shadow var(--motion-route) var(--ease-signal);
+}
+
+.onAir::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0.22rem;
+  border-radius: 0.55rem;
+  background: linear-gradient(
+    118deg,
+    rgb(255 255 255 / 8%),
+    transparent 19% 76%,
+    rgb(255 255 255 / 3%)
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.onAir[data-live="true"] {
+  color: #fffdf3;
+  text-shadow:
+    0 0 0.08rem #fff,
+    0 0 0.28rem rgb(255 255 245 / 96%),
+    0 0 0.7rem rgb(255 239 210 / 58%),
+    0 0 1.2rem rgb(255 45 36 / 26%);
+}
+
+.onAir[data-live="true"]::before {
+  border-color: #ff2f29;
+  box-shadow:
+    0 0 0.06rem rgb(255 245 226 / 92%),
+    0 0 0.28rem rgb(255 31 28 / 94%),
+    0 0 0.78rem rgb(255 26 24 / 62%),
+    0 0 1.35rem rgb(255 26 24 / 24%),
+    inset 0 0 0.18rem rgb(255 241 222 / 70%),
+    inset 0 0 0.68rem rgb(255 28 24 / 52%);
+}
+
+.pile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* grid, so each spine stretches to the row width as it did in the flex stack */
+.pile li {
+  display: grid;
+}
+
+/* the table the pile rests on */
+.stack::after {
+  content: "";
+  position: absolute;
+  inset: auto -1.5rem 0;
+  height: 0.45rem;
+  background: linear-gradient(180deg, #2a2f3a, #0a0c10);
+  border-radius: 2px;
+  box-shadow: 0 6px 12px rgb(0 0 0 / 55%);
+}
+
+/* one VHS lying flat, spine out */
+.vhs {
+  position: relative;
+  display: flex;
+  height: 3.3rem;
+  align-items: center;
+  padding: 0.32rem 1.1rem 0.38rem 2.1rem;
+  border: 0;
+  border-radius: 0.3rem;
+  background:
+    radial-gradient(
+      0.3rem circle at 0.55rem 50%,
+      #454c5a 0 25%,
+      #04060a 40% 60%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, #31353f 0%, #1a1d24 18%, #14161c 70%, #07080a 100%),
+    #14161c;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 9%),
+    0 3px 5px rgb(0 0 0 / 55%);
+  transform: translateX(var(--drift)) rotate(var(--tip));
+  transition:
+    transform var(--motion-micro) var(--ease-signal),
+    filter var(--motion-micro) var(--ease-signal);
+}
+
+.vhs:hover {
+  transform: translateX(calc(var(--drift) + 0.7rem)) rotate(var(--tip));
+  filter: brightness(1.18);
+}
+
+/* the loading-door notch on the shell */
+.notch {
+  position: absolute;
+  top: 26%;
+  left: 1.15rem;
+  width: 0.65rem;
+  height: 0.5rem;
+  background: #0a0c10;
+  border-radius: 1px;
+  box-shadow: inset 0 1px 1px rgb(0 0 0 / 80%);
+}
+
+.vhsLabel {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 2px;
+  background:
+    radial-gradient(70% 130% at 18% 0%, rgb(0 0 0 / 5%) 0%, transparent 55%),
+    radial-gradient(50% 120% at 88% 100%, rgb(0 0 0 / 6%) 0%, transparent 50%),
+    var(--tv-sticker);
+  color: #1d2027;
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 14%),
+    0 1px 2px rgb(0 0 0 / 45%);
+}
+
+.vhsCode,
+.vhsTag {
+  font-family: var(--font-code);
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.vhsTag {
+  color: rgb(29 32 39 / 72%);
+}
+
+.vhsTitle {
+  display: block;
+  overflow: hidden;
+  min-width: 0;
+  max-width: 100%;
+  line-height: 1.1;
+  font-family: var(--font-display);
+  font-size: clamp(0.72rem, 1.4vw, 0.85rem);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* handwritten-label economics: shrink and wrap before cutting words off */
+.vhsName {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.vhsTitle small {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-code);
+  font-size: 0.5rem;
+  letter-spacing: 0.14em;
+  color: rgb(29 32 39 / 78%);
+}
+
+/* the hole in the pile: that tape is in the deck */
+.bay {
+  display: flex;
+  height: 3.3rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--color-line);
+  border-radius: 0.3rem;
+  color: var(--color-signal-cyan);
+  font-family: var(--font-code);
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  text-shadow: var(--shadow-neon);
+  transform: translateX(var(--drift)) rotate(var(--tip));
+}
+
+.ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  transform-origin: 0 0;
+  pointer-events: none;
+  will-change: transform, opacity, clip-path;
+  opacity: 0;
+  filter: drop-shadow(0 0.9rem 1.4rem rgb(0 0 0 / 65%));
+}
+
+@media (max-width: 64rem) {
+  .stack {
+    left: 0;
+    width: min(23rem, 100%);
+    contain: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vhs,
+  .onAir,
+  .onAir::before {
+    transition-duration: 0.001ms;
+  }
+
+  .vhs:hover {
+    transform: translateX(var(--drift)) rotate(var(--tip));
+  }
+}
+
+/* ── V2 analog foreground pass ───────────────────────────── */
+
+/* Molded shell wear and paper fibres stay on the object, never the room. */
+.vhs {
+  isolation: isolate;
+}
+
+.vhs::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0.18rem 0.25rem;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      104deg,
+      transparent 0 18%,
+      rgb(255 255 255 / 5%) 18.2% 18.7%,
+      transparent 18.9% 61%,
+      rgb(0 0 0 / 14%) 61.2% 61.7%,
+      transparent 61.9%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 4px,
+      rgb(255 255 255 / 2%) 4px 5px
+    );
+  content: "";
+  pointer-events: none;
+}
+
+.vhs:nth-child(3n)::after {
+  background-position:
+    0.8rem 0,
+    0 1px;
+}
+
+.vhs:nth-child(3n + 1)::after {
+  transform: scaleX(-1);
+}
+
+.vhsLabel {
+  position: relative;
+  z-index: 1;
+  background:
+    repeating-linear-gradient(
+      88deg,
+      transparent 0 5px,
+      rgb(75 56 34 / 3%) 5px 6px
+    ),
+    repeating-linear-gradient(
+      1deg,
+      transparent 0 7px,
+      rgb(255 255 255 / 10%) 7px 8px
+    ),
+    radial-gradient(70% 130% at 18% 0%, rgb(0 0 0 / 5%) 0%, transparent 55%),
+    radial-gradient(50% 120% at 88% 100%, rgb(0 0 0 / 6%) 0%, transparent 50%),
+    var(--tv-sticker);
+}
+
+.vhs:disabled {
+  cursor: wait;
+}
+
+.vhs:disabled:hover {
+  filter: none;
+  transform: translateX(var(--drift)) rotate(var(--tip));
+}
+
+/*
+ * The real stack button remains in normal flow while this fixed duplicate
+ * travels between measured viewport coordinates. Only transform and opacity
+ * animate, so neither the pile nor the TV can shift.
+ */
+.ghost {
+  box-sizing: border-box;
+  margin: 0;
+  opacity: 0;
+  transform: none;
+  transition: none;
+  filter: drop-shadow(0 0.72rem 0.75rem rgb(0 0 0 / 62%));
+}
+
+.ghost[data-phase="pickup"] {
+  filter: drop-shadow(0 0.9rem 0.9rem rgb(0 0 0 / 68%));
+}
+
+.ghost[data-phase="travel"] {
+  filter: drop-shadow(0 1.15rem 1rem rgb(0 0 0 / 72%));
+}
+
+.ghost[data-phase="register"],
+.ghost[data-phase="feed"] {
+  filter: drop-shadow(0 0.28rem 0.22rem rgb(0 0 0 / 78%));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost {
+    transition: none;
+  }
+}

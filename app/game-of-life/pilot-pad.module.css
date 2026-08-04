@@ -1,0 +1,439 @@
+/* biome-ignore-all lint: source-faithful control CSS retains its authored declarations. */
+
+.row {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  position: relative;
+}
+
+.container .around {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-image: linear-gradient(0deg, #f5f8fa, #9da4a8);
+}
+
+.container .around .handle {
+  width: 155px;
+  height: 155px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: #c5d1da;
+  box-shadow:
+    0 0 10px rgba(0, 0, 0, 0.5),
+    0 10px 10px rgba(0, 0, 0, 0.2),
+    inset 0 0 16px rgba(0, 0, 0, 0.85),
+    inset 0 0 24px rgba(0, 0, 0, 0.75),
+    inset 0 0 48px rgba(0, 0, 0, 0.2);
+  perspective: 300px;
+}
+
+.container .around .handle .button-wrapper {
+  width: 102px;
+  height: 102px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-image: linear-gradient(0deg, #86969c, #eff1f1);
+  box-shadow:
+    0 9px 14px rgba(0, 0, 0, 0.5),
+    0 19px 8px -2px rgba(0, 0, 0, 0.2),
+    0 33px 8px rgba(0, 0, 0, 0.4),
+    0 -12px 10px rgba(255, 255, 255, 0.5),
+    inset 0 3px 3px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 3px rgba(89, 91, 92, 0.6);
+  transition: 0.25s ease-out;
+}
+
+.container .around .handle .button-wrapper .inside {
+  position: relative;
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  background-image: linear-gradient(180deg, #adb9bf, #d4dbdd);
+  box-shadow:
+    inset 0 3px 6px rgba(152, 160, 163, 0.4),
+    inset 0 -3px 6px rgba(238, 244, 246, 0.4);
+}
+
+.container .around .handle .button-wrapper .inside .dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e7ecef;
+  box-shadow:
+    0 2px 2px rgba(0, 0, 0, 0.3),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.2);
+}
+
+.container .around .handle .button-wrapper .inside .dot:nth-child(1) {
+  left: 50%;
+  top: 10%;
+}
+
+.container .around .handle .button-wrapper .inside .dot:nth-child(2) {
+  left: 90%;
+  top: 50%;
+}
+
+.container .around .handle .button-wrapper .inside .dot:nth-child(3) {
+  left: 50%;
+  top: 90%;
+}
+
+.container .around .handle .button-wrapper .inside .dot:nth-child(4) {
+  left: 10%;
+  top: 50%;
+}
+
+.container .icon {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  fill: #b4b9bd;
+  filter: drop-shadow(1px 1px 1px #f4f4f4);
+}
+
+.container .icon:nth-child(2) {
+  top: -12%;
+  left: 50%;
+}
+
+.container .icon:nth-child(3) {
+  top: 50%;
+  left: 112%;
+}
+
+.container .icon:nth-child(4) {
+  top: 112%;
+  left: 50%;
+}
+
+.container .icon:nth-child(5) {
+  top: 50%;
+  left: -12%;
+}
+
+.container .icon.active {
+  fill: #e3a560;
+  filter: brightness(0.9) drop-shadow(0 0 2px #e3a15b) drop-shadow(0 0 1px #fff);
+}
+
+.touch {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  z-index: 999;
+  width: 600px;
+  height: 600px;
+  transform: rotate(45deg);
+}
+
+.touch .t {
+  width: 300px;
+  height: 300px;
+}
+
+.row:has(.t1:hover) .button-wrapper {
+  transform-style: preserve-3d;
+  transform: translate(0, -5px) rotateX(8deg);
+  box-shadow:
+    0 7px 14px rgba(0, 0, 0, 0.5),
+    0 14px 8px -5px rgba(0, 0, 0, 0.3),
+    0 24px 8px rgba(0, 0, 0, 0.4),
+    0 -6px 10px rgba(255, 255, 255, 0.5),
+    inset 0 3px 3px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 3px rgba(89, 91, 92, 0.6) !important;
+}
+
+.row:has(.t1:hover) .icon:nth-child(2) {
+  fill: #eaa75d;
+  filter: brightness(0.9) drop-shadow(0 0 2px #f1b475) drop-shadow(0 0 1px #fff);
+}
+
+.row:has(.t2:hover) .button-wrapper {
+  transform-style: preserve-3d;
+  transform: translate(5px, 0) rotateY(8deg);
+  box-shadow:
+    2px 9px 14px rgba(0, 0, 0, 0.4),
+    2px 19px 8px -2px rgba(0, 0, 0, 0.2),
+    2px 30px 8px rgba(0, 0, 0, 0.3),
+    -6px -14px 10px rgba(255, 255, 255, 0.5),
+    inset 0 3px 3px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 3px rgba(89, 91, 92, 0.6) !important;
+}
+
+.row:has(.t2:hover) .icon:nth-child(3) {
+  fill: #e3a560;
+  filter: brightness(0.9) drop-shadow(0 0 2px #e3a15b) drop-shadow(0 0 1px #fff);
+}
+
+.row:has(.t3:hover) .button-wrapper {
+  transform-style: preserve-3d;
+  transform: translate(-5px, 0) rotateY(-8deg);
+  box-shadow:
+    -2px 9px 14px rgba(0, 0, 0, 0.4),
+    -2px 19px 8px -2px rgba(0, 0, 0, 0.2),
+    -2px 30px 8px rgba(0, 0, 0, 0.3),
+    6px -14px 10px rgba(255, 255, 255, 0.5),
+    inset 0 3px 3px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 3px rgba(89, 91, 92, 0.6) !important;
+}
+
+.row:has(.t3:hover) .icon:nth-child(5) {
+  fill: #e3a560;
+  filter: brightness(0.9) drop-shadow(0 0 2px #e3a15b) drop-shadow(0 0 1px #fff);
+}
+
+.row:has(.t4:hover) .button-wrapper {
+  transform-style: preserve-3d;
+  transform: translate(0, 5px) rotateX(-8deg);
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.6),
+    0 19px 8px -2px rgba(0, 0, 0, 0.3),
+    0 34px 8px rgba(0, 0, 0, 0.4),
+    0 -14px 10px rgba(255, 255, 255, 0.65),
+    inset 0 3px 3px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 3px rgba(89, 91, 92, 0.6) !important;
+}
+
+.row:has(.t4:hover) .icon:nth-child(4) {
+  fill: #e3a560;
+  filter: brightness(0.9) drop-shadow(0 0 2px #e3a15b) drop-shadow(0 0 1px #fff);
+}
+
+/*
+ * Integration adapters
+ * These only provide responsive sizing, React semantics, and focus treatment.
+ */
+
+.pilot {
+  position: relative;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  flex: none;
+}
+
+.pilot .container,
+.pilot .around {
+  width: 100%;
+  height: 100%;
+}
+
+.pilot .handle {
+  width: 77.5%;
+  height: 77.5%;
+}
+
+.pilot .button-wrapper {
+  width: 65.8%;
+  height: 65.8%;
+}
+
+.pilot .inside {
+  width: 83.33%;
+  height: 83.33%;
+}
+
+.pilot .dot {
+  width: 9.4%;
+  height: 9.4%;
+}
+
+.pilot .icon {
+  width: 15%;
+}
+
+.pilot .touch {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pilot .touch .t {
+  width: 50%;
+  height: 50%;
+  min-width: 44px;
+  min-height: 44px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  touch-action: none;
+  cursor: grab;
+}
+
+.pilot .touch .t:active {
+  cursor: grabbing;
+}
+
+.pilot[data-direction="north"] .button-wrapper {
+  transform-style: preserve-3d;
+  transform: translate(0, -5px) rotateX(8deg);
+}
+
+.pilot[data-direction="east"] .button-wrapper {
+  transform-style: preserve-3d;
+  transform: translate(5px, 0) rotateY(8deg);
+}
+
+.pilot[data-direction="west"] .button-wrapper {
+  transform-style: preserve-3d;
+  transform: translate(-5px, 0) rotateY(-8deg);
+}
+
+.pilot[data-direction="south"] .button-wrapper {
+  transform-style: preserve-3d;
+  transform: translate(0, 5px) rotateX(-8deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button-wrapper {
+    transition: none;
+  }
+}
+
+/* Pointer capture replaces the field control's four hover quadrants. */
+
+.dragPilot {
+  --pilot-cap: 6.25rem;
+
+  display: grid;
+  width: 100%;
+  min-width: 44px;
+  min-height: 44px;
+  place-items: center;
+  border: 0;
+  padding: 0.5rem;
+  background: transparent;
+  container-type: size;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.dragPilot[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+.dragPilot .pilot {
+  width: min(78cqi, 78cqb, var(--pilot-cap));
+  height: min(78cqi, 78cqb, var(--pilot-cap));
+  aspect-ratio: 1 / 1;
+  flex: 0 0 auto;
+}
+
+.dragPilot .container,
+.dragPilot .around {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+}
+
+.dragPilot .around {
+  background-image: linear-gradient(0deg, #77796f, #ded6c2);
+}
+
+.dragPilot .pilot .container .around .handle {
+  width: 77.5%;
+  height: 77.5%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: #8f9085;
+  box-shadow:
+    0 0 10px rgb(39 39 36 / 52%),
+    0 10px 10px rgb(39 39 36 / 24%),
+    inset 0 0 16px rgb(39 39 36 / 72%),
+    inset 0 0 24px rgb(39 39 36 / 42%),
+    inset 0 0 48px rgb(39 39 36 / 18%);
+}
+
+.dragPilot .pilot .container .around .handle .button-wrapper {
+  width: 65.8%;
+  height: 65.8%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-image: linear-gradient(0deg, #676960, #d8d0bd);
+  transform: translate3d(var(--pilot-x), var(--pilot-y), 0)
+    rotateX(var(--pilot-tilt-x)) rotateY(var(--pilot-tilt-y));
+}
+
+.dragPilot[data-dragging="true"]
+  .pilot
+  .container
+  .around
+  .handle
+  .button-wrapper {
+  transition: none;
+}
+
+.dragPilot .pilot .container .around .handle .button-wrapper .inside {
+  width: 83.33%;
+  height: 83.33%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-image: linear-gradient(180deg, #aaa491, #d8d0bd);
+  transform: rotate(var(--pilot-zoom-angle));
+  transition: transform 180ms cubic-bezier(0.2, 0.84, 0.2, 1);
+}
+
+.dragPilot .dot {
+  background: var(--life-bone);
+}
+
+.dragPilot .dot:first-child {
+  background: var(--life-bone);
+  box-shadow:
+    0 1px 2px rgb(39 39 36 / 34%),
+    inset 0 -2px 2px rgb(89 91 84 / 24%);
+}
+
+.dragPilot .icon {
+  fill: #676960;
+  filter: drop-shadow(1px 1px 1px #e7dfcd);
+}
+
+.dragPilot .icon.active {
+  fill: #3f413b;
+  filter: drop-shadow(1px 1px 1px #e7dfcd);
+}
+
+@media (max-width: 45rem) {
+  .dragPilot {
+    --pilot-cap: 4.5rem;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .dragPilot {
+    padding: 0.28rem;
+  }
+
+  .dragPilot {
+    --pilot-cap: 3.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dragPilot .inside {
+    transition: none;
+  }
+}

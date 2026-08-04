@@ -11,13 +11,20 @@ import {
 
 const ABOUT = '/about' as Route
 const PAPERS = '/papers' as Route
+const HOME = '/'
 const CLOUD: Offshore = { kind: 'cloud', duration: 4200 }
 
 const idle: State = { phase: 'idle', offshore: undefined }
-const departing: State = { phase: 'departing', url: ABOUT, offshore: undefined }
+const departing: State = {
+  phase: 'departing',
+  url: ABOUT,
+  origin: HOME,
+  offshore: undefined,
+}
 const unmounting: State = {
   phase: 'unmounting',
   url: ABOUT,
+  origin: HOME,
   offshore: undefined,
 }
 
@@ -26,18 +33,22 @@ test('default state is idle without offshore', () => {
 })
 
 test('navigate from idle starts a departure', () => {
-  const next = reducer(idle, { type: 'NAVIGATE', payload: { url: ABOUT } })
+  const next = reducer(idle, {
+    type: 'NAVIGATE',
+    payload: { url: ABOUT, origin: HOME },
+  })
   assert.deepEqual(next, departing)
 })
 
 test('navigate while departing retargets the departure', () => {
   const next = reducer(departing, {
     type: 'NAVIGATE',
-    payload: { url: PAPERS },
+    payload: { url: PAPERS, origin: HOME },
   })
   assert.deepEqual(next, {
     phase: 'departing',
     url: PAPERS,
+    origin: HOME,
     offshore: undefined,
   })
 })
@@ -45,11 +56,12 @@ test('navigate while departing retargets the departure', () => {
 test('navigate while unmounting retargets the push', () => {
   const next = reducer(unmounting, {
     type: 'NAVIGATE',
-    payload: { url: PAPERS },
+    payload: { url: PAPERS, origin: HOME },
   })
   assert.deepEqual(next, {
     phase: 'unmounting',
     url: PAPERS,
+    origin: HOME,
     offshore: undefined,
   })
 })
@@ -69,17 +81,24 @@ test('reset lands idle from every phase', () => {
   assert.deepEqual(reducer(unmounting, { type: 'RESET' }), idle)
 })
 
+test('reset on idle returns the same state object', () => {
+  const state: State = { phase: 'idle', offshore: CLOUD }
+  assert.equal(reducer(state, { type: 'RESET' }), state)
+})
+
 test('offshore sets and clears in every phase', () => {
   const set = { type: 'OFFSHORE', payload: { offshore: CLOUD } } as const
   assert.deepEqual(reducer(idle, set), { phase: 'idle', offshore: CLOUD })
   assert.deepEqual(reducer(departing, set), {
     phase: 'departing',
     url: ABOUT,
+    origin: HOME,
     offshore: CLOUD,
   })
   assert.deepEqual(reducer(unmounting, set), {
     phase: 'unmounting',
     url: ABOUT,
+    origin: HOME,
     offshore: CLOUD,
   })
 
@@ -92,11 +111,12 @@ test('offshore survives navigate, unmount and reset', () => {
   const cloudyIdle: State = { phase: 'idle', offshore: CLOUD }
   const cloudyDeparting = reducer(cloudyIdle, {
     type: 'NAVIGATE',
-    payload: { url: ABOUT },
+    payload: { url: ABOUT, origin: HOME },
   })
   assert.deepEqual(cloudyDeparting, {
     phase: 'departing',
     url: ABOUT,
+    origin: HOME,
     offshore: CLOUD,
   })
 
@@ -104,6 +124,7 @@ test('offshore survives navigate, unmount and reset', () => {
   assert.deepEqual(cloudyUnmounting, {
     phase: 'unmounting',
     url: ABOUT,
+    origin: HOME,
     offshore: CLOUD,
   })
 

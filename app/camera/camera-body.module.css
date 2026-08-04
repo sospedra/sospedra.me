@@ -1,0 +1,235 @@
+.cameraTop {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 500px;
+  height: 305px;
+  isolation: isolate;
+  margin-inline: auto;
+}
+
+.cameraTop::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background:
+    linear-gradient(
+      98deg,
+      transparent 0 5%,
+      rgb(56 47 36 / 20%) 5.2% 5.6%,
+      transparent 5.9% 91%,
+      rgb(232 223 176 / 16%) 91.3% 91.7%,
+      transparent 92%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(45 41 29 / 3.6%) 0 1px,
+      transparent 1px 5px
+    ),
+    linear-gradient(
+      105deg,
+      rgb(236 231 190 / 22%),
+      transparent 24% 74%,
+      rgb(35 39 30 / 16%)
+    ),
+    linear-gradient(
+      160deg,
+      var(--camera-shell-high),
+      var(--camera-shell) 52%,
+      var(--camera-shell-low)
+    );
+  clip-path: polygon(
+    24px 0,
+    356px 0,
+    370px 12px,
+    calc(100% - 18px) 12px,
+    100% 30px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    18px 100%,
+    0 calc(100% - 22px),
+    0 28px
+  );
+  content: "";
+  filter: drop-shadow(3px 0 0 var(--camera-shell-seam))
+    drop-shadow(-2px 0 0 var(--camera-shell-high))
+    drop-shadow(0 9px 8px rgb(24 25 20 / 38%));
+  pointer-events: none;
+}
+
+.cameraTop::after {
+  position: absolute;
+  z-index: 0;
+  inset: 9px 12px 50px;
+  border: 1px solid rgb(55 57 45 / 44%);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 73%,
+      rgb(42 44 34 / 12%) 73% 74%,
+      transparent 74%
+    ),
+    linear-gradient(165deg, rgb(225 218 174 / 9%), transparent 42%);
+  box-shadow:
+    inset 0 1px rgb(238 231 188 / 15%),
+    inset 0 -1px rgb(38 40 31 / 28%);
+  clip-path: polygon(
+    12px 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    0 100%,
+    0 12px
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.cameraBottom {
+  position: absolute;
+  z-index: 3;
+  bottom: 0;
+  display: block;
+  width: 530px;
+  height: 180px;
+  isolation: isolate;
+  border: 1px solid #242728;
+  border-radius: 6px 6px 24px 24px;
+  background:
+    linear-gradient(
+      90deg,
+      #242728 0 24px,
+      transparent 24px calc(100% - 24px),
+      #202324 calc(100% - 24px)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 3%) 0 1px,
+      transparent 1px 6px
+    ),
+    linear-gradient(165deg, #5d6261, #323637 32%, #171a1b 78%, #252829);
+  box-shadow:
+    inset 0 3px rgb(188 192 180 / 17%),
+    inset 0 -6px 0 rgb(4 5 6 / 48%),
+    0 8px 12px rgb(0 0 0 / 34%);
+}
+
+.cameraBottom::before {
+  position: absolute;
+  z-index: 0;
+  inset: 42px 20px 10px;
+  border: 1px solid #171a1a;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(155 151 117 / 18%),
+      transparent 11% 89%,
+      rgb(155 151 117 / 12%)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 2.8%) 0 1px,
+      transparent 1px 6px
+    ),
+    linear-gradient(165deg, #393d3b, #171a19 72%, #242725);
+  box-shadow:
+    inset 0 3px 0 rgb(255 255 255 / 6%),
+    inset 0 -4px 0 rgb(0 0 0 / 32%),
+    0 4px 0 #0f1111;
+  clip-path: polygon(
+    10px 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% calc(100% - 16px),
+    calc(100% - 16px) 100%,
+    16px 100%,
+    0 calc(100% - 16px),
+    0 10px
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.cameraBottom::after {
+  position: absolute;
+  z-index: 1;
+  top: 54px;
+  left: 24px;
+  width: 24px;
+  height: 96px;
+  border: 1px solid #111414;
+  background:
+    repeating-linear-gradient(0deg, #73786f 0 7px, #353a39 7px 12px),
+    linear-gradient(90deg, #7c8279, #333837);
+  box-shadow:
+    inset 2px 0 rgb(220 216 176 / 12%),
+    456px 0 0 #292e2d,
+    456px 0 0 1px #111414;
+  content: "";
+  pointer-events: none;
+}
+
+.cameraTitle {
+  position: absolute;
+  z-index: 2;
+  top: 260px;
+  right: 22px;
+  color: #34382e;
+  font-family: var(--font-code);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-shadow: 0 1px rgb(235 230 190 / 36%);
+  text-transform: uppercase;
+}
+
+.rainbow {
+  position: absolute;
+  z-index: 2;
+  top: 113px;
+  left: 70px;
+  display: block;
+  width: 40px;
+  height: 42px;
+  background-image: linear-gradient(
+    #161a18 5%,
+    #4ec6bb 5% 17%,
+    #161a18 17% 23%,
+    #bf9d32 23% 37%,
+    #161a18 37% 43%,
+    #9a4337 43% 58%,
+    #161a18 58% 65%,
+    #5f526d 65% 80%,
+    #111513 80%
+  );
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 24%);
+}
+
+.labels {
+  pointer-events: none;
+}
+
+.logo {
+  position: relative;
+  z-index: 2;
+  margin-top: 11px;
+  color: #d7d4bc;
+  font-family: var(--font-code);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  text-align: center;
+  text-shadow: 0 2px #151817;
+}
+
+.cameraType {
+  position: absolute;
+  z-index: 2;
+  right: 30px;
+  bottom: 16px;
+  color: rgb(208 207 176 / 64%);
+  font-family: var(--font-code);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}

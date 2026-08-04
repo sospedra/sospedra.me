@@ -51,11 +51,6 @@
     var(--win-light);
 }
 
-.toolButton:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
-}
-
 .toolButton:active,
 .toolButton[aria-pressed="true"] {
   border-color: var(--win-shadow) var(--win-light) var(--win-light)
@@ -98,11 +93,6 @@
   color: white;
 }
 
-.optionButton:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -2px;
-}
-
 .strokeMark,
 .eraserMark,
 .brushMark {
@@ -132,11 +122,6 @@
 .brushCell[aria-pressed="true"] {
   background: var(--win-title);
   color: white;
-}
-
-.brushCell:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -1px;
 }
 
 .brushMark[data-shape="circle"] {
@@ -225,12 +210,6 @@
   inset: -10px;
 }
 
-.nub:focus-visible {
-  outline: 2px solid #000;
-  outline-offset: 1px;
-  box-shadow: 0 0 0 1px #fff;
-}
-
 .nubE {
   composes: nub;
   top: calc(50% - 2px);
@@ -313,11 +292,6 @@
   width: 16px;
   height: 16px;
   padding: 0;
-}
-
-.swatch:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
 }
 
 .statusBar {
@@ -422,9 +396,4 @@
   border-right-color: var(--win-light);
   border-bottom-color: var(--win-light);
   border-left-color: var(--win-shadow);
-}
-
-.dialogButton:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -4px;
 }

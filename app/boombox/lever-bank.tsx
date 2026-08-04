@@ -1,5 +1,5 @@
-import css from './boombox.module.css'
 import { type BoomboxState, FULL_UNLOCK, UNLOCKS } from './engine'
+import css from './lever-bank.module.css'
 
 export const skipSecondsGain = (state: BoomboxState) => {
   const current = UNLOCKS[state.guesses.length] ?? FULL_UNLOCK

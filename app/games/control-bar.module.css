@@ -1,0 +1,124 @@
+.controls {
+  position: relative;
+  z-index: 1;
+}
+
+.controls p {
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0 clamp(0.1rem, 1vmin, 0.7rem);
+}
+
+.controlGroup {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 4vmin, 3rem);
+}
+
+.controlLegend,
+.controlLink {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgb(246 246 248 / 86%);
+  font-size: clamp(0.78rem, 1.75vmin, 1.05rem);
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  text-shadow: 0 1px 2px rgb(20 21 28 / 90%);
+}
+
+.crossKey,
+.circleKey {
+  display: inline-grid;
+  width: 1.2em;
+  place-items: center;
+  font-size: 1.55em;
+  font-weight: 400;
+  line-height: 1;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 0.7px rgb(31 28 43 / 55%);
+}
+
+.crossKey {
+  color: var(--games-cross);
+}
+
+.circleKey {
+  color: var(--games-circle);
+}
+
+.controlLink {
+  border-radius: 0.25rem;
+}
+
+.controlLink:hover {
+  color: white;
+}
+
+.controlHint {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 0.65rem;
+  color: rgb(245 245 248 / 94%);
+  font-family: var(--font-code);
+  font-size: clamp(0.65rem, 1.35vmin, 0.8rem);
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 2px rgb(20 21 28 / 90%);
+}
+
+.controlHint span {
+  color: rgb(228 233 255 / 92%);
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 700px) {
+  .controls {
+    gap: 0.65rem;
+    padding: 0;
+  }
+
+  .controlGroup {
+    gap: clamp(0.8rem, 5vw, 1.6rem);
+  }
+
+  .controlLegend,
+  .controlLink {
+    font-size: clamp(0.7rem, 3.2vw, 0.9rem);
+  }
+
+  .controlHint {
+    font-size: clamp(0.57rem, 2.35vw, 0.7rem);
+  }
+}
+
+@media (max-width: 430px) {
+  .controlHint {
+    display: none;
+  }
+
+  .controls {
+    justify-content: center;
+  }
+
+  .controlGroup {
+    width: 100%;
+    justify-content: space-around;
+  }
+}
+
+@media (max-height: 620px) and (orientation: landscape) {
+  .controlLegend,
+  .controlLink,
+  .controlHint {
+    min-height: 36px;
+  }
+}

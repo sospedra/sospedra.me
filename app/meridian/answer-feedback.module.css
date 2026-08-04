@@ -1,0 +1,242 @@
+.feedbackBar {
+  composes: feedbackBar from "./geo-game.module.css";
+  position: relative;
+  z-index: 5;
+  display: grid;
+  min-height: 4.4rem;
+  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--geo-line);
+  background: #11140f;
+  gap: 0.8rem;
+}
+
+.feedbackBar[data-result="correct"] {
+  border-color: rgb(121 221 155 / 46%);
+}
+
+.feedbackBar[data-result="perfect"] {
+  border-color: var(--geo-amber-bright);
+  background: rgb(255 199 92 / 12%);
+}
+
+.feedbackBar[data-result="perfect"] .feedbackIcon {
+  border-width: 2px;
+  color: var(--geo-amber-bright);
+}
+
+.feedbackBar[data-result="perfect"] .feedbackCopy strong {
+  color: var(--geo-amber-bright);
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.feedbackBar[data-result="incorrect"],
+.feedbackBar[data-result="passed"],
+.feedbackBar[data-result="expired"] {
+  border-color: rgb(239 128 108 / 46%);
+}
+
+.feedbackIcon {
+  composes: feedbackIcon from "./geo-game.module.css";
+  display: grid;
+  width: 2.55rem;
+  height: 2.55rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: var(--geo-success);
+  font: 700 1rem / 1 var(--font-code);
+}
+
+.feedbackBar:not([data-result="correct"]) .feedbackIcon {
+  color: var(--geo-error);
+}
+
+.feedbackCopy {
+  min-width: 0;
+}
+
+.feedbackCopy strong,
+.feedbackCopy span {
+  display: block;
+}
+
+.feedbackCopy strong {
+  color: var(--geo-sand-bright);
+  font-size: 0.82rem;
+}
+
+.feedbackCopy span {
+  margin-top: 0.2rem;
+  overflow: hidden;
+  color: var(--geo-sand-muted);
+  font: 0.65rem / 1.3 var(--font-code);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feedbackPoints {
+  text-align: right;
+}
+
+.feedbackPoints strong,
+.feedbackPoints span {
+  display: block;
+}
+
+.feedbackPoints strong {
+  color: var(--geo-amber-bright);
+  font: 700 1.1rem / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+}
+
+.feedbackPoints span {
+  margin-top: 0.2rem;
+  color: var(--geo-sand-muted);
+  font: 0.5rem / 1 var(--font-code);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.feedbackCorrection {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgb(239 128 108 / 46%);
+  background: rgb(239 128 108 / 12%);
+  gap: 0.6rem;
+  grid-column: 1 / -1;
+}
+
+.feedbackCorrection span {
+  color: var(--geo-sand-muted);
+  font: 0.55rem / 1.2 var(--font-code);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.feedbackCorrection strong {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--geo-sand-bright);
+  font-size: 1.05rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feedbackBar {
+  border: var(--geo-outline);
+  background: var(--geo-paper);
+  box-shadow: var(--geo-hard-shadow-sm);
+}
+
+.feedbackBar[data-result="correct"] {
+  border-color: var(--geo-arcade-ink);
+  box-shadow:
+    4px 4px 0 var(--geo-success),
+    7px 7px 0 var(--geo-arcade-ink);
+}
+
+.feedbackBar[data-result="perfect"] {
+  border-color: var(--geo-arcade-ink);
+  background: var(--geo-amber-bright);
+  box-shadow:
+    4px 4px 0 var(--geo-pink),
+    7px 7px 0 var(--geo-arcade-ink);
+}
+
+.feedbackBar[data-result="perfect"] .feedbackIcon {
+  color: var(--geo-arcade-ink);
+}
+
+.feedbackBar[data-result="perfect"] .feedbackCopy strong {
+  color: var(--geo-arcade-ink);
+  text-shadow: 2px 2px 0 var(--geo-pink);
+}
+
+.feedbackBar[data-result="incorrect"],
+.feedbackBar[data-result="passed"],
+.feedbackBar[data-result="expired"] {
+  border-color: var(--geo-arcade-ink);
+  box-shadow:
+    4px 4px 0 var(--geo-error),
+    7px 7px 0 var(--geo-arcade-ink);
+}
+
+.feedbackIcon {
+  border: 3px solid currentColor;
+  border-radius: 0;
+  background: var(--geo-paper-bright);
+}
+
+.feedbackCopy strong {
+  color: var(--geo-arcade-ink);
+}
+
+.feedbackCopy span,
+.feedbackPoints span {
+  color: #554b5d;
+}
+
+.feedbackPoints strong {
+  color: #8f5600;
+}
+
+.feedbackCorrection {
+  border: 3px solid var(--geo-error);
+  background: var(--geo-paper-bright);
+}
+
+.feedbackCorrection span {
+  color: #554b5d;
+}
+
+.feedbackCorrection strong {
+  color: var(--geo-arcade-ink);
+}
+
+@media (max-width: 800px) {
+  .feedbackBar {
+    min-height: 3.6rem;
+    padding: 0.45rem;
+  }
+
+  .feedbackIcon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .feedbackCorrection {
+    padding: 0.45rem 0.55rem;
+  }
+
+  .feedbackCorrection strong {
+    font-size: 0.92rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .feedbackBar {
+    box-shadow: 2px 2px 0 var(--geo-arcade-ink);
+  }
+
+  .feedbackBar[data-result="correct"] {
+    box-shadow:
+      2px 2px 0 var(--geo-success),
+      4px 4px 0 var(--geo-arcade-ink);
+  }
+
+  .feedbackBar[data-result="incorrect"],
+  .feedbackBar[data-result="passed"],
+  .feedbackBar[data-result="expired"] {
+    box-shadow:
+      2px 2px 0 var(--geo-error),
+      4px 4px 0 var(--geo-arcade-ink);
+  }
+}

@@ -1,13 +1,14 @@
 'use client'
 
 import { useId, useState } from 'react'
-import css from './terminal.module.css'
+import consoleOutput from './console-output.module.css'
 import {
   buildFileTree,
   type FileTreeDirectory,
   type FileTreeFile,
   type FileTreeNode,
 } from './tree'
+import css from './tree-view.module.css'
 
 type TreeViewProps = {
   paths: string[]
@@ -135,7 +136,9 @@ export default function TreeView({ paths, segments }: TreeViewProps) {
           <TreeNodes nodes={tree.children} />
         </div>
       ) : (
-        <p className={`${css.line} ${css.dim}`}>Directory is empty</p>
+        <p className={`${consoleOutput.line} ${consoleOutput.dim}`}>
+          Directory is empty
+        </p>
       )}
       <p className={css.treeFooter}>
         {tree.directoryCount} dir(s) · {tree.fileCount} file(s)

@@ -1,13 +1,13 @@
 import { range } from 'es-toolkit'
 import { useEffect, useRef } from 'react'
 import type { DailyCountdown } from 'services/daily-countdown'
-import css from './boombox.module.css'
 import {
   type BoomboxState,
   CLIP_SECONDS,
   FULL_UNLOCK,
   type Song,
 } from './engine'
+import css from './lcd-rack.module.css'
 
 const TICKER_STEPS = [0.06, 0.16, 0.26, 0.36, 0.46, 0.56, 0.66, 0.76, 0.86]
 

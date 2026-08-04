@@ -106,7 +106,8 @@
   display: contents;
 }
 
-/* z law: wf 0 · stairs 1 · props 2+ · stalls 3 · glows 4+ · seps 5 */
+/* z law: wf 0 · stairs 1 · stalls 3 · seps 5; props and glows nest
+   inside the stall wraps (-1 back · 1 front · 2 glow) */
 .stairs {
   position: relative;
   z-index: 1;
@@ -195,6 +196,11 @@
   width: calc(var(--su) * var(--w));
   height: calc(var(--su) * var(--h));
   isolation: isolate;
+}
+
+/* the 2026-08-04 session lift: each stall floats off the band floor */
+.floor .stallWrap {
+  margin-bottom: calc(var(--su) * var(--lift, 0));
 }
 
 /* contact shadow, the one stall effect that stays */

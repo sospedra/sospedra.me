@@ -1,0 +1,257 @@
+@reference "../../services/style/global.css";
+
+.completionActions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.62rem;
+}
+.completionActions button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 0.34rem;
+  padding: 0.62rem 0.75rem;
+  color: var(--cw-ink);
+  background: linear-gradient(135deg, var(--cw-key-light), var(--cw-key));
+  box-shadow: var(--cw-key-shadow);
+  font: 700 0.58rem / 1.2 var(--font-code);
+  text-transform: uppercase;
+}
+.completionActions button:active {
+  box-shadow: var(--cw-key-pressed);
+  transform: translateY(2px);
+}
+
+.confettiBurst {
+  position: absolute;
+  z-index: 5;
+  top: 3.4rem;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.confettiPiece {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: var(--cw-cf-w);
+  height: var(--cw-cf-h);
+  border-radius: 0.09rem;
+  background: var(--cw-cf-tone);
+  opacity: 0;
+  animation: cw-confetti var(--cw-cf-duration) var(--cw-cf-delay) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes cw-confetti {
+  0% {
+    animation-timing-function: ease-out;
+    opacity: 0;
+    transform: translate3d(0, 0.4rem, 0) rotate3d(1, 0.7, 0.4, 0deg);
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  26% {
+    animation-timing-function: ease-in;
+    transform: translate3d(calc(var(--cw-cf-x) * 0.45), var(--cw-cf-peak), 0)
+      rotate3d(1, 0.7, 0.4, calc(var(--cw-cf-spin) * 0.35));
+  }
+
+  78% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--cw-cf-x), var(--cw-cf-fall), 0)
+      rotate3d(1, 0.7, 0.4, var(--cw-cf-spin));
+  }
+}
+
+.completionMark {
+  display: grid;
+  min-height: 7rem;
+  grid-template-columns: repeat(2, 4rem);
+  place-content: center;
+  gap: 0.35rem;
+  border-radius: calc(0.72rem - 1px) calc(0.72rem - 1px) 0 0;
+  background: var(--cw-display);
+}
+
+.completionDialog[open] .completionMark span {
+  animation: cw-mark-pop 560ms var(--cw-ease) both;
+}
+
+.completionDialog[open] .completionMark span:last-child {
+  animation-delay: 90ms;
+}
+
+@keyframes cw-mark-pop {
+  0% {
+    transform: scale(0.4);
+  }
+
+  62% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: none;
+  }
+}
+
+.completionMark span {
+  display: grid;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  font: 750 1.7rem / 1 var(--font-code);
+}
+
+.completionMark span:first-child {
+  background: var(--cw-orange);
+}
+
+.completionMark span:last-child {
+  background: var(--cw-blue-deep);
+}
+
+.completionBody {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  text-align: center;
+}
+
+.completionBody > span {
+  /* --cw-orange fails contrast on the dialog's #ccd0d4 plate */
+  color: #963819;
+  font: 700 0.5rem / 1 var(--font-code);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.completionBody h2 {
+  margin: 0;
+  font: 750 1.65rem / 1 var(--font-body);
+  letter-spacing: -0.035em;
+}
+
+.completionBody p {
+  margin: 0;
+  color: var(--cw-muted);
+}
+
+.resultStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid #b6b7b6;
+  border-radius: 0.42rem;
+  background: var(--cw-paper);
+}
+
+.resultStats div {
+  display: grid;
+  gap: 0.32rem;
+  padding: 0.75rem;
+}
+
+.resultStats div + div {
+  border-left: 1px solid #d8d5cc;
+}
+
+.resultStats dt {
+  color: var(--cw-muted);
+  font: 650 0.48rem / 1 var(--font-code);
+  text-transform: uppercase;
+}
+
+.resultStats dd {
+  margin: 0;
+  color: var(--cw-blue-deep);
+  font: 750 1.08rem / 1 var(--font-code);
+}
+
+.nextPuzzle {
+  display: grid;
+  margin: 0.65rem 0 0;
+  padding: 0.6rem 0.75rem;
+  border: 1px dashed #b6b7b6;
+  border-radius: 0.42rem;
+  background: var(--cw-paper);
+  gap: 0.45rem;
+}
+
+.nextPuzzleReadout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0;
+  gap: 0.6rem;
+}
+
+.nextPuzzleReadout span {
+  color: var(--cw-muted);
+  font: 650 0.48rem / 1 var(--font-code);
+  text-transform: uppercase;
+}
+
+.nextPuzzleReadout strong {
+  color: var(--cw-blue-deep);
+  font: 750 1.08rem / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+}
+
+.nextPuzzleTrack {
+  display: block;
+  overflow: hidden;
+  height: 6px;
+  border: 1px solid #b6b7b6;
+  border-radius: 999px;
+  background: #efeadf;
+}
+
+.nextPuzzleTrack span {
+  display: block;
+  width: calc(var(--remaining, 0) * 100%);
+  height: 100%;
+  border-radius: 999px;
+  background: var(--cw-blue-deep);
+  transition: width 900ms linear;
+}
+
+.nextPuzzleReady {
+  margin-top: 0.65rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--cw-blue-deep);
+  border-radius: 0.42rem;
+  background: var(--cw-paper);
+  color: var(--cw-blue-deep);
+  cursor: pointer;
+  font: 750 0.58rem / 1 var(--font-code);
+  text-transform: uppercase;
+}
+
+@media (max-width: 30rem) {
+  .completionActions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .completionDialog[open] .completionMark span {
+    animation: none;
+  }
+
+  .confettiBurst {
+    display: none;
+  }
+}

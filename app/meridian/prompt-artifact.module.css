@@ -1,0 +1,173 @@
+.promptOrbit {
+  composes: promptOrbit from "./artifact-frame.module.css";
+  position: relative;
+  display: grid;
+  width: min(58%, 25rem);
+  aspect-ratio: 1;
+  place-items: center;
+}
+
+.promptOrbit::before,
+.promptOrbit::after {
+  position: absolute;
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.promptOrbit::before {
+  inset: -10%;
+  border: 1px solid var(--geo-line);
+  background: repeating-conic-gradient(
+    transparent 0 10deg,
+    rgb(221 145 72 / 55%) 10deg 10.5deg,
+    transparent 10.5deg 30deg
+  );
+  mask: radial-gradient(transparent 0 96.5%, #000 97%);
+  animation: orbit-turn 38s linear infinite reverse;
+}
+
+.promptOrbit::after {
+  inset: 4%;
+  border: 1px dashed rgb(112 221 209 / 28%);
+}
+
+.shapeAsset {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 82%;
+  height: auto;
+  max-height: 82%;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(88%) sepia(23%) saturate(456%)
+    hue-rotate(356deg) brightness(95%) contrast(90%)
+    drop-shadow(0.9rem 1.2rem 0 rgb(0 0 0 / 42%));
+  transform: rotate(-1deg);
+}
+
+.flagStage {
+  position: relative;
+  display: grid;
+  width: min(76%, 35rem);
+  place-items: center;
+  perspective: 45rem;
+}
+
+.flagStage::before {
+  position: absolute;
+  z-index: -1;
+  inset: -18%;
+  border: 1px solid var(--geo-line);
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 9.8%,
+    rgb(217 197 157 / 6%) 10%
+  );
+  content: "";
+  clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
+  transform: rotateX(58deg) translateY(15%);
+}
+
+.flagAsset {
+  display: block;
+  width: min(100%, 31rem);
+  height: auto;
+  max-height: 44vh;
+  border: 1px solid rgb(243 230 200 / 42%);
+  box-shadow:
+    0.9rem 1.1rem 0 #080907,
+    0 1.6rem 3rem rgb(0 0 0 / 46%);
+  object-fit: contain;
+}
+
+.promptOrbit::before {
+  border: 3px solid var(--geo-paper);
+  background: repeating-conic-gradient(
+    transparent 0 9deg,
+    var(--geo-amber) 9deg 10deg,
+    transparent 10deg 20deg,
+    var(--geo-cyan) 20deg 21deg,
+    transparent 21deg 30deg
+  );
+}
+
+.promptOrbit::after {
+  border: 3px dashed var(--geo-pink);
+}
+
+.shapeAsset {
+  width: 82%;
+  height: auto;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(94%) sepia(19%) saturate(521%)
+    hue-rotate(346deg) brightness(107%) contrast(103%)
+    drop-shadow(6px 6px 0 var(--geo-pink))
+    drop-shadow(5px 5px 0 var(--geo-arcade-ink));
+}
+
+.flagStage::before {
+  border: 3px solid var(--geo-arcade-ink);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--geo-cyan) 0 10%,
+    var(--geo-pink) 10% 20%,
+    var(--geo-amber) 20% 30%,
+    var(--geo-violet) 30% 40%
+  );
+  opacity: 0.32;
+}
+
+.flagAsset {
+  border: var(--geo-outline);
+  box-shadow:
+    8px 8px 0 var(--geo-pink),
+    13px 13px 0 var(--geo-arcade-ink);
+}
+
+@keyframes orbit-turn {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (max-width: 800px) {
+  .promptOrbit {
+    width: min(52%, 14rem);
+  }
+
+  .flagStage {
+    width: min(68%, 21rem);
+  }
+
+  .flagAsset {
+    max-height: 25vh;
+    box-shadow:
+      0.45rem 0.55rem 0 #080907,
+      0 1rem 2rem rgb(0 0 0 / 46%);
+  }
+}
+
+@media (max-width: 800px) {
+  .flagAsset {
+    box-shadow:
+      4px 4px 0 var(--geo-pink),
+      7px 7px 0 var(--geo-arcade-ink);
+  }
+}
+
+/* portrait phones: width-driven artifacts waste a tall stage — let the
+   shape and flag grow into it */
+@media (max-width: 559px) and (min-height: 621px) {
+  .promptOrbit {
+    width: min(82%, 19rem);
+  }
+
+  .flagStage {
+    width: min(88%, 24rem);
+  }
+
+  .flagAsset {
+    max-height: 36vh;
+  }
+}

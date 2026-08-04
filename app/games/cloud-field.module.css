@@ -1,0 +1,222 @@
+.cloud {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  width: min(76vw, 62rem);
+  aspect-ratio: 1.72;
+  isolation: isolate;
+  opacity: 0;
+  filter: saturate(1.16) contrast(1.08);
+  pointer-events: none;
+  transform: translate3d(-50%, -50%, 0) scale(0.56);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  animation: cloud-ignite 3.45s var(--games-ease) both;
+}
+
+.cloud::before,
+.cloud::after,
+.cloudTexture,
+.cloudCore,
+.cloudWisp,
+.cloudVeil {
+  position: absolute;
+  content: "";
+  inset: 0;
+}
+
+.cloud::before {
+  background:
+    radial-gradient(
+      ellipse at 40% 48%,
+      rgb(114 154 255 / 88%) 0 4%,
+      rgb(54 103 238 / 72%) 15%,
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 59% 42%,
+      rgb(65 112 248 / 74%) 0 11%,
+      transparent 43%
+    ),
+    radial-gradient(
+      ellipse at 52% 64%,
+      rgb(34 79 214 / 70%) 0 10%,
+      transparent 38%
+    );
+  filter: blur(7px);
+  opacity: 0.62;
+}
+
+.cloud::after {
+  inset: 8% 3%;
+  background:
+    radial-gradient(
+      ellipse at 28% 60%,
+      rgb(45 89 226 / 64%) 0 11%,
+      transparent 40%
+    ),
+    radial-gradient(
+      ellipse at 72% 57%,
+      rgb(34 76 205 / 56%) 0 9%,
+      transparent 36%
+    ),
+    radial-gradient(
+      ellipse at 52% 37%,
+      rgb(134 168 255 / 38%) 0 4%,
+      transparent 28%
+    );
+  filter: blur(11px);
+  opacity: 0.54;
+  transform: rotate(-8deg);
+}
+
+.cloudTexture {
+  --cloud-fade: radial-gradient(
+    ellipse at 50% 51%,
+    #000 0 13%,
+    rgb(0 0 0 / 92%) 30%,
+    rgb(0 0 0 / 48%) 53%,
+    transparent 76%
+  );
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  opacity: 0.96;
+  filter: blur(0.6px) contrast(1.75) saturate(1.18);
+  mask-image: var(--cloud-fade);
+  -webkit-mask-image: var(--cloud-fade);
+  mix-blend-mode: screen;
+  transform: rotate(-4deg) scale(1.06);
+}
+
+.cloudCore {
+  z-index: 3;
+  inset: 17% 19%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 20deg,
+    transparent,
+    rgb(70 117 245 / 42%),
+    transparent 31%,
+    rgb(119 155 255 / 36%),
+    transparent 68%,
+    rgb(45 91 225 / 46%),
+    transparent
+  );
+  filter: blur(5px);
+  opacity: 0.58;
+  transform: rotate(7deg);
+}
+
+.cloudWisp {
+  z-index: 1;
+  inset: 4% 10%;
+  background:
+    radial-gradient(
+      ellipse at 36% 35%,
+      rgb(105 143 255 / 48%) 0 4%,
+      transparent 23%
+    ),
+    radial-gradient(
+      ellipse at 67% 66%,
+      rgb(64 105 233 / 48%) 0 5%,
+      transparent 25%
+    ),
+    radial-gradient(
+      ellipse at 53% 48%,
+      transparent 0 11%,
+      rgb(52 95 225 / 28%) 24%,
+      transparent 43%
+    );
+  filter: blur(7px);
+  transform: rotate(14deg) scaleX(1.08);
+  animation: cloud-wisp-drift 12s ease-in-out 3.45s infinite alternate;
+}
+
+.cloudVeil {
+  z-index: 4;
+  inset: 14% 10%;
+  background:
+    radial-gradient(ellipse at 30% 58%, rgb(0 4 22 / 72%) 0 3%, transparent 20%),
+    radial-gradient(ellipse at 69% 38%, rgb(0 5 25 / 68%) 0 4%, transparent 21%),
+    radial-gradient(
+      ellipse at 51% 51%,
+      transparent 0 12%,
+      rgb(2 8 36 / 45%) 24%,
+      transparent 47%
+    ),
+    repeating-radial-gradient(
+      ellipse at 50% 50%,
+      transparent 0 7%,
+      rgb(1 5 24 / 20%) 8% 9%,
+      transparent 11% 17%
+    );
+  filter: blur(3px);
+  mix-blend-mode: multiply;
+  opacity: 0.78;
+  transform: rotate(-11deg) scaleX(1.14);
+  animation: cloud-veil-drift 16s ease-in-out 3.45s infinite alternate;
+}
+
+@keyframes cloud-ignite {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(0.45) rotate(-5deg);
+  }
+
+  24% {
+    opacity: 0.16;
+  }
+
+  74% {
+    opacity: 0.6;
+  }
+
+  100% {
+    opacity: 0.55;
+    transform: translate3d(-50%, -50%, 0) scale(1) rotate(0);
+  }
+}
+
+@keyframes cloud-wisp-drift {
+  from {
+    transform: translate3d(-1.2%, 0, 0) rotate(14deg) scaleX(1.08);
+  }
+
+  to {
+    transform: translate3d(1.4%, -1.2%, 0) rotate(11deg) scaleX(1.13);
+  }
+}
+
+@keyframes cloud-veil-drift {
+  from {
+    opacity: 0.72;
+    transform: translate3d(1%, 0, 0) rotate(-11deg) scaleX(1.14);
+  }
+
+  to {
+    opacity: 0.88;
+    transform: translate3d(-1.5%, 1%, 0) rotate(-8deg) scaleX(1.08);
+  }
+}
+
+@media (max-width: 700px) {
+  .cloud {
+    width: 142vw;
+    filter: saturate(1.12) contrast(1.06);
+  }
+
+  .cloudTexture {
+    filter: blur(0.8px) contrast(1.35) saturate(1.12);
+    opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud {
+    opacity: 0.55;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+}

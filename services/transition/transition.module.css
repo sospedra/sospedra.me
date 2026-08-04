@@ -32,7 +32,9 @@
       var(--sky-home) 100%
     );
   contain: strict;
-  height: 500dvh;
+  /* vh, not dvh: scene offsets pan in 100vh steps, and on mobile a dvh
+     plane falls 400 × (vh - dvh) short, exposing the void at the bottom */
+  height: 500vh;
   transform-origin: left top;
   width: 400vw;
 }

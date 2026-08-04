@@ -1,0 +1,102 @@
+/* an unseen campfire, low beside the cockpit */
+.firelight {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 76% 58% at 42% 112%,
+    #ffb05d 0%,
+    #e76d32 38%,
+    transparent 76%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.022;
+  animation: travel-firelight 10.7s ease-in-out infinite;
+  pointer-events: none;
+  transform: translate3d(-0.4%, 0.35%, 0) scale(1.012);
+  transform-origin: 42% 100%;
+}
+
+@keyframes travel-firelight {
+  0%,
+  100% {
+    opacity: 0.022;
+    transform: translate3d(-0.4%, 0.35%, 0) scale(1.012);
+  }
+
+  14% {
+    opacity: 0.029;
+    transform: translate3d(0.15%, 0, 0) scale(1.018);
+  }
+
+  37% {
+    opacity: 0.024;
+    transform: translate3d(-0.1%, 0.2%, 0) scale(1.009);
+  }
+
+  58% {
+    opacity: 0.03;
+    transform: translate3d(0.35%, -0.15%, 0) scale(1.021);
+  }
+
+  73% {
+    opacity: 0.021;
+    transform: translate3d(-0.25%, 0.25%, 0) scale(1.014);
+  }
+
+  91% {
+    opacity: 0.027;
+    transform: translate3d(0.2%, 0.1%, 0) scale(1.017);
+  }
+}
+
+/* twenty-two minutes later */
+.supernova {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 46%,
+    #f4faff 0 16%,
+    #bfe0ff 36%,
+    rgb(9 16 34 / 94%) 78%
+  );
+  animation: travel-supernova 1.8s var(--ease-signal, ease-out) forwards;
+  pointer-events: none;
+}
+
+@keyframes travel-supernova {
+  0% {
+    opacity: 0;
+  }
+
+  16% {
+    opacity: 1;
+  }
+
+  58% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .firelight {
+    animation: none;
+  }
+
+  .firelight {
+    opacity: 0.026;
+    transform: none;
+  }
+}
+
+.firelight {
+  animation: none;
+  mix-blend-mode: normal;
+  opacity: 0.006;
+  transform: none;
+}

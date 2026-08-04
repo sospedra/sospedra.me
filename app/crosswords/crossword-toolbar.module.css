@@ -1,0 +1,424 @@
+@reference "../../services/style/global.css";
+
+.desktopToolbar,
+.mobileToolbar {
+  position: relative;
+  z-index: 1;
+}
+.desktopToolbar {
+  min-width: 0;
+  border: 0;
+}
+
+.toolbar {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.desktopToolbar {
+  display: grid;
+  min-height: 0;
+  grid-template-columns:
+    7.15rem minmax(10.5rem, 12.5rem) auto minmax(0, 1fr)
+    4.5rem;
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "timer parameters switches actions speaker";
+  gap: 0.42rem 0.62rem;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.68rem 0.72rem;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 55%), transparent 30%), #c5c9ce;
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 80%),
+    inset -1px -1px 0 rgb(62 64 71 / 12%),
+    -4px -4px 10px rgb(255 255 255 / 50%),
+    5px 6px 13px rgb(45 49 56 / 14%);
+}
+
+.timerTool {
+  display: grid;
+  min-width: 0;
+  min-height: 44px;
+  grid-area: timer;
+  align-content: center;
+  gap: 0.38rem;
+  border: 1px solid #0c0d10;
+  border-radius: 0.28rem;
+  padding: 0.46rem 0.68rem;
+  color: #9ea0a8;
+  background:
+    linear-gradient(112deg, rgb(255 255 255 / 7%), transparent 36%),
+    var(--cw-display);
+  box-shadow:
+    inset 0 3px 6px rgb(0 0 0 / 55%),
+    inset 0 -1px 0 rgb(255 255 255 / 7%),
+    0 1px 0 rgb(255 255 255 / 75%);
+  font-family: var(--font-code);
+  text-align: left;
+  transition:
+    box-shadow var(--cw-fast) var(--cw-ease),
+    transform var(--cw-fast) var(--cw-ease);
+}
+
+.timerTool span {
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.timerTool strong {
+  color: var(--cw-display-ink);
+  font-size: 1.08rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.timerTool::after {
+  width: 0.48rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--cw-green);
+  box-shadow: 0 0 0 2px #0e0f12;
+  content: "";
+}
+
+.timerTool[aria-pressed="false"]::after {
+  background: #666970;
+}
+
+.timerTool:active {
+  box-shadow:
+    inset 0 4px 8px rgb(0 0 0 / 62%),
+    0 1px 0 rgb(255 255 255 / 60%);
+  transform: translateY(1px);
+}
+
+.actionBank {
+  display: grid;
+  min-width: 0;
+  grid-area: actions;
+  grid-template-columns: repeat(7, minmax(44px, 6.4rem));
+  justify-content: end;
+  gap: 0.4rem;
+}
+
+.toolButton {
+  position: relative;
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  border: 0;
+  border-radius: 0.44rem;
+  padding: 0.4rem 0.34rem;
+  color: #43454c;
+  background: linear-gradient(180deg, #fbfcfd, #e9ebee 58%, #dfe2e6);
+  box-shadow: var(--cw-key-shadow);
+  font: 700 0.5rem / 1 var(--font-code);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transform: translateY(-1px);
+  transition:
+    box-shadow var(--cw-fast) var(--cw-ease),
+    color var(--cw-fast) linear,
+    filter var(--cw-fast) linear,
+    transform var(--cw-fast) var(--cw-ease);
+}
+
+.toolButton > span:first-child,
+.toolButton > .toolGlyph {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  border: 1px solid #9699a0;
+  border-radius: 50%;
+  color: var(--cw-ink);
+  background: #f8f8f7;
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 80%),
+    0 2px 3px rgb(39 41 47 / 22%);
+  font-size: 0.78rem;
+}
+
+.toolButton:hover:not(:disabled) {
+  color: var(--cw-ink);
+  filter: brightness(1.04);
+}
+
+.toolButton:active:not(:disabled),
+.toolButton[aria-pressed="true"] {
+  box-shadow: var(--cw-key-pressed);
+  transform: translateY(2px);
+}
+
+.toolButton[aria-pressed="true"] {
+  color: #24200c;
+  background: linear-gradient(135deg, #ffe980, var(--cw-yellow));
+}
+
+.toolGlyph svg {
+  width: 0.92rem;
+  height: 0.92rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.transportTool {
+  color: #fff;
+  background: linear-gradient(180deg, #f0855a, var(--cw-orange) 62%, #cd5a31);
+}
+
+.transportTool:hover:not(:disabled) {
+  color: #fff;
+}
+
+.transportTool > span:first-child {
+  border-color: rgb(255 255 255 / 55%);
+  color: #fff;
+  background: rgb(255 255 255 / 16%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 30%);
+}
+
+.pencilTool {
+  color: #33290e;
+  background: linear-gradient(180deg, #f2d36b, var(--cw-yellow) 62%, #d9a832);
+}
+
+.pencilTool:hover:not(:disabled) {
+  color: #1f1909;
+}
+
+.pencilTool > span:first-child {
+  border-color: rgb(92 68 12 / 40%);
+  color: #33290e;
+  background: rgb(255 255 255 / 34%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 45%);
+}
+
+.checkTool {
+  color: #0e2233;
+  background: linear-gradient(180deg, #9fc2d8, var(--cw-blue) 62%, #6e92aa);
+}
+
+.checkTool:hover:not(:disabled) {
+  color: #081826;
+}
+
+.checkTool > span:first-child {
+  border-color: rgb(14 34 51 / 30%);
+  color: #0e2233;
+  background: rgb(255 255 255 / 32%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 45%);
+}
+
+.revealTool {
+  color: #f2f2ef;
+  background: linear-gradient(180deg, #3a3d46, #24262c 62%, #1b1d22);
+}
+
+.revealTool:hover:not(:disabled) {
+  color: #fff;
+}
+
+.revealTool > span:first-child {
+  border-color: rgb(255 255 255 / 35%);
+  color: #fff;
+  background: rgb(255 255 255 / 10%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 15%);
+}
+
+.guardTool[aria-pressed="true"] {
+  color: #fff;
+  background: linear-gradient(180deg, #d9614e, var(--cw-red) 62%, #a53a29);
+}
+
+.guardTool[aria-pressed="true"] > span:first-child {
+  border-color: rgb(255 255 255 / 60%);
+  color: #fff;
+  background: #8f251c;
+}
+
+.speakerGrille {
+  width: 100%;
+  height: 100%;
+  min-height: 44px;
+  grid-area: speaker;
+  border: 1px solid rgb(70 72 77 / 16%);
+  border-radius: 0.36rem;
+  background:
+    radial-gradient(#4c5058 1.4px, transparent 1.55px) 0 0 / 0.5rem 0.5rem,
+    #c2c6cb;
+  box-shadow: var(--cw-well-shadow);
+  opacity: 0.82;
+}
+.mobileToolbar {
+  display: none;
+}
+
+@media (max-width: 78rem) and (min-width: 52.01rem) {
+  .desktopToolbar {
+    grid-template-columns: 6.6rem minmax(9.6rem, 11rem) auto minmax(0, 1fr);
+    grid-template-areas: "timer parameters switches actions";
+    column-gap: 0.46rem;
+  }
+
+  .speakerGrille {
+    display: none;
+  }
+
+  .actionBank {
+    gap: 0.24rem;
+  }
+}
+
+@media (max-width: 64rem) and (min-height: 36.01rem) {
+  /* Seven keys plus the cluster exceed one row at this width; stack them. */
+  .desktopToolbar {
+    grid-template-columns: 6.6rem minmax(9.2rem, 10.5rem) minmax(0, 1fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "timer parameters switches"
+      "timer parameters actions";
+  }
+
+  .actionBank {
+    justify-content: stretch;
+    grid-template-columns: repeat(7, minmax(44px, 1fr));
+    gap: 0.2rem;
+  }
+
+  .toolButton {
+    min-height: 0;
+    padding: 0.22rem;
+    gap: 0.14rem;
+    font-size: 0.42rem;
+  }
+
+  .toolButton > span:first-child,
+  .toolButton > .toolGlyph {
+    width: 1.1rem;
+    height: 1.1rem;
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 52rem), (max-width: 64rem) and (max-height: 36rem) {
+  .desktopToolbar {
+    display: none;
+  }
+
+  .mobileToolbar {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+    grid-template-rows: minmax(0, 1fr) 3.45rem;
+    grid-template-areas:
+      "parameters switches"
+      "actions actions";
+    gap: 0.34rem 0.28rem;
+    overflow: hidden;
+    padding: 0.36rem max(0.42rem, var(--safe-area-right))
+      max(0.55rem, var(--safe-area-bottom)) max(0.42rem, var(--safe-area-left));
+    border: 1px solid rgb(255 255 255 / 45%);
+    border-bottom: 0;
+    border-radius: 0.48rem 0.48rem 0 0;
+    background: #c5c9ce;
+    box-shadow: inset 1px 1px 0 rgb(255 255 255 / 70%);
+  }
+
+  .mobileToolbar .timerTool,
+  .mobileToolbar .speakerGrille {
+    display: none;
+  }
+
+  .mobileToolbar .actionBank {
+    justify-content: start;
+    grid-template-columns: repeat(7, minmax(44px, 1fr));
+    gap: 0.16rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-left: 0.24rem;
+    scroll-padding-left: 0.24rem;
+    scrollbar-width: none;
+  }
+
+  .mobileToolbar .actionBank::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobileToolbar .toolButton {
+    min-width: 44px;
+    min-height: 44px;
+    gap: 0.08rem;
+    padding: 0.18rem;
+  }
+
+  .mobileToolbar .toolButton > span:first-child,
+  .mobileToolbar .toolButton > .toolGlyph {
+    width: 1.12rem;
+    height: 1.12rem;
+    font-size: 0.58rem;
+  }
+
+  .mobileToolbar .toolButton > span:last-child {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: 0.44rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 21.5rem) {
+  .mobileToolbar {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 3.55rem 3rem 7rem;
+    grid-template-areas:
+      "parameters"
+      "switches"
+      "actions";
+  }
+
+  .mobileToolbar .actionBank {
+    grid-template-columns: repeat(4, minmax(44px, 1fr));
+    grid-template-rows: repeat(2, 3.5rem);
+    overflow: visible;
+  }
+}
+
+.game[data-short-viewport="true"] .mobileToolbar {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "actions";
+  padding: 0.18rem max(0.42rem, var(--safe-area-right))
+    max(0.18rem, var(--safe-area-bottom)) max(0.42rem, var(--safe-area-left));
+}
+
+@media (forced-colors: active) {
+  .mobileToolbar {
+    color: CanvasText;
+    background: Canvas;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timerTool,
+  .toolButton {
+    transition: none;
+  }
+}

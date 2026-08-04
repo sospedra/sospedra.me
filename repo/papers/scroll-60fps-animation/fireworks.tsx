@@ -24,18 +24,24 @@ const Fireworks: React.FC = () => {
     const image = createVirtualImage()
     const draw = createDraw(context, image, aspect)
 
-    draw()
+    // paint on decode: a synchronous draw after a src swap rasters nothing
+    image.onload = draw
 
+    // coalesce by skipping, never by cancelling: touch scrolling delivers
+    // event bursts between frames, and cancelling starves the callback
     let frameRequest = 0
+    let nextFrame = 0
     const unsubscribe = createScrollListener((frame) => {
-      cancelAnimationFrame(frameRequest)
+      nextFrame = frame
+      if (frameRequest) return
       frameRequest = requestAnimationFrame(() => {
-        image.src = createFrameRoute(frame + 1)
-        draw()
+        frameRequest = 0
+        image.src = createFrameRoute(nextFrame + 1)
       })
     })
 
     return () => {
+      image.onload = null
       unsubscribe()
       cancelAnimationFrame(frameRequest)
     }

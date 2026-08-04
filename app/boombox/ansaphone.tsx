@@ -1,10 +1,17 @@
+import cn from 'clsx'
 import type { DailyCountdown } from 'services/daily-countdown'
-import css from './boombox.module.css'
+import css from './ansaphone.module.css'
 import { Cassette } from './cassette-bay'
+import mold from './cassette-shell.module.css'
+import label from './cassette-sticker.module.css'
 import type { BoomboxState, Song } from './engine'
+import pen from './guess-line.module.css'
 import { Lcd } from './lcd-rack'
+import lcd from './lcd-rack.module.css'
 import { skipSecondsGain, TAD_KEY_ORDER, Transport } from './lever-bank'
+import lever from './lever-bank.module.css'
 import { CaseTracklist } from './tracklist-card'
+import jcard from './tracklist-card.module.css'
 import type { ClipAudio } from './use-clip-audio'
 
 type AnsaphoneProps = {
@@ -50,7 +57,15 @@ export function Ansaphone({
 }: AnsaphoneProps) {
   return (
     <div
-      className={css.ansaphone}
+      className={cn(
+        css.ansaphone,
+        mold.ansaphone,
+        label.ansaphone,
+        pen.ansaphone,
+        lcd.ansaphone,
+        lever.ansaphone,
+        jcard.ansaphone,
+      )}
       data-entry-open={mobileEntryOpen}
       onPointerDownCapture={(event) => {
         if (mobileEntryOpen && event.pointerType !== 'mouse') {
@@ -77,7 +92,7 @@ export function Ansaphone({
       }}
     >
       <section className={css.tadBody} aria-label='Answering machine'>
-        <div className={css.tadBay}>
+        <div className={cn(css.tadBay, mold.tadBay, label.tadBay)}>
           <Cassette
             daily={daily}
             isPlaying={sound.isPlaying}

@@ -21,7 +21,9 @@
   --color-midnight-purple: #180a38;
   --color-home-neon: var(--color-signal-cyan);
   --color-signal-yellow: #ffea00;
-  --color-focus: var(--color-signal-yellow);
+  /* focus rings are retired site-wide: the token stays for the module
+     rules that consume it, resolving to an invisible outline */
+  --color-focus: transparent;
 
   /* Type roles */
   --font-body: var(--font-wotfard), Helvetica, sans-serif;
@@ -54,7 +56,7 @@
   --shadow-neon: 0 0 0.75rem rgb(109 247 234 / 28%);
   --shadow-neon-pink: 0 0 0.85rem rgb(255 79 216 / 50%);
   --shadow-panel: 0 1rem 3rem rgb(0 0 0 / 38%);
-  --shadow-focus: 0 0 0.9rem rgb(255 234 0 / 32%);
+  --shadow-focus: none;
   --motion-micro: 160ms;
   --motion-route: 480ms;
   --motion-signature: 1200ms;
@@ -169,19 +171,15 @@ html[data-scroll-behavior][data-scroll-behavior] .site-main:focus {
   min-height: 44px;
   align-items: center;
   padding: 0.625rem 0.875rem;
-  border: 1px solid var(--color-focus);
+  border: 1px solid var(--color-signal-cyan);
   background: var(--color-bg-void);
-  color: var(--color-focus);
+  color: var(--color-signal-cyan);
   font-family: var(--font-code);
   font-size: 0.875rem;
   line-height: 1;
   text-decoration: none;
   transform: translateY(calc(-100% - var(--safe-area-top) - 1rem));
   transition: transform var(--motion-micro) var(--ease-signal);
-}
-
-.skip-link:focus-visible {
-  transform: translateY(0);
 }
 
 /* Opt-in helper for navigation and action targets; prose links stay compact. */
@@ -216,21 +214,6 @@ html[data-scroll-behavior][data-scroll-behavior]
   transition:
     color var(--motion-micro) var(--ease-signal),
     text-shadow var(--motion-micro) var(--ease-signal);
-}
-
-html[data-scroll-behavior][data-scroll-behavior]
-  :where(
-    .prose-link,
-    .site-main :where(p, blockquote, dd, td) a,
-    .site-main article li a
-  ):not(:where(nav, h1, h2, h3, h4, h5, h6, footer) a):not(
-    :has(img, [data-paper-media])
-  ):where(:hover, :focus-visible) {
-  color: var(--color-text-strong);
-  text-decoration-color: currentColor;
-  text-shadow:
-    -0.075em 0 var(--color-signal-pink),
-    0.075em 0 var(--color-signal-cyan);
 }
 
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {

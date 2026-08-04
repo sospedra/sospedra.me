@@ -41,3 +41,6 @@ export type DragPanelProps = {
   style: CSSProperties
   tabIndex: number
 }
+
+export type WinampPanelId = 'equalizer' | 'player' | 'tracklist'
+export type WinampPanelVisibility = Record<WinampPanelId, boolean>

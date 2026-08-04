@@ -1,0 +1,235 @@
+/* ── transport: latching lever keys. legends silkscreen on the fascia;
+   blank caps ride a machined slot and slide under its mouth ── */
+
+.leverBank {
+  --kw: 76px;
+  --kh: 58px;
+  --lip: 8px;
+  --kgap: 9px;
+  --mouth: 11px;
+  --void: 12px;
+  --lever-ink: #2b2d2f;
+}
+
+.leverBank[data-size="deck"] {
+  place-self: center;
+}
+
+.leverBank[data-size="tad"] {
+  --kw: 56px;
+  --kh: 42px;
+  --lip: 6px;
+  --kgap: 8px;
+  --mouth: 9px;
+  --void: 9px;
+  --lever-ink: #d9d5c9;
+  width: fit-content;
+  margin: 2px auto 6px;
+}
+
+.leverLegend {
+  display: flex;
+  gap: var(--kgap);
+  padding: 0 10px;
+  margin-bottom: 6px;
+}
+
+.legendCell {
+  width: var(--kw);
+  display: grid;
+  justify-items: center;
+  color: var(--lever-ink);
+}
+
+.legendCell b {
+  font: 700 6.5px var(--micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.legendCell i {
+  margin-top: 2px;
+  font: 8px / 1 var(--micro);
+  font-style: normal;
+  letter-spacing: -0.08em;
+}
+
+.legendCell i[data-dot] {
+  width: 7px;
+  height: 7px;
+  margin-top: 3px;
+  border-radius: 50%;
+  background: #c23325;
+}
+
+.leverSlot {
+  display: flex;
+  gap: var(--kgap);
+  padding: var(--mouth) 10px var(--void);
+  border-top: 1px solid rgb(0 0 0 / 50%);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #060707, #141514);
+  box-shadow:
+    inset 0 3px 8px rgb(0 0 0 / 85%),
+    inset 0 -1px 0 rgb(255 255 255 / 5%),
+    0 1px 0 rgb(255 255 255 / 40%);
+}
+
+.leverKey {
+  position: relative;
+  display: block;
+  width: var(--kw);
+  height: var(--kh);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.leverKey:disabled {
+  cursor: default;
+}
+
+/* rear edge dives under the mouth; greige abs unless a bank claims it */
+.leverCap {
+  position: absolute;
+  inset: 0;
+  border-radius: 2px 2px 3px 3px;
+  transform-origin: 50% 0;
+  transition:
+    transform 160ms ease-out,
+    filter 160ms ease-out,
+    box-shadow 160ms ease-out;
+  background-image:
+    linear-gradient(180deg, rgb(0 0 0 / 60%), rgb(0 0 0 / 0%) 26%),
+    linear-gradient(
+      90deg,
+      rgb(255 255 255 / 20%),
+      rgb(255 255 255 / 0%) 22% 78%,
+      rgb(0 0 0 / 16%)
+    ),
+    repeating-linear-gradient(
+      180deg,
+      rgb(0 0 0 / 5%) 0 1px,
+      rgb(0 0 0 / 0%) 1px 3px
+    ),
+    linear-gradient(
+      180deg,
+      var(--cap-rear, #7f7d72),
+      var(--cap-front, #a5a398) 80%
+    );
+  box-shadow:
+    0 10px 9px -5px rgb(0 0 0 / 55%),
+    0 20px 18px -10px rgb(0 0 0 / 32%),
+    5px 0 6px -4px rgb(0 0 0 / 70%),
+    -5px 0 6px -4px rgb(0 0 0 / 70%);
+}
+
+.leverCap::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--lip);
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(
+    180deg,
+    var(--lip-hi, #5b594f),
+    var(--lip-lo, #3d3c35)
+  );
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 35%);
+  transition: height 160ms ease-out;
+}
+
+.leverKey:hover:enabled .leverCap {
+  filter: brightness(1.04);
+}
+
+.leverKey:disabled .leverCap {
+  filter: saturate(0.55) brightness(0.9);
+}
+
+.leverKey[data-on="true"] .leverCap {
+  transform: perspective(700px) rotateX(-9deg);
+  filter: brightness(0.88);
+  box-shadow:
+    0 5px 5px -3px rgb(0 0 0 / 55%),
+    0 10px 9px -6px rgb(0 0 0 / 32%),
+    4px 0 5px -3px rgb(0 0 0 / 65%),
+    -4px 0 5px -3px rgb(0 0 0 / 65%);
+}
+
+.leverKey[data-on="true"] .leverCap::after {
+  height: 3px;
+}
+
+.leverKey:active:enabled .leverCap {
+  transition-duration: 50ms;
+  transform: perspective(700px) rotateX(-12deg);
+  filter: brightness(0.84);
+  box-shadow:
+    0 3px 4px -2px rgb(0 0 0 / 55%),
+    0 7px 7px -5px rgb(0 0 0 / 32%),
+    3px 0 4px -3px rgb(0 0 0 / 60%),
+    -3px 0 4px -3px rgb(0 0 0 / 60%);
+}
+
+.leverKey:active:enabled .leverCap::after {
+  height: 2px;
+  transition-duration: 50ms;
+}
+
+/* the step banks claim keys by position: red, orange, amber, cream */
+.leverKey:nth-child(1) .leverCap {
+  --cap-rear: #ab3424;
+  --cap-front: #d55341;
+  --lip-hi: #79251a;
+  --lip-lo: #571b12;
+}
+
+.leverKey:nth-child(2) .leverCap {
+  --cap-rear: #b85b21;
+  --cap-front: #e37d3e;
+  --lip-hi: #824017;
+  --lip-lo: #5e2f11;
+}
+
+.leverKey:nth-child(3) .leverCap {
+  --cap-rear: #c28d2b;
+  --cap-front: #efb448;
+  --lip-hi: #89641e;
+  --lip-lo: #644816;
+}
+
+.leverKey:nth-child(4) .leverCap {
+  --cap-rear: #c4bfb3;
+  --cap-front: #f1ebde;
+  --lip-hi: #8b877e;
+  --lip-lo: #64625c;
+}
+
+@media (max-width: 759px) {
+  /* Five physical controls still fit the 320px floor without shrinking below
+     a 44px touch target. Wider phones regain the original cap width. */
+  .leverBank[data-size="tad"] {
+    --kw: clamp(44px, calc((100vw - 100px) / 5), 56px);
+    --kh: 44px;
+    --kgap: 2px;
+  }
+
+  .ansaphone[data-entry-open="true"] .leverBank[data-size="tad"] {
+    margin-top: 0;
+    margin-bottom: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leverCap,
+  .leverCap::after {
+    transition: none;
+  }
+}
