@@ -3,7 +3,11 @@
 import { clamp, partition } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { useGameInput } from 'services/hotkeys'
+import {
+  isEditableTarget,
+  letterKeysDisabled,
+  useGameInput,
+} from 'services/hotkeys'
 import Link, { LinkBack } from 'services/link'
 import Row from 'services/row'
 import Shell from 'services/shell'
@@ -139,6 +143,8 @@ const useMoveKeys = (dispatch: Dispatch) => {
       if (event.metaKey || event.ctrlKey || event.altKey || event.repeat) {
         return
       }
+      // taps on stickers stay as the pointer path when letter keys are off
+      if (isEditableTarget(event.target) || letterKeysDisabled()) return
       const key = event.key.toLowerCase()
       if (key === 'z') {
         event.preventDefault()
@@ -218,7 +224,24 @@ const useOrbitAndTap = (dispatch: Dispatch) => {
     })
   }
 
-  return { orbit, onPointerDown, onPointerMove, onPointerUp }
+  // keyboard orbit: drag stays pointer sugar, arrows reach every angle
+  const ORBIT_KEY_DEG = 12
+  const onOrbitKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const step = {
+      ArrowUp: { x: ORBIT_KEY_DEG, y: 0 },
+      ArrowDown: { x: -ORBIT_KEY_DEG, y: 0 },
+      ArrowLeft: { x: 0, y: -ORBIT_KEY_DEG },
+      ArrowRight: { x: 0, y: ORBIT_KEY_DEG },
+    }[event.key]
+    if (!step) return
+    event.preventDefault()
+    setOrbit((prev) => ({
+      rotateX: clamp(prev.rotateX + step.x, -80, 80),
+      rotateY: prev.rotateY + step.y,
+    }))
+  }
+
+  return { orbit, onPointerDown, onPointerMove, onPointerUp, onOrbitKeyDown }
 }
 
 const TimerReadout: React.FC<{ timer: TimerState }> = ({ timer }) => {
@@ -292,7 +315,7 @@ const statusWord = (state: GameState, solved: boolean) => {
 export default function RubiksView() {
   const [state, dispatch] = useReducer(reduce, initialState)
   const spun = useTurnClock(state.turning, dispatch)
-  const { orbit, ...pointerProps } = useOrbitAndTap(dispatch)
+  const { orbit, onOrbitKeyDown, ...pointerProps } = useOrbitAndTap(dispatch)
   useGameInput()
   useMoveKeys(dispatch)
 
@@ -358,10 +381,14 @@ export default function RubiksView() {
             </p>
           </aside>
 
-          {/* biome-ignore lint/a11y/noStaticElementInteractions: stickers are pointer sugar, every move has a keyboard path */}
           <div
             className={css.pit}
+            role='application'
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: role=application stage, arrow-key orbit needs focus (same pattern as the meridian map)
+            tabIndex={0}
+            aria-label='Cube view. Arrow keys rotate the camera. Face keys u, d, l, r, f, b turn layers, with Shift for counterclockwise.'
             onContextMenu={(event) => event.preventDefault()}
+            onKeyDown={onOrbitKeyDown}
             {...pointerProps}
           >
             <div className={css.mat} aria-hidden='true' />

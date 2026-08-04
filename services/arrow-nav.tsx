@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { isEditableTarget } from 'services/hotkeys'
+import { isEditableTarget, letterKeysDisabled } from 'services/hotkeys'
 
 const ITEM_SELECTOR = '[data-arrow-item]'
 
@@ -11,7 +11,8 @@ const shouldIgnoreKey = (event: KeyboardEvent) =>
   event.altKey ||
   event.shiftKey ||
   event.isComposing ||
-  isEditableTarget(event.target)
+  isEditableTarget(event.target) ||
+  (event.key.length === 1 && letterKeysDisabled())
 
 const listItems = () =>
   Array.from(document.querySelectorAll<HTMLElement>(ITEM_SELECTOR)).filter(
@@ -44,9 +45,14 @@ const activateFocusedItem = () => {
 const closestItem = (target: EventTarget | null) =>
   target instanceof Element ? target.closest(ITEM_SELECTOR) : null
 
+// only pointer-granted focus may be revoked by the pointer leaving;
+// blurring a keyboard-focused item would drop the tab position to body
+let pointerFocused: HTMLElement | null = null
+
 const focusHoveredItem = (target: EventTarget | null) => {
   const item = closestItem(target)
   if (item instanceof HTMLElement && item !== document.activeElement) {
+    pointerFocused = item
     item.focus()
   }
 }
@@ -57,8 +63,12 @@ const blurDepartedItem = (event: PointerEvent) => {
   const leftTheItem =
     item instanceof HTMLElement &&
     item === document.activeElement &&
+    item === pointerFocused &&
     destination !== item
-  if (leftTheItem) item.blur()
+  if (leftTheItem) {
+    pointerFocused = null
+    item.blur()
+  }
 }
 
 const KEY_DELTA: Record<string, 1 | -1> = {
@@ -82,6 +92,7 @@ function trackArrowNavigation(activationKeys: readonly string[]) {
     }
     const delta = KEY_DELTA[event.key]
     if (delta === undefined || !focusSibling(delta)) return
+    pointerFocused = null
     keyboardDriving = true
     event.preventDefault()
   }

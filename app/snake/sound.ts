@@ -1,5 +1,21 @@
+import { once } from 'es-toolkit'
 import { audioContextClass } from '../../services/audio/kit.ts'
+import { readLocal, writeLocal } from '../../services/storage.ts'
 import type { Phase } from './engine'
+
+const SOUND_KEY = 'midnight-io:snake-sound'
+let mutedFlag: boolean | null = null
+
+export const isMuted = () => {
+  if (typeof window === 'undefined') return false
+  mutedFlag ??= readLocal(SOUND_KEY) === 'off'
+  return mutedFlag
+}
+
+export const setMuted = (muted: boolean) => {
+  mutedFlag = muted
+  writeLocal(SOUND_KEY, muted ? 'off' : 'on')
+}
 
 export type SoundName = 'key' | 'start' | 'eat' | 'pause' | 'over'
 
@@ -23,20 +39,20 @@ const TUNES: Record<SoundName, Note[]> = {
   ],
 }
 
-let context: AudioContext | null = null
-
 // first call always rides a user gesture, so autoplay policy lets it run
+const createContext = once((): AudioContext | null => {
+  const AudioContextClass = audioContextClass()
+  return AudioContextClass ? new AudioContextClass() : null
+})
+
 const ensureContext = () => {
-  if (context === null) {
-    const AudioContextClass = audioContextClass()
-    if (!AudioContextClass) return null
-    context = new AudioContextClass()
-  }
-  if (context.state === 'suspended') void context.resume()
+  const context = createContext()
+  if (context?.state === 'suspended') void context.resume()
   return context
 }
 
 export const play = (name: SoundName) => {
+  if (isMuted()) return
   const audio = ensureContext()
   if (!audio) return
   const zero = audio.currentTime + 0.01

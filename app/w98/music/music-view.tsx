@@ -324,6 +324,13 @@ export default function MusicView({
           isPlaying: audio.isPlaying,
           position: audio.position,
         }
+  const playbackError =
+    playback.source === 'soundcloud'
+      ? soundCloudError
+      : (audio.error ?? bundledPlaylistError)
+  const trackAnnouncement = currentTrack
+    ? `${playerFeed.isPlaying ? 'Playing' : 'Paused'}: ${currentTrack.title}`
+    : null
 
   const loadLocalTrackSource = useCallback(
     (track: LocalMusicTrack): boolean => {
@@ -534,9 +541,7 @@ export default function MusicView({
     <section className={css.winamp} aria-label='Winamp music player'>
       <h2 className={css.srOnly}>Winamp music player</h2>
       <p className={css.srOnly} aria-live='polite'>
-        {playback.source === 'soundcloud'
-          ? soundCloudError
-          : (audio.error ?? bundledPlaylistError)}
+        {playbackError ?? trackAnnouncement}
       </p>
 
       {soundCloudRequested ? (

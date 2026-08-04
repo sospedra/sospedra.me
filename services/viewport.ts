@@ -2,7 +2,10 @@
 
 import { useEffect } from 'react'
 
-type ViewportHeightVar = '--crossword-viewport-height' | '--geo-viewport-height'
+type ViewportHeightVar =
+  | '--boombox-viewport-height'
+  | '--crossword-viewport-height'
+  | '--geo-viewport-height'
 
 /* mobile keyboards shrink the visual viewport without resizing the window;
    the custom property carries the real height into the css */

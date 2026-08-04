@@ -1,7 +1,8 @@
 'use client'
 
 import type React from 'react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useStoreSelector } from 'services/external-store'
 import Link from 'services/link'
 import w98 from '../w98.module.css'
 import css from './realplayer.module.css'
@@ -286,7 +287,6 @@ const DeadMenuItems: React.FC<{ labels: string[] }> = ({ labels }) => (
       <button
         key={label}
         type='button'
-        role='menuitem'
         className={`${w98.menuItem} ${css.menuDisabled}`}
         disabled
       >
@@ -301,11 +301,16 @@ const RealMenubar: React.FC<{
   close: () => void
 }> = ({ tuner, close }) => {
   const [menu, setMenu] = useState<MenuId | null>(null)
+  const triggerRefs = useRef<Partial<Record<MenuId, HTMLButtonElement | null>>>(
+    {},
+  )
 
   useEffect(() => {
     if (!menu) return
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenu(null)
+      if (event.key !== 'Escape') return
+      setMenu(null)
+      triggerRefs.current[menu]?.focus()
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
@@ -315,13 +320,17 @@ const RealMenubar: React.FC<{
   const pick = (station: RealStation) => {
     tuner.tune(station)
     setMenu(null)
+    triggerRefs.current.presets?.focus()
   }
 
   const trigger = (id: MenuId, label: React.ReactNode) => (
     <button
+      ref={(node) => {
+        triggerRefs.current[id] = node
+      }}
       type='button'
       className={w98.menuTrigger}
-      aria-haspopup='menu'
+      aria-haspopup='true'
       aria-expanded={menu === id}
       onClick={() => toggle(id)}
     >
@@ -348,12 +357,15 @@ const RealMenubar: React.FC<{
             </>,
           )}
           {menu === 'file' && (
-            <div className={w98.menu} role='menu' aria-label='File menu'>
+            <div className={w98.menu}>
               <button
                 type='button'
-                role='menuitem'
                 className={w98.menuItem}
-                onClick={close}
+                onClick={() => {
+                  setMenu(null)
+                  triggerRefs.current.file?.focus()
+                  close()
+                }}
               >
                 <span>Exit</span>
               </button>
@@ -368,17 +380,12 @@ const RealMenubar: React.FC<{
             </>,
           )}
           {menu === 'presets' && (
-            <div
-              className={`${w98.menu} ${css.presetsMenu}`}
-              role='menu'
-              aria-label='Presets menu'
-            >
+            <div className={`${w98.menu} ${css.presetsMenu}`}>
               {REAL_STATIONS.map((station) => (
                 <button
                   key={station.id}
                   type='button'
-                  role='menuitemradio'
-                  aria-checked={tuner.state.stationId === station.id}
+                  aria-pressed={tuner.state.stationId === station.id}
                   className={w98.menuItem}
                   onClick={() => pick(station)}
                 >
@@ -401,7 +408,7 @@ const RealMenubar: React.FC<{
             </>,
           )}
           {menu === 'help' && (
-            <div className={w98.menu} role='menu' aria-label='Help menu'>
+            <div className={w98.menu}>
               <DeadMenuItems labels={['About RealPlayer G2']} />
             </div>
           )}
@@ -457,10 +464,13 @@ const GuideBar: React.FC<{
   )
 }
 
+const selectElapsedSeconds = (seconds: number) => seconds
+
 const StatusBar: React.FC<{
   tuner: Tuner
   station: RealStation | undefined
 }> = ({ tuner, station }) => {
+  const elapsed = useStoreSelector(tuner.elapsedStore, selectElapsedSeconds)
   const live = tuner.state.status === 'playing'
   return (
     <footer className={css.statusBar}>
@@ -471,7 +481,7 @@ const StatusBar: React.FC<{
       </b>
       <span className={css.beacon} data-live={live} aria-hidden='true' />
       <span className={css.lcd} data-align='right'>
-        {formatElapsed(tuner.elapsed)}/LIVE
+        {formatElapsed(elapsed)}/LIVE
       </span>
     </footer>
   )

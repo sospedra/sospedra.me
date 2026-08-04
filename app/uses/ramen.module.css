@@ -1375,7 +1375,7 @@
 }
 
 .bannerSub {
-  color: rgb(255 255 255 / 80%);
+  color: #ffffff;
   font-size: 0.72em;
   letter-spacing: 0.14em;
 }
@@ -1557,7 +1557,7 @@
 
 .dishDead .dishName,
 .dishDead .price {
-  color: var(--ink-faint);
+  color: rgb(36 29 21 / 62%);
   text-decoration: line-through;
   text-decoration-color: rgb(168 34 15 / 65%);
   text-decoration-thickness: 2px;
@@ -1568,7 +1568,7 @@
 }
 
 .dishDead .dishNote {
-  color: rgb(36 29 21 / 52%);
+  color: rgb(36 29 21 / 76%);
 }
 
 .dishDead .slotTag {
@@ -2115,7 +2115,7 @@
 
 .dish[data-verdict="fine"] .price,
 .dish[data-verdict="cheap"] .price {
-  color: rgb(168 34 15 / 78%);
+  color: rgb(168 34 15);
 }
 
 .slotTag {

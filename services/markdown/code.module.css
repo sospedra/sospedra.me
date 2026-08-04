@@ -135,7 +135,7 @@
   position: absolute;
   left: 0;
   width: calc(var(--code-gutter) - 1rem);
-  color: rgb(255 255 255 / 24%);
+  color: rgb(255 255 255 / 55%);
   content: counter(code-line, decimal-leading-zero);
   font-size: 0.75rem;
   text-align: right;

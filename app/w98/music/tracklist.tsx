@@ -10,6 +10,7 @@ import { formatTime } from './format'
 import css from './music.module.css'
 import { normalizeSoundCloudPlaylist } from './soundcloud'
 import type { DragPanelProps, MusicTrack } from './types'
+import { useTouchHitSlop } from './use-touch-hit-slop'
 
 type TracklistProps = {
   currentIndex: number
@@ -43,6 +44,9 @@ export default function Tracklist({
   totalDuration,
   tracks,
 }: TracklistProps) {
+  const touchHitSlop = useTouchHitSlop(
+    `.${css.addFilesHotspot}, .${css.tracklistCloseHotspot}`,
+  )
   const [draggingFiles, setDraggingFiles] = useState(false)
   const [pickerView, setPickerView] = useState<'choose' | 'soundcloud'>(
     'choose',
@@ -112,6 +116,7 @@ export default function Tracklist({
       data-calibration-label='Tracklist panel'
       data-calibration-kind='panel'
       {...dragProps}
+      {...touchHitSlop}
     >
       <img
         className={css.skin}
@@ -123,6 +128,7 @@ export default function Tracklist({
       />
       <span
         className={`${css.dragHandle} ${css.tracklistDragHandle}`}
+        data-touch-slop-ignore
         aria-hidden='true'
       />
 

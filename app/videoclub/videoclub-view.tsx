@@ -2,7 +2,7 @@
 
 import cn from 'clsx'
 import { clamp } from 'es-toolkit'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, Ref } from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { sceneTrap, type Trap, useHotkeys } from 'services/hotkeys'
 import Link, { LinkBack } from 'services/link'
@@ -147,10 +147,12 @@ function DeckKey(props: {
   hint: string
   onPress: () => void
   kind?: 'transport' | 'volume'
+  ref?: Ref<HTMLButtonElement>
 }) {
   return (
     <span className={css.keyWrap} data-kind={props.kind ?? 'transport'}>
       <button
+        ref={props.ref}
         type='button'
         className={css.key}
         onClick={props.onPress}
@@ -179,6 +181,8 @@ export default function VideoclubView() {
   const ghostRef = useRef<HTMLDivElement>(null)
   const slotRef = useRef<HTMLDivElement>(null)
   const stackRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const playKeyRef = useRef<HTMLButtonElement>(null)
+  const spineFocusRef = useRef<number | null>(null)
   const osdSerial = useRef(0)
   const { fxMode, osReducedMotion } = useTheme()
 
@@ -262,6 +266,13 @@ export default function VideoclubView() {
     const id = window.setTimeout(() => setOsd(null), OSD_MS)
     return () => window.clearTimeout(id)
   }, [osd])
+
+  // a swapped-in spine unmounts into the bay span and focus falls to body
+  useEffect(() => {
+    const pending = spineFocusRef.current
+    spineFocusRef.current = null
+    if (pending === state.tape) playKeyRef.current?.focus()
+  }, [state.tape])
 
   const flash = (text: string) => {
     osdSerial.current += 1
@@ -464,6 +475,7 @@ export default function VideoclubView() {
                   onPress={() => seek(-SEEK_STEP)}
                 />
                 <DeckKey
+                  ref={playKeyRef}
                   glyph={state.status === 'playing' ? '❚❚' : '▷'}
                   hint={state.status === 'playing' ? 'PAUSE' : 'PLAY'}
                   onPress={toggle}
@@ -494,32 +506,40 @@ export default function VideoclubView() {
           <span className={css.onAir} data-live={lit} aria-hidden='true'>
             ON AIR
           </span>
-          {TAPES.map((item, index) => {
-            const pile = pileStyle(index)
-            if (index === state.tape) {
+          <ul className={css.pile}>
+            {TAPES.map((item, index) => {
+              const pile = pileStyle(index)
+              if (index === state.tape) {
+                return (
+                  <li key={item.id}>
+                    <span className={css.bay} style={pile}>
+                      IN DECK
+                    </span>
+                  </li>
+                )
+              }
               return (
-                <span key={item.id} className={css.bay} style={pile}>
-                  IN DECK
-                </span>
+                <li key={item.id}>
+                  <button
+                    ref={(element) => {
+                      stackRefs.current[index] = element
+                    }}
+                    type='button'
+                    className={css.vhs}
+                    style={pile}
+                    disabled={state.status === 'inserting'}
+                    onClick={() => {
+                      spineFocusRef.current = index
+                      insertTape(index)
+                    }}
+                    aria-label={`Insert ${item.title}, ${item.venue}`}
+                  >
+                    <SpineBar index={index} tape={item} />
+                  </button>
+                </li>
               )
-            }
-            return (
-              <button
-                key={item.id}
-                ref={(element) => {
-                  stackRefs.current[index] = element
-                }}
-                type='button'
-                className={css.vhs}
-                style={pile}
-                disabled={state.status === 'inserting'}
-                onClick={() => insertTape(index)}
-                aria-label={`Insert ${item.title}, ${item.venue}`}
-              >
-                <SpineBar index={index} tape={item} />
-              </button>
-            )
-          })}
+            })}
+          </ul>
         </section>
 
         <footer className={css.caption}>
@@ -552,6 +572,7 @@ export default function VideoclubView() {
         {lit
           ? `${OSD_STATUS[state.status]} — ${activeTape.title}, ${activeTape.venue}`
           : 'Television off'}
+        {lit && osd && <span key={osd.serial}> — {osd.text}</span>}
       </p>
     </Shell>
   )

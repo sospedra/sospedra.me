@@ -35,7 +35,7 @@ const Egg: FC<{
   }, [exitFullscreenOnComplete, onComplete])
 
   return (
-    <div className={css.override} aria-live='polite' role='status'>
+    <div className={css.override}>
       <div aria-hidden='true' className={css.scan} />
       <div aria-hidden='true' className={css.tears}>
         <span />

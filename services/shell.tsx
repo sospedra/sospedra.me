@@ -1,9 +1,8 @@
 import cn from 'clsx'
 import type React from 'react'
+import SystemSettings from 'services/system-settings'
 import StageMain from 'services/transition/stage'
-
-// the scroll surface: hotkeys and page effects resolve it by this id
-export const VBODY_ID = 'vbody'
+import { VBODY_ID } from 'services/vbody'
 
 type ShellProps = {
   className?: string
@@ -23,6 +22,7 @@ const Shell = ({
       <a className='skip-link' href='#main-content'>
         Skip to content ▼
       </a>
+      <SystemSettings />
       <div
         id={VBODY_ID}
         style={{ overscrollBehavior: 'contain' }}

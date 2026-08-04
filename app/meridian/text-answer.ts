@@ -1,4 +1,4 @@
-import { groupBy, mapValues, uniq } from 'es-toolkit'
+import { groupBy, mapValues, memoize, uniq } from 'es-toolkit'
 import type { Locale, LocalizedOption } from './model'
 
 export type GeoAutocompleteMatch =
@@ -151,18 +151,10 @@ export const buildGeoAutocompleteIndex = (
   resolvable: uniquelyResolvableOptions(indexOptions(options, locale)),
 })
 
-const collators = new Map<Locale, Intl.Collator>()
-
-const collatorFor = (locale: Locale): Intl.Collator => {
-  const cached = collators.get(locale)
-  if (cached) return cached
-  const collator = new Intl.Collator(locale, {
-    numeric: true,
-    sensitivity: 'base',
-  })
-  collators.set(locale, collator)
-  return collator
-}
+const collatorFor = memoize(
+  (locale: Locale): Intl.Collator =>
+    new Intl.Collator(locale, { numeric: true, sensitivity: 'base' }),
+)
 
 export const rankGeoAutocompleteIndex = (
   input: string,

@@ -93,7 +93,8 @@
 }
 
 .rubik span:nth-child(2) {
-  color: #0046ad;
+  /* brand blue #0046ad fails 4.5:1 under brightness(1.5) */
+  color: #4d8dff;
   animation-delay: -2s;
 }
 

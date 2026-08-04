@@ -936,8 +936,9 @@
 
 .stations button b {
   grid-area: freq;
-  color: rgb(255 161 74 / 62%);
+  color: #ffa14a;
   font-size: 0.44rem;
+  text-shadow: 0 1px rgb(0 0 0 / 55%);
 }
 
 .stations button span {
@@ -1061,7 +1062,7 @@
 .coords,
 .contactRange span:last-child {
   overflow: hidden;
-  color: #8a7451;
+  color: #5a4c37;
   font-size: 0.48rem;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1085,7 +1086,7 @@
   gap: 0.6rem;
   padding-right: 7.25rem;
   border-top: 1px solid var(--travel-line);
-  color: rgb(242 233 216 / 42%);
+  color: rgb(242 233 216 / 72%);
   font-size: 0.42rem;
   white-space: nowrap;
 }
@@ -2650,7 +2651,7 @@
 }
 
 .stationIdentity span {
-  color: rgb(25 27 23 / 72%);
+  color: rgb(240 236 220 / 92%);
 }
 
 .missionStats dt {
@@ -2853,13 +2854,13 @@
 }
 
 .compassMeta {
-  color: rgb(226 220 194 / 68%);
+  color: rgb(226 220 194 / 92%);
   font-size: var(--cockpit-type-label);
   letter-spacing: 0.04em;
 }
 
-.compassMeta output {
-  color: #91b8ae;
+.compassMeta span {
+  color: #c8e6dd;
   font-family: var(--font-code, monospace);
   font-size: inherit;
   font-weight: 800;
@@ -2998,7 +2999,7 @@
 }
 
 .scopeHeader small {
-  color: rgb(222 219 200 / 48%);
+  color: rgb(222 219 200 / 82%);
 }
 
 .scopeMachine {
@@ -3159,7 +3160,7 @@
   background: var(--cockpit-grain), linear-gradient(145deg, #d0c9a9, #8f8c78);
   box-shadow: 0 2px 0 rgb(0 0 0 / 24%);
   color: #34352d;
-  content: "MFD–05 / SIGNALSCOPE";
+  content: "MFD–05 / SIGNALSCOPE" / "";
   font: 800 0.46rem / 1 var(--font-code, monospace);
   letter-spacing: 0.08em;
   pointer-events: none;
@@ -3769,6 +3770,12 @@
   transform: translateX(-50%);
 }
 
+/* the slider input is opacity 0, so its own focus ring never paints */
+.axisDial:has(.rangeDialInput:focus-visible) {
+  outline: 2px solid #eaffff;
+  outline-offset: 2px;
+}
+
 .axisDial:has(.rangeDialInput:focus-visible)::after {
   opacity: 1;
 }
@@ -4090,7 +4097,7 @@
   color: #2b281f;
 }
 
-.zoomControls button:active:not(:disabled) {
+.zoomControls button:active:not(:disabled):not([aria-disabled="true"]) {
   filter: brightness(0.92);
   box-shadow:
     inset 3px 3px 5px rgb(0 0 0 / 28%),
@@ -4100,7 +4107,8 @@
   transform: translateY(4px);
 }
 
-.zoomControls button:last-child:active:not(:disabled) {
+.zoomControls
+  button:last-child:active:not(:disabled):not([aria-disabled="true"]) {
   box-shadow:
     inset 3px 3px 5px rgb(48 35 17 / 34%),
     inset -1px -1px rgb(255 245 194 / 12%),
@@ -4108,7 +4116,8 @@
     0 2px 2px rgb(0 0 0 / 28%);
 }
 
-.zoomControls button:disabled {
+.zoomControls button:disabled,
+.zoomControls button[aria-disabled="true"] {
   cursor: not-allowed;
   filter: saturate(0.35) brightness(0.72);
   box-shadow:
@@ -4211,8 +4220,9 @@
     0 0.46rem 0.38rem rgb(0 0 0 / 38%);
 }
 
-.zoomControls button:active:not(:disabled),
-.zoomControls button:last-child:active:not(:disabled) {
+.zoomControls button:active:not(:disabled):not([aria-disabled="true"]),
+.zoomControls
+  button:last-child:active:not(:disabled):not([aria-disabled="true"]) {
   filter: none;
   box-shadow:
     inset 0.2rem 0.2rem 0.28rem rgb(0 0 0 / 52%),
@@ -4221,8 +4231,12 @@
   transform: none;
 }
 
-.zoomControls button:active:not(:disabled) .zoomKeyFace,
-.zoomControls button[data-pressed="true"]:not(:disabled) .zoomKeyFace {
+.zoomControls
+  button:active:not(:disabled):not([aria-disabled="true"])
+  .zoomKeyFace,
+.zoomControls
+  button[data-pressed="true"]:not(:disabled):not([aria-disabled="true"])
+  .zoomKeyFace {
   filter: brightness(0.93);
   box-shadow:
     inset 0.2rem 0.2rem 0.26rem rgb(0 0 0 / 28%),
@@ -4231,7 +4245,8 @@
   transform: translateY(0.22rem) rotateX(0);
 }
 
-.zoomControls button:disabled {
+.zoomControls button:disabled,
+.zoomControls button[aria-disabled="true"] {
   filter: saturate(0.45) brightness(0.72);
   box-shadow:
     inset 0.2rem 0.2rem 0.28rem rgb(0 0 0 / 52%),
@@ -4239,7 +4254,8 @@
   transform: none;
 }
 
-.zoomControls button:disabled .zoomKeyFace {
+.zoomControls button:disabled .zoomKeyFace,
+.zoomControls button[aria-disabled="true"] .zoomKeyFace {
   box-shadow:
     inset 0.14rem 0.12rem rgb(255 255 255 / 16%),
     inset -0.18rem -0.16rem rgb(28 27 23 / 24%),
@@ -4350,7 +4366,7 @@
 }
 
 .signalBank span {
-  color: rgb(220 215 191 / 47%);
+  color: rgb(220 215 191 / 76%);
   font-size: 0.38rem;
 }
 
@@ -4482,7 +4498,7 @@
     inset 1px 1px rgb(255 255 255 / 16%),
     0 2px 0 rgb(0 0 0 / 23%);
   color: rgb(48 48 39 / 84%);
-  content: "FIELD PATCH  /  03–B";
+  content: "FIELD PATCH  /  03–B" / "";
   font: 800 0.47rem / 1 var(--font-code, monospace);
   letter-spacing: 0.07em;
   pointer-events: none;
@@ -4501,7 +4517,7 @@
 
 .manifestHeader p,
 .manifestMeta {
-  color: rgb(226 209 181 / 47%);
+  color: rgb(226 209 181 / 74%);
 }
 
 .manifestHeader > span {
@@ -4556,8 +4572,8 @@
 }
 
 .stations button {
-  --switch-front-a: #7d7f76;
-  --switch-front-b: #50534d;
+  --switch-front-a: #5f6159;
+  --switch-front-b: #3d403b;
   --switch-depth-a: #555850;
   --switch-depth-b: #30332e;
   appearance: none;
@@ -4577,22 +4593,22 @@
 }
 
 .stations button:nth-child(2) {
-  --switch-front-a: #7d796f;
-  --switch-front-b: #514f49;
+  --switch-front-a: #5f5c54;
+  --switch-front-b: #3e3c38;
   --switch-depth-a: #57534c;
   --switch-depth-b: #322f2b;
 }
 
 .stations button:nth-child(3) {
-  --switch-front-a: #757b74;
-  --switch-front-b: #4c524d;
+  --switch-front-a: #595d58;
+  --switch-front-b: #3a3f3b;
   --switch-depth-a: #505750;
   --switch-depth-b: #2d332f;
 }
 
 .stations button:nth-child(4) {
-  --switch-front-a: #79777a;
-  --switch-front-b: #4f4d50;
+  --switch-front-a: #5c5a5d;
+  --switch-front-b: #3c3b3d;
   --switch-depth-a: #555255;
   --switch-depth-b: #312f31;
 }
@@ -4982,7 +4998,7 @@
 .contactNote {
   display: -webkit-box;
   overflow: hidden;
-  color: #75654d;
+  color: #5a4c37;
   font-family: var(--font-body, sans-serif);
   font-size: 0.48rem;
   font-style: italic;
@@ -4999,7 +5015,7 @@
 .scopeInstructions {
   border-top-color: #252823;
   background: var(--cockpit-grain), #262a25;
-  color: rgb(218 213 190 / 42%);
+  color: rgb(218 213 190 / 80%);
 }
 
 .lunarLayerBack .lunarOrbitPath,
@@ -5939,7 +5955,7 @@
 .radioHint {
   overflow: hidden;
   margin: -0.18rem 0 -0.12rem;
-  color: rgb(226 220 198 / 62%);
+  color: rgb(226 220 198 / 88%);
   font: 700 var(--cockpit-type-label) / 1.15 var(--font-code, monospace);
   letter-spacing: 0.015em;
   white-space: nowrap;
@@ -6013,7 +6029,7 @@
 }
 
 .radioScreen > span {
-  color: rgb(173 207 193 / 58%);
+  color: rgb(173 207 193 / 72%);
   font-size: var(--cockpit-type-label);
   letter-spacing: 0.04em;
 }
@@ -6109,7 +6125,7 @@
   border-bottom-width: 0.22rem;
   border-radius: 0.16rem;
   background:
-    var(--cockpit-grain), linear-gradient(145deg, #b8b39d, #7a7a6e 64%, #4d5149);
+    var(--cockpit-grain), linear-gradient(145deg, #d8d2b8, #7a7a6e 64%, #4d5149);
   box-shadow:
     inset 1px 1px rgb(255 255 255 / 22%),
     inset -2px -2px rgb(0 0 0 / 24%),

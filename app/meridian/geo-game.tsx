@@ -7,17 +7,24 @@ import type {
   MutableRefObject,
   KeyboardEvent as ReactKeyboardEvent,
   ReactNode,
+  Ref,
 } from 'react'
 import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useReducer,
   useRef,
   useState,
 } from 'react'
 import DailyCountdownPanel from 'services/daily-countdown-panel'
+import {
+  createExternalStore,
+  type ExternalStore,
+  useStoreSelector,
+} from 'services/external-store'
 import { useGameInput } from 'services/hotkeys'
 import { useDocumentLang } from 'services/locale'
 import Modal from 'services/modal'
@@ -244,6 +251,7 @@ function DialogHeader({
 function AppHeader({
   challenge,
   copy,
+  helpButtonRef,
   locale,
   mode,
   onLocaleChange,
@@ -256,6 +264,7 @@ function AppHeader({
 }: {
   challenge: DailyGeoChallenge
   copy: GeoMessages
+  helpButtonRef: Ref<HTMLButtonElement>
   locale: GeoLocale
   mode: GeoGameMode
   onLocaleChange: (locale: GeoLocale) => void
@@ -365,6 +374,7 @@ function AppHeader({
           <span aria-hidden='true'>◉</span>
         </button>
         <button
+          ref={helpButtonRef}
           type='button'
           className={css.headerButton}
           disabled={timedState}
@@ -397,22 +407,25 @@ const progressSegmentStatus = (
   return 'pending'
 }
 
+const selectClockDecisecond = (elapsedMs: number) => Math.floor(elapsedMs / 100)
+
 function ProgressTrack({
   challenge,
-  roundElapsedMs,
+  roundClock,
   state,
   timed,
 }: {
   challenge: DailyGeoChallenge
-  roundElapsedMs: number
+  roundClock: ExternalStore<number>
   state: GeoGameState
   timed: boolean
 }) {
+  const elapsedDeciseconds = useStoreSelector(roundClock, selectClockDecisecond)
   const activeRound = challenge.rounds[state.roundIndex]
   const activeRoundLimit = activeRound ? roundTimeLimitMs(activeRound) : 0
   const timeRatio =
     timed && activeRoundLimit > 0
-      ? Math.max(0, 1 - roundElapsedMs / activeRoundLimit)
+      ? Math.max(0, 1 - (elapsedDeciseconds * 100) / activeRoundLimit)
       : 1
 
   return (
@@ -910,7 +923,7 @@ function RoundTelemetry({
   locale,
   onPass,
   practiceTimed,
-  roundElapsedMs,
+  roundClock,
   roundLimitMs,
   state,
 }: {
@@ -920,13 +933,18 @@ function RoundTelemetry({
   locale: GeoLocale
   onPass: () => void
   practiceTimed: boolean
-  roundElapsedMs: number
+  roundClock: ExternalStore<number>
   roundLimitMs: number
   state: GeoGameState
 }) {
-  const remainingMs = Math.max(0, roundLimitMs - roundElapsedMs)
-  const timerRatio = roundLimitMs > 0 ? remainingMs / roundLimitMs : 0
-  const urgent = practiceTimed && remainingMs <= LOW_TIME_THRESHOLD_MS
+  const clockText = useStoreSelector(roundClock, (elapsedMs: number) =>
+    formatRoundClock(roundLimitMs - elapsedMs),
+  )
+  const lowTime = useStoreSelector(
+    roundClock,
+    (elapsedMs: number) => roundLimitMs - elapsedMs <= LOW_TIME_THRESHOLD_MS,
+  )
+  const urgent = practiceTimed && lowTime
 
   return (
     <div className={css.questionTelemetry}>
@@ -934,12 +952,10 @@ function RoundTelemetry({
         className={css.questionMetric}
         data-urgent={urgent}
         role='timer'
-        aria-label={`${copy.time}: ${
-          practiceTimed ? formatRoundClock(remainingMs) : copy.untimed
-        }`}
+        aria-label={`${copy.time}: ${practiceTimed ? clockText : copy.untimed}`}
       >
         <span>{copy.time}</span>
-        <strong>{practiceTimed ? formatRoundClock(remainingMs) : '∞'}</strong>
+        <strong>{practiceTimed ? clockText : '∞'}</strong>
         {urgent && <small>{copy.lowTime}</small>}
       </span>
       <span className={css.questionMetric}>
@@ -967,11 +983,6 @@ function RoundTelemetry({
       <span
         className={`${css.timerTrack} ${css.roundTimerTrack}`}
         aria-hidden='true'
-        style={
-          {
-            '--timer-ratio': timerRatio,
-          } as CSSProperties
-        }
       >
         <span />
       </span>
@@ -1100,7 +1111,7 @@ function TextAnswerConsole({
             role='combobox'
             aria-autocomplete='list'
             aria-labelledby={`${inputId}-label geo-question-title`}
-            aria-controls={listboxId}
+            aria-controls={expanded ? listboxId : undefined}
             aria-expanded={expanded}
             aria-activedescendant={
               expanded ? `${listboxId}-option-${activeIndex}` : undefined
@@ -1281,6 +1292,12 @@ function VisibilityPause({
   copy: GeoMessages
   onResume: () => void
 }) {
+  const resumeRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    window.requestAnimationFrame(() => resumeRef.current?.focus())
+  }, [])
+
   return (
     <div className={css.overlay}>
       <section
@@ -1291,9 +1308,9 @@ function VisibilityPause({
         <h2 id='geo-visibility-pause-title'>{copy.visibilityPaused}</h2>
         <p>{copy.visibilityPausedBody}</p>
         <button
+          ref={resumeRef}
           type='button'
           className={css.primaryButton}
-          data-initial-focus
           onClick={onResume}
         >
           <span>{copy.resume}</span>
@@ -1502,7 +1519,7 @@ function GameDialogs({
         <div className={css.dialogBody}>
           <ul className={css.settingsList}>
             <li className={`${css.settingRow} ${css.mobileSettingRow}`}>
-              <span>{copy.edition}</span>
+              <span aria-hidden='true'>{copy.edition}</span>
               <fieldset className={css.settingChoices}>
                 <legend className={css.srOnly}>{copy.edition}</legend>
                 <button
@@ -1528,7 +1545,7 @@ function GameDialogs({
               </fieldset>
             </li>
             <li className={`${css.settingRow} ${css.mobileSettingRow}`}>
-              <span>{copy.language}</span>
+              <span aria-hidden='true'>{copy.language}</span>
               <fieldset className={css.settingChoices}>
                 <legend className={css.srOnly}>{copy.language}</legend>
                 <button
@@ -1682,7 +1699,9 @@ function GeoSession({
   settings: GeoSettings
 }) {
   const [state, dispatch] = useReducer(geoGameReducer, initialState)
-  const [roundElapsedMs, setRoundElapsedMs] = useState(state.roundElapsedMs)
+  const [roundClock] = useState(() =>
+    createExternalStore(initialState.roundElapsedMs),
+  )
   const [countdown, setCountdown] = useState(START_COUNTDOWN_SECONDS)
   const [marker, setMarker] = useState<{
     attemptKey: string
@@ -1695,9 +1714,10 @@ function GeoSession({
   const [audio] = useState(createGeoAudio)
   const stateRef = useRef(state)
   const questionElapsedRef = useRef(state.questionElapsedMs)
-  const roundElapsedRef = useRef(roundElapsedMs)
+  const gameRef = useRef<HTMLDivElement>(null)
   const questionHeadingRef = useRef<HTMLHeadingElement>(null)
   const openerRef = useRef<HTMLElement | null>(null)
+  const helpButtonRef = useRef<HTMLButtonElement | null>(null)
   const recordedCompletionRef = useRef<string | null>(null)
   const announcementNonceRef = useRef(false)
   const playedFeedbackRef = useRef(
@@ -1756,6 +1776,16 @@ function GeoSession({
     setAnnouncement(`${message}${announcementNonceRef.current ? '\u200B' : ''}`)
   }, [])
 
+  const applyRoundClock = useCallback(
+    (elapsedMs: number, limitMs: number) => {
+      roundClock.set(elapsedMs)
+      const ratio =
+        limitMs > 0 ? Math.max(0, (limitMs - elapsedMs) / limitMs) : 0
+      gameRef.current?.style.setProperty('--timer-ratio', String(ratio))
+    },
+    [roundClock],
+  )
+
   useEffect(() => () => audio.dispose(), [audio])
 
   useEffect(() => {
@@ -1795,13 +1825,11 @@ function GeoSession({
     const startedAt = performance.now()
     let frame = 0
     let expired = false
-    setRoundElapsedMs(baseElapsed)
-    roundElapsedRef.current = baseElapsed
+    applyRoundClock(baseElapsed, limitMs)
 
     const update = (now: number) => {
       const cappedElapsed = clamp(baseElapsed + now - startedAt, 0, limitMs)
-      setRoundElapsedMs(cappedElapsed)
-      roundElapsedRef.current = cappedElapsed
+      applyRoundClock(cappedElapsed, limitMs)
 
       if (cappedElapsed >= limitMs && !expired) {
         expired = true
@@ -1817,13 +1845,18 @@ function GeoSession({
 
     frame = window.requestAnimationFrame(update)
     return () => window.cancelAnimationFrame(frame)
-  }, [practiceTimed, round, roundClockRunning, state.roundElapsedMs])
+  }, [
+    applyRoundClock,
+    practiceTimed,
+    round,
+    roundClockRunning,
+    state.roundElapsedMs,
+  ])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (roundClockRunning) return
-    setRoundElapsedMs(state.roundElapsedMs)
-    roundElapsedRef.current = state.roundElapsedMs
-  }, [roundClockRunning, state.roundElapsedMs])
+    applyRoundClock(state.roundElapsedMs, round ? roundTimeLimitMs(round) : 0)
+  }, [applyRoundClock, round, roundClockRunning, state.roundElapsedMs])
 
   useEffect(() => {
     if (state.phase !== 'countdown') return
@@ -1882,14 +1915,15 @@ function GeoSession({
       dispatch({
         type: 'FEEDBACK_FINISHED',
         completedAt: new Date().toISOString(),
-        roundElapsedMs: roundElapsedRef.current,
+        roundElapsedMs: roundClock.get(),
       })
     }, duration)
     return () => window.clearTimeout(timeout)
-  }, [state.challenge.rules, state.lastAnswer, state.phase])
+  }, [roundClock, state.challenge.rules, state.lastAnswer, state.phase])
 
   useEffect(() => {
-    if (state.phase !== 'round-summary') return
+    // Untimed practice holds the summary for the Continue button (WCAG 2.2.1).
+    if (state.phase !== 'round-summary' || !state.timed) return
     const duration =
       state.challenge.rules?.roundSummaryMs ??
       DEFAULT_GEO_CHALLENGE_RULES.roundSummaryMs
@@ -1897,7 +1931,7 @@ function GeoSession({
       dispatch({ type: 'ROUND_SUMMARY_FINISHED' })
     }, duration)
     return () => window.clearTimeout(timeout)
-  }, [state.challenge.rules?.roundSummaryMs, state.phase])
+  }, [state.challenge.rules?.roundSummaryMs, state.phase, state.timed])
 
   useEffect(() => {
     if (state.phase !== 'question' || question?.type !== 'map') return
@@ -1923,6 +1957,27 @@ function GeoSession({
   }, [announce, audio, copy, locale, options, state.lastAnswer, state.phase])
 
   useEffect(() => {
+    if (state.phase !== 'round-summary' || !round) return
+    const roundAnswers = state.answers.filter(
+      (answer) => answer.roundId === round.id,
+    )
+    const score = sumBy(roundAnswers, (answer) => answer.score)
+    const correct = roundAnswers.filter((answer) => answer.correct).length
+    announce(
+      `${copy.roundComplete}. ${copy.roundScore}: ${formatScore(score, locale)}. ${copy.roundAccuracy}: ${correct}/${roundAnswers.length}.`,
+    )
+  }, [
+    announce,
+    copy.roundAccuracy,
+    copy.roundComplete,
+    copy.roundScore,
+    locale,
+    round,
+    state.answers,
+    state.phase,
+  ])
+
+  useEffect(() => {
     if (
       state.phase !== 'round-summary' ||
       !round ||
@@ -1945,6 +2000,11 @@ function GeoSession({
     state.roundElapsedMs,
     state.roundIndex,
   ])
+
+  useEffect(() => {
+    if (state.phase !== 'visibility-paused') return
+    announce(copy.visibilityPaused)
+  }, [announce, copy.visibilityPaused, state.phase])
 
   useEffect(() => {
     const serialized = serializeGeoRun(state)
@@ -1987,7 +2047,7 @@ function GeoSession({
       const frozen = geoGameReducer(current, {
         type: 'VISIBILITY_HIDDEN',
         elapsedMs: questionElapsedRef.current,
-        roundElapsedMs: roundElapsedRef.current,
+        roundElapsedMs: roundClock.get(),
       })
       const serialized = serializeGeoRun(frozen)
       if (serialized) {
@@ -2000,7 +2060,7 @@ function GeoSession({
       dispatch({
         type: 'VISIBILITY_HIDDEN',
         elapsedMs: questionElapsedRef.current,
-        roundElapsedMs: roundElapsedRef.current,
+        roundElapsedMs: roundClock.get(),
       })
     }
     const handleVisibility = () => {
@@ -2013,7 +2073,7 @@ function GeoSession({
       document.removeEventListener('visibilitychange', handleVisibility)
       window.removeEventListener('pagehide', freezeAndSave)
     }
-  }, [])
+  }, [roundClock])
 
   const submitTextAnswer = ({
     optionId,
@@ -2036,7 +2096,7 @@ function GeoSession({
       optionId,
       submittedText,
       elapsedMs: questionElapsedRef.current,
-      roundElapsedMs: roundElapsedRef.current,
+      roundElapsedMs: roundClock.get(),
       answeredAt: new Date().toISOString(),
     })
   }
@@ -2046,7 +2106,7 @@ function GeoSession({
       type: 'SUBMIT_MAP',
       coordinate,
       elapsedMs: questionElapsedRef.current,
-      roundElapsedMs: roundElapsedRef.current,
+      roundElapsedMs: roundClock.get(),
       answeredAt: new Date().toISOString(),
     })
   }
@@ -2057,10 +2117,10 @@ function GeoSession({
     dispatch({
       type: 'SKIP_QUESTION',
       elapsedMs: questionElapsedRef.current,
-      roundElapsedMs: roundElapsedRef.current,
+      roundElapsedMs: roundClock.get(),
       answeredAt: new Date().toISOString(),
     })
-  }, [])
+  }, [roundClock])
 
   const start = useCallback(() => {
     const current = stateRef.current
@@ -2082,7 +2142,8 @@ function GeoSession({
 
   const openOverlay = useCallback(
     (overlay: 'settings' | 'help', opener: HTMLButtonElement | null) => {
-      openerRef.current = opener
+      // The '?' shortcut has no opener; close then returns focus to the header help button.
+      openerRef.current = opener ?? helpButtonRef.current
       dispatch({ type: 'OPEN_OVERLAY', overlay })
     },
     [],
@@ -2278,7 +2339,7 @@ function GeoSession({
                   locale={locale}
                   onPass={passQuestion}
                   practiceTimed={practiceTimed}
-                  roundElapsedMs={roundElapsedMs}
+                  roundClock={roundClock}
                   roundLimitMs={roundTimeLimitMs(round)}
                   state={state}
                 />
@@ -2374,6 +2435,7 @@ function GeoSession({
 
   return (
     <div
+      ref={gameRef}
       className={css.game}
       lang={locale}
       data-reduced-motion={settings.reducedMotion}
@@ -2385,6 +2447,7 @@ function GeoSession({
       <AppHeader
         challenge={state.challenge}
         copy={copy}
+        helpButtonRef={helpButtonRef}
         locale={locale}
         mode={mode}
         onLocaleChange={onLocaleChange}
@@ -2397,7 +2460,7 @@ function GeoSession({
       />
       <ProgressTrack
         challenge={state.challenge}
-        roundElapsedMs={roundElapsedMs}
+        roundClock={roundClock}
         state={state}
         timed={practiceTimed}
       />

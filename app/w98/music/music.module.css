@@ -42,6 +42,11 @@
   cursor: grabbing;
 }
 
+.panel:focus-visible {
+  outline: 2px dashed var(--music-orange);
+  outline-offset: -2px;
+}
+
 .dragHandle {
   position: absolute;
   z-index: 3;
@@ -63,12 +68,19 @@
   border-radius: 45%;
 }
 
-.equalizerDragHandle,
-.tracklistDragHandle {
+.equalizerDragHandle {
   top: 2.5%;
   left: 3%;
   width: 66%;
   height: 13%;
+}
+
+.tracklistDragHandle {
+  top: 78%;
+  left: 3%;
+  width: 94%;
+  height: 18%;
+  min-height: 0;
 }
 
 .playerPanel {
@@ -189,6 +201,9 @@
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
+
+  /* .playerDisplay sets pointer-events: none and it inherits; hover pause needs auto */
+  pointer-events: auto;
 }
 
 .marquee > span {
@@ -201,6 +216,11 @@
 .marquee i {
   padding-left: 2.2cqw;
   font-style: normal;
+}
+
+.marquee:hover > span,
+.marquee:focus-within > span {
+  animation-play-state: paused;
 }
 
 @keyframes marquee-title {
@@ -267,6 +287,14 @@
   direction: ltr;
   opacity: 0;
   writing-mode: vertical-lr;
+}
+
+/* the range inputs are invisible overlays, so focus shows on the wrapper */
+.gaugeInput:focus-within,
+.frequencyControl:focus-within,
+.balanceControl:focus-within {
+  outline: 2px solid var(--music-orange);
+  outline-offset: 2px;
 }
 
 .timeGauge {
@@ -385,6 +413,24 @@
 .hotspot:disabled,
 .hotspot[aria-disabled="true"] {
   cursor: default;
+}
+
+.hotspot:focus-visible,
+.addFilesHotspot:focus-visible {
+  outline: 2px solid var(--music-orange);
+  outline-offset: 2px;
+}
+
+/* WCAG 2.5.8: 24px minimum target; the percentage hotspots shrink below it at narrow widths */
+.hotspot::before,
+.addFilesHotspot::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 24px);
+  height: max(100%, 24px);
+  transform: translate(-50%, -50%);
 }
 
 .openTracklistHotspot[data-lit="true"]::after,
@@ -645,6 +691,7 @@
   background: #050505;
   color: #fff;
   font: inherit;
+  font-size: 1rem;
 }
 
 .sourceDialog [role="alert"] {
@@ -658,12 +705,19 @@
 }
 
 .sourceDialog button {
+  min-height: 2.75rem;
   padding: 0.5rem 0.7rem;
   border: 1px solid #999;
   background: #292929;
   color: #fff;
   cursor: pointer;
   font: inherit;
+}
+
+.sourceDialog input:focus-visible,
+.sourceDialog button:focus-visible {
+  outline: 2px solid var(--music-orange);
+  outline-offset: 2px;
 }
 
 .trackViewport {
@@ -724,12 +778,30 @@
   white-space: nowrap;
 }
 
+@media (max-width: 47.99rem), (pointer: coarse) {
+  .trackViewport {
+    scroll-snap-type: y proximity;
+  }
+
+  .trackRow {
+    height: 55px;
+    min-height: 55px;
+    font-size: max(0.6875rem, 3.05cqw);
+    scroll-snap-align: start;
+  }
+}
+
 .trackRow span {
   padding-left: 1.1cqw;
 }
 
 .trackRow span:first-child {
   padding-left: 7.1cqw;
+}
+
+.trackRow:focus-visible {
+  outline: 2px solid var(--music-orange);
+  outline-offset: -2px;
 }
 
 .trackRow time {

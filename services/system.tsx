@@ -1,6 +1,6 @@
 'use client'
 
-import { uniq } from 'es-toolkit'
+import { debounce, uniq } from 'es-toolkit'
 import type React from 'react'
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { readLocalJson, writeLocalJson } from 'services/storage'
@@ -28,7 +28,8 @@ const SystemContext = createContext<SystemContextValue>({
 })
 
 const STORAGE_KEY = 'midnight-io:anomalies'
-const NOTICE_DISMISS_MS = 2600
+// WCAG 2.2.1: give the toast enough dwell time to be read
+const NOTICE_DISMISS_MS = 6000
 
 const isAnomalyId = (id: unknown): id is AnomalyId =>
   typeof id === 'string' && Object.hasOwn(ANOMALIES, id)
@@ -36,7 +37,7 @@ const isAnomalyId = (id: unknown): id is AnomalyId =>
 export function SystemProvider(props: { children: React.ReactNode }) {
   const [anomalies, setAnomalies] = useState<AnomalyId[]>([])
   const [message, setMessage] = useState('')
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const dismissRef = useRef(debounce(() => setMessage(''), NOTICE_DISMISS_MS))
 
   useEffect(() => {
     const stored = readLocalJson(STORAGE_KEY)
@@ -46,15 +47,12 @@ export function SystemProvider(props: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
+    return () => dismissRef.current.cancel()
   }, [])
 
   const notify = (nextMessage: string) => {
     setMessage(nextMessage)
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    timeoutRef.current = setTimeout(() => setMessage(''), NOTICE_DISMISS_MS)
+    dismissRef.current()
   }
 
   const discover = (id: AnomalyId) => {

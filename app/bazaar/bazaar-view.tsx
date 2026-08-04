@@ -16,6 +16,8 @@ import {
 import { createPortal } from 'react-dom'
 import SpriteCar from 'services/car/car'
 import Link from 'services/link'
+import Shell from 'services/shell'
+import { prefersQuietFx } from 'services/theme'
 import css from './bazaar.module.css'
 import scene from './scene.module.css'
 import SceneStall from './scene-stall'
@@ -567,6 +569,7 @@ function Stall({ id }: { id: BazaarStallId }) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeTimerRef = useRef<number | null>(null)
+  const suppressFocusOpenRef = useRef(false)
   const active = open || focused
 
   const updateDialogPosition = useCallback(() => {
@@ -654,7 +657,22 @@ function Stall({ id }: { id: BazaarStallId }) {
     sfx.click()
   }
 
-  const focusDialogOnTab = (event: React.KeyboardEvent<HTMLAnchorElement>) => {
+  const dismissDialog = () => {
+    const link = wrapRef.current?.querySelector<HTMLAnchorElement>('a[href]')
+    if (link && document.activeElement !== link) {
+      // refocusing the stall link must not re-open the dialog it just closed
+      suppressFocusOpenRef.current = true
+      link.focus()
+    }
+    setOpen(false)
+    setFocused(false)
+  }
+
+  const handleLinkKeyDown = (event: React.KeyboardEvent<HTMLAnchorElement>) => {
+    if (event.key === 'Escape') {
+      dismissDialog()
+      return
+    }
     if (event.key !== 'Tab' || event.shiftKey) return
     const firstLink =
       dialogRef.current?.querySelector<HTMLAnchorElement>('a[href]')
@@ -663,7 +681,11 @@ function Stall({ id }: { id: BazaarStallId }) {
     firstLink.focus()
   }
 
-  const keepDialogInTabOrder = (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleDialogKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Escape') {
+      dismissDialog()
+      return
+    }
     if (event.key !== 'Tab') return
     const links =
       dialogRef.current?.querySelectorAll<HTMLAnchorElement>('a[href]')
@@ -700,6 +722,10 @@ function Stall({ id }: { id: BazaarStallId }) {
       onMouseEnter={openOnHover}
       onMouseLeave={closeAfterHover}
       onFocusCapture={() => {
+        if (suppressFocusOpenRef.current) {
+          suppressFocusOpenRef.current = false
+          return
+        }
         updateDialogPosition()
         setFocused(true)
       }}
@@ -716,10 +742,12 @@ function Stall({ id }: { id: BazaarStallId }) {
       <Link
         className={scene.stall}
         aria-label={spec.label}
+        aria-expanded={active}
+        aria-haspopup='dialog'
         data-label={spec.label}
         onClick={guardTap}
         onMouseEnter={() => sfx.stall(id)}
-        onKeyDown={focusDialogOnTab}
+        onKeyDown={handleLinkKeyDown}
         url={spec.href}
       >
         <SceneStall id={id} active={active} />
@@ -733,7 +761,7 @@ function Stall({ id }: { id: BazaarStallId }) {
           dialogRef={dialogRef}
           onMouseEnter={openOnHover}
           onMouseLeave={closeAfterHover}
-          onKeyDown={keepDialogInTabOrder}
+          onKeyDown={handleDialogKeyDown}
         />
       ) : (
         <Dialog
@@ -743,7 +771,7 @@ function Stall({ id }: { id: BazaarStallId }) {
           dialogRef={dialogRef}
           onMouseEnter={openOnHover}
           onMouseLeave={closeAfterHover}
-          onKeyDown={keepDialogInTabOrder}
+          onKeyDown={handleDialogKeyDown}
         />
       )}
     </div>
@@ -852,56 +880,65 @@ export default function BazaarView() {
   const scrollToMarket = () => {
     sceneRef.current?.scrollTo({
       top: sceneRef.current.clientHeight,
-      behavior: 'smooth',
+      behavior: prefersQuietFx() ? 'auto' : 'smooth',
     })
   }
 
   return (
-    <main
-      className={css.scene}
-      ref={sceneRef}
-      data-hitbox={hitbox || undefined}
-    >
-      <div className={scene.hud}>
-        <button type='button' className={scene.hudBtn} onClick={toggleSound}>
-          {sound ? 'SOUND ON' : 'SOUND OFF'}
-        </button>
-        <button
-          type='button'
-          className={scene.hudBtn}
-          onClick={() => setHitbox((previous) => !previous)}
-        >
-          {hitbox ? 'HITBOX ON' : 'HITBOX OFF'}
-        </button>
-      </div>
-
-      <div className={css.desktopTree}>
-        <div className={cn(scene.scene, css.streetHost)}>
-          <StreetFloor onDoor={scrollToMarket} />
+    <Shell>
+      <div
+        className={css.scene}
+        ref={sceneRef}
+        data-hitbox={hitbox || undefined}
+      >
+        <h1 className='sr-only'>Bazaar</h1>
+        <div className={scene.hud}>
+          <button
+            type='button'
+            className={scene.hudBtn}
+            aria-pressed={sound}
+            onClick={toggleSound}
+          >
+            SOUND <span aria-hidden='true'>{sound ? 'ON' : 'OFF'}</span>
+          </button>
+          <button
+            type='button'
+            className={scene.hudBtn}
+            aria-pressed={hitbox}
+            onClick={() => setHitbox((previous) => !previous)}
+          >
+            HITBOX <span aria-hidden='true'>{hitbox ? 'ON' : 'OFF'}</span>
+          </button>
         </div>
-        {DESKTOP_FLOORS.map((spec, i) => (
-          <Fragment key={spec.stalls[0]}>
-            <div className={css.sep} data-bazaar-sep={i} />
-            <MarketFloor spec={spec} index={i} />
-          </Fragment>
-        ))}
-        <div className={css.sep} data-bazaar-sep={3} />
-        <div className={css.bottomPad} />
-      </div>
 
-      <div className={css.mobileTree}>
-        <div className={cn(scene.scene, css.streetHost)}>
-          <StreetFloor onDoor={scrollToMarket} />
+        <div className={css.desktopTree}>
+          <div className={cn(scene.scene, css.streetHost)}>
+            <StreetFloor onDoor={scrollToMarket} />
+          </div>
+          {DESKTOP_FLOORS.map((spec, i) => (
+            <Fragment key={spec.stalls[0]}>
+              <div className={css.sep} data-bazaar-sep={i} />
+              <MarketFloor spec={spec} index={i} />
+            </Fragment>
+          ))}
+          <div className={css.sep} data-bazaar-sep={3} />
+          <div className={css.bottomPad} />
         </div>
-        {MOBILE_FLOORS.map((spec, i) => (
-          <Fragment key={spec.stalls[0]}>
-            <div className={css.sepM} />
-            <MobileMarketFloor spec={spec} index={i} />
-          </Fragment>
-        ))}
-        <div className={css.sepM} />
-        <div className={css.bottomPad} />
+
+        <div className={css.mobileTree}>
+          <div className={cn(scene.scene, css.streetHost)}>
+            <StreetFloor onDoor={scrollToMarket} />
+          </div>
+          {MOBILE_FLOORS.map((spec, i) => (
+            <Fragment key={spec.stalls[0]}>
+              <div className={css.sepM} />
+              <MobileMarketFloor spec={spec} index={i} />
+            </Fragment>
+          ))}
+          <div className={css.sepM} />
+          <div className={css.bottomPad} />
+        </div>
       </div>
-    </main>
+    </Shell>
   )
 }

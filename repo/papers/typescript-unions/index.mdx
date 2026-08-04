@@ -21,7 +21,7 @@ The good thing is that TypeScript is smart enough to identify when there's a dis
 Property 'a' does not exist on type 'A', 'B'
 ```
 
-### Identifier keys
+## Identifier keys
 
 The [recommended way](https://github.com/Microsoft/TypeScript/pull/9163) to do it is by having a **constant string-type field in the object**. For TypeScript will infer the type using that field as an anchor. The same way it does with primitive types.
 
@@ -41,7 +41,7 @@ const act = (coin: VaporCoin | NeonCoin) => {
 }
 ```
 
-### Morphic check
+## Morphic check
 
 But, sometimes it's not possible to rely upon one specific field. Maybe it's not even up to us to decide the object shapes - working with a third-party API. In such cases, we can **infer the type by running a morphic check**. Meaning, looking for differences in their shape.
 
@@ -58,7 +58,7 @@ const act = (coin: VaporCoin | NeonCoin) => {
 }
 ```
 
-### Type predicates
+## Type predicates
 
 Finally, when everything else failed. We can **use a to-be-defined function** or type guards or [type predicates](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates). If the objects don't have an identifier field. If they are morphally equal. We can check their inner differences with a function. And let this TBD function to imperatively coerce the type.
 
@@ -79,7 +79,7 @@ const act = (coin: VaporCoin | NeonCoin) => {
 }
 ```
 
-### Conclusion
+## Conclusion
 
 Unions and Intersections are part of TypeScript's backbone. These are powerful and we must embrace their usage as much as possible. Once we start working with them we must learn how to discriminate different types. For that I recommend that everyone **follows this step-through**:
 

@@ -10,6 +10,8 @@ import {
 import { useGameInput } from 'services/hotkeys'
 import { shareHandled, shareText } from 'services/share'
 import { readLocalJson, writeLocalJson } from 'services/storage'
+import { useSystem } from 'services/system'
+import { useViewportHeightVar } from 'services/viewport'
 import * as z from 'zod/mini'
 import css from './boombox.module.css'
 import { createDeckSfx, type DeckSfx } from './deck-sfx'
@@ -270,8 +272,8 @@ const Tuner = (props: {
         <div className={css.radioTuning}>
           <span>tuning</span>
           <div className={css.wheel} data-live={props.isPlaying}>
-            <button type='button' tabIndex={-1} aria-hidden />
-            <button type='button' tabIndex={-1} aria-hidden />
+            <span aria-hidden />
+            <span aria-hidden />
           </div>
         </div>
       </div>
@@ -325,11 +327,10 @@ const Lcd = (props: {
   const playing = stage === 'play'
 
   const nextTape = `next tape ${countdownLabel(props.countdown)}`
-  const statusLine = () => {
-    if (stage === 'won')
-      return `got it in ${props.state.guesses.length} · ${nextTape}`
-    if (stage === 'lost') return `side b next time · ${nextTape}`
-    return nextTape
+  const verdict = () => {
+    if (stage === 'won') return `got it in ${props.state.guesses.length} · `
+    if (stage === 'lost') return 'side b next time · '
+    return ''
   }
   const yearHint = props.limit >= 4 || !playing ? props.daily.year : '····'
   const genreHint = () => {
@@ -339,7 +340,7 @@ const Lcd = (props: {
 
   return (
     <div className={css.lcdBezel}>
-      <div className={css.lcdScreen} aria-live='polite'>
+      <div className={css.lcdScreen}>
         <div className={css.lcdTop}>
           <span>boombox #{props.state.day + 1}</span>
           <span>
@@ -370,7 +371,11 @@ const Lcd = (props: {
           </span>
         </div>
         <div className={css.lcdStatus}>
-          <span>{statusLine()}</span>
+          <span>
+            {/* only the verdict is live: the countdown ticks every second */}
+            <span aria-live='polite'>{verdict()}</span>
+            {nextTape}
+          </span>
           <span>{STAGE_TAG[stage]}</span>
         </div>
         {!playing && (
@@ -478,12 +483,23 @@ const Cassette = (props: {
           <div className={css.sticker}>
             <span className={css.aSide}>a</span>
             <div className={css.stickerScript}>
-              <span className={css.scriptTitle} data-masked={!revealed}>
+              <span
+                className={css.scriptTitle}
+                data-masked={!revealed}
+                aria-hidden={!revealed}
+              >
                 {revealed ? props.daily.title : masked.title}
               </span>
-              <span className={css.scriptArtist} data-masked={!revealed}>
+              <span
+                className={css.scriptArtist}
+                data-masked={!revealed}
+                aria-hidden={!revealed}
+              >
                 {revealed ? props.daily.artist : masked.artist}
               </span>
+              {!revealed && (
+                <span className='sr-only'>Answer hidden until solved</span>
+              )}
             </div>
             {/* the cover is the answer; alt text would spoil it */}
             <img
@@ -607,7 +623,7 @@ const CaseTracklist = (props: PaperProps) => (
         </ol>
         <div className={css.caseFoot}>
           <span>dolby off</span>
-          <span>rebobina abans, va</span>
+          <span lang='ca'>rebobina abans, va</span>
         </div>
       </div>
       <span className={css.caseSpine} aria-hidden />
@@ -733,6 +749,7 @@ type LeverSpec = {
   word: string
   on?: boolean
   red?: boolean
+  pressed?: boolean
   disabled?: boolean
   ariaLabel: string
   onPress: () => void
@@ -758,6 +775,7 @@ const LeverBank = (props: { size: 'deck' | 'tad'; keys: LeverSpec[] }) => (
           className={css.leverKey}
           data-on={key.on}
           aria-label={key.ariaLabel}
+          aria-pressed={key.pressed}
           onClick={key.onPress}
           disabled={key.disabled}
         >
@@ -774,6 +792,7 @@ const Transport = (props: TransportProps) => {
       glyph: '▶',
       word: 'play',
       on: props.soundPlaying,
+      pressed: props.soundPlaying,
       ariaLabel: 'Play',
       onPress: props.onPlay,
       disabled: !props.soundReady,
@@ -820,6 +839,7 @@ export default function BoomboxView() {
   >({ status: 'loading' })
 
   useGameInput()
+  useViewportHeightVar('--boombox-viewport-height')
 
   useEffect(() => {
     setSession({ status: 'ready', state: loadState(dayNumber(new Date())) })
@@ -853,10 +873,29 @@ function BoomboxMachine({
   const [volume, setVolume] = useState(0.65)
   const sfxRef = useRef<DeckSfx | null>(null)
   const copiedTimerRef = useRef(0)
+  const mobilePointerInsideRef = useRef(false)
+  const mobilePointerResetRef = useRef(0)
   /* the site's dailies count to utc midnight; this tape flips at 02:00 on
      spain's wall clock, so the lcd counts to the engine's own flip instant */
   const countdown = useDailyCountdown(nextFlipAt)
   const doorOpen = useDoorGreeting()
+
+  useEffect(() => {
+    const resetMobilePointer = () => {
+      window.clearTimeout(mobilePointerResetRef.current)
+      mobilePointerResetRef.current = window.setTimeout(() => {
+        mobilePointerInsideRef.current = false
+      }, 0)
+    }
+    window.addEventListener('pointerup', resetMobilePointer, true)
+    window.addEventListener('pointercancel', resetMobilePointer, true)
+    return () => {
+      window.clearTimeout(mobilePointerResetRef.current)
+      window.removeEventListener('pointerup', resetMobilePointer, true)
+      window.removeEventListener('pointercancel', resetMobilePointer, true)
+    }
+  }, [])
+  const { notify } = useSystem()
 
   const daily = songForDay(SONGS, state.day)
   const limit = unlockedSeconds(state)
@@ -907,6 +946,8 @@ function BoomboxMachine({
     persistState(next)
     setState(next)
     if (next.stage !== 'play') sound.stop()
+    const landed = next.guesses[state.guesses.length]
+    if (landed) notify(SCORE_LABEL[landed.score])
   }
 
   const onGuess = (candidate: Song | undefined) => {
@@ -950,6 +991,7 @@ function BoomboxMachine({
     if (shareHandled(outcome)) return
     await navigator.clipboard.writeText(card).catch(() => undefined)
     setCopied(true)
+    notify('Result copied to the clipboard')
     window.clearTimeout(copiedTimerRef.current)
     copiedTimerRef.current = window.setTimeout(
       () => setCopied(false),
@@ -987,25 +1029,25 @@ function BoomboxMachine({
   }
 
   /* desk and ansaphone each mount one pen and one results slip; unique
-     ids keep the combobox wiring valid while css shows a single surface.
-     only the desk pen autofocuses: on touch screens a focused pen means
-     the keyboard is up and the machine folds, so the tap must be real */
-  const guessInput = (resultsId: string, autoFocus: boolean) => (
+     ids keep the combobox wiring valid while css shows a single surface */
+  const guessInput = (resultsId: string, desk: boolean) => (
     <input
       className={css.noteInput}
       type='text'
       value={query}
-      // biome-ignore lint/a11y/noAutofocus: the pen waits on the note line
-      autoFocus={autoFocus}
       placeholder='artist or title…'
       aria-label='Guess the song'
       aria-expanded={results.length > 0}
       role='combobox'
-      aria-controls={resultsId}
+      aria-controls={results.length > 0 ? resultsId : undefined}
+      aria-autocomplete='list'
+      aria-activedescendant={
+        results.length > 0 ? `${resultsId}-${cursor}` : undefined
+      }
       autoComplete='off'
       spellCheck={false}
       onFocus={() => {
-        if (!autoFocus) setMobileEntryOpen(true)
+        if (!desk) setMobileEntryOpen(true)
       }}
       onChange={(event) => {
         setQuery(event.target.value)
@@ -1028,8 +1070,10 @@ function BoomboxMachine({
         {results.map((song, index) => (
           <button
             key={song.id}
+            id={`${resultsId}-${index}`}
             type='button'
             role='option'
+            tabIndex={-1}
             aria-selected={index === cursor}
             className={css.songRow}
             data-cursor={index === cursor}
@@ -1170,6 +1214,11 @@ function BoomboxMachine({
       <div
         className={css.ansaphone}
         data-entry-open={mobileEntryOpen}
+        onPointerDownCapture={(event) => {
+          if (mobileEntryOpen && event.pointerType !== 'mouse') {
+            mobilePointerInsideRef.current = true
+          }
+        }}
         onClickCapture={(event) => {
           if (!mobileEntryOpen) return
           const target = event.target
@@ -1178,6 +1227,7 @@ function BoomboxMachine({
           if (target.closest('button')) setMobileEntryOpen(false)
         }}
         onBlurCapture={(event) => {
+          if (mobilePointerInsideRef.current) return
           const nextTarget = event.relatedTarget
           if (
             nextTarget instanceof Node &&

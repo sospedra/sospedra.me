@@ -31,7 +31,7 @@ const Role: React.FC = () => {
       <button
         type='button'
         className={css.replay}
-        title='Replay transmission'
+        aria-label='javascript hacker, replay the transmission'
         onClick={() => setIteration(0)}
       >
         ｊａｖ

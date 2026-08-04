@@ -180,10 +180,9 @@ const GameMenu: React.FC<{
   toggleSound: () => void
   exit: () => void
 }> = ({ density, sound, newGame, toggleSound, exit }) => (
-  <div className={css.menu} role='menu' aria-label='Game menu'>
+  <div className={css.menu}>
     <button
       type='button'
-      role='menuitem'
       className={css.menuItem}
       onClick={() => newGame(density)}
     >
@@ -195,8 +194,7 @@ const GameMenu: React.FC<{
       <button
         key={name}
         type='button'
-        role='menuitemradio'
-        aria-checked={name === density}
+        aria-pressed={name === density}
         className={css.menuItem}
         onClick={() => newGame(name)}
       >
@@ -214,8 +212,7 @@ const GameMenu: React.FC<{
     <hr />
     <button
       type='button'
-      role='menuitemcheckbox'
-      aria-checked={sound}
+      aria-pressed={sound}
       className={css.menuItem}
       onClick={toggleSound}
     >
@@ -227,12 +224,7 @@ const GameMenu: React.FC<{
       </span>
     </button>
     <hr />
-    <button
-      type='button'
-      role='menuitem'
-      className={css.menuItem}
-      onClick={exit}
-    >
+    <button type='button' className={css.menuItem} onClick={exit}>
       Exit
     </button>
   </div>
@@ -256,42 +248,57 @@ const WindowControls: React.FC<{
 
 const HelpWindow: React.FC<{ close: () => void; drag: WindowDrag }> = (
   props,
-) => (
-  <section
-    className={css.helpWindow}
-    style={props.drag.style}
-    aria-label='Minesweeper help'
-  >
-    <header className={css.titlebar} {...props.drag.handle}>
-      <span className={css.appIcon} aria-hidden='true' />
-      <strong>Help</strong>
-      <span className={css.windowControls}>
-        <button type='button' aria-label='Close help' onClick={props.close}>
-          ×
+) => {
+  const closeRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    closeRef.current?.focus()
+  }, [])
+
+  return (
+    <section
+      className={css.helpWindow}
+      style={props.drag.style}
+      aria-label='Minesweeper help'
+    >
+      <header className={css.titlebar} {...props.drag.handle}>
+        <span className={css.appIcon} aria-hidden='true' />
+        <strong>Help</strong>
+        <span className={css.windowControls}>
+          <button
+            ref={closeRef}
+            type='button'
+            aria-label='Close help'
+            onClick={props.close}
+          >
+            ×
+          </button>
+        </span>
+      </header>
+      <div className={css.helpBody}>
+        <ul>
+          <li>Left click sweeps a cell.</li>
+          <li>
+            Right click plants a flag. <kbd>f</kbd> on a focused cell works too.
+          </li>
+          <li>On touch screens, switch to Flag mode before tapping a cell.</li>
+          <li>Click a satisfied number to sweep its neighbors at once.</li>
+          <li>The first sweep is never a mine.</li>
+          <li>
+            The field is dealt to fit your screen. Difficulty sets density.
+          </li>
+          <li>Sound toggles in the Game menu.</li>
+          <li>
+            <kbd>F2</kbd> deals a new board.
+          </li>
+        </ul>
+        <button type='button' className={css.okButton} onClick={props.close}>
+          OK
         </button>
-      </span>
-    </header>
-    <div className={css.helpBody}>
-      <ul>
-        <li>Left click sweeps a cell.</li>
-        <li>
-          Right click plants a flag. <kbd>f</kbd> on a focused cell works too.
-        </li>
-        <li>On touch screens, switch to Flag mode before tapping a cell.</li>
-        <li>Click a satisfied number to sweep its neighbors at once.</li>
-        <li>The first sweep is never a mine.</li>
-        <li>The field is dealt to fit your screen. Difficulty sets density.</li>
-        <li>Sound toggles in the Game menu.</li>
-        <li>
-          <kbd>F2</kbd> deals a new board.
-        </li>
-      </ul>
-      <button type='button' className={css.okButton} onClick={props.close}>
-        OK
-      </button>
-    </div>
-  </section>
-)
+      </div>
+    </section>
+  )
+}
 
 const useSoundPref = (audio: SweepAudio) => {
   const [sound, setSound] = useState(true)
@@ -498,7 +505,6 @@ const GameMenuItem: React.FC<{
     return (
       <button
         type='button'
-        role='menuitem'
         className={css.programItem}
         onClick={() => startLaunch('mines')}
       >
@@ -510,7 +516,6 @@ const GameMenuItem: React.FC<{
   return (
     <Link
       url={game.href}
-      role='menuitem'
       className={css.programItem}
       onClick={(event) => guardNav(event, game.href)}
     >
@@ -588,6 +593,23 @@ const reduceChrome = (state: ChromeState, event: ChromeEvent): ChromeState => {
   }
 }
 
+type MenuTriggerId = 'game' | 'help' | 'start' | 'programs' | 'games'
+
+// closing a menu unmounts the focused item; hand focus back to its trigger
+const chromeFocusTarget = (
+  prev: ChromeState,
+  next: ChromeState,
+): MenuTriggerId | null => {
+  if (!prev.helpOpen && next.helpOpen) return null
+  if (prev.helpOpen && !next.helpOpen) return 'help'
+  if (prev.menu !== null && next.menu === null) return prev.menu
+  if (prev.startMenu === 'programs' && next.startMenu === 'root')
+    return 'programs'
+  if (prev.startMenu === 'games' && next.startMenu === 'root') return 'games'
+  if (prev.startMenu !== 'closed' && next.startMenu === 'closed') return 'start'
+  return null
+}
+
 const useSweepClock = (status: MinesStatus) => {
   const [seconds, setSeconds] = useState(0)
 
@@ -615,6 +637,12 @@ export default function Windows98View() {
   const deskRef = useRef<HTMLDivElement>(null)
   const workAreaRef = useRef<HTMLDivElement>(null)
   const paintRef = useRef<PaintHandle | null>(null)
+  const gameTriggerRef = useRef<HTMLButtonElement>(null)
+  const helpTriggerRef = useRef<HTMLButtonElement>(null)
+  const startTriggerRef = useRef<HTMLButtonElement>(null)
+  const programsTriggerRef = useRef<HTMLButtonElement>(null)
+  const gamesTriggerRef = useRef<HTMLButtonElement>(null)
+  const prevChromeRef = useRef(chrome)
   const gameDrag = useWindowDrag(workAreaRef)
   const paintDrag = useWindowDrag(workAreaRef)
   const realDrag = useWindowDrag(workAreaRef)
@@ -729,6 +757,19 @@ export default function Windows98View() {
     dispatch({ type: 'reset', level: target })
   }, [fit, density, state.status, state.level])
 
+  useEffect(() => {
+    const triggers = {
+      game: gameTriggerRef,
+      help: helpTriggerRef,
+      start: startTriggerRef,
+      programs: programsTriggerRef,
+      games: gamesTriggerRef,
+    }
+    const target = chromeFocusTarget(prevChromeRef.current, chrome)
+    prevChromeRef.current = chrome
+    if (target) triggers[target].current?.focus()
+  }, [chrome])
+
   useHotkeys([
     [
       'F2',
@@ -766,7 +807,7 @@ export default function Windows98View() {
           <DesktopLink
             url='/console'
             label='MS-DOS'
-            ariaLabel='Open the console'
+            ariaLabel='MS-DOS, open the console'
             icon={css.msdosIcon}
             iconId='msdos'
             icons={icons}
@@ -827,6 +868,7 @@ export default function Windows98View() {
           {chrome.menu && (
             <button
               type='button'
+              tabIndex={-1}
               className={css.menuBackdrop}
               aria-label='Close menu'
               onClick={() => chromeDispatch({ type: 'menu', menu: null })}
@@ -839,6 +881,7 @@ export default function Windows98View() {
             data-hidden={!minesWindow.open || minesWindow.minimized}
             data-active={desktop.active === 'mines'}
             onPointerDownCapture={() => activateApp('mines')}
+            onFocusCapture={() => activateApp('mines')}
           >
             {minesWindow.open && (
               <div className={css.window} style={gameDrag.style}>
@@ -855,9 +898,10 @@ export default function Windows98View() {
                 <nav className={css.menubar} aria-label='Minesweeper menus'>
                   <div className={css.menuSlot}>
                     <button
+                      ref={gameTriggerRef}
                       type='button'
                       className={css.menuTrigger}
-                      aria-haspopup='menu'
+                      aria-haspopup='true'
                       aria-expanded={chrome.menu === 'game'}
                       onClick={() =>
                         chromeDispatch({
@@ -880,9 +924,10 @@ export default function Windows98View() {
                   </div>
                   <div className={css.menuSlot}>
                     <button
+                      ref={helpTriggerRef}
                       type='button'
                       className={css.menuTrigger}
-                      aria-haspopup='menu'
+                      aria-haspopup='true'
                       aria-expanded={chrome.menu === 'help'}
                       onClick={() =>
                         chromeDispatch({
@@ -894,14 +939,9 @@ export default function Windows98View() {
                       <u>H</u>elp
                     </button>
                     {chrome.menu === 'help' && (
-                      <div
-                        className={css.menu}
-                        role='menu'
-                        aria-label='Help menu'
-                      >
+                      <div className={css.menu}>
                         <button
                           type='button'
-                          role='menuitem'
                           className={css.menuItem}
                           onClick={() =>
                             chromeDispatch({ type: 'help', open: true })
@@ -996,6 +1036,7 @@ export default function Windows98View() {
             className={css.paintArea}
             desktop={desktop}
             activate={activateApp}
+            activateOnFocus
           >
             <PaintWindow
               ref={paintRef}
@@ -1014,6 +1055,7 @@ export default function Windows98View() {
             className={css.winampArea}
             desktop={desktop}
             activate={activateApp}
+            activateOnFocus
           >
             <MusicView
               panels={desktop.winampPanels}
@@ -1053,6 +1095,7 @@ export default function Windows98View() {
           {chrome.startMenu !== 'closed' && (
             <button
               type='button'
+              tabIndex={-1}
               className={css.menuBackdrop}
               aria-label='Close start menu'
               onClick={() =>
@@ -1062,9 +1105,10 @@ export default function Windows98View() {
           )}
           <div className={css.menuSlot}>
             <button
+              ref={startTriggerRef}
               type='button'
               className={css.startButton}
-              aria-haspopup='menu'
+              aria-haspopup='true'
               aria-expanded={chrome.startMenu !== 'closed'}
               onClick={() =>
                 chromeDispatch({
@@ -1082,17 +1126,13 @@ export default function Windows98View() {
               <strong>Start</strong>
             </button>
             {chrome.startMenu !== 'closed' && (
-              <div
-                className={css.startMenu}
-                role='menu'
-                aria-label='Start menu'
-              >
+              <div className={css.startMenu}>
                 <div className={css.menuSlot}>
                   <button
+                    ref={programsTriggerRef}
                     type='button'
-                    role='menuitem'
                     className={css.menuItem}
-                    aria-haspopup='menu'
+                    aria-haspopup='true'
                     aria-expanded={chrome.startMenu === 'programs'}
                     onClick={() =>
                       chromeDispatch({
@@ -1108,14 +1148,9 @@ export default function Windows98View() {
                     Programs <span aria-hidden='true'>▸</span>
                   </button>
                   {chrome.startMenu === 'programs' && (
-                    <div
-                      className={css.programsMenu}
-                      role='menu'
-                      aria-label='Programs'
-                    >
+                    <div className={css.programsMenu}>
                       <Link
                         url='/console'
-                        role='menuitem'
                         className={css.programItem}
                         onClick={(event) => guardNav(event, '/console')}
                       >
@@ -1124,7 +1159,6 @@ export default function Windows98View() {
                       </Link>
                       <button
                         type='button'
-                        role='menuitem'
                         className={css.programItem}
                         onClick={() => startLaunch('mines')}
                       >
@@ -1133,7 +1167,6 @@ export default function Windows98View() {
                       </button>
                       <button
                         type='button'
-                        role='menuitem'
                         className={css.programItem}
                         onClick={() => startLaunch('paint')}
                       >
@@ -1142,7 +1175,6 @@ export default function Windows98View() {
                       </button>
                       <button
                         type='button'
-                        role='menuitem'
                         className={css.programItem}
                         onClick={() => startLaunch('winamp')}
                       >
@@ -1154,7 +1186,6 @@ export default function Windows98View() {
                       </button>
                       <button
                         type='button'
-                        role='menuitem'
                         className={css.programItem}
                         onClick={() => startLaunch('realplayer')}
                       >
@@ -1169,10 +1200,10 @@ export default function Windows98View() {
                 </div>
                 <div className={css.menuSlot}>
                   <button
+                    ref={gamesTriggerRef}
                     type='button'
-                    role='menuitem'
                     className={css.menuItem}
-                    aria-haspopup='menu'
+                    aria-haspopup='true'
                     aria-expanded={chrome.startMenu === 'games'}
                     onClick={() =>
                       chromeDispatch({
@@ -1188,11 +1219,7 @@ export default function Windows98View() {
                     Games <span aria-hidden='true'>▸</span>
                   </button>
                   {chrome.startMenu === 'games' && (
-                    <div
-                      className={css.gamesMenu}
-                      role='menu'
-                      aria-label='Games'
-                    >
+                    <div className={css.gamesMenu}>
                       {GAMES.map((game) => (
                         <GameMenuItem
                           key={game.id}
@@ -1207,7 +1234,6 @@ export default function Windows98View() {
                 <hr />
                 <Link
                   url='/'
-                  role='menuitem'
                   className={css.shutdownItem}
                   aria-label='Shut down and return home'
                   onClick={(event) => guardNav(event, '/')}

@@ -508,15 +508,14 @@ export default function GeoMap({
   }
 
   const handlePointerUp = (event: PointerEvent<SVGSVGElement>) => {
-    const coordinate =
-      dragPointerRef.current === event.pointerId && !selectionLocked
-        ? selectAtClientPoint(event.currentTarget, {
-            clientX: event.clientX,
-            clientY: event.clientY,
-          })
-        : null
+    // WCAG 2.5.2: release only places the pin; the lock button confirms.
+    if (dragPointerRef.current === event.pointerId && !selectionLocked) {
+      selectAtClientPoint(event.currentTarget, {
+        clientX: event.clientX,
+        clientY: event.clientY,
+      })
+    }
     releasePointer(event)
-    if (coordinate) onSubmit(coordinate)
   }
 
   const moveMarker = (latitudeDelta: number, longitudeDelta: number) => {
@@ -714,6 +713,16 @@ export default function GeoMap({
 
       <div className={css.mapStatusBar}>
         <p className={css.mapPosition}>{positionText}</p>
+        {selectedCoordinate && !selectionLocked && (
+          <button
+            type='button'
+            className={css.secondaryButton}
+            onClick={submitSelection}
+          >
+            <span>{labels.submit}</span>
+            <span aria-hidden='true'>◉</span>
+          </button>
+        )}
         {feedback && (
           <p className={css.mapFeedback} role='status'>
             <span>{labels.distance}</span>

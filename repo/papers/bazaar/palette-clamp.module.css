@@ -102,7 +102,6 @@
 }
 
 .chip[data-stray="true"] .hex {
-  opacity: 0.5;
   text-decoration: line-through;
 }
 

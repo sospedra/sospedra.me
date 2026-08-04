@@ -99,6 +99,12 @@ export const useDraggablePanel = (
 
     let frame = 0
     const scheduleClamp = () => {
+      const drag = dragRef.current
+      if (drag) {
+        dragRef.current = null
+        setDragging(false)
+        releasePointer(panelNode, drag.pointerId)
+      }
       cancelAnimationFrame(frame)
       frame = requestAnimationFrame(() => clampToStage(panelNode))
     }
@@ -143,8 +149,8 @@ export const useDraggablePanel = (
       pointer: { x: event.clientX, y: event.clientY },
       pointerId: event.pointerId,
     }
-    event.preventDefault()
     if (!capturePointer(panel, event.pointerId)) return
+    event.preventDefault()
     dragRef.current = drag
     setDragging(true)
   }

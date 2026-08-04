@@ -1,10 +1,11 @@
-import { clamp } from 'es-toolkit'
+import { clamp, debounce } from 'es-toolkit'
 import type { Route } from 'next'
 import { usePathname, useRouter } from 'next/navigation'
 import type React from 'react'
-import { useEffect, useRef } from 'react'
-import { VBODY_ID } from 'services/shell'
+import { useEffect, useRef, useSyncExternalStore } from 'react'
+import { readLocal, writeLocal } from 'services/storage'
 import { prefersQuietFx } from 'services/theme'
+import { VBODY_ID } from 'services/vbody'
 import { tinykeys } from 'tinykeys'
 
 export type Trap = [string | string[], (event: KeyboardEvent) => void]
@@ -41,8 +42,48 @@ const konamiListeners = new Set<() => void>()
 let konamiCursor = 0
 let konamiTimeout: number | null = null
 let successKey: string | null = null
-let successKeyTimeout: number | null = null
 let gameInputClaims = 0
+
+// WCAG 2.1.4: bare character shortcuts must have an off switch
+const LETTER_KEYS_KEY = 'midnight-io:letter-keys'
+let letterKeysOff: boolean | null = null
+const letterKeysListeners = new Set<() => void>()
+
+export const letterKeysDisabled = () => {
+  if (typeof window === 'undefined') return false
+  letterKeysOff ??= readLocal(LETTER_KEYS_KEY) === 'off'
+  return letterKeysOff
+}
+
+export const setLetterKeysEnabled = (enabled: boolean) => {
+  letterKeysOff = !enabled
+  writeLocal(LETTER_KEYS_KEY, enabled ? 'on' : 'off')
+  for (const listener of letterKeysListeners) listener()
+}
+
+const subscribeLetterKeys = (listener: () => void) => {
+  letterKeysListeners.add(listener)
+  return () => {
+    letterKeysListeners.delete(listener)
+  }
+}
+
+export const useLetterKeysEnabled = () =>
+  useSyncExternalStore(
+    subscribeLetterKeys,
+    () => !letterKeysDisabled(),
+    () => true,
+  )
+
+// shift does not count: Shift+G is still a character-only shortcut
+const isCharacterCombo = (combo: string) => {
+  const parts = combo.split('+')
+  const key = parts.at(-1) ?? ''
+  const hasRealModifier = parts
+    .slice(0, -1)
+    .some((part) => part.toLowerCase() !== 'shift')
+  return !hasRealModifier && key.length === 1
+}
 
 export const isEditableTarget = (target: EventTarget | null) => {
   if (!(target instanceof Element)) return false
@@ -93,17 +134,13 @@ const captureEvent = (event: KeyboardEvent) => {
   event.stopImmediatePropagation()
 }
 
+const scheduleSuccessKeyClear = debounce(() => {
+  successKey = null
+}, SUCCESS_KEY_HOLD_MS)
+
 const clearSuccessKey = () => {
   successKey = null
-  if (successKeyTimeout !== null) {
-    window.clearTimeout(successKeyTimeout)
-    successKeyTimeout = null
-  }
-}
-
-const scheduleSuccessKeyClear = () => {
-  if (successKeyTimeout !== null) window.clearTimeout(successKeyTimeout)
-  successKeyTimeout = window.setTimeout(clearSuccessKey, SUCCESS_KEY_HOLD_MS)
+  scheduleSuccessKeyClear.cancel()
 }
 
 const isModifiedOrRepeatedKey = (event: KeyboardEvent) =>
@@ -226,22 +263,30 @@ const resolveGotoKey = (
 // vim-style leader: `g` arms a goto window, the next key picks the sector.
 // Capture phase, like konami: the second key must never reach single-key
 // traps (`g b` warps to the bazaar instead of also triggering "back").
-const createGotoCapture =
-  (navigate: (url: Route) => void) => (event: KeyboardEvent) => {
-    if (gameInputClaims > 0 || MODIFIER_KEYS.has(event.key)) return
-    if (event.isComposing || isEditableTarget(event.target)) {
-      clearGotoSession()
-      return
-    }
-    if (gotoPending) {
-      clearGotoSession()
-      resolveGotoKey(event, navigate)
-      return
-    }
-    if (event.key === 'g' && !isModifiedOrRepeatedKey(event)) {
-      startGotoSession()
-    }
+const handleGotoCapture = (
+  event: KeyboardEvent,
+  navigate: (url: Route) => void,
+) => {
+  const inactive =
+    letterKeysDisabled() || gameInputClaims > 0 || MODIFIER_KEYS.has(event.key)
+  if (inactive) return
+  if (event.isComposing || isEditableTarget(event.target)) {
+    clearGotoSession()
+    return
   }
+  if (gotoPending) {
+    clearGotoSession()
+    resolveGotoKey(event, navigate)
+    return
+  }
+  if (event.key === 'g' && !isModifiedOrRepeatedKey(event)) {
+    startGotoSession()
+  }
+}
+
+const createGotoCapture =
+  (navigate: (url: Route) => void) => (event: KeyboardEvent) =>
+    handleGotoCapture(event, navigate)
 
 const canScrollVertically = (element: HTMLElement) => {
   if (element.scrollHeight - element.clientHeight <= 1) return false
@@ -381,8 +426,19 @@ export const scrollMarkedScene = (selector: string, direction: -1 | 1) => {
   return scrollSceneSequence(scenes, direction, surface)
 }
 
+// Space and Enter must keep activating a focused control (WCAG 2.1.1);
+// scene traps on them only fire when focus rests on a non-interactive node
+const ACTIVATION_COMBOS = new Set(['space', 'enter'])
+
+const isActivationTarget = (target: EventTarget | null) =>
+  target instanceof Element &&
+  Boolean(target.closest('a, button, [role="button"], summary'))
+
 const shouldIgnoreTrap = (event: KeyboardEvent, combo: string) =>
   gameInputClaims > 0 ||
+  (letterKeysDisabled() && isCharacterCombo(combo)) ||
+  (ACTIVATION_COMBOS.has(combo.toLowerCase()) &&
+    isActivationTarget(event.target)) ||
   capturedEvents.has(event) ||
   event.defaultPrevented ||
   event.isComposing ||

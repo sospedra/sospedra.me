@@ -122,7 +122,12 @@ export default function GamesView() {
       if (!ready) setPhase('ready')
 
       if (event.key === 'Enter') {
-        if (!ready || grid.current?.contains(document.activeElement)) return
+        // a focused link or button keeps its native Enter (WCAG 2.1.1)
+        const onInteractive =
+          event.target instanceof Element &&
+          event.target.closest('a, button, input, [role="button"]')
+        if (!ready || onInteractive) return
+        if (grid.current?.contains(document.activeElement)) return
         event.preventDefault()
         links.current[selectedIndex]?.click()
         return

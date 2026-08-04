@@ -578,21 +578,21 @@
 
 .selectionLabel .selectedCategory {
   margin-top: 0.35rem;
-  color: rgb(246 246 248 / 88%);
+  color: rgb(246 246 248);
   font-family: var(--font-code);
   font-size: clamp(0.65rem, 1.35vmin, 0.83rem);
   letter-spacing: 0.06em;
-  text-shadow: 0 1px 2px rgb(20 21 27 / 90%);
+  text-shadow: 0 1px 2px rgb(20 21 27 / 96%);
 }
 
 .selectionLabel .selectedDescription {
   max-width: 40ch;
   margin-top: 0.55rem;
   margin-left: auto;
-  color: rgb(250 250 252 / 84%);
+  color: rgb(250 250 252 / 96%);
   font-size: clamp(0.7rem, 1.45vmin, 0.88rem);
   line-height: 1.35;
-  text-shadow: 0 1px 2px rgb(20 21 27 / 92%);
+  text-shadow: 0 1px 2px rgb(20 21 27 / 96%);
 }
 
 .gameGrid {
@@ -787,7 +787,7 @@
 
 :global(html[data-scroll-behavior][data-scroll-behavior])
   .gameLink:focus-visible {
-  outline: 1px solid rgb(239 243 255 / 42%);
+  outline: 2px solid rgb(239 243 255 / 92%);
   outline-offset: -0.3rem;
   box-shadow:
     inset 0 0 2rem rgb(235 242 255 / 7%),
@@ -855,7 +855,7 @@
   min-height: 44px;
   align-items: center;
   gap: 0.65rem;
-  color: rgb(245 245 248 / 70%);
+  color: rgb(245 245 248 / 94%);
   font-family: var(--font-code);
   font-size: clamp(0.65rem, 1.35vmin, 0.8rem);
   letter-spacing: 0.04em;

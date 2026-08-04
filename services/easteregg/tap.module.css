@@ -1,8 +1,13 @@
 @reference "../../services/style/global.css";
 
 .tap {
-  @apply fixed inset-0 z-50 w-full outline-hidden;
+  @apply fixed inset-0 z-50 w-full;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.tap:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -6px;
 }
 
 .count {

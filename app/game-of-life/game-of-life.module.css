@@ -2084,7 +2084,7 @@
 .identityPlate > span,
 .programPlate > span,
 .systemLamp > span {
-  color: #52554d;
+  color: #272724;
 }
 
 .identityPlate h1 {
@@ -2169,7 +2169,7 @@
 }
 
 .presetRail > header small {
-  color: #5f625a;
+  color: #43453f;
 }
 
 .presetRail ol {
@@ -2219,7 +2219,7 @@
 }
 
 .railPresetIndex {
-  color: #bd3a2b;
+  color: #8c2015;
 }
 
 .railPresetCopy strong {
@@ -2227,7 +2227,7 @@
 }
 
 .railPresetCopy small {
-  color: #777027;
+  color: #4f4a10;
 }
 
 .railPresetState {
@@ -2263,7 +2263,7 @@
 
 .presetRail > footer {
   border-top-color: #777267;
-  color: #4e514a;
+  color: #363832;
   background: #b9b7aa;
 }
 
@@ -2475,7 +2475,7 @@
 }
 
 .controlModule > header {
-  color: #454840;
+  color: #272724;
 }
 
 .controlModule > header output {
@@ -2782,7 +2782,7 @@
 }
 
 .throttle small {
-  color: #4f524a;
+  color: #33352f;
 }
 
 .gridPilot {
@@ -2977,7 +2977,7 @@
 }
 
 .patternBay > header span {
-  color: #8c2d22;
+  color: #6d2018;
 }
 
 .patternBay h2 {
@@ -2985,7 +2985,7 @@
 }
 
 .patternBay > header p {
-  color: #55584f;
+  color: #3c3e38;
 }
 
 .protocolLink {
@@ -3062,7 +3062,7 @@
 }
 
 .cartridgeIndex {
-  color: #5c792f;
+  color: #3f5420;
 }
 
 .cartridgeNotch {
@@ -3082,7 +3082,7 @@
 }
 
 .cartridge small {
-  color: #5b5e56;
+  color: #3f423b;
 }
 
 .cartridgeAction {
@@ -4398,7 +4398,7 @@
   grid-template-columns: 0.48rem minmax(0, 1fr);
   align-items: center;
   gap: 0.24rem;
-  color: #4b4d46;
+  color: #303239;
   font: 900 0.32rem / 1 var(--font-code);
   letter-spacing: 0.06em;
   text-transform: uppercase;

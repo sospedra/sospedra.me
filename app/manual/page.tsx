@@ -446,7 +446,13 @@ export default function ManualPage() {
                 </td>
               </tr>
               <tr>
-                <td data-label='Observed condition'>Unscheduled ███ event</td>
+                <td data-label='Observed condition'>
+                  Unscheduled{' '}
+                  <span role='img' aria-label='redacted service information'>
+                    ███
+                  </span>{' '}
+                  event
+                </td>
                 <td data-label='Probable cause'>
                   <span
                     className={css.redacted}

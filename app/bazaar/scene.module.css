@@ -392,6 +392,13 @@
   animation: bulbFlicker 1.2s steps(1, end) forwards;
 }
 
+/* the animated frames are the only focus cue and die under reduced motion */
+.sDoor:focus-visible,
+.sBus:focus-visible {
+  outline: 2px solid #ffe900;
+  outline-offset: 2px;
+}
+
 @keyframes bulbFlicker {
   0% {
     opacity: 1;
@@ -687,7 +694,7 @@
       rgba(255, 255, 255, 0.04) 0 2px,
       transparent 2px 4px
     ),
-    linear-gradient(180deg, #7c8088, #5e626a);
+    linear-gradient(180deg, #5e626a, #5e626a);
   box-shadow:
     inset 1px 1px 0 rgba(255, 255, 255, 0.45),
     inset -1px -1px 0 rgba(0, 0, 0, 0.45),
@@ -849,6 +856,8 @@
   grid-template-columns: auto 1fr;
   width: max-content;
   max-width: 100%;
+  /* 10px type on 1.8 leading is an 18px row; pad the target to 24px */
+  padding-block: 3px;
   color: #ffe9a8;
   text-decoration: none;
 }

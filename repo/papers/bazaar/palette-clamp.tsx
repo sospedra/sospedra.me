@@ -83,6 +83,11 @@ const PaletteClamp: React.FC<{
             >
               <span className={css.swatch} style={{ background: target }} />
               <span className={css.hex}>{hex}</span>
+              {isStray ? (
+                <span className='sr-only'>
+                  {hex} merges into {target}
+                </span>
+              ) : null}
               {isAdded ? <span className={css.scope}>added by law</span> : null}
               {scope ? <span className={css.scope}>{scope}</span> : null}
             </span>

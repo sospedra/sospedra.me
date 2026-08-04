@@ -1,7 +1,7 @@
 'use client'
 
 import cn from 'clsx'
-import { partition, range } from 'es-toolkit'
+import { type DebouncedFunction, debounce, partition, range } from 'es-toolkit'
 import {
   type CSSProperties,
   type FormEvent,
@@ -784,9 +784,14 @@ const ClueList = ({
                       {entry.clue ? (
                         <span className={css.clueText}>{entry.clue}</span>
                       ) : (
-                        <span className={css.clueMask} aria-hidden='true'>
-                          {mask}
-                        </span>
+                        <>
+                          <span className={css.clueMask} aria-hidden='true'>
+                            {mask}
+                          </span>
+                          <span className={css.srOnly}>
+                            {entry.length} letters, no clue in this edition
+                          </span>
+                        </>
                       )}
                       {assist && <span className={css.clueMeta}>{assist}</span>}
                       {solved && (
@@ -1305,6 +1310,9 @@ function CrosswordSession({
   const composingRef = useRef(false)
   const skipInputRef = useRef(false)
   const latestStateRef = useRef(state)
+  const debouncedSaveRef = useRef<DebouncedFunction<
+    (current: CrosswordState) => void
+  > | null>(null)
   const announcementNonceRef = useRef(false)
   const sweepRunRef = useRef(0)
   const acrossListRef = useRef<HTMLDivElement>(null)
@@ -1589,13 +1597,18 @@ function CrosswordSession({
   }, [puzzle, settleBoard])
 
   useEffect(() => {
-    if (!hydrated) return
-    const timeout = window.setTimeout(() => save(state), SAVE_DEBOUNCE_MS)
-    return () => window.clearTimeout(timeout)
-  }, [hydrated, save, state])
+    const debouncedSave = debounce(save, SAVE_DEBOUNCE_MS)
+    debouncedSaveRef.current = debouncedSave
+    return () => debouncedSave.cancel()
+  }, [save])
 
   useEffect(() => {
-    const flush = () => save(latestStateRef.current)
+    if (!hydrated) return
+    debouncedSaveRef.current?.(state)
+  }, [hydrated, state])
+
+  useEffect(() => {
+    const flush = () => debouncedSaveRef.current?.flush()
     const onVisibility = () => {
       if (document.hidden) {
         const current = latestStateRef.current

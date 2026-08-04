@@ -42,7 +42,7 @@ const Fireworks: React.FC = () => {
   }, [])
 
   return (
-    <div className={css.anchor}>
+    <div aria-hidden='true' className={css.anchor}>
       <Preload />
       <div className={css.background} />
       <canvas id='canvas' ref={canvas} className={css.canvas} />

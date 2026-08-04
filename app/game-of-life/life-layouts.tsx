@@ -396,7 +396,8 @@ const GridPilot = ({
         data-direction={direction}
         data-dragging={dragging ? 'true' : 'false'}
         style={pilotStyle}
-        aria-label='Press and hold, then drag to move the grid. Use arrow keys for precise movement and Home to fit the pattern.'
+        aria-label='Field slew'
+        aria-describedby='field-slew-help'
         aria-keyshortcuts='ArrowUp ArrowDown ArrowLeft ArrowRight Home 0'
         data-life-sfx='knob'
         data-no-press-pulse
@@ -429,6 +430,10 @@ const GridPilot = ({
           </span>
         </span>
       </button>
+      <span id='field-slew-help' className='sr-only'>
+        Press and hold, then drag to move the grid. Use arrow keys for precise
+        movement and Home to fit the pattern.
+      </span>
     </section>
   )
 }
@@ -557,6 +562,9 @@ const SpeedControl = ({
   )
 }
 
+const fieldToolLabel = (tool: LifeTool) =>
+  `Field tool: ${tool === 'move' ? 'Slew' : 'Draw'} active`
+
 const TransportControls = ({
   canvas,
   clearUniverse,
@@ -631,7 +639,7 @@ const TransportControls = ({
       <label
         className={controls.fieldSwitch}
         data-life-sfx='lever'
-        aria-label='Field tool: Draw or Slew'
+        aria-label={fieldToolLabel(canvas.tool)}
       >
         <input
           className={controls.fieldSwitchInput}
@@ -639,7 +647,7 @@ const TransportControls = ({
           checked={canvas.tool === 'move'}
           role='switch'
           aria-checked={canvas.tool === 'move'}
-          aria-label='Field tool: Draw or Slew'
+          aria-label={fieldToolLabel(canvas.tool)}
           onChange={(event) =>
             canvas.setTool(event.currentTarget.checked ? 'move' : 'draw')
           }
@@ -1051,7 +1059,7 @@ const PatternTrigger = ({
     type='button'
     className={`${css.patternHandle} ${className}`}
     aria-expanded={open}
-    aria-controls='pattern-bay'
+    aria-controls={open ? 'pattern-bay' : undefined}
     aria-keyshortcuts='P'
     onClick={onToggle}
   >

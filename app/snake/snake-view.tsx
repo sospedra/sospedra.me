@@ -2,7 +2,7 @@
 
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
-import { useGameInput } from 'services/hotkeys'
+import { letterKeysDisabled, useGameInput } from 'services/hotkeys'
 import { isKeyboardClick } from 'services/keyboard-click'
 import Link, { LinkBack } from 'services/link'
 import Row from 'services/row'
@@ -20,7 +20,7 @@ import {
 } from './engine'
 import { drawFrame, LCD_H, LCD_W } from './lcd'
 import css from './snake.module.css'
-import { play, transitionSound } from './sound'
+import { isMuted, play, setMuted, transitionSound } from './sound'
 
 const TOP_KEY = 'snake-top'
 const LEVEL_KEY = 'snake-level'
@@ -154,6 +154,47 @@ const HOTSPOTS: Hotspot[] = [
   { id: 'hash', kind: 'key', x: 66.4, y: 86.3, width: 21, height: 6.2 },
 ]
 
+const MIN_TOUCH_TARGET = 44
+const ACTIONABLE_HOTSPOTS = HOTSPOTS.filter((spot) => spot.kind !== 'key')
+
+const nearestActionableHotspot = (
+  phone: HTMLElement,
+  point: { x: number; y: number },
+): Hotspot | null => {
+  const phoneRect = phone.getBoundingClientRect()
+  const candidates = ACTIONABLE_HOTSPOTS.flatMap((spot) => {
+    const button = phone.querySelector<HTMLButtonElement>(
+      `[data-hotspot="${spot.id}"]`,
+    )
+    if (!button) return []
+    const rect = button.getBoundingClientRect()
+    const xSlop = Math.max(0, (MIN_TOUCH_TARGET - rect.width) / 2)
+    const ySlop = Math.max(0, (MIN_TOUCH_TARGET - rect.height) / 2)
+    if (
+      point.x < rect.left - xSlop ||
+      point.x > rect.right + xSlop ||
+      point.y < rect.top - ySlop ||
+      point.y > rect.bottom + ySlop
+    ) {
+      return []
+    }
+
+    const centerX =
+      phoneRect.left + ((spot.x + spot.width / 2) / 100) * phoneRect.width
+    const centerY =
+      phoneRect.top + ((spot.y + spot.height / 2) / 100) * phoneRect.height
+    return [
+      {
+        distance: (point.x - centerX) ** 2 + (point.y - centerY) ** 2,
+        spot,
+      },
+    ]
+  })
+
+  candidates.sort((a, b) => a.distance - b.distance)
+  return candidates[0]?.spot ?? null
+}
+
 // taps act on pointerdown, so pointer clicks must not act a second time
 const pressProps = (act: () => void) => ({
   onPointerDown: () => act(),
@@ -218,6 +259,10 @@ const useKeypad = (dispatch: Dispatch, setPressed: SetPressed) => {
       if (event.metaKey || event.ctrlKey || event.altKey || event.repeat) {
         return
       }
+      // letter/digit steering obeys the shortcut switch; arrows and space stay
+      if (event.key.length === 1 && event.key !== ' ' && letterKeysDisabled()) {
+        return
+      }
       lightSpot(event.key, true)
       const dir = KEY_TURNS[event.key]
       if (dir) {
@@ -227,6 +272,9 @@ const useKeypad = (dispatch: Dispatch, setPressed: SetPressed) => {
         return
       }
       if (!KEY_SELECT.has(event.key)) return
+      // a focused link or button keeps its native Enter and Space
+      if (event.target instanceof Element && event.target.closest('a, button'))
+        return
       event.preventDefault()
       dispatch({ type: 'SELECT', roll: Math.random() })
     }
@@ -314,9 +362,22 @@ function HotspotButton({
 
 export default function SnakeView() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const routedPressRef = useRef<{ id: string; pointerId: number } | null>(null)
   const [state, dispatch] = useReducer(reduce, initialState)
   const [pressed, setPressed] = useState<ReadonlySet<string>>(new Set())
+  const [soundOff, setSoundOff] = useState(false)
   useGameInput()
+
+  useEffect(() => {
+    setSoundOff(isMuted())
+  }, [])
+
+  const toggleSound = () => {
+    const next = !soundOff
+    setMuted(next)
+    setSoundOff(next)
+    if (!next) play('key')
+  }
 
   const pressSpot = (id: string, down: boolean) =>
     setPressed((prev) => {
@@ -344,6 +405,46 @@ export default function SnakeView() {
       case 'key':
         return () => play('key')
     }
+  }
+
+  const routeTouchPress = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (
+      !event.isPrimary ||
+      (event.pointerType !== 'touch' && event.pointerType !== 'pen')
+    ) {
+      return
+    }
+    const spot = nearestActionableHotspot(event.currentTarget, {
+      x: event.clientX,
+      y: event.clientY,
+    })
+    if (!spot) return
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId)
+    } catch {
+      return
+    }
+    routedPressRef.current = { id: spot.id, pointerId: event.pointerId }
+    pressSpot(spot.id, true)
+    hotspotAction(spot)()
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
+  const endRoutedPress = (event: React.PointerEvent<HTMLDivElement>) => {
+    const routed = routedPressRef.current
+    if (!routed || routed.pointerId !== event.pointerId) return
+    routedPressRef.current = null
+    pressSpot(routed.id, false)
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId)
+      } catch {
+        // The browser may end a touch before React receives pointerup.
+      }
+    }
+    event.preventDefault()
+    event.stopPropagation()
   }
 
   useStoredProgress(state, dispatch)
@@ -391,9 +492,19 @@ export default function SnakeView() {
       <div className={css.navRow}>
         <Row
           right={
-            <Link url='/'>
-              <LinkBack>Home</LinkBack>
-            </Link>
+            <div className={css.navControls}>
+              <Link url='/'>
+                <LinkBack>Home</LinkBack>
+              </Link>
+              <button
+                type='button'
+                className={css.soundToggle}
+                aria-pressed={!soundOff}
+                onClick={toggleSound}
+              >
+                SFX <span aria-hidden='true'>{soundOff ? 'OFF' : 'ON'}</span>
+              </button>
+            </div>
           }
         />
       </div>
@@ -424,7 +535,13 @@ export default function SnakeView() {
             </p>
           </aside>
           <div className={css.phone}>
-            <div className={css.inner}>
+            <div
+              className={css.inner}
+              onLostPointerCapture={endRoutedPress}
+              onPointerCancelCapture={endRoutedPress}
+              onPointerDownCapture={routeTouchPress}
+              onPointerUpCapture={endRoutedPress}
+            >
               <img
                 src='/images/nokia-3310.webp'
                 alt=''

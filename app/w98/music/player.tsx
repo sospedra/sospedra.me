@@ -9,6 +9,7 @@ import {
   volumeGaugeProgress,
 } from './player-gauge'
 import type { DragPanelProps, MusicTrack } from './types'
+import { useTouchHitSlop } from './use-touch-hit-slop'
 
 type PlayerProps = {
   canPlay: boolean
@@ -51,6 +52,7 @@ export default function Player({
   tracklistOpen,
   volume,
 }: PlayerProps) {
+  const touchHitSlop = useTouchHitSlop(`.${css.hotspot}`)
   const title = track?.title ?? ''
   const progress = duration > 0 ? Math.min(position / duration, 1) : 0
   const seekFromPointer = (event: ReactPointerEvent<HTMLInputElement>) => {
@@ -101,6 +103,7 @@ export default function Player({
       data-calibration-label='Player panel'
       data-calibration-kind='panel'
       {...dragProps}
+      {...touchHitSlop}
     >
       <img
         className={css.skin}
@@ -112,6 +115,7 @@ export default function Player({
       />
       <span
         className={`${css.dragHandle} ${css.playerDragHandle}`}
+        data-touch-slop-ignore
         aria-hidden='true'
       />
 
@@ -147,6 +151,7 @@ export default function Player({
 
         <label
           className={`${css.gaugeInput} ${css.timeGauge}`}
+          data-touch-slop-ignore
           data-calibration-id='H01'
           data-calibration-label='Time gauge'
           data-calibration-kind='control'
@@ -170,6 +175,7 @@ export default function Player({
         </label>
         <label
           className={`${css.gaugeInput} ${css.volumeGauge}`}
+          data-touch-slop-ignore
           data-calibration-id='H02'
           data-calibration-label='Volume gauge'
           data-calibration-kind='control'

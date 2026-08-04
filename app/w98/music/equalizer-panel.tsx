@@ -1,7 +1,9 @@
+import { type PointerEvent as ReactPointerEvent, useRef } from 'react'
 import { cssVars } from 'services/css-vars'
 import { EQ_FREQUENCIES, formatFrequency } from './equalizer'
 import css from './music.module.css'
 import type { DragPanelProps } from './types'
+import { useTouchHitSlop } from './use-touch-hit-slop'
 
 type EqualizerPanelProps = {
   balance: number
@@ -31,6 +33,70 @@ export default function EqualizerPanel({
   onClose,
   processingEnabled,
 }: EqualizerPanelProps) {
+  const touchHitSlop = useTouchHitSlop(`.${css.equalizerCloseHotspot}`)
+  const bandPointerRef = useRef<{ index: number; pointerId: number } | null>(
+    null,
+  )
+
+  const setBandFromPointer = (
+    fieldset: HTMLFieldSetElement,
+    index: number,
+    clientY: number,
+  ) => {
+    const rect = fieldset.getBoundingClientRect()
+    const ratio = Math.min(1, Math.max(0, (clientY - rect.top) / rect.height))
+    onBandChange(index, Math.round(12 - ratio * 24))
+  }
+
+  const startBandPointer = (event: ReactPointerEvent<HTMLFieldSetElement>) => {
+    if (
+      !event.isPrimary ||
+      (event.pointerType === 'mouse' && event.button !== 0)
+    )
+      return
+    const rect = event.currentTarget.getBoundingClientRect()
+    const ratio = Math.min(
+      0.999999,
+      Math.max(0, (event.clientX - rect.left) / rect.width),
+    )
+    const index = Math.floor(ratio * EQ_FREQUENCIES.length)
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId)
+    } catch {
+      return
+    }
+    bandPointerRef.current = { index, pointerId: event.pointerId }
+    event.currentTarget
+      .querySelectorAll<HTMLInputElement>('input[type="range"]')
+      [index]?.focus({ preventScroll: true })
+    setBandFromPointer(event.currentTarget, index, event.clientY)
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
+  const moveBandPointer = (event: ReactPointerEvent<HTMLFieldSetElement>) => {
+    const pointer = bandPointerRef.current
+    if (!pointer || pointer.pointerId !== event.pointerId) return
+    setBandFromPointer(event.currentTarget, pointer.index, event.clientY)
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
+  const endBandPointer = (event: ReactPointerEvent<HTMLFieldSetElement>) => {
+    const pointer = bandPointerRef.current
+    if (!pointer || pointer.pointerId !== event.pointerId) return
+    bandPointerRef.current = null
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      try {
+        event.currentTarget.releasePointerCapture(event.pointerId)
+      } catch {
+        // The browser may end a pointer before React receives pointerup.
+      }
+    }
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
   return (
     <section
       id='winamp-equalizer-panel'
@@ -39,6 +105,7 @@ export default function EqualizerPanel({
       data-calibration-label='Equalizer panel'
       data-calibration-kind='panel'
       {...dragProps}
+      {...touchHitSlop}
     >
       <img
         className={css.skin}
@@ -50,6 +117,7 @@ export default function EqualizerPanel({
       />
       <span
         className={`${css.dragHandle} ${css.equalizerDragHandle}`}
+        data-touch-slop-ignore
         aria-hidden='true'
       />
 
@@ -59,7 +127,20 @@ export default function EqualizerPanel({
           : 'Equalizer settings are stored, but SoundCloud playback is unchanged. Load a local file to hear them.'}
       </p>
 
-      <fieldset className={css.frequencyControls} data-no-drag>
+      <fieldset
+        className={css.frequencyControls}
+        data-no-drag
+        onClickCapture={(event) => {
+          if (event.detail === 0) return
+          event.preventDefault()
+          event.stopPropagation()
+        }}
+        onLostPointerCapture={endBandPointer}
+        onPointerCancel={endBandPointer}
+        onPointerDown={startBandPointer}
+        onPointerMove={moveBandPointer}
+        onPointerUp={endBandPointer}
+      >
         <legend className={css.srOnly}>Ten-band equalizer</legend>
         {EQ_FREQUENCIES.map((frequency, index) => {
           const value = bands[index] ?? 0

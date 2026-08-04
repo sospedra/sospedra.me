@@ -481,7 +481,81 @@ Animation:
 - One owner per animated dimension. Never spring a container against content in motion. The spring pins the box against a moving target, then snaps.
 - A transition needs a painted starting frame, and one animation frame fires before paint. Gate insertion animations with an after-paint helper.
 
-## 13. Performance
+## 13. Accessibility
+
+Accessibility is architecture. The failures that matter are systemic: a cascade rule that silently kills every focus indicator, a reduced-motion policy that hides content forever, a keyboard trap in a shared listener. Fix the system once, or fix a hundred widgets forever. Target WCAG 2.2 AA and treat these rules as the floor.
+
+The cascade owns focus:
+
+- Never reset `:focus-visible` with a high-specificity global rule. A reset at specificity (0,3,1) silently beats every `.class:focus-visible` restore at (0,2,0), and the site ships with zero focus indicators while every module believes it styled one. Audit computed specificity, not rule presence.
+- The sanctioned shape: one zero-specificity default, `:where(html) :focus-visible { outline: 2px solid var(--color-focus) }`. Any single-class module rule overrides it. Every interactive element then either inherits a visible default or overrides it consciously. No element can fall through.
+- `all: unset` and `outline: 0` on a component also erase the global default. A component that resets its own styles owes its own `:focus-visible` rule in the same file.
+- A focus indicator must not depend on an animation. Reduced-motion policies set `animation: none`, and an animated-only indicator vanishes for exactly the users who toggled that setting. Pair every animated focus treatment with a static outline.
+
+Reduced motion is a contract with teeth:
+
+- A global kill (`animation: none; transition: none` under `prefers-reduced-motion` and the site's own quiet mode) is the right default, and it creates one obligation: no content may need an animation to become visible. `opacity: 0` base plus a reveal animation equals invisible forever under the kill. Reveal patterns rest visible and animate from visible.
+- CSS cannot stop a GIF. An animating GIF longer than five seconds becomes a `<video muted loop controls>`: the encoder halves the bytes and the controls are the pause mechanism.
+- JavaScript-driven loops (sprite flips, rAF cycles) do not hear CSS kills. Route them through one shared predicate that reads both the OS media query and the site's quiet flag, and check it per tick.
+- Smooth scrolling passed as a JS argument (`behavior: 'smooth'`) overrides the CSS reduced-motion reset. Derive the behavior from the same predicate.
+
+Ship the two switches every animated site owes its users:
+
+- An effects switch (WCAG 2.2.2). Ambient loops longer than five seconds need a user-reachable stop. The OS media query is not enough: the mechanism must be reachable from the content. One persisted flag, one root class, one CSS kill block, one JS predicate.
+- A single-key shortcut switch (WCAG 2.1.4). Bare letter, digit, and punctuation shortcuts must be disableable or remappable; Shift does not count as a modifier. Classify combos in one place: no Ctrl/Alt/Meta part and a length-one key means character shortcut, gated by the flag.
+- Surface both behind a focus-revealed control next to the skip link. Keyboard and AT users find it on the first Tab; pointer users never see the chrome; the art stays intact.
+
+Centralize keyboard policy:
+
+- Every shortcut flows through one guard. One `shouldIgnore(event, combo)` function is the single place that exempts editable targets, checks the kill flag, drops unexpected modifiers, and skips claimed game input. A policy fix lands once.
+- Activation keys pass through: a trap on Space or Enter must yield when focus sits on a link or button, or the trap silently disables every control on the page. This is the single most common self-inflicted keyboard bug in scene-based UIs.
+- Global and capture-phase listeners need target guards. A game listener that `preventDefault`s Enter everywhere makes the skip link decorative. Guard: interactive target, let it pass; steering keys may stay global, activation keys may not.
+- Never intercept Tab. A terminal that autocompletes on Tab lets Shift+Tab escape and documents the exit in the input's description. An "any key" gate filters to the keys it actually needs.
+- Hidden slides, closed menus, and off-screen panes hold no tab stops: `inert`, `tabIndex={-1}`, or unmount.
+
+Focus is state; manage its transitions:
+
+- Disabling a focused control drops focus to `body` and strands the keyboard user. Swap `disabled` for `aria-disabled` plus a click guard when the control stays visible, or move focus to the successor before disabling.
+- Everything that opens returns. Menus, dialogs, and popovers refocus their trigger on close, including the Escape path. Overlays that block input take focus on open. Native `<dialog>` with `showModal()` buys the trap, the backdrop, and Escape for free; custom overlays owe all three by hand.
+- Pointer hover may grant focus, and only pointer-granted focus may be revoked by the pointer leaving. Blurring a keyboard-focused item on `pointerout` destroys the tab position.
+- Autofocus on page mount steals the reading position from screen readers. Focus on first user intent instead.
+
+Live regions are a broadcast discipline:
+
+- One polite singleton beats scattered regions. A shared `notify(message)` renders one persistent `role='status'` element; every feature announces through it. Regions created with their first message already in place announce unreliably; the singleton exists from page load.
+- Never put ticking values inside a live region. A countdown or seconds counter in `aria-live` floods the screen reader every second. Announce transitions (ready, verdict, track change), not renders.
+- Announce what the pixels celebrate: game verdicts, copy confirmations, station changes, round summaries. If sighted users get feedback, AT users get the same sentence.
+
+Names and state are the API:
+
+- Toggles keep a fixed name and expose state through `aria-pressed`. A flipping name ("Sound on" / "Sound off") is ambiguous: state or action? Fixed name plus state is not. Visible state text rides an `aria-hidden` suffix.
+- The visible label leads the accessible name (WCAG 2.5.3): a control labeled "SFX ON" and named "Sound effects" breaks voice control. Prefix match is the rule.
+- `title` is not a name. It is unreachable by keyboard and touch. The same text goes in an `aria-label` or an adjacent visually-hidden element.
+- `aria-controls`, `aria-labelledby`, and `aria-describedby` must reference mounted ids. Conditional rendering makes references dangle; make the attribute conditional too.
+- Do not claim ARIA patterns you do not implement. `role='menu'` promises arrow-key navigation; plain buttons in a styled container promise nothing and work. Downgrade the role or build the pattern, never half of it.
+- Decorative art is `aria-hidden`, including its `title` cousin the CSS `content` string (use the `content: "…" / ""` alt syntax). Meaningful canvas or SVG scenes get `role='img'` and a label; interactive canvases get `role='application'`, a label that teaches the keys, and the keys themselves.
+- A composite widget announces its caption once. A labeled group whose caption repeats the image alt reads everything twice; empty the inner alt and let the group speak.
+
+Contrast survives art direction:
+
+- Alpha-composited inks fail silently. `rgb(255 255 255 / 42%)` on a dark panel is a different color than white; compute the composite before judging the ratio. Most muted-text failures are one alpha bump away from passing.
+- Gradients are judged at the worst stop under the text, not the average.
+- Fix contrast inside the palette: shift lightness within the hue, never swap the hue. The theme survives; the ratio passes. 4.5:1 for text, 3:1 for large text and UI component boundaries.
+- Color is never the only channel. Links inside prose keep an underline; a hue shift alone fails the color-blind and the low-contrast display alike.
+
+Pointer and keyboard are peers:
+
+- Every drag has a key path: orbit a 3D view with arrows, resize with arrow steps, move with a roving cursor. Every hover reveal also opens on focus and closes on Escape.
+- Activation fires on up-events with the pointer-away abort. Down-event activation is for latency-critical steering only.
+- Device-motion actuation (shake) gets a disable and a UI equivalent (WCAG 2.5.4). The quiet-effects switch is a natural home.
+- Targets reach 24×24 CSS px or inherit the spacing exception honestly. Tiny visuals keep their art with an invisible padded hit area.
+
+Verification:
+
+- The linter catches syntax (missing alt, missing button type). It cannot see cascade order, focus flow, live-region timing, or composite contrast. Those need the audit: specificity math on every focus rule, a keyboard-only walkthrough per route, a reduced-motion pass, computed ratios on real composites.
+- State the accessibility contract per shared component in its doc: icon-only controls require labels, truncation keeps full text in the DOM, the kit button owns the focus ring. Consumers inherit conformance instead of re-deriving it.
+
+## 14. Performance
 
 - Set budgets per route class and per metric. Label each number as a target or a measurement. Re-measure after each serving-chain change.
 - The levers, in impact order: ship less client JavaScript, keep a persistent layout shell, prerender the shells, stream the holes, serve from the platform cache, keep shared layouts cheap, aggregate upstream, seed the islands.
@@ -491,7 +565,7 @@ Animation:
 - Virtualize every large list. Keep one DOM tree across viewports and let CSS own responsiveness.
 - Never turn live data into static data to hit a metric. The goal is a fast first frame with honest values.
 
-## 14. Testing
+## 15. Testing
 
 - Test the logic layer as pure functions: mappers, engines, math, policies. No network, no framework, no UI. This suite is the workhorse and runs in milliseconds.
 - Verify component and page behavior in a real browser, end to end. Rendered-DOM unit tests are optional. Zero of them can be a valid decision. State the policy either way.
@@ -501,7 +575,7 @@ Animation:
 - Table-driven suites carry a growth rule: a new variant must add its row.
 - Gate every completion claim: typecheck, lint, unit tests, dead-code scan, build. Then probe reality: curl the page for seeds in the HTML, load it under hostile hydration settings, keep the analyzer score from regressing.
 
-## 15. Process
+## 16. Process
 
 The work loop, for a 20-minute fix and a multi-week feature alike:
 
@@ -552,7 +626,7 @@ Follow-up ledgers:
 - Every entry carries a problem statement and a concrete follow-up direction.
 - Ledgers rot. On conflict, doctrine docs win.
 
-## 16. Working with AI agents
+## 17. Working with AI agents
 
 - Keep one agent doc. Symlink every assistant's filename to it, so one source feeds every tool.
 - Open the doc with the identity sentence and the objective function. Close each major doc with a never-do list: the forbidden move plus the sanctioned alternative.
@@ -566,7 +640,7 @@ Follow-up ledgers:
 - Pin the framework generation and its current idioms in the doc. Agents check current docs before any framework API, never trained memory.
 - With warning debt in the repo, scope lint to touched files, or the diff drowns in old noise.
 
-## 17. Adoption
+## 18. Adoption
 
 1. Write the identity sentence and the objective function into the agent doc.
 2. Name the paradigm and the tie-breakers.
@@ -575,7 +649,7 @@ Follow-up ledgers:
 5. Build one route through the full pipeline as the canonical precedent.
 6. Add the verification gates to CI, then start the three decision homes.
 
-## 18. Anti-patterns
+## 19. Anti-patterns
 
 Each line names a forbidden move. The sections above hold the sanctioned alternative.
 

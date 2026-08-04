@@ -1,9 +1,9 @@
-// biome-ignore-all lint/a11y/noNoninteractiveTabindex: Scrollable carousel tracks must be keyboard-focusable.
 'use client'
 
 import { clamp, throttle } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { prefersQuietFx } from 'services/theme'
 import css from './carousel.module.css'
 import { pad } from './pad'
 
@@ -17,7 +17,7 @@ const SLIDE_HEIGHT = 805
 const SCROLL_THROTTLE_MS = 100
 
 const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
-  const track = useRef<HTMLElement>(null)
+  const track = useRef<HTMLDivElement>(null)
   const [index, setIndex] = useState(0)
 
   const handleScroll = useMemo(
@@ -36,11 +36,12 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
   const scrollBySlide = (step: number) => {
     track.current?.scrollBy({
       left: step * track.current.clientWidth,
-      behavior: 'smooth',
+      behavior: prefersQuietFx() ? 'auto' : 'smooth',
     })
   }
 
   const handleTrackKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.target !== event.currentTarget) return
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault()
       scrollBySlide(event.key === 'ArrowLeft' ? -1 : 1)
@@ -52,16 +53,12 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
       aria-label={props.label}
       aria-roledescription='carousel'
       className={css.carousel}
+      onKeyDown={handleTrackKeyDown}
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: The named carousel region must receive focus for arrow-key scrolling.
+      tabIndex={0}
     >
       <span className={css.label}>{props.label}</span>
-      <section
-        aria-label={`${props.label} shots`}
-        className={css.track}
-        onKeyDown={handleTrackKeyDown}
-        onScroll={handleScroll}
-        ref={track}
-        tabIndex={0}
-      >
+      <div className={css.track} onScroll={handleScroll} ref={track}>
         {props.items.map((item) => (
           <img
             alt={item.alt}
@@ -75,12 +72,14 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
             width={SLIDE_WIDTH}
           />
         ))}
-      </section>
+      </div>
       <div className={css.deck}>
-        <span className={css.counter}>
-          {pad(index + 1)}&nbsp;/&nbsp;{pad(props.items.length)}
+        <span aria-live='polite' className={css.status}>
+          <span className={css.counter}>
+            {pad(index + 1)}&nbsp;/&nbsp;{pad(props.items.length)}
+          </span>
+          <span className={css.note}>{props.items[index]?.alt}</span>
         </span>
-        <span className={css.note}>{props.items[index]?.alt}</span>
         <span className={css.controls}>
           <button
             aria-label='Previous shot'

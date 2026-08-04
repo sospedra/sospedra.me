@@ -405,11 +405,12 @@ export default function CameraView() {
                     <div className={css.lensGlass} />
                   </div>
 
+                  {/* aria-disabled keeps focus while printing */}
                   <button
                     ref={shutterRef}
                     type='button'
                     className={css.shutter}
-                    disabled={
+                    aria-disabled={
                       cameraState !== 'ready' || printState === 'printing'
                     }
                     aria-label='Take a photo'

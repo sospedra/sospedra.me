@@ -65,6 +65,34 @@
   z-index: 10;
 }
 
+.navControls {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.soundToggle {
+  min-height: 44px;
+  padding: 0 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--color-signal-yellow);
+  font: inherit;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.soundToggle[aria-pressed="false"] {
+  opacity: 0.62;
+}
+
+.soundToggle:hover,
+.soundToggle:focus-visible {
+  outline: 2px solid var(--color-focus, #ffe900);
+  outline-offset: 2px;
+}
+
 .stage {
   display: flex;
   min-height: 0;

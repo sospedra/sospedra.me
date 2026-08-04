@@ -2,6 +2,7 @@
 
 import { uniq } from 'es-toolkit'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { prefersQuietFx } from 'services/theme'
 import styles from './scene.module.css'
 import {
   type BazaarStallId,
@@ -69,7 +70,8 @@ function loopFrames(
   show: (file: string) => void,
 ) {
   const tick = (i: number) => {
-    show(frames[i].file)
+    // re-check per frame: fx-quiet can flip without re-running the effect
+    if (!prefersQuietFx()) show(frames[i].file)
     schedule(timers, () => tick((i + 1) % frames.length), frames[i].ms ?? 200)
   }
   tick(0)
@@ -174,9 +176,7 @@ export default function SceneStall(props: {
   // biome-ignore lint/correctness/useExhaustiveDependencies: breakpointTick re-arms timers when the visible tree changes
   useLayoutEffect(() => {
     if (!rootRef.current || rootRef.current.offsetParent === null) return
-    const reduced = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
+    const reduced = prefersQuietFx()
     const timers: Timers = { ids: [] }
     const show = (index: number, file: string) => {
       const layer = layers[index]

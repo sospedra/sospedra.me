@@ -466,7 +466,9 @@ export default function TerminalView(props: {
       event.stopPropagation()
       return submit()
     }
-    if (event.key === 'Tab') return autocomplete(event)
+    // Shift+Tab stays free so keyboard focus can leave the prompt (WCAG 2.1.2)
+    if (event.key === 'Tab' && !event.shiftKey) return autocomplete(event)
+    if (event.key === 'Escape') return event.currentTarget.blur()
     if (event.key === 'ArrowUp') return recall(event, -1)
     if (event.key === 'ArrowDown') return recall(event, 1)
   }
@@ -484,13 +486,17 @@ export default function TerminalView(props: {
       }
       dispatch({ type: 'hacker-type' })
     }
+    // Tab and bare modifiers stay free for keyboard navigation and AT chords
+    const passThroughKeys = new Set(['Tab', 'Shift', 'Control', 'Alt', 'Meta'])
     const onWindowKeyDown = (event: KeyboardEvent) => {
       switch (modeRef.current.kind) {
         case 'gated':
+          if (event.key !== 'Enter' && event.key !== ' ') return
           event.preventDefault()
           startBootRef.current()
           return
         case 'anim':
+          if (passThroughKeys.has(event.key)) return
           event.preventDefault()
           dispatch({ type: 'anim-stop' })
           return
@@ -572,7 +578,13 @@ export default function TerminalView(props: {
   }, [muted])
 
   useEffect(() => {
-    if (ready && showScroll) inputRef.current?.focus({ preventScroll: true })
+    // claim focus only when it sits nowhere; never steal an active position
+    const idle =
+      document.activeElement === document.body ||
+      document.activeElement === null
+    if (ready && showScroll && idle) {
+      inputRef.current?.focus({ preventScroll: true })
+    }
   }, [ready, showScroll])
 
   useEffect(() => {
@@ -634,7 +646,9 @@ export default function TerminalView(props: {
               className={css.gate}
               onClick={() => startBoot()}
             >
-              <span className={css.gateEye}>{EYE_ART}</span>
+              <span aria-hidden='true' className={css.gateEye}>
+                {EYE_ART}
+              </span>
               <span className={css.gatePrompt}>▸ PRESS ENTER TO BOOT</span>
               <span className={css.gateHint}>sound on</span>
             </button>
@@ -729,12 +743,17 @@ export default function TerminalView(props: {
                         onChange={(event) => setValue(event.target.value)}
                         onKeyDown={onKeyDown}
                         aria-label='Terminal input. Type help for commands'
+                        aria-describedby='console-input-hint'
                         autoCapitalize='none'
                         autoComplete='off'
                         autoCorrect='off'
                         spellCheck={false}
                         enterKeyHint='go'
                       />
+                      <span className='sr-only' id='console-input-hint'>
+                        Tab autocompletes. Shift plus Tab or Escape leaves the
+                        prompt.
+                      </span>
                     </div>
                   )}
 

@@ -237,6 +237,30 @@ export type NubBindings = {
   onPointerMove: React.PointerEventHandler<HTMLButtonElement>
   onPointerUp: React.PointerEventHandler<HTMLButtonElement>
   onPointerCancel: React.PointerEventHandler<HTMLButtonElement>
+  onKeyDown: React.KeyboardEventHandler<HTMLButtonElement>
+}
+
+const NUB_KEY_STEP = 8
+
+const NUB_AXES: Record<Nub, Point> = {
+  e: { x: 1, y: 0 },
+  s: { x: 0, y: 1 },
+  se: { x: 1, y: 1 },
+}
+
+const ARROW_VECTORS: Record<string, Point> = {
+  ArrowDown: { x: 0, y: 1 },
+  ArrowLeft: { x: -1, y: 0 },
+  ArrowRight: { x: 1, y: 0 },
+  ArrowUp: { x: 0, y: -1 },
+}
+
+const nubArrowDelta = (nub: Nub, key: string): Point | null => {
+  const vector = ARROW_VECTORS[key]
+  if (!vector) return null
+  const axes = NUB_AXES[nub]
+  const delta = { x: vector.x * axes.x, y: vector.y * axes.y }
+  return delta.x === 0 && delta.y === 0 ? null : delta
 }
 
 export const usePaint = () => {
@@ -867,6 +891,17 @@ export const usePaint = () => {
       if (pointerIdRef.current !== event.pointerId) return
       pointerIdRef.current = null
       send({ type: 'cancel' })
+    },
+    onKeyDown: (event) => {
+      const delta = nubArrowDelta(nub, event.key)
+      if (!delta || pointerIdRef.current !== null) return
+      const step = event.shiftKey ? 1 : NUB_KEY_STEP
+      const size = stateRef.current.size
+      resizeCanvasTo({
+        width: Math.max(1, size.width + delta.x * step),
+        height: Math.max(1, size.height + delta.y * step),
+      })
+      event.preventDefault()
     },
   })
 

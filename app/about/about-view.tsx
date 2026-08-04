@@ -96,14 +96,16 @@ export default function AboutView(props: { years: number }) {
             <section>
               <h3 className='relative'>
                 Highlighted
-                <span
-                  title='Only the highlights. I worked at many companies over the years and never sat idle for more than a couple of months.'
-                  className={css.question}
-                >
+                <span aria-hidden='true' className={css.question}>
                   ?
                 </span>
                 <span className='ml-2 sm:ml-4'>Experience</span>
               </h3>
+              {/* outside the h3 so the note stays out of the heading name */}
+              <span className='sr-only'>
+                Only the highlights. I worked at many companies over the years
+                and never sat idle for more than a couple of months.
+              </span>
               <h4>
                 Principal engineer
                 <br />
@@ -157,6 +159,8 @@ export default function AboutView(props: { years: number }) {
           }
           right={
             <section className='mt-4'>
+              {/* columns interleave in the DOM; reanchor the job under its own h3 */}
+              <h3 className='sr-only'>Experience</h3>
               <h4>
                 Staff engineer & head of clients
                 <br />
@@ -190,6 +194,7 @@ export default function AboutView(props: { years: number }) {
           }
           right={
             <section className='mt-4'>
+              <h3 className='sr-only'>Experience</h3>
               <h4>
                 Lead software engineer
                 <br />
@@ -235,6 +240,7 @@ export default function AboutView(props: { years: number }) {
           }
           right={
             <section className='mt-4'>
+              <h3 className='sr-only'>Experience</h3>
               <h4>
                 Co-founder & CTO
                 <br />

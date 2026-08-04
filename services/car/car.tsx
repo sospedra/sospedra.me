@@ -56,7 +56,7 @@ const SpriteCar: React.FC<SpriteCarProps> = ({
     <button
       type='button'
       className={css.control}
-      aria-label={engineOn ? 'Turn off the car engine' : 'Start the car engine'}
+      aria-label='Car engine'
       aria-pressed={engineOn}
       disabled={disabled}
       onClick={onToggle}

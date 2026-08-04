@@ -146,7 +146,7 @@ const NotFoundView: React.FC = () => {
             channelIndex !== 0 && css.expand,
             locked && css.locked,
           )}
-          disabled={locked}
+          aria-disabled={locked}
           onClick={tuneForward}
           onKeyDown={handleKeyDown}
           type='button'

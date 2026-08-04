@@ -78,7 +78,15 @@
 }
 
 .windowControls > button {
+  position: relative;
   padding: 0;
+}
+
+/* WCAG 2.5.8: grow the 17x16 visual to a 24px hit target */
+.windowControls > button::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
 }
 
 .windowControls > button:active {

@@ -2,6 +2,7 @@
 
 import { clamp } from 'es-toolkit'
 import { useEffect, useReducer, useState } from 'react'
+import { createExternalStore } from 'services/external-store'
 import { readLocal, writeLocal } from 'services/storage'
 import { type RealStation, stationById } from './stations.ts'
 import { DEFAULT_VOLUME, INITIAL_TUNER, reduceTuner } from './tuner.ts'
@@ -25,7 +26,7 @@ export const useTuner = () => {
   )
   const [volume, setVolume] = useState(DEFAULT_VOLUME)
   const [muted, setMuted] = useState(false)
-  const [elapsed, setElapsed] = useState(0)
+  const [elapsedStore] = useState(() => createExternalStore(0))
 
   useEffect(() => () => controller.dispose(), [controller])
 
@@ -58,19 +59,19 @@ export const useTuner = () => {
   useEffect(() => {
     if (state.status !== 'playing') return
     const id = window.setInterval(
-      () => setElapsed((seconds) => Math.min(seconds + 1, 359_999)),
+      () => elapsedStore.set(Math.min(elapsedStore.get() + 1, 359_999)),
       1000,
     )
     return () => window.clearInterval(id)
-  }, [state.status])
+  }, [elapsedStore, state.status])
 
   const tune = (station: RealStation) => {
-    if (station.id !== state.stationId) setElapsed(0)
+    if (station.id !== state.stationId) elapsedStore.set(0)
     controller.tune(station)
   }
 
   const stop = () => {
-    setElapsed(0)
+    elapsedStore.set(0)
     controller.stop()
   }
 
@@ -81,7 +82,7 @@ export const useTuner = () => {
 
   return {
     state,
-    elapsed,
+    elapsedStore,
     volume,
     muted,
     tune,

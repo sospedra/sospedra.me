@@ -59,7 +59,9 @@ const Meta: React.FC<{
       ) : null}
       <div className={cn('flex items-center font-bold', props.className)}>
         <Time time={props.time} />
-        <span className='mx-2 mt-1 text-xs opacity-75'>▼</span>
+        <span aria-hidden='true' className='mx-2 mt-1 text-xs opacity-75'>
+          ▼
+        </span>
         <Reading minutes={props.minutes} />
       </div>
     </div>

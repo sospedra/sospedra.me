@@ -25,6 +25,14 @@ const sprites = {
   triangle,
 }
 
+const ALT_TEXT: Partial<Record<keyof typeof sprites, string>> = {
+  count: 'Hand-drawn tally marks',
+  demons: 'Two mirrored horned demon figures',
+  insert: 'Cartridge sliding into a slot',
+  mobius: 'Möbius strip diagram',
+  triangle: 'Penrose impossible triangle',
+}
+
 const SpriteManual: React.FC<{
   name: keyof typeof sprites
   className?: string
@@ -33,7 +41,7 @@ const SpriteManual: React.FC<{
 
   return (
     <img
-      alt={props.name}
+      alt={ALT_TEXT[props.name] ?? props.name}
       src={sprite.src}
       width={sprite.width}
       height={sprite.height}

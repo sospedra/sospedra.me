@@ -86,7 +86,7 @@
   pointer-events: none;
 }
 
-.tuner:hover:not(:disabled) {
+.tuner:hover:not([aria-disabled="true"]) {
   border-color: var(--color-signal-yellow, var(--yellow, #ffea00));
 }
 
@@ -96,7 +96,7 @@
   outline-offset: 0.45rem;
 }
 
-.tuner:disabled {
+.tuner[aria-disabled="true"] {
   cursor: wait;
   opacity: 1;
 }

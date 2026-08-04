@@ -42,6 +42,7 @@ const Tap: React.FC<{
     <button
       type='button'
       className={css.tap}
+      aria-label={`${count} taps left to launch the override. Escape dismisses.`}
       onClick={() => {
         if (count > 1) {
           setCount(count - 1)

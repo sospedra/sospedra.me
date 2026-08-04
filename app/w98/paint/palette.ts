@@ -30,6 +30,39 @@ export const PALETTE: readonly string[] = [
   '#ff8040',
 ]
 
+const COLOR_NAMES: Readonly<Record<string, string>> = {
+  '#000000': 'black',
+  '#808080': 'gray',
+  '#800000': 'maroon',
+  '#808000': 'olive',
+  '#008000': 'green',
+  '#008080': 'teal',
+  '#000080': 'navy',
+  '#800080': 'purple',
+  '#808040': 'dark khaki',
+  '#004040': 'dark teal',
+  '#0080ff': 'sky blue',
+  '#004080': 'dark sky blue',
+  '#4000ff': 'indigo',
+  '#804000': 'brown',
+  '#ffffff': 'white',
+  '#c0c0c0': 'silver',
+  '#ff0000': 'red',
+  '#ffff00': 'yellow',
+  '#00ff00': 'lime',
+  '#00ffff': 'cyan',
+  '#0000ff': 'blue',
+  '#ff00ff': 'magenta',
+  '#ffff80': 'pale yellow',
+  '#00ff80': 'spring green',
+  '#80ffff': 'pale cyan',
+  '#8080ff': 'pale blue',
+  '#ff0080': 'rose',
+  '#ff8040': 'coral',
+}
+
+export const colorName = (hex: string): string => COLOR_NAMES[hex] ?? hex
+
 export const DEFAULT_FG = '#000000'
 export const DEFAULT_BG = '#ffffff'
 

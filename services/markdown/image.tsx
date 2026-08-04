@@ -52,8 +52,10 @@ const Image: React.FC<{
     >
       <span className={css.viewport}>
         {dimensions ? (
+          // empty alt: the group's caption already carries the alt text,
+          // a named img would announce it twice
           <NextImage
-            alt={props.alt}
+            alt=''
             className={css.image}
             decoding='async'
             height={dimensions.height}
@@ -65,7 +67,7 @@ const Image: React.FC<{
           />
         ) : (
           <img
-            alt={props.alt}
+            alt=''
             className={css.image}
             decoding='async'
             loading='lazy'

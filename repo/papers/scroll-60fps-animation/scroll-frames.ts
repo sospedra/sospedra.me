@@ -1,5 +1,5 @@
 import { clamp } from 'es-toolkit'
-import { VBODY_ID } from 'services/shell'
+import { VBODY_ID } from 'services/vbody'
 
 const size = { width: 2560, height: 1440 }
 export const frameMax = 174

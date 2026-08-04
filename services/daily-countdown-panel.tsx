@@ -1,8 +1,10 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useEffect, useRef } from 'react'
 import { cssVars } from 'services/css-vars'
 import { useDailyCountdown } from 'services/daily-countdown'
+import { useSystem } from 'services/system'
 
 type DailyCountdownPanelProps = {
   classes: {
@@ -20,6 +22,17 @@ type DailyCountdownPanelProps = {
 const DailyCountdownPanel = ({ classes, labels }: DailyCountdownPanelProps) => {
   const router = useRouter()
   const countdown = useDailyCountdown()
+  const { notify } = useSystem()
+  const previousStatus = useRef(countdown.status)
+
+  // announce the countdown-to-ready swap; a page that loads already
+  // ready shows the button in place and needs no announcement
+  useEffect(() => {
+    if (previousStatus.current === 'counting' && countdown.status === 'ready') {
+      notify(labels.ready)
+    }
+    previousStatus.current = countdown.status
+  }, [countdown.status, labels.ready, notify])
 
   if (countdown.status === 'pending') return null
 

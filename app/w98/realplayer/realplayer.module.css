@@ -299,6 +299,7 @@
 }
 
 .channelsFoot button {
+  min-height: 24px;
   padding: 0.05rem 0.4rem;
   border-width: 1px;
   border-style: solid;

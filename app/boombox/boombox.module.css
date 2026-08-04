@@ -449,7 +449,7 @@
   text-transform: uppercase;
 }
 
-/* the mik tuning thumbwheel: black slot, two half-wheel buttons whose
+/* the mik tuning thumbwheel: black slot, two half-wheel spans whose
    white band is the lit crown of the cylinder */
 .wheel {
   display: flex;
@@ -464,7 +464,7 @@
   box-shadow: -2px 2px 6px -1px #000;
 }
 
-.wheel button {
+.wheel span {
   position: relative;
   border: 0;
   outline: 0;
@@ -474,7 +474,7 @@
   padding: 0;
 }
 
-.wheel button:nth-child(1) {
+.wheel span:nth-child(1) {
   border-radius: 2px 0 0 2px;
   background-image:
     linear-gradient(
@@ -485,7 +485,7 @@
     linear-gradient(90deg, #000 0%, rgb(0 0 0 / 60%) 80% 100%);
 }
 
-.wheel button:nth-child(2) {
+.wheel span:nth-child(2) {
   border-radius: 0 2px 2px 0;
   background-image:
     linear-gradient(
@@ -496,7 +496,7 @@
     linear-gradient(270deg, #000 0%, rgb(0 0 0 / 60%) 80% 100%);
 }
 
-.wheel[data-live="true"] button {
+.wheel[data-live="true"] span {
   animation: wheel-shimmer 0.9s linear infinite alternate;
 }
 
@@ -1970,7 +1970,8 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-shadow: 0 0 6px rgb(255 84 36 / 60%);
-  animation: caret-blink 1.4s steps(1, end) infinite;
+  /* WCAG 2.2.2: the blink stops; fill-mode none rests it visible */
+  animation: caret-blink 1.4s steps(1, end) 8;
 }
 
 /* ══ post-it, pen and paper hold the input ══ */
@@ -2086,7 +2087,7 @@
   content: counter(trk) ".";
   position: absolute;
   left: 0;
-  color: #a3966f;
+  color: #6f6448;
   font-size: 15px;
 }
 
@@ -2291,7 +2292,7 @@
 }
 
 .noteInput::placeholder {
-  color: rgb(47 63 143 / 38%);
+  color: rgb(47 63 143 / 62%);
 }
 
 .noteInput:focus-visible {
@@ -3299,7 +3300,7 @@
      its own scroll surface so the software keyboard cannot pan an otherwise
      unscrollable page. */
   .room {
-    height: 100dvh;
+    height: var(--boombox-viewport-height, 100dvh);
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior-y: contain;
@@ -3442,7 +3443,7 @@
     max-height: clamp(
       44px,
       calc(
-        100dvh -
+        var(--boombox-viewport-height, 100dvh) -
         max(8px, var(--safe-area-top)) -
         15.45rem -
         var(--safe-area-bottom)
@@ -3469,7 +3470,7 @@
   .wooferCone,
   .powerLed,
   .newTapeSlip,
-  .wheel[data-live="true"] button,
+  .wheel[data-live="true"] span,
   .meterLed::after,
   .tadLed,
   /* the case skips its swing; base styles are already the open pose */

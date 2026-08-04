@@ -5,6 +5,7 @@ import { useMemo, useReducer } from 'react'
 import { type Trap, trigger, useHotkeys, useKonami } from 'services/hotkeys'
 import { useShake } from 'services/shake'
 import { useSystem } from 'services/system'
+import { useTheme } from 'services/theme'
 import { useLog } from './log'
 
 const Egg = dynamic(() => import('./egg'))
@@ -30,7 +31,7 @@ const reducer = (state: EggState, event: EggEvent): EggState => {
         exitFullscreen: event.exitFullscreen,
       }
     case 'DISMISS':
-      return state.phase === 'egg' ? { phase: 'idle' } : state
+      return state.phase === 'idle' ? state : { phase: 'idle' }
     case 'SHOW_TAP':
       return { phase: 'tap' }
   }
@@ -38,7 +39,8 @@ const reducer = (state: EggState, event: EggEvent): EggState => {
 
 const EasterEgg: React.FC<{ children: React.ReactNode }> = (props) => {
   const [state, dispatch] = useReducer(reducer, { phase: 'idle' })
-  const { discover } = useSystem()
+  const { anomalies, discover, notify } = useSystem()
+  const { fxMode } = useTheme()
   const pathname = usePathname()
 
   const activate = () => dispatch({ type: 'ACTIVATE', exitFullscreen: false })
@@ -47,6 +49,8 @@ const EasterEgg: React.FC<{ children: React.ReactNode }> = (props) => {
   const complete = () => dispatch({ type: 'DISMISS' })
 
   useKonami(() => {
+    // discover() only announces the first run; repeats still need audio feedback
+    if (anomalies.includes('konami')) notify('OVERRIDE REPLAYED ▼')
     discover('konami')
     activate()
   })
@@ -57,11 +61,16 @@ const EasterEgg: React.FC<{ children: React.ReactNode }> = (props) => {
   )
   useHotkeys(dismissTraps)
 
-  useShake(() => {
-    // synthetic Escape dismisses a running egg before the tap shows
-    trigger('Escape')
-    dispatch({ type: 'SHOW_TAP' })
-  }, !pathname.startsWith('/papers/'))
+  // quiet mode also disables motion actuation (WCAG 2.5.4);
+  // the konami sequence stays as the equivalent UI path
+  useShake(
+    () => {
+      // synthetic Escape dismisses a running egg before the tap shows
+      trigger('Escape')
+      dispatch({ type: 'SHOW_TAP' })
+    },
+    !pathname.startsWith('/papers/') && fxMode === 'full',
+  )
 
   useLog()
 

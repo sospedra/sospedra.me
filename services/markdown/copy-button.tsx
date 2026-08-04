@@ -1,5 +1,6 @@
 'use client'
 
+import { debounce } from 'es-toolkit'
 import { useEffect, useRef, useState } from 'react'
 import css from './code.module.css'
 
@@ -36,20 +37,14 @@ const writeClipboard = async (text: string) => {
 
 const CopyButton = ({ source }: { source: string }) => {
   const [phase, setPhase] = useState<CopyPhase>('idle')
-  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const resetRef = useRef(debounce(() => setPhase('idle'), resetDelay))
 
-  useEffect(
-    () => () => {
-      if (resetTimer.current) clearTimeout(resetTimer.current)
-    },
-    [],
-  )
+  useEffect(() => () => resetRef.current.cancel(), [])
 
   const copy = async () => {
     const written = await writeClipboard(source)
     setPhase(written ? 'copied' : 'failed')
-    if (resetTimer.current) clearTimeout(resetTimer.current)
-    resetTimer.current = setTimeout(() => setPhase('idle'), resetDelay)
+    resetRef.current()
   }
 
   return (

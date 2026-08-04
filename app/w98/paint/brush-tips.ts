@@ -1,23 +1,10 @@
+import { memoize } from 'es-toolkit'
 import type { Point } from './geometry.ts'
 import type { BrushShape } from './options.ts'
 
 export type BrushTip = { shape: BrushShape; size: number }
 
 type SlashShape = Extract<BrushShape, 'diagonal' | 'reverseDiagonal'>
-
-// pure derivation over a bounded domain: sizes stay single-digit
-const masks = new Map<string, readonly Point[]>()
-
-const memoized = (
-  key: string,
-  build: () => readonly Point[],
-): readonly Point[] => {
-  const cached = masks.get(key)
-  if (cached) return cached
-  const mask = build()
-  masks.set(key, mask)
-  return mask
-}
 
 const buildDisc = (size: number): readonly Point[] => {
   if (size <= 1) return [{ x: 0, y: 0 }]
@@ -58,17 +45,24 @@ const buildSlash = (shape: SlashShape, size: number): readonly Point[] => {
   return points
 }
 
+const buildMask = (tip: BrushTip): readonly Point[] => {
+  if (tip.shape === 'circle') return buildDisc(tip.size)
+  if (tip.shape === 'square') return buildSquare(tip.size)
+  return buildSlash(tip.shape, tip.size)
+}
+
+// pure derivation over a bounded domain: sizes stay single-digit
+const maskFor = memoize(buildMask, {
+  getCacheKey: (tip: BrushTip) => `${tip.shape}:${tip.size}`,
+})
+
 export const discMask = (size: number): readonly Point[] =>
-  memoized(`circle:${size}`, () => buildDisc(size))
+  maskFor({ shape: 'circle', size })
 
 export const squareMask = (size: number): readonly Point[] =>
-  memoized(`square:${size}`, () => buildSquare(size))
+  maskFor({ shape: 'square', size })
 
 export const slashMask = (shape: SlashShape, size: number): readonly Point[] =>
-  memoized(`${shape}:${size}`, () => buildSlash(shape, size))
+  maskFor({ shape, size })
 
-export const brushMask = (tip: BrushTip): readonly Point[] => {
-  if (tip.shape === 'circle') return discMask(tip.size)
-  if (tip.shape === 'square') return squareMask(tip.size)
-  return slashMask(tip.shape, tip.size)
-}
+export const brushMask = (tip: BrushTip): readonly Point[] => maskFor(tip)

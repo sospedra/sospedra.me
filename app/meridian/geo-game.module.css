@@ -3180,7 +3180,7 @@
 }
 
 .roundNode span {
-  color: #43384b;
+  color: var(--geo-arcade-ink);
   font-weight: 800;
 }
 
@@ -3754,6 +3754,10 @@
 .mapFeedback span {
   color: #554b5d;
   font-weight: 800;
+}
+
+.mapFeedback strong {
+  color: #a8371f;
 }
 
 .mapLegend {

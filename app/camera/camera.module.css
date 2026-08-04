@@ -1119,12 +1119,12 @@
     0 1px 0 rgb(255 240 224 / 23%);
 }
 
-.shutter:hover:not(:disabled) .shutterStem {
+.shutter:hover:not(:disabled):not([aria-disabled="true"]) .shutterStem {
   filter: brightness(1.1) saturate(1.05);
   transform: translateY(-5px) rotateX(5deg);
 }
 
-.shutter:active:not(:disabled) .shutterStem {
+.shutter:active:not(:disabled):not([aria-disabled="true"]) .shutterStem {
   box-shadow:
     0 1px 0 #54100c,
     0 3px 4px rgb(71 20 15 / 32%);
@@ -1138,11 +1138,13 @@
   box-shadow: var(--shadow-focus);
 }
 
-.shutter:disabled {
+.shutter:disabled,
+.shutter[aria-disabled="true"] {
   cursor: not-allowed;
 }
 
-.shutter:disabled .shutterStem {
+.shutter:disabled .shutterStem,
+.shutter[aria-disabled="true"] .shutterStem {
   box-shadow:
     0 3px 0 #4f403b,
     0 5px 5px rgb(55 44 40 / 28%);
@@ -1895,7 +1897,7 @@
       transparent 24% 68%,
       rgb(0 0 0 / 18%)
     ),
-    linear-gradient(145deg, #dc79b6, #a0437c 62%, #69264f);
+    linear-gradient(145deg, #dc79b6, #c4699f 62%, #69264f);
   box-shadow:
     2px 2px 2px rgb(255 231 246 / 22%) inset,
     -3px -3px 3px rgb(55 7 37 / 28%) inset,

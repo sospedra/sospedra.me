@@ -642,10 +642,6 @@ export default function TravelView() {
     },
     [],
   )
-  const wakeAtHearth = useCallback(
-    () => trackDestination(HOME),
-    [trackDestination],
-  )
   const globe = useTravelGlobe({
     tracked,
     quiet: fxMode === 'quiet',
@@ -671,11 +667,15 @@ export default function TravelView() {
       },
     },
   })
+  const zoomInAtLimit = globe.zoomLevel >= SCENE_ZOOM_MAX
+  const zoomOutAtLimit = globe.zoomLevel <= TRAVEL_ZOOM_MIN
   const changeZoom = (direction: 'in' | 'out') => {
     if (direction === 'in') globe.zoomIn()
     else globe.zoomOut()
   }
   const actuateZoom = (direction: 'in' | 'out') => {
+    const atLimit = direction === 'in' ? zoomInAtLimit : zoomOutAtLimit
+    if (atLimit) return
     setPressedZoom(direction)
     if (zoomPressTimerRef.current !== null) {
       clearTimeout(zoomPressTimerRef.current)
@@ -686,10 +686,7 @@ export default function TravelView() {
       zoomPressTimerRef.current = null
     }, ZOOM_KEY_SETTLE_MS)
   }
-  const supernova = useSupernovaLoop({
-    quiet: fxMode === 'quiet',
-    onLoop: wakeAtHearth,
-  })
+  const supernova = useSupernovaLoop({ quiet: fxMode === 'quiet' })
   const activeRegionMeta =
     REGIONS.find((region) => region.id === activeRegion) ?? REGIONS[0]
   const activeRegionSpots = DESTINATIONS.filter(
@@ -698,6 +695,13 @@ export default function TravelView() {
   const activeRegionIndex = REGIONS.findIndex(
     (region) => region.id === activeRegion,
   )
+  const [regionStatus, setRegionStatus] = useState('')
+  const announcedRegionRef = useRef(activeRegion)
+  useEffect(() => {
+    if (announcedRegionRef.current === activeRegion) return
+    announcedRegionRef.current = activeRegion
+    setRegionStatus(`Region: ${activeRegionMeta.label}`)
+  }, [activeRegion, activeRegionMeta.label])
   const visitorNote = visitorNoteFor(uplink)
   const visitorNoteBusy =
     uplink.status === 'idle' || uplink.status === 'locating'
@@ -900,20 +904,17 @@ export default function TravelView() {
               </div>
               <p>
                 <small className={css.compassMeta}>HDG</small>
-                <output
+                {/* spans, not <output>: idle drift rewrites these ~5×/s */}
+                <span
                   ref={globe.compassHeadingRef}
                   className={css.bearingValue}
-                  aria-label='Globe view heading'
                 >
                   {formatViewHeading(HOME.lon)}
-                </output>
+                </span>
                 <span className={css.compassMeta}>
-                  <output
-                    ref={globe.compassLatitudeRef}
-                    aria-label='Globe view latitude'
-                  >
+                  <span ref={globe.compassLatitudeRef}>
                     {formatViewLatitude(HOME.lat)}
-                  </output>{' '}
+                  </span>{' '}
                   LAT
                 </span>
               </p>
@@ -1135,6 +1136,9 @@ export default function TravelView() {
                     title='Time until the sun has other plans'
                   >
                     <i className={css.sun} aria-hidden='true' />
+                    <span className='sr-only'>
+                      Time until the sun has other plans{' '}
+                    </span>
                     {supernova.countdown}
                   </span>
                   <span className={css.blink} aria-hidden='true'>
@@ -1196,7 +1200,7 @@ export default function TravelView() {
                     <button
                       type='button'
                       aria-label='Zoom in'
-                      disabled={globe.zoomLevel >= SCENE_ZOOM_MAX}
+                      aria-disabled={zoomInAtLimit}
                       data-pressed={pressedZoom === 'in'}
                       onClick={() => actuateZoom('in')}
                     >
@@ -1207,7 +1211,7 @@ export default function TravelView() {
                     <button
                       type='button'
                       aria-label='Zoom out'
-                      disabled={globe.zoomLevel <= TRAVEL_ZOOM_MIN}
+                      aria-disabled={zoomOutAtLimit}
                       data-pressed={pressedZoom === 'out'}
                       onClick={() => actuateZoom('out')}
                     >
@@ -1233,10 +1237,15 @@ export default function TravelView() {
             </div>
           </section>
 
-          <aside className={cn(css.instrumentWing, css.starboardWing)}>
+          <aside
+            className={cn(css.instrumentWing, css.starboardWing)}
+            aria-labelledby='travel-radio-title'
+          >
             <header>
               <span>03</span>
-              <strong className={css.instrumentLabel}>Local radio</strong>
+              <strong className={css.instrumentLabel} id='travel-radio-title'>
+                Local radio
+              </strong>
               <i className={css.radioLed} aria-hidden='true' />
             </header>
             <p className={css.radioHint}>Explore each city&apos;s radio.</p>
@@ -1302,11 +1311,13 @@ export default function TravelView() {
                 ))}
               </div>
             </fieldset>
+            <span className='sr-only' role='status'>
+              {regionStatus}
+            </span>
             <section
               id='travel-sector-panel'
               className={css.stripViewport}
               aria-label={`${activeRegionMeta.label} ship-log places`}
-              aria-live='polite'
               data-sector={activeRegionMeta.id}
             >
               <ol>

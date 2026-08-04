@@ -1101,6 +1101,20 @@
     inset 0 0 0.68rem rgb(255 28 24 / 52%);
 }
 
+.pile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* grid, so each spine stretches to the row width as it did in the flex stack */
+.pile li {
+  display: grid;
+}
+
 /* the table the pile rests on */
 .stack::after {
   content: "";
@@ -1224,7 +1238,7 @@
   font-family: var(--font-code);
   font-size: 0.5rem;
   letter-spacing: 0.14em;
-  color: rgb(29 32 39 / 62%);
+  color: rgb(29 32 39 / 78%);
 }
 
 /* the hole in the pile: that tape is in the deck */

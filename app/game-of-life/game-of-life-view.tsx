@@ -1,11 +1,12 @@
 'use client'
 
-import { clamp } from 'es-toolkit'
+import { clamp, debounce } from 'es-toolkit'
 import {
   type KeyboardEvent,
   type PointerEvent,
   useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useRef,
   useState,
@@ -115,6 +116,14 @@ export default function GameOfLifeView() {
       return next
     })
   }, [])
+
+  // Thunk defers reading cameraRef until after the zoom state commit.
+  const announceSoon = useMemo(
+    () => debounce((message: () => string) => setAnnouncement(message()), 350),
+    [],
+  )
+
+  useEffect(() => () => announceSoon.cancel(), [announceSoon])
 
   const bindCanvas = useCallback((node: HTMLCanvasElement | null) => {
     if (canvasRef.current === node) return
@@ -387,9 +396,23 @@ export default function GameOfLifeView() {
       ' ': { run: toggleRunning },
       '.': { cue: 'key', run: stepOnce },
       c: { cue: 'key', run: clearUniverse },
-      d: { cue: 'lever', keepDefault: true, run: () => setTool('draw') },
+      d: {
+        cue: 'lever',
+        keepDefault: true,
+        run: () => {
+          setTool('draw')
+          setAnnouncement('Draw tool active.')
+        },
+      },
       f: { cue: 'knob', keepDefault: true, run: () => fitCells(state.cells) },
-      m: { cue: 'lever', keepDefault: true, run: () => setTool('move') },
+      m: {
+        cue: 'lever',
+        keepDefault: true,
+        run: () => {
+          setTool('move')
+          setAnnouncement('Slew tool active.')
+        },
+      },
       p: { cue: 'key', run: jumpToPresets },
       r: { cue: 'key', run: resetUniverse },
     }
@@ -512,6 +535,7 @@ export default function GameOfLifeView() {
       event.preventDefault()
       const next: Cell = [cursor[0] + direction[0], cursor[1] + direction[1]]
       setCursor(next)
+      announceSoon(() => `x ${next[0]}, y ${next[1]}`)
 
       const canvas = canvasRef.current
       if (canvas) {
@@ -534,10 +558,12 @@ export default function GameOfLifeView() {
       event.preventDefault()
       playMechanicalSound('key')
       zoomBy(1.2)
+      announceSoon(() => `zoom ${Math.round(cameraRef.current.zoom)}x`)
     } else if (event.key === '-' || event.key === '_') {
       event.preventDefault()
       playMechanicalSound('key')
       zoomBy(1 / 1.2)
+      announceSoon(() => `zoom ${Math.round(cameraRef.current.zoom)}x`)
     }
   }
 

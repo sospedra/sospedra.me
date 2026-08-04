@@ -1,15 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 
 const LOOP_MS = 22 * 60_000
-// the reset never yanks an active drag or keypress
+// the flash never interrupts an active drag or keypress
 const IDLE_GUARD_MS = 8_000
-// the state reset hides behind the flash peak
-const FLASH_RESET_MS = 700
 const FLASH_TOTAL_MS = 1_800
 
 type SupernovaOptions = {
   quiet: boolean
-  onLoop: () => void
 }
 
 const formatCountdown = (remainingMs: number): string => {
@@ -19,7 +16,7 @@ const formatCountdown = (remainingMs: number): string => {
   return `T−${minutes}:${seconds}`
 }
 
-export function useSupernovaLoop({ quiet, onLoop }: SupernovaOptions) {
+export function useSupernovaLoop({ quiet }: SupernovaOptions) {
   const [remainingMs, setRemainingMs] = useState(LOOP_MS)
   const [loop, setLoop] = useState(1)
   const [flashing, setFlashing] = useState(false)
@@ -28,16 +25,11 @@ export function useSupernovaLoop({ quiet, onLoop }: SupernovaOptions) {
   const lastInteractionRef = useRef(0)
   const firingRef = useRef(false)
   const quietRef = useRef(quiet)
-  const onLoopRef = useRef(onLoop)
   const timeoutsRef = useRef<number[]>([])
 
   useEffect(() => {
     quietRef.current = quiet
   }, [quiet])
-
-  useEffect(() => {
-    onLoopRef.current = onLoop
-  }, [onLoop])
 
   useEffect(() => {
     lastTickRef.current =
@@ -70,13 +62,11 @@ export function useSupernovaLoop({ quiet, onLoop }: SupernovaOptions) {
     const fire = () => {
       firingRef.current = true
       if (quietRef.current) {
-        onLoopRef.current()
         restart()
         return
       }
       setFlashing(true)
       timeoutsRef.current.push(
-        window.setTimeout(() => onLoopRef.current(), FLASH_RESET_MS),
         window.setTimeout(() => {
           setFlashing(false)
           restart()

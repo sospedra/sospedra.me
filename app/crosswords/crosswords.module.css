@@ -1174,7 +1174,7 @@
 }
 
 .clueButton[data-solved="true"]:not([data-active="true"]) {
-  color: #77776f;
+  color: #63635a;
 }
 
 .clueButton[data-solved="true"]:not([data-active="true"]) .clueNumber {
@@ -2304,7 +2304,8 @@
 }
 
 .completionBody > span {
-  color: var(--cw-orange);
+  /* --cw-orange fails contrast on the dialog's #ccd0d4 plate */
+  color: #963819;
   font: 700 0.5rem / 1 var(--font-code);
   letter-spacing: 0.1em;
   text-transform: uppercase;

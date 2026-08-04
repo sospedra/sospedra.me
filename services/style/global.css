@@ -149,9 +149,10 @@ html,
   color: var(--color-bg-void);
 }
 
-html[data-scroll-behavior][data-scroll-behavior] :focus-visible {
-  outline: none;
-  box-shadow: none;
+/* zero-specificity default so any single-class module rule can restyle it */
+:where(html[data-scroll-behavior][data-scroll-behavior]) :focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 html[data-scroll-behavior][data-scroll-behavior] .site-main:focus {
@@ -203,7 +204,15 @@ html[data-scroll-behavior][data-scroll-behavior]
   :has(img, [data-paper-media])
 ) {
   color: var(--color-signal-cyan);
-  text-decoration: none;
+  /* WCAG 1.4.1: hue alone cannot mark a link inside prose */
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(
+    in oklab,
+    var(--color-signal-cyan) 55%,
+    transparent
+  );
+  text-underline-offset: 0.2em;
   transition:
     color var(--motion-micro) var(--ease-signal),
     text-shadow var(--motion-micro) var(--ease-signal);
@@ -218,7 +227,7 @@ html[data-scroll-behavior][data-scroll-behavior]
     :has(img, [data-paper-media])
   ):where(:hover, :focus-visible) {
   color: var(--color-text-strong);
-  text-decoration: none;
+  text-decoration-color: currentColor;
   text-shadow:
     -0.075em 0 var(--color-signal-pink),
     0.075em 0 var(--color-signal-cyan);

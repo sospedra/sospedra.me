@@ -33,7 +33,12 @@ const Footer: React.FC<{
         >
           Discuss on X
         </a>
-        <span className='mx-2 mt-1 text-xs font-bold opacity-75'>▼</span>
+        <span
+          aria-hidden='true'
+          className='mx-2 mt-1 text-xs font-bold opacity-75'
+        >
+          ▼
+        </span>
         <a
           href={createGithubLink(props.slug)}
           className={cn('text-cyan-400', neonCss.neon)}

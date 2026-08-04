@@ -26,7 +26,7 @@ import {
   type ToolOptions,
 } from './options.ts'
 import css from './paint.module.css'
-import { PALETTE } from './palette.ts'
+import { colorName, PALETTE } from './palette.ts'
 import { type Mode, prospectiveSize } from './state.ts'
 import { TOOLS, type ToolId, toolById } from './tools.ts'
 import { type Paint, usePaint } from './use-paint.ts'
@@ -393,21 +393,24 @@ const PaletteBar: React.FC<{
     <span
       className={css.currentColors}
       role='img'
-      aria-label={`Foreground ${fg}, background ${bg}`}
+      aria-label={`Foreground ${colorName(fg)}, background ${colorName(bg)}`}
     >
       <i className={css.bgSwatch} style={{ background: bg }} />
       <i className={css.fgSwatch} style={{ background: fg }} />
     </span>
     <fieldset className={css.swatches}>
       <legend className='sr-only'>Color palette</legend>
+      <p className='sr-only'>
+        Click sets foreground. Alt plus click or right click sets background.
+      </p>
       {PALETTE.map((color) => (
         <button
           key={color}
           type='button'
           className={css.swatch}
           style={{ background: color }}
-          aria-label={`Color ${color}`}
-          onClick={() => setFg(color)}
+          aria-label={`Color ${colorName(color)}`}
+          onClick={(event) => (event.altKey ? setBg(color) : setFg(color))}
           onContextMenu={(event) => {
             event.preventDefault()
             setBg(color)
@@ -461,6 +464,91 @@ const selectionCursor = (paint: Paint): string | null => {
 const ClaimKeys: React.FC = () => {
   useGameInput()
   return null
+}
+
+const trapTab = (event: KeyboardEvent, box: HTMLElement) => {
+  if (event.key !== 'Tab') return
+  const buttons = box.querySelectorAll('button')
+  const first = buttons[0]
+  const last = buttons[buttons.length - 1]
+  if (!first || !last) return
+  const active = document.activeElement
+  if (!box.contains(active)) {
+    event.preventDefault()
+    first.focus()
+    return
+  }
+  if (event.shiftKey && active === first) {
+    event.preventDefault()
+    last.focus()
+    return
+  }
+  if (!event.shiftKey && active === last) {
+    event.preventDefault()
+    first.focus()
+  }
+}
+
+const SavePrompt: React.FC<{
+  onYes: () => void
+  onNo: () => void
+  onCancel: () => void
+}> = ({ onYes, onNo, onCancel }) => {
+  const boxRef = useRef<HTMLElement>(null)
+  const yesRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    const box = boxRef.current
+    if (!box) return
+    const opener = document.activeElement
+    yesRef.current?.focus()
+    const onKeyDown = (event: KeyboardEvent) => trapTab(event, box)
+    document.addEventListener('keydown', onKeyDown, true)
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, true)
+      if (opener instanceof HTMLElement) opener.focus()
+    }
+  }, [])
+
+  return (
+    <>
+      <div className={css.dialogShield} aria-hidden='true' />
+      <section
+        ref={boxRef}
+        className={css.dialog}
+        role='alertdialog'
+        aria-modal='true'
+        aria-label='Save changes to untitled'
+      >
+        <header className={w98.titlebar}>
+          <strong>Paint</strong>
+        </header>
+        <div className={css.dialogBody}>
+          <p>Save changes to untitled?</p>
+          <div className={css.dialogButtons}>
+            <button
+              ref={yesRef}
+              type='button'
+              className={css.dialogButton}
+              onClick={onYes}
+            >
+              Yes
+            </button>
+            <button type='button' className={css.dialogButton} onClick={onNo}>
+              No
+            </button>
+            <button
+              type='button'
+              className={css.dialogButton}
+              onClick={onCancel}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </section>
+    </>
+  )
 }
 
 export default function PaintWindow({
@@ -689,6 +777,7 @@ export default function PaintWindow({
               className={css.bitmap}
               width={state.size.width}
               height={state.size.height}
+              aria-label='Paint canvas'
               style={{
                 ...zoomed,
                 cursor: selectionCursor(paint) ?? toolById[state.tool].cursor,
@@ -700,8 +789,11 @@ export default function PaintWindow({
               className={css.overlay}
               width={state.size.width}
               height={state.size.height}
+              aria-hidden='true'
+              tabIndex={-1}
               style={zoomed}
             />
+            <p className='sr-only'>Drawing needs a pointer.</p>
             {resizing && (
               <span
                 className={css.resizePreview}
@@ -766,45 +858,11 @@ export default function PaintWindow({
       />
 
       {prompt && (
-        <>
-          <div className={css.dialogShield} aria-hidden='true' />
-          <section
-            className={css.dialog}
-            role='alertdialog'
-            aria-modal='true'
-            aria-label='Save changes to untitled'
-          >
-            <header className={w98.titlebar}>
-              <strong>Paint</strong>
-            </header>
-            <div className={css.dialogBody}>
-              <p>Save changes to untitled?</p>
-              <div className={css.dialogButtons}>
-                <button
-                  type='button'
-                  className={css.dialogButton}
-                  onClick={() => void promptYes()}
-                >
-                  Yes
-                </button>
-                <button
-                  type='button'
-                  className={css.dialogButton}
-                  onClick={promptNo}
-                >
-                  No
-                </button>
-                <button
-                  type='button'
-                  className={css.dialogButton}
-                  onClick={() => setPrompt(null)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </section>
-        </>
+        <SavePrompt
+          onYes={() => void promptYes()}
+          onNo={promptNo}
+          onCancel={() => setPrompt(null)}
+        />
       )}
     </section>
   )
