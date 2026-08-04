@@ -261,10 +261,6 @@
   animation: neon 2s linear infinite;
 }
 
-.markdown a:focus-visible {
-  animation: none;
-}
-
 /* Link headers */
 .markdown h1[id],
 .markdown h2[id],

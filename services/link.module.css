@@ -9,8 +9,7 @@
   color: var(--color-signal-yellow);
 }
 
-.back:hover,
-a:focus-visible .back {
+.back:hover {
   border-bottom-color: var(--color-signal-yellow);
 }
 

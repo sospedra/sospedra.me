@@ -1,0 +1,180 @@
+/* ---- interactive file tree: branch geometry adapted to the amber CRT ---- */
+
+.treePanel {
+  width: min(100%, 38rem);
+  margin: 0.4rem 0 0.65rem;
+  padding: 0.65rem;
+  border: 1px solid var(--crt-faint);
+  border-radius: 0.3rem;
+  animation: tree-reveal 240ms var(--ease-signal, ease-out) both;
+  background:
+    linear-gradient(90deg, rgb(255 176 0 / 3%), transparent 22%),
+    rgb(10 5 0 / 68%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 233 194 / 2%),
+    0 0 1rem rgb(255 132 0 / 3%);
+}
+
+@keyframes tree-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+}
+
+.treeHeader,
+.treeFooter {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  color: var(--crt-dim);
+  font-size: 0.72em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.treeHeader {
+  padding: 0 0.35rem 0.45rem;
+  border-bottom: 1px solid var(--crt-faint);
+}
+
+.treeFooter {
+  padding: 0.5rem 0.35rem 0;
+  border-top: 1px solid var(--crt-faint);
+}
+
+.treeList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.treeRootBranches,
+.treeChildrenClip {
+  margin-left: 0.72rem;
+  padding-left: 0.72rem;
+  border-left: 1px solid var(--crt-faint);
+}
+
+.treeRootBranches {
+  margin-bottom: 0.45rem;
+}
+
+.treeItem {
+  position: relative;
+  margin-top: 0.16rem;
+}
+
+.treeRootBranches > .treeList > .treeItem::before,
+.treeChildrenClip > .treeList > .treeItem::before {
+  position: absolute;
+  top: 1rem;
+  left: -0.72rem;
+  width: 0.72rem;
+  height: 1px;
+  background: var(--crt-faint);
+  content: "";
+}
+
+.treeRow {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 2rem;
+  align-items: center;
+  gap: 0.52rem;
+  padding: 0.22rem 0.42rem;
+  border: 0;
+  border-radius: 0.18rem;
+  background: transparent;
+  color: var(--crt);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  text-shadow: inherit;
+}
+
+.treeFolderRow {
+  cursor: pointer;
+}
+
+.treeFileRow {
+  color: var(--crt-dim);
+}
+
+.treeRootRow {
+  margin-top: 0.32rem;
+  color: var(--crt-hot);
+}
+
+.treeFolderRow:hover,
+.treeFileRow:hover {
+  background: var(--crt);
+  color: var(--crt-ink);
+  outline: none;
+  text-shadow: none;
+}
+
+.treeIcon {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  stroke-width: 1.7;
+}
+
+.treeName {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.treeCount {
+  margin-left: auto;
+  color: var(--crt-dim);
+  font-size: 0.72em;
+  font-variant-numeric: tabular-nums;
+}
+
+.treeFolderRow:hover .treeCount {
+  color: inherit;
+}
+
+.treeChildrenShell {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms ease-in-out;
+}
+
+.treeChildrenShell[data-open="true"] {
+  grid-template-rows: 1fr;
+}
+
+.treeChildrenClip {
+  overflow: hidden;
+}
+
+@media (max-width: 640px) {
+  .treePanel {
+    width: 100%;
+    padding: 0.45rem;
+  }
+
+  .treeRow {
+    min-height: 2.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .treePanel {
+    animation: none;
+  }
+
+  .treeChildrenShell {
+    transition: none;
+  }
+}

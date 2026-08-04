@@ -1,0 +1,148 @@
+/* ── the cream sticker ── */
+
+.stickerOuter {
+  position: relative;
+  width: 100%;
+  height: 8em;
+  border-top: 0.1em solid var(--tape-shell-lo);
+  border-bottom: 0.1em solid var(--tape-shell-hi);
+  border-radius: 0.7em;
+  background: var(--tape-shell);
+}
+
+.sticker {
+  position: absolute;
+  inset: 0.2em;
+  border-bottom: 1px solid var(--tape-shell-deep);
+  border-radius: 0.7em;
+  background: var(--cream);
+  color: #33383a;
+}
+
+.aSide {
+  position: absolute;
+  top: 0.7em;
+  left: 1em;
+  display: block;
+  width: 1.1em;
+  height: 1.1em;
+  padding-top: 0.1em;
+  border-radius: 0.1em;
+  background: #33383a;
+  color: var(--cream);
+  font-weight: 900;
+  line-height: 1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* the daily song, in pen; scribble-masked until the tape is named.
+   the whole block must clear the hub band plate below: flatter lines,
+   gentler tilt, higher start */
+.stickerScript {
+  position: absolute;
+  top: 0.12em;
+  left: 3.4em;
+  right: 3.6em;
+  display: grid;
+  transform: rotate(-2deg);
+  color: #3b45a8;
+  font-family: var(--hand);
+}
+
+.scriptTitle {
+  min-width: 0;
+  font-size: 1.15em;
+  font-weight: 700;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scriptArtist {
+  min-width: 0;
+  font-size: 0.85em;
+  font-weight: 600;
+  line-height: 1.08;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scriptTitle[data-masked="true"],
+.scriptArtist[data-masked="true"] {
+  filter: blur(3px);
+  user-select: none;
+}
+
+/* the cover is a photo sticker; it sharpens with the unlock ladder */
+.albumSticker {
+  position: absolute;
+  z-index: 2;
+  top: 0.35em;
+  right: 0.5em;
+  width: 2.5em;
+  height: 2.5em;
+  border: 0.14em solid rgb(255 255 255 / 88%);
+  object-fit: cover;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 35%);
+  transform: rotate(2deg);
+  transition: filter 600ms ease;
+}
+
+.coverHeavy {
+  filter: blur(9px) saturate(0.8);
+}
+
+.coverMid {
+  filter: blur(5px);
+}
+
+.coverSoft {
+  filter: blur(2.5px);
+}
+
+.coverClear {
+  filter: none;
+}
+
+.stickerStripe {
+  display: block;
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  border-top: 0.3em solid #d23c33;
+  border-bottom: 0.3em solid #313a41;
+}
+
+.chipTape {
+  position: absolute;
+  bottom: -0.1em;
+  left: 3.5em;
+  color: #4b9121;
+  font-size: 0.9em;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.chipLogo {
+  position: absolute;
+  bottom: -0.1em;
+  right: 3.5em;
+  color: #33383a;
+  font-size: 0.9em;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.ansaphone .tadBay .chipTape,
+.ansaphone .tadBay .chipLogo {
+  font-size: 1.1em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .albumSticker {
+    transition: none;
+  }
+}

@@ -1,0 +1,303 @@
+@reference "../services/style/global.css";
+
+.nav {
+  position: absolute;
+  z-index: 4;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  display: flex;
+  max-width: calc(100% - 2rem);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.nav a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid currentColor;
+  background: var(--color-surface, rgb(14 20 27 / 84%));
+  font-weight: 600;
+  text-decoration: none;
+  filter: drop-shadow(0 0 0.6rem currentColor);
+}
+
+.nav .homeLink {
+  --liquid-layer-a: #fff;
+  --liquid-layer-b: #00f;
+  --liquid-base: #f00;
+  --liquid-inset: #558;
+  --liquid-preroll: 20s;
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  overflow: visible;
+  min-width: 2.75rem;
+  padding: 0;
+  place-items: center;
+  border: 2px solid rgb(255 255 255 / 72%);
+  border-radius: 2rem;
+  color: var(--color-bg-void, #0e141b);
+  background: var(--liquid-base);
+  box-shadow: 0 0 1rem rgb(87 120 255 / 44%);
+  filter: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.homeLinkClip {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  overflow: hidden;
+  align-self: stretch;
+  justify-self: stretch;
+  border-radius: calc(2rem - 2px);
+  background: var(--liquid-base);
+  clip-path: inset(0 round calc(2rem - 2px));
+  contain: paint;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+.homeLiquidScene {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  filter: saturate(0.82) brightness(1.45);
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+}
+
+.homeLiquidBase {
+  position: relative;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(2rem - 2px);
+  background: var(--liquid-base);
+  box-shadow: inset 0 0 10px 9px var(--liquid-inset);
+  mix-blend-mode: color-dodge;
+}
+
+.homeLiquidSurface {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: calc(2rem - 2px);
+  box-shadow:
+    inset 0 -4px 4px rgb(0 0 0 / 27%),
+    inset 0 4px 4px rgb(255 255 255 / 33%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  animation: liquidOpacityPulse 5s ease infinite;
+}
+
+.homeLinkText {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: grid;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0.72rem 0.9rem;
+  place-items: center;
+  border-radius: inherit;
+  color: var(--color-bg-void, #0e141b);
+  font: inherit;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 0 4px var(--color-text-strong, #fff);
+  -webkit-text-stroke: 0.2px currentColor;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transition: transform 300ms ease;
+}
+
+.homeLinkLabel {
+  display: flex;
+  gap: 0.28em;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.homeLinkWord {
+  display: inline-block;
+}
+
+.homeLiquidLayer {
+  position: absolute;
+  top: 50%;
+  left: -115%;
+  width: 500%;
+  aspect-ratio: 1;
+  background: radial-gradient(
+    ellipse at 65% 180%,
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a),
+    var(--liquid-layer-b),
+    var(--liquid-layer-a)
+  );
+  mix-blend-mode: difference;
+  pointer-events: none;
+  translate: 0 -50%;
+  animation: liquidRotate var(--liquid-duration) linear
+    calc(var(--liquid-delay) - var(--liquid-preroll)) infinite;
+}
+
+.homeLiquidLight {
+  position: absolute;
+  z-index: 1;
+  width: 80%;
+  height: 1.9rem;
+  aspect-ratio: 1;
+  border-radius: 2rem;
+  background: rgb(255 255 255 / 33%);
+  filter: blur(5px);
+  pointer-events: none;
+  animation: liquidLightPulse 3s ease-in-out infinite;
+}
+
+.nav a:hover {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  text-decoration: line-through;
+}
+
+.nav a.homeLink:hover {
+  outline: none;
+  text-decoration: none;
+}
+
+.nav a.homeLink:hover .homeLinkText {
+  transform: scale(1.06);
+}
+
+.nav a.homeLink:active .homeLinkText {
+  transform: scale(0.95);
+}
+
+@keyframes liquidRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes liquidLightPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.1;
+  }
+}
+
+@keyframes liquidOpacityPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (min-width: 768px) {
+  .nav {
+    top: max(2.25rem, env(safe-area-inset-top));
+    right: max(2.25rem, env(safe-area-inset-right));
+    bottom: auto;
+    flex-direction: column;
+    align-items: stretch;
+    font-size: 0.8rem;
+  }
+
+  .nav .homeLink {
+    --home-link-height: 21rem;
+
+    width: 5rem;
+    height: var(--home-link-height);
+  }
+
+  .homeLiquidScene {
+    width: 13rem;
+    height: 5rem;
+    transform: translate(-50%, -50%) rotate(90deg) scaleX(1.6154);
+  }
+
+  .homeLinkLabel {
+    flex-direction: column;
+    gap: 0.35rem;
+    text-transform: uppercase;
+  }
+
+  .homeLinkWord {
+    line-height: 1;
+    text-orientation: upright;
+    writing-mode: vertical-rl;
+  }
+}
+
+@media (min-width: 768px) and (max-height: 420px) {
+  .nav .homeLink {
+    --home-link-height: calc(100dvh - 4.5rem);
+  }
+
+  .homeLinkLabel {
+    gap: 0.2rem;
+  }
+}
+
+@media (max-height: 580px) {
+  .nav {
+    font-size: 0.65rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .homeLinkText {
+    transition: none;
+  }
+
+  .homeLinkText,
+  .homeLiquidSurface,
+  .homeLiquidLayer,
+  .homeLiquidLight {
+    animation: none;
+  }
+
+  .homeLiquidLayer {
+    transform: rotate(0deg);
+  }
+
+  .nav a.homeLink:hover .homeLinkText,
+  .nav a.homeLink:active .homeLinkText {
+    transform: none;
+  }
+}

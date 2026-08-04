@@ -264,7 +264,9 @@ function HomeStage() {
 
     const isFirstRide = claimFirstRide()
     if (!motionAllowed) {
-      router.push('/bazaar')
+      // no drive under reduced motion, but keep the route swap on the
+      // transition machine so back/forward history stays consistent
+      transition.navigateLater('/bazaar', 0)
       return
     }
 

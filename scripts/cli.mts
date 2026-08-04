@@ -3,7 +3,11 @@ import { existsSync } from 'node:fs'
 import { parseArgs } from 'node:util'
 import * as clack from '@clack/prompts'
 import createPaper from './commands/create-paper.mts'
-import { readingCommand, resizeCommand } from './commands/paper-sync.mts'
+import {
+  ogCommand,
+  readingCommand,
+  resizeCommand,
+} from './commands/paper-sync.mts'
 import rewrite from './commands/rewrite.mts'
 import { type Context, unwrap } from './prompts.mts'
 
@@ -98,6 +102,7 @@ const COMMANDS = {
     head: ['scripts/geo/generate-challenge.ts'],
     done: 'Challenge generated',
   }),
+  og: { hint: 'Render the paper og cards', run: ogCommand },
   reading: { hint: 'Recompute reading times', run: readingCommand },
   resize: { hint: 'Resize paper images into public/', run: resizeCommand },
   rewrite: { hint: 'Shorten a URL into /r/*', run: rewrite },

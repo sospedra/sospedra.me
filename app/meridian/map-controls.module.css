@@ -1,0 +1,302 @@
+.mapInstructions,
+.mapControlLegend,
+.mapLiveRegion {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+  margin: -1px;
+  white-space: nowrap;
+}
+
+.mapZoomControls {
+  position: absolute;
+  z-index: 6;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: grid;
+  grid-template-columns: auto minmax(3.2rem, auto) auto;
+  padding: 0;
+  border: 1px solid var(--geo-line-strong);
+  background: rgb(9 12 10 / 90%);
+  box-shadow: 0 0.7rem 1.6rem rgb(0 0 0 / 26%);
+}
+
+.mapControlButton,
+.mapRecenterButton {
+  min-width: 42px;
+  min-height: 42px;
+  border: 0;
+  background: transparent;
+  color: var(--geo-sand);
+  font: 700 0.72rem / 1 var(--font-code);
+}
+
+.mapControlButton > span:last-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.mapControlButton:hover:not(:disabled),
+.mapRecenterButton:hover:not(:disabled) {
+  background: var(--geo-sand);
+  color: var(--geo-ink);
+}
+
+.mapControlButton:disabled,
+.mapRecenterButton:disabled {
+  color: var(--geo-sand-muted);
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.mapZoomReadout {
+  display: grid;
+  min-height: 42px;
+  place-items: center;
+  border-inline: 1px solid var(--geo-line);
+  color: var(--geo-cyan);
+  font: 600 0.62rem / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+}
+
+.mapRecenterButton {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: -1px;
+  display: flex;
+  min-width: 8.2rem;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 0.6rem;
+  border: 1px solid var(--geo-line-strong);
+  background: rgb(9 12 10 / 90%);
+  gap: 0.4rem;
+}
+
+.mapStatusBar {
+  position: relative;
+  z-index: 7;
+  display: grid;
+  min-height: 4.6rem;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  border-top: 1px solid var(--geo-line-strong);
+  background: rgb(12 15 12 / 96%);
+}
+
+.mapPosition {
+  min-width: 0;
+  margin: 0;
+  padding: 0.65rem 0.8rem;
+  overflow: hidden;
+  color: var(--geo-sand-muted);
+  font: 0.58rem / 1.45 var(--font-code);
+  text-overflow: ellipsis;
+}
+
+.mapFeedback {
+  display: grid;
+  min-width: 7rem;
+  align-content: center;
+  align-self: stretch;
+  margin: 0;
+  padding-inline: 0.8rem;
+  border-left: 1px solid var(--geo-line);
+  text-align: right;
+}
+
+.mapFeedback span,
+.mapFeedback strong {
+  display: block;
+}
+
+.mapFeedback span {
+  color: var(--geo-sand-muted);
+  font: 600 0.48rem / 1 var(--font-code);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mapFeedback strong {
+  margin-top: 0.3rem;
+  color: var(--geo-error);
+  font: 700 0.82rem / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+}
+
+.mapLegend {
+  display: flex;
+  flex-wrap: wrap;
+  padding-inline: 0.8rem;
+  color: var(--geo-sand-muted);
+  font: 0.5rem / 1.4 var(--font-code);
+  gap: 0.65rem;
+}
+
+.mapLegend span {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.mapLegend span::before {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--geo-amber);
+  border-radius: 50%;
+  content: "";
+}
+
+.mapLegend span[data-marker="answer"]::before {
+  border-color: var(--geo-cyan);
+  border-radius: 0;
+  background: var(--geo-cyan);
+  clip-path: polygon(
+    40% 0,
+    60% 0,
+    60% 40%,
+    100% 40%,
+    100% 60%,
+    60% 60%,
+    60% 100%,
+    40% 100%,
+    40% 60%,
+    0 60%,
+    0 40%,
+    40% 40%
+  );
+}
+
+.mapZoomControls {
+  border: var(--geo-outline);
+  background: var(--geo-paper);
+  box-shadow: var(--geo-hard-shadow-md);
+}
+
+.mapControlButton,
+.mapRecenterButton {
+  color: var(--geo-arcade-ink);
+  font-weight: 800;
+}
+
+.mapControlButton:hover:not(:disabled),
+.mapRecenterButton:hover:not(:disabled) {
+  background: var(--geo-pink);
+  color: var(--geo-arcade-ink);
+}
+
+.mapZoomReadout {
+  border-inline: 2px solid var(--geo-arcade-ink);
+  color: var(--geo-arcade-ink);
+  font-weight: 800;
+}
+
+.mapRecenterButton {
+  border: var(--geo-outline);
+  background: var(--geo-cyan);
+  box-shadow: var(--geo-hard-shadow-sm);
+}
+
+.mapStatusBar {
+  border-top: var(--geo-outline);
+  background: var(--geo-paper);
+}
+
+.mapPosition {
+  color: #4c4255;
+  font-weight: 800;
+}
+
+.mapFeedback {
+  border-left: 3px solid var(--geo-arcade-ink);
+}
+
+.mapFeedback span {
+  color: #554b5d;
+  font-weight: 800;
+}
+
+.mapFeedback strong {
+  color: #a8371f;
+}
+
+.mapLegend {
+  color: #554b5d;
+  font-weight: 800;
+}
+
+.mapLegend span::before {
+  border: 2px solid var(--geo-arcade-ink);
+}
+
+@media (max-width: 800px) {
+  .mapZoomControls {
+    top: 0.4rem;
+    left: 0.4rem;
+  }
+
+  .mapControlButton,
+  .mapRecenterButton,
+  .mapZoomReadout {
+    min-height: 36px;
+  }
+
+  .mapControlButton {
+    min-width: 36px;
+  }
+
+  .mapRecenterButton {
+    min-width: 7.4rem;
+  }
+
+  .mapStatusBar {
+    min-height: 3.6rem;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .mapPosition {
+    padding: 0.45rem 0.55rem;
+    font-size: 0.48rem;
+  }
+
+  .mapFeedback {
+    padding-inline: 0.55rem;
+  }
+
+  .mapLegend {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .mapStatusBar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .mapFeedback {
+    position: static;
+    min-width: 5.5rem;
+    min-height: 100%;
+    border-left: 1px solid var(--geo-line);
+    background: transparent;
+  }
+
+  .mapRecenterButton > span:last-child {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .mapRecenterButton {
+    min-width: 42px;
+  }
+}

@@ -1,6 +1,9 @@
 import { coverUrl } from './blob-assets'
-import css from './boombox.module.css'
+import css from './cassette-bay.module.css'
+import mold from './cassette-shell.module.css'
+import label from './cassette-sticker.module.css'
 import type { BoomboxState, Song } from './engine'
+import spool from './tape-reels.module.css'
 
 const SHELL_SCREWS = ['tl', 'tr', 'bl', 'br']
 
@@ -18,18 +21,18 @@ const scribble = (text: string) =>
     .join('')
 
 const coverBlurClass = (limit: number, stage: BoomboxState['stage']) => {
-  if (stage !== 'play') return css.coverClear
-  if (limit >= 11) return css.coverSoft
-  if (limit >= 7) return css.coverMid
-  return css.coverHeavy
+  if (stage !== 'play') return label.coverClear
+  if (limit >= 11) return label.coverSoft
+  if (limit >= 7) return label.coverMid
+  return label.coverHeavy
 }
 
 const Hub = () => (
-  <span className={css.hub}>
-    <span className={css.teethBox}>
-      <span className={css.teeth} />
-      <span className={css.teeth} />
-      <span className={css.teeth} />
+  <span className={spool.hub}>
+    <span className={spool.teethBox}>
+      <span className={spool.teeth} />
+      <span className={spool.teeth} />
+      <span className={spool.teeth} />
     </span>
   </span>
 )
@@ -49,30 +52,30 @@ export const Cassette = (props: {
 
   return (
     <div
-      className={css.cassette}
+      className={`${mold.cassette} ${css.cassette} ${spool.cassette}`}
       data-rolling={props.isPlaying}
       style={{ '--wound': props.wound } as React.CSSProperties}
     >
-      <div className={css.shell}>
+      <div className={mold.shell}>
         {SHELL_SCREWS.map((corner) => (
-          <span key={corner} className={css.tapeScrew} data-corner={corner}>
-            <span className={css.tapeScrewSlot} />
+          <span key={corner} className={mold.tapeScrew} data-corner={corner}>
+            <span className={mold.tapeScrewSlot} />
           </span>
         ))}
 
-        <div className={css.stickerOuter}>
-          <div className={css.sticker}>
-            <span className={css.aSide}>a</span>
-            <div className={css.stickerScript}>
+        <div className={label.stickerOuter}>
+          <div className={label.sticker}>
+            <span className={label.aSide}>a</span>
+            <div className={label.stickerScript}>
               <span
-                className={css.scriptTitle}
+                className={label.scriptTitle}
                 data-masked={!revealed}
                 aria-hidden={!revealed}
               >
                 {revealed ? props.daily.title : masked.title}
               </span>
               <span
-                className={css.scriptArtist}
+                className={label.scriptArtist}
                 data-masked={!revealed}
                 aria-hidden={!revealed}
               >
@@ -85,35 +88,35 @@ export const Cassette = (props: {
             {/* the cover is the answer; alt text would spoil it */}
             <img
               src={coverUrl(props.daily.id)}
-              className={`${css.albumSticker} ${coverBlurClass(props.limit, props.stage)}`}
+              className={`${label.albumSticker} ${coverBlurClass(props.limit, props.stage)}`}
               alt=''
               draggable={false}
             />
-            <span className={css.stickerStripe} />
-            <span className={css.chipTape}>bub-90</span>
-            <span className={css.chipLogo}>saiwa®</span>
-            <div className={css.hubBand}>
+            <span className={label.stickerStripe} />
+            <span className={label.chipTape}>bub-90</span>
+            <span className={label.chipLogo}>saiwa®</span>
+            <div className={spool.hubBand}>
               <Hub />
-              <div className={css.tapeWindow}>
-                <span className={css.reelSupply} />
-                <span className={css.reelTakeup} />
+              <div className={spool.tapeWindow}>
+                <span className={spool.reelSupply} />
+                <span className={spool.reelTakeup} />
               </div>
               <Hub />
             </div>
           </div>
         </div>
 
-        <div className={css.shellBottom}>
-          <span className={css.tapeScrew} data-corner='c'>
-            <span className={css.tapeScrewSlot} />
+        <div className={mold.shellBottom}>
+          <span className={mold.tapeScrew} data-corner='c'>
+            <span className={mold.tapeScrewSlot} />
           </span>
-          <span className={css.bottomShadow}>
-            <span className={`${css.bottomHoles} ${css.holesA}`} />
-            <span className={`${css.bottomHoles} ${css.holesB}`} />
-            <span className={`${css.bottomHoles} ${css.holesC}`} />
+          <span className={mold.bottomShadow}>
+            <span className={`${mold.bottomHoles} ${mold.holesA}`} />
+            <span className={`${mold.bottomHoles} ${mold.holesB}`} />
+            <span className={`${mold.bottomHoles} ${mold.holesC}`} />
           </span>
-          <span className={`${css.shellHole} ${css.holeLeft}`} />
-          <span className={`${css.shellHole} ${css.holeRight}`} />
+          <span className={`${mold.shellHole} ${mold.holeLeft}`} />
+          <span className={`${mold.shellHole} ${mold.holeRight}`} />
         </div>
       </div>
     </div>

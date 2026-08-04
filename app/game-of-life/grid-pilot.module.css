@@ -1,0 +1,305 @@
+@reference "../../services/style/global.css";
+
+.gridPilot {
+  position: absolute;
+  z-index: 12;
+  right: 0.9rem;
+  bottom: 2.7rem;
+  display: grid;
+  width: 8rem;
+  justify-items: center;
+  gap: 0.2rem;
+  color: var(--life-panel-ink);
+  filter: drop-shadow(0 0.55rem 0.55rem rgb(0 0 0 / 48%));
+}
+
+.gridPilotLegend {
+  position: relative;
+  z-index: 2;
+  border: 1px solid #666258;
+  padding: 0.22rem 0.46rem;
+  color: #34352f;
+  background: var(--life-bone);
+  font: 900 0.34rem / 1 var(--font-code);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.gridPilotPlate {
+  position: relative;
+  width: 7.6rem;
+  height: 7.6rem;
+  border: 0.28rem solid #6d695f;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(
+      from 22.5deg,
+      rgb(39 39 36 / 24%) 0deg 1deg,
+      transparent 1deg 45deg
+    ),
+    radial-gradient(circle, #4b4c45 0 38%, #20211c 39% 48%, #c7c0ad 49% 70%);
+  box-shadow:
+    inset 0 0 0 0.18rem rgb(255 255 255 / 24%),
+    inset 0 0 1rem rgb(0 0 0 / 45%),
+    0 0.22rem 0 #383932;
+}
+
+.gridPilotDirection,
+.gridPilotKnob {
+  position: absolute;
+  touch-action: none;
+  user-select: none;
+}
+
+.gridPilotDirection {
+  z-index: 3;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  color: #393a34;
+  background: transparent;
+  font: 900 0.75rem / 1 var(--font-code);
+}
+
+.gridPilotDirection span {
+  display: grid;
+  width: 1.2rem;
+  height: 1.2rem;
+  place-items: center;
+  border: 1px solid rgb(39 39 36 / 28%);
+  background: rgb(222 214 194 / 48%);
+}
+
+.gridPilotNorth {
+  top: 0.02rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.gridPilotEast {
+  top: 50%;
+  right: 0.02rem;
+  transform: translateY(-50%);
+}
+
+.gridPilotSouth {
+  bottom: 0.02rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.gridPilotWest {
+  top: 50%;
+  left: 0.02rem;
+  transform: translateY(-50%);
+}
+
+.gridPilotKnob {
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 3.25rem;
+  height: 3.25rem;
+  place-items: center;
+  border: 0.22rem solid #171814;
+  border-radius: 50%;
+  padding: 0;
+  background:
+    radial-gradient(circle at 34% 27%, #74766c, transparent 22%),
+    radial-gradient(circle, #3d3e38, #191a16 72%);
+  box-shadow:
+    inset 0.22rem 0.25rem 0.4rem rgb(255 255 255 / 9%),
+    inset -0.3rem -0.34rem 0.45rem rgb(0 0 0 / 48%),
+    0 0.28rem 0 #0b0c09,
+    0 0.4rem 0.5rem rgb(0 0 0 / 52%);
+  transform: translate(-50%, -50%);
+  transition: transform 120ms cubic-bezier(0.2, 0.84, 0.2, 1);
+}
+
+.gridPilotKnob i {
+  width: 0.6rem;
+  height: 0.6rem;
+  border: 0.12rem solid #10110e;
+  border-radius: 50%;
+  background: var(--life-red);
+  box-shadow: 0 0 0.35rem rgb(228 73 47 / 55%);
+}
+
+.gridPilot[data-direction="north"] .gridPilotKnob {
+  transform: translate(-50%, -62%) rotateX(10deg);
+}
+
+.gridPilot[data-direction="east"] .gridPilotKnob {
+  transform: translate(-38%, -50%) rotateY(10deg);
+}
+
+.gridPilot[data-direction="south"] .gridPilotKnob {
+  transform: translate(-50%, -38%) rotateX(-10deg);
+}
+
+.gridPilot[data-direction="west"] .gridPilotKnob {
+  transform: translate(-62%, -50%) rotateY(-10deg);
+}
+
+.gridPilot[data-direction="north"] .gridPilotNorth span,
+.gridPilot[data-direction="east"] .gridPilotEast span,
+.gridPilot[data-direction="south"] .gridPilotSouth span,
+.gridPilot[data-direction="west"] .gridPilotWest span {
+  color: #1d1e19;
+  background: var(--life-amber);
+}
+
+.gridPilotKnob:active {
+  box-shadow:
+    inset 0.35rem 0.4rem 0.55rem rgb(0 0 0 / 55%),
+    0 0.08rem 0 #0b0c09;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gridPilotDirection:hover span {
+    background: var(--life-amber);
+  }
+}
+
+@media (max-width: 45rem) {
+  .gridPilot {
+    right: 0.68rem;
+    bottom: 2.25rem;
+    width: 6.6rem;
+  }
+
+  .gridPilotLegend {
+    padding: 0.18rem 0.35rem;
+    font-size: 0.3rem;
+  }
+
+  .gridPilotPlate {
+    width: 6.25rem;
+    height: 6.25rem;
+  }
+
+  .gridPilotKnob {
+    width: 2.8rem;
+    height: 2.8rem;
+  }
+}
+
+@media (max-width: 24rem) {
+  .gridPilot {
+    right: 0.48rem;
+    bottom: 2rem;
+    width: 6.15rem;
+  }
+
+  .gridPilotLegend {
+    display: none;
+  }
+
+  .gridPilotPlate {
+    width: 5.95rem;
+    height: 5.95rem;
+  }
+}
+
+@media (max-width: 45rem) and (max-height: 42rem) {
+  .gridPilot {
+    right: 0.5rem;
+    bottom: 1.95rem;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .gridPilot {
+    right: 0.55rem;
+    bottom: 1.95rem;
+    width: 5.9rem;
+  }
+
+  .gridPilotLegend {
+    display: none;
+  }
+
+  .gridPilotPlate {
+    width: 5.7rem;
+    height: 5.7rem;
+  }
+
+  .gridPilotKnob {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridPilotKnob {
+    transition: none;
+  }
+}
+
+.gridPilot {
+  position: relative;
+  z-index: 1;
+  right: auto;
+  bottom: auto;
+  display: grid;
+  width: auto;
+  min-width: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  justify-items: stretch;
+  gap: 0;
+  filter: none;
+}
+
+.gridPilot > header {
+  width: 100%;
+}
+
+.gridPilot > button {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: visible;
+}
+
+@media (max-width: 45rem) {
+  .gridPilot {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .gridPilot > button {
+    min-height: 6rem;
+  }
+}
+
+@media (max-width: 24rem) {
+  .gridPilot > button {
+    min-height: 5.5rem;
+  }
+}
+
+@media (max-width: 24rem) and (max-height: 46rem) {
+  .gridPilot > button {
+    min-height: 5rem;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .gridPilot {
+    min-height: 0;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .gridPilot > button {
+    min-height: 0;
+  }
+}

@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import type { DailyCountdown } from 'services/daily-countdown'
-import css from './boombox.module.css'
+import css from './boombox-chassis.module.css'
 import { CassettePane } from './cassette-bay'
 import type { DeckSfx } from './deck-sfx'
 import type { BoomboxState, Song } from './engine'
+import fnRow from './function-row.module.css'
 import { DbMeter, Lcd } from './lcd-rack'
+import lcd from './lcd-rack.module.css'
 import { DECK_KEY_ORDER, skipSecondsGain, Transport } from './lever-bank'
+import lower from './lower-console.module.css'
+import speaker from './speaker-panel.module.css'
 import { CaseTracklist } from './tracklist-card'
 import { Tuner } from './tuner-dial'
 import type { ClipAudio } from './use-clip-audio'
@@ -31,19 +35,19 @@ const FunctionRow = (props: { onPress: () => void }) => {
   }
 
   return (
-    <div className={css.functionRow} aria-hidden>
-      <span className={css.functionLabel}>function</span>
+    <div className={fnRow.functionRow} aria-hidden>
+      <span className={fnRow.functionLabel}>function</span>
       {FUNCTIONS.map((name) => (
         <button
           key={name}
           type='button'
           tabIndex={-1}
-          className={css.functionKey}
+          className={fnRow.functionKey}
           data-on={name === 'tape'}
           onClick={() => press(name)}
         >
           <span
-            className={css.functionLed}
+            className={fnRow.functionLed}
             data-blink={blinking === name}
             data-deny={name !== 'tape'}
           />
@@ -56,22 +60,22 @@ const FunctionRow = (props: { onPress: () => void }) => {
 
 const Speaker = (props: { live: boolean; side: 'left' | 'right' }) => (
   <section
-    className={`${css.speakerPanel} ${props.side === 'left' ? css.speakerLeft : css.speakerRight}`}
+    className={`${speaker.speakerPanel} ${props.side === 'left' ? speaker.speakerLeft : speaker.speakerRight}`}
     data-live={props.live}
   >
-    <div className={css.tweeterRing}>
-      <div className={css.wooferCone}>
-        <div className={css.wooferCap} />
+    <div className={speaker.tweeterRing}>
+      <div className={speaker.wooferCone}>
+        <div className={speaker.wooferCap} />
       </div>
     </div>
-    <div className={css.woofer}>
-      <div className={css.wooferRing}>
-        <div className={css.wooferCone}>
-          <div className={css.wooferCap} />
+    <div className={speaker.woofer}>
+      <div className={speaker.wooferRing}>
+        <div className={speaker.wooferCone}>
+          <div className={speaker.wooferCap} />
         </div>
       </div>
     </div>
-    <div className={css.speakerMicrocopy}>
+    <div className={speaker.speakerMicrocopy}>
       <span>2 way speaker system</span>
       <span>6.5 in woofer</span>
     </div>
@@ -82,19 +86,19 @@ const EqBank = (props: {
   gains: number[]
   onGain: (band: number, gainDb: number) => void
 }) => (
-  <fieldset className={css.eqBank} aria-label='Five band graphic equalizer'>
-    <span className={css.panelLabel}>5 band graphic equalizer · db</span>
-    <div className={css.eqScaleSide} aria-hidden>
+  <fieldset className={lower.eqBank} aria-label='Five band graphic equalizer'>
+    <span className={lower.panelLabel}>5 band graphic equalizer · db</span>
+    <div className={lower.eqScaleSide} aria-hidden>
       <span>+8</span>
       <span>0</span>
       <span>-8</span>
     </div>
-    <div className={css.eqGrid}>
+    <div className={lower.eqGrid}>
       {EQ_LABELS.map((label, band) => (
-        <label key={label} className={css.eqSlider}>
+        <label key={label} className={lower.eqSlider}>
           <input
             type='range'
-            className={css.eqInput}
+            className={lower.eqInput}
             min={-8}
             max={8}
             step={1}
@@ -102,7 +106,7 @@ const EqBank = (props: {
             aria-label={`${label}Hz gain`}
             onChange={(event) => props.onGain(band, Number(event.target.value))}
           />
-          <span className={css.eqName}>{label}</span>
+          <span className={lower.eqName}>{label}</span>
         </label>
       ))}
     </div>
@@ -113,13 +117,13 @@ const VolumeCell = (props: {
   value: number
   onChange: (value: number) => void
 }) => (
-  <section className={css.volumeCell}>
-    <span className={css.panelLabel}>volume</span>
-    <div className={css.volumeTicks} aria-hidden />
-    <div className={css.knobWrap}>
+  <section className={lower.volumeCell}>
+    <span className={lower.panelLabel}>volume</span>
+    <div className={lower.volumeTicks} aria-hidden />
+    <div className={lower.knobWrap}>
       <input
         type='range'
-        className={css.knobInput}
+        className={lower.knobInput}
         min={0}
         max={100}
         value={Math.round(props.value * 100)}
@@ -127,7 +131,7 @@ const VolumeCell = (props: {
         onChange={(event) => props.onChange(Number(event.target.value) / 100)}
       />
       <div
-        className={css.volumeKnob}
+        className={lower.volumeKnob}
         style={
           { '--angle': `${-130 + props.value * 260}deg` } as React.CSSProperties
         }
@@ -234,7 +238,7 @@ export function BoomboxChassis({
               <span className={css.deckTag}>daily mixtape decoder</span>
             </div>
 
-            <div className={css.lcdRack}>
+            <div className={lcd.lcdRack}>
               <Lcd
                 countdown={countdown}
                 daily={daily}
@@ -242,7 +246,7 @@ export function BoomboxChassis({
                 seconds={sound.seconds}
                 state={state}
               />
-              <div className={css.meterStack}>
+              <div className={lcd.meterStack}>
                 <DbMeter
                   analyser={sound.analyser}
                   band='low'
@@ -280,7 +284,7 @@ export function BoomboxChassis({
           />
         </section>
 
-        <section className={css.lowerConsole}>
+        <section className={lower.lowerConsole}>
           <EqBank gains={eqGains} onGain={onEqGain} />
           <Transport
             size='deck'

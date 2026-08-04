@@ -1,0 +1,360 @@
+/* Cobe adds a full-bleed wrapper. The canvas follows the complete monitor
+   rectangle so deep zoom can use its horizontal room without clipping. */
+.canvas {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  margin: auto;
+  display: block;
+  cursor: grab;
+  opacity: 0;
+  touch-action: none;
+  transition: opacity 240ms ease;
+}
+
+.canvas[data-ready="true"] {
+  opacity: 1;
+}
+
+.canvas[data-hovered="true"] {
+  cursor: pointer;
+}
+
+.canvas:active {
+  cursor: grabbing;
+}
+
+.scopeFallback {
+  position: absolute;
+  z-index: 3;
+  inset: 20%;
+  display: none;
+  place-content: center;
+  gap: 0.35rem;
+  color: var(--travel-campfire);
+  font: 700 0.62rem / 1.4 var(--font-code, monospace);
+  text-align: center;
+}
+
+.scopeFallback[data-visible="true"] {
+  display: grid;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvas {
+    transition: none;
+  }
+}
+
+/* This SVG is always present. Once Cobe is ready only its glass, brass rim
+   and reticles remain above WebGL; without WebGL it is the complete scope. */
+.scopeBackdrop {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 0 14px rgb(98 214 195 / 14%))
+    drop-shadow(0 14px 10px rgb(0 0 0 / 56%));
+}
+
+.scopeOuterRim {
+  fill: none;
+  stroke: var(--v2-brass-mid);
+  stroke-width: 36px;
+  filter: drop-shadow(-3px -3px 0 rgb(225 184 111 / 36%))
+    drop-shadow(4px 4px 0 rgb(20 11 4 / 84%));
+}
+
+.scopeInnerRim {
+  fill: none;
+  stroke: #21170d;
+  stroke-width: 18px;
+  filter: drop-shadow(-2px -2px 0 rgb(223 170 91 / 24%))
+    drop-shadow(3px 3px 0 #030201);
+}
+
+.scopeEarth {
+  stroke: #74d8c8;
+  stroke-opacity: 0.34;
+  stroke-width: 2px;
+  transition: opacity 180ms steps(2, end);
+}
+
+.scopeMap {
+  fill: none;
+  stroke: rgb(98 214 195 / 18%);
+  stroke-width: 2px;
+  transition: opacity 180ms steps(2, end);
+}
+
+.scopeLand {
+  fill: rgb(180 103 48 / 34%);
+  stroke: rgb(255 161 74 / 42%);
+  stroke-width: 2px;
+}
+
+.scopeRoute {
+  stroke: var(--travel-ember);
+  stroke-dasharray: 8 6;
+  stroke-width: 3px;
+}
+
+.backdropSignal {
+  fill: var(--travel-campfire);
+  stroke: #fff2cc;
+  stroke-width: 1px;
+  filter: drop-shadow(0 0 6px var(--travel-campfire));
+}
+
+.backdropSignalActive {
+  fill: var(--travel-teal);
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 3px #f4ffff) drop-shadow(0 0 10px var(--travel-teal));
+}
+
+.scopeTarget {
+  fill: none;
+  stroke: var(--travel-teal);
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 5px rgb(98 214 195 / 72%));
+}
+
+.scopeSweep {
+  fill: rgb(98 214 195 / 6%);
+  stroke: rgb(98 214 195 / 18%);
+  stroke-width: 2px;
+  transform-box: fill-box;
+  transform-origin: left bottom;
+  animation: v2-scope-sweep 7s steps(28, end) infinite;
+}
+
+.scopeGlass {
+  fill-opacity: 0.52;
+  stroke: rgb(216 255 248 / 24%);
+  stroke-width: 3px;
+}
+
+.scopeReflection {
+  fill: rgb(234 255 252 / 7%);
+  mix-blend-mode: screen;
+}
+
+.scopeTicks {
+  fill: none;
+  stroke: #e6bc75;
+  stroke-width: 8px;
+  filter: drop-shadow(2px 2px 0 #140b03);
+}
+
+.viewport:has(.canvas[data-ready="true"]) .scopeEarth,
+.viewport:has(.canvas[data-ready="true"]) .scopeMap {
+  opacity: 0;
+}
+
+@keyframes v2-scope-sweep {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+.scopeFallback {
+  z-index: 4;
+  align-self: end;
+  justify-self: center;
+  inset: auto auto 12%;
+  min-width: min(18rem, 78%);
+  padding: calc(var(--v2-px) * 2);
+  border: 2px solid rgb(98 214 195 / 36%);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgb(98 214 195 / 5%) 0 1px,
+      transparent 1px 4px
+    ),
+    rgb(3 10 13 / 82%);
+  box-shadow:
+    inset 2px 2px rgb(206 255 247 / 7%),
+    inset -2px -2px rgb(0 0 0 / 54%),
+    0 0 1rem rgb(98 214 195 / 8%);
+  backdrop-filter: blur(2px);
+}
+
+@media (max-width: 899px) {
+  .scopeFallback {
+    bottom: 7%;
+    min-width: min(15rem, 72%);
+    font-size: 0.52rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .scopeFallback span {
+    display: none;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .scopeFallback {
+    background-color: #030a0d;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scopeEarth,
+  .scopeMap {
+    transition: none;
+  }
+
+  .scopeSweep {
+    animation: none;
+    opacity: 0.45;
+  }
+}
+
+.scopeBackdrop,
+.canvas {
+  transform: none;
+  transform-origin: center;
+}
+
+.canvas {
+  contain: strict;
+  filter: none;
+  transition-duration: 120ms;
+}
+
+.scopeBackdrop {
+  filter: none;
+}
+
+.viewport:has(.canvas[data-ready="true"]) .scopeBackdrop {
+  opacity: 0;
+}
+
+.scopeOuterRim,
+.scopeInnerRim,
+.scopeTicks {
+  display: none;
+}
+
+.scopeEarth {
+  stroke: none;
+}
+
+.scopeMap {
+  stroke: rgb(106 175 179 / 20%);
+  stroke-width: 2px;
+}
+
+.scopeLand {
+  fill: rgb(59 121 99 / 36%);
+  stroke: rgb(116 188 171 / 48%);
+}
+
+.scopeRoute {
+  stroke: #61aed0;
+  stroke-dasharray: 5 7;
+  stroke-width: 2px;
+}
+
+.backdropSignal {
+  fill: #64b592;
+  stroke: #b8e8da;
+  stroke-width: 1px;
+  filter: none;
+}
+
+.backdropSignalActive {
+  fill: #70b9e5;
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 2px rgb(112 185 229 / 60%));
+}
+
+.visitorScopePoint {
+  fill: none;
+  stroke: #d8edc5;
+  stroke-width: 2px;
+}
+
+.visitorScopePoint circle:first-child {
+  fill: rgb(69 139 119 / 18%);
+  stroke: #6fc1a8;
+}
+
+.visitorScopePoint circle:nth-child(2) {
+  fill: #d8edc5;
+  stroke: #296e79;
+  stroke-width: 3px;
+}
+
+.scopeTarget {
+  stroke: #70b9e5;
+  stroke-width: 2px;
+  filter: none;
+}
+
+.scopeSweep {
+  fill: rgb(98 183 192 / 3%);
+  stroke: rgb(98 183 192 / 9%);
+  animation: none;
+  opacity: 0.34;
+}
+
+.scopeGlass {
+  fill-opacity: 0.18;
+  stroke: none;
+}
+
+.scopeReflection {
+  fill: rgb(234 240 216 / 2%);
+  mix-blend-mode: normal;
+}
+
+.scopeFallback {
+  z-index: 9;
+  inset: auto auto 8%;
+  min-width: min(18rem, 78%);
+  padding: 0.55rem;
+  border: 2px solid #333a34;
+  background: var(--cockpit-grain), rgb(8 18 18 / 92%);
+  box-shadow:
+    inset 1px 1px rgb(218 229 208 / 5%),
+    inset -2px -2px rgb(0 0 0 / 50%);
+  color: #c4ba89;
+  backdrop-filter: none;
+}
+
+@media (max-width: 899px) {
+  .scopeBackdrop,
+  .canvas {
+    transform: none;
+  }
+
+  .scopeFallback {
+    bottom: 6%;
+    min-width: min(15rem, 72%);
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .scopeFallback span {
+    display: none;
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .scopeFallback {
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvas {
+    transition: none;
+  }
+}

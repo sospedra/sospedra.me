@@ -5,14 +5,12 @@ import type { Route } from 'next'
 import type React from 'react'
 import Icon from 'services/icon/icon'
 import { useRouteTransition } from 'services/transition/context'
-import { UNMOUNT_DELAY_MS } from 'services/transition/stage'
 import { usePrefetch } from 'services/transition/use-prefetch'
 import css from './link.module.css'
 
 type LinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   url: Route
   children: React.ReactNode
-  instant?: boolean
   prefetchOnFocus?: boolean
   ref?: React.Ref<HTMLAnchorElement>
 }
@@ -21,7 +19,6 @@ export default function Link(props: LinkProps) {
   const {
     children,
     download,
-    instant,
     onClick,
     onFocus,
     onMouseEnter,
@@ -51,7 +48,9 @@ export default function Link(props: LinkProps) {
     if (event.defaultPrevented) return
 
     event.preventDefault()
-    transition.navigateLater(url, instant ? 0 : UNMOUNT_DELAY_MS)
+    // navigate immediately: every ms before router.push is a window where
+    // the browser back button walks past the page the visitor is leaving
+    transition.navigate(url)
   }
 
   return (

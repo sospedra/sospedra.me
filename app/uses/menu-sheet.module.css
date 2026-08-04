@@ -1,0 +1,399 @@
+/* ---- the sheet: washi menu taped to the wall ---- */
+
+.sheet {
+  position: relative;
+  z-index: 1;
+  padding: clamp(1.8rem, 5vw, 2.8rem) clamp(1.1rem, 4.5vw, 2.6rem)
+    clamp(1.6rem, 4vw, 2.4rem);
+  background:
+    radial-gradient(
+      120% 90% at 50% 30%,
+      transparent 58%,
+      rgb(120 90 40 / 12%) 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      var(--grid-line) 0 1px,
+      transparent 1px 2.3rem
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--grid-line) 0 1px,
+      transparent 1px 2.3rem
+    ),
+    linear-gradient(180deg, #f1e7d1, var(--washi) 40%, var(--washi-deep));
+  border-radius: 3px;
+  box-shadow:
+    0 0.2rem 0.6rem rgb(0 0 0 / 45%),
+    0 1.6rem 3.4rem rgb(0 0 0 / 60%);
+  color: var(--ink);
+  /* no rotate on the scroll surface: a tilted paint root re-rasters
+     every tile on scroll, and fast flicks expose black unpainted tiles */
+}
+
+/* broth ring and a chili smudge, service was busy.
+   blends live on the small pseudos, never on this full-bleed layer:
+   a sheet-sized multiply group forces whole-page backdrop readback */
+.wear {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  pointer-events: none;
+}
+
+.wear::before {
+  position: absolute;
+  top: 24%;
+  right: -2.2rem;
+  width: 9.5rem;
+  height: 8rem;
+  border: 0.45rem solid rgb(150 90 30 / 15%);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 0.16rem rgb(150 90 30 / 8%),
+    0 0 1.6rem rgb(150 90 30 / 8%);
+  content: "";
+  mix-blend-mode: multiply;
+  transform: rotate(14deg);
+}
+
+.wear::after {
+  position: absolute;
+  bottom: 16%;
+  left: 8%;
+  width: 3.4rem;
+  height: 2.1rem;
+  background: radial-gradient(
+    closest-side,
+    rgb(198 62 22 / 14%),
+    transparent 74%
+  );
+  border-radius: 50%;
+  content: "";
+  mix-blend-mode: multiply;
+  transform: rotate(-18deg);
+}
+
+/* a second ring lower down, and a shoyu drip trail */
+.stainRing {
+  position: absolute;
+  z-index: 2;
+  bottom: 30%;
+  left: -1.6rem;
+  width: 6.5rem;
+  height: 5.6rem;
+  border: 0.38rem solid rgb(150 90 30 / 12%);
+  border-radius: 50%;
+  content: "";
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transform: rotate(-9deg);
+}
+
+.stainDrops {
+  position: absolute;
+  z-index: 2;
+  top: 11%;
+  left: 32%;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: rgb(150 90 30 / 18%);
+  border-radius: 50%;
+  box-shadow:
+    1.1rem 0.4rem 0 -0.1rem rgb(150 90 30 / 14%),
+    2.3rem -0.2rem 0 -0.15rem rgb(150 90 30 / 16%),
+    3.1rem 0.5rem 0 -0.2rem rgb(150 90 30 / 12%),
+    -0.9rem -0.3rem 0 -0.18rem rgb(150 90 30 / 12%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* the bowl sat here while somebody read their own menu */
+.stainBowl {
+  position: absolute;
+  z-index: 2;
+  top: 38%;
+  left: 26%;
+  width: 9.5rem;
+  height: 8.6rem;
+  border: 0.5rem solid rgb(150 90 30 / 8%);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.14rem rgb(150 90 30 / 5%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transform: rotate(7deg);
+}
+
+/* chili oil got away mid-service */
+.stainSplat {
+  position: absolute;
+  z-index: 2;
+  top: 55%;
+  right: 7%;
+  width: 7.5rem;
+  height: 6.5rem;
+  background:
+    radial-gradient(38% 34% at 42% 46%, rgb(198 82 18 / 15%), transparent 70%),
+    radial-gradient(15% 13% at 74% 28%, rgb(198 82 18 / 17%), transparent 72%),
+    radial-gradient(10% 9% at 82% 62%, rgb(198 82 18 / 14%), transparent 70%),
+    radial-gradient(8% 8% at 20% 76%, rgb(198 82 18 / 13%), transparent 70%),
+    radial-gradient(5% 5% at 60% 84%, rgb(198 82 18 / 12%), transparent 70%),
+    radial-gradient(4% 4% at 90% 42%, rgb(198 82 18 / 12%), transparent 70%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  transform: rotate(-9deg);
+}
+
+/* one shoyu drip ran down the paper and dried */
+.stainRun {
+  position: absolute;
+  z-index: 2;
+  top: 66%;
+  left: 12%;
+  width: 2.6rem;
+  height: 7.5rem;
+  background:
+    radial-gradient(42% 16% at 50% 7%, rgb(150 90 30 / 17%), transparent 72%),
+    linear-gradient(
+      180deg,
+      rgb(150 90 30 / 13%),
+      rgb(150 90 30 / 5%) 68%,
+      transparent
+    )
+    50% 0 / 3px 100% no-repeat,
+    radial-gradient(30% 9% at 50% 90%, rgb(150 90 30 / 14%), transparent 70%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* striped washi tape holding the sheet up */
+.tape {
+  position: absolute;
+  z-index: 3;
+  width: 5.2rem;
+  height: 1.5rem;
+  background: repeating-linear-gradient(
+    45deg,
+    rgb(207 47 30 / 62%) 0 0.55rem,
+    rgb(244 236 216 / 72%) 0.55rem 1.1rem
+  );
+  box-shadow: 0 1px 3px rgb(0 0 0 / 28%);
+  opacity: 0.92;
+}
+
+.tapeLeft {
+  top: -0.65rem;
+  left: -1.5rem;
+  rotate: -38deg;
+}
+
+.tapeRight {
+  top: -0.55rem;
+  right: -1.4rem;
+  rotate: 41deg;
+}
+
+.tapeSideL {
+  top: 38%;
+  left: -1.9rem;
+  width: 3.6rem;
+  height: 1.2rem;
+  rotate: 56deg;
+}
+
+.tapeSideR {
+  top: 84%;
+  right: -1.8rem;
+  width: 3.6rem;
+  height: 1.2rem;
+  rotate: -49deg;
+}
+
+/* ---- masthead ---- */
+
+.masthead {
+  position: relative;
+  margin-bottom: 1.6rem;
+}
+
+.masthead p {
+  margin: 0;
+}
+
+.eyebrow {
+  color: var(--ink-muted);
+  font-family: var(--font-code);
+  font-size: var(--text-xs);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.shopName {
+  display: flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.shopMark {
+  color: var(--shu);
+  font: 700 clamp(1.2rem, 3.4vw, 1.6rem) / 1 var(--font-jp);
+  letter-spacing: 0.1em;
+}
+
+/* riso misprint: the red plate slipped a hair */
+.shopScript {
+  color: var(--shu);
+  font: 400 clamp(2.2rem, 6.5vw, 3.4rem) / 1.1 var(--font-signage);
+  text-shadow:
+    2px 2px 0 rgb(207 47 30 / 25%),
+    -1px -1px 0 rgb(70 110 150 / 22%);
+}
+
+/* one brush drag under the name, owner's own hand */
+.brushLine {
+  display: block;
+  width: clamp(9rem, 42%, 13rem);
+  margin-top: 0.15rem;
+  fill: none;
+  opacity: 0.8;
+  stroke: var(--shu);
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.tagline {
+  margin-top: 0.5rem;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+/* the house story; global prose-link rule wins, so links recolor via vars */
+.story {
+  --color-signal-cyan: var(--shu-ink);
+  --color-signal-pink: var(--shu);
+  --color-text-strong: #000;
+
+  max-width: 38rem;
+  margin-top: 0.9rem;
+  padding-top: 0.8rem;
+  border-top: 2px dotted var(--ink-faint);
+  color: var(--ink-muted);
+  font: italic 400 0.92rem / 1.7 var(--font-body);
+}
+
+/* ---- the chit ---- */
+
+.chit {
+  margin-top: 2.4rem;
+  padding-top: 1rem;
+  border-top: 3px double rgb(168 34 15 / 55%);
+  color: var(--ink-muted);
+  font-family: var(--font-code);
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  line-height: 2;
+  text-align: center;
+}
+
+.chit p {
+  margin: 0;
+}
+
+.chitLink {
+  color: var(--shu-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.chitLink:hover {
+  color: var(--shu);
+}
+
+/* the house seal, pressed a little too hard */
+.hanko {
+  position: absolute;
+  right: clamp(1rem, 4vw, 2.2rem);
+  bottom: 1.1rem;
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid rgb(207 47 30 / 78%);
+  border-radius: 4px;
+  color: rgb(207 47 30 / 84%);
+  font: 700 1.4rem / 1 var(--font-jp);
+  mix-blend-mode: multiply;
+  place-items: center;
+  rotate: -8deg;
+}
+
+@media (max-width: 559px) {
+  .tapeSideL,
+  .tapeSideR {
+    display: none;
+  }
+}
+
+/* ---- v2 foreground pass: a precisely registered, working paper menu ---- */
+
+.sheet {
+  border: 1px solid rgb(84 58 28 / 26%);
+  box-shadow:
+    inset 1px 0 rgb(255 255 255 / 48%),
+    inset -2px 0 rgb(95 66 31 / 10%),
+    inset 0 -2px rgb(95 66 31 / 12%),
+    0 0.2rem 0.6rem rgb(0 0 0 / 45%),
+    0 1.6rem 3.4rem rgb(0 0 0 / 60%);
+  rotate: 0deg;
+}
+
+/* Paper fibres and printer registration marks stay on the physical sheet. */
+.sheet::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background:
+    linear-gradient(var(--shu-ink), var(--shu-ink)) 12px 12px / 12px 1px
+    no-repeat,
+    linear-gradient(var(--shu-ink), var(--shu-ink)) 12px 12px / 1px 12px
+    no-repeat,
+    linear-gradient(var(--shu-ink), var(--shu-ink)) calc(100% - 12px) 12px /
+    12px 1px no-repeat,
+    linear-gradient(var(--shu-ink), var(--shu-ink)) calc(100% - 12px) 12px / 1px
+    12px no-repeat,
+    linear-gradient(var(--shu-ink), var(--shu-ink)) 12px calc(100% - 12px) /
+    12px 1px no-repeat,
+    linear-gradient(var(--shu-ink), var(--shu-ink)) 12px calc(100% - 12px) / 1px
+    12px no-repeat,
+    linear-gradient(var(--shu-ink), var(--shu-ink)) calc(100% - 12px)
+    calc(100% - 12px) / 12px 1px no-repeat,
+    linear-gradient(var(--shu-ink), var(--shu-ink)) calc(100% - 12px)
+    calc(100% - 12px) / 1px 12px no-repeat,
+    repeating-linear-gradient(
+      87deg,
+      transparent 0 19px,
+      rgb(69 48 23 / 4%) 20px,
+      transparent 21px 43px
+    );
+  content: "";
+  opacity: 0.44;
+  pointer-events: none;
+}
+
+.masthead,
+.chit {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 559px) {
+  .sheet::before {
+    opacity: 0.32;
+  }
+}
+
+@media (forced-colors: active) {
+  .sheet::before {
+    display: none;
+  }
+}

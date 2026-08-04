@@ -96,11 +96,6 @@
   border-left-color: var(--win-dark);
 }
 
-.windowControls > button:focus-visible {
-  outline: 1px dotted #000;
-  outline-offset: -3px;
-}
-
 .menubar {
   position: relative;
   z-index: 30;
@@ -122,7 +117,6 @@
 }
 
 .menuTrigger:hover,
-.menuTrigger:focus-visible,
 .menuTrigger[aria-expanded="true"] {
   border-color: var(--win-light) var(--win-shadow) var(--win-shadow)
     var(--win-light);
@@ -181,8 +175,7 @@
   text-transform: capitalize;
 }
 
-.menuItem:hover,
-.menuItem:focus-visible {
+.menuItem:hover {
   background: var(--win-title);
   color: white;
   outline: 0;

@@ -1,0 +1,375 @@
+/* ══ post-it, pen and paper hold the input ══ */
+
+/* ══ the j-card case: the paper lies flat where the post-it lived and
+   the empty tray shell hangs ajar off its right hinge, a quarter turn
+   plus a nudge. on load the shell starts shut over the paper and swings
+   open; the paper itself never moves. ══ */
+
+.caseScene {
+  position: absolute;
+  z-index: 15;
+  top: 26px;
+  /* hangs off the machine's right shoulder */
+  right: -62px;
+  width: 262px;
+  height: 396px;
+  perspective: 1600px;
+  perspective-origin: -25% 40%;
+  font-family: var(--hand);
+}
+
+/* windows without shoulder room tuck the case back in; the paper and
+   its writing must never clip at the viewport edge */
+@media (max-width: 1360px) {
+  .caseScene {
+    right: -18px;
+  }
+}
+
+/* the case throws paper-shaped darkness onto the speaker below */
+.caseScene::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  bottom: 9px;
+  left: 14px;
+  right: 34%;
+  height: 22px;
+  transform: skew(-6deg) rotate(-3deg);
+  box-shadow: 0 20px 14px rgb(0 0 0 / 30%);
+}
+
+.caseRig {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotate(-5deg);
+  animation: case-arrive 620ms cubic-bezier(0.3, 0.8, 0.3, 1) both;
+}
+
+/* ── the tracklist paper: inner face of the front flap, facing us ── */
+
+.casePaper {
+  position: absolute;
+  inset: 0;
+  padding: 14px 18px 12px;
+  color: var(--jc-ink);
+  background:
+    linear-gradient(270deg, rgb(0 0 0 / 14%), rgb(0 0 0 / 0%) 9%),
+    linear-gradient(180deg, var(--jc-paper-hi), var(--jc-paper));
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 12%),
+    -12px 16px 24px -12px rgb(0 0 0 / 42%);
+}
+
+.caseTitle {
+  margin: 0;
+  font-size: 26px;
+  line-height: 30px;
+  font-weight: 700;
+  transform: rotate(-0.8deg);
+}
+
+.caseTitle small {
+  margin-left: 6px;
+  color: var(--jc-ink-soft);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* printed rule under the handwriting; the press did this part */
+.caseRule {
+  margin: 7px 0 0;
+  padding-bottom: 4px;
+  border-bottom: 1.5px solid var(--jc-rule);
+  color: var(--jc-print);
+  font: 10px var(--micro);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.trackRows {
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: trk;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.trackRows li {
+  counter-increment: trk;
+  position: relative;
+  height: 44px;
+  line-height: 43px;
+  padding-left: 22px;
+  border-bottom: 1px dotted var(--jc-rule);
+  white-space: nowrap;
+}
+
+.trackRows li::before {
+  content: counter(trk) ".";
+  position: absolute;
+  left: 0;
+  color: #6f6448;
+  font-size: 15px;
+}
+
+.trackRows li:nth-child(odd) {
+  transform: rotate(-0.5deg);
+}
+
+.trackRows li:nth-child(even) {
+  transform: rotate(0.4deg);
+}
+
+.trackRows li[data-long="true"] {
+  font-size: 14px;
+  letter-spacing: -0.025em;
+}
+
+/* the rotated rows are sibling stacking contexts; the writing row must
+   sit above them so its dropdown is not buried by later lines */
+.trackRows li[data-active="true"] {
+  z-index: 3;
+}
+
+.caseFoot {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--jc-ink-soft);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ── spine fold: perpendicular at the hinge, a striped sliver ── */
+
+.caseSpine {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--jc-depth);
+  height: 100%;
+  transform-origin: right center;
+  transform: rotateY(86deg);
+  background:
+    linear-gradient(270deg, rgb(0 0 0 / 25%), rgb(0 0 0 / 0%) 55%),
+    linear-gradient(
+      180deg,
+      var(--jc-band) 0 34%,
+      var(--jc-band-2) 34% 67%,
+      var(--jc-band-3) 67%
+    );
+}
+
+/* ── the tray shell: hinged on the paper's right edge. its own faces
+   build a shallow box toward the viewer; rotateY swings the whole arm ── */
+
+.caseArm {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: 100% 50%;
+  transform: rotateY(93deg);
+  animation: case-open 1150ms 420ms cubic-bezier(0.34, 0.9, 0.3, 1.02) both;
+}
+
+/* tray interior: clear molded plastic, so the paper ghosts through
+   while the case is still shut */
+.armFloor {
+  position: absolute;
+  inset: 3px;
+  transform: translateZ(calc(var(--jc-depth) - 3px));
+  background: linear-gradient(
+    160deg,
+    rgb(120 128 138 / 14%),
+    rgb(40 44 52 / 22%) 70%
+  );
+  box-shadow: inset 0 0 10px rgb(0 0 0 / 25%);
+}
+
+/* the spindle towers of an empty tray, stacked for the vertical case */
+.armPost {
+  position: absolute;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  margin-left: -15px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #3c4046, #17191c 68%);
+  box-shadow: 0 0 0 2px rgb(0 0 0 / 55%);
+}
+
+.armPost[data-post="a"] {
+  top: 24%;
+}
+
+.armPost[data-post="b"] {
+  bottom: 24%;
+}
+
+/* clear polystyrene back: mostly transmission, one hard streak */
+.armBack {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(var(--jc-depth));
+  border-radius: 3px;
+  background:
+    linear-gradient(
+      115deg,
+      rgb(255 255 255 / 32%) 0 12%,
+      rgb(255 255 255 / 6%) 12% 30%,
+      rgb(255 255 255 / 0%) 30% 46%,
+      rgb(255 255 255 / 14%) 46% 52%,
+      rgb(255 255 255 / 0%) 52%
+    ),
+    linear-gradient(160deg, rgb(70 76 84 / 20%), rgb(30 34 40 / 28%));
+  box-shadow:
+    inset 0 0 0 1.5px rgb(255 255 255 / 45%),
+    inset 0 0 0 3px rgb(255 255 255 / 12%);
+}
+
+.armWall {
+  position: absolute;
+  background: linear-gradient(
+    180deg,
+    rgb(140 148 158 / 30%),
+    rgb(60 66 74 / 34%)
+  );
+}
+
+.armWall[data-side="top"] {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--jc-depth);
+  transform-origin: top;
+  transform: rotateX(90deg);
+}
+
+.armWall[data-side="bottom"] {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--jc-depth);
+  transform-origin: bottom;
+  transform: rotateX(-90deg);
+}
+
+/* the free long edge: the strip that faces us once the case is open */
+.armWall[data-side="rim"] {
+  top: 0;
+  left: 0;
+  width: var(--jc-depth);
+  height: 100%;
+  transform-origin: left;
+  transform: rotateY(-90deg);
+  background:
+    linear-gradient(
+      180deg,
+      rgb(255 255 255 / 55%),
+      rgb(255 255 255 / 12%) 8%,
+      rgb(255 255 255 / 8%) 92%,
+      rgb(255 255 255 / 40%)
+    ),
+    linear-gradient(90deg, #9aa1a8, #5c6167 60%, #7c828a);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 28%);
+}
+
+@keyframes case-arrive {
+  from {
+    opacity: 0;
+    transform: rotate(-5deg) translate3d(0, 6px, 34px);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(-5deg) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes case-open {
+  from {
+    transform: rotateY(4deg);
+  }
+
+  to {
+    transform: rotateY(93deg);
+  }
+}
+
+/* the ansaphone seats the j-card in flow; 276 is the 262 box plus the
+   open tray's 30px right overhang minus the tilt's 17px left one */
+.ansaphone .caseScene {
+  position: relative;
+  z-index: 30;
+  top: auto;
+  right: auto;
+  margin-left: max(0px, calc((100% - 276px) / 2));
+}
+
+@media (max-width: 759px) {
+  /* The transport and the writing line are one focused workstation. Keep the
+     active line pinned immediately below the folded machine; otherwise the
+     paper retains its document position and scrolls beneath the sticky deck. */
+  .ansaphone[data-entry-open="true"] .caseScene {
+    position: sticky;
+    z-index: 41;
+    top: calc(max(8px, var(--safe-area-top)) + 11.95rem);
+    height: 3.25rem;
+    perspective: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .caseScene::before,
+  .ansaphone[data-entry-open="true"] .caseTitle,
+  .ansaphone[data-entry-open="true"] .caseRule,
+  .ansaphone[data-entry-open="true"] .caseFoot,
+  .ansaphone[data-entry-open="true"] .caseSpine,
+  .ansaphone[data-entry-open="true"] .caseArm {
+    display: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .caseRig,
+  .ansaphone[data-entry-open="true"] .casePaper {
+    position: relative;
+    inset: auto;
+    height: 100%;
+    transform: none;
+    animation: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .casePaper {
+    overflow: visible;
+    padding: 4px 12px;
+  }
+
+  .ansaphone[data-entry-open="true"] .trackRows {
+    height: 44px;
+    margin: 0;
+  }
+
+  .ansaphone[data-entry-open="true"] .trackRows li:not([data-active="true"]),
+  .ansaphone[data-entry-open="true"] .trackRows li::before {
+    display: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .trackRows li[data-active="true"] {
+    height: 44px;
+    padding-left: 0;
+    border: 0;
+    line-height: 44px;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* the case skips its swing; base styles are already the open pose */
+  .caseRig,
+  .caseArm {
+    animation: none;
+  }
+}

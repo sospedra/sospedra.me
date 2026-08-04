@@ -1,0 +1,379 @@
+.zoomControls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.zoomControls legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.zoomControls button {
+  min-height: 2.75rem;
+  border: 1px solid var(--travel-line-strong);
+  background: #150f0a;
+  color: var(--travel-campfire);
+  font: 800 1rem / 1 var(--font-code, monospace);
+}
+
+@media (max-width: 899px) {
+  .zoomControls {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: stretch;
+  }
+
+  .zoomControls button {
+    min-height: 2.75rem;
+  }
+}
+
+.zoomControls button {
+  border: 2px solid #725127;
+  background-color: #36220e;
+  background-image: var(--v2-brushed-brass);
+  color: #ffd08b;
+  text-shadow: 1px 1px #160b03;
+  box-shadow:
+    inset 2px 2px 0 rgb(255 224 160 / 20%),
+    inset -2px -2px 0 #1a0e04,
+    0 var(--v2-px) 0 #080402;
+  transition:
+    transform 80ms steps(2, end),
+    box-shadow 80ms steps(2, end);
+}
+
+.zoomControls button:active {
+  box-shadow:
+    inset 2px 2px var(--v2-px) rgb(0 0 0 / 64%),
+    inset -1px -1px 0 rgb(255 222 155 / 8%);
+  transform: translateY(var(--v2-px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoomControls button {
+    transition: none;
+  }
+}
+
+.zoomControls {
+  position: relative;
+  display: grid;
+  min-width: 6.25rem;
+  grid-template-columns: repeat(2, minmax(2.75rem, 1fr));
+  align-items: stretch;
+  gap: 0.34rem;
+  padding: 0.2rem 0.24rem 0.3rem;
+  border: 1px solid #1e211c;
+  background:
+    radial-gradient(
+      circle at 0.32rem 0.32rem,
+      #181a16 0 0.07rem,
+      #8d8a78 0.08rem 0.13rem,
+      transparent 0.14rem
+    ),
+    radial-gradient(
+      circle at calc(100% - 0.32rem) calc(100% - 0.32rem),
+      #181a16 0 0.07rem,
+      #8d8a78 0.08rem 0.13rem,
+      transparent 0.14rem
+    ),
+    var(--cockpit-grain), linear-gradient(145deg, #6e7168, #3c4039);
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 8%),
+    inset -2px -2px rgb(0 0 0 / 38%),
+    0 2px 0 rgb(0 0 0 / 25%);
+}
+
+.zoomControls button {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  place-items: center;
+  border: 2px solid #3c382d;
+  border-top-color: #e5dabb;
+  border-left-color: #b8af96;
+  border-right-color: #3f3b31;
+  border-bottom-color: #292821;
+  border-radius: 3px 3px 5px 5px;
+  background:
+    radial-gradient(
+      circle at 79% 18%,
+      rgb(73 66 49 / 52%) 0 0.12rem,
+      rgb(239 224 187 / 24%) 0.13rem 0.17rem,
+      transparent 0.18rem
+    ),
+    repeating-linear-gradient(
+      172deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px,
+      rgb(53 45 34 / 7%) 5px 6px
+    ),
+    linear-gradient(145deg, #ded3b4 0 18%, #a79e86 19% 66%, #746d5c 67%);
+  box-shadow:
+    inset 2px 2px rgb(255 255 255 / 28%),
+    inset -3px -3px rgb(28 27 23 / 30%),
+    0 4px 0 #494538,
+    0 6px 0 #171914,
+    0 7px 5px rgb(0 0 0 / 36%);
+  color: #292b25;
+  font-size: 1.08rem;
+  text-shadow:
+    0 1px rgb(255 255 255 / 30%),
+    1px 2px rgb(33 31 26 / 18%);
+  transform: translateY(-2px);
+  transition:
+    transform 80ms steps(2, end),
+    box-shadow 80ms steps(2, end),
+    filter 80ms linear;
+}
+
+.zoomControls button::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0.18rem;
+  border-top: 1px solid rgb(255 248 217 / 28%);
+  border-left: 1px solid rgb(255 248 217 / 16%);
+  border-radius: 2px;
+  content: "";
+  pointer-events: none;
+}
+
+.zoomControls button:last-child {
+  background:
+    radial-gradient(
+      circle at 79% 18%,
+      rgb(75 54 24 / 60%) 0 0.12rem,
+      rgb(247 221 150 / 25%) 0.13rem 0.17rem,
+      transparent 0.18rem
+    ),
+    repeating-linear-gradient(
+      172deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px,
+      rgb(60 40 18 / 8%) 5px 6px
+    ),
+    linear-gradient(145deg, #d4b963 0 18%, #9b813f 19% 66%, #65542f 67%);
+  border-top-color: #e9d290;
+  border-left-color: #baa15d;
+  border-right-color: #483c27;
+  border-bottom-color: #2d271c;
+  box-shadow:
+    inset 2px 2px rgb(255 245 194 / 24%),
+    inset -3px -3px rgb(51 38 19 / 34%),
+    0 4px 0 #4e422b,
+    0 6px 0 #171914,
+    0 7px 5px rgb(0 0 0 / 36%);
+  color: #2b281f;
+}
+
+.zoomControls button:active:not(:disabled):not([aria-disabled="true"]) {
+  filter: brightness(0.92);
+  box-shadow:
+    inset 3px 3px 5px rgb(0 0 0 / 28%),
+    inset -1px -1px rgb(255 255 255 / 12%),
+    0 1px 0 #272820,
+    0 2px 2px rgb(0 0 0 / 28%);
+  transform: translateY(4px);
+}
+
+.zoomControls
+  button:last-child:active:not(:disabled):not([aria-disabled="true"]) {
+  box-shadow:
+    inset 3px 3px 5px rgb(48 35 17 / 34%),
+    inset -1px -1px rgb(255 245 194 / 12%),
+    0 1px 0 #272820,
+    0 2px 2px rgb(0 0 0 / 28%);
+}
+
+.zoomControls button:disabled,
+.zoomControls button[aria-disabled="true"] {
+  cursor: not-allowed;
+  filter: saturate(0.35) brightness(0.72);
+  box-shadow:
+    inset 2px 2px 4px rgb(0 0 0 / 22%),
+    inset -1px -1px rgb(255 255 255 / 9%),
+    0 1px 0 #272820;
+  transform: translateY(3px);
+}
+
+/* The key well stays fixed. Only the cap travels, so the press reads as
+   physical depth instead of a shadow being swapped underneath one flat box. */
+.zoomControls button,
+.zoomControls button:last-child {
+  overflow: visible;
+  padding: 0.18rem;
+  border: 1px solid #1b1e1a;
+  border-radius: 0.35rem;
+  background: linear-gradient(145deg, #242722, #3b3e37 58%, #191b18);
+  box-shadow:
+    inset 0.2rem 0.2rem 0.28rem rgb(0 0 0 / 52%),
+    inset -0.06rem -0.06rem rgb(230 224 199 / 8%),
+    0 1px rgb(255 255 255 / 6%);
+  transform: none;
+}
+
+.zoomControls button::before {
+  z-index: 0;
+  inset: 0.14rem;
+  border: 1px solid rgb(7 8 7 / 78%);
+  border-radius: 0.24rem;
+  background: #171916;
+  box-shadow:
+    inset 0.16rem 0.16rem 0.24rem rgb(0 0 0 / 58%),
+    inset -1px -1px rgb(255 255 255 / 5%);
+}
+
+.zoomKeyFace {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-height: 2.36rem;
+  place-items: center;
+  border: 1px solid;
+  border-color: #e0d7be #57544b #34332d #bcb5a2;
+  border-radius: 0.24rem 0.24rem 0.34rem 0.34rem;
+  background:
+    radial-gradient(
+      circle at 76% 18%,
+      rgb(71 65 51 / 42%) 0 0.11rem,
+      rgb(239 228 199 / 24%) 0.12rem 0.16rem,
+      transparent 0.17rem
+    ),
+    repeating-linear-gradient(
+      172deg,
+      rgb(255 255 255 / 5%) 0 1px,
+      transparent 1px 5px,
+      rgb(53 45 34 / 6%) 5px 6px
+    ),
+    linear-gradient(145deg, #d8cfb8 0 18%, #a6a191 19% 66%, #716e64 67%);
+  box-shadow:
+    inset 0.14rem 0.12rem rgb(255 255 255 / 22%),
+    inset -0.18rem -0.16rem rgb(28 27 23 / 28%),
+    0 0.32rem 0 #4a483f,
+    0 0.46rem 0.38rem rgb(0 0 0 / 38%);
+  color: #292b26;
+  font-size: 1.08rem;
+  text-shadow:
+    0 1px rgb(255 255 255 / 28%),
+    1px 2px rgb(33 31 26 / 17%);
+  transform: translateY(-0.18rem) rotateX(4deg);
+  transform-origin: center bottom;
+  transition:
+    transform 95ms cubic-bezier(0.2, 0.82, 0.24, 1),
+    box-shadow 95ms cubic-bezier(0.2, 0.82, 0.24, 1),
+    filter 95ms linear;
+}
+
+.zoomControls button:last-child .zoomKeyFace {
+  border-color: #d9c58f #62573e #383226 #ad9d70;
+  background:
+    radial-gradient(
+      circle at 76% 18%,
+      rgb(79 60 32 / 46%) 0 0.11rem,
+      rgb(235 215 164 / 22%) 0.12rem 0.16rem,
+      transparent 0.17rem
+    ),
+    repeating-linear-gradient(
+      172deg,
+      rgb(255 255 255 / 4%) 0 1px,
+      transparent 1px 5px,
+      rgb(60 40 18 / 7%) 5px 6px
+    ),
+    linear-gradient(145deg, #c9b57e 0 18%, #968459 19% 66%, #625942 67%);
+  box-shadow:
+    inset 0.14rem 0.12rem rgb(255 244 210 / 19%),
+    inset -0.18rem -0.16rem rgb(44 35 22 / 30%),
+    0 0.32rem 0 #4a4233,
+    0 0.46rem 0.38rem rgb(0 0 0 / 38%);
+}
+
+.zoomControls button:active:not(:disabled):not([aria-disabled="true"]),
+.zoomControls
+  button:last-child:active:not(:disabled):not([aria-disabled="true"]) {
+  filter: none;
+  box-shadow:
+    inset 0.2rem 0.2rem 0.28rem rgb(0 0 0 / 52%),
+    inset -0.06rem -0.06rem rgb(230 224 199 / 8%),
+    0 1px rgb(255 255 255 / 6%);
+  transform: none;
+}
+
+.zoomControls
+  button:active:not(:disabled):not([aria-disabled="true"])
+  .zoomKeyFace,
+.zoomControls
+  button[data-pressed="true"]:not(:disabled):not([aria-disabled="true"])
+  .zoomKeyFace {
+  filter: brightness(0.93);
+  box-shadow:
+    inset 0.2rem 0.2rem 0.26rem rgb(0 0 0 / 28%),
+    inset -0.06rem -0.06rem rgb(255 255 255 / 9%),
+    0 0.05rem 0 #3a3932;
+  transform: translateY(0.22rem) rotateX(0);
+}
+
+.zoomControls button:disabled,
+.zoomControls button[aria-disabled="true"] {
+  filter: saturate(0.45) brightness(0.72);
+  box-shadow:
+    inset 0.2rem 0.2rem 0.28rem rgb(0 0 0 / 52%),
+    inset -0.06rem -0.06rem rgb(230 224 199 / 6%);
+  transform: none;
+}
+
+.zoomControls button:disabled .zoomKeyFace,
+.zoomControls button[aria-disabled="true"] .zoomKeyFace {
+  box-shadow:
+    inset 0.14rem 0.12rem rgb(255 255 255 / 16%),
+    inset -0.18rem -0.16rem rgb(28 27 23 / 24%),
+    0 0.32rem 0 #3f3d36,
+    0 0.46rem 0.3rem rgb(0 0 0 / 28%);
+  transform: translateY(-0.18rem) rotateX(4deg);
+}
+
+@media (max-width: 899px) {
+  .zoomControls {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 540px) {
+  .zoomControls {
+    min-width: 6.25rem;
+  }
+}
+
+@media (max-height: 700px) and (max-width: 649px) {
+  .zoomControls {
+    display: grid;
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .zoomControls button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgb(233 225 183 / 22%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoomKeyFace,
+  .zoomControls button {
+    transition: none;
+  }
+}

@@ -1,0 +1,333 @@
+@reference "../../services/style/global.css";
+
+.field {
+  composes: field from "./chrome.module.css";
+}
+
+.hud {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.38rem;
+  padding: 0.32rem 0.42rem;
+  border-width: 3px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+  background: var(--win-face);
+}
+
+.lcd {
+  min-width: 3.6ch;
+  padding: 0.08rem 0.18rem;
+  border: 1px inset var(--win-mid);
+  background: #070707;
+  color: #ff1818;
+  font-family: "Courier New", monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-align: right;
+  text-shadow: 0 0 0.32rem rgb(255 0 0 / 72%);
+}
+
+.face {
+  composes: face from "./chrome.module.css";
+}
+
+.boardScroll {
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.board {
+  display: grid;
+  width: fit-content;
+  grid-template-columns: repeat(var(--cols, 9), var(--cell, 2rem));
+  border-width: 3px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-mid);
+  background: var(--win-face);
+  touch-action: manipulation;
+}
+
+.cell {
+  display: grid;
+  width: var(--cell, 2rem);
+  height: var(--cell, 2rem);
+  place-items: center;
+  padding: 0;
+  background: var(--win-face);
+  color: var(--win-ink);
+  font-family: Arial, sans-serif;
+  font-size: calc(var(--cell, 2rem) * 0.58);
+  font-weight: 900;
+  line-height: 1;
+  user-select: none;
+}
+
+.cell[data-variant="hidden"] {
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-mid);
+  border-bottom-color: var(--win-mid);
+  border-left-color: var(--win-light);
+  font-size: calc(var(--cell, 2rem) * 0.58);
+}
+
+.board[data-mode="flag"] .cell[data-variant="hidden"] {
+  cursor: cell;
+}
+
+.board[data-status="idle"] .cell[data-variant="hidden"]:active,
+.board[data-status="playing"] .cell[data-variant="hidden"]:active {
+  border-width: 1px;
+  border-color: var(--win-mid);
+}
+
+.cell[data-variant="revealed"],
+.cell[data-variant="boom"],
+.cell[data-variant="wrong"] {
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: var(--win-mid);
+  border-left-color: var(--win-mid);
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.cell[data-variant="boom"] {
+  background: #ff0000;
+}
+
+.cell[data-variant="wrong"] {
+  position: relative;
+}
+
+.cell[data-variant="wrong"]::after {
+  content: "×";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #ff0000;
+  font-size: calc(var(--cell, 2rem) * 0.8);
+  font-weight: 900;
+}
+
+.board[data-status="won"] .cell,
+.board[data-status="lost"] .cell {
+  pointer-events: none;
+}
+
+.cell[data-adjacent="1"] {
+  color: #0000ff;
+}
+
+.cell[data-adjacent="2"] {
+  color: #005700;
+}
+
+.cell[data-adjacent="3"] {
+  color: #c00000;
+}
+
+.cell[data-adjacent="4"] {
+  color: #000080;
+}
+
+.cell[data-adjacent="5"] {
+  color: #800000;
+}
+
+.cell[data-adjacent="6"] {
+  color: #005757;
+}
+
+.cell[data-adjacent="7"] {
+  color: #000000;
+}
+
+.cell[data-adjacent="8"] {
+  color: #595959;
+}
+
+.statusBar {
+  composes: bevelIn from "./chrome.module.css";
+  display: flex;
+  min-height: 2rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.38rem;
+  padding-left: 0.35rem;
+  color: #202020;
+  font-size: 0.68rem;
+}
+
+.modeSwitch {
+  display: flex;
+  flex: 0 0 auto;
+  min-inline-size: 0;
+  gap: 2px;
+  margin: 0;
+  padding: 2px;
+  border: 0;
+}
+
+.modeSwitch button {
+  min-height: 1.55rem;
+  padding: 0.15rem 0.5rem;
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-shadow);
+  border-bottom-color: var(--win-shadow);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  color: #000;
+  font-family: inherit;
+  font-size: 0.66rem;
+}
+
+.modeSwitch button[aria-pressed="true"] {
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+  background:
+    radial-gradient(#fff 0.6px, transparent 0.8px) 0 0 / 3px 3px,
+    #d6d6d6;
+  font-weight: 700;
+}
+
+.helpWindow {
+  composes: bevelOut from "./chrome.module.css";
+  position: absolute;
+  z-index: 40;
+  top: clamp(1.25rem, 12vh, 5rem);
+  left: 50%;
+  width: min(23rem, calc(100% - 2rem));
+  transform: translateX(-50%);
+}
+
+.helpBody {
+  display: flex;
+  flex-direction: column;
+  padding: 0.6rem 0.85rem 0.8rem;
+  font-size: 0.74rem;
+}
+
+.helpBody ul {
+  margin: 0 0 0.75rem;
+  padding-left: 1.15rem;
+  list-style-type: square;
+}
+
+.helpBody li {
+  padding-block: 0.12rem;
+}
+
+.helpBody kbd {
+  padding: 0 0.2rem;
+  border: 1px solid var(--win-ink);
+  font-family: "Courier New", monospace;
+  font-size: 0.7rem;
+}
+
+.okButton {
+  min-width: 5rem;
+  min-height: 1.75rem;
+  align-self: center;
+  padding: 0.12rem 1rem;
+  border-width: 2px;
+  border-style: solid;
+  border-top-color: var(--win-light);
+  border-right-color: var(--win-shadow);
+  border-bottom-color: var(--win-shadow);
+  border-left-color: var(--win-light);
+  background: var(--win-face);
+  color: var(--win-ink);
+  font-family: inherit;
+}
+
+.okButton:active {
+  border-top-color: var(--win-shadow);
+  border-right-color: var(--win-light);
+  border-bottom-color: var(--win-light);
+  border-left-color: var(--win-shadow);
+}
+
+@media (max-width: 47.99rem) {
+  .statusBar {
+    min-height: 2.45rem;
+  }
+
+  .statusBar > span {
+    max-width: 7.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .modeSwitch button,
+  .face,
+  .okButton {
+    min-height: 2.75rem;
+  }
+
+  .modeSwitch button {
+    padding-inline: 0.65rem;
+  }
+}
+
+@media (max-width: 25rem) {
+  .statusBar > span {
+    display: none;
+  }
+
+  .statusBar {
+    justify-content: flex-end;
+  }
+}
+
+@media (max-height: 35rem) {
+  .statusBar > span {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .face {
+    transition: transform 70ms steps(1, end);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .face {
+    animation: none;
+    transition: none;
+  }
+}
+
+.statusBar[data-status="lost"] > span {
+  color: #a00000;
+  font-weight: 700;
+}
+
+.statusBar[data-status="won"] > span {
+  color: #005b00;
+  font-weight: 700;
+}

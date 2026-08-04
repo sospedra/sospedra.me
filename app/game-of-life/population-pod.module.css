@@ -1,0 +1,380 @@
+@reference "../../services/style/global.css";
+
+.instrumentPod {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid #69797a;
+  border-radius: 0.8rem 0.22rem 0.7rem 0.25rem;
+  padding: 1rem 0.72rem 0.75rem;
+  color: var(--life-panel-ink);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 25%), transparent 28%),
+    linear-gradient(180deg, var(--life-panel-light), #647479);
+  box-shadow: var(--life-bevel), var(--life-shadow);
+}
+
+.instrumentPod::after {
+  position: absolute;
+  inset: 0.42rem;
+  pointer-events: none;
+  border: 1px solid rgb(20 33 37 / 33%);
+  border-radius: 0.55rem 0.12rem 0.5rem 0.15rem;
+  content: "";
+}
+
+.instrumentLabel {
+  position: relative;
+  z-index: 2;
+  display: block;
+  color: #2c3d40;
+  font: 900 0.48rem / 1 var(--font-code);
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.populationPod {
+  display: grid;
+  min-width: 0;
+  grid-column: 3;
+  grid-template-columns: 1fr 0.55rem;
+  grid-template-rows: auto auto auto minmax(3.2rem, 1fr);
+  gap: 0.6rem 0.55rem;
+  align-content: center;
+}
+
+.populationPod .instrumentLabel {
+  grid-column: 1 / -1;
+}
+
+.populationReadout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-width: 0;
+  grid-column: 1;
+  border: 0.28rem solid #26383e;
+  border-radius: 0.18rem;
+  padding: 0.45rem 0.5rem;
+  background:
+    linear-gradient(180deg, rgb(23 61 120 / 55%), transparent),
+    var(--life-screen);
+  box-shadow: var(--life-cavity);
+  font-family: var(--font-code);
+  text-transform: uppercase;
+}
+
+.populationReadout span {
+  color: #8ebeb6;
+  font-size: 0.4rem;
+  letter-spacing: 0.1em;
+}
+
+.populationReadout strong {
+  overflow: hidden;
+  margin-top: 0.22rem;
+  color: var(--life-cyan);
+  font-size: clamp(1.2rem, 2.2vw, 1.85rem);
+  line-height: 1;
+  letter-spacing: -0.06em;
+  text-overflow: ellipsis;
+}
+
+.signalBank {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  grid-column: 2;
+  grid-row: 2 / 5;
+  flex-direction: column-reverse;
+  gap: 0.16rem;
+  padding: 0.25rem 0.12rem;
+  border: 1px solid #26383e;
+  background: #1d3037;
+}
+
+.signalBank i {
+  width: 100%;
+  min-height: 0.2rem;
+  flex: 1;
+  background: #3d5053;
+}
+
+.signalBank i[data-on="true"] {
+  background: var(--life-cyan);
+  box-shadow: 0 0 0.3rem rgb(88 239 212 / 58%);
+}
+
+.signalBank i[data-on="true"]:nth-last-child(-n + 3) {
+  background: var(--life-red);
+  box-shadow: 0 0 0.3rem rgb(255 73 59 / 58%);
+}
+
+.deltaReadout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-column: 1;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.deltaReadout div {
+  display: grid;
+  min-width: 0;
+  border: 1px solid rgb(16 26 29 / 42%);
+  padding: 0.32rem 0.4rem;
+  background: rgb(216 211 188 / 28%);
+  font-family: var(--font-code);
+  text-transform: uppercase;
+}
+
+.deltaReadout dt {
+  color: #3c5052;
+  font-size: 0.38rem;
+  letter-spacing: 0.08em;
+}
+
+.deltaReadout dd {
+  margin: 0.17rem 0 0;
+  color: #16282d;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.deltaReadout div:first-child dd {
+  color: #006e65;
+}
+
+.deltaReadout div:last-child dd {
+  color: #9c2b25;
+}
+
+.scope {
+  position: relative;
+  z-index: 2;
+  min-height: 3.25rem;
+  grid-column: 1;
+  overflow: hidden;
+  border: 0.24rem solid #26383e;
+  border-radius: 0.16rem;
+  background: var(--life-screen);
+  box-shadow: var(--life-cavity);
+}
+
+.scopeTrace {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.scopeTrace path {
+  fill: none;
+  stroke: rgb(88 239 212 / 14%);
+  stroke-width: 0.75;
+}
+
+.scopeTrace polyline {
+  fill: none;
+  filter: drop-shadow(0 0 1px var(--life-cyan));
+  stroke: var(--life-cyan);
+  stroke-width: 1.3;
+  vector-effect: non-scaling-stroke;
+}
+
+.instrumentPod {
+  border-color: #6a695f;
+  border-radius: 0.35rem 0.1rem 0.3rem 0.1rem;
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 40%), transparent 28%),
+    linear-gradient(180deg, #c7c5b8, #98998e);
+}
+
+.instrumentPod::after {
+  border-color: rgb(39 39 36 / 36%);
+  border-radius: 0.2rem 0.06rem 0.18rem 0.06rem;
+}
+
+.instrumentLabel {
+  color: var(--life-panel-ink);
+}
+
+.populationReadout {
+  border-color: #393a34;
+  background:
+    linear-gradient(180deg, rgb(75 108 57 / 44%), transparent),
+    var(--life-screen);
+}
+
+.populationReadout span {
+  color: #91ad76;
+}
+
+.populationReadout strong {
+  color: var(--life-cyan);
+  text-shadow: 0 0 0.35rem rgb(168 229 109 / 40%);
+}
+
+.signalBank {
+  border-color: #4b4c45;
+  background: #33342f;
+}
+
+.signalBank i {
+  background: #5b5e55;
+}
+
+.signalBank i[data-on="true"] {
+  background: var(--life-cyan);
+  box-shadow: 0 0 0.3rem rgb(168 229 109 / 50%);
+}
+
+.signalBank i[data-on="true"]:nth-last-child(-n + 3) {
+  background: var(--life-red);
+  box-shadow: 0 0 0.3rem rgb(228 73 47 / 55%);
+}
+
+.deltaReadout div {
+  border-color: rgb(39 39 36 / 38%);
+  background: rgb(222 214 194 / 42%);
+}
+
+.deltaReadout dt {
+  color: #55584f;
+}
+
+.deltaReadout dd {
+  color: var(--life-panel-ink);
+}
+
+.scope {
+  border-color: #393a34;
+}
+
+.scopeTrace path {
+  stroke: rgb(168 229 109 / 16%);
+}
+
+.scopeTrace polyline {
+  filter: drop-shadow(0 0 1px var(--life-cyan));
+}
+
+@media (max-width: 74rem) {
+  .populationPod {
+    padding-inline: 0.6rem;
+  }
+
+  .scope {
+    min-height: 2.6rem;
+  }
+}
+
+@media (max-width: 45rem) {
+  .populationPod {
+    min-height: 0;
+    border-radius: 0.35rem;
+    padding: 0.48rem 0.52rem;
+  }
+
+  .populationPod {
+    grid-column: 1;
+    grid-row: 2;
+    grid-template-columns: minmax(6rem, 0.8fr) minmax(8rem, 1.3fr) 0.42rem;
+    grid-template-rows: auto 1fr;
+    gap: 0.28rem 0.38rem;
+  }
+
+  .populationPod .instrumentLabel {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 0.53rem;
+    text-align: left;
+  }
+
+  .populationReadout {
+    grid-column: 1;
+    grid-row: 2;
+    border-width: 0.18rem;
+    padding: 0.3rem 0.38rem;
+  }
+
+  .populationReadout strong {
+    font-size: 1rem;
+  }
+
+  .signalBank {
+    grid-column: 3;
+    grid-row: 1 / 3;
+    gap: 0.09rem;
+  }
+
+  .deltaReadout {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-content: center;
+    gap: 0.2rem;
+  }
+
+  .deltaReadout div {
+    display: flex;
+    gap: 0.2rem;
+    align-items: baseline;
+    border: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .deltaReadout dt {
+    font-size: 0.42rem;
+  }
+
+  .deltaReadout dd {
+    font-size: 0.58rem;
+  }
+
+  .scope {
+    display: none;
+  }
+}
+
+@media (max-width: 45rem) and (max-height: 42rem) {
+  .instrumentPod {
+    display: none;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .instrumentPod {
+    display: none;
+  }
+}
+
+.populationPod {
+  grid-column: 2;
+}
+
+@media (max-width: 45rem) {
+  .populationPod {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 45rem) and (max-height: 42rem) {
+  .instrumentPod {
+    display: none;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .instrumentPod {
+    display: none;
+  }
+}

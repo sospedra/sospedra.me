@@ -1,0 +1,421 @@
+@reference "../../services/style/global.css";
+
+.mobileClues {
+  position: relative;
+  z-index: 1;
+}
+
+.clueColumns {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  overflow: hidden;
+}
+
+/* Same plate-and-recess grammar as the grid: a raised shell tray holds
+   the clue sheet pressed into a paper well. */
+.clueGroup {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 50%);
+  border-radius: 0.55rem;
+  padding: 0.32rem;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 62%), transparent 30%), #c6cacf;
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 78%),
+    inset -1px -1px 0 rgb(69 71 78 / 14%),
+    -5px -5px 12px rgb(255 255 255 / 55%),
+    6px 8px 16px rgb(45 49 56 / 16%);
+}
+
+.cluePaper {
+  position: relative;
+
+  /* Safari only honors the rounded clip from a stacking context. */
+  isolation: isolate;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  border-radius: 0.26rem;
+  background: var(--cw-paper);
+}
+
+/* Child backgrounds paint over a parent inset shadow, so the well sits
+   on an overlay above the sheet. */
+.cluePaper::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 2px 2px 6px rgb(118 114 100 / 42%),
+    inset -2px -2px 6px rgb(255 255 255 / 55%),
+    inset 0 0 0 1px rgb(32 33 38 / 12%);
+  content: "";
+  pointer-events: none;
+}
+
+.clueHeading {
+  display: flex;
+  min-width: 0;
+  min-height: 1.95rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  border-bottom: 1px solid #cbc8bf;
+
+  /* Round the strip itself: the paper's overflow clip misses it in Safari. */
+  border-radius: 0.26rem 0.26rem 0 0;
+  padding: 0.3rem 0.6rem;
+  color: var(--cw-ink);
+  background: #ece9df;
+}
+
+.clueGroup:first-child .clueHeading {
+  box-shadow: inset 0.32rem 0 var(--cw-orange);
+}
+
+.clueGroup:last-child .clueHeading {
+  box-shadow: inset 0.32rem 0 var(--cw-blue-deep);
+}
+
+.clueHeading h2 {
+  margin: 0;
+  font: 750 0.62rem / 1 var(--font-code);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.clueTally {
+  color: var(--cw-muted);
+  font: 650 0.48rem / 1 var(--font-code);
+  letter-spacing: 0.06em;
+}
+
+.clueScroller {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--cw-paper);
+  scrollbar-color: #9fa1a5 transparent;
+  scrollbar-width: thin;
+
+  /* Rows leave through a fade instead of a hard slice at the well edge. */
+  mask-image: linear-gradient(
+    180deg,
+    transparent,
+    #000 0.4rem,
+    #000 calc(100% - 1rem),
+    transparent
+  );
+}
+
+.clueList {
+  margin: 0;
+  padding: 0 0 0.9rem;
+  list-style: none;
+}
+
+.clueList li {
+  margin: 0;
+}
+
+.clueButton {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 2.25rem;
+  grid-template-columns: 1.35rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem;
+  border: 0;
+  border-bottom: 1px solid #ddd9cf;
+  padding: 0.26rem 0.5rem 0.26rem 0.42rem;
+  color: #3d3e42;
+  background: var(--cw-paper);
+  text-align: left;
+  transition:
+    background var(--cw-fast) linear,
+    box-shadow var(--cw-fast) linear,
+    color var(--cw-fast) linear;
+}
+
+.clueButton:hover {
+  color: var(--cw-ink);
+  background: #f0eee6;
+}
+
+.clueButton[data-active="true"] {
+  color: #182331;
+  background: #dceaf4;
+  box-shadow: inset 0.32rem 0 var(--cw-blue-deep);
+}
+
+.clueNumber {
+  display: grid;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  place-items: center;
+  align-self: center;
+  border: 1px solid rgb(174 176 182 / 60%);
+  border-radius: 50%;
+  color: var(--cw-ink);
+  background: linear-gradient(135deg, #fff, #dddedf);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 2px 0 #a8abb1;
+  font: 750 0.44rem / 1 var(--font-code);
+}
+
+.clueButton[data-active="true"] .clueNumber {
+  border-color: #205ebd;
+  color: #fff;
+  background: var(--cw-blue-deep);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 24%),
+    0 2px 0 #16438a;
+}
+
+.clueCopy {
+  display: grid;
+  min-width: 0;
+  gap: 0.12rem;
+}
+
+.clueText {
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.clueMask {
+  font: 700 0.72rem / 1.25 var(--font-code);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.clueMeta {
+  color: var(--cw-muted);
+  font: 650 0.46rem / 1.2 var(--font-code);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.proofMark {
+  display: none;
+}
+
+.clueButton[data-strike="true"] .clueText,
+.clueButton[data-strike="true"] .clueMask {
+  text-decoration: line-through;
+  text-decoration-color: var(--cw-orange);
+  text-decoration-thickness: 1.5px;
+}
+
+.clueButton[data-solved="true"]:not([data-active="true"]) {
+  color: #63635a;
+}
+
+.clueButton[data-solved="true"]:not([data-active="true"]) .clueNumber {
+  border-color: #4a8d5c;
+  color: #173820;
+  background: #a8ddb5;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 48%),
+    0 2px 0 #6ba57a;
+}
+.mobileClues {
+  display: none;
+}
+
+.game[data-large-text="true"] .clueText,
+.game[data-large-text="true"] .clueMask {
+  font-size: 0.88rem;
+  line-height: 1.35;
+}
+
+.game[data-large-text="true"] .clueButton {
+  min-height: 2.8rem;
+}
+
+@media (max-width: 52rem), (max-width: 64rem) and (max-height: 36rem) {
+  .clueColumns {
+    display: none;
+  }
+
+  .mobileClues {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    grid-template-rows: 3.75rem minmax(0, 1fr);
+    grid-template-areas:
+      "tabs"
+      "list";
+    gap: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 0.55rem;
+    background: var(--cw-shell);
+    box-shadow: var(--cw-plate-shadow);
+  }
+
+  .clueTabs {
+    display: grid;
+    min-width: 0;
+    min-height: 0;
+    grid-area: tabs;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: stretch;
+    gap: 0.42rem;
+    margin: 0;
+    padding: 0.45rem 0.48rem 0.52rem;
+    border: 0;
+    background: #c5c9ce;
+  }
+
+  .clueTabs button {
+    min-width: 0;
+    min-height: 44px;
+    border: 0;
+    border-radius: 0.32rem;
+    color: var(--cw-muted);
+    background: linear-gradient(135deg, var(--cw-key-light), var(--cw-key));
+    box-shadow: var(--cw-key-shadow);
+    font: 750 0.54rem / 1 var(--font-code);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: translateY(-1px);
+  }
+
+  .clueTabs button:active {
+    box-shadow: var(--cw-key-pressed);
+    transform: translateY(2px);
+  }
+
+  .clueTabs button[aria-pressed="true"] {
+    color: #fff;
+    background: var(--cw-blue-deep);
+    box-shadow: var(--cw-key-shadow);
+  }
+
+  .mobileClueList {
+    min-width: 0;
+    min-height: 0;
+    grid-area: list;
+    overflow: hidden;
+    border-top: 1px solid #afb0ad;
+    background: var(--cw-paper);
+  }
+
+  .mobileClueList .clueGroup {
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: var(--cw-paper);
+    box-shadow: none;
+  }
+
+  .mobileClueList .cluePaper {
+    border-radius: 0;
+  }
+
+  .mobileClueList .cluePaper::after {
+    display: none;
+  }
+
+  .mobileClueList .clueHeading {
+    display: none;
+  }
+
+  .mobileClueList .clueButton {
+    min-height: 2.8rem;
+  }
+
+  .clueText {
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 30rem) {
+  .clueButton {
+    grid-template-columns: 1.3rem minmax(0, 1fr) auto;
+    gap: 0.34rem;
+    padding-inline: 0.38rem;
+  }
+
+  .clueText {
+    font-size: 0.74rem;
+  }
+
+  .clueMeta {
+    font-size: 0.46rem;
+  }
+}
+
+@media (max-width: 64rem) and (max-height: 36rem) {
+  .mobileClues {
+    grid-template-rows: 3.6rem minmax(0, 1fr);
+  }
+
+  .clueTabs {
+    padding-block: 0.35rem 0.45rem;
+  }
+}
+
+.game[data-short-viewport="true"] .mobileClues {
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "list";
+}
+
+.game[data-short-viewport="true"] .clueTabs {
+  display: none;
+}
+
+@media (forced-colors: active) {
+  .clueColumns,
+  .mobileClues {
+    color: CanvasText;
+    background: Canvas;
+  }
+  .clueGroup,
+  .cluePaper,
+  .mobileClueList {
+    color: CanvasText;
+    background: Canvas;
+    forced-color-adjust: none;
+  }
+
+  .cluePaper::after {
+    display: none;
+  }
+
+  .clueScroller {
+    mask-image: none;
+  }
+  .clueButton {
+    color: ButtonText;
+    background: ButtonFace;
+  }
+  .clueButton[data-active="true"] {
+    color: HighlightText;
+    background: Highlight;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clueButton,
+  .clueTabs button {
+    transition: none;
+  }
+}

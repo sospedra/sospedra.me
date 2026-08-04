@@ -1,0 +1,386 @@
+.difficulty {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.questionTelemetry {
+  position: relative;
+  display: grid;
+  min-height: 3.3rem;
+  align-items: stretch;
+  grid-template-columns: auto auto auto auto auto;
+  border: 1px solid var(--geo-line);
+  background: rgb(217 197 157 / 3%);
+}
+
+.questionMetric {
+  display: grid;
+  min-width: 5.2rem;
+  align-content: center;
+  padding: 0.42rem 0.65rem;
+}
+
+.questionMetric + .questionMetric,
+.questionTelemetry .difficulty {
+  border-left: 1px solid var(--geo-line);
+}
+
+.questionMetric > span:first-child {
+  color: var(--geo-sand-muted);
+  font: 600 0.46rem / 1 var(--font-code);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.questionMetric > strong {
+  margin-top: 0.32rem;
+  color: var(--geo-sand-bright);
+  font: 700 0.92rem / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+}
+
+.questionMetric > small {
+  margin-top: 0.2rem;
+  color: var(--geo-warning);
+  font: 700 0.42rem / 1 var(--font-code);
+  letter-spacing: 0.12em;
+}
+
+.questionMetric[data-urgent="true"] > strong {
+  color: var(--geo-warning);
+  animation: urgent-signal 600ms steps(2, end) infinite;
+}
+
+.questionTelemetry .difficulty {
+  padding-inline: 0.7rem;
+}
+
+.difficultyLabel {
+  min-width: 4.2ch;
+  color: var(--geo-sand-bright);
+  font: 700 0.7rem / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.difficultyBars {
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+}
+
+.difficultyBars > span[data-lit] {
+  width: 0.35rem;
+  height: 1.55rem;
+  background: var(--geo-panel-3);
+  transform: skewX(-12deg);
+}
+
+.difficultyBars > span[data-lit="true"] {
+  background: var(--geo-signal);
+  box-shadow: 0 0 0.55rem rgb(var(--geo-signal-rgb) / 34%);
+}
+
+.passButton {
+  display: grid;
+  min-width: 4.8rem;
+  min-height: 3.3rem;
+  place-content: center;
+  border: 0;
+  border-left: 1px solid var(--geo-line);
+  background: transparent;
+  color: var(--geo-sand);
+  cursor: pointer;
+  font: 700 0.52rem / 1 var(--font-code);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  gap: 0.25rem;
+}
+
+.passButton kbd {
+  color: var(--geo-sand-muted);
+  font: inherit;
+}
+
+.passButton:hover {
+  background: rgb(var(--geo-signal-rgb) / 12%);
+  color: var(--geo-sand-bright);
+}
+
+.passButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.34;
+}
+
+.consoleHud {
+  display: grid;
+  min-height: 4.4rem;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--geo-line);
+}
+
+.hudDatum {
+  display: grid;
+  align-content: center;
+  padding: 0.45rem 0.7rem;
+}
+
+.hudDatum + .hudDatum {
+  border-left: 1px solid var(--geo-line);
+}
+
+.hudDatum span {
+  color: var(--geo-sand-muted);
+  font: 600 0.52rem / 1 var(--font-code);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hudDatum strong {
+  min-width: 4ch;
+  margin-top: 0.36rem;
+  color: var(--geo-sand-bright);
+  font: 700 clamp(1rem, 2vw, 1.35rem) / 1 var(--font-code);
+  font-variant-numeric: tabular-nums;
+}
+
+.hudDatum[data-urgent="true"] strong {
+  color: var(--geo-warning);
+  animation: urgent-signal 600ms steps(2, end) infinite;
+}
+
+.timerTrack {
+  position: relative;
+  height: 2px;
+  margin-top: 0.45rem;
+  overflow: hidden;
+  background: var(--geo-line);
+}
+
+.timerTrack span {
+  position: absolute;
+  inset: 0;
+  background: var(--geo-signal);
+  box-shadow: 0 0 0.65rem rgb(var(--geo-signal-rgb) / 40%);
+  transform: scaleX(var(--timer-ratio, 1));
+  transform-origin: left;
+  transition: transform 80ms linear;
+}
+
+.roundTimerTrack {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+}
+
+.consoleFooter {
+  display: flex;
+  min-height: 2rem;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--geo-line);
+  color: var(--geo-sand-muted);
+  font: 0.54rem / 1.4 var(--font-code);
+  letter-spacing: 0.04em;
+}
+
+.questionTelemetry {
+  border: var(--geo-outline);
+  background: var(--geo-paper);
+  box-shadow: var(--geo-hard-shadow-sm);
+}
+
+.questionMetric {
+  color: var(--geo-arcade-ink);
+}
+
+.questionMetric + .questionMetric,
+.questionTelemetry .difficulty {
+  border-left: 2px solid var(--geo-arcade-ink);
+}
+
+.questionMetric > span:first-child {
+  color: #544958;
+  font-weight: 800;
+}
+
+.questionMetric > strong,
+.difficultyLabel {
+  color: var(--geo-arcade-ink);
+}
+
+.questionMetric > small {
+  color: #7c4700;
+}
+
+.questionMetric[data-urgent="true"] > strong {
+  color: #a83519;
+}
+
+.difficultyBars > span[data-lit] {
+  border: 1px solid var(--geo-arcade-ink);
+  background: #b8a990;
+  transform: none;
+}
+
+.difficultyBars > span[data-lit="true"] {
+  background: var(--geo-signal);
+  box-shadow: none;
+}
+
+.passButton {
+  border-left: 2px solid var(--geo-arcade-ink);
+  background: var(--geo-amber);
+  color: var(--geo-arcade-ink);
+  font-weight: 800;
+}
+
+.passButton kbd {
+  color: #493d45;
+}
+
+.passButton:hover {
+  background: var(--geo-pink);
+  color: var(--geo-arcade-ink);
+}
+
+.consoleHud {
+  border-bottom: 3px solid var(--geo-arcade-ink);
+  background: var(--geo-amber);
+}
+
+.hudDatum + .hudDatum {
+  border-left: 3px solid var(--geo-arcade-ink);
+}
+
+.hudDatum span {
+  color: #4d4148;
+  font-weight: 800;
+}
+
+.hudDatum strong {
+  color: var(--geo-arcade-ink);
+}
+
+.hudDatum[data-urgent="true"] strong {
+  color: #a83519;
+}
+
+.timerTrack {
+  height: 5px;
+  border: 1px solid var(--geo-arcade-ink);
+  background: #817348;
+}
+
+.timerTrack span {
+  background: var(--geo-pink);
+  box-shadow: none;
+}
+
+.consoleFooter {
+  border-top: 3px solid var(--geo-arcade-ink);
+  color: var(--geo-arcade-ink);
+}
+
+@keyframes urgent-signal {
+  50% {
+    opacity: 0.48;
+  }
+}
+
+@media (max-width: 800px) {
+  .questionTelemetry {
+    min-height: 3rem;
+    grid-template-columns: auto auto auto auto;
+    border: 0;
+    background: transparent;
+  }
+
+  .questionMetric {
+    min-width: 3.1rem;
+    padding: 0.25rem 0.4rem;
+  }
+
+  .questionMetric > span:first-child {
+    font-size: 0.4rem;
+  }
+
+  .questionMetric > strong {
+    margin-top: 0.22rem;
+    font-size: 0.8rem;
+  }
+
+  .questionTelemetry .difficulty {
+    display: flex;
+    min-width: 3.2rem;
+    justify-content: center;
+    padding-inline: 0.35rem;
+  }
+
+  .difficultyBars,
+  .scoreMetric {
+    display: none;
+  }
+
+  .difficultyLabel {
+    font-size: 0.65rem;
+  }
+
+  .passButton {
+    min-width: 3.2rem;
+    min-height: 3rem;
+    padding-inline: 0.35rem;
+  }
+
+  .passButton kbd {
+    display: none;
+  }
+
+  .consoleHud {
+    position: absolute;
+    z-index: 35;
+    top: max(var(--safe-area-top), 0px);
+    right: 6rem;
+    width: 8.4rem;
+    min-height: 3.65rem;
+    border: 0;
+  }
+
+  .hudDatum {
+    padding: 0.35rem 0.45rem;
+  }
+
+  .hudDatum span {
+    font-size: 0.42rem;
+  }
+
+  .hudDatum strong {
+    margin-top: 0.25rem;
+    font-size: 0.82rem;
+  }
+
+  .timerTrack {
+    margin-top: 0.3rem;
+  }
+
+  .consoleFooter {
+    display: none;
+  }
+}
+
+@media (max-height: 650px) and (min-width: 801px) {
+  .consoleFooter {
+    min-height: 2.4rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .questionTelemetry {
+    border: 2px solid var(--geo-arcade-ink);
+    background: var(--geo-paper);
+    box-shadow: 2px 2px 0 var(--geo-arcade-ink);
+  }
+}

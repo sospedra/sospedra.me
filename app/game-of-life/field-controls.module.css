@@ -1,0 +1,352 @@
+@reference "../../services/style/global.css";
+
+.modeRocker button {
+  transform: translateY(-0.08rem);
+  transition:
+    transform 70ms steps(2, end),
+    box-shadow 70ms steps(2, end),
+    filter 70ms linear;
+}
+.modeRocker button:active:not(:disabled) {
+  box-shadow: var(--life-key-pressed);
+  filter: brightness(0.92);
+  transform: translateY(0.3rem);
+}
+
+.fieldControls {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0 0.42rem;
+}
+
+.fieldControls > header {
+  grid-column: 1 / -1;
+}
+
+.modeRocker,
+.opticsKeys {
+  display: grid;
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.modeRocker {
+  grid-template-columns: 1fr 1fr;
+  gap: 0.18rem;
+  border: 0.28rem solid #101d22;
+  border-radius: 0.3rem;
+  padding: 0.12rem 0.12rem 0.32rem;
+  background: linear-gradient(180deg, #0a1317, #17272c 30%, #0a1519), #0e1b20;
+  box-shadow:
+    inset 0 0.35rem 0.55rem rgb(0 0 0 / 72%),
+    0 1px 0 rgb(255 255 255 / 12%);
+}
+
+.modeRocker button {
+  --life-key-edge: #192b30;
+
+  position: relative;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid;
+  border-color: #75878a #1b2b30 #142328 #65777b;
+  border-radius: 0.16rem;
+  padding: 0.3rem;
+  color: #8ea3a1;
+  background:
+    radial-gradient(circle at 26% 16%, rgb(255 255 255 / 16%), transparent 32%),
+    repeating-linear-gradient(
+      100deg,
+      transparent 0 0.34rem,
+      rgb(255 255 255 / 2%) 0.34rem 0.38rem
+    ),
+    linear-gradient(155deg, #40585e, #293e44 64%, #203238);
+  box-shadow: var(--life-key-raised);
+  font: 800 0.48rem / 1 var(--font-code);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.modeRocker button i {
+  display: block;
+  width: 0.45rem;
+  height: 0.22rem;
+  margin: 0 auto 0.3rem;
+  background: #17272c;
+}
+
+.modeRocker button[aria-pressed="true"] {
+  color: #071615;
+  background:
+    linear-gradient(155deg, #8effec, var(--life-cyan) 54%, #289f92), #58efd4;
+  box-shadow:
+    inset 0.18rem 0.22rem 0.32rem rgb(6 54 50 / 45%),
+    inset -1px -1px 0 rgb(255 255 255 / 18%),
+    0 0.04rem 0 #071416,
+    0 0 0.5rem rgb(88 239 212 / 20%);
+  transform: translateY(0.16rem);
+}
+
+.modeRocker button[aria-pressed="true"] i {
+  background: var(--life-red);
+  box-shadow: 0 0 0.35rem var(--life-red);
+}
+
+.opticsKeys {
+  grid-template-columns: 0.72fr 1.3fr 0.72fr;
+  gap: 0.22rem;
+}
+
+.modeLeverGroup {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(3.2rem, 1fr) auto;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.modeLeverGroup > span {
+  color: #42443e;
+  font: 900 0.36rem / 1 var(--font-code);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+}
+
+.modeLeverGroup > span:first-child {
+  transform: rotate(180deg);
+}
+
+.modeLever {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-width: 44px;
+  min-height: 56px;
+  place-items: center;
+  border: 1px solid #4a4b44;
+  border-radius: 0.1rem;
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 18%), transparent 40%), #85867d;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 35%),
+    inset 0 -2px 0 rgb(39 39 36 / 28%);
+}
+
+.modeLeverGate {
+  position: relative;
+  display: block;
+  width: min(3.7rem, 86%);
+  height: 2.45rem;
+  overflow: hidden;
+  border: 0.2rem solid #4a4b44;
+  border-radius: 2rem 2rem 0.25rem 0.25rem;
+  background:
+    radial-gradient(ellipse at 50% 100%, #41423c, #171814 68%), #1d1e19;
+  box-shadow:
+    inset 0 0.45rem 0.75rem rgb(0 0 0 / 72%),
+    0 1px 0 rgb(255 255 255 / 28%);
+}
+
+.modeLeverArm {
+  position: absolute;
+  bottom: -0.05rem;
+  left: 50%;
+  display: block;
+  width: 0.34rem;
+  height: 2.15rem;
+  border: 1px solid #55564f;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #777970, #e5dfd0 48%, #66685f);
+  box-shadow: 0.12rem 0.12rem 0.2rem rgb(0 0 0 / 50%);
+  transform: translateX(-50%) rotate(-28deg);
+  transform-origin: 50% 100%;
+  transition: transform 220ms cubic-bezier(0.65, 1.35, 0.5, 1);
+}
+
+.modeLeverArm span {
+  position: absolute;
+  top: -0.38rem;
+  left: 50%;
+  width: 0.92rem;
+  height: 0.92rem;
+  border: 1px solid #7e2118;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 25%, #ff9a75, transparent 24%),
+    var(--life-red);
+  box-shadow:
+    inset -0.16rem -0.2rem 0.3rem rgb(91 19 12 / 36%),
+    0 0.16rem 0.24rem rgb(0 0 0 / 45%);
+  transform: translateX(-50%);
+}
+
+.modeLever[data-mode="move"] .modeLeverArm {
+  transform: translateX(-50%) rotate(28deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .modeRocker button:hover,
+  .modeLever:hover {
+    filter: brightness(1.08);
+  }
+}
+
+@media (max-width: 74rem) {
+  .opticsKeys button {
+    padding-inline: 0.15rem;
+  }
+}
+
+@media (max-width: 45rem) {
+  .fieldControls {
+    grid-column: 1;
+    grid-row: 1;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr 1fr;
+    gap: 0.25rem 0;
+  }
+
+  .modeLeverGroup,
+  .opticsKeys {
+    min-height: 44px;
+  }
+
+  .opticsKeys {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .opticsKeys button {
+    min-width: 44px;
+  }
+}
+
+@media (max-width: 24rem) {
+  .fieldControls {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    grid-template-columns: 0.72fr 1.1fr;
+    grid-template-rows: auto minmax(44px, 1fr);
+    gap: 0 0.3rem;
+  }
+
+  .modeLever {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .fieldControls {
+    min-height: 5rem;
+    grid-template-columns: 5.5rem minmax(8.25rem, 1fr);
+    column-gap: 0.2rem;
+  }
+
+  .modeRocker button,
+  .modeLever,
+  .opticsKeys button {
+    min-height: 44px;
+  }
+
+  .opticsKeys {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modeRocker button,
+  .modeLever,
+  .opticsKeys button,
+  .modeLeverArm {
+    transition: none;
+  }
+}
+
+/* Layout hosts for the optics and transport controls. */
+
+.opticsKeys {
+  display: block;
+}
+
+.opticsKeys > div {
+  width: 100%;
+  height: 100%;
+}
+
+.fieldControls {
+  grid-template-columns: minmax(8rem, 0.95fr) minmax(0, 1.35fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0 0.34rem;
+}
+
+.fieldModeSwitch {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  place-items: center;
+  overflow: visible;
+  padding: 0.08rem 0.14rem;
+}
+
+.opticsKeys {
+  min-height: 0;
+}
+
+@media (max-width: 74rem) {
+  .fieldControls {
+    grid-template-columns: minmax(5.6rem, 0.8fr) minmax(0, 1.3fr);
+  }
+}
+
+@media (max-width: 45rem) {
+  .fieldControls {
+    grid-column: 1;
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 3.35rem minmax(3.35rem, 1fr);
+    gap: 0.22rem;
+  }
+
+  .fieldModeSwitch {
+    min-height: 0;
+  }
+
+  .opticsKeys {
+    min-height: 0;
+  }
+
+  .opticsKeys > div {
+    gap: 1px;
+    padding: 1px;
+  }
+
+  .opticsKeys.opticsKeys button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 24rem) {
+  .fieldControls {
+    grid-template-rows: auto 3.05rem minmax(3rem, 1fr);
+  }
+}
+
+@media (max-width: 59.99rem) and (max-height: 32rem) and (
+    orientation: landscape
+  ) {
+  .fieldControls {
+    min-height: 0;
+    grid-column: 1;
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 3.1rem minmax(3.2rem, 1fr);
+    gap: 0.18rem;
+  }
+}

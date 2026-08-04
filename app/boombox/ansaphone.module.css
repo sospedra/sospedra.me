@@ -1,0 +1,378 @@
+/* ══ ansaphone: the narrow-room build, a tad-2200 dual-microcassette
+   answering machine in front elevation. putty body, charcoal panel,
+   cream keys ══ */
+
+.ansaphone {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  width: min(100% - 24px, 420px);
+  margin: 18px 0 46px;
+}
+
+/* the putty chassis, squared */
+.tadBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 12px 0;
+  border: 1px solid #8e8b82;
+  border-top-color: #e9e6dd;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #d2cfc6, #bab7ae);
+  box-shadow:
+    inset 0 2px 0 rgb(255 255 255 / 65%),
+    inset 3px 0 0 rgb(255 255 255 / 33%),
+    inset -3px 0 6px rgb(0 0 0 / 19%),
+    0 24px 46px -18px rgb(0 0 0 / 88%);
+}
+
+/* the bay: both tapes seat here */
+.tadBay {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 14px 10px;
+  border-radius: 6px;
+  background: linear-gradient(#232220, #2f2e2b);
+  box-shadow:
+    inset 0 12px 24px rgb(0 0 0 / 87%),
+    inset 0 -2px 0 rgb(255 255 255 / 9%),
+    inset 0 0 0 1px #000;
+}
+
+/* the bay door wears the boombox glass: same border sheen, same
+   corner bloom, only lightly tinted so the tape stays readable */
+.tadLid {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  border: 2px solid;
+  border-image: linear-gradient(
+      -140deg,
+      rgb(255 255 255 / 87%) 0%,
+      rgb(255 255 255 / 53%) 5%,
+      rgb(17 17 17 / 33%) 40%,
+      #111 100%
+    )
+    2;
+  background:
+    linear-gradient(
+      115deg,
+      rgb(255 255 255 / 30%) 0 9%,
+      rgb(255 255 255 / 7%) 9% 22%,
+      rgb(255 255 255 / 0%) 22% 60%,
+      rgb(255 255 255 / 10%) 60% 66%,
+      rgb(255 255 255 / 0%) 66%
+    ),
+    radial-gradient(
+      circle at 450% 750%,
+      rgb(255 255 255 / 0%) 0%,
+      rgb(255 255 255 / 6%) 92.9%,
+      rgb(255 255 255 / 27%) 93%,
+      rgb(255 255 255 / 0%) 99%
+    ),
+    linear-gradient(rgb(16 20 26 / 16%), rgb(10 12 16 / 28%));
+}
+
+.tadLid::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 38%;
+  bottom: 0;
+  width: 33%;
+  transform: skewX(-14deg);
+  transform-origin: 50% 0;
+  opacity: 0.9;
+  background: linear-gradient(
+    90deg,
+    #d0402c 0 25%,
+    #e06f28 25% 50%,
+    #edac34 50% 75%,
+    #efe9da 75% 100%
+  );
+}
+
+/* the dark control deck under the bay; the machine is two-tone */
+.tadLower {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 -12px;
+  padding: 2px 12px 0;
+  border-radius: 0 0 7px 7px;
+  background: linear-gradient(#3a3833, #24221f);
+  box-shadow:
+    inset 0 2px 0 rgb(0 0 0 / 40%),
+    inset 0 3px 0 rgb(255 255 255 / 7%);
+}
+
+.tadBrand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 4px 0;
+}
+
+.tadBrand b {
+  color: #ef6a24;
+  font:
+    italic 800 13px / 1 Georgia,
+    "Times New Roman",
+    serif;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 60%);
+}
+
+.tadBrand span {
+  color: #8f8b80;
+  font: 8px var(--micro);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 60%);
+}
+
+/* charcoal control panel, near-black on the dark deck */
+.tadPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background: linear-gradient(#2e2c29, #1b1a18);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 10%),
+    inset 0 -6px 12px rgb(0 0 0 / 55%),
+    0 1px 0 rgb(255 255 255 / 10%);
+}
+
+.tadStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* answer-on slide, latched to on */
+.tadSwitch {
+  position: relative;
+  flex: none;
+  width: 38px;
+  height: 15px;
+  border-radius: 8px;
+  background: #191816;
+  box-shadow:
+    inset 0 2px 4px #000,
+    0 1px 0 rgb(255 255 255 / 13%);
+}
+
+.tadSwitch i {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 15px;
+  height: 11px;
+  border-radius: 5px;
+  background: linear-gradient(#dcd8ce, #a5a198);
+  box-shadow: 0 1px 2px #000;
+}
+
+.tadTag {
+  min-width: 0;
+  overflow: hidden;
+  color: #d8d4ca;
+  font: 8px var(--micro);
+  font-style: normal;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+}
+
+.tadLed {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3a0d0d;
+  box-shadow: inset 0 1px 2px #000;
+}
+
+.tadLed[data-lit="true"] {
+  background: #ff5648;
+  box-shadow:
+    0 0 8px rgb(255 86 72 / 80%),
+    inset 0 0 2px rgb(255 255 255 / 53%);
+}
+
+.tadLed[data-blink="true"] {
+  animation: tad-blink 1.1s steps(1) infinite;
+}
+
+@keyframes tad-blink {
+  50% {
+    background: #ff5648;
+    box-shadow:
+      0 0 8px rgb(255 86 72 / 80%),
+      inset 0 0 2px rgb(255 255 255 / 53%);
+  }
+}
+
+/* the yellow escape hatch, tad-sized: turns the machine off, exits */
+.tadOff {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  margin-left: auto;
+  padding: 0 11px;
+  border: 1px solid #7c6410;
+  border-radius: 4px;
+  color: #4a3a05;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 25%) 0 1px,
+      rgb(0 0 0 / 5%) 1px 2px
+    ),
+    linear-gradient(#f6d84c 0 12%, #e8c33c 14% 62%, #b8951d 78%, #d9b62f);
+  box-shadow:
+    0 3px 0 #8a6d0e,
+    0 4px 5px rgb(0 0 0 / 55%),
+    inset 0 1px 0 rgb(255 255 255 / 60%);
+  font: 700 9px var(--micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    translate 60ms ease,
+    box-shadow 60ms ease;
+}
+
+.tadOff:active {
+  translate: 0 2px;
+  box-shadow:
+    0 1px 0 #8a6d0e,
+    0 1px 2px rgb(0 0 0 / 55%),
+    inset 0 1px 0 rgb(255 255 255 / 60%);
+}
+
+/* volume knob, hardware buttons do the real work */
+.tadVol {
+  position: relative;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #d9d5cb, #8f8b82 60%, #6f6b63);
+  box-shadow:
+    0 3px 6px rgb(0 0 0 / 63%),
+    inset 0 2px 3px rgb(255 255 255 / 53%),
+    inset 0 -4px 8px rgb(0 0 0 / 38%);
+}
+
+.tadVol::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  width: 3px;
+  height: 9px;
+  border-radius: 2px;
+  background: #33312d;
+  transform: translateX(-50%);
+}
+
+.tadGrille {
+  flex: 0 1 64px;
+  min-width: 28px;
+  width: 64px;
+  height: 40px;
+  border-radius: 4px;
+  background: repeating-linear-gradient(90deg, #1d1c1a 0 4px, #3a3835 4px 8px);
+  box-shadow:
+    inset 0 3px 8px rgb(0 0 0 / 75%),
+    inset 0 0 0 1px #000,
+    0 1px 0 rgb(255 255 255 / 13%);
+}
+
+/* front lip: mic and line holes drilled at the right */
+.tadLip {
+  position: relative;
+  height: 18px;
+  margin: 2px -12px 0;
+  border-radius: 0 0 7px 7px;
+  background: linear-gradient(#4a4741, #34322d 70%, #262420);
+  box-shadow:
+    inset 0 2px 0 rgb(255 255 255 / 14%),
+    inset 0 -6px 10px rgb(0 0 0 / 55%);
+}
+
+.tadLip::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 26px;
+  width: 64px;
+  height: 12px;
+  margin-top: -6px;
+  background:
+    radial-gradient(circle 5px at 8px 6px, #111 60%, transparent 62%),
+    radial-gradient(circle 5px at 32px 6px, #111 60%, transparent 62%),
+    radial-gradient(circle 3px at 56px 6px, #111 60%, transparent 62%);
+}
+
+/* below this width the machine cannot keep readable type or 44px keys;
+   the answering machine takes over */
+@media (max-width: 759px) {
+  .ansaphone {
+    display: flex;
+    padding-bottom: max(0px, var(--safe-area-bottom));
+  }
+
+  /* Focusing the guess line opens a compact, sticky transport. The keyboard
+     may halve the visual viewport, but play/stop/skip and the LCD remain in
+     view while the paper scrolls beneath them. */
+  .ansaphone[data-entry-open="true"] {
+    gap: 10px;
+  }
+
+  .ansaphone[data-entry-open="true"] .tadBody {
+    position: sticky;
+    z-index: 40;
+    top: max(8px, var(--safe-area-top));
+    gap: 0;
+    padding-top: 8px;
+    box-shadow:
+      inset 0 2px 0 rgb(255 255 255 / 65%),
+      inset 3px 0 0 rgb(255 255 255 / 33%),
+      inset -3px 0 6px rgb(0 0 0 / 19%),
+      0 12px 28px -10px rgb(0 0 0 / 92%);
+  }
+
+  .ansaphone[data-entry-open="true"] .tadBay,
+  .ansaphone[data-entry-open="true"] .tadBrand,
+  .ansaphone[data-entry-open="true"] .tadStatusRow,
+  .ansaphone[data-entry-open="true"] .tadLip {
+    display: none;
+  }
+
+  .ansaphone[data-entry-open="true"] .tadLower {
+    gap: 0;
+    padding-top: 0;
+  }
+
+  .ansaphone[data-entry-open="true"] .tadPanel {
+    gap: 4px;
+    padding: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tadLed {
+    animation: none;
+  }
+}

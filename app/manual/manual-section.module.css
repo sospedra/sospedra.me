@@ -1,0 +1,105 @@
+.sectionHeader {
+  display: grid;
+  grid-template-columns: 5.4rem 1fr;
+  gap: 1rem;
+  align-items: stretch;
+  border: 2px solid var(--manual-ink);
+}
+
+.sectionHeader > span {
+  display: grid;
+  place-items: center;
+  padding: 0.7rem;
+  background: var(--manual-ink);
+  color: var(--manual-paper-raised);
+  font: 900 0.65rem / 1.2 var(--font-code, monospace);
+  letter-spacing: 0.12em;
+  text-align: center;
+  writing-mode: vertical-rl;
+}
+
+.sectionHeader > div {
+  padding: 0.8rem 1rem;
+}
+
+.sectionHeader h2,
+.sectionHeader p {
+  margin: 0;
+}
+
+.sectionHeader h2 {
+  font-family: var(--font-code, monospace);
+  font-size: clamp(1.35rem, 4vw, 2.2rem);
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.sectionHeader p {
+  padding-top: 0.45rem;
+  color: var(--manual-ink-muted);
+  font: 700 0.68rem / 1.4 var(--font-code, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.redacted {
+  display: inline;
+  padding-inline: 0.22em;
+  background:
+    linear-gradient(177deg, transparent 5%, #171914 8% 87%, transparent 91%),
+    #171914;
+  box-decoration-break: clone;
+  color: transparent;
+  line-height: 1.1;
+  text-shadow: none;
+  user-select: none;
+  -webkit-box-decoration-break: clone;
+}
+
+.procedurePage {
+  position: relative;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: stretch;
+  align-content: flex-start;
+  gap: 1rem 1.5rem;
+}
+
+.procedurePage .sectionHeader {
+  flex: 1 1 100%;
+}
+
+/* Center rule between the two printed columns, like a service-manual spread. */
+@media (min-width: 880px) {
+  .procedurePage > article + article {
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--manual-rule);
+  }
+}
+
+.procedurePage .cautionLine {
+  margin-top: auto;
+  padding: 0.7rem;
+  border: 1px solid var(--manual-accent);
+  border-left-width: 0.35rem;
+  background: rgb(151 52 82 / 6%);
+  font-family: var(--font-code, monospace);
+  font-size: 0.78rem;
+}
+
+.procedurePage .cautionLine::before {
+  content: none;
+}
+
+@media (max-width: 519px) {
+  .sectionHeader {
+    grid-template-columns: 3.2rem 1fr;
+  }
+
+  .procedurePage {
+    flex-direction: column;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,171 @@
+.notebookFilters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.notebookHighlight {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  right: 0.2rem;
+  left: 0.2rem;
+  width: calc(100% - 0.4rem);
+  height: 3.6rem;
+  fill: none;
+  filter: none;
+  pointer-events: none;
+  stroke: rgb(202 160 79 / 50%);
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  stroke-linecap: round;
+  stroke-miterlimit: 10;
+  stroke-width: 17;
+  transform: translateY(-50%);
+  transform-origin: 50% 50%;
+  transition:
+    stroke-dashoffset 500ms ease-in-out 0ms,
+    stroke 180ms ease-out 0ms;
+}
+
+.notebookFlourish {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: -3.15rem;
+  width: 3.4rem;
+  height: 3.4rem;
+  fill: rgb(36 29 21 / 48%);
+  filter: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) scale(0.5);
+  transform-origin: 50% 50%;
+  transition:
+    opacity 180ms ease-out,
+    fill 180ms ease-out,
+    transform 300ms ease-out;
+}
+
+.dish:hover .notebookHighlight {
+  animation: notebook-ink-hover 2.5s ease-in-out infinite;
+  stroke-dashoffset: 0;
+  transition:
+    stroke-dashoffset 500ms ease-in-out 0ms,
+    stroke 180ms ease-out 0ms;
+}
+
+.dish:hover .notebookFlourish {
+  animation: notebook-flourish-hover 2.5s ease-in-out infinite;
+  opacity: 0.9;
+}
+
+.dish:active .notebookHighlight {
+  animation: notebook-ink-press 1s ease-in-out infinite;
+  filter: url("#usesNotebookNoisePress");
+  stroke: rgb(109 247 234 / 54%);
+  stroke-dashoffset: 0;
+}
+
+.dish:active .notebookFlourish {
+  animation: none;
+  fill: rgb(36 29 21 / 92%);
+  filter: url("#usesNotebookNoisePress");
+  opacity: 1;
+  transform: translate(1.9rem, -50%) scale(0.5) rotate(-135deg);
+}
+
+@keyframes notebook-ink-hover {
+  0%,
+  100% {
+    filter: url("#usesNotebookNoise");
+    transform: translateY(-50%) rotate(0);
+  }
+  25% {
+    filter: url("#usesNotebookNoiseAlt");
+    transform: translateY(calc(-50% - 2px)) rotate(-0.45deg);
+  }
+  50% {
+    filter: url("#usesNotebookNoise");
+    transform: translateY(calc(-50% + 2px)) rotate(0);
+  }
+  75% {
+    filter: url("#usesNotebookNoiseAlt");
+    transform: translateY(calc(-50% - 2px)) rotate(-0.45deg);
+  }
+}
+
+@keyframes notebook-flourish-hover {
+  0%,
+  100% {
+    filter: url("#usesNotebookNoise");
+    transform: translateY(-50%) scale(0.5) rotate(0);
+  }
+  25% {
+    filter: url("#usesNotebookNoiseAlt");
+    transform: translateY(calc(-50% - 2px)) scale(0.5) rotate(-15deg);
+  }
+  50% {
+    filter: url("#usesNotebookNoise");
+    transform: translateY(calc(-50% + 2px)) scale(0.5) rotate(-8deg);
+  }
+  75% {
+    filter: url("#usesNotebookNoiseAlt");
+    transform: translateY(calc(-50% - 2px)) scale(0.5) rotate(-15deg);
+  }
+}
+
+@keyframes notebook-ink-press {
+  0%,
+  100% {
+    filter: url("#usesNotebookNoisePress");
+    transform: translateY(calc(-50% - 1px)) rotate(0);
+  }
+  25% {
+    transform: translateY(calc(-50% - 1px)) rotate(-0.7deg);
+  }
+  50% {
+    filter: url("#usesNotebookNoisePressAlt");
+    transform: translateY(calc(-50% + 1px)) rotate(0);
+  }
+  66% {
+    transform: translateY(calc(-50% + 1px)) rotate(0.5deg);
+  }
+}
+
+@media (hover: none) {
+  .dish:hover .notebookHighlight {
+    animation: none;
+    stroke-dashoffset: 1000;
+  }
+
+  .dish:hover .notebookFlourish {
+    animation: none;
+    opacity: 0;
+  }
+
+  .dish:active .notebookHighlight {
+    stroke-dashoffset: 0;
+  }
+
+  .dish:active .notebookFlourish {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notebookHighlight,
+  .notebookFlourish {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .notebookHighlight,
+  .notebookFlourish {
+    display: none;
+  }
+}

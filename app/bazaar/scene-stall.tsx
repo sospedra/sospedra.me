@@ -3,7 +3,7 @@
 import { uniq } from 'es-toolkit'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { prefersQuietFx } from 'services/theme'
-import styles from './scene.module.css'
+import styles from './stall-box.module.css'
 import {
   type BazaarStallId,
   type FxFrame,

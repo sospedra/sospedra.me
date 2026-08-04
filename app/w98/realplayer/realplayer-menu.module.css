@@ -1,0 +1,15 @@
+@reference "../../../services/style/global.css";
+
+/* menus */
+
+.menuDisabled:disabled {
+  background: transparent;
+  color: var(--win-mid);
+  text-shadow: 1px 1px 0 var(--win-light);
+}
+
+.presetsMenu {
+  max-height: 13.5rem;
+  min-width: 14rem;
+  overflow-y: auto;
+}

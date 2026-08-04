@@ -7,15 +7,15 @@ export type Offshore = { kind: 'cloud'; duration?: number }
 
 export type NavPhase =
   | { phase: 'idle' }
-  | { phase: 'departing'; url: Route }
-  | { phase: 'unmounting'; url: Route }
+  | { phase: 'departing'; url: Route; origin: string }
+  | { phase: 'unmounting'; url: Route; origin: string }
 
 export type State = NavPhase & { offshore: Offshore | undefined }
 
 export const DEFAULT_STATE: State = { phase: 'idle', offshore: undefined }
 
 export type Action =
-  | { type: 'NAVIGATE'; payload: { url: Route } }
+  | { type: 'NAVIGATE'; payload: { url: Route; origin: string } }
   | { type: 'UNMOUNT' }
   | { type: 'RESET' }
   | { type: 'OFFSHORE'; payload: { offshore: Offshore | undefined } }
@@ -30,16 +30,22 @@ export const reducer = (state: State, action: Action): State =>
       // a mid-unmount navigate retargets the push instead of restarting
       phase: state.phase === 'unmounting' ? 'unmounting' : 'departing',
       url: payload.url,
+      origin: payload.origin,
       offshore: state.offshore,
     }))
     .with({ type: 'UNMOUNT' }, () => {
       if (state.phase !== 'departing') return state
-      return { phase: 'unmounting', url: state.url, offshore: state.offshore }
+      return {
+        phase: 'unmounting',
+        url: state.url,
+        origin: state.origin,
+        offshore: state.offshore,
+      }
     })
-    .with({ type: 'RESET' }, () => ({
-      phase: 'idle',
-      offshore: state.offshore,
-    }))
+    .with({ type: 'RESET' }, () => {
+      if (state.phase === 'idle') return state
+      return { phase: 'idle', offshore: state.offshore }
+    })
     .with({ type: 'OFFSHORE' }, ({ payload }) => ({
       ...state,
       offshore: payload.offshore,
@@ -58,7 +64,10 @@ export const useStateReducer = (): TransitionT => {
       dispatch({ type: 'RESET' })
       return
     }
-    dispatch({ type: 'NAVIGATE', payload: { url } })
+    dispatch({
+      type: 'NAVIGATE',
+      payload: { url, origin: window.location.pathname },
+    })
   }
   const navigateLater = (url: Route, delay: number) => {
     const origin = window.location.pathname
