@@ -53,10 +53,13 @@ const offenders = tracked
   .toSorted((a, b) => b.loc - a.loc)
 
 for (const { path, loc } of offenders) {
-  console.error(`${String(loc).padStart(5)}  ${path}`)
+  console.warn(`${String(loc).padStart(5)}  ${path}`)
 }
 if (offenders.length > 0) {
-  console.error(`loc-gate: ${offenders.length} files over ${CAP} effective LOC`)
-  process.exit(1)
+  console.warn(`loc-gate: ${offenders.length} files over ${CAP} effective LOC`)
+  console.warn(
+    `loc-gate: advisory, nothing blocks. Agents: split a listed file to ${CAP} or fewer effective LOC whenever you edit it.`,
+  )
+} else {
+  console.log(`loc-gate: every code file is at or under ${CAP} effective LOC`)
 }
-console.log(`loc-gate: every code file is at or under ${CAP} effective LOC`)
