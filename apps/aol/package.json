@@ -21,9 +21,11 @@
     "@noble/hashes": "2.2.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.4",
-    "@types/node": "24.13.3",
-    "typescript": "5.9.3",
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
     "vite": "8.2.0"
   }
 }

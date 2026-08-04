@@ -1,10 +1,6 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
+  "extends": ["@repo/biome-config/base.json"],
   "files": {
     "includes": [
       "**",
@@ -15,9 +11,6 @@
       "!repo/crosswords/sources.lock.json"
     ]
   },
-  "formatter": {
-    "indentStyle": "space"
-  },
   "css": {
     "parser": {
       "cssModules": true,
@@ -26,9 +19,7 @@
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single",
-      "jsxQuoteStyle": "single",
-      "semicolons": "asNeeded"
+      "jsxQuoteStyle": "single"
     }
   },
   "linter": {
@@ -38,47 +29,11 @@
       "project": "recommended"
     },
     "rules": {
-      "preset": "recommended",
-      "complexity": {
-        "noExcessiveCognitiveComplexity": {
-          "level": "warn",
-          "options": {
-            "maxAllowedComplexity": 10
-          }
-        },
-        "noForEach": "error"
-      },
       "correctness": {
-        "noUnusedVariables": "error",
-        "noUnusedImports": "error",
-        "noUnusedFunctionParameters": "error",
-        "noUnusedPrivateClassMembers": "error",
         "useExhaustiveDependencies": "warn"
       },
       "performance": {
-        "noImgElement": "off",
-        "noBarrelFile": "error",
-        "noReExportAll": "error"
-      },
-      "style": {
-        "noEnum": "error",
-        "useFilenamingConvention": {
-          "level": "error",
-          "options": {
-            "requireAscii": false,
-            "filenameCases": ["kebab-case"]
-          }
-        },
-        "useConsistentTypeDefinitions": {
-          "level": "error",
-          "options": {
-            "style": "type"
-          }
-        }
-      },
-      "suspicious": {
-        "noImportCycles": "error",
-        "noConsole": "error"
+        "noImgElement": "off"
       }
     }
   },
