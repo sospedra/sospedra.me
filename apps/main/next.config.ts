@@ -1,3 +1,4 @@
+import { join } from 'node:path'
 import createMDX from '@next/mdx'
 import type { NextConfig } from 'next'
 import rewrites from './services/rewrites.json'
@@ -19,6 +20,7 @@ const withMDX = createMDX({
 })
 
 const config: NextConfig = {
+  outputFileTracingRoot: join(__dirname, '../..'),
   cacheComponents: true,
   reactCompiler: true,
   typedRoutes: true,

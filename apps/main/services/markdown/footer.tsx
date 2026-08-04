@@ -13,7 +13,7 @@ const createXSearch = (url: string) => {
 }
 
 const createGithubLink = (slug: string) => {
-  return `${REPO_URL}/blob/${REPO_BRANCH}/repo/papers/${slug}/index.mdx`
+  return `${REPO_URL}/blob/${REPO_BRANCH}/apps/main/repo/papers/${slug}/index.mdx`
 }
 
 const Footer: React.FC<{

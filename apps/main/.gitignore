@@ -1,0 +1,15 @@
+.next
+/work/raw-data/
+# raw USA Today xd archive; served content lives in repo/crosswords/challenges
+/repo/crosswords/puzzles/
+# meridian challenges are deterministic build artifacts, prebuild regenerates them
+/repo/geo/challenges/
+
+# image-generation scratch
+/tmp/
+/output/
+/cf.jar
+/sub-blocked.bin
+/scene-*.png
+/street-ref.png
+/street-master-ref.png

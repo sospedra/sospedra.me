@@ -1,0 +1,20 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "tasks": {
+    "build": {
+      "cache": false,
+      "env": ["MERIDIAN_PUBLICATION_DATE", "VERCEL_ENV"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {},
+    "typecheck": {},
+    "test": {},
+    "ci:geo:test": {},
+    "ci:geo:validate:challenges": {
+      "cache": false
+    }
+  }
+}

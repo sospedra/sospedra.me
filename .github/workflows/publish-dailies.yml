@@ -29,8 +29,6 @@ jobs:
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 11.13.0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -43,21 +41,21 @@ jobs:
 
       - name: Archive the Spanish crossword
         continue-on-error: true
-        run: pnpm ci:crosswords:archive-es
+        run: pnpm --filter main ci:crosswords:archive-es
 
       - name: Verify the timed geography engine
-        run: pnpm ci:geo:test
+        run: pnpm --filter main ci:geo:test
 
       - name: Generate and build the UTC edition
-        run: pnpm build
+        run: pnpm --filter main build
 
       - name: Validate the generated edition and locked corpus
-        run: pnpm ci:geo:validate:challenges
+        run: pnpm --filter main ci:geo:validate:challenges
 
       - name: Commit the dailies and trigger the deployment
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add repo/crosswords/challenges
+          git add apps/main/repo/crosswords/challenges
           git commit --allow-empty -m "chore: publish dailies ${MERIDIAN_PUBLICATION_DATE}"
           git push origin "HEAD:${GITHUB_REF_NAME}"

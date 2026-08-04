@@ -19,9 +19,9 @@ This file was retargeted on 2026-08-04. The original plan predated the layout un
 | Vercel AUTO-enables skip-unaffected builds for pnpm-workspace monorepos. The daily deploy dies on empty days unless the "Skip deployment" toggle is disabled | Vercel monorepo docs, confirmed |
 | `pnpm run build` fires `prebuild` (`enablePrePostScripts` defaults true) | pnpm docs, confirmed |
 | lint-staged 17: closest config wins, tasks run in the config's dir, staged paths are absolute | lint-staged README, confirmed |
-| Biome 2 in a subdir needs `vcs.root` pointed at the repo root and supports nested ignore files | Biome docs, confirmed |
+| Biome 2 in a subdir finds `.git` by walking up on its own. Setting `vcs.root: "../../"` BREAKS nested `.gitignore` anchoring: `tmp/` leaked into the scan with 179 errors | Empirical, 2026-08-04. The original doc-claim was wrong |
 | `pnpm/action-setup` reads the version from `packageManager` when `version` is omitted | action README, confirmed |
-| Whether `turbo run build` fires pnpm pre-scripts | Unverified. Phase 5 probes it empirically and has a contingency |
+| `turbo run build` fires pnpm pre-scripts: the root `pnpm build` printed all 14 generate-challenge lines | Empirical, 2026-08-04. The contingency is dead |
 
 ## Preconditions
 
@@ -125,7 +125,7 @@ node_modules
 
 1. `package.json`: rename to `"name": "main"`, add `"private": true`, keep `"type": "module"` and `engines` (Vercel reads the Node version here). Delete `packageManager`, `prepare`, and the husky + lint-staged devDeps. Split the test chain: `test` keeps `node --test <39 files> && tsx --test app/travel/radio-stations.test.ts && node scripts/loc-gate.ts && node scripts/css-refs-gate.ts`, new `"typecheck": "tsc"`, and `lint` already exists as `biome check .`. All other scripts stay verbatim.
 2. `next.config.ts`: add `import { join } from 'node:path'` and `outputFileTracingRoot: join(__dirname, '../..')` as the first config key. If the TS config loader leaves `__dirname` undefined, switch to `import.meta.dirname`. The Phase 5 build is the probe. The `./repo/...` tracing globs stay unchanged. Never run `next build` bare from the repo root.
-3. `biome.json`: add `"root": "../../"` to the `vcs` block. `$schema` and the `files.includes` negations stay (their targets moved with the config).
+3. `biome.json`: unchanged. Biome walks up to `.git` itself and honors the nested ignore files with correct anchoring. A `vcs.root` override breaks that.
 4. `services/markdown/footer.tsx`: `createGithubLink` gains the `apps/main/` segment: `blob/master/apps/main/repo/papers/...`.
 5. Unchanged, with reasons: `tsconfig.json` (baseUrl, include, exclude are app-dir-relative), `.lintstagedrc.mjs` (its `./scripts/*.mts` imports moved with it, absolute staged paths still substring-match), `.husky/*`, `postcss.config.mjs`, `mdx-components.tsx`, `next-env.d.ts`.
 
@@ -173,7 +173,7 @@ Cutover on project `sospedra-me`:
 
 5. Dashboard: Root Directory → `apps/main`. Keep "Include source files outside of the Root Directory" enabled. Disable the "Skip deployment" toggle (kills auto skip-unaffected, which would swallow empty daily commits). Confirm no Build/Install command overrides appeared.
 6. Merge the migration branch into `master` and push. This ships the 81 unmerged commits (meridian, w98, boombox, bazaar, the layout unification) together with the monorepo flip. Confirmed 2026-08-04. Watch the deploy, then smoke the same routes in prod.
-7. `workflow_dispatch` the Publish dailies workflow: green run, commit lands, Vercel builds it (not "Skipped").
+7. `workflow_dispatch` the Publish dailies workflow: commit lands, Vercel builds it (not "Skipped"). Known blocker: the validate step fails today with 1148 pre-existing errors (follow-up 5). Fix that first or the run dies before the commit step.
 8. Cleanup: delete the throwaway project, `vercel link` back to `sospedra-me`, `vercel pull`. Future env pulls: `vercel env pull apps/main/.env.local`.
 
 Rollback: revert Root Directory to empty and revert the merge commit. Production serving is always the last good deployment, so nothing user-facing breaks in between.
@@ -194,3 +194,4 @@ Rollback: revert Root Directory to empty and revert the merge commit. Production
 2. Hoist the `app/w98/taskbar.tsx → ../games/catalogue` cross-route import into `services/`.
 3. `app/console/static-files.json` is tracked yet rewritten by every build. Candidate for gitignoring plus generation-on-build.
 4. Prune the `.gitignore` guards for scratch that no longer exists (`/work/raw-data/`, `/output/`, `/cf.jar`, scene pngs) or keep them for future imagegen runs.
+5. `ci:geo:validate:challenges` fails with 1148 pre-existing errors: `CREDITS.txt` was deleted in 6bd221e7, `work/raw-data/` locks are absent, and every shape hash differs from the manifest. Verified pre-existing on 2026-08-04 (lexicon, corpus, and determinism checks pass). The daily workflow gates on this step.
