@@ -9,6 +9,7 @@ import Link from 'services/link'
 import Shell from 'services/shell'
 import { readLocal, writeLocal } from 'services/storage'
 import { useRouteTransition } from 'services/transition/context'
+import { match } from 'ts-pattern'
 import { GAMES } from '../games/catalogue'
 import {
   type AppId,
@@ -576,22 +577,22 @@ const INITIAL_CHROME: ChromeState = {
   helpOpen: false,
 }
 
-const reduceChrome = (state: ChromeState, event: ChromeEvent): ChromeState => {
-  switch (event.type) {
-    case 'menu':
-      return { ...state, menu: event.menu }
-    case 'start':
-      return { ...state, startMenu: event.startMenu }
-    case 'help':
-      return event.open
+const reduceChrome = (state: ChromeState, event: ChromeEvent): ChromeState =>
+  match(event)
+    .with({ type: 'menu' }, ({ menu }) => ({ ...state, menu }))
+    .with({ type: 'start' }, ({ startMenu }) => ({ ...state, startMenu }))
+    .with({ type: 'help' }, ({ open }) =>
+      open
         ? { ...state, helpOpen: true, menu: null }
-        : { ...state, helpOpen: false }
-    case 'exit-mines':
-      return { ...state, menu: null, helpOpen: false }
-    case 'escape':
-      return INITIAL_CHROME
-  }
-}
+        : { ...state, helpOpen: false },
+    )
+    .with({ type: 'exit-mines' }, () => ({
+      ...state,
+      menu: null,
+      helpOpen: false,
+    }))
+    .with({ type: 'escape' }, () => INITIAL_CHROME)
+    .exhaustive()
 
 type MenuTriggerId = 'game' | 'help' | 'start' | 'programs' | 'games'
 

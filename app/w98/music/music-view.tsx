@@ -11,6 +11,7 @@ import {
   useState,
 } from 'react'
 import { fetchJson, HTTPError } from 'services/http'
+import { match } from 'ts-pattern'
 import {
   BUNDLED_PLAYLIST_MANIFEST_URL,
   parseBundledPlaylist,
@@ -92,34 +93,30 @@ type DeckTracks = {
 const currentTrackOf = (
   playback: PlaybackState,
   decks: DeckTracks,
-): MusicTrack | null => {
-  switch (playback.source) {
-    case 'local':
-      return decks.localTracks[playback.index] ?? null
-    case 'none':
-      return null
-    case 'soundcloud':
-      return (
-        decks.soundCloudTracks[playback.index] ??
+): MusicTrack | null =>
+  match(playback)
+    .with({ source: 'local' }, ({ index }) => decks.localTracks[index] ?? null)
+    .with({ source: 'none' }, () => null)
+    .with(
+      { source: 'soundcloud' },
+      ({ index }) =>
+        decks.soundCloudTracks[index] ??
         (decks.fallbackSound
-          ? trackFromSoundCloud(decks.fallbackSound, playback.index)
-          : null)
-      )
-  }
-}
+          ? trackFromSoundCloud(decks.fallbackSound, index)
+          : null),
+    )
+    .exhaustive()
 
-const currentIndexOf = (playback: PlaybackState, decks: DeckTracks): number => {
-  switch (playback.source) {
-    case 'local':
-      return decks.localTracks[playback.index]
-        ? decks.soundCloudTracks.length + playback.index
-        : -1
-    case 'none':
-      return -1
-    case 'soundcloud':
-      return decks.soundCloudTracks[playback.index] ? playback.index : -1
-  }
-}
+const currentIndexOf = (playback: PlaybackState, decks: DeckTracks): number =>
+  match(playback)
+    .with({ source: 'local' }, ({ index }) =>
+      decks.localTracks[index] ? decks.soundCloudTracks.length + index : -1,
+    )
+    .with({ source: 'none' }, () => -1)
+    .with({ source: 'soundcloud' }, ({ index }) =>
+      decks.soundCloudTracks[index] ? index : -1,
+    )
+    .exhaustive()
 
 const withLiveDuration = (
   localTracks: LocalMusicTrack[],

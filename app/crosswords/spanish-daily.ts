@@ -1,3 +1,4 @@
+import { filter, flatMap, join, map, pipe } from 'es-toolkit/fp'
 import * as z from 'zod/mini'
 import {
   type ChallengePuzzle,
@@ -36,16 +37,17 @@ const normalizeLetter = (character: string): string => {
 }
 
 const normalizeWord = (word: string): string =>
-  [...word].map(normalizeLetter).join('')
+  pipe([...word], map(normalizeLetter), join(''))
 
 const isGridCharacter = (character: string): boolean =>
   character === '#' || GRID_LETTERS.has(character)
 
 const parseBoard = (board: string): string[] | null => {
-  const rows = board
-    .split('\n')
-    .map((row) => normalizeWord(row.trim()))
-    .filter((row) => row.length > 0)
+  const rows = pipe(
+    board.split('\n'),
+    map((row) => normalizeWord(row.trim())),
+    filter((row) => row.length > 0),
+  )
 
   const width = rows[0]?.length ?? 0
   const sane =
@@ -64,16 +66,19 @@ const clueEntrySchema = z.object({
 
 const looseRecordSchema = z.catch(z.record(z.string(), z.unknown()), {})
 
-const clueBookSide = (side: unknown): Record<string, string> => {
-  const pairs = Object.values(looseRecordSchema.parse(side)).flatMap(
-    (entry) => {
-      const parsed = clueEntrySchema.safeParse(entry)
-      if (!parsed.success) return []
-      return [[normalizeWord(parsed.data.answer), parsed.data.clue] as const]
-    },
-  )
-  return Object.fromEntries(pairs)
+const cluePair = (entry: unknown): (readonly [string, string])[] => {
+  const parsed = clueEntrySchema.safeParse(entry)
+  if (!parsed.success) return []
+  return [[normalizeWord(parsed.data.answer), parsed.data.clue] as const]
 }
+
+const clueBookSide = (side: unknown): Record<string, string> =>
+  pipe(
+    looseRecordSchema.parse(side),
+    Object.values,
+    flatMap(cluePair),
+    Object.fromEntries,
+  )
 
 const wordsIn = (line: string): string[] =>
   line.split('#').filter((word) => word.length >= 2)

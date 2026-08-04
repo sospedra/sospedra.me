@@ -1,4 +1,5 @@
 import { clamp, range } from 'es-toolkit'
+import { match, P } from 'ts-pattern'
 
 export const COLS = 20
 export const ROWS = 10
@@ -112,21 +113,15 @@ const levelTurn = (state: GameState, dir: Dir): GameState => {
   return { ...state, level: clampLevel(state.level + delta) }
 }
 
-const turn = (state: GameState, dir: Dir): GameState => {
-  switch (state.phase) {
-    case 'menu':
-      return menuTurn(state, dir)
-    case 'level':
-      return levelTurn(state, dir)
-    case 'tops':
-      return { ...state, phase: 'menu' }
-    case 'running':
-    case 'paused':
-      return queueTurn(state, dir)
-    case 'over':
-      return state
-  }
-}
+const turn = (state: GameState, dir: Dir): GameState =>
+  match(state.phase)
+    .returnType<GameState>()
+    .with('menu', () => menuTurn(state, dir))
+    .with('level', () => levelTurn(state, dir))
+    .with('tops', () => ({ ...state, phase: 'menu' }))
+    .with(P.union('running', 'paused'), () => queueTurn(state, dir))
+    .with('over', () => state)
+    .exhaustive()
 
 const menuSelect = (state: GameState, roll: number): GameState => {
   if (state.menuIndex === 1) return { ...state, phase: 'level' }
@@ -134,20 +129,14 @@ const menuSelect = (state: GameState, roll: number): GameState => {
   return start(state, roll)
 }
 
-const select = (state: GameState, roll: number): GameState => {
-  switch (state.phase) {
-    case 'menu':
-      return menuSelect(state, roll)
-    case 'level':
-    case 'tops':
-    case 'over':
-      return { ...state, phase: 'menu' }
-    case 'running':
-      return { ...state, phase: 'paused' }
-    case 'paused':
-      return { ...state, phase: 'running' }
-  }
-}
+const select = (state: GameState, roll: number): GameState =>
+  match(state.phase)
+    .returnType<GameState>()
+    .with('menu', () => menuSelect(state, roll))
+    .with(P.union('level', 'tops', 'over'), () => ({ ...state, phase: 'menu' }))
+    .with('running', () => ({ ...state, phase: 'paused' }))
+    .with('paused', () => ({ ...state, phase: 'running' }))
+    .exhaustive()
 
 const hitsWall = (cell: Vec) =>
   cell.x < 0 || cell.y < 0 || cell.x >= COLS || cell.y >= ROWS
@@ -185,19 +174,21 @@ const tick = (state: GameState, roll: number): GameState => {
   }
 }
 
-export const reduce = (state: GameState, event: GameEvent): GameState => {
-  switch (event.type) {
-    case 'TURN':
-      return turn(state, event.dir)
-    case 'SELECT':
-      return select(state, event.roll)
-    case 'TICK':
-      return tick(state, event.roll)
-    case 'HIDE':
-      return state.phase === 'running' ? { ...state, phase: 'paused' } : state
-    case 'TOP':
-      return { ...state, top: Math.max(state.top, event.top) }
-    case 'LEVEL':
-      return { ...state, level: clampLevel(event.level) }
-  }
-}
+export const reduce = (state: GameState, event: GameEvent): GameState =>
+  match(event)
+    .returnType<GameState>()
+    .with({ type: 'TURN' }, ({ dir }) => turn(state, dir))
+    .with({ type: 'SELECT' }, ({ roll }) => select(state, roll))
+    .with({ type: 'TICK' }, ({ roll }) => tick(state, roll))
+    .with({ type: 'HIDE' }, () =>
+      state.phase === 'running' ? { ...state, phase: 'paused' } : state,
+    )
+    .with({ type: 'TOP' }, ({ top }) => ({
+      ...state,
+      top: Math.max(state.top, top),
+    }))
+    .with({ type: 'LEVEL' }, ({ level }) => ({
+      ...state,
+      level: clampLevel(level),
+    }))
+    .exhaustive()

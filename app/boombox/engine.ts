@@ -1,4 +1,5 @@
 import { Temporal } from 'temporal-polyfill'
+import { match } from 'ts-pattern'
 
 export type Song = {
   album: string
@@ -121,17 +122,17 @@ export const reduce = (
 ): BoomboxState => {
   if (state.stage !== 'play') return state
 
-  switch (event.type) {
-    case 'guess': {
-      const score = scoreGuess(daily, event.candidate)
-      const guesses = [...state.guesses, guessOf(event.candidate, score)]
+  return match(event)
+    .with({ type: 'guess' }, ({ candidate }) => {
+      const score = scoreGuess(daily, candidate)
+      const guesses = [...state.guesses, guessOf(candidate, score)]
       return { ...state, guesses, stage: stageAfter(guesses, score) }
-    }
-    case 'skip': {
+    })
+    .with({ type: 'skip' }, () => {
       const guesses = [...state.guesses, SKIP_GUESS]
       return { ...state, guesses, stage: stageAfter(guesses, 'skip') }
-    }
-  }
+    })
+    .exhaustive()
 }
 
 export const unlockedSeconds = (state: BoomboxState): number => {

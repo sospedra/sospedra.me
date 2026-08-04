@@ -1,4 +1,5 @@
-import { maxBy, sumBy, uniq } from 'es-toolkit'
+import { maxBy, sumBy } from 'es-toolkit'
+import { flatMap, pipe, uniq } from 'es-toolkit/fp'
 import { DAY_MS } from 'services/time'
 import type {
   AnswerResult,
@@ -140,15 +141,18 @@ const utcDayNumber = (date: string) => {
   return Math.floor(Date.UTC(year, month - 1, day) / DAY_MS)
 }
 
+const playedDays = (run: OfficialGeoRunRecord): number[] => {
+  const day = utcDayNumber(run.publicationDate)
+  return day === null ? [] : [day]
+}
+
+const newestFirst = (days: readonly number[]) =>
+  days.toSorted((left, right) => right - left)
+
 export const calculateDailyPlayStreak = (
   runs: readonly OfficialGeoRunRecord[],
 ) => {
-  const days = uniq(
-    runs.flatMap((run) => {
-      const day = utcDayNumber(run.publicationDate)
-      return day === null ? [] : [day]
-    }),
-  ).sort((left, right) => right - left)
+  const days = pipe(runs, flatMap(playedDays), uniq(), newestFirst)
   if (days.length === 0) return 0
 
   let streak = 1

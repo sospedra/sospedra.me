@@ -1,5 +1,6 @@
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
+import { match, P } from 'ts-pattern'
 import { openPng, savePng } from './file-io.ts'
 import { floodFill } from './fill.ts'
 import {
@@ -772,27 +773,21 @@ export const usePaint = () => {
     clearOverlay()
   }
 
-  const applyEffects = (state: PaintState, event: PaintEvent) => {
-    switch (event.type) {
-      case 'down':
-        return applyDown(state, event.at, event.button)
-      case 'move':
-        return applyMove(state, event.at)
-      case 'up':
-        return applyUp(state, event.at)
-      case 'dblclick':
-        return applyDoubleClick(state)
-      case 'tool':
-      case 'cancel':
+  const applyEffects = (state: PaintState, event: PaintEvent) =>
+    match(event)
+      .with({ type: 'down' }, (event) =>
+        applyDown(state, event.at, event.button),
+      )
+      .with({ type: 'move' }, ({ at }) => applyMove(state, at))
+      .with({ type: 'up' }, ({ at }) => applyUp(state, at))
+      .with({ type: 'dblclick' }, () => applyDoubleClick(state))
+      .with({ type: P.union('tool', 'cancel') }, () => {
         anchorFloat()
         stopSpray()
         strokeUndoRef.current = null
         clearOverlay()
-        return
-      default:
-        return
-    }
-  }
+      })
+      .otherwise(() => undefined)
 
   const setZoom = (level: Magnification) => {
     if (level !== 1) lastZoomRef.current = level

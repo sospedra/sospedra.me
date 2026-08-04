@@ -6,6 +6,7 @@ import { dirname, join, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
 import { groupBy, isNotNil, sumBy } from 'es-toolkit'
+import { filter, map, pipe } from 'es-toolkit/fp'
 import { buildCityAutocompleteOptions } from '../../app/meridian/city-options.ts'
 import type { GeneratedCityCorpus } from '../../app/meridian/corpus-model.ts'
 import type {
@@ -930,10 +931,11 @@ for (const [roundIndex, round] of challenge.rounds.entries()) {
       difficulties.every((difficulty) => seenDifficulties.has(difficulty)),
     `${round.type} round must span all four difficulty levels`,
   )
-  const continents = new Set(
-    round.questions
-      .map((question) => countryByCode.get(question.countryCode)?.continent)
-      .filter(isNotNil),
+  const continents = pipe(
+    round.questions,
+    map((question) => countryByCode.get(question.countryCode)?.continent),
+    filter(isNotNil),
+    (values) => new Set(values),
   )
   check(
     continents.size >= 5,
@@ -949,10 +951,11 @@ check(
   questionIds.size === expectedQuestionCount,
   `Challenge must contain ${expectedQuestionCount} unique question IDs`,
 )
-const expectedCapitalCityIds = new Set(
-  eligibleMapCities
-    .filter((city) => city.isCapital)
-    .map((city) => city.geonamesId),
+const expectedCapitalCityIds = pipe(
+  eligibleMapCities,
+  filter((city) => city.isCapital),
+  map((city) => city.geonamesId),
+  (ids) => new Set(ids),
 )
 check(
   generatedMapCityIds.size === expectedCapitalCityIds.size &&
@@ -961,10 +964,11 @@ check(
     ),
   'Map round must locate every eligible capital exactly once',
 )
-const activeCountryCodes = new Set(
-  corpus.countries
-    .filter((country) => country.status === 'active')
-    .map((country) => country.code),
+const activeCountryCodes = pipe(
+  corpus.countries,
+  filter((country) => country.status === 'active'),
+  map((country) => country.code),
+  (codes) => new Set(codes),
 )
 check(
   [...activeCountryCodes].every((code) => distinctAnswerCountryCodes.has(code)),

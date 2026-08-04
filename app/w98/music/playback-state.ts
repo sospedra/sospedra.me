@@ -1,3 +1,5 @@
+import { match } from 'ts-pattern'
+
 export type PlaybackState =
   | { source: 'local'; index: number }
   | { source: 'none' }
@@ -30,30 +32,29 @@ const armBundledDeck = (state: PlaybackState): PlaybackState => {
 export const reducePlayback = (
   state: PlaybackState,
   event: PlaybackEvent,
-): PlaybackState => {
-  switch (event.type) {
-    case 'bundled-ready':
-      return armBundledDeck(state)
-    case 'load-soundcloud':
-      return {
-        index: 0,
-        localIndex: localDeckIndex(state),
-        source: 'soundcloud',
-      }
-    case 'play-local':
-      return state.source === 'local' && state.index === event.index
+): PlaybackState =>
+  match(event)
+    .returnType<PlaybackState>()
+    .with({ type: 'bundled-ready' }, () => armBundledDeck(state))
+    .with({ type: 'load-soundcloud' }, () => ({
+      index: 0,
+      localIndex: localDeckIndex(state),
+      source: 'soundcloud',
+    }))
+    .with({ type: 'play-local' }, ({ index }) =>
+      state.source === 'local' && state.index === index
         ? state
-        : { index: event.index, source: 'local' }
-    case 'select-soundcloud':
-      return {
-        index: event.index,
-        localIndex: localDeckIndex(state),
-        source: 'soundcloud',
-      }
-    case 'sync-soundcloud':
-      if (state.source !== 'soundcloud' || state.index === event.index) {
+        : { index, source: 'local' },
+    )
+    .with({ type: 'select-soundcloud' }, ({ index }) => ({
+      index,
+      localIndex: localDeckIndex(state),
+      source: 'soundcloud',
+    }))
+    .with({ type: 'sync-soundcloud' }, ({ index }) => {
+      if (state.source !== 'soundcloud' || state.index === index) {
         return state
       }
-      return { ...state, index: event.index }
-  }
-}
+      return { ...state, index }
+    })
+    .exhaustive()

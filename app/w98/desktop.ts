@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern'
 import type { WinampPanelId, WinampPanelVisibility } from './music/music-view'
 
 export type AppId = 'mines' | 'paint' | 'winamp' | 'realplayer'
@@ -94,36 +95,34 @@ const close = (state: DesktopState, app: AppId): DesktopState => {
 export const reduceDesktop = (
   state: DesktopState,
   action: DesktopAction,
-): DesktopState => {
-  switch (action.type) {
-    case 'launch':
-      return launch(state, action.app)
-    case 'launch-winamp':
-      return { ...launch(state, 'winamp'), winampPanels: ALL_WINAMP_PANELS }
-    case 'activate': {
-      const current = state.apps[action.app]
+): DesktopState =>
+  match(action)
+    .returnType<DesktopState>()
+    .with({ type: 'launch' }, ({ app }) => launch(state, app))
+    .with({ type: 'launch-winamp' }, () => ({
+      ...launch(state, 'winamp'),
+      winampPanels: ALL_WINAMP_PANELS,
+    }))
+    .with({ type: 'activate' }, ({ app }) => {
+      const current = state.apps[app]
       if (!current.open || current.minimized) return state
-      return { ...state, active: action.app }
-    }
-    case 'minimize':
-      return minimize(state, action.app)
-    case 'close':
-      return close(state, action.app)
-    case 'open-winamp-panel':
-      return {
-        ...launch(state, 'winamp'),
-        winampPanels: state.winampPanels[action.panel]
-          ? state.winampPanels
-          : { ...state.winampPanels, [action.panel]: true },
-      }
-    case 'close-winamp-panel': {
-      if (action.panel === 'player') {
+      return { ...state, active: app }
+    })
+    .with({ type: 'minimize' }, ({ app }) => minimize(state, app))
+    .with({ type: 'close' }, ({ app }) => close(state, app))
+    .with({ type: 'open-winamp-panel' }, ({ panel }) => ({
+      ...launch(state, 'winamp'),
+      winampPanels: state.winampPanels[panel]
+        ? state.winampPanels
+        : { ...state.winampPanels, [panel]: true },
+    }))
+    .with({ type: 'close-winamp-panel' }, ({ panel }) => {
+      if (panel === 'player') {
         return { ...close(state, 'winamp'), winampPanels: NO_WINAMP_PANELS }
       }
       return {
         ...state,
-        winampPanels: { ...state.winampPanels, [action.panel]: false },
+        winampPanels: { ...state.winampPanels, [panel]: false },
       }
-    }
-  }
-}
+    })
+    .exhaustive()

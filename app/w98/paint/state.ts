@@ -1,4 +1,5 @@
 import { clamp } from 'es-toolkit'
+import { match, P } from 'ts-pattern'
 import {
   type Handle,
   type Point,
@@ -168,34 +169,33 @@ const moveCurve = (
   return { ...mode, c2: at }
 }
 
-const movedMode = (mode: Mode, at: Point, size: Size): Mode => {
-  switch (mode.kind) {
-    case 'freehand':
-      return { ...mode, last: at }
-    case 'selecting':
-      return { ...mode, to: clampPoint(at, size) }
-    case 'shaping':
-    case 'polygon':
-      return { ...mode, to: at }
-    case 'curving':
-      return moveCurve(mode, at)
-    case 'movingSelection':
-      return {
-        ...mode,
-        grip: at,
-        rect: {
-          ...mode.rect,
-          x: mode.rect.x + at.x - mode.grip.x,
-          y: mode.rect.y + at.y - mode.grip.y,
-        },
-      }
-    case 'resizingSelection':
-    case 'resizingCanvas':
-      return { ...mode, to: at }
-    default:
-      return mode
-  }
-}
+const movedMode = (mode: Mode, at: Point, size: Size): Mode =>
+  match(mode)
+    .returnType<Mode>()
+    .with({ kind: 'freehand' }, (mode) => ({ ...mode, last: at }))
+    .with({ kind: 'selecting' }, (mode) => ({
+      ...mode,
+      to: clampPoint(at, size),
+    }))
+    .with({ kind: P.union('shaping', 'polygon') }, (mode) => ({
+      ...mode,
+      to: at,
+    }))
+    .with({ kind: 'curving' }, (mode) => moveCurve(mode, at))
+    .with({ kind: 'movingSelection' }, (mode) => ({
+      ...mode,
+      grip: at,
+      rect: {
+        ...mode.rect,
+        x: mode.rect.x + at.x - mode.grip.x,
+        y: mode.rect.y + at.y - mode.grip.y,
+      },
+    }))
+    .with({ kind: P.union('resizingSelection', 'resizingCanvas') }, (mode) => ({
+      ...mode,
+      to: at,
+    }))
+    .otherwise(() => mode)
 
 const upCurve = (
   state: PaintState,
@@ -227,92 +227,93 @@ const upSelecting = (state: PaintState, from: Point, to: Point): PaintState => {
   return { ...state, mode: { kind: 'selected', rect } }
 }
 
-const reduceUp = (state: PaintState, at: Point): PaintState => {
-  const mode = state.mode
-  switch (mode.kind) {
-    case 'freehand':
-    case 'shaping':
-      return { ...state, mode: IDLE, dirty: true }
-    case 'polygon':
-      return upPolygon(state, mode, at)
-    case 'curving':
-      return upCurve(state, mode)
-    case 'selecting':
-      return upSelecting(state, mode.from, mode.to)
-    case 'movingSelection':
-      return {
-        ...state,
-        mode: { kind: 'selected', rect: mode.rect },
-        dirty: true,
-      }
-    case 'resizingSelection':
-      return {
-        ...state,
-        dirty: true,
-        mode: {
-          kind: 'selected',
-          rect: resizeRect(mode.rect, mode.handle, mode.to),
-        },
-      }
-    case 'resizingCanvas':
-      return { ...state, mode: IDLE }
-    default:
-      return state
-  }
-}
+const reduceUp = (state: PaintState, at: Point): PaintState =>
+  match(state.mode)
+    .returnType<PaintState>()
+    .with({ kind: P.union('freehand', 'shaping') }, () => ({
+      ...state,
+      mode: IDLE,
+      dirty: true,
+    }))
+    .with({ kind: 'polygon' }, (mode) => upPolygon(state, mode, at))
+    .with({ kind: 'curving' }, (mode) => upCurve(state, mode))
+    .with({ kind: 'selecting' }, (mode) =>
+      upSelecting(state, mode.from, mode.to),
+    )
+    .with({ kind: 'movingSelection' }, ({ rect }) => ({
+      ...state,
+      mode: { kind: 'selected', rect },
+      dirty: true,
+    }))
+    .with({ kind: 'resizingSelection' }, (mode) => ({
+      ...state,
+      dirty: true,
+      mode: {
+        kind: 'selected',
+        rect: resizeRect(mode.rect, mode.handle, mode.to),
+      },
+    }))
+    .with({ kind: 'resizingCanvas' }, () => ({ ...state, mode: IDLE }))
+    .otherwise(() => state)
 
-export const reduce = (state: PaintState, event: PaintEvent): PaintState => {
-  switch (event.type) {
-    case 'tool':
-      if (event.tool === state.tool) return state
-      return { ...state, tool: event.tool, mode: IDLE }
-    case 'color':
-      return event.slot === 'fg'
+export const reduce = (state: PaintState, event: PaintEvent): PaintState =>
+  match(event)
+    .returnType<PaintState>()
+    .with({ type: 'tool' }, ({ tool }) => {
+      if (tool === state.tool) return state
+      return { ...state, tool, mode: IDLE }
+    })
+    .with({ type: 'color' }, (event) =>
+      event.slot === 'fg'
         ? { ...state, fg: event.color }
-        : { ...state, bg: event.color }
-    case 'option':
-      return { ...state, options: { ...state.options, ...event.patch } }
-    case 'zoom':
-      return { ...state, zoom: event.level }
-    case 'down':
-      return reduceDown(state, event.at, event.button)
-    case 'move': {
-      const moved = movedMode(state.mode, event.at, state.size)
+        : { ...state, bg: event.color },
+    )
+    .with({ type: 'option' }, ({ patch }) => ({
+      ...state,
+      options: { ...state.options, ...patch },
+    }))
+    .with({ type: 'zoom' }, ({ level }) => ({ ...state, zoom: level }))
+    .with({ type: 'down' }, (event) =>
+      reduceDown(state, event.at, event.button),
+    )
+    .with({ type: 'move' }, ({ at }) => {
+      const moved = movedMode(state.mode, at, state.size)
       return moved === state.mode ? state : { ...state, mode: moved }
-    }
-    case 'up':
-      return reduceUp(state, event.at)
-    case 'dblclick':
+    })
+    .with({ type: 'up' }, ({ at }) => reduceUp(state, at))
+    .with({ type: 'dblclick' }, () => {
       if (state.mode.kind !== 'polygon' || state.mode.points.length < 2) {
         return state
       }
       return { ...state, mode: IDLE, dirty: true }
-    case 'cancel':
-      return state.mode.kind === 'idle' ? state : { ...state, mode: IDLE }
-    case 'commit':
-      return { ...state, dirty: true }
-    case 'deselect':
+    })
+    .with({ type: 'cancel' }, () =>
+      state.mode.kind === 'idle' ? state : { ...state, mode: IDLE },
+    )
+    .with({ type: 'commit' }, () => ({ ...state, dirty: true }))
+    .with({ type: 'deselect' }, () => {
       if (state.mode.kind !== 'selected' && state.mode.kind !== 'selecting') {
         return state
       }
       return { ...state, mode: IDLE }
-    case 'select-rect':
-      return {
-        ...state,
-        tool: 'select',
-        mode: { kind: 'selected', rect: event.rect },
-      }
-    case 'grab':
+    })
+    .with({ type: 'select-rect' }, ({ rect }) => ({
+      ...state,
+      tool: 'select',
+      mode: { kind: 'selected', rect },
+    }))
+    .with({ type: 'grab' }, ({ at }) => {
       if (state.mode.kind !== 'selected') return state
       return {
         ...state,
         mode: {
           kind: 'movingSelection',
           rect: state.mode.rect,
-          grip: event.at,
+          grip: at,
         },
       }
-    case 'grab-handle':
+    })
+    .with({ type: 'grab-handle' }, (event) => {
       if (state.mode.kind !== 'selected') return state
       return {
         ...state,
@@ -323,40 +324,35 @@ export const reduce = (state: PaintState, event: PaintEvent): PaintState => {
           to: event.at,
         },
       }
-    case 'resize-canvas':
-      return {
-        ...state,
-        mode: {
-          kind: 'resizingCanvas',
-          nub: event.nub,
-          start: event.at,
-          to: event.at,
-        },
-      }
-    case 'canvas-resized':
-      return {
-        ...state,
-        size: { width: event.width, height: event.height },
-        dirty: true,
-        mode: IDLE,
-      }
-    case 'cleared':
-      return {
-        ...state,
-        size: { width: event.width, height: event.height },
-        dirty: false,
-        zoom: 1,
-        mode: IDLE,
-      }
-    case 'opened':
-      return {
-        ...state,
-        size: { width: event.width, height: event.height },
-        dirty: false,
-        zoom: 1,
-        mode: IDLE,
-      }
-    case 'saved':
-      return { ...state, dirty: false }
-  }
-}
+    })
+    .with({ type: 'resize-canvas' }, (event) => ({
+      ...state,
+      mode: {
+        kind: 'resizingCanvas',
+        nub: event.nub,
+        start: event.at,
+        to: event.at,
+      },
+    }))
+    .with({ type: 'canvas-resized' }, (event) => ({
+      ...state,
+      size: { width: event.width, height: event.height },
+      dirty: true,
+      mode: IDLE,
+    }))
+    .with({ type: 'cleared' }, (event) => ({
+      ...state,
+      size: { width: event.width, height: event.height },
+      dirty: false,
+      zoom: 1,
+      mode: IDLE,
+    }))
+    .with({ type: 'opened' }, (event) => ({
+      ...state,
+      size: { width: event.width, height: event.height },
+      dirty: false,
+      zoom: 1,
+      mode: IDLE,
+    }))
+    .with({ type: 'saved' }, () => ({ ...state, dirty: false }))
+    .exhaustive()

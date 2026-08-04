@@ -1,3 +1,4 @@
+import { match, P } from 'ts-pattern'
 import { type GameState, MENU_ITEMS, type Vec } from './engine'
 
 // 84×48 LCD, the 3310's real resolution: score strip rows 0..5,
@@ -183,16 +184,10 @@ const drawGame = (ctx: Ctx, state: GameState) => {
 
 export const drawFrame = (ctx: Ctx, state: GameState) => {
   clear(ctx)
-  switch (state.phase) {
-    case 'menu':
-      return drawMenu(ctx, state)
-    case 'level':
-      return drawLevel(ctx, state)
-    case 'tops':
-      return drawTops(ctx, state)
-    case 'running':
-    case 'paused':
-    case 'over':
-      return drawGame(ctx, state)
-  }
+  return match(state.phase)
+    .with('menu', () => drawMenu(ctx, state))
+    .with('level', () => drawLevel(ctx, state))
+    .with('tops', () => drawTops(ctx, state))
+    .with(P.union('running', 'paused', 'over'), () => drawGame(ctx, state))
+    .exhaustive()
 }

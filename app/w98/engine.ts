@@ -1,5 +1,7 @@
 import { range } from 'es-toolkit'
+import { filter, map, pipe, sortBy, take } from 'es-toolkit/fp'
 import { mulberry32 } from 'services/random'
+import { match } from 'ts-pattern'
 
 export type Level = { rows: number; cols: number; mines: number }
 
@@ -56,26 +58,28 @@ const OFFSETS = [
 const neighborsOf = (index: number, level: Level): number[] => {
   const row = Math.floor(index / level.cols)
   const col = index % level.cols
-  return OFFSETS.map(([rowStep, colStep]) => [row + rowStep, col + colStep])
-    .filter(
-      ([nearRow, nearCol]) =>
-        nearRow >= 0 &&
-        nearRow < level.rows &&
-        nearCol >= 0 &&
-        nearCol < level.cols,
-    )
-    .map(([nearRow, nearCol]) => nearRow * level.cols + nearCol)
+  const withinBoard = ([nearRow, nearCol]: readonly [number, number]) =>
+    nearRow >= 0 && nearRow < level.rows && nearCol >= 0 && nearCol < level.cols
+  return pipe(
+    OFFSETS,
+    map(([rowStep, colStep]) => [row + rowStep, col + colStep] as const),
+    filter(withinBoard),
+    map(([nearRow, nearCol]) => nearRow * level.cols + nearCol),
+  )
 }
 
 // first click is never a mine: the safe index leaves the candidate pool
 const pickMines = (level: Level, safe: number, seed: number): Set<number> => {
   const random = mulberry32(seed)
-  const picked = range(level.rows * level.cols)
-    .filter((index) => index !== safe)
-    .map((index) => ({ index, key: random() }))
-    .toSorted((a, b) => a.key - b.key)
-    .slice(0, level.mines)
-  return new Set(picked.map(({ index }) => index))
+  const picked = pipe(
+    range(level.rows * level.cols),
+    filter((index) => index !== safe),
+    map((index) => ({ index, key: random() })),
+    sortBy(['key']),
+    take(level.mines),
+    map(({ index }) => index),
+  )
+  return new Set(picked)
 }
 
 const armBoard = (state: MinesState, safe: number, seed: number): Cell[] => {
@@ -174,13 +178,13 @@ const flagAt = (state: MinesState, index: number): MinesState => {
 const canSweep = (state: MinesState) =>
   state.status === 'idle' || state.status === 'playing'
 
-export const reduce = (state: MinesState, event: MinesEvent): MinesState => {
-  switch (event.type) {
-    case 'reveal':
-      return canSweep(state) ? revealAt(state, event.index, event.seed) : state
-    case 'flag':
-      return canSweep(state) ? flagAt(state, event.index) : state
-    case 'reset':
-      return createGame(event.level)
-  }
-}
+export const reduce = (state: MinesState, event: MinesEvent): MinesState =>
+  match(event)
+    .with({ type: 'reveal' }, (event) =>
+      canSweep(state) ? revealAt(state, event.index, event.seed) : state,
+    )
+    .with({ type: 'flag' }, ({ index }) =>
+      canSweep(state) ? flagAt(state, index) : state,
+    )
+    .with({ type: 'reset' }, ({ level }) => createGame(level))
+    .exhaustive()

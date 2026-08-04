@@ -11,7 +11,8 @@ import {
 } from 'node:fs'
 import { resolve } from 'node:path'
 import { createInterface } from 'node:readline'
-import { groupBy, sumBy, uniqBy } from 'es-toolkit'
+import { groupBy, sumBy } from 'es-toolkit'
+import { filter, map, pipe, uniqBy } from 'es-toolkit/fp'
 import type {
   CityOverrideAction,
   GeneratedCityCorpus,
@@ -439,9 +440,12 @@ const uniqueNames = (preferred: string, values: string[]) => {
   const candidates = [normalizedPreferred, ...values]
     .map(normalizedCurrentName)
     .filter(usableName)
-  const remainder = uniqBy(candidates, normalizeName)
-    .filter((value) => value !== normalizedPreferred)
-    .sort(compareText)
+  const remainder = pipe(
+    candidates,
+    uniqBy(normalizeName),
+    filter((value) => value !== normalizedPreferred),
+    (names) => names.toSorted(compareText),
+  )
   return [normalizedPreferred, ...remainder]
 }
 
@@ -521,20 +525,23 @@ const overridesById = groupBy(
   (override) => override.geonamesId,
 )
 
-const excludedIds = new Set(
-  overrideDocument.overrides
-    .filter((override) => override.action === 'exclude')
-    .map((override) => override.geonamesId),
+const excludedIds = pipe(
+  overrideDocument.overrides,
+  filter((override) => override.action === 'exclude'),
+  map((override) => override.geonamesId),
+  (ids) => new Set(ids),
 )
-const includedIds = new Set(
-  overrideDocument.overrides
-    .filter((override) => override.action === 'include')
-    .map((override) => override.geonamesId),
+const includedIds = pipe(
+  overrideDocument.overrides,
+  filter((override) => override.action === 'include'),
+  map((override) => override.geonamesId),
+  (ids) => new Set(ids),
 )
-const capitalOverrides = new Map(
-  overrideDocument.overrides
-    .filter((override) => override.action === 'capital')
-    .map((override) => [override.geonamesId, override.isCapital]),
+const capitalOverrides = pipe(
+  overrideDocument.overrides,
+  filter((override) => override.action === 'capital'),
+  map((override) => [override.geonamesId, override.isCapital] as const),
+  (entries) => new Map(entries),
 )
 
 const main = async () => {
@@ -953,10 +960,11 @@ const main = async () => {
   const existingCountryCorpus = readJson<ExistingCountryCorpus>(
     'repo/geo/generated/countries.json',
   )
-  const reviewedByCode = new Map(
-    existingCountryCorpus.countries
-      .filter((country) => LEGACY_REVIEWED_COUNTRY_CODES.has(country.code))
-      .map((country) => [country.code, country]),
+  const reviewedByCode = pipe(
+    existingCountryCorpus.countries,
+    filter((country) => LEGACY_REVIEWED_COUNTRY_CODES.has(country.code)),
+    map((country) => [country.code, country] as const),
+    (entries) => new Map(entries),
   )
   const naturalEarth = readJson<NaturalEarthDocument>(
     sourceLock.naturalEarth.file.path,
@@ -1008,10 +1016,11 @@ const main = async () => {
       `Country-difficulty shape hold references unknown country ${code}`,
     )
   }
-  const capitalReviewCodes = new Set(
-    overrideDocument.reviewQueue
-      .filter((review) => review.topic.includes('capital'))
-      .map((review) => review.countryCode),
+  const capitalReviewCodes = pipe(
+    overrideDocument.reviewQueue,
+    filter((review) => review.topic.includes('capital')),
+    map((review) => review.countryCode),
+    (codes) => new Set(codes),
   )
 
   const gameCountries: CountryRecord[] = countries.map((country) => {

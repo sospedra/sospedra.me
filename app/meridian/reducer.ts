@@ -1,5 +1,6 @@
 import { clamp } from 'es-toolkit'
 import { haversineDistanceKm, isGeoCoordinate } from 'services/distance'
+import { match } from 'ts-pattern'
 import type {
   AnswerResult,
   ChoiceAnswerResult,
@@ -121,10 +122,6 @@ const normalizeElapsed = (
 ): number | null => {
   if (!Number.isFinite(elapsedMs)) return null
   return clamp(elapsedMs, 0, Math.max(0, limitMs))
-}
-
-const assertNever = (value: never): never => {
-  throw new Error(`Unhandled geo action: ${JSON.stringify(value)}`)
 }
 
 export const createGeoGameState = (
@@ -710,12 +707,13 @@ export const geoGameReducer = (
   state: GeoGameState,
   action: GeoGameAction,
 ): GeoGameState => {
-  switch (action.type) {
-    case 'START':
+  return match(action)
+    .returnType<GeoGameState>()
+    .with({ type: 'START' }, ({ startedAt }) => {
       if (
         state.phase !== 'idle' ||
         !currentQuestion(state) ||
-        !isIsoDateTime(action.startedAt)
+        !isIsoDateTime(startedAt)
       ) {
         return state
       }
@@ -723,9 +721,10 @@ export const geoGameReducer = (
         ...state,
         phase: 'countdown',
         countdownReason: 'run-start',
-        startedAt: action.startedAt,
+        startedAt,
       }
-    case 'COUNTDOWN_FINISHED':
+    })
+    .with({ type: 'COUNTDOWN_FINISHED' }, () => {
       if (state.phase !== 'countdown') return state
       return {
         ...state,
@@ -740,19 +739,18 @@ export const geoGameReducer = (
             ? state.lastAnswer
             : null,
       }
-    case 'SUBMIT_CHOICE':
-      return submitChoice(state, action)
-    case 'SUBMIT_TEXT':
-      return submitText(state, action)
-    case 'SUBMIT_MAP':
-      return submitMap(state, action)
-    case 'SKIP_QUESTION':
-      return skipQuestion(state, action)
-    case 'ROUND_TIME_EXPIRED':
-      return expireRound(state, action.roundElapsedMs, action.answeredAt)
-    case 'FEEDBACK_FINISHED':
-      return finishFeedback(state, action.completedAt, action.roundElapsedMs)
-    case 'ROUND_SUMMARY_FINISHED':
+    })
+    .with({ type: 'SUBMIT_CHOICE' }, (action) => submitChoice(state, action))
+    .with({ type: 'SUBMIT_TEXT' }, (action) => submitText(state, action))
+    .with({ type: 'SUBMIT_MAP' }, (action) => submitMap(state, action))
+    .with({ type: 'SKIP_QUESTION' }, (action) => skipQuestion(state, action))
+    .with({ type: 'ROUND_TIME_EXPIRED' }, (action) =>
+      expireRound(state, action.roundElapsedMs, action.answeredAt),
+    )
+    .with({ type: 'FEEDBACK_FINISHED' }, (action) =>
+      finishFeedback(state, action.completedAt, action.roundElapsedMs),
+    )
+    .with({ type: 'ROUND_SUMMARY_FINISHED' }, () => {
       if (state.phase !== 'round-summary') return state
       if (state.roundIndex >= state.challenge.rounds.length - 1) {
         return {
@@ -776,22 +774,27 @@ export const geoGameReducer = (
         visibilityReturnPhase: 'question',
         lastAnswer: null,
       }
-    case 'PAUSE_BETWEEN_ROUNDS':
+    })
+    .with({ type: 'PAUSE_BETWEEN_ROUNDS' }, () => {
       if (state.phase !== 'round-summary') return state
       return { ...state, phase: 'between-rounds-paused' }
-    case 'RESUME_BETWEEN_ROUNDS':
+    })
+    .with({ type: 'RESUME_BETWEEN_ROUNDS' }, () => {
       if (state.phase !== 'between-rounds-paused') return state
       return { ...state, phase: 'round-summary' }
-    case 'VISIBILITY_HIDDEN':
-      return freezeForVisibility(state, action.elapsedMs, action.roundElapsedMs)
-    case 'RESUME_FROM_VISIBILITY':
+    })
+    .with({ type: 'VISIBILITY_HIDDEN' }, (action) =>
+      freezeForVisibility(state, action.elapsedMs, action.roundElapsedMs),
+    )
+    .with({ type: 'RESUME_FROM_VISIBILITY' }, () => {
       if (state.phase !== 'visibility-paused') return state
       return {
         ...state,
         phase: 'countdown',
         countdownReason: 'resume',
       }
-    case 'OPEN_OVERLAY':
+    })
+    .with({ type: 'OPEN_OVERLAY' }, ({ overlay }) => {
       if (
         state.overlay ||
         state.phase === 'question' ||
@@ -799,11 +802,11 @@ export const geoGameReducer = (
       ) {
         return state
       }
-      return { ...state, overlay: action.overlay }
-    case 'CLOSE_OVERLAY':
+      return { ...state, overlay }
+    })
+    .with({ type: 'CLOSE_OVERLAY' }, () => {
       if (!state.overlay) return state
       return { ...state, overlay: null }
-    default:
-      return assertNever(action)
-  }
+    })
+    .exhaustive()
 }

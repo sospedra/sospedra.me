@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link, { LinkBack } from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
+import { match, P } from 'ts-pattern'
 import css from './camera.module.css'
 import { developInstantFilmCanvas } from './instant-film'
 
@@ -42,37 +43,28 @@ function cameraFault(error: unknown): CameraFault {
     }
   }
 
-  if (error instanceof DOMException) {
-    switch (error.name) {
-      case 'NotAllowedError':
-      case 'SecurityError':
-        return {
-          title: 'Camera access blocked',
-          detail:
-            'Allow camera access in your browser settings, then retry. Nothing is uploaded.',
-        }
-      case 'NotFoundError':
-      case 'OverconstrainedError':
-        return {
-          title: 'No camera found',
-          detail:
-            'Connect a camera or enable one in your device settings, then try again.',
-        }
-      case 'NotReadableError':
-      case 'AbortError':
-        return {
-          title: 'Camera is busy',
-          detail:
-            'Another app may be using the camera. Close it, wait a moment, and retry.',
-        }
-    }
-  }
-
-  return {
-    title: 'Camera signal lost',
-    detail:
-      'The browser could not start the camera. Check its permissions and try again.',
-  }
+  const name = error instanceof DOMException ? error.name : null
+  return match(name)
+    .with(P.union('NotAllowedError', 'SecurityError'), () => ({
+      title: 'Camera access blocked',
+      detail:
+        'Allow camera access in your browser settings, then retry. Nothing is uploaded.',
+    }))
+    .with(P.union('NotFoundError', 'OverconstrainedError'), () => ({
+      title: 'No camera found',
+      detail:
+        'Connect a camera or enable one in your device settings, then try again.',
+    }))
+    .with(P.union('NotReadableError', 'AbortError'), () => ({
+      title: 'Camera is busy',
+      detail:
+        'Another app may be using the camera. Close it, wait a moment, and retry.',
+    }))
+    .otherwise(() => ({
+      title: 'Camera signal lost',
+      detail:
+        'The browser could not start the camera. Check its permissions and try again.',
+    }))
 }
 
 function captureSquare(

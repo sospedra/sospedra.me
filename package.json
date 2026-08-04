@@ -1,6 +1,7 @@
 {
   "name": "sospedra.me",
   "version": "4.0.0",
+  "type": "module",
   "packageManager": "pnpm@11.13.0",
   "engines": {
     "node": "24.x"
@@ -44,6 +45,7 @@
     "tailwindcss": "4.3.3",
     "temporal-polyfill": "1.0.3",
     "tinykeys": "4.0.0",
+    "ts-pattern": "5.9.0",
     "zod": "4.4.3"
   },
   "devDependencies": {

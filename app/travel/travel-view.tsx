@@ -20,6 +20,7 @@ import {
   fetchVisitorLocation,
   type VisitorLocation,
 } from 'services/visitor-location'
+import { match } from 'ts-pattern'
 import {
   DESTINATIONS,
   type Destination,
@@ -169,18 +170,17 @@ type UplinkEvent =
   | { type: 'located'; visitor: Visitor }
   | { type: 'unavailable' }
 
-const uplinkReducer = (state: UplinkState, event: UplinkEvent): UplinkState => {
-  switch (event.type) {
-    case 'locate':
-      return { status: 'locating' }
-    case 'located':
-      return state.status === 'locating'
-        ? { status: 'located', visitor: event.visitor }
-        : state
-    case 'unavailable':
-      return state.status === 'locating' ? { status: 'unavailable' } : state
-  }
-}
+const uplinkReducer = (state: UplinkState, event: UplinkEvent): UplinkState =>
+  match(event)
+    .returnType<UplinkState>()
+    .with({ type: 'locate' }, () => ({ status: 'locating' }))
+    .with({ type: 'located' }, ({ visitor }) =>
+      state.status === 'locating' ? { status: 'located', visitor } : state,
+    )
+    .with({ type: 'unavailable' }, () =>
+      state.status === 'locating' ? { status: 'unavailable' } : state,
+    )
+    .exhaustive()
 
 const visitorFrom = (location: VisitorLocation | null): Visitor | null => {
   if (!location?.located) return null

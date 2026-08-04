@@ -1,6 +1,7 @@
 'use client'
 
 import { clamp } from 'es-toolkit'
+import { map, pipe } from 'es-toolkit/fp'
 import {
   type KeyboardEvent,
   type PointerEvent,
@@ -51,13 +52,17 @@ const degreeRange = (from: number, to: number): number[] =>
   )
 
 const meridianPath = (longitude: number): string =>
-  graticulePath(
-    degreeRange(-90, 90).map((latitude) => ({ latitude, longitude })),
+  pipe(
+    degreeRange(-90, 90),
+    map((latitude) => ({ latitude, longitude })),
+    graticulePath,
   )
 
 const parallelPath = (latitude: number): string =>
-  graticulePath(
-    degreeRange(-180, 180).map((longitude) => ({ latitude, longitude })),
+  pipe(
+    degreeRange(-180, 180),
+    map((longitude) => ({ latitude, longitude })),
+    graticulePath,
   )
 
 const GRATICULE_MERIDIANS = [

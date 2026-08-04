@@ -1,19 +1,18 @@
 'use client'
 
-import { range } from 'es-toolkit'
 import { Caveat, Share_Tech_Mono, VT323 } from 'next/font/google'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import {
-  type DailyCountdown,
-  useDailyCountdown,
-} from 'services/daily-countdown'
+import { useDailyCountdown } from 'services/daily-countdown'
 import { useGameInput } from 'services/hotkeys'
 import { shareHandled, shareText } from 'services/share'
 import { readLocalJson, writeLocalJson } from 'services/storage'
 import { useSystem } from 'services/system'
 import { useViewportHeightVar } from 'services/viewport'
 import * as z from 'zod/mini'
+import { Ansaphone } from './ansaphone'
+import { clipUrl } from './blob-assets'
 import css from './boombox.module.css'
+import { BoomboxChassis } from './boombox-chassis'
 import { createDeckSfx, type DeckSfx } from './deck-sfx'
 import {
   type BoomboxEvent,
@@ -21,8 +20,6 @@ import {
   CLIP_SECONDS,
   dayNumber,
   FULL_UNLOCK,
-  type Guess,
-  type GuessScore,
   initialState,
   MAX_GUESSES,
   matchesSongQuery,
@@ -35,6 +32,7 @@ import {
   unlockedSeconds,
 } from './engine'
 import songsJson from './songs.json'
+import { SCORE_LABEL } from './tracklist-card'
 import { EQ_BANDS, useClipAudio } from './use-clip-audio'
 
 const caveat = Caveat({
@@ -56,42 +54,10 @@ const shareTechMono = Share_Tech_Mono({
 const FONT_VARIABLES = `${caveat.variable} ${vt323.variable} ${shareTechMono.variable}`
 
 const SONGS = songsJson as Song[]
-const BLOB = 'https://2nvntiogo7b5zhfu.public.blob.vercel-storage.com/boombox'
 const STORAGE_KEY = '@@boombox/state-v1'
 const MAX_RESULTS = 5
-/* seven FM stops, one per attempt state 0..6; the needle parks on them */
-const FM_STOPS = ['88', '91', '94', '98', '102', '105', '108']
-const AM_STOPS = ['530', '700', '900', '1100', '1300', '1600']
-const FUNCTIONS = ['tape', 'tuner', 'cd', 'aux']
-const EQ_LABELS = ['60', '250', '1K', '4K', '12K']
-const TICKER_STEPS = [0.06, 0.16, 0.26, 0.36, 0.46, 0.56, 0.66, 0.76, 0.86]
 const DOOR_CLOSE_DELAY_MS = 1400
-const FUNCTION_BLINK_MS = 700
 const COPIED_RESET_MS = 2000
-const SHELL_SCREWS = ['tl', 'tr', 'bl', 'br']
-
-const clipUrl = (id: string) => `${BLOB}/clips/${id}.mp3`
-const coverUrl = (id: string) => `${BLOB}/covers/${id}.jpg`
-
-const SCORE_LABEL = {
-  album: 'Right album',
-  artist: 'Right artist',
-  decade: 'Right decade',
-  hit: 'Correct',
-  miss: 'No match',
-  skip: 'Skipped',
-  year: 'Right year',
-} satisfies Record<GuessScore, string>
-
-const SCORE_NOTE = {
-  album: 'right album!',
-  artist: 'right artist!',
-  decade: 'close decade',
-  hit: '',
-  miss: '',
-  skip: '',
-  year: 'right year!',
-} satisfies Record<GuessScore, string>
 
 const savedGuessSchema = z.object({
   label: z.string(),
@@ -136,701 +102,11 @@ const useDoorGreeting = () => {
   return doorOpen
 }
 
-const CHARS = 'aabccddeefghiijklmnnoopqrssttuuvwxyz'
-/* deterministic index-hash: every render and hydration agrees on the mask */
-const scribble = (text: string) =>
-  [...text]
-    .map((char, index) =>
-      char === ' '
-        ? ' '
-        : CHARS.charAt(
-            ((char.codePointAt(0) ?? 0) + index * 31) % CHARS.length,
-          ),
-    )
-    .join('')
-
-const skipSecondsGain = (state: BoomboxState) => {
-  const current = UNLOCKS[state.guesses.length] ?? FULL_UNLOCK
-  const next = UNLOCKS[state.guesses.length + 1]
-  return next === undefined ? 0 : next - current
-}
-
 /* rew steps through the unlock ladder like cd track-back: mid-segment
    jumps to the segment start, a boundary jumps to the one before */
 const previousWaypoint = (seconds: number) => {
   const stops = [0, ...UNLOCKS].filter((stop) => stop < seconds)
   return stops[stops.length - 1] ?? 0
-}
-
-type SegmentTone = 'played' | 'unlocked' | 'locked'
-
-const segmentTone = (
-  index: number,
-  seconds: number,
-  limit: number,
-): SegmentTone => {
-  if (index < seconds) return 'played'
-  if (index < limit) return 'unlocked'
-  return 'locked'
-}
-
-const tickerZone = (at: number) => {
-  if (at >= 0.86) return 'red'
-  if (at >= 0.62) return 'amber'
-  return 'green'
-}
-
-const coverBlurClass = (limit: number, stage: BoomboxState['stage']) => {
-  if (stage !== 'play') return css.coverClear
-  if (limit >= 11) return css.coverSoft
-  if (limit >= 7) return css.coverMid
-  return css.coverHeavy
-}
-
-const STAGE_TAG = {
-  lost: 'END',
-  play: 'PLAY',
-  won: 'WIN',
-} satisfies Record<BoomboxState['stage'], string>
-
-/* db meter: a strip of leds, rAF writes --vu, css decides which burn */
-const DbMeter = (props: {
-  analyser: React.RefObject<AnalyserNode | null>
-  band: 'low' | 'high'
-  isPlaying: boolean
-}) => {
-  const rowRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const row = rowRef.current
-    if (!props.isPlaying || !row) return
-
-    let frame = 0
-    const bins = new Uint8Array(32)
-    const tick = () => {
-      const analyser = props.analyser.current
-      if (analyser) {
-        analyser.getByteFrequencyData(bins)
-        const half = bins.length / 2
-        const start = props.band === 'low' ? 0 : half
-        let sum = 0
-        for (let index = start; index < start + half; index++) {
-          sum += bins[index] ?? 0
-        }
-        row.style.setProperty('--vu', (sum / half / 255).toFixed(3))
-      }
-      frame = requestAnimationFrame(tick)
-    }
-    frame = requestAnimationFrame(tick)
-
-    return () => {
-      cancelAnimationFrame(frame)
-      row.style.setProperty('--vu', '0')
-    }
-  }, [props.isPlaying, props.analyser, props.band])
-
-  return (
-    <div className={css.dbMeter} aria-hidden>
-      <span className={css.dbTag}>db·{props.band === 'low' ? 'l' : 'r'}</span>
-      <div className={css.ledRow} ref={rowRef}>
-        {TICKER_STEPS.map((at) => (
-          <span
-            key={at}
-            className={css.meterLed}
-            data-zone={tickerZone(at)}
-            style={{ '--at': at } as React.CSSProperties}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-const Tuner = (props: {
-  attempts: number
-  daily: Song
-  isPlaying: boolean
-  stage: BoomboxState['stage']
-}) => {
-  const nowPlaying =
-    props.stage === 'play'
-      ? `DFM: signal encrypted · guess the tape · take ${props.attempts}/${MAX_GUESSES}`
-      : `DFM: ${props.daily.artist} · ${props.daily.title}`
-
-  return (
-    <section className={css.tuner}>
-      <div className={css.tunerCluster}>
-        <div className={css.indicatorLabel}>
-          fm stereo
-          <span className={css.ledBorder}>
-            <span
-              className={`${css.tunerLed} ${css.tunerLedRed}`}
-              data-on={props.isPlaying}
-            />
-          </span>
-        </div>
-        <div className={css.radioTuning}>
-          <span>tuning</span>
-          <div className={css.wheel} data-live={props.isPlaying}>
-            <span aria-hidden />
-            <span aria-hidden />
-          </div>
-        </div>
-      </div>
-
-      <div
-        className={css.dialGlass}
-        data-live={props.isPlaying}
-        role='img'
-        aria-label={`Attempt ${Math.min(props.attempts + 1, MAX_GUESSES)} of ${MAX_GUESSES}`}
-      >
-        <div className={`${css.dialRow} ${css.dialFm}`}>
-          <span className={css.dialCap}>fm·mhz</span>
-          <span className={css.dialStops}>
-            {FM_STOPS.map((stop) => (
-              <i key={stop}>{stop}</i>
-            ))}
-          </span>
-        </div>
-        <div className={`${css.dialRow} ${css.dialAm}`}>
-          <span className={css.dialCap}>am·khz</span>
-          <span className={css.dialStops}>
-            {AM_STOPS.map((stop) => (
-              <i key={stop}>{stop}</i>
-            ))}
-          </span>
-        </div>
-        <div className={css.nowStrip}>{nowPlaying}</div>
-        <span
-          className={css.dialNeedle}
-          style={{ '--dial': props.attempts } as React.CSSProperties}
-        />
-      </div>
-    </section>
-  )
-}
-
-const countdownLabel = (countdown: DailyCountdown) => {
-  if (countdown.status === 'counting') return countdown.label
-  if (countdown.status === 'ready') return '00:00:00'
-  return '--:--:--'
-}
-
-const Lcd = (props: {
-  countdown: DailyCountdown
-  daily: Song
-  seconds: number
-  limit: number
-  state: BoomboxState
-}) => {
-  const { stage } = props.state
-  const playing = stage === 'play'
-
-  const nextTape = `next tape ${countdownLabel(props.countdown)}`
-  const verdict = () => {
-    if (stage === 'won') return `got it in ${props.state.guesses.length} · `
-    if (stage === 'lost') return 'side b next time · '
-    return ''
-  }
-  const yearHint = props.limit >= 4 || !playing ? props.daily.year : '····'
-  const genreHint = () => {
-    if (playing && props.limit < 7) return '····'
-    return props.daily.genre || 'unknown'
-  }
-
-  return (
-    <div className={css.lcdBezel}>
-      <div className={css.lcdScreen}>
-        <div className={css.lcdTop}>
-          <span>boombox #{props.state.day + 1}</span>
-          <span>
-            {String(props.seconds).padStart(3, '0')}/
-            {playing ? `${props.limit}s` : `${CLIP_SECONDS}s`}
-          </span>
-        </div>
-        <div
-          className={css.lcdRuler}
-          role='img'
-          aria-label={`${props.limit} of ${FULL_UNLOCK} seconds unlocked`}
-        >
-          {range(FULL_UNLOCK).map((segment) => (
-            <span
-              key={`seg-${segment}`}
-              className={css.lcdSegment}
-              data-tone={segmentTone(
-                segment,
-                props.seconds,
-                playing ? props.limit : FULL_UNLOCK,
-              )}
-            />
-          ))}
-        </div>
-        <div className={css.lcdHint}>
-          <span>
-            year {yearHint} · genre {genreHint()}
-          </span>
-        </div>
-        <div className={css.lcdStatus}>
-          <span>
-            {/* only the verdict is live: the countdown ticks every second */}
-            <span aria-live='polite'>{verdict()}</span>
-            {nextTape}
-          </span>
-          <span>{STAGE_TAG[stage]}</span>
-        </div>
-        {!playing && (
-          <div
-            className={css.lcdNextBar}
-            aria-hidden
-            style={
-              {
-                '--remaining':
-                  props.countdown.status === 'counting'
-                    ? props.countdown.remainingFraction
-                    : 0,
-              } as React.CSSProperties
-            }
-          >
-            <span />
-          </div>
-        )}
-      </div>
-      <div className={css.power}>
-        <span className={css.powerLed} data-on={playing} />
-        <span>power</span>
-      </div>
-    </div>
-  )
-}
-
-const FunctionRow = (props: { onPress: () => void }) => {
-  const [blinking, setBlinking] = useState<string | null>(null)
-  const blinkTimerRef = useRef(0)
-
-  useEffect(() => () => window.clearTimeout(blinkTimerRef.current), [])
-
-  const press = (name: string) => {
-    props.onPress()
-    setBlinking(name)
-    window.clearTimeout(blinkTimerRef.current)
-    blinkTimerRef.current = window.setTimeout(
-      () => setBlinking(null),
-      FUNCTION_BLINK_MS,
-    )
-  }
-
-  return (
-    <div className={css.functionRow} aria-hidden>
-      <span className={css.functionLabel}>function</span>
-      {FUNCTIONS.map((name) => (
-        <button
-          key={name}
-          type='button'
-          tabIndex={-1}
-          className={css.functionKey}
-          data-on={name === 'tape'}
-          onClick={() => press(name)}
-        >
-          <span
-            className={css.functionLed}
-            data-blink={blinking === name}
-            data-deny={name !== 'tape'}
-          />
-          {name}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-const Hub = () => (
-  <span className={css.hub}>
-    <span className={css.teethBox}>
-      <span className={css.teeth} />
-      <span className={css.teeth} />
-      <span className={css.teeth} />
-    </span>
-  </span>
-)
-
-const Cassette = (props: {
-  daily: Song
-  isPlaying: boolean
-  limit: number
-  stage: BoomboxState['stage']
-  wound: number
-}) => {
-  const masked = {
-    artist: scribble(props.daily.artist),
-    title: scribble(props.daily.title),
-  }
-  const revealed = props.stage !== 'play'
-
-  return (
-    <div
-      className={css.cassette}
-      data-rolling={props.isPlaying}
-      style={{ '--wound': props.wound } as React.CSSProperties}
-    >
-      <div className={css.shell}>
-        {SHELL_SCREWS.map((corner) => (
-          <span key={corner} className={css.tapeScrew} data-corner={corner}>
-            <span className={css.tapeScrewSlot} />
-          </span>
-        ))}
-
-        <div className={css.stickerOuter}>
-          <div className={css.sticker}>
-            <span className={css.aSide}>a</span>
-            <div className={css.stickerScript}>
-              <span
-                className={css.scriptTitle}
-                data-masked={!revealed}
-                aria-hidden={!revealed}
-              >
-                {revealed ? props.daily.title : masked.title}
-              </span>
-              <span
-                className={css.scriptArtist}
-                data-masked={!revealed}
-                aria-hidden={!revealed}
-              >
-                {revealed ? props.daily.artist : masked.artist}
-              </span>
-              {!revealed && (
-                <span className='sr-only'>Answer hidden until solved</span>
-              )}
-            </div>
-            {/* the cover is the answer; alt text would spoil it */}
-            <img
-              src={coverUrl(props.daily.id)}
-              className={`${css.albumSticker} ${coverBlurClass(props.limit, props.stage)}`}
-              alt=''
-              draggable={false}
-            />
-            <span className={css.stickerStripe} />
-            <span className={css.chipTape}>bub-90</span>
-            <span className={css.chipLogo}>saiwa®</span>
-            <div className={css.hubBand}>
-              <Hub />
-              <div className={css.tapeWindow}>
-                <span className={css.reelSupply} />
-                <span className={css.reelTakeup} />
-              </div>
-              <Hub />
-            </div>
-          </div>
-        </div>
-
-        <div className={css.shellBottom}>
-          <span className={css.tapeScrew} data-corner='c'>
-            <span className={css.tapeScrewSlot} />
-          </span>
-          <span className={css.bottomShadow}>
-            <span className={`${css.bottomHoles} ${css.holesA}`} />
-            <span className={`${css.bottomHoles} ${css.holesB}`} />
-            <span className={`${css.bottomHoles} ${css.holesC}`} />
-          </span>
-          <span className={`${css.shellHole} ${css.holeLeft}`} />
-          <span className={`${css.shellHole} ${css.holeRight}`} />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-const CassettePane = (props: {
-  daily: Song
-  doorOpen: boolean
-  isPlaying: boolean
-  limit: number
-  stage: BoomboxState['stage']
-  tapeExpired: boolean
-  wound: number
-  onLoadNewTape: () => void
-}) => (
-  <div className={css.pane} data-open={props.doorOpen}>
-    <div className={css.doorCase}>
-      <div className={css.caseTopLabel}>boombox mixtape player</div>
-      <div className={css.caseBottomLabel}>auto reverse</div>
-    </div>
-    <Cassette
-      daily={props.daily}
-      isPlaying={props.isPlaying}
-      limit={props.limit}
-      stage={props.stage}
-      wound={props.wound}
-    />
-    {props.tapeExpired && (
-      <button
-        type='button'
-        className={css.newTapeSlip}
-        onClick={props.onLoadNewTape}
-      >
-        ● new tape ready · press to load
-      </button>
-    )}
-  </div>
-)
-
-const NoteEntry = (props: { guess: Guess }) => {
-  const circled = props.guess.score === 'hit'
-  const note = SCORE_NOTE[props.guess.score]
-
-  return (
-    <>
-      <span className={circled ? css.circled : css.crossed}>
-        {props.guess.label}
-        <span className='sr-only'> ({SCORE_LABEL[props.guess.score]})</span>
-      </span>
-      {note !== '' && <small className={css.marginScribble}>{note}</small>}
-    </>
-  )
-}
-
-type PaperProps = {
-  guesses: Guess[]
-  stage: BoomboxState['stage']
-  input: React.ReactNode
-  dropdown: React.ReactNode
-}
-
-const CaseTracklist = (props: PaperProps) => (
-  <aside className={css.caseScene} aria-label='Attempts'>
-    <div className={css.caseRig}>
-      <div className={css.casePaper}>
-        <h2 className={css.caseTitle}>
-          tracklist <small>· today's guesses</small>
-        </h2>
-        <p className={css.caseRule}>side a · type i · c-90</p>
-        <ol className={css.trackRows}>
-          {range(MAX_GUESSES).map((slot) => {
-            const guess = props.guesses[slot]
-            const active =
-              props.stage === 'play' && slot === props.guesses.length
-            return (
-              <li
-                key={`track-${slot}`}
-                data-long={(guess?.label.length ?? 0) > 22}
-                data-active={active}
-              >
-                {guess && <NoteEntry guess={guess} />}
-                {active && props.input}
-                {active && props.dropdown}
-              </li>
-            )
-          })}
-        </ol>
-        <div className={css.caseFoot}>
-          <span>dolby off</span>
-          <span lang='ca'>rebobina abans, va</span>
-        </div>
-      </div>
-      <span className={css.caseSpine} aria-hidden />
-      <div className={css.caseArm} aria-hidden>
-        <span className={css.armFloor}>
-          <span className={css.armPost} data-post='a' />
-          <span className={css.armPost} data-post='b' />
-        </span>
-        <span className={css.armBack} />
-        <span className={css.armWall} data-side='top' />
-        <span className={css.armWall} data-side='bottom' />
-        <span className={css.armWall} data-side='rim' />
-      </div>
-    </div>
-  </aside>
-)
-
-const Speaker = (props: { live: boolean; side: 'left' | 'right' }) => (
-  <section
-    className={`${css.speakerPanel} ${props.side === 'left' ? css.speakerLeft : css.speakerRight}`}
-    data-live={props.live}
-  >
-    <div className={css.tweeterRing}>
-      <div className={css.wooferCone}>
-        <div className={css.wooferCap} />
-      </div>
-    </div>
-    <div className={css.woofer}>
-      <div className={css.wooferRing}>
-        <div className={css.wooferCone}>
-          <div className={css.wooferCap} />
-        </div>
-      </div>
-    </div>
-    <div className={css.speakerMicrocopy}>
-      <span>2 way speaker system</span>
-      <span>6.5 in woofer</span>
-    </div>
-  </section>
-)
-
-const EqBank = (props: {
-  gains: number[]
-  onGain: (band: number, gainDb: number) => void
-}) => (
-  <fieldset className={css.eqBank} aria-label='Five band graphic equalizer'>
-    <span className={css.panelLabel}>5 band graphic equalizer · db</span>
-    <div className={css.eqScaleSide} aria-hidden>
-      <span>+8</span>
-      <span>0</span>
-      <span>-8</span>
-    </div>
-    <div className={css.eqGrid}>
-      {EQ_LABELS.map((label, band) => (
-        <label key={label} className={css.eqSlider}>
-          <input
-            type='range'
-            className={css.eqInput}
-            min={-8}
-            max={8}
-            step={1}
-            value={props.gains[band] ?? 0}
-            aria-label={`${label}Hz gain`}
-            onChange={(event) => props.onGain(band, Number(event.target.value))}
-          />
-          <span className={css.eqName}>{label}</span>
-        </label>
-      ))}
-    </div>
-  </fieldset>
-)
-
-const VolumeCell = (props: {
-  value: number
-  onChange: (value: number) => void
-}) => (
-  <section className={css.volumeCell}>
-    <span className={css.panelLabel}>volume</span>
-    <div className={css.volumeTicks} aria-hidden />
-    <div className={css.knobWrap}>
-      <input
-        type='range'
-        className={css.knobInput}
-        min={0}
-        max={100}
-        value={Math.round(props.value * 100)}
-        aria-label='Volume'
-        onChange={(event) => props.onChange(Number(event.target.value) / 100)}
-      />
-      <div
-        className={css.volumeKnob}
-        style={
-          { '--angle': `${-130 + props.value * 260}deg` } as React.CSSProperties
-        }
-      />
-    </div>
-  </section>
-)
-
-type TransportKeyName = 'play' | 'stop' | 'rew' | 'skip' | 'share'
-
-const DECK_KEY_ORDER = ['play', 'stop', 'rew', 'skip', 'share'] as const
-const TAD_KEY_ORDER = ['rew', 'play', 'skip', 'stop', 'share'] as const
-
-type TransportProps = {
-  canRewind: boolean
-  copied: boolean
-  playing: boolean
-  soundReady: boolean
-  soundPlaying: boolean
-  skipGain: number
-  onPlay: () => void
-  onStop: () => void
-  onRewind: () => void
-  onSkip: () => void
-  onShare: () => void
-  order: readonly TransportKeyName[]
-  size: 'deck' | 'tad'
-}
-
-type LeverSpec = {
-  glyph: string
-  word: string
-  on?: boolean
-  red?: boolean
-  pressed?: boolean
-  disabled?: boolean
-  ariaLabel: string
-  onPress: () => void
-}
-
-/* latching lever keys: legends silkscreened on the fascia, blank caps
-   slide under the slot mouth. latched keys stay down; both decks share it */
-const LeverBank = (props: { size: 'deck' | 'tad'; keys: LeverSpec[] }) => (
-  <div className={css.leverBank} data-size={props.size}>
-    <div className={css.leverLegend} aria-hidden>
-      {props.keys.map((key) => (
-        <span key={key.ariaLabel} className={css.legendCell}>
-          <b>{key.word}</b>
-          {key.red ? <i data-dot='true' /> : <i>{key.glyph}</i>}
-        </span>
-      ))}
-    </div>
-    <div className={css.leverSlot}>
-      {props.keys.map((key) => (
-        <button
-          key={key.ariaLabel}
-          type='button'
-          className={css.leverKey}
-          data-on={key.on}
-          aria-label={key.ariaLabel}
-          aria-pressed={key.pressed}
-          onClick={key.onPress}
-          disabled={key.disabled}
-        >
-          <span className={css.leverCap} aria-hidden />
-        </button>
-      ))}
-    </div>
-  </div>
-)
-
-const Transport = (props: TransportProps) => {
-  const keys = {
-    play: {
-      glyph: '▶',
-      word: 'play',
-      on: props.soundPlaying,
-      pressed: props.soundPlaying,
-      ariaLabel: 'Play',
-      onPress: props.onPlay,
-      disabled: !props.soundReady,
-    },
-    stop: {
-      glyph: '◼',
-      word: 'stop',
-      ariaLabel: 'Stop',
-      onPress: props.onStop,
-    },
-    rew: {
-      glyph: '◀◀',
-      word: 'rew',
-      ariaLabel: 'Rewind to the previous waypoint',
-      onPress: props.onRewind,
-      disabled: !props.canRewind,
-    },
-    skip: {
-      glyph: '▶▶',
-      word: props.skipGain > 0 ? `skip +${props.skipGain}s` : 'skip',
-      ariaLabel: 'Skip attempt',
-      onPress: props.onSkip,
-      disabled: !props.playing,
-    },
-    share: {
-      glyph: '●',
-      word: props.copied ? 'copied.' : 'rec·share',
-      on: props.copied,
-      red: true,
-      ariaLabel: 'Share result',
-      onPress: props.onShare,
-      disabled: props.playing,
-    },
-  } satisfies Record<TransportKeyName, LeverSpec>
-
-  return (
-    <LeverBank size={props.size} keys={props.order.map((name) => keys[name])} />
-  )
 }
 
 export default function BoomboxView() {
@@ -1090,224 +366,51 @@ function BoomboxMachine({
     <main className={`${css.room} ${FONT_VARIABLES}`}>
       <h1 className='sr-only'>Boombox, the daily mixtape guessing game</h1>
 
-      <div className={css.machineStage}>
-        <div className={css.handle} aria-hidden>
-          <span className={css.handlePost} data-side='l' />
-          <span className={css.handlePost} data-side='r' />
-          <span className={css.handleGrip} />
-        </div>
+      <BoomboxChassis
+        copied={copied}
+        countdown={countdown}
+        daily={daily}
+        doorOpen={doorOpen}
+        eqGains={eqGains}
+        guessDropdown={guessDropdown}
+        guessInput={guessInput}
+        limit={limit}
+        playing={playing}
+        sfx={sfx}
+        sound={sound}
+        state={state}
+        tapeExpired={tapeExpired}
+        tapeSpan={tapeSpan}
+        volume={volume}
+        onEqGain={onEqGain}
+        onRewind={onRewind}
+        onShare={onShare}
+        onSkip={onSkip}
+        onStop={onStop}
+        onVolume={onVolume}
+        togglePlay={togglePlay}
+      />
 
-        <a className={css.exitKey} href='/'>
-          exit
-        </a>
-
-        <div className={css.topRail} aria-hidden>
-          <span className={css.topDecoKey}>
-            <span className={css.topDecoLed} />
-          </span>
-          <span className={css.topDecoKey}>
-            <span className={css.topDecoLed} />
-          </span>
-          <span className={css.topDecoKey}>
-            <span className={css.topDecoLed} />
-          </span>
-          <span className={css.topDecoKnob} />
-          <span className={css.topDecoKnob} />
-        </div>
-
-        <div className={css.boombox}>
-          <div className={css.topLip} aria-hidden>
-            <span className={css.brandPlate}>
-              saiwa · stereo radio cassette recorder · model bv 1991
-            </span>
-          </div>
-
-          <Tuner
-            attempts={state.guesses.length}
-            daily={daily}
-            isPlaying={sound.isPlaying}
-            stage={state.stage}
-          />
-
-          <section className={css.mainFace}>
-            <Speaker live={sound.isPlaying} side='left' />
-
-            <section className={css.centerDeck}>
-              <div className={css.deckBrand}>
-                <span className={css.deckLogo}>BOOMBOX</span>
-                <span className={css.deckTag}>daily mixtape decoder</span>
-              </div>
-
-              <div className={css.lcdRack}>
-                <Lcd
-                  countdown={countdown}
-                  daily={daily}
-                  limit={limit}
-                  seconds={sound.seconds}
-                  state={state}
-                />
-                <div className={css.meterStack}>
-                  <DbMeter
-                    analyser={sound.analyser}
-                    band='low'
-                    isPlaying={sound.isPlaying}
-                  />
-                  <DbMeter
-                    analyser={sound.analyser}
-                    band='high'
-                    isPlaying={sound.isPlaying}
-                  />
-                </div>
-              </div>
-
-              <FunctionRow onPress={() => sfx().click()} />
-
-              <CassettePane
-                daily={daily}
-                doorOpen={doorOpen}
-                isPlaying={sound.isPlaying}
-                limit={limit}
-                stage={state.stage}
-                tapeExpired={tapeExpired}
-                wound={sound.seconds / tapeSpan}
-                onLoadNewTape={() => location.reload()}
-              />
-            </section>
-
-            <Speaker live={sound.isPlaying} side='right' />
-
-            <CaseTracklist
-              guesses={state.guesses}
-              stage={state.stage}
-              input={guessInput('boombox-results', true)}
-              dropdown={guessDropdown('boombox-results')}
-            />
-          </section>
-
-          <section className={css.lowerConsole}>
-            <EqBank gains={eqGains} onGain={onEqGain} />
-            <Transport
-              size='deck'
-              order={DECK_KEY_ORDER}
-              canRewind={sound.seconds > 0 || sound.isPlaying}
-              copied={copied}
-              playing={playing}
-              soundReady={sound.isReady}
-              soundPlaying={sound.isPlaying}
-              skipGain={skipSecondsGain(state)}
-              onPlay={togglePlay}
-              onStop={onStop}
-              onRewind={onRewind}
-              onSkip={onSkip}
-              onShare={onShare}
-            />
-            <VolumeCell value={volume} onChange={onVolume} />
-          </section>
-
-          <span className={css.screw} data-corner='tl' aria-hidden />
-          <span className={css.screw} data-corner='tr' aria-hidden />
-          <span className={css.screw} data-corner='bl' aria-hidden />
-          <span className={css.screw} data-corner='br' aria-hidden />
-        </div>
-      </div>
-
-      <div
-        className={css.ansaphone}
-        data-entry-open={mobileEntryOpen}
-        onPointerDownCapture={(event) => {
-          if (mobileEntryOpen && event.pointerType !== 'mouse') {
-            mobilePointerInsideRef.current = true
-          }
-        }}
-        onClickCapture={(event) => {
-          if (!mobileEntryOpen) return
-          const target = event.target
-          if (!(target instanceof Element)) return
-          if (target.closest('[role="option"]')) return
-          if (target.closest('button')) setMobileEntryOpen(false)
-        }}
-        onBlurCapture={(event) => {
-          if (mobilePointerInsideRef.current) return
-          const nextTarget = event.relatedTarget
-          if (
-            nextTarget instanceof Node &&
-            event.currentTarget.contains(nextTarget)
-          ) {
-            return
-          }
-          setMobileEntryOpen(false)
-        }}
-      >
-        <section className={css.tadBody} aria-label='Answering machine'>
-          <div className={css.tadBay}>
-            <Cassette
-              daily={daily}
-              isPlaying={sound.isPlaying}
-              limit={limit}
-              stage={state.stage}
-              wound={sound.seconds / tapeSpan}
-            />
-            <span className={css.tadLid} aria-hidden />
-          </div>
-          <div className={css.tadLower}>
-            <div className={css.tadBrand}>
-              <b>somo</b>
-              <span>tad-2200 · daily mixtape</span>
-            </div>
-            <div className={css.tadPanel}>
-              <Lcd
-                countdown={countdown}
-                daily={daily}
-                limit={limit}
-                seconds={sound.seconds}
-                state={state}
-              />
-              <div className={css.tadStatusRow}>
-                <span className={css.tadSwitch} aria-hidden>
-                  <i />
-                </span>
-                <em className={css.tadTag}>answer on</em>
-                <span className={css.tadLed} data-lit='true' />
-                <span
-                  className={css.tadLed}
-                  data-blink={playing && !sound.isPlaying}
-                  data-lit={sound.isPlaying}
-                />
-                <em className={css.tadTag}>
-                  {playing ? '1 new message' : 'no new messages'}
-                </em>
-                <a className={css.tadOff} href='/' aria-label='Turn off, exit'>
-                  off
-                </a>
-                <span className={css.tadVol} aria-hidden />
-                <span className={css.tadGrille} aria-hidden />
-              </div>
-              <Transport
-                size='tad'
-                order={TAD_KEY_ORDER}
-                canRewind={sound.seconds > 0 || sound.isPlaying}
-                copied={copied}
-                playing={playing}
-                soundReady={sound.isReady}
-                soundPlaying={sound.isPlaying}
-                skipGain={skipSecondsGain(state)}
-                onPlay={togglePlay}
-                onStop={onStop}
-                onRewind={onRewind}
-                onSkip={onSkip}
-                onShare={onShare}
-              />
-            </div>
-            <div className={css.tadLip} aria-hidden />
-          </div>
-        </section>
-        <CaseTracklist
-          guesses={state.guesses}
-          stage={state.stage}
-          input={guessInput('boombox-results-m', false)}
-          dropdown={guessDropdown('boombox-results-m')}
-        />
-      </div>
+      <Ansaphone
+        copied={copied}
+        countdown={countdown}
+        daily={daily}
+        guessDropdown={guessDropdown}
+        guessInput={guessInput}
+        limit={limit}
+        mobileEntryOpen={mobileEntryOpen}
+        mobilePointerInsideRef={mobilePointerInsideRef}
+        playing={playing}
+        setMobileEntryOpen={setMobileEntryOpen}
+        sound={sound}
+        state={state}
+        tapeSpan={tapeSpan}
+        onRewind={onRewind}
+        onShare={onShare}
+        onSkip={onSkip}
+        onStop={onStop}
+        togglePlay={togglePlay}
+      />
     </main>
   )
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { filter, map, pipe, sortBy } from 'es-toolkit/fp'
 import {
   type PointerEvent as ReactPointerEvent,
   useCallback,
@@ -40,47 +41,49 @@ const centerDistance = (point: Point, rect: DOMRect): number => {
   return dx * dx + dy * dy
 }
 
+const isTappable = (button: HTMLButtonElement): boolean => {
+  if (
+    button.disabled ||
+    button.ariaDisabled === 'true' ||
+    !button.isConnected ||
+    button.getClientRects().length === 0
+  ) {
+    return false
+  }
+  const style = getComputedStyle(button)
+  return style.visibility !== 'hidden' && style.pointerEvents !== 'none'
+}
+
 const nearestTouchTarget = (
   root: HTMLElement,
   selector: string,
   point: Point,
 ): HTMLButtonElement | null => {
-  const candidates = Array.from(
-    root.querySelectorAll<HTMLButtonElement>(selector),
-  )
-    .filter((button) => {
-      if (
-        button.disabled ||
-        button.ariaDisabled === 'true' ||
-        !button.isConnected ||
-        button.getClientRects().length === 0
-      ) {
-        return false
-      }
-      const style = getComputedStyle(button)
-      return style.visibility !== 'hidden' && style.pointerEvents !== 'none'
-    })
-    .map((button) => {
-      const rect = button.getBoundingClientRect()
-      const xSlop = Math.max(0, (MIN_TOUCH_TARGET - rect.width) / 2)
-      const ySlop = Math.max(0, (MIN_TOUCH_TARGET - rect.height) / 2)
-      const withinTarget =
-        point.x >= rect.left - xSlop &&
-        point.x <= rect.right + xSlop &&
-        point.y >= rect.top - ySlop &&
-        point.y <= rect.bottom + ySlop
+  const measured = (button: HTMLButtonElement) => {
+    const rect = button.getBoundingClientRect()
+    const xSlop = Math.max(0, (MIN_TOUCH_TARGET - rect.width) / 2)
+    const ySlop = Math.max(0, (MIN_TOUCH_TARGET - rect.height) / 2)
+    const withinTarget =
+      point.x >= rect.left - xSlop &&
+      point.x <= rect.right + xSlop &&
+      point.y >= rect.top - ySlop &&
+      point.y <= rect.bottom + ySlop
 
-      return {
-        button,
-        centerDistance: centerDistance(point, rect),
-        distance: distanceToRect(point, rect),
-        withinTarget,
-      }
-    })
-    .filter((candidate) => candidate.withinTarget)
-    .sort(
-      (a, b) => a.distance - b.distance || a.centerDistance - b.centerDistance,
-    )
+    return {
+      button,
+      centerDistance: centerDistance(point, rect),
+      distance: distanceToRect(point, rect),
+      withinTarget,
+    }
+  }
+
+  const candidates = pipe(
+    Array.from(root.querySelectorAll<HTMLButtonElement>(selector)),
+    filter(isTappable),
+    map(measured),
+    filter((candidate) => candidate.withinTarget),
+    sortBy(['distance', 'centerDistance']),
+  )
 
   return candidates[0]?.button ?? null
 }

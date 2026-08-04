@@ -8,6 +8,7 @@ import Link, { LinkBack } from 'services/link'
 import Row from 'services/row'
 import Shell from 'services/shell'
 import { readLocal, writeLocal } from 'services/storage'
+import { match } from 'ts-pattern'
 import {
   type Dir,
   type GameEvent,
@@ -391,21 +392,15 @@ export default function SnakeView() {
     dispatch({ type: 'TURN', dir, roll: Math.random() })
   const select = () => dispatch({ type: 'SELECT', roll: Math.random() })
 
-  const hotspotAction = (spot: Hotspot): (() => void) => {
-    switch (spot.kind) {
-      case 'dir': {
-        const { dir } = spot
-        return () => {
-          play('key')
-          steer(dir)
-        }
-      }
-      case 'select':
-        return select
-      case 'key':
-        return () => play('key')
-    }
-  }
+  const hotspotAction = (spot: Hotspot): (() => void) =>
+    match(spot)
+      .with({ kind: 'dir' }, ({ dir }) => () => {
+        play('key')
+        steer(dir)
+      })
+      .with({ kind: 'select' }, () => select)
+      .with({ kind: 'key' }, () => () => play('key'))
+      .exhaustive()
 
   const routeTouchPress = (event: React.PointerEvent<HTMLDivElement>) => {
     if (

@@ -6,6 +6,7 @@ import { type Trap, trigger, useHotkeys, useKonami } from 'services/hotkeys'
 import { useShake } from 'services/shake'
 import { useSystem } from 'services/system'
 import { useTheme } from 'services/theme'
+import { match } from 'ts-pattern'
 import { useLog } from './log'
 
 const Egg = dynamic(() => import('./egg'))
@@ -21,21 +22,20 @@ type EggEvent =
   | { type: 'DISMISS' }
   | { type: 'SHOW_TAP' }
 
-const reducer = (state: EggState, event: EggEvent): EggState => {
-  switch (event.type) {
-    case 'ACTIVATE':
-      return {
-        phase: 'egg',
-        // the run key remounts the egg when konami fires mid-run
-        run: state.phase === 'egg' ? state.run + 1 : 0,
-        exitFullscreen: event.exitFullscreen,
-      }
-    case 'DISMISS':
-      return state.phase === 'idle' ? state : { phase: 'idle' }
-    case 'SHOW_TAP':
-      return { phase: 'tap' }
-  }
-}
+const reducer = (state: EggState, event: EggEvent): EggState =>
+  match(event)
+    .returnType<EggState>()
+    .with({ type: 'ACTIVATE' }, ({ exitFullscreen }) => ({
+      phase: 'egg',
+      // the run key remounts the egg when konami fires mid-run
+      run: state.phase === 'egg' ? state.run + 1 : 0,
+      exitFullscreen,
+    }))
+    .with({ type: 'DISMISS' }, () =>
+      state.phase === 'idle' ? state : { phase: 'idle' },
+    )
+    .with({ type: 'SHOW_TAP' }, () => ({ phase: 'tap' }))
+    .exhaustive()
 
 const EasterEgg: React.FC<{ children: React.ReactNode }> = (props) => {
   const [state, dispatch] = useReducer(reducer, { phase: 'idle' })

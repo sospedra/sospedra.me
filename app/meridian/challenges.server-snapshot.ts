@@ -2,6 +2,7 @@ import 'server-only'
 
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { filter, map, pipe } from 'es-toolkit/fp'
 import { cacheLife, cacheTag } from 'next/cache'
 import { serverEnv } from 'services/env.server'
 import { createLogger } from 'services/logger'
@@ -15,6 +16,8 @@ import {
 const log = createLogger('meridian.challenges')
 const challengeDirectory = join(process.cwd(), 'repo/geo/challenges')
 const challengeFilenamePattern = /^\d{4}-\d{2}-\d{2}\.json$/u
+
+const ascending = (values: readonly string[]) => values.toSorted()
 
 export class GeoChallengeFileError extends Error {
   constructor(date: string) {
@@ -43,10 +46,12 @@ export async function loadCurrentGeoChallenge(): Promise<DailyGeoChallenge> {
   cacheLife('hours')
   cacheTag('meridian')
 
-  const dates = (await readdir(challengeDirectory))
-    .filter((filename) => challengeFilenamePattern.test(filename))
-    .map((filename) => filename.slice(0, 10))
-    .sort()
+  const dates = pipe(
+    await readdir(challengeDirectory),
+    filter((filename) => challengeFilenamePattern.test(filename)),
+    map((filename) => filename.slice(0, 10)),
+    ascending,
+  )
   const today = resolveGeoPublicationDate(
     serverEnv.meridianPublicationDate ?? undefined,
   )

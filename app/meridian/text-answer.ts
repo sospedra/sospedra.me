@@ -1,4 +1,5 @@
-import { groupBy, mapValues, memoize, uniq } from 'es-toolkit'
+import { groupBy, mapValues, memoize } from 'es-toolkit'
+import { filter, flatMap, length, map, pipe, take, uniq } from 'es-toolkit/fp'
 import type { Locale, LocalizedOption } from './model'
 
 export type GeoAutocompleteMatch =
@@ -92,10 +93,18 @@ const indexOptions = (
   })
 }
 
+const distinctIdCount = (group: readonly IndexedOption[]): number =>
+  pipe(
+    group,
+    map((option) => option.optionId),
+    uniq(),
+    length(),
+  )
+
 const uniquelyResolvableOptions = (options: readonly IndexedOption[]) => {
   const idCountByLabel = mapValues(
     groupBy(options, (option) => option.normalizedLabel),
-    (group) => uniq(group.map((option) => option.optionId)).length,
+    distinctIdCount,
   )
 
   return options.filter(
@@ -137,6 +146,20 @@ const MATCH_RANK: Record<GeoAutocompleteMatch, number> = {
   substring: 4,
 }
 
+type MatchedOption = IndexedOption & { match: GeoAutocompleteMatch }
+
+const toCandidate = ({
+  label,
+  match,
+  normalizedLabel,
+  optionId,
+}: MatchedOption): GeoAutocompleteCandidate => ({
+  optionId,
+  label,
+  normalizedLabel,
+  match,
+})
+
 export type GeoAutocompleteIndex = {
   locale: Locale
   resolvable: readonly IndexedOption[]
@@ -173,12 +196,12 @@ export const rankGeoAutocompleteIndex = (
   const maxResults = positiveInteger(config.maxResults, DEFAULT_MAX_RESULTS)
   const collator = collatorFor(index.locale)
 
-  return index.resolvable
-    .flatMap((option) => {
-      const match = matchFor(option.normalizedLabel, normalizedQuery)
-      return match ? [{ ...option, match }] : []
-    })
-    .sort(
+  const matchedOptions = (option: IndexedOption): MatchedOption[] => {
+    const match = matchFor(option.normalizedLabel, normalizedQuery)
+    return match ? [{ ...option, match }] : []
+  }
+  const ranked = (matched: readonly MatchedOption[]) =>
+    matched.toSorted(
       (left, right) =>
         MATCH_RANK[left.match] - MATCH_RANK[right.match] ||
         left.capitalPriority - right.capitalPriority ||
@@ -186,13 +209,14 @@ export const rankGeoAutocompleteIndex = (
         collator.compare(left.label, right.label) ||
         left.index - right.index,
     )
-    .slice(0, maxResults)
-    .map(({ label, match, normalizedLabel, optionId }) => ({
-      optionId,
-      label,
-      normalizedLabel,
-      match,
-    }))
+
+  return pipe(
+    index.resolvable,
+    flatMap(matchedOptions),
+    ranked,
+    take(maxResults),
+    map(toCandidate),
+  )
 }
 
 export const rankGeoAutocompleteCandidates = (
@@ -215,10 +239,11 @@ export const resolveExactGeoOptionId = (
   const normalizedInput = normalizeGeoAnswer(input, locale)
   if (!normalizedInput) return null
 
-  const matchingIds = uniq(
-    indexOptions(options, locale)
-      .filter((option) => option.normalizedLabel === normalizedInput)
-      .map((option) => option.optionId),
+  const matchingIds = pipe(
+    indexOptions(options, locale),
+    filter((option) => option.normalizedLabel === normalizedInput),
+    map((option) => option.optionId),
+    uniq(),
   )
 
   return matchingIds.length === 1 ? (matchingIds[0] ?? null) : null

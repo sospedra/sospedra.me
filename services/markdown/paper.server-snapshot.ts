@@ -3,6 +3,7 @@
 import 'server-only'
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { filter, map, pipe } from 'es-toolkit/fp'
 import { cacheLife, cacheTag } from 'next/cache'
 import { byNewestFirst, paperFromMetadata } from './paper.mapper.ts'
 import type { Paper } from './paper.types.ts'
@@ -30,9 +31,11 @@ export async function fetchPaper(slug: string): Promise<Paper | null> {
 export async function fetchPapers(): Promise<Paper[]> {
   cacheLife('max')
   cacheTag('papers')
-  const slugs = (await readdir(root, { withFileTypes: true }))
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => dirent.name)
+  const slugs = pipe(
+    await readdir(root, { withFileTypes: true }),
+    filter((dirent) => dirent.isDirectory()),
+    map((dirent) => dirent.name),
+  )
   const papers = await Promise.all(
     slugs.map(async (slug) => {
       const raw = await readFile(join(root, slug, 'metadata.json'), 'utf8')

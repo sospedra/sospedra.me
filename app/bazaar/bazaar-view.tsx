@@ -2,6 +2,7 @@
 
 import cn from 'clsx'
 import { clamp, isNotNil, mapValues, sum, sumBy } from 'es-toolkit'
+import { drop, find, join, map, pipe, take } from 'es-toolkit/fp'
 import type { Route } from 'next'
 import { Press_Start_2P } from 'next/font/google'
 import {
@@ -19,6 +20,7 @@ import Link from 'services/link'
 import Shell from 'services/shell'
 import { prefersQuietFx } from 'services/theme'
 import css from './bazaar.module.css'
+import LayoutEditor from './layout-editor'
 import scene from './scene.module.css'
 import SceneStall from './scene-stall'
 import { sfx, soundPreference } from './sounds'
@@ -240,7 +242,7 @@ const GAMES_TURN_PAUSE_CHARS = 10
 
 const countCharacters = (value: string) => Array.from(value).length
 const sliceCharacters = (value: string, length: number) =>
-  Array.from(value).slice(0, length).join('')
+  pipe(Array.from(value), take(length), join(''))
 
 function getDialogCharacterCount(desc: string, links: readonly StallLink[]) {
   return (
@@ -550,10 +552,12 @@ function GamesDialogs(props: {
 
 const focusNextStall = (wrap: HTMLElement): boolean => {
   const siblings = Array.from(wrap.parentElement?.children ?? [])
-  const target = siblings
-    .slice(siblings.indexOf(wrap) + 1)
-    .map((sibling) => sibling.querySelector<HTMLAnchorElement>('a[href]'))
-    .find(isNotNil)
+  const target = pipe(
+    siblings,
+    drop(siblings.indexOf(wrap) + 1),
+    map((sibling) => sibling.querySelector<HTMLAnchorElement>('a[href]')),
+    find(isNotNil),
+  )
   target?.focus()
   return Boolean(target)
 }
@@ -719,6 +723,7 @@ function Stall({ id }: { id: BazaarStallId }) {
         } as React.CSSProperties
       }
       data-stall={id}
+      data-edit-id={id}
       onMouseEnter={openOnHover}
       onMouseLeave={closeAfterHover}
       onFocusCapture={() => {
@@ -803,7 +808,7 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
   const totalWidth = sumBy(spec.stalls, (id) => DIMS[id].width)
   const stairs = <div className={css.stairs} aria-hidden />
   const band = (
-    <div className={css.band}>
+    <div className={css.band} data-stage=''>
       {spec.stalls.map((id) => (
         <Stall key={id} id={id} />
       ))}
@@ -839,7 +844,7 @@ function MobileMarketFloor({
   )
   const sm = <div className={css.sm} aria-hidden />
   const stack = (
-    <div className={css.stack}>
+    <div className={css.stack} data-stage=''>
       {spec.stalls.map((id) => (
         <div key={id} className={css.storyRow}>
           <Stall id={id} />
@@ -870,6 +875,7 @@ export default function BazaarView() {
     serverSoundOff,
   )
   const [hitbox, setHitbox] = useState(false)
+  const [editor, setEditor] = useState(false)
 
   const toggleSound = () => {
     const next = !sound
@@ -909,7 +915,16 @@ export default function BazaarView() {
           >
             HITBOX <span aria-hidden='true'>{hitbox ? 'ON' : 'OFF'}</span>
           </button>
+          <button
+            type='button'
+            className={scene.hudBtn}
+            aria-pressed={editor}
+            onClick={() => setEditor((previous) => !previous)}
+          >
+            EDITOR <span aria-hidden='true'>{editor ? 'ON' : 'OFF'}</span>
+          </button>
         </div>
+        <LayoutEditor enabled={editor} />
 
         <div className={css.desktopTree}>
           <div className={cn(scene.scene, css.streetHost)}>

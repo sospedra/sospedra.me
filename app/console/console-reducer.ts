@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern'
 import type { Effect, Output } from './command-shell'
 import { joinPath } from './console-path'
 
@@ -77,38 +78,41 @@ const ran = (state: State, event: Extract<Event, { type: 'ran' }>): State => {
 
 export const reduce = (state: State, event: Event): State => {
   const { mode } = state
-  switch (event.type) {
-    case 'ran':
-      return ran(state, event)
-    case 'note':
-      return append(state, { output: event.output })
-    case 'gate':
-      return mode.kind === 'shell'
-        ? { ...state, mode: { kind: 'gated' } }
-        : state
-    case 'boot':
-      return mode.kind === 'gated' ? { ...state, mode: SHELL } : state
-    case 'hacker-type':
-      return mode.kind === 'hacker'
+  return match(event)
+    .returnType<State>()
+    .with({ type: 'ran' }, (event) => ran(state, event))
+    .with({ type: 'note' }, ({ output }) => append(state, { output }))
+    .with({ type: 'gate' }, () =>
+      mode.kind === 'shell' ? { ...state, mode: { kind: 'gated' } } : state,
+    )
+    .with({ type: 'boot' }, () =>
+      mode.kind === 'gated' ? { ...state, mode: SHELL } : state,
+    )
+    .with({ type: 'hacker-type' }, () =>
+      mode.kind === 'hacker'
         ? {
             ...state,
             mode: { kind: 'hacker', typed: mode.typed + HACKER_CHUNK },
           }
-        : state
-    case 'hacker-exit':
-      return mode.kind === 'hacker'
+        : state,
+    )
+    .with({ type: 'hacker-exit' }, () =>
+      mode.kind === 'hacker'
         ? { ...append(state, { output: [HACKER_EXIT_NOTE] }), mode: SHELL }
-        : state
-    case 'anim-tick':
-      return mode.kind === 'anim'
+        : state,
+    )
+    .with({ type: 'anim-tick' }, () =>
+      mode.kind === 'anim'
         ? {
             ...state,
             mode: { ...mode, index: (mode.index + 1) % mode.frames.length },
           }
-        : state
-    case 'anim-stop':
-      return mode.kind === 'anim' ? { ...state, mode: SHELL } : state
-  }
+        : state,
+    )
+    .with({ type: 'anim-stop' }, () =>
+      mode.kind === 'anim' ? { ...state, mode: SHELL } : state,
+    )
+    .exhaustive()
 }
 
 export const initialState = (): State => ({

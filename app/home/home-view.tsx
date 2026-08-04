@@ -17,6 +17,7 @@ import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
 import { useRouteTransition } from 'services/transition/context'
 import { usePrefetch } from 'services/transition/use-prefetch'
+import { match } from 'ts-pattern'
 import SpriteCity from './city-sprite'
 import css from './home.module.css'
 import SpriteMoon from './moon-sprite'
@@ -87,36 +88,37 @@ const INITIAL_STAGE: StageState = {
 }
 
 function stageReducer(state: StageState, event: StageEvent): StageState {
-  switch (event.type) {
-    case 'reveal-car':
-      return { ...state, carVisible: true }
-    case 'car-arrive':
-      return { ...state, engineOn: true, carArriving: true, carVisible: true }
-    case 'car-park':
-      return { ...state, carArriving: false }
-    case 'engine-on':
-      return { ...state, engineOn: true }
-    case 'engine-off':
-      return { ...state, engineOn: false }
-    case 'engine-toggle':
-      return { ...state, engineOn: !state.engineOn }
-    case 'depart':
-      return {
-        ...state,
-        carVisible: true,
-        carArriving: false,
-        driveDuration: event.duration,
-        offset: [BAZAAR_OFFSET, 0],
-      }
-    case 'leave-home':
-      return {
-        ...state,
-        engineOn: false,
-        carArriving: false,
-        isLeavingHome: true,
-        offset: [0, 100],
-      }
-  }
+  return match(event)
+    .returnType<StageState>()
+    .with({ type: 'reveal-car' }, () => ({ ...state, carVisible: true }))
+    .with({ type: 'car-arrive' }, () => ({
+      ...state,
+      engineOn: true,
+      carArriving: true,
+      carVisible: true,
+    }))
+    .with({ type: 'car-park' }, () => ({ ...state, carArriving: false }))
+    .with({ type: 'engine-on' }, () => ({ ...state, engineOn: true }))
+    .with({ type: 'engine-off' }, () => ({ ...state, engineOn: false }))
+    .with({ type: 'engine-toggle' }, () => ({
+      ...state,
+      engineOn: !state.engineOn,
+    }))
+    .with({ type: 'depart' }, ({ duration }) => ({
+      ...state,
+      carVisible: true,
+      carArriving: false,
+      driveDuration: duration,
+      offset: [BAZAAR_OFFSET, 0],
+    }))
+    .with({ type: 'leave-home' }, () => ({
+      ...state,
+      engineOn: false,
+      carArriving: false,
+      isLeavingHome: true,
+      offset: [0, 100],
+    }))
+    .exhaustive()
 }
 
 function carPose(stage: StageState, isDeparting: boolean) {

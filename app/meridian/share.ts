@@ -1,3 +1,4 @@
+import { filter, join, map, pipe } from 'es-toolkit/fp'
 import type {
   AnswerResult,
   DailyGeoChallenge,
@@ -68,10 +69,12 @@ export const formatGeoShareCard = ({
   )
   const roundLines = challenge.rounds.map((round) => {
     const label = ROUND_LABELS[locale][round.type].padEnd(labelWidth + 2)
-    const symbols = answers
-      .filter((answer) => answer.roundId === round.id)
-      .map((answer) => answerSymbol(round.type, answer))
-      .join('')
+    const symbols = pipe(
+      answers,
+      filter((answer) => answer.roundId === round.id),
+      map((answer) => answerSymbol(round.type, answer)),
+      join(''),
+    )
     return `${label}${symbols || '—'}`
   })
   const statistics = calculateRunStatistics(challenge, answers)

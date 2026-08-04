@@ -1,4 +1,5 @@
-import { range, takeWhile } from 'es-toolkit'
+import { range } from 'es-toolkit'
+import { filter, map, pipe, takeWhile } from 'es-toolkit/fp'
 
 export type CrosswordLocale = 'en' | 'es'
 export type CrosswordDirection = 'across' | 'down'
@@ -102,11 +103,13 @@ const startDirections = (
 ]
 
 const numberedStarts = (grid: PuzzleGrid): EntryStart[] =>
-  grid.cells
-    .filter((cell) => cell.solution !== null)
-    .map((cell) => ({ cell, directions: startDirections(grid, cell) }))
-    .filter((start) => start.directions.length > 0)
-    .map((start, position) => ({ ...start, number: position + 1 }))
+  pipe(
+    grid.cells,
+    filter((cell) => cell.solution !== null),
+    map((cell) => ({ cell, directions: startDirections(grid, cell) })),
+    filter((start) => start.directions.length > 0),
+    map((start, position) => ({ ...start, number: position + 1 })),
+  )
 
 const entryCellIndices = (
   grid: PuzzleGrid,
@@ -116,8 +119,11 @@ const entryCellIndices = (
   const reach =
     direction === 'across' ? grid.width - start.column : grid.height - start.row
   const step = direction === 'across' ? 1 : grid.width
-  const along = range(reach).map((offset) => start.index + offset * step)
-  return takeWhile(along, (index) => grid.cells[index]?.solution !== null)
+  return pipe(
+    range(reach),
+    map((offset) => start.index + offset * step),
+    takeWhile((index) => grid.cells[index]?.solution !== null),
+  )
 }
 
 const entryFrom = (

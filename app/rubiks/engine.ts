@@ -1,6 +1,8 @@
 // Facelet cube engine. Sticker slots are fixed (position, normal) pairs in
 // grid space; a turn rotates the layer's slots and permutes their colors.
 
+import { match } from 'ts-pattern'
+
 export type Face = 'U' | 'D' | 'L' | 'R' | 'F' | 'B'
 export type Move = { face: Face; prime: boolean }
 export type Vec = readonly [number, number, number]
@@ -282,21 +284,13 @@ const turnEnd = (state: GameState, now: number): GameState => {
   return settle(after, now)
 }
 
-export const reduce = (state: GameState, event: GameEvent): GameState => {
-  switch (event.type) {
-    case 'PLAY':
-      return play(state, event.move, event.now)
-    case 'UNDO':
-      return undo(state)
-    case 'REDO':
-      return redo(state)
-    case 'SCRAMBLE':
-      return scramble(state, event.moves)
-    case 'SOLVE':
-      return solve(state)
-    case 'RESET':
-      return initialState
-    case 'TURN_END':
-      return turnEnd(state, event.now)
-  }
-}
+export const reduce = (state: GameState, event: GameEvent): GameState =>
+  match(event)
+    .with({ type: 'PLAY' }, (event) => play(state, event.move, event.now))
+    .with({ type: 'UNDO' }, () => undo(state))
+    .with({ type: 'REDO' }, () => redo(state))
+    .with({ type: 'SCRAMBLE' }, ({ moves }) => scramble(state, moves))
+    .with({ type: 'SOLVE' }, () => solve(state))
+    .with({ type: 'RESET' }, () => initialState)
+    .with({ type: 'TURN_END' }, ({ now }) => turnEnd(state, now))
+    .exhaustive()

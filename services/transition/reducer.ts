@@ -1,5 +1,6 @@
 import type { Route } from 'next'
 import { useReducer } from 'react'
+import { match } from 'ts-pattern'
 import type { TransitionT } from './context'
 
 export type Offshore = { kind: 'cloud'; duration?: number }
@@ -22,30 +23,28 @@ export type Action =
 export const destinationUrl = (state: State): Route | null =>
   state.phase === 'idle' ? null : state.url
 
-const assertNever = (value: never): never => {
-  throw new Error(`Unhandled action: ${JSON.stringify(value)}`)
-}
-
-export const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case 'NAVIGATE':
-      return {
-        // a mid-unmount navigate retargets the push instead of restarting
-        phase: state.phase === 'unmounting' ? 'unmounting' : 'departing',
-        url: action.payload.url,
-        offshore: state.offshore,
-      }
-    case 'UNMOUNT':
+export const reducer = (state: State, action: Action): State =>
+  match(action)
+    .returnType<State>()
+    .with({ type: 'NAVIGATE' }, ({ payload }) => ({
+      // a mid-unmount navigate retargets the push instead of restarting
+      phase: state.phase === 'unmounting' ? 'unmounting' : 'departing',
+      url: payload.url,
+      offshore: state.offshore,
+    }))
+    .with({ type: 'UNMOUNT' }, () => {
       if (state.phase !== 'departing') return state
       return { phase: 'unmounting', url: state.url, offshore: state.offshore }
-    case 'RESET':
-      return { phase: 'idle', offshore: state.offshore }
-    case 'OFFSHORE':
-      return { ...state, offshore: action.payload.offshore }
-    default:
-      return assertNever(action)
-  }
-}
+    })
+    .with({ type: 'RESET' }, () => ({
+      phase: 'idle',
+      offshore: state.offshore,
+    }))
+    .with({ type: 'OFFSHORE' }, ({ payload }) => ({
+      ...state,
+      offshore: payload.offshore,
+    }))
+    .exhaustive()
 
 export const useStateReducer = (): TransitionT => {
   const [state, dispatch] = useReducer(reducer, DEFAULT_STATE)

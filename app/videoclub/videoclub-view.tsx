@@ -8,6 +8,7 @@ import { sceneTrap, type Trap, useHotkeys } from 'services/hotkeys'
 import Link, { LinkBack } from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
+import { match } from 'ts-pattern'
 import { createDeckAudio } from './deck-audio'
 import { runTapeSwap } from './tape-swap'
 import { TAPES, type Tape } from './tapes'
@@ -59,41 +60,45 @@ type TvEvent =
   | { type: 'insert'; tape: number }
   | { type: 'inserted'; burst: TapeBurst }
 
-const reducer = (state: TvState, event: TvEvent): TvState => {
-  switch (event.type) {
-    case 'power':
+const reducer = (state: TvState, event: TvEvent): TvState =>
+  match(event)
+    .returnType<TvState>()
+    .with({ type: 'power' }, () => {
       if (state.status === 'off' || state.status === 'cooling')
         return { ...state, status: 'warming' }
       return { ...state, status: 'cooling', incoming: null, cold: false }
-    case 'ready':
+    })
+    .with({ type: 'ready' }, () => {
       if (state.status === 'cooling') return { ...state, status: 'off' }
       if (state.status !== 'warming' && state.status !== 'switching')
         return state
       return { ...state, status: 'playing' }
-    case 'toggle':
+    })
+    .with({ type: 'toggle' }, () => {
       if (state.status === 'playing') return { ...state, status: 'paused' }
       if (state.status === 'paused') return { ...state, status: 'playing' }
       return state
-    case 'insert':
-      if (state.status === 'inserting' || event.tape === state.tape)
-        return state
+    })
+    .with({ type: 'insert' }, ({ tape }) => {
+      if (state.status === 'inserting' || tape === state.tape) return state
       return {
         ...state,
         status: 'inserting',
-        incoming: event.tape,
+        incoming: tape,
         cold: state.status === 'off' || state.status === 'cooling',
       }
-    case 'inserted':
+    })
+    .with({ type: 'inserted' }, ({ burst }) => {
       if (state.status !== 'inserting' || state.incoming === null) return state
       return {
         status: state.cold ? 'warming' : 'switching',
         tape: state.incoming,
         incoming: null,
         cold: false,
-        burst: event.burst,
+        burst,
       }
-  }
-}
+    })
+    .exhaustive()
 
 const drawBurst = (): TapeBurst => (Math.random() < 0.2 ? 'bars' : 'snow')
 

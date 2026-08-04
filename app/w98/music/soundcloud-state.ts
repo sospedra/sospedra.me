@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern'
 import type { SoundCloudSound } from './soundcloud.ts'
 
 export type SoundCloudStatus =
@@ -71,40 +72,40 @@ const applySoundSync = (
 export const reduceSoundCloud = (
   state: SoundCloudState,
   event: SoundCloudEvent,
-): SoundCloudState => {
-  switch (event.type) {
-    case 'error':
-      return { ...state, status: { message: event.message, phase: 'error' } }
-    case 'finish':
-      return {
-        ...state,
-        position: state.duration,
-        status:
-          state.status.phase === 'playing' ? { phase: 'ready' } : state.status,
-      }
-    case 'load-start':
-      return INITIAL_SOUNDCLOUD
-    case 'pause':
-      return state.status.phase === 'playing'
+): SoundCloudState =>
+  match(event)
+    .returnType<SoundCloudState>()
+    .with({ type: 'error' }, ({ message }) => ({
+      ...state,
+      status: { message, phase: 'error' },
+    }))
+    .with({ type: 'finish' }, () => ({
+      ...state,
+      position: state.duration,
+      status:
+        state.status.phase === 'playing' ? { phase: 'ready' } : state.status,
+    }))
+    .with({ type: 'load-start' }, () => INITIAL_SOUNDCLOUD)
+    .with({ type: 'pause' }, () =>
+      state.status.phase === 'playing'
         ? { ...state, status: { phase: 'ready' } }
-        : state
-    case 'play':
-      return { ...state, status: { phase: 'playing' } }
-    case 'playlist-sync':
-      return { ...state, sounds: event.sounds }
-    case 'progress':
-      return { ...state, position: event.position }
-    case 'ready':
-      return state.status.phase === 'playing'
+        : state,
+    )
+    .with({ type: 'play' }, () => ({ ...state, status: { phase: 'playing' } }))
+    .with({ type: 'playlist-sync' }, ({ sounds }) => ({ ...state, sounds }))
+    .with({ type: 'progress' }, ({ position }) => ({ ...state, position }))
+    .with({ type: 'ready' }, () =>
+      state.status.phase === 'playing'
         ? state
-        : { ...state, status: { phase: 'ready' } }
-    case 'select-track':
-      return applySelectTrack(state, event.index)
-    case 'sound-sync':
-      return applySoundSync(state, event)
-    case 'timeout':
-      return state.status.phase === 'loading'
-        ? { ...state, status: { message: event.message, phase: 'error' } }
-        : state
-  }
-}
+        : { ...state, status: { phase: 'ready' } },
+    )
+    .with({ type: 'select-track' }, ({ index }) =>
+      applySelectTrack(state, index),
+    )
+    .with({ type: 'sound-sync' }, (event) => applySoundSync(state, event))
+    .with({ type: 'timeout' }, ({ message }) =>
+      state.status.phase === 'loading'
+        ? { ...state, status: { message, phase: 'error' } }
+        : state,
+    )
+    .exhaustive()

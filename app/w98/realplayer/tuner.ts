@@ -1,3 +1,5 @@
+import { match } from 'ts-pattern'
+
 export const CONNECT_TIMEOUT_MS = 15_000
 export const DEFAULT_VOLUME = 0.72
 
@@ -36,49 +38,51 @@ type HeldState = { status: ActiveStatus; stationId: string; attempt: number }
 const isHeld = (state: TunerState): state is HeldState =>
   state.status === 'connecting' || state.status === 'playing'
 
-export const reduceTuner = (
-  state: TunerState,
-  event: TunerEvent,
-): TunerState => {
-  switch (event.type) {
-    case 'restore':
+export const reduceTuner = (state: TunerState, event: TunerEvent): TunerState =>
+  match(event)
+    .returnType<TunerState>()
+    .with({ type: 'restore' }, ({ stationId }) => {
       if (!isVirginIdle(state)) return state
-      return { ...state, stationId: event.stationId }
-    case 'tune':
-      return {
-        status: 'connecting',
-        stationId: event.stationId,
-        attempt: event.attempt,
-      }
-    case 'stop':
-      return {
-        status: 'idle',
-        stationId: state.stationId,
-        attempt: event.attempt,
-      }
-    case 'user-pause':
+      return { ...state, stationId }
+    })
+    .with({ type: 'tune' }, (event) => ({
+      status: 'connecting',
+      stationId: event.stationId,
+      attempt: event.attempt,
+    }))
+    .with({ type: 'stop' }, ({ attempt }) => ({
+      status: 'idle',
+      stationId: state.stationId,
+      attempt,
+    }))
+    .with({ type: 'user-pause' }, () => {
       if (!isHeld(state)) return state
       return { ...state, status: 'paused' }
-    case 'audio-playing':
-      if (event.attempt !== state.attempt) return state
+    })
+    .with({ type: 'audio-playing' }, ({ attempt }) => {
+      if (attempt !== state.attempt) return state
       if (state.status !== 'connecting' && state.status !== 'paused')
         return state
       return { ...state, status: 'playing' }
-    case 'audio-waiting':
-      if (event.attempt !== state.attempt) return state
+    })
+    .with({ type: 'audio-waiting' }, ({ attempt }) => {
+      if (attempt !== state.attempt) return state
       if (state.status !== 'playing') return state
       return { ...state, status: 'connecting' }
-    case 'audio-pause':
-      if (event.attempt !== state.attempt) return state
+    })
+    .with({ type: 'audio-pause' }, ({ attempt }) => {
+      if (attempt !== state.attempt) return state
       if (state.status !== 'playing') return state
       return { ...state, status: 'paused' }
-    case 'audio-error':
-      if (event.attempt !== state.attempt) return state
+    })
+    .with({ type: 'audio-error' }, ({ attempt }) => {
+      if (attempt !== state.attempt) return state
       if (!isHeld(state)) return state
       return { ...state, status: 'error' }
-    case 'connect-timeout':
-      if (event.attempt !== state.attempt) return state
+    })
+    .with({ type: 'connect-timeout' }, ({ attempt }) => {
+      if (attempt !== state.attempt) return state
       if (state.status !== 'connecting') return state
       return { ...state, status: 'error' }
-  }
-}
+    })
+    .exhaustive()

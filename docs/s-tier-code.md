@@ -20,7 +20,7 @@ Two approaches both look valid? These principles break the tie.
 
 1. Single responsibility. One component, one concern. One hook, one behavior. One module, one owner.
 2. Composability. New behavior arrives as new composition, never as new internal branches.
-3. Substitution. One function returns one shape for every variant, so consumers never branch on the variant. A variant with real behavior differences rides a discriminated union, switched in one place (section 7).
+3. Substitution. One function returns one shape for every variant, so consumers never branch on the variant. A variant with real behavior differences rides a discriminated union, matched in one place (section 7).
 4. Narrow surfaces. Each module exposes a small public API. Restricted-import lint enforces the boundary, not a barrel file.
 5. One owner per datum. Copies can exist, but each piece of data has one canonical write path.
 6. Partition by access pattern. Group code by product usage, not by technical category. A terms page and a checkout page share a navbar and nothing else.
@@ -194,7 +194,7 @@ type FetchState =
   | { status: 'error'; error: Error }
 ```
 
-- One pure function owns every transition: `(state, event) => state`. An event invalid in the current state returns the state unchanged, decided in this one place. An exhaustiveness check turns a missing case into a compile error.
+- One pure function owns every transition: `(state, event) => state`. An event invalid in the current state returns the state unchanged, decided in this one place. The transition body is a ts-pattern `match(event)` chain, and `.exhaustive()` turns a missing case into a compile error.
 - Derive flags from the machine at the point of use. A stored `isLoading` next to `status` is a sync bug on a timer.
 - Server-side statuses get one table of legal moves and one guard. Never scatter status checks across handlers.
 - Plain union plus reducer first. Reach for a state-machine library only for hierarchy, parallel regions, or delayed transitions.
@@ -331,7 +331,7 @@ Boundaries:
 
 Optimize for cognitive complexity: reader effort, never path count.
 
-The cost model. Each branch, loop, or catch costs one. Each nesting level adds one more, and callbacks count as nesting. A switch costs one in total. Early returns, optional chaining, and nullish coalescing are free. Consequences: flat is cheap, nested is expensive, a lookup beats a switch, a switch beats an else-if chain, early returns beat else.
+The cost model. Each branch, loop, or catch costs one. Each nesting level adds one more, and callbacks count as nesting. A match expression or switch costs one in total. Early returns, optional chaining, and nullish coalescing are free. Consequences: flat is cheap, nested is expensive, a lookup beats a match, a match beats an else-if chain, early returns beat else.
 
 Budgets per function: cognitive complexity 10 hard and 5 target, nesting depth 3 hard and 2 target, parameters 3 hard and 2 target, length soft at about 60 lines. The numbers are tunable defaults, not measurements. Length is a symptom. Complexity is the rule. Over budget: extract, restructure, or flag it. Never obfuscate to pass.
 
@@ -340,7 +340,7 @@ Control flow:
 - Guard clauses first. Validate and bail at the top. The happy path sits last, at the lowest indentation.
 - No else after return or throw. The code after an exit is already the other branch.
 - A ternary selects between two expressions. Never nest ternaries. Never put side effects in the arms.
-- Three or more branches on one value: a lookup table or an exhaustive switch, never an else-if chain.
+- Three or more branches on one value: a lookup table for pure data, or a ts-pattern `match().exhaustive()` for logic. Never an else-if chain, and never a bare switch.
 - Merge collapsible ifs. Name any condition with three or more operands as a `const` or a predicate.
 - Positive conditions first. `if (!x) A else B` forces the reader to invert twice.
 - One try per operation, at the boundary: handler, action, job entry. Extract the fallible call, so the try body stays minimal. A value-shaped attempt helper covers parse-or-fallback.
@@ -410,7 +410,7 @@ The playbook, symptom to move:
 | Symptom | Move |
 | --- | --- |
 | Depth over 2 | invert and return early, or extract the block |
-| Else-if chain on one value | lookup table, or switch with exhaustiveness |
+| Else-if chain on one value | lookup table, or `match().exhaustive()` |
 | `let` assigned in branches | ternary, lookup, or extracted function |
 | Flag flipped inside a loop | `some`, `every`, `find` |
 | Loop building an array | `map`, `filter`, `flatMap` |
@@ -453,7 +453,7 @@ Component design:
 - Route colors through variable slots. Variants set slots. States read slots. One mechanism serves variants and per-instance overrides. Consumers pass base colors only, and the component derives hover, disabled, and foreground.
 - Props extend the element type. Never hand-list native props. Export by name. Hoist timings, easings, and limits into named constants.
 - Shared primitives are owned. The public API cannot express your need? Stop and ask the owner. Composition on top is always fine.
-- Classify presentation once in the mapper and carry it as a discriminated union. Renderers switch exhaustively. Never classify by URL or label heuristics at render time.
+- Classify presentation once in the mapper and carry it as a discriminated union. Renderers match exhaustively. Never classify by URL or label heuristics at render time.
 - State accessibility as a consumer contract in the doc. Example: icon-only controls require an accessible label.
 - Each component gets a README next to its source. A central table carries only the import path and one line per component. Docs update in the same PR as the change.
 - Ship a playground per component. One registry file is the source of truth. Navigation, search, and drift badges derive from it.

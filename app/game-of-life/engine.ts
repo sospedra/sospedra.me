@@ -1,3 +1,5 @@
+import { match } from 'ts-pattern'
+
 export type Cell = readonly [x: number, y: number]
 export type CellKey = `${number},${number}`
 export type CellSet = ReadonlySet<CellKey>
@@ -207,12 +209,10 @@ export const createLifeState = (
   }
 }
 
-export const lifeReducer = (
-  state: LifeState,
-  action: LifeAction,
-): LifeState => {
-  switch (action.type) {
-    case 'step': {
+export const lifeReducer = (state: LifeState, action: LifeAction): LifeState =>
+  match(action)
+    .returnType<LifeState>()
+    .with({ type: 'step' }, () => {
       const next = evolve(state.cells)
       return {
         ...state,
@@ -226,9 +226,8 @@ export const lifeReducer = (
           next.cells.size,
         ],
       }
-    }
-
-    case 'paint': {
+    })
+    .with({ type: 'paint' }, (action) => {
       const next = new Set(state.cells)
       const births = new Set<CellKey>()
 
@@ -259,12 +258,11 @@ export const lifeReducer = (
         history: [next.size],
         presetId: 'custom',
       }
-    }
-
-    case 'load':
-      return createLifeState(action.cells, action.presetId)
-
-    case 'reset': {
+    })
+    .with({ type: 'load' }, (action) =>
+      createLifeState(action.cells, action.presetId),
+    )
+    .with({ type: 'reset' }, () => {
       const cells = new Set(state.seed)
       return {
         ...state,
@@ -275,9 +273,6 @@ export const lifeReducer = (
         deathsCount: 0,
         history: [cells.size],
       }
-    }
-
-    case 'clear':
-      return createLifeState(new Set(), 'custom')
-  }
-}
+    })
+    .with({ type: 'clear' }, () => createLifeState(new Set(), 'custom'))
+    .exhaustive()

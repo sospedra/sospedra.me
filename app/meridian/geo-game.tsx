@@ -1,6 +1,7 @@
 'use client'
 
-import { clamp, sumBy, uniq } from 'es-toolkit'
+import { clamp, sumBy } from 'es-toolkit'
+import { join, map, pipe, uniq } from 'es-toolkit/fp'
 import type {
   CSSProperties,
   FormEvent,
@@ -464,7 +465,7 @@ function PlanetInstrument({
   challenge: DailyGeoChallenge
   copy: GeoMessages
 }) {
-  const durations = uniq(challenge.rounds.map((round) => roundSeconds(round)))
+  const durations = pipe(challenge.rounds, map(roundSeconds), uniq())
   const durationReadout =
     durations.length === 1
       ? `${challenge.rounds.length}×${formatRoundClock(durations[0] * 1000)}`
@@ -510,9 +511,7 @@ const briefingTimingNotice = (
   copy: GeoMessages,
 ) =>
   formatGeoMessage(copy.timingNotice, {
-    seconds: uniq(challenge.rounds.map((round) => roundSeconds(round))).join(
-      '/',
-    ),
+    seconds: pipe(challenge.rounds, map(roundSeconds), uniq(), join('/')),
   })
 
 function BriefingFrame({

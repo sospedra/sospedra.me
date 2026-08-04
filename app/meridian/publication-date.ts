@@ -1,4 +1,8 @@
+import { filter, pipe } from 'es-toolkit/fp'
+
 const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/u
+
+const ascending = (values: readonly string[]) => values.toSorted()
 
 export const isUtcPublicationDate = (value: string): boolean => {
   const match = ISO_DATE_PATTERN.exec(value)
@@ -23,10 +27,11 @@ export const latestPublicationDateOnOrBefore = (
   dates: readonly string[],
   date: string,
 ): string | null =>
-  dates
-    .filter((candidate) => candidate <= date)
-    .toSorted()
-    .at(-1) ?? null
+  pipe(
+    dates,
+    filter((candidate) => candidate <= date),
+    ascending,
+  ).at(-1) ?? null
 
 export const resolveGeoPublicationDate = (
   configuredDate: string | undefined,

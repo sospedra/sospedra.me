@@ -1,4 +1,5 @@
 import { range } from 'es-toolkit'
+import { match } from 'ts-pattern'
 
 export const STARTUP_TIMEOUT_MS = 12_000
 
@@ -45,10 +46,6 @@ export const initialRadio = (stationCount: number): RadioState => ({
 
 export const wantsPlayback = (state: RadioState): boolean =>
   state.phase !== 'off' && state.phase !== 'error'
-
-const assertNever = (value: never): never => {
-  throw new Error(`Unhandled radio event: ${JSON.stringify(value)}`)
-}
 
 const nextUnattempted = (
   attempted: ReadonlySet<number>,
@@ -162,26 +159,19 @@ const recoverFromFailure = (state: RadioState, attempt: number): RadioState => {
   }
 }
 
-export const reduceRadio = (
-  state: RadioState,
-  event: RadioEvent,
-): RadioState => {
-  switch (event.type) {
-    case 'tune':
-      return retune(state, event)
-    case 'stations':
-      return swapStations(state, event.stationCount)
-    case 'start':
-      return beginAttempt(state, event)
-    case 'hold':
-      return park(state)
-    case 'audio-playing':
-      return lockSignal(state, event.attempt)
-    case 'audio-waiting':
-      return rebuffer(state, event.attempt)
-    case 'station-failed':
-      return recoverFromFailure(state, event.attempt)
-    default:
-      return assertNever(event)
-  }
-}
+export const reduceRadio = (state: RadioState, event: RadioEvent): RadioState =>
+  match(event)
+    .with({ type: 'tune' }, (event) => retune(state, event))
+    .with({ type: 'stations' }, ({ stationCount }) =>
+      swapStations(state, stationCount),
+    )
+    .with({ type: 'start' }, (event) => beginAttempt(state, event))
+    .with({ type: 'hold' }, () => park(state))
+    .with({ type: 'audio-playing' }, ({ attempt }) =>
+      lockSignal(state, attempt),
+    )
+    .with({ type: 'audio-waiting' }, ({ attempt }) => rebuffer(state, attempt))
+    .with({ type: 'station-failed' }, ({ attempt }) =>
+      recoverFromFailure(state, attempt),
+    )
+    .exhaustive()

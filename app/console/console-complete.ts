@@ -1,6 +1,8 @@
-import { uniq } from 'es-toolkit'
+import { filter, pipe, uniq } from 'es-toolkit/fp'
 import { COMMAND_NAMES, codeOf, type ShellContext } from './command-shell.ts'
 import { entriesAt, resolvePath } from './console-path.ts'
+
+const alphabetical = (names: readonly string[]) => names.toSorted()
 
 export type Completion = { value: string; options: string[] }
 
@@ -71,9 +73,12 @@ export const complete = (
         token,
         options.directoryOnlyCommands?.includes(commandName),
       )
-    : uniq([...COMMAND_NAMES, ...(options.extraCommandNames ?? [])])
-        .sort()
-        .filter((name) => name.startsWith(token.toLowerCase()))
+    : pipe(
+        [...COMMAND_NAMES, ...(options.extraCommandNames ?? [])],
+        uniq(),
+        alphabetical,
+        filter((name) => name.startsWith(token.toLowerCase())),
+      )
 
   if (matches.length === 0) return { value: input, options: [] }
   if (matches.length === 1) {

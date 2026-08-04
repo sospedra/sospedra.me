@@ -1,95 +1,26 @@
 import { range } from 'es-toolkit'
-import * as z from 'zod/mini'
+import { match } from 'ts-pattern'
+import type { CrosswordPuzzle } from './crossword-data.ts'
 import {
-  type CrosswordDirection,
-  type CrosswordPuzzle,
-  GRID_LETTERS,
-} from './crossword-data.ts'
+  restoreCrosswordState,
+  serializeCrosswordState,
+} from './crossword-save.ts'
+import type {
+  CrosswordAction,
+  CrosswordState,
+  GameSnapshot,
+} from './crossword-state.ts'
+import { createCrosswordState } from './crossword-state.ts'
 
-export type CrosswordStatus = 'not-started' | 'playing' | 'paused' | 'complete'
-
-type GameSnapshot = {
-  guesses: string[]
-  pencilCells: boolean[]
-  checkedCells: boolean[]
-  revealedCells: boolean[]
-  incorrectCells: boolean[]
-  selectedCell: number
-  direction: CrosswordDirection
-}
-
-export type CrosswordState = GameSnapshot & {
-  status: CrosswordStatus
-  pencilMode: boolean
-  elapsedMs: number
-  runStartedAt: number | null
-  autoPaused: boolean
-  undoStack: GameSnapshot[]
-  redoStack: GameSnapshot[]
-}
-
-export type PersistedCrosswordState = {
-  schemaVersion: 1
-  puzzleId: string
-  guesses: string[]
-  pencilCells: number[]
-  checkedCells: number[]
-  revealedCells: number[]
-  incorrectCells: number[]
-  selectedCell: number
-  direction: CrosswordDirection
-  status: CrosswordStatus
-  elapsedMs: number
-  runStartedAt: number | null
-}
-
-export type CrosswordAction =
-  | { type: 'HYDRATE'; state: CrosswordState }
-  | {
-      type: 'SELECT'
-      index: number
-      direction?: CrosswordDirection
-    }
-  | { type: 'SET_DIRECTION'; direction: CrosswordDirection }
-  | { type: 'TOGGLE_DIRECTION' }
-  | { type: 'TOGGLE_PENCIL' }
-  | {
-      type: 'WRITE'
-      index: number
-      value: string
-      nextIndex: number
-      incorrect: boolean
-      checked: boolean
-      now: number
-    }
-  | {
-      type: 'CLEAR'
-      index: number
-      nextIndex: number
-      now: number
-    }
-  | {
-      type: 'CHECK'
-      indices: number[]
-      solutions: Record<number, string>
-    }
-  | {
-      type: 'REVEAL'
-      indices: number[]
-      solutions: Record<number, string>
-      now: number
-    }
-  | { type: 'START'; now: number }
-  | { type: 'PAUSE'; now: number; automatic: boolean }
-  | { type: 'RESUME'; now: number }
-  | { type: 'COMPLETE'; now: number }
-  | { type: 'UNDO' }
-  | { type: 'REDO' }
+export type {
+  CrosswordAction,
+  CrosswordState,
+  CrosswordStatus,
+  PersistedCrosswordState,
+} from './crossword-state.ts'
+export { createCrosswordState, restoreCrosswordState, serializeCrosswordState }
 
 const HISTORY_LIMIT = 80
-
-const blankFlags = (cellCount: number) =>
-  Array.from({ length: cellCount }, () => false)
 
 const snapshot = (state: CrosswordState): GameSnapshot => ({
   guesses: [...state.guesses],
@@ -158,54 +89,31 @@ const withCellEdit = (
   return { guesses, pencilCells, incorrectCells, checkedCells }
 }
 
-export const createCrosswordState = (
-  puzzle: CrosswordPuzzle,
-): CrosswordState => {
-  const selectedCell =
-    puzzle.cells.find((cell) => cell.solution !== null)?.index ?? 0
-  const cellCount = puzzle.cells.length
-
-  return {
-    guesses: Array.from({ length: cellCount }, () => ''),
-    pencilCells: blankFlags(cellCount),
-    checkedCells: blankFlags(cellCount),
-    revealedCells: blankFlags(cellCount),
-    incorrectCells: blankFlags(cellCount),
-    selectedCell,
-    direction: 'across',
-    status: 'not-started',
-    pencilMode: false,
-    elapsedMs: 0,
-    runStartedAt: null,
-    autoPaused: false,
-    undoStack: [],
-    redoStack: [],
-  }
-}
-
 export const crosswordReducer = (
   state: CrosswordState,
   action: CrosswordAction,
 ): CrosswordState => {
-  switch (action.type) {
-    case 'HYDRATE':
-      return action.state
-    case 'SELECT':
-      return {
-        ...state,
-        selectedCell: action.index,
-        direction: action.direction ?? state.direction,
-      }
-    case 'SET_DIRECTION':
-      return { ...state, direction: action.direction }
-    case 'TOGGLE_DIRECTION':
-      return {
-        ...state,
-        direction: state.direction === 'across' ? 'down' : 'across',
-      }
-    case 'TOGGLE_PENCIL':
-      return { ...state, pencilMode: !state.pencilMode }
-    case 'WRITE': {
+  return match(action)
+    .returnType<CrosswordState>()
+    .with({ type: 'HYDRATE' }, ({ state }) => state)
+    .with({ type: 'SELECT' }, (action) => ({
+      ...state,
+      selectedCell: action.index,
+      direction: action.direction ?? state.direction,
+    }))
+    .with({ type: 'SET_DIRECTION' }, ({ direction }) => ({
+      ...state,
+      direction,
+    }))
+    .with({ type: 'TOGGLE_DIRECTION' }, () => ({
+      ...state,
+      direction: state.direction === 'across' ? 'down' : 'across',
+    }))
+    .with({ type: 'TOGGLE_PENCIL' }, () => ({
+      ...state,
+      pencilMode: !state.pencilMode,
+    }))
+    .with({ type: 'WRITE' }, (action) => {
       if (boardLocked(state)) return state
       if (state.revealedCells[action.index]) return state
       return withHistory(state, {
@@ -218,8 +126,8 @@ export const crosswordReducer = (
         }),
         selectedCell: action.nextIndex,
       })
-    }
-    case 'CLEAR': {
+    })
+    .with({ type: 'CLEAR' }, (action) => {
       if (boardLocked(state)) return state
       if (state.revealedCells[action.index]) return state
       if (!state.guesses[action.index] && action.index === action.nextIndex) {
@@ -234,8 +142,8 @@ export const crosswordReducer = (
         }),
         selectedCell: action.nextIndex,
       })
-    }
-    case 'CHECK': {
+    })
+    .with({ type: 'CHECK' }, (action) => {
       const checkedCells = [...state.checkedCells]
       const incorrectCells = [...state.incorrectCells]
       for (const index of action.indices) {
@@ -248,8 +156,8 @@ export const crosswordReducer = (
         checkedCells,
         incorrectCells,
       }
-    }
-    case 'REVEAL': {
+    })
+    .with({ type: 'REVEAL' }, (action) => {
       const guesses = [...state.guesses]
       const pencilCells = [...state.pencilCells]
       const revealedCells = [...state.revealedCells]
@@ -268,16 +176,17 @@ export const crosswordReducer = (
         revealedCells,
         incorrectCells,
       })
-    }
-    case 'START':
+    })
+    .with({ type: 'START' }, ({ now }) => {
       if (state.status !== 'not-started') return state
       return {
         ...state,
         status: 'playing',
-        runStartedAt: action.now,
+        runStartedAt: now,
         autoPaused: false,
       }
-    case 'PAUSE':
+    })
+    .with({ type: 'PAUSE' }, (action) => {
       if (state.status !== 'playing') return state
       return {
         ...state,
@@ -286,24 +195,27 @@ export const crosswordReducer = (
         runStartedAt: null,
         autoPaused: action.automatic,
       }
-    case 'RESUME':
+    })
+    .with({ type: 'RESUME' }, ({ now }) => {
       if (state.status !== 'paused') return state
       return {
         ...state,
         status: 'playing',
-        runStartedAt: action.now,
+        runStartedAt: now,
         autoPaused: false,
       }
-    case 'COMPLETE':
+    })
+    .with({ type: 'COMPLETE' }, ({ now }) => {
       if (state.status === 'complete') return state
       return {
         ...state,
         status: 'complete',
-        elapsedMs: stoppedElapsed(state, action.now),
+        elapsedMs: stoppedElapsed(state, now),
         runStartedAt: null,
         autoPaused: false,
       }
-    case 'UNDO': {
+    })
+    .with({ type: 'UNDO' }, () => {
       if (state.status === 'complete') return state
       const previous = state.undoStack.at(-1)
       if (!previous) return state
@@ -316,8 +228,8 @@ export const crosswordReducer = (
           HISTORY_LIMIT,
         ),
       }
-    }
-    case 'REDO': {
+    })
+    .with({ type: 'REDO' }, () => {
       if (state.status === 'complete') return state
       const next = state.redoStack[0]
       if (!next) return state
@@ -327,43 +239,8 @@ export const crosswordReducer = (
         undoStack: [...state.undoStack, snapshot(state)].slice(-HISTORY_LIMIT),
         redoStack: state.redoStack.slice(1),
       }
-    }
-  }
-}
-
-const flagIndices = (flags: boolean[]) =>
-  flags.flatMap((enabled, index) => (enabled ? [index] : []))
-
-export const serializeCrosswordState = (
-  state: CrosswordState,
-  puzzleId: string,
-): PersistedCrosswordState => ({
-  schemaVersion: 1,
-  puzzleId,
-  guesses: state.guesses,
-  pencilCells: flagIndices(state.pencilCells),
-  checkedCells: flagIndices(state.checkedCells),
-  revealedCells: flagIndices(state.revealedCells),
-  incorrectCells: flagIndices(state.incorrectCells),
-  selectedCell: state.selectedCell,
-  direction: state.direction,
-  status: state.status,
-  elapsedMs: state.elapsedMs,
-  runStartedAt: state.runStartedAt,
-})
-
-const isCellIndex = (value: unknown, cellCount: number): value is number =>
-  typeof value === 'number' &&
-  Number.isInteger(value) &&
-  value >= 0 &&
-  value < cellCount
-
-const restoreFlags = (value: readonly unknown[], cellCount: number) => {
-  const flags = blankFlags(cellCount)
-  for (const index of value) {
-    if (isCellIndex(index, cellCount)) flags[index] = true
-  }
-  return flags
+    })
+    .exhaustive()
 }
 
 export const formatTime = (milliseconds: number) => {
@@ -411,74 +288,4 @@ export const shareCard = (
     rows.join(''),
     `⏱️ ${formatTime(state.elapsedMs)} · sospedra.me/crosswords`,
   ].join('\n')
-}
-
-/* The gate rejects only foreign saves; every other field self-heals so one
-   corrupt flag never wipes a filled grid. */
-const savedGameSchema = z.object({
-  schemaVersion: z.literal(1),
-  puzzleId: z.string(),
-  guesses: z.array(z.unknown()),
-  pencilCells: z.catch(z.array(z.unknown()), []),
-  checkedCells: z.catch(z.array(z.unknown()), []),
-  revealedCells: z.catch(z.array(z.unknown()), []),
-  incorrectCells: z.catch(z.array(z.unknown()), []),
-  selectedCell: z.catch(z.nullable(z.int()), null),
-  direction: z.catch(z.enum(['across', 'down']), 'across'),
-  status: z.catch(
-    z.enum(['not-started', 'playing', 'paused', 'complete']),
-    'not-started',
-  ),
-  elapsedMs: z.catch(z.number().check(z.nonnegative()), 0),
-  runStartedAt: z.catch(z.nullable(z.number().check(z.positive())), null),
-})
-
-const restoredClock = (
-  runStartedAt: number | null,
-  status: CrosswordStatus,
-  now: number,
-): number | null => {
-  if (status !== 'playing') return null
-  return runStartedAt ?? now
-}
-
-export const restoreCrosswordState = (
-  value: unknown,
-  puzzle: CrosswordPuzzle,
-  now: number,
-): CrosswordState | null => {
-  const parsed = savedGameSchema.safeParse(value)
-  if (!parsed.success) return null
-  const saved = parsed.data
-  if (
-    saved.puzzleId !== puzzle.id ||
-    saved.guesses.length !== puzzle.cells.length
-  ) {
-    return null
-  }
-
-  const guesses = saved.guesses.map((guess, index) => {
-    if (puzzle.cells[index]?.solution === null) return ''
-    return typeof guess === 'string' && GRID_LETTERS.has(guess) ? guess : ''
-  })
-  const selectedCell =
-    saved.selectedCell !== null &&
-    puzzle.cells[saved.selectedCell]?.solution !== null
-      ? saved.selectedCell
-      : createCrosswordState(puzzle).selectedCell
-
-  return {
-    ...createCrosswordState(puzzle),
-    guesses,
-    pencilCells: restoreFlags(saved.pencilCells, puzzle.cells.length),
-    checkedCells: restoreFlags(saved.checkedCells, puzzle.cells.length),
-    revealedCells: restoreFlags(saved.revealedCells, puzzle.cells.length),
-    incorrectCells: restoreFlags(saved.incorrectCells, puzzle.cells.length),
-    selectedCell,
-    direction: saved.direction,
-    status: saved.status,
-    elapsedMs: saved.elapsedMs,
-    runStartedAt: restoredClock(saved.runStartedAt, saved.status, now),
-    autoPaused: false,
-  }
 }

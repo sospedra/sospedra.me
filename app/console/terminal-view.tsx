@@ -9,6 +9,7 @@ import { playKeyClick } from 'services/audio/key-click'
 import { useGameInput } from 'services/hotkeys'
 import Shell from 'services/shell'
 import { readLocal, writeLocal } from 'services/storage'
+import { match, P } from 'ts-pattern'
 import {
   codeOf,
   type Effect,
@@ -179,24 +180,23 @@ function OutputView(props: {
   links: LinkEntry[]
   execute: Execute
 }) {
-  switch (props.output.kind) {
-    case 'text':
-      return (
-        <p
-          className={cn(css.line, props.output.tone && css[props.output.tone])}
-        >
-          {props.output.text || ' '}
-        </p>
-      )
-    case 'listing':
-      return <Listing listing={props.output} execute={props.execute} />
-    case 'links':
-      return <LinksTable links={props.links} execute={props.execute} />
-    case 'help':
-      return <HelpTable />
-    case 'tree':
-      return <TreeView paths={props.paths} segments={props.output.segments} />
-  }
+  return match(props.output)
+    .with({ kind: 'text' }, (output) => (
+      <p className={cn(css.line, output.tone && css[output.tone])}>
+        {output.text || ' '}
+      </p>
+    ))
+    .with({ kind: 'listing' }, (output) => (
+      <Listing listing={output} execute={props.execute} />
+    ))
+    .with({ kind: 'links' }, () => (
+      <LinksTable links={props.links} execute={props.execute} />
+    ))
+    .with({ kind: 'help' }, () => <HelpTable />)
+    .with({ kind: 'tree' }, ({ segments }) => (
+      <TreeView paths={props.paths} segments={segments} />
+    ))
+    .exhaustive()
 }
 
 const runTreeCommand = (
@@ -299,26 +299,18 @@ export default function TerminalView(props: {
 
   const applyEffect = (effect?: Effect) => {
     if (!effect) return
-    switch (effect.kind) {
-      case 'open':
-        window.open(effect.href, '_blank', 'noopener')
-        return
-      case 'copy':
-        void copyToClipboard(effect.text)
-        return
-      case 'clear':
-        return
-      case 'exit':
-        router.push('/')
-        return
-      case 'hacker':
-      case 'animate':
-        inputRef.current?.blur()
-        return
-      case 'toggle-audio':
-        toggleAudio()
-        return
-    }
+    match(effect)
+      .with({ kind: 'open' }, ({ href }) =>
+        window.open(href, '_blank', 'noopener'),
+      )
+      .with({ kind: 'copy' }, ({ text }) => void copyToClipboard(text))
+      .with({ kind: 'clear' }, () => {})
+      .with({ kind: 'exit' }, () => router.push('/'))
+      .with({ kind: P.union('hacker', 'animate') }, () =>
+        inputRef.current?.blur(),
+      )
+      .with({ kind: 'toggle-audio' }, () => toggleAudio())
+      .exhaustive()
   }
 
   const execute: Execute = (commands) => {
@@ -489,44 +481,37 @@ export default function TerminalView(props: {
     // Tab and bare modifiers stay free for keyboard navigation and AT chords
     const passThroughKeys = new Set(['Tab', 'Shift', 'Control', 'Alt', 'Meta'])
     const onWindowKeyDown = (event: KeyboardEvent) => {
-      switch (modeRef.current.kind) {
-        case 'gated':
+      match(modeRef.current.kind)
+        .with('gated', () => {
           if (event.key !== 'Enter' && event.key !== ' ') return
           event.preventDefault()
           startBootRef.current()
-          return
-        case 'anim':
+        })
+        .with('anim', () => {
           if (passThroughKeys.has(event.key)) return
           event.preventDefault()
           dispatch({ type: 'anim-stop' })
-          return
-        case 'hacker':
-          onHackerKey(event)
-          return
-        case 'shell': {
+        })
+        .with('hacker', () => onHackerKey(event))
+        .with('shell', () => {
           const command = FKEY_COMMANDS[event.key]
           if (!command) return
           event.preventDefault()
           executeRef.current([command])
-        }
-      }
+        })
+        .exhaustive()
     }
     const onWindowClick = (event: MouseEvent) => {
-      switch (modeRef.current.kind) {
-        case 'gated':
-          startBootRef.current()
-          return
-        case 'anim':
-          dispatch({ type: 'anim-stop' })
-          return
-        case 'hacker':
-          dispatch({ type: 'hacker-type' })
-          return
-        case 'shell':
+      match(modeRef.current.kind)
+        .with('gated', () => startBootRef.current())
+        .with('anim', () => dispatch({ type: 'anim-stop' }))
+        .with('hacker', () => dispatch({ type: 'hacker-type' }))
+        .with('shell', () => {
           if (isInteractive(event.target)) return
           if (window.getSelection()?.toString()) return
           inputRef.current?.focus({ preventScroll: true })
-      }
+        })
+        .exhaustive()
     }
     window.addEventListener('keydown', onWindowKeyDown)
     window.addEventListener('click', onWindowClick)
