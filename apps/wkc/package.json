@@ -1,0 +1,28 @@
+{
+  "name": "wkc",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "biome check .",
+    "preview": "vite preview",
+    "test": "node --test test/hue.test.ts",
+    "typecheck": "tsc"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "catalog:",
+    "tailwindcss": "4.3.3",
+    "typescript": "catalog:",
+    "vite": "8.2.0"
+  }
+}

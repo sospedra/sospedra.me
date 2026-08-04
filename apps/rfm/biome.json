@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@repo/biome-config/base.json"],
+  "files": {
+    "includes": ["**", "!src/home/newsletter.css", "!src/about/markdown.css"]
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "single"
+    }
+  },
+  "linter": {
+    "domains": {
+      "react": "recommended"
+    },
+    "rules": {
+      "correctness": {
+        "useExhaustiveDependencies": "warn"
+      }
+    }
+  }
+}

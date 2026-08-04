@@ -1,0 +1,48 @@
+{
+  "name": "rfm",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "biome check .",
+    "preview": "vite preview",
+    "test": "tsx --test test/github.test.ts test/home.test.tsx",
+    "typecheck": "tsc"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@react-spring/web": "10.1.2",
+    "human-number": "3.0.0",
+    "language-map": "1.5.0",
+    "markdown-to-jsx": "9.10.2",
+    "mixpanel-browser": "2.81.0",
+    "new-github-issue-url": "1.1.0",
+    "react": "19.2.8",
+    "react-content-loader": "7.1.2",
+    "react-dom": "19.2.8",
+    "react-router": "8.3.0",
+    "swr": "2.5.0",
+    "validator": "13.15.35"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/mixpanel-browser": "2.66.0",
+    "@types/node": "catalog:",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "@types/validator": "13.15.10",
+    "@vitejs/plugin-react": "6.0.5",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.5",
+    "typescript": "catalog:",
+    "vite": "8.2.0"
+  }
+}

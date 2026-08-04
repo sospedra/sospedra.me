@@ -1,0 +1,35 @@
+{
+  "name": "sti",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Safely convert any semver to an integer for easy comparisons",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "biome check .",
+    "test": "node --test test/index.test.ts",
+    "typecheck": "tsc"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

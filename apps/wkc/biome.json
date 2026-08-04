@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@repo/biome-config/base.json"],
+  "files": {
+    "includes": ["**"]
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "requireAscii": true,
+            "filenameCases": ["kebab-case"]
+          }
+        }
+      }
+    }
+  }
+}

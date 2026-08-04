@@ -1,0 +1,318 @@
+[
+  {
+    "type": "OR",
+    "noc": "KOR"
+  },
+  {
+    "type": "OR",
+    "noc": "KOR"
+  },
+  {
+    "type": "OR",
+    "noc": "KOR"
+  },
+  {
+    "type": "OR",
+    "noc": "NOR"
+  },
+  {
+    "type": "WR",
+    "noc": "NOR"
+  },
+  {
+    "type": "OR",
+    "noc": "NOR"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "CAN"
+  },
+  {
+    "type": "OR",
+    "noc": "JAM"
+  },
+  {
+    "type": "OR",
+    "noc": "KEN"
+  },
+  {
+    "type": "OR",
+    "noc": "PUR"
+  },
+  {
+    "type": "WR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "WR",
+    "noc": "VEN"
+  },
+  {
+    "type": "OR",
+    "noc": "VEN"
+  },
+  {
+    "type": "OR",
+    "noc": "POL"
+  },
+  {
+    "type": "OR",
+    "noc": "NED"
+  },
+  {
+    "type": "OR",
+    "noc": "NED"
+  },
+  {
+    "type": "WR",
+    "noc": "ITA"
+  },
+  {
+    "type": "OR",
+    "noc": "ITA"
+  },
+  {
+    "type": "OR",
+    "noc": "GER"
+  },
+  {
+    "type": "WR",
+    "noc": "CHN"
+  },
+  {
+    "type": "OR",
+    "noc": "CHN"
+  },
+  {
+    "type": "WR",
+    "noc": "GER"
+  },
+  {
+    "type": "OR",
+    "noc": "GER"
+  },
+  {
+    "type": "OR",
+    "noc": "GBR"
+  },
+  {
+    "type": "OR",
+    "noc": "GBR"
+  },
+  {
+    "type": "OR",
+    "noc": "GER"
+  },
+  {
+    "type": "OR",
+    "noc": "ROC"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "LTU"
+  },
+  {
+    "type": "OR",
+    "noc": "CZE"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "WR",
+    "noc": "CHN"
+  },
+  {
+    "type": "OR",
+    "noc": "CHN"
+  },
+  {
+    "type": "OR",
+    "noc": "IRI"
+  },
+  {
+    "type": "OR",
+    "noc": "CZE"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "CHN"
+  },
+  {
+    "type": "OR",
+    "noc": "SUI"
+  },
+  {
+    "type": "OR",
+    "noc": "ROC"
+  },
+  {
+    "type": "OR",
+    "noc": "KOR"
+  },
+  {
+    "type": "OR",
+    "noc": "SVK"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "FRA"
+  },
+  {
+    "type": "WR",
+    "noc": "POL"
+  },
+  {
+    "type": "OR",
+    "noc": "POL"
+  },
+  {
+    "type": "OR",
+    "noc": "AUS"
+  },
+  {
+    "type": "OR",
+    "noc": "AUS"
+  },
+  {
+    "type": "OR",
+    "noc": "AUS"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "AUS"
+  },
+  {
+    "type": "OR",
+    "noc": "RSA"
+  },
+  {
+    "type": "WR",
+    "noc": "RSA"
+  },
+  {
+    "type": "OR",
+    "noc": "RSA"
+  },
+  {
+    "type": "OR",
+    "noc": "CHN"
+  },
+  {
+    "type": "WR",
+    "noc": "AUS"
+  },
+  {
+    "type": "OR",
+    "noc": "AUS"
+  },
+  {
+    "type": "WR",
+    "noc": "CHN"
+  },
+  {
+    "type": "OR",
+    "noc": "CHN"
+  },
+  {
+    "type": "OR",
+    "noc": "AUS"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "UKR"
+  },
+  {
+    "type": "OR",
+    "noc": "ROC"
+  },
+  {
+    "type": "OR",
+    "noc": "AUS"
+  },
+  {
+    "type": "WR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "HUN"
+  },
+  {
+    "type": "WR",
+    "noc": "USA"
+  },
+  {
+    "type": "OR",
+    "noc": "USA"
+  },
+  {
+    "type": "WR",
+    "noc": "GBR"
+  },
+  {
+    "type": "OR",
+    "noc": "GBR"
+  },
+  {
+    "type": "WR",
+    "noc": "GEO"
+  },
+  {
+    "type": "OR",
+    "noc": "GEO"
+  },
+  {
+    "type": "WR",
+    "noc": "GEO"
+  },
+  {
+    "type": "OR",
+    "noc": "GEO"
+  },
+  {
+    "type": "WR",
+    "noc": "GEO"
+  },
+  {
+    "type": "OR",
+    "noc": "GEO"
+  }
+]

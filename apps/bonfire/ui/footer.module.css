@@ -1,0 +1,16 @@
+.signature {
+  /* Fix Safari text-shadow cutout */
+  transform: translateZ(0);
+  color: #60f8eb;
+  transition: 250ms linear 0s;
+  text-shadow: none;
+}
+
+.signature:hover {
+  text-shadow:
+    2px 0 3px #00a895,
+    2px 3px 1rem #00a895,
+    2px 0 1rem,
+    20px 0 10rem #00a895,
+    40px 0 10rem #00a895;
+}

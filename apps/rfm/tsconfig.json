@@ -1,0 +1,15 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["vite/client", "node"]
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "test/**/*.ts",
+    "test/**/*.tsx",
+    "vite.config.ts"
+  ]
+}

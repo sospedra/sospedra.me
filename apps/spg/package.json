@@ -1,0 +1,26 @@
+{
+  "name": "spg",
+  "version": "7.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "biome check .",
+    "preview": "vite preview",
+    "test": "node --test test/generator.test.ts test/password.test.ts test/request.test.ts test/semantic.test.ts test/transform.test.ts",
+    "typecheck": "tsc"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "8.2.0"
+  }
+}

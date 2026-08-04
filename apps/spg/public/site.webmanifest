@@ -1,0 +1,19 @@
+{
+  "short_name": "SPG Password generator",
+  "name": "Semantic Password Generator Site",
+  "display": "standalone",
+  "theme_color": "#68D391",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

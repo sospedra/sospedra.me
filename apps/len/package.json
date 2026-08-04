@@ -1,0 +1,26 @@
+{
+  "name": "len",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Safely access arrays' length property",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": "24.x"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "biome check .",
+    "test": "node --test test/len.test.ts",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@repo/biome-config/base.json"],
+  "files": {
+    "includes": ["**", "!next-env.d.ts"]
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "single"
+    }
+  },
+  "linter": {
+    "domains": {
+      "react": "recommended",
+      "next": "recommended",
+      "project": "recommended"
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["scripts/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    }
+  ]
+}

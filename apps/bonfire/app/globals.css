@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+body {
+  overflow: hidden;
+}
+
+button:focus {
+  outline: none;
+}

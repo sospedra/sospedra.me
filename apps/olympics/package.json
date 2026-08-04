@@ -1,0 +1,36 @@
+{
+  "name": "olympics",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "lint": "biome check .",
+    "start": "next start",
+    "test": "node --test services/create-ranking.test.ts services/create-flag.test.ts",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "country-emoji": "2.0.1",
+    "next": "16.3.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "catalog:",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "cheerio": "1.2.0",
+    "typescript": "catalog:"
+  },
+  "license": "ISC"
+}

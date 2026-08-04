@@ -1,0 +1,255 @@
+:root {
+  --gray-300: #e2e8f0;
+  --gray-400: #cbd5e0;
+  --gray-600: #718096;
+  --gray-800: #2d3748;
+  --blue-600: #3182ce;
+  --purple-600: #805ad5;
+  --radius: 0.25rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Lato, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
+  background: #fff url("/background.svg") no-repeat 50%;
+}
+
+a {
+  color: var(--blue-600);
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--purple-600);
+}
+
+:where(a, button, input):focus-visible {
+  outline: 2px solid var(--gray-800);
+  outline-offset: 2px;
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  max-width: 42rem;
+  min-height: 100dvh;
+  margin: auto;
+}
+
+.hero {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  margin: 1.5rem;
+  border-top: 4px solid currentcolor;
+  font-size: 1.875rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+.panel {
+  position: relative;
+  width: 91.666667%;
+}
+
+@media (min-width: 640px) {
+  .panel {
+    width: 60%;
+  }
+}
+
+.password-box {
+  display: flex;
+  border: 1px solid var(--gray-600);
+  border-radius: var(--radius);
+  background: #fff;
+}
+
+.password-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 0;
+  border-radius: var(--radius) 0 0 var(--radius);
+  background: transparent;
+  font: inherit;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.renew-button {
+  padding: 0 0.75rem;
+  border: 0;
+  border-left: 1px solid var(--gray-600);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--gray-300);
+  font: inherit;
+  cursor: pointer;
+}
+
+.renew-button:active {
+  background: var(--gray-400);
+}
+
+.hint {
+  width: 100%;
+  margin: 0;
+  padding: 1rem 0;
+  font-weight: 900;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.slider {
+  appearance: none;
+  width: 100%;
+  height: 0.33rem;
+  border-radius: var(--radius);
+  background: linear-gradient(
+    90deg,
+    #c53030 0%,
+    #dd6b20 25%,
+    #ecc94b 50%,
+    #68d391 75%,
+    #2f855a
+  );
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgb(0 0 0 / 10%);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px #000;
+  cursor: grab;
+}
+
+.slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+}
+
+.slider::-moz-range-thumb {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid rgb(0 0 0 / 10%);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px #000;
+  cursor: grab;
+}
+
+.slider::-moz-range-thumb:active {
+  cursor: grabbing;
+}
+
+.tweaks {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin: 2.5rem 0 0;
+  padding: 0.5rem;
+  border: 1px solid var(--gray-600);
+  border-radius: var(--radius);
+  background: #fff;
+  font-size: 0.875rem;
+  list-style: none;
+}
+
+.tweaks input[type="checkbox"] {
+  vertical-align: middle;
+}
+
+.toast {
+  position: absolute;
+  left: 50%;
+  margin-top: 4rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius);
+  background: var(--gray-800);
+  color: #fff;
+  font-size: 0.875rem;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, 0);
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0);
+  }
+
+  10%,
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -2rem);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -2rem);
+  }
+}
+
+.footer {
+  padding: 1.5rem 0;
+}
+
+.stores {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 1rem 3rem;
+}
+
+.store-link {
+  display: flex;
+  align-items: center;
+  margin: 0 0.5rem;
+  padding: 0.25rem;
+  border: 1px solid var(--gray-400);
+  border-radius: var(--radius);
+  background: #fff;
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 10%),
+    0 1px 2px rgb(0 0 0 / 6%);
+}
+
+.store-icon {
+  width: 2rem;
+  height: 2rem;
+  margin-right: 0.5rem;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.colophon {
+  font-family: ui-monospace, sfmono-regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  text-align: center;
+}

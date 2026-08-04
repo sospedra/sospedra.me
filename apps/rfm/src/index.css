@@ -1,0 +1,53 @@
+@import "tailwindcss";
+@import "./home/newsletter.css";
+@import "./submit/button.css";
+@import "./submit/issue.css";
+@import "./about/markdown.css";
+
+/* Tailwind v1 defaults the app was designed against. */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  display: contents;
+  overflow-x: hidden;
+}
+
+a.link {
+  color: var(--color-blue-600);
+}
+
+a.link:hover {
+  color: var(--color-blue-800);
+}
+
+a[href*="//"]:not([href*="sospedra.me"]),
+a[href*="//"]:not([href*="rfm.sospedra.me"]) {
+  display: inline-flex;
+  position: relative;
+}
+
+a[href*="//"]:not([href*="sospedra.me"]):after,
+a[href*="//"]:not([href*="rfm.sospedra.me"]):after {
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+  display: inline-block;
+  opacity: 0.75;
+  transform: translateY(-3px) scale(0.8);
+}

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#68D391" />
+    <meta name="description" content="Secure passwords that humans can read 🗝" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="shortcut icon" href="/icon/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icon/apple-touch-icon.png" />
+    <link rel="preload" href="/background.svg" as="image" />
+    <link rel="preload" href="/firefox.svg" as="image" />
+    <link rel="preload" href="/chrome.svg" as="image" />
+    <title>Secure passwords that humans can read</title>
+  </head>
+
+  <body>
+    <div class="shell">
+      <main class="hero">
+        <h1 class="title">Secure passwords that humans can read</h1>
+
+        <section class="panel">
+          <div class="password-box">
+            <input
+              id="js-password"
+              class="password-input"
+              placeholder="loading . . ."
+              value=""
+              aria-label="generated password"
+              readonly
+            />
+            <button id="js-renew" class="renew-button" type="button">RENEW</button>
+          </div>
+
+          <div>
+            <p id="js-hint" class="hint">good</p>
+            <input
+              id="js-slider"
+              class="slider"
+              type="range"
+              min="8"
+              max="34"
+              value="24"
+              aria-label="password length"
+            />
+          </div>
+
+          <ul class="tweaks">
+            <li>
+              <input type="checkbox" id="js-case" />
+              <label for="js-case">case</label>
+            </li>
+            <li>
+              <input type="checkbox" id="js-leet" />
+              <label for="js-leet">leet</label>
+            </li>
+            <li>
+              <input type="checkbox" id="js-random" />
+              <label for="js-random">random</label>
+            </li>
+            <li>
+              <input type="checkbox" id="js-symbols" />
+              <label for="js-symbols">symbols</label>
+            </li>
+          </ul>
+        </section>
+
+        <aside id="js-toast" class="toast" role="status">Copied to your clipboard!</aside>
+      </main>
+
+      <footer class="footer">
+        <div class="stores">
+          <a
+            class="store-link"
+            href="https://addons.mozilla.org/firefox/addon/semantic-password-generator/"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <img src="/firefox.svg" class="store-icon" alt="firefox logo" />
+            <span>Get the <span class="nowrap">Add-on</span></span>
+          </a>
+          <a
+            class="store-link"
+            href="https://chrome.google.com/webstore/detail/semantic-password-generat/jnihpommmhnofegpepjdbckgkhhjooln"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            <img src="/chrome.svg" class="store-icon" alt="chrome logo" />
+            <span>Get the Extension</span>
+          </a>
+        </div>
+
+        <div class="colophon">
+          <p>
+            <a href="https://www.npmjs.com/package/semantic-password-generator">npm lib</a>
+            //
+            <a href="https://github.com/sospedra/semantic-password-generator">github</a>
+          </p>
+          <p>hand-crafted with 💜 by <a href="https://sospedra.me">@sospedra</a></p>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

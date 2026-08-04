@@ -1,0 +1,43 @@
+.bullet {
+  min-width: 0.5rem;
+}
+
+.bulletActive {
+  box-shadow: 0 0 0 rgb(255 255 255 / 40%);
+  animation: pulse 2s infinite;
+}
+
+.dash {
+  height: 0.12rem;
+}
+
+.dash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.25rem;
+  background-color: white;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 700ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashDone::before {
+  transform: scaleX(1);
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(255 255 255 / 40%);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgb(255 255 255 / 0%);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgb(255 255 255 / 0%);
+  }
+}
