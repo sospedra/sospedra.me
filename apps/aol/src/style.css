@@ -1,0 +1,226 @@
+:root {
+  --bg: #0b0e14;
+  --panel: #121724;
+  --line: #1f2637;
+  --text: #d7dce6;
+  --dim: #8891a5;
+  --accent: #7aa2ff;
+  --ok: #57c78a;
+  --warn: #e3b341;
+  --bad: #e0637c;
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+#app {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100dvh;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.brand {
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.chip {
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--dim);
+}
+
+.chip strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.chip.prf strong {
+  color: var(--ok);
+}
+
+header .spacer {
+  flex: 1;
+}
+
+button {
+  font: inherit;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: var(--accent);
+}
+
+:where(button, input):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  min-height: 0;
+}
+
+.chat {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 0;
+  border-right: 1px solid var(--line);
+}
+
+.messages {
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.message .meta {
+  color: var(--dim);
+  margin-right: 8px;
+}
+
+.message .who {
+  color: var(--accent);
+  margin-right: 8px;
+}
+
+.message.self .who {
+  color: var(--ok);
+}
+
+.message .body {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--line);
+}
+
+.composer input {
+  flex: 1;
+  font: inherit;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 10px;
+}
+
+aside {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  min-height: 0;
+}
+
+aside section {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  min-height: 0;
+}
+
+aside h2 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--dim);
+}
+
+aside ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+aside li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--dim);
+}
+
+aside li .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dim);
+  flex: none;
+}
+
+aside li.open .dot {
+  background: var(--ok);
+}
+
+aside li.connecting .dot {
+  background: var(--warn);
+}
+
+aside li.closed .dot {
+  background: var(--bad);
+}
+
+.eventlog {
+  overflow-y: auto;
+}
+
+.eventlog p {
+  margin: 0;
+  color: var(--dim);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.standby {
+  display: grid;
+  place-content: center;
+  height: 100dvh;
+  color: var(--dim);
+  text-align: center;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+
+  aside {
+    display: none;
+  }
+}

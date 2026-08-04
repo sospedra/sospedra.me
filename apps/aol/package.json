@@ -1,0 +1,29 @@
+{
+  "name": "aol",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "biome check .",
+    "preview": "vite preview",
+    "test": "node --test test/bytes.test.ts test/topics.test.ts test/keys.test.ts test/offer.test.ts test/frame.test.ts test/seal.test.ts test/seq-window.test.ts test/rate-limit.test.ts test/router.test.ts test/messages.test.ts test/nostr-event.test.ts",
+    "typecheck": "tsc"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@noble/ciphers": "2.2.0",
+    "@noble/curves": "2.2.0",
+    "@noble/hashes": "2.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.4",
+    "@types/node": "24.13.3",
+    "typescript": "5.9.3",
+    "vite": "8.2.0"
+  }
+}
