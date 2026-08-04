@@ -1,12 +1,11 @@
 import { range } from 'es-toolkit'
+import css from './boombox.module.css'
 import {
   type BoomboxState,
   type Guess,
   type GuessScore,
   MAX_GUESSES,
 } from './engine'
-import pen from './guess-line.module.css'
-import css from './tracklist-card.module.css'
 
 export const SCORE_LABEL = {
   album: 'Right album',
@@ -34,11 +33,11 @@ const NoteEntry = (props: { guess: Guess }) => {
 
   return (
     <>
-      <span className={circled ? pen.circled : pen.crossed}>
+      <span className={circled ? css.circled : css.crossed}>
         {props.guess.label}
         <span className='sr-only'> ({SCORE_LABEL[props.guess.score]})</span>
       </span>
-      {note !== '' && <small className={pen.marginScribble}>{note}</small>}
+      {note !== '' && <small className={css.marginScribble}>{note}</small>}
     </>
   )
 }

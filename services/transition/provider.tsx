@@ -37,23 +37,11 @@ export const Provider: React.FunctionComponent<{
     return () => clearTimeout(timer)
   }, [transition.phase, transition.unmount])
 
-  // back/forward mid-flight: the browser already moved, so the pending
-  // departure is stale — cancel it instead of pushing over the pop
-  useEffect(() => {
-    const cancel = () => transition.reset()
-    window.addEventListener('popstate', cancel)
-    return () => window.removeEventListener('popstate', cancel)
-  }, [transition.reset])
-
   const pushUrl = transition.phase === 'unmounting' ? transition.url : null
-  const pushOrigin =
-    transition.phase === 'unmounting' ? transition.origin : null
   useEffect(() => {
     if (pushUrl === null) return
-    // a pop landed after the departure started: drop the stale push
-    if (pushOrigin !== window.location.pathname) return
     router.push(pushUrl)
-  }, [pushUrl, pushOrigin, router.push])
+  }, [pushUrl, router.push])
 
   return (
     <TransitionCTX.Provider value={transition}>

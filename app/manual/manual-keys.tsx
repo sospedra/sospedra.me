@@ -66,21 +66,14 @@ function useAutoCheckOnScroll(id: string) {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry) return
-        // a restored scroll position can land past the row: the initial
-        // observation is then the only callback, so treat above-viewport
-        // as seen (zero-size boxes are unrendered, never "above")
-        const box = entry.boundingClientRect
-        const laidOut = box.width > 0 || box.height > 0
-        const scrolledPast = laidOut && box.top < window.innerHeight
-        if (!entry.isIntersecting && !scrolledPast) return
+        if (!entry?.isIntersecting) return
         observer.disconnect()
         markTimer = window.setTimeout(() => {
           // uncontrolled art-direction checkbox: the DOM is the only state owner
           input.checked = true
         }, 500)
       },
-      { threshold: 0, rootMargin: '0px 0px -12% 0px' },
+      { threshold: 0 },
     )
 
     const cancelAutoCheck = () => {

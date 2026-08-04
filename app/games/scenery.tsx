@@ -1,8 +1,5 @@
-import cn from 'clsx'
 import { range } from 'es-toolkit'
 import type { CSSProperties } from 'react'
-import cloudCss from './cloud-field.module.css'
-import columnCss from './column-field.module.css'
 import css from './games.module.css'
 
 type ColumnStyle = CSSProperties & {
@@ -30,9 +27,9 @@ const COLUMNS = range(COLUMN_COUNT).map((index) => {
 
 export function CloudField() {
   return (
-    <div className={cn(cloudCss.cloud, css.cloud)} aria-hidden='true'>
+    <div className={css.cloud} aria-hidden='true'>
       <svg
-        className={cloudCss.cloudTexture}
+        className={css.cloudTexture}
         viewBox='0 0 1000 580'
         preserveAspectRatio='none'
         aria-hidden='true'
@@ -83,31 +80,28 @@ export function CloudField() {
           filter='url(#games-cloud-noise)'
         />
       </svg>
-      <span className={cloudCss.cloudCore} />
-      <span className={cloudCss.cloudWisp} />
-      <span className={cloudCss.cloudVeil} />
+      <span className={css.cloudCore} />
+      <span className={css.cloudWisp} />
+      <span className={css.cloudVeil} />
     </div>
   )
 }
 
 export function ColumnField() {
   return (
-    <div
-      className={cn(columnCss.columnViewport, css.columnViewport)}
-      aria-hidden='true'
-    >
-      <div className={columnCss.columnGrid}>
+    <div className={css.columnViewport} aria-hidden='true'>
+      <div className={css.columnGrid}>
         {COLUMNS.map((column) => (
           <span
             key={column.id}
-            className={columnCss.columnCell}
+            className={css.columnCell}
             data-gap={column.gap ? 'true' : undefined}
           >
-            <span className={columnCss.column} style={column.style}>
-              <i className={columnCss.columnTop} />
-              <i className={columnCss.columnBottom} />
-              <i className={columnCss.columnLeft} />
-              <i className={columnCss.columnRight} />
+            <span className={css.column} style={column.style}>
+              <i className={css.columnTop} />
+              <i className={css.columnBottom} />
+              <i className={css.columnLeft} />
+              <i className={css.columnRight} />
             </span>
           </span>
         ))}

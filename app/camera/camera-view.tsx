@@ -1,26 +1,116 @@
 'use client'
 
-import cn from 'clsx'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link, { LinkBack } from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
+import { match, P } from 'ts-pattern'
 import css from './camera.module.css'
-import {
-  CAMERA_CONSTRAINTS,
-  type CameraFault,
-  type CameraState,
-  cameraFault,
-  captureSquare,
-  type PrintState,
-  stopStream,
-} from './camera-capture'
-import { CameraChassis } from './camera-chassis'
-import lead from './camera-intro.module.css'
-import { OutputDock } from './camera-output-dock'
-import bay from './camera-output-dock.module.css'
+import { developInstantFilmCanvas } from './instant-film'
 
+const PHOTO_SIZE = 1200
 const DEVELOP_DURATION = 1450
+
+type CameraState = 'error' | 'ready' | 'requesting'
+type PrintState = 'idle' | 'printing' | 'ready'
+
+type CameraFault = {
+  detail: string
+  title: string
+}
+
+const CAMERA_CONSTRAINTS: MediaStreamConstraints = {
+  audio: false,
+  video: {
+    facingMode: 'user',
+    height: { ideal: PHOTO_SIZE },
+    width: { ideal: PHOTO_SIZE },
+  },
+}
+
+function stopStream(stream: MediaStream | null) {
+  for (const track of stream?.getTracks() ?? []) {
+    track.stop()
+  }
+}
+
+function cameraFault(error: unknown): CameraFault {
+  if (!window.isSecureContext) {
+    return {
+      title: 'Secure connection required',
+      detail:
+        'Camera access only works over HTTPS or on localhost. Open the secure version of this page and try again.',
+    }
+  }
+
+  const name = error instanceof DOMException ? error.name : null
+  return match(name)
+    .with(P.union('NotAllowedError', 'SecurityError'), () => ({
+      title: 'Camera access blocked',
+      detail:
+        'Allow camera access in your browser settings, then retry. Nothing is uploaded.',
+    }))
+    .with(P.union('NotFoundError', 'OverconstrainedError'), () => ({
+      title: 'No camera found',
+      detail:
+        'Connect a camera or enable one in your device settings, then try again.',
+    }))
+    .with(P.union('NotReadableError', 'AbortError'), () => ({
+      title: 'Camera is busy',
+      detail:
+        'Another app may be using the camera. Close it, wait a moment, and retry.',
+    }))
+    .otherwise(() => ({
+      title: 'Camera signal lost',
+      detail:
+        'The browser could not start the camera. Check its permissions and try again.',
+    }))
+}
+
+function captureSquare(
+  video: HTMLVideoElement,
+  canvas: HTMLCanvasElement,
+  seed: number,
+): boolean {
+  const sourceWidth = video.videoWidth
+  const sourceHeight = video.videoHeight
+  if (!sourceWidth || !sourceHeight) return false
+
+  const cropSize = Math.min(sourceWidth, sourceHeight)
+  const sourceX = (sourceWidth - cropSize) / 2
+  const sourceY = (sourceHeight - cropSize) / 2
+  const context = canvas.getContext('2d')
+  if (!context) return false
+
+  canvas.width = PHOTO_SIZE
+  canvas.height = PHOTO_SIZE
+  context.save()
+  context.translate(PHOTO_SIZE, 0)
+  context.scale(-1, 1)
+  context.drawImage(
+    video,
+    sourceX,
+    sourceY,
+    cropSize,
+    cropSize,
+    0,
+    0,
+    PHOTO_SIZE,
+    PHOTO_SIZE,
+  )
+  context.restore()
+  developInstantFilmCanvas(context, PHOTO_SIZE, PHOTO_SIZE, seed)
+  return true
+}
+
+function formatCaptureTime(date: Date) {
+  return new Intl.DateTimeFormat('en', {
+    hour: '2-digit',
+    minute: '2-digit',
+    month: 'short',
+    day: '2-digit',
+  }).format(date)
+}
 
 function revealMobileActions(element: HTMLElement, motionAllowed: boolean) {
   if (!window.matchMedia('(max-width: 820px)').matches) return
@@ -248,16 +338,16 @@ export default function CameraView() {
       </header>
 
       <section className={css.workspace} aria-labelledby='camera-title'>
-        <div className={lead.intro}>
-          <p className={lead.eyebrow}>Midnight I/O · instant relay</p>
+        <div className={css.intro}>
+          <p className={css.eyebrow}>Midnight I/O · instant relay</p>
           <h1 id='camera-title'>Camera</h1>
-          <p className={lead.lede}>
+          <p className={css.lede}>
             A tiny photo booth inside the machine. Look into the top-right
             mirror, press the shutter, and wait for the chemistry.
           </p>
 
-          <div className={lead.privacy}>
-            <span aria-hidden='true' className={lead.privacyLed} />
+          <div className={css.privacy}>
+            <span aria-hidden='true' className={css.privacyLed} />
             <p>
               <strong>Local signal only.</strong> Your stream is never uploaded
               or recorded. The captured frame lives in this tab unless you
@@ -265,7 +355,7 @@ export default function CameraView() {
             </p>
           </div>
 
-          <dl className={lead.instructions}>
+          <dl className={css.instructions}>
             <div>
               <dt>01</dt>
               <dd>Allow camera access</dd>
@@ -282,31 +372,180 @@ export default function CameraView() {
         </div>
 
         <div
-          className={cn(css.booth, bay.booth)}
+          className={css.booth}
           data-has-photo={photoUrl ? 'true' : 'false'}
           data-print-state={printState}
         >
-          <CameraChassis
-            cameraState={cameraState}
-            printState={printState}
-            setCameraState={setCameraState}
-            shutterRef={shutterRef}
-            videoRef={videoRef}
-            takePhoto={takePhoto}
-          />
+          <div
+            className={css.machine}
+            data-camera-state={cameraState}
+            data-print-state={printState}
+          >
+            <div className={css.cameraRig}>
+              <div className={css.cameraShadow} aria-hidden='true' />
 
-          <OutputDock
-            cameraState={cameraState}
-            captureId={captureId}
-            capturedAt={capturedAt}
-            fault={fault}
-            liveMessage={liveMessage}
-            photoActionsRef={photoActionsRef}
-            photoUrl={photoUrl}
-            printState={printState}
-            requestCamera={requestCamera}
-            resetPhoto={resetPhoto}
-          />
+              <div className={css.camera}>
+                <div className={css.cameraTop}>
+                  <div className={css.flash} aria-hidden='true'>
+                    <span className={css.shutterFlash} />
+                  </div>
+                  <div className={css.timer} aria-hidden='true' />
+                  <div className={css.sensor} aria-hidden='true' />
+                  <div className={css.opticsPlate} aria-hidden='true' />
+
+                  <div className={css.lens} aria-hidden='true'>
+                    <div className={css.lensGlass} />
+                  </div>
+
+                  {/* aria-disabled keeps focus while printing */}
+                  <button
+                    ref={shutterRef}
+                    type='button'
+                    className={css.shutter}
+                    aria-disabled={
+                      cameraState !== 'ready' || printState === 'printing'
+                    }
+                    aria-label='Take a photo'
+                    onClick={takePhoto}
+                  >
+                    <span className={css.shutterWell} aria-hidden='true'>
+                      <span className={css.shutterStem}>
+                        <span className={css.shutterCap} />
+                      </span>
+                    </span>
+                  </button>
+
+                  <div className={css.viewfinder}>
+                    <div className={css.viewfinderGlass}>
+                      <video
+                        ref={videoRef}
+                        autoPlay
+                        muted
+                        playsInline
+                        aria-label='Mirrored live camera preview'
+                        onCanPlay={() => setCameraState('ready')}
+                        onLoadedData={() => setCameraState('ready')}
+                      />
+                      <span
+                        className={css.viewfinderReflection}
+                        aria-hidden='true'
+                      />
+
+                      {cameraState !== 'ready' && (
+                        <span className={css.viewfinderBack} aria-hidden='true'>
+                          {cameraState === 'requesting' ? '···' : '!'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className={css.filmRatchetHousing} aria-hidden='true'>
+                    <div className={css.filmRatchet} />
+                  </div>
+                  <div className={css.power} aria-hidden='true' />
+                  <div className={css.cameraTitle} aria-hidden='true'>
+                    Midnight I/O
+                  </div>
+                </div>
+
+                <div className={css.cameraBottom}>
+                  <div className={css.feedRailHousing} aria-hidden='true'>
+                    <div className={css.feedRail}>
+                      <div className={css.feedCarriage} />
+                    </div>
+                  </div>
+                  <div className={css.printer} aria-hidden='true' />
+                  <div className={css.labels} aria-hidden='true'>
+                    <div className={css.rainbow} />
+                    <div className={css.logo}>Sospedroid</div>
+                    <div className={css.cameraType}>CAM-01 · LOCAL</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={css.outputDock}>
+            <div className={css.outputHeader} aria-hidden='true'>
+              <span>Chemistry bay</span>
+              <span>Output / 01</span>
+            </div>
+
+            <div className={css.printBay}>
+              {photoUrl ? (
+                <figure
+                  key={captureId}
+                  className={css.print}
+                  aria-label='Your developed instant picture'
+                >
+                  <div className={css.photoSurface}>
+                    <img
+                      src={photoUrl}
+                      alt='Your mirrored camera portrait'
+                      draggable={false}
+                    />
+                    <span className={css.developWash} aria-hidden='true' />
+                  </div>
+                  <figcaption>
+                    <span>midnight / {String(captureId).padStart(2, '0')}</span>
+                    <time dateTime={capturedAt?.toISOString()}>
+                      {capturedAt
+                        ? formatCaptureTime(capturedAt)
+                        : 'developing'}
+                    </time>
+                  </figcaption>
+                </figure>
+              ) : (
+                <div className={css.paperGuide} aria-hidden='true'>
+                  <span>Awaiting exposure</span>
+                </div>
+              )}
+            </div>
+
+            <div className={css.controlDeck}>
+              <p
+                className={css.liveStatus}
+                aria-live='polite'
+                aria-atomic='true'
+              >
+                {liveMessage}
+              </p>
+
+              {cameraState === 'error' && (
+                <div className={css.errorPanel}>
+                  <p>{fault?.detail}</p>
+                  <button
+                    type='button'
+                    className={css.deckButton}
+                    onClick={() => void requestCamera()}
+                  >
+                    <span>Retry camera</span>
+                  </button>
+                </div>
+              )}
+
+              {photoUrl && printState === 'ready' && (
+                <div ref={photoActionsRef} className={css.photoActions}>
+                  <button
+                    type='button'
+                    className={css.deckButton}
+                    data-tone='neutral'
+                    onClick={resetPhoto}
+                  >
+                    <span>Try again</span>
+                  </button>
+                  <a
+                    className={css.deckButton}
+                    data-tone='pink'
+                    href={photoUrl}
+                    download={`midnight-photo-${captureId}.jpg`}
+                  >
+                    <span>Download photo</span>
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 

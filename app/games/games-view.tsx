@@ -1,6 +1,5 @@
 'use client'
 
-import cn from 'clsx'
 import { clamp } from 'es-toolkit'
 import { useEffect, useRef, useState } from 'react'
 import { isEditableTarget, useGameInput } from 'services/hotkeys'
@@ -8,10 +7,7 @@ import Link from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
 import { useRouteTransition } from 'services/transition/context'
-import panelCss from './browser-panel.module.css'
 import { GAMES } from './catalogue'
-import barCss from './control-bar.module.css'
-import gridCss from './game-grid.module.css'
 import { GAME_ICONS } from './game-icons'
 import css from './games.module.css'
 import { createMenuSfx, type MenuSfx } from './menu-sfx'
@@ -187,43 +183,34 @@ export default function GamesView() {
         </p>
 
         <section
-          className={cn(panelCss.browserPanel, css.browserPanel)}
+          className={css.browserPanel}
           aria-busy={phase === 'loading'}
           aria-labelledby='games-title'
         >
           {phase === 'loading' ? (
-            <p
-              className={cn(panelCss.menuLoading, css.menuLoading)}
-              role='status'
-            >
+            <p className={css.menuLoading} role='status'>
               Now loading...
             </p>
           ) : null}
 
-          <header className={panelCss.browserHeader}>
-            <div className={panelCss.archiveLabel}>
+          <header className={css.browserHeader}>
+            <div className={css.archiveLabel}>
               <h1 id='games-title'>Game Archive / 1</h1>
               <p>{GAMES.length.toString().padStart(2, '0')} files online</p>
             </div>
 
-            <div className={panelCss.selectionLabel}>
-              <p className={panelCss.selectedTitle} aria-live='polite'>
+            <div className={css.selectionLabel}>
+              <p className={css.selectedTitle} aria-live='polite'>
                 {selected.title}
               </p>
-              <p className={panelCss.selectedCategory}>
+              <p className={css.selectedCategory}>
                 {selected.code} · {selected.category}
               </p>
-              <p className={panelCss.selectedDescription}>
-                {selected.description}
-              </p>
+              <p className={css.selectedDescription}>{selected.description}</p>
             </div>
           </header>
 
-          <nav
-            ref={grid}
-            className={gridCss.gameGrid}
-            aria-label='Available games'
-          >
+          <nav ref={grid} className={css.gameGrid} aria-label='Available games'>
             {GAMES.map((game, index) => {
               const active = selectedIndex === index
               const Icon = GAME_ICONS[game.id]
@@ -234,7 +221,7 @@ export default function GamesView() {
                     links.current[index] = node
                   }}
                   url={game.href}
-                  className={cn(gridCss.gameLink, css.gameLink)}
+                  className={css.gameLink}
                   data-active={active ? 'true' : 'false'}
                   tabIndex={ready ? 0 : -1}
                   aria-label={`${game.title}. ${game.description} Controls: ${game.controls}.`}
@@ -243,13 +230,13 @@ export default function GamesView() {
                   onPointerDown={() => selectGame(index)}
                   onClick={() => playSfx('confirm')}
                 >
-                  <span className={cn(gridCss.iconStage, css.iconStage)}>
-                    <span className={cn(gridCss.iconWrap, css.iconWrap)}>
+                  <span className={css.iconStage}>
+                    <span className={css.iconWrap}>
                       <Icon />
-                      <span className={gridCss.cursor} aria-hidden='true' />
+                      <span className={css.cursor} aria-hidden='true' />
                     </span>
                   </span>
-                  <span className={gridCss.gameName} aria-hidden='true'>
+                  <span className={css.gameName} aria-hidden='true'>
                     {game.title}
                   </span>
                 </Link>
@@ -257,27 +244,27 @@ export default function GamesView() {
             })}
           </nav>
 
-          <footer className={barCss.controls}>
-            <div className={barCss.controlGroup}>
-              <span className={barCss.controlLegend}>
-                <span className={barCss.crossKey} aria-hidden='true'>
+          <footer className={css.controls}>
+            <div className={css.controlGroup}>
+              <span className={css.controlLegend}>
+                <span className={css.crossKey} aria-hidden='true'>
                   ×
                 </span>
                 Enter
               </span>
               <Link
                 url='/bazaar'
-                className={barCss.controlLink}
+                className={css.controlLink}
                 aria-label='Back to the bazaar'
                 onClick={() => playSfx('cancel')}
               >
-                <span className={barCss.circleKey} aria-hidden='true'>
+                <span className={css.circleKey} aria-hidden='true'>
                   ○
                 </span>
                 Back
               </Link>
             </div>
-            <p className={barCss.controlHint}>
+            <p className={css.controlHint}>
               <span aria-hidden='true'>← ↑ ↓ →</span> Choose a game
             </p>
           </footer>

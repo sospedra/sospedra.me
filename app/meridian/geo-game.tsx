@@ -1,46 +1,2489 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { useDocumentLang } from 'services/locale'
-import { getBrowserStorage } from 'services/storage'
-import { useViewportHeightVar } from 'services/viewport'
+import { clamp, sumBy } from 'es-toolkit'
+import { join, map, pipe, uniq } from 'es-toolkit/fp'
+import type {
+  CSSProperties,
+  FormEvent,
+  MutableRefObject,
+  KeyboardEvent as ReactKeyboardEvent,
+  ReactNode,
+  Ref,
+} from 'react'
 import {
-  createGeoGameState,
-  type GeoGameState,
-  restoreGeoGameState,
-} from './game-state'
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react'
+import DailyCountdownPanel from 'services/daily-countdown-panel'
+import {
+  createExternalStore,
+  type ExternalStore,
+  useStoreSelector,
+} from 'services/external-store'
+import { useGameInput } from 'services/hotkeys'
+import { useDocumentLang } from 'services/locale'
+import Modal from 'services/modal'
+import { shareHandled, shareText } from 'services/share'
+import { getBrowserStorage } from 'services/storage'
+import { DAY_MS } from 'services/time'
+import { useViewportHeightVar } from 'services/viewport'
+import { mergeCapitalAutocompleteOptions } from './city-options'
+import { OFFICIAL_COUNTRY_OPTIONS } from './country-lexicon'
+import { createGeoAudio, type GeoSound } from './geo-audio'
 import css from './geo-game.module.css'
-import { type GeoLocale, getGeoMessages } from './geo-messages'
-import { GeoSession } from './geo-session'
-import shell from './geo-shell.module.css'
-import overlays from './mission-overlays.module.css'
-import type { DailyGeoChallenge, GeoSettings } from './model'
+import GeoMap, { type GeoMapLabels } from './geo-map'
+import {
+  formatGeoMessage,
+  type GeoLocale,
+  type GeoMessages,
+  getGeoMessages,
+} from './geo-messages'
+import type {
+  AnswerResult,
+  DailyGeoChallenge,
+  GeoCoordinate,
+  GeoSettings,
+  LocalizedOption,
+  Round,
+  RoundType,
+} from './model'
+import { roundTimeLimitMs } from './model'
 import {
   loadGeoRun,
   loadGeoSettings,
+  loadGeoStats,
   removeGeoRun,
+  saveGeoRun,
   saveGeoSettings,
+  saveGeoStats,
+  serializeGeoRun,
 } from './persistence'
 import {
-  createSessionNonce,
-  type GeoGameMode,
-  type PracticeRound,
-  practiceChallenge,
-} from './run-mode'
+  createGeoGameState,
+  currentQuestion,
+  currentRound,
+  type GeoGameState,
+  geoGameReducer,
+  restoreGeoGameState,
+} from './reducer'
 import {
   deriveDailyChallenge,
   deriveRunChallenge,
   differentRunNonce,
+  type RunNonce,
 } from './run-variants'
+import { DEFAULT_GEO_CHALLENGE_RULES } from './scoring'
+import { formatGeoShareCard } from './share'
+import {
+  calculateDailyPlayStreak,
+  calculateRunStatistics,
+  createOfficialRunRecord,
+  personalBestFor,
+  recordOfficialRun,
+} from './stats'
+import {
+  buildGeoAutocompleteIndex,
+  isMeaningfulGeoAnswerInput,
+  rankGeoAutocompleteIndex,
+  resolveExactGeoOptionId,
+} from './text-answer'
 
-export type { GeoGameMode } from './run-mode'
-
+export type GeoGameMode = 'daily' | 'practice'
 export type GeoGameProps = {
   challenge: DailyGeoChallenge
   locale: GeoLocale
   mode?: GeoGameMode
   onLocaleChange: (locale: GeoLocale) => void
   onModeChange: (mode: GeoGameMode) => void
+}
+
+type PracticeRound = 'all' | RoundType
+
+const PRACTICE_ROUNDS: PracticeRound[] = [
+  'all',
+  'shape',
+  'flag',
+  'capital',
+  'map',
+]
+
+const START_COUNTDOWN_SECONDS = 3
+const START_COUNTDOWN_MS = START_COUNTDOWN_SECONDS * 1000
+const RESUME_COUNTDOWN_MS = 1000
+const LOW_TIME_THRESHOLD_MS = 10_000
+const ANSWER_MAX_LENGTH = 64
+const AUTOCOMPLETE_MAX_RESULTS = 8
+const AUTOCOMPLETE_MIN_CHARACTERS = 1
+
+const formatScore = (score: number, locale: GeoLocale) =>
+  new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'es-ES').format(score)
+
+const formatDate = (date: string, locale: GeoLocale) =>
+  new Intl.DateTimeFormat(locale === 'en' ? 'en-US' : 'es-ES', {
+    day: '2-digit',
+    month: 'short',
+    timeZone: 'UTC',
+    weekday: 'short',
+    year: 'numeric',
+  }).format(new Date(`${date}T12:00:00Z`))
+
+const formatDuration = (milliseconds: number | null, locale: GeoLocale) => {
+  if (milliseconds === null) return '—'
+  const seconds = milliseconds / 1000
+  return `${new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'es-ES', {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 1,
+  }).format(seconds)} s`
+}
+
+const formatRoundClock = (remainingMs: number) => {
+  const safeRemaining = Math.max(0, remainingMs)
+  if (safeRemaining <= LOW_TIME_THRESHOLD_MS && safeRemaining > 0) {
+    return `${Math.floor(safeRemaining / 1000)}.${Math.floor(
+      (safeRemaining % 1000) / 100,
+    )}`
+  }
+
+  const totalSeconds = Math.ceil(safeRemaining / 1000)
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
+  return `${minutes}:${String(seconds).padStart(2, '0')}`
+}
+
+const roundSeconds = (round: Round) =>
+  Math.max(1, Math.round(roundTimeLimitMs(round) / 1000))
+
+const DIFFICULTY_TIERS = [1, 2, 3, 4] as const
+
+const formatDistance = (kilometres: number | null, locale: GeoLocale) => {
+  if (kilometres === null) return '—'
+  return `${new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'es-ES', {
+    maximumFractionDigits: 0,
+  }).format(kilometres)} km`
+}
+
+const challengeSequence = (challenge: DailyGeoChallenge) => {
+  if (challenge.sequence) return challenge.sequence
+  const date = new Date(`${challenge.publicationDate}T00:00:00Z`)
+  const yearStart = Date.UTC(date.getUTCFullYear(), 0, 1)
+  return Math.floor((date.getTime() - yearStart) / DAY_MS) + 1
+}
+
+const createSessionNonce = (fallback: RunNonce = 'practice'): RunNonce => {
+  if (typeof window === 'undefined') return fallback
+
+  try {
+    return window.crypto.randomUUID()
+  } catch {
+    // Older secure contexts may expose getRandomValues without randomUUID.
+  }
+
+  try {
+    const values = new Uint32Array(4)
+    window.crypto.getRandomValues(values)
+    return [...values]
+      .map((value) => value.toString(16).padStart(8, '0'))
+      .join('')
+  } catch {
+    return `${String(fallback)}:${Date.now()}`
+  }
+}
+
+const roundName = (copy: GeoMessages, type: RoundType) => copy[type]
+
+const roundInstruction = (copy: GeoMessages, type: RoundType) => {
+  if (type === 'shape') return copy.shapeInstruction
+  if (type === 'flag') return copy.flagInstruction
+  if (type === 'capital') return copy.capitalInstruction
+  return copy.mapInstruction
+}
+
+const practiceChallenge = (
+  challenge: DailyGeoChallenge,
+  practiceRound: PracticeRound,
+): DailyGeoChallenge => {
+  if (practiceRound === 'all') {
+    return { ...challenge, id: `${challenge.id}:practice:all` }
+  }
+  return {
+    ...challenge,
+    id: `${challenge.id}:practice:${practiceRound}`,
+    rounds: challenge.rounds.filter((round) => round.type === practiceRound),
+  }
+}
+
+function DialogHeader({
+  close,
+  copy,
+  eyebrow,
+  id,
+  title,
+}: {
+  close: () => void
+  copy: GeoMessages
+  eyebrow: string
+  id: string
+  title: string
+}) {
+  return (
+    <header className={css.dialogHeader}>
+      <div>
+        <p>{eyebrow}</p>
+        <h2 id={id}>{title}</h2>
+      </div>
+      <button
+        type='button'
+        className={css.dialogClose}
+        aria-label={copy.close}
+        onClick={close}
+      >
+        <span aria-hidden='true'>×</span>
+      </button>
+    </header>
+  )
+}
+
+function AppHeader({
+  challenge,
+  copy,
+  helpButtonRef,
+  locale,
+  mode,
+  onLocaleChange,
+  onModeChange,
+  onSoundToggle,
+  openHelp,
+  openSettings,
+  soundEnabled,
+  timedState,
+}: {
+  challenge: DailyGeoChallenge
+  copy: GeoMessages
+  helpButtonRef: Ref<HTMLButtonElement>
+  locale: GeoLocale
+  mode: GeoGameMode
+  onLocaleChange: (locale: GeoLocale) => void
+  onModeChange: (mode: GeoGameMode) => void
+  onSoundToggle: () => void
+  openHelp: (button: HTMLButtonElement) => void
+  openSettings: (button: HTMLButtonElement) => void
+  soundEnabled: boolean
+  timedState: boolean
+}) {
+  return (
+    <header className={css.topbar}>
+      <div className={css.brandCluster}>
+        <a className={css.homeLink} href='/' aria-label={copy.home}>
+          <span aria-hidden='true'>←</span>
+          <span className={css.srOnly}>{copy.home}</span>
+        </a>
+        <div className={css.brandLockup}>
+          <span className={css.brandMark} aria-hidden='true'>
+            {copy.brandMark}
+          </span>
+          <div className={css.brandCopy}>
+            <p>{copy.edition}</p>
+            <h1>{copy.brand}</h1>
+          </div>
+        </div>
+      </div>
+
+      <div className={css.dateLockup}>
+        <span>
+          {copy.signal}
+          {' // '}
+          {copy.challenge}{' '}
+          {String(challengeSequence(challenge)).padStart(3, '0')}
+        </span>
+        <strong>{formatDate(challenge.publicationDate, locale)}</strong>
+        <span>
+          {challenge.rulesVersion}
+          {' // '}
+          {challenge.sourceRevision}
+        </span>
+      </div>
+
+      <div className={css.headerTools}>
+        <nav className={css.modeNav} aria-label={copy.edition}>
+          <button
+            type='button'
+            className={css.modeLink}
+            data-active={mode === 'daily'}
+            aria-pressed={mode === 'daily'}
+            disabled={timedState}
+            onClick={() => onModeChange('daily')}
+          >
+            {copy.daily}
+          </button>
+          <button
+            type='button'
+            className={css.modeLink}
+            data-active={mode === 'practice'}
+            aria-pressed={mode === 'practice'}
+            disabled={timedState}
+            onClick={() => onModeChange('practice')}
+          >
+            {copy.practice}
+          </button>
+          <span className={css.headerDivider} aria-hidden='true' />
+          <button
+            type='button'
+            className={css.languageLink}
+            data-active={locale === 'en'}
+            aria-label={`${copy.language}: ${copy.english}`}
+            aria-pressed={locale === 'en'}
+            onClick={() => onLocaleChange('en')}
+          >
+            EN
+          </button>
+          <button
+            type='button'
+            className={css.languageLink}
+            data-active={locale === 'es'}
+            aria-label={`${copy.language}: ${copy.spanish}`}
+            aria-pressed={locale === 'es'}
+            onClick={() => onLocaleChange('es')}
+          >
+            ES
+          </button>
+        </nav>
+        <button
+          type='button'
+          className={css.headerButton}
+          aria-label={`${copy.sound}: ${
+            soundEnabled ? copy.soundOn : copy.soundOff
+          }`}
+          aria-pressed={soundEnabled}
+          onClick={onSoundToggle}
+        >
+          <span aria-hidden='true'>{soundEnabled ? '♪' : '∅'}</span>
+        </button>
+        <button
+          type='button'
+          className={css.headerButton}
+          disabled={timedState}
+          aria-label={copy.settings}
+          aria-haspopup='dialog'
+          onClick={(event) => openSettings(event.currentTarget)}
+        >
+          <span aria-hidden='true'>◉</span>
+        </button>
+        <button
+          ref={helpButtonRef}
+          type='button'
+          className={css.headerButton}
+          disabled={timedState}
+          aria-label={copy.help}
+          aria-haspopup='dialog'
+          onClick={(event) => openHelp(event.currentTarget)}
+        >
+          <span aria-hidden='true'>?</span>
+        </button>
+      </div>
+    </header>
+  )
+}
+
+const progressSegmentStatus = (
+  state: GeoGameState,
+  index: number,
+): 'completed' | 'current' | 'pending' => {
+  const currentRoundFinished =
+    index === state.roundIndex &&
+    (state.phase === 'round-summary' || state.phase === 'between-rounds-paused')
+  if (
+    state.phase === 'completed' ||
+    index < state.roundIndex ||
+    currentRoundFinished
+  ) {
+    return 'completed'
+  }
+  if (index === state.roundIndex && state.phase !== 'idle') return 'current'
+  return 'pending'
+}
+
+const selectClockDecisecond = (elapsedMs: number) => Math.floor(elapsedMs / 100)
+
+function ProgressTrack({
+  challenge,
+  roundClock,
+  state,
+  timed,
+}: {
+  challenge: DailyGeoChallenge
+  roundClock: ExternalStore<number>
+  state: GeoGameState
+  timed: boolean
+}) {
+  const elapsedDeciseconds = useStoreSelector(roundClock, selectClockDecisecond)
+  const activeRound = challenge.rounds[state.roundIndex]
+  const activeRoundLimit = activeRound ? roundTimeLimitMs(activeRound) : 0
+  const timeRatio =
+    timed && activeRoundLimit > 0
+      ? Math.max(0, 1 - (elapsedDeciseconds * 100) / activeRoundLimit)
+      : 1
+
+  return (
+    <div
+      className={css.progressTrack}
+      aria-hidden='true'
+      style={{
+        gridTemplateColumns: `repeat(${challenge.rounds.length}, 1fr)`,
+      }}
+    >
+      {challenge.rounds.map((round, index) => {
+        const status = progressSegmentStatus(state, index)
+        return (
+          <span
+            key={round.id}
+            className={css.progressSegment}
+            data-state={status}
+            style={
+              index === state.roundIndex
+                ? ({
+                    '--round-time-ratio': timeRatio,
+                  } as CSSProperties)
+                : undefined
+            }
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+function PlanetInstrument({
+  challenge,
+  copy,
+}: {
+  challenge: DailyGeoChallenge
+  copy: GeoMessages
+}) {
+  const durations = pipe(challenge.rounds, map(roundSeconds), uniq())
+  const durationReadout =
+    durations.length === 1
+      ? `${challenge.rounds.length}×${formatRoundClock(durations[0] * 1000)}`
+      : durations.map((seconds) => formatRoundClock(seconds * 1000)).join('/')
+
+  return (
+    <div className={css.instrumentStage} aria-hidden='true'>
+      <div className={css.planetInstrument}>
+        <span className={css.orbitOuter} />
+        <span className={css.orbitInner} />
+        <span className={css.orbitPulse} />
+        <div className={css.planetCore}>
+          <img
+            src='/games/geo/assets/map/world-map.svg'
+            alt=''
+            width='1000'
+            height='500'
+          />
+        </div>
+        <ol className={css.roundNodes}>
+          {challenge.rounds.map((round, index) => (
+            <li className={css.roundNode} key={round.id}>
+              <span>
+                {copy.round} 0{index + 1}
+              </span>
+              <strong>{roundName(copy, round.type)}</strong>
+            </li>
+          ))}
+        </ol>
+        <div className={css.planetReadout}>
+          <span>LAT +00.000 {' // '} LON +00.000</span>
+          <span>
+            UTC {' // '} {durationReadout}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const briefingTimingNotice = (
+  challenge: DailyGeoChallenge,
+  copy: GeoMessages,
+) =>
+  formatGeoMessage(copy.timingNotice, {
+    seconds: pipe(challenge.rounds, map(roundSeconds), uniq(), join('/')),
+  })
+
+function BriefingFrame({
+  challenge,
+  controls,
+  copy,
+  displayRounds,
+  lead,
+  locale,
+  mode,
+  onStart,
+}: {
+  challenge: DailyGeoChallenge
+  controls?: ReactNode
+  copy: GeoMessages
+  displayRounds: Round[]
+  lead: {
+    body: string
+    eyebrow?: string
+    note: string
+    timing: string
+    title: string
+  }
+  locale: GeoLocale
+  mode: GeoGameMode
+  onStart: () => void
+}) {
+  const introChallenge = { ...challenge, rounds: displayRounds }
+
+  return (
+    <section
+      className={css.briefing}
+      data-mode={mode}
+      aria-labelledby='geo-briefing-title'
+    >
+      <div className={css.briefingCopy}>
+        <div className={css.briefingLead}>
+          {lead.eyebrow !== undefined && (
+            <p className={css.eyebrow}>{lead.eyebrow}</p>
+          )}
+          <h2 id='geo-briefing-title' className={css.briefingTitle}>
+            {lead.title}
+          </h2>
+          <p className={css.briefingBody}>{lead.body}</p>
+
+          <div className={css.briefingMeta}>
+            <p>{lead.note}</p>
+            <p>{lead.timing}</p>
+          </div>
+        </div>
+
+        <div className={css.briefingControls}>
+          {controls}
+          <button type='button' className={css.primaryButton} onClick={onStart}>
+            <span>{copy.start}</span>
+            <span className={css.buttonArrow} aria-hidden='true'>
+              ↗
+            </span>
+          </button>
+        </div>
+      </div>
+      <PlanetInstrument challenge={introChallenge} copy={copy} />
+      <span className={css.srOnly}>
+        {formatDate(challenge.publicationDate, locale)}
+      </span>
+    </section>
+  )
+}
+
+function DailyBriefing({
+  challenge,
+  copy,
+  displayRounds,
+  locale,
+  onStart,
+}: {
+  challenge: DailyGeoChallenge
+  copy: GeoMessages
+  displayRounds: Round[]
+  locale: GeoLocale
+  onStart: () => void
+}) {
+  return (
+    <BriefingFrame
+      challenge={challenge}
+      copy={copy}
+      displayRounds={displayRounds}
+      lead={{
+        body: copy.introBody,
+        eyebrow: copy.introEyebrow,
+        note: copy.officialAttempt,
+        timing: briefingTimingNotice(challenge, copy),
+        title: copy.introTitle,
+      }}
+      locale={locale}
+      mode='daily'
+      onStart={onStart}
+    />
+  )
+}
+
+function PracticeBriefing({
+  challenge,
+  copy,
+  displayRounds,
+  locale,
+  onPracticeRoundChange,
+  onPracticeTimedChange,
+  onStart,
+  practiceRound,
+  practiceTimed,
+}: {
+  challenge: DailyGeoChallenge
+  copy: GeoMessages
+  displayRounds: Round[]
+  locale: GeoLocale
+  onPracticeRoundChange: (round: PracticeRound) => void
+  onPracticeTimedChange: (timed: boolean) => void
+  onStart: () => void
+  practiceRound: PracticeRound
+  practiceTimed: boolean
+}) {
+  return (
+    <BriefingFrame
+      challenge={challenge}
+      controls={
+        <div className={css.practiceControls}>
+          <label className={css.selectField}>
+            <span>{copy.practiceRound}</span>
+            <select
+              value={practiceRound}
+              onChange={(event) =>
+                onPracticeRoundChange(event.target.value as PracticeRound)
+              }
+            >
+              {PRACTICE_ROUNDS.map((round) => (
+                <option key={round} value={round}>
+                  {round === 'all' ? copy.allRounds : roundName(copy, round)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button
+            type='button'
+            className={css.practiceTiming}
+            data-active={practiceTimed}
+            aria-pressed={practiceTimed}
+            onClick={() => onPracticeTimedChange(!practiceTimed)}
+          >
+            <span>{practiceTimed ? copy.timed : copy.untimed}</span>
+            <span className={css.toggle} data-active={practiceTimed} />
+          </button>
+        </div>
+      }
+      copy={copy}
+      displayRounds={displayRounds}
+      lead={{
+        body: copy.practiceBody,
+        note: copy.practiceNote,
+        timing: practiceTimed
+          ? briefingTimingNotice(challenge, copy)
+          : copy.untimedNotice,
+        title: copy.practiceTitle,
+      }}
+      locale={locale}
+      mode='practice'
+      onStart={onStart}
+    />
+  )
+}
+
+function DifficultyMeter({
+  difficulty,
+  label,
+  shortLabel,
+}: {
+  difficulty: number
+  label: string
+  shortLabel: string
+}) {
+  const displayedDifficulty = clamp(
+    Math.round(difficulty),
+    1,
+    DIFFICULTY_TIERS.length,
+  )
+
+  return (
+    <span className={css.difficulty}>
+      <span className={css.srOnly}>
+        {label} {displayedDifficulty}/{DIFFICULTY_TIERS.length}
+      </span>
+      <strong className={css.difficultyLabel} aria-hidden='true'>
+        {shortLabel} {displayedDifficulty}/{DIFFICULTY_TIERS.length}
+      </strong>
+      <span className={css.difficultyBars} aria-hidden='true'>
+        {DIFFICULTY_TIERS.map((level) => (
+          <span key={level} data-lit={level <= displayedDifficulty} />
+        ))}
+      </span>
+    </span>
+  )
+}
+
+function PromptArtifact({
+  copy,
+  locale,
+  mapFeedback,
+  mapLabels,
+  onMapCoordinateChange,
+  onMapSubmit,
+  question,
+  selectedCoordinate,
+  state,
+}: {
+  copy: GeoMessages
+  locale: GeoLocale
+  mapFeedback?: { answerCoordinate: GeoCoordinate; distanceKm: number }
+  mapLabels: GeoMapLabels
+  onMapCoordinateChange: (coordinate: GeoCoordinate) => void
+  onMapSubmit: (coordinate: GeoCoordinate) => void
+  question: NonNullable<ReturnType<typeof currentQuestion>>
+  selectedCoordinate: GeoCoordinate | null
+  state: GeoGameState
+}) {
+  if (question.type === 'shape' && question.assetUrl) {
+    return (
+      <div className={css.promptOrbit}>
+        <img
+          className={css.shapeAsset}
+          src={question.assetUrl}
+          alt={copy.shapePromptAlt}
+          width='1000'
+          height='700'
+        />
+      </div>
+    )
+  }
+
+  if (question.type === 'flag' && question.assetUrl) {
+    return (
+      <div className={css.flagStage}>
+        <img
+          className={css.flagAsset}
+          src={question.assetUrl}
+          alt={copy.flagPromptAlt}
+          width='640'
+          height='480'
+        />
+      </div>
+    )
+  }
+
+  if (question.type === 'capital') {
+    return null
+  }
+
+  return (
+    <GeoMap
+      locale={locale}
+      labels={mapLabels}
+      prompt={question.prompt[locale]}
+      disabled={state.phase !== 'question'}
+      selectedCoordinate={selectedCoordinate}
+      onSelectedCoordinateChange={onMapCoordinateChange}
+      onSubmit={onMapSubmit}
+      feedback={mapFeedback}
+    />
+  )
+}
+
+const selectedOptionFor = (answer: AnswerResult | null): string | null => {
+  if (!answer || answer.kind === 'map-pin') return null
+  return answer.selectedOptionId
+}
+
+const correctOptionFor = (answer: AnswerResult | null): string | null => {
+  if (!answer || answer.kind === 'map-pin') return null
+  return answer.correctOptionId
+}
+
+const isPerfectAnswer = (answer: AnswerResult | null): boolean =>
+  answer?.kind === 'map-pin' && answer.distanceBand === 'within-100'
+
+type FeedbackResult = 'correct' | 'expired' | 'incorrect' | 'passed' | 'perfect'
+
+const feedbackResult = (answer: AnswerResult): FeedbackResult => {
+  if (answer.expired) return 'expired'
+  if (answer.skipped) return 'passed'
+  if (isPerfectAnswer(answer)) return 'perfect'
+  return answer.correct ? 'correct' : 'incorrect'
+}
+
+const feedbackHeadline = (answer: AnswerResult, copy: GeoMessages): string => {
+  const headlines: Record<FeedbackResult, string> = {
+    correct: copy.correct,
+    expired: copy.expired,
+    incorrect: copy.incorrect,
+    passed: copy.passed,
+    perfect: copy.perfect,
+  }
+  return headlines[feedbackResult(answer)]
+}
+
+const FEEDBACK_GLYPHS: Record<FeedbackResult, string> = {
+  correct: '✓',
+  expired: '×',
+  incorrect: '×',
+  passed: '↷',
+  perfect: '◎',
+}
+
+const FEEDBACK_ATTRS: Record<FeedbackResult, string> = {
+  correct: 'correct',
+  expired: 'incorrect',
+  incorrect: 'incorrect',
+  passed: 'pass',
+  perfect: 'perfect',
+}
+
+const FEEDBACK_SOUNDS: Record<FeedbackResult, GeoSound> = {
+  correct: 'correct',
+  expired: 'timeout',
+  incorrect: 'incorrect',
+  passed: 'pass',
+  perfect: 'perfect',
+}
+
+const feedbackDetail = (
+  answer: AnswerResult,
+  copy: GeoMessages,
+  locale: GeoLocale,
+  submittedLabel: string | undefined,
+): string => {
+  if (answer.kind === 'map-pin') {
+    if (answer.distanceKm === null) return ''
+    return copy.distanceAway.replace(
+      '{distance}',
+      new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'es-ES', {
+        maximumFractionDigits: 0,
+      }).format(answer.distanceKm),
+    )
+  }
+  if (!submittedLabel) return ''
+  return `${copy.yourAnswer}: ${submittedLabel}`
+}
+
+function FeedbackBar({
+  answer,
+  copy,
+  locale,
+  options,
+}: {
+  answer: AnswerResult
+  copy: GeoMessages
+  locale: GeoLocale
+  options: LocalizedOption[]
+}) {
+  const result = feedbackResult(answer)
+  const correctOption = options.find(
+    (option) => option.id === correctOptionFor(answer),
+  )
+  const selectedOption = options.find(
+    (option) => option.id === selectedOptionFor(answer),
+  )
+  const submittedText =
+    answer.kind === 'choice' ? answer.submittedText?.trim() : undefined
+  const detail = feedbackDetail(
+    answer,
+    copy,
+    locale,
+    submittedText ?? selectedOption?.label[locale],
+  )
+  const correction = answer.correct ? null : correctOption
+
+  return (
+    <div className={css.feedbackBar} data-result={result}>
+      <span className={css.feedbackIcon} aria-hidden='true'>
+        {FEEDBACK_GLYPHS[result]}
+      </span>
+      <span className={css.feedbackCopy}>
+        <strong>{feedbackHeadline(answer, copy)}</strong>
+        <span>{detail}</span>
+      </span>
+      <span className={css.feedbackPoints}>
+        <strong>
+          {answer.score > 0 ? `+${formatScore(answer.score, locale)}` : '0'}
+        </strong>
+        <span>
+          {answer.score > 0
+            ? `×${answer.streakMultiplier.toFixed(1)} ${copy.multiplier}`
+            : copy.noPoints}
+        </span>
+      </span>
+      {correction && (
+        <div className={css.feedbackCorrection}>
+          <span>{copy.correctAnswer}</span>
+          <strong>{correction.label[locale]}</strong>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function RoundTelemetry({
+  attempt,
+  copy,
+  difficulty,
+  locale,
+  onPass,
+  practiceTimed,
+  roundClock,
+  roundLimitMs,
+  state,
+}: {
+  attempt: number
+  copy: GeoMessages
+  difficulty: number
+  locale: GeoLocale
+  onPass: () => void
+  practiceTimed: boolean
+  roundClock: ExternalStore<number>
+  roundLimitMs: number
+  state: GeoGameState
+}) {
+  const clockText = useStoreSelector(roundClock, (elapsedMs: number) =>
+    formatRoundClock(roundLimitMs - elapsedMs),
+  )
+  const lowTime = useStoreSelector(
+    roundClock,
+    (elapsedMs: number) => roundLimitMs - elapsedMs <= LOW_TIME_THRESHOLD_MS,
+  )
+  const urgent = practiceTimed && lowTime
+
+  return (
+    <div className={css.questionTelemetry}>
+      <span
+        className={css.questionMetric}
+        data-urgent={urgent}
+        role='timer'
+        aria-label={`${copy.time}: ${practiceTimed ? clockText : copy.untimed}`}
+      >
+        <span>{copy.time}</span>
+        <strong>{practiceTimed ? clockText : '∞'}</strong>
+        {urgent && <small>{copy.lowTime}</small>}
+      </span>
+      <span className={css.questionMetric}>
+        <span>{copy.attempt}</span>
+        <strong>Q{String(attempt).padStart(2, '0')}</strong>
+      </span>
+      <DifficultyMeter
+        difficulty={difficulty}
+        label={copy.difficulty}
+        shortLabel={copy.levelShort}
+      />
+      <span className={`${css.questionMetric} ${css.scoreMetric}`}>
+        <span>{copy.score}</span>
+        <strong>{formatScore(state.score, locale)}</strong>
+      </span>
+      <button
+        type='button'
+        className={css.passButton}
+        disabled={state.phase !== 'question'}
+        onClick={onPass}
+      >
+        <span>{copy.pass}</span>
+        <kbd>P</kbd>
+      </button>
+      <span
+        className={`${css.timerTrack} ${css.roundTimerTrack}`}
+        aria-hidden='true'
+      >
+        <span />
+      </span>
+    </div>
+  )
+}
+
+function TextAnswerConsole({
+  copy,
+  lexicon,
+  locale,
+  onAnswer,
+  options,
+  placeholder,
+  state,
+}: {
+  copy: GeoMessages
+  lexicon: LocalizedOption[]
+  locale: GeoLocale
+  onAnswer: (answer: { optionId: string | null; submittedText: string }) => void
+  options: LocalizedOption[]
+  placeholder: string
+  state: GeoGameState
+}) {
+  const [value, setValue] = useState('')
+  const [focused, setFocused] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const inputId = useId()
+  const listboxId = useId()
+  const active = state.phase === 'question'
+  const lexiconIndex = useMemo(
+    () => buildGeoAutocompleteIndex(lexicon, locale),
+    [lexicon, locale],
+  )
+  const candidates = useMemo(
+    () =>
+      rankGeoAutocompleteIndex(value, lexiconIndex, {
+        maxResults: AUTOCOMPLETE_MAX_RESULTS,
+        minimumCharacters: AUTOCOMPLETE_MIN_CHARACTERS,
+      }),
+    [lexiconIndex, value],
+  )
+  const expanded = active && focused && !dismissed && candidates.length > 0
+  const meaningful = isMeaningfulGeoAnswerInput(value, locale)
+
+  useEffect(() => {
+    if (!active) return
+    window.requestAnimationFrame(() =>
+      inputRef.current?.focus({ preventScroll: true }),
+    )
+  }, [active])
+
+  const transmit = (answer: string) => {
+    const submittedText = answer.trim()
+    if (!submittedText || !active) return
+    onAnswer({
+      optionId: resolveExactGeoOptionId(submittedText, options, locale),
+      submittedText,
+    })
+  }
+
+  const submitForm = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!value.trim()) return
+
+    const exactCurrentOption = resolveExactGeoOptionId(value, options, locale)
+    if (exactCurrentOption) {
+      transmit(value)
+      return
+    }
+
+    const candidate = expanded ? candidates[activeIndex] : null
+    transmit(candidate?.label ?? value)
+  }
+
+  const handleAnswerKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    const canCycle = candidates.length > 0 && !dismissed
+    const keyActions: Record<string, (() => void) | false> = {
+      ArrowDown:
+        canCycle &&
+        (() => setActiveIndex((index) => (index + 1) % candidates.length)),
+      ArrowUp:
+        canCycle &&
+        (() =>
+          setActiveIndex(
+            (index) => (index - 1 + candidates.length) % candidates.length,
+          )),
+      Escape: expanded && (() => setDismissed(true)),
+    }
+
+    const action = keyActions[event.key]
+    if (!action) return
+    event.preventDefault()
+    action()
+  }
+
+  return (
+    <aside
+      className={css.answerConsole}
+      data-mode='text'
+      aria-label={copy.answerInput}
+    >
+      <form className={css.chatForm} onSubmit={submitForm}>
+        <label id={`${inputId}-label`} className={css.srOnly} htmlFor={inputId}>
+          {copy.answerInput}
+        </label>
+        <div className={css.commandLine}>
+          <span className={css.commandPrefix} aria-hidden='true'>
+            TX&gt;
+          </span>
+          <input
+            ref={inputRef}
+            id={inputId}
+            className={css.answerInput}
+            type='text'
+            value={value}
+            disabled={!active}
+            maxLength={ANSWER_MAX_LENGTH}
+            autoCapitalize='words'
+            autoComplete='off'
+            enterKeyHint='send'
+            spellCheck={false}
+            placeholder={placeholder}
+            role='combobox'
+            aria-autocomplete='list'
+            aria-labelledby={`${inputId}-label geo-question-title`}
+            aria-controls={expanded ? listboxId : undefined}
+            aria-expanded={expanded}
+            aria-activedescendant={
+              expanded ? `${listboxId}-option-${activeIndex}` : undefined
+            }
+            aria-describedby={`${inputId}-hint`}
+            onBlur={() => setFocused(false)}
+            onFocus={() => {
+              setFocused(true)
+              setDismissed(false)
+            }}
+            onChange={(event) => {
+              setValue(event.target.value)
+              setActiveIndex(0)
+              setDismissed(false)
+            }}
+            onKeyDown={handleAnswerKeyDown}
+          />
+          <button
+            type='submit'
+            className={css.sendButton}
+            disabled={!active || value.trim().length === 0}
+          >
+            <span>{copy.sendAnswer}</span>
+            <span aria-hidden='true'>↗</span>
+          </button>
+        </div>
+
+        <span id={`${inputId}-hint`} className={css.answerHint}>
+          {copy.answerHint}
+        </span>
+
+        {expanded && (
+          <div
+            id={listboxId}
+            className={css.autocompleteList}
+            role='listbox'
+            aria-label={copy.autocompleteResults}
+          >
+            {candidates.map((candidate, index) => (
+              <button
+                id={`${listboxId}-option-${index}`}
+                key={candidate.optionId}
+                type='button'
+                role='option'
+                aria-selected={index === activeIndex}
+                tabIndex={-1}
+                onPointerDown={(event) => event.preventDefault()}
+                onClick={() => transmit(candidate.label)}
+              >
+                <span>{candidate.label}</span>
+                <span className={css.autocompleteArrow} aria-hidden='true'>
+                  ↗
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {active &&
+          focused &&
+          meaningful &&
+          candidates.length === 0 &&
+          !dismissed && (
+            <span className={css.noAutocompleteResults} role='status'>
+              {copy.noAutocompleteResults}
+            </span>
+          )}
+      </form>
+      <span className={css.streakReadout}>
+        {copy.streak} <strong>×{state.currentStreak}</strong>
+      </span>
+    </aside>
+  )
+}
+
+function RoundSummary({
+  copy,
+  locale,
+  onContinue,
+  state,
+}: {
+  copy: GeoMessages
+  locale: GeoLocale
+  onContinue: () => void
+  state: GeoGameState
+}) {
+  const round = currentRound(state)
+  if (!round) return null
+  const answers = state.answers.filter((answer) => answer.roundId === round.id)
+  const score = sumBy(answers, (answer) => answer.score)
+  const correct = answers.filter((answer) => answer.correct).length
+  const timedOut = state.roundElapsedMs >= roundTimeLimitMs(round)
+
+  return (
+    <div className={css.overlay}>
+      <section
+        className={css.summaryPanel}
+        data-timeout={timedOut || undefined}
+        aria-labelledby='geo-round-summary-title'
+        tabIndex={-1}
+      >
+        <p className={css.eyebrow}>
+          {roundName(copy, round.type)}
+          {' // '}0{state.roundIndex + 1}
+        </p>
+        <h2 id='geo-round-summary-title'>{copy.roundComplete}</h2>
+        <div className={css.summaryStats}>
+          <span className={css.summaryStat}>
+            <span>{copy.roundScore}</span>
+            <strong>{formatScore(score, locale)}</strong>
+          </span>
+          <span className={css.summaryStat}>
+            <span>{copy.roundAccuracy}</span>
+            <strong>
+              {correct}/{answers.length}
+            </strong>
+          </span>
+        </div>
+        <button
+          type='button'
+          className={css.secondaryButton}
+          onClick={onContinue}
+        >
+          <span>{copy.continueEarly}</span>
+          <span aria-hidden='true'>→</span>
+        </button>
+        <span className={css.summaryTimer} aria-hidden='true'>
+          <span />
+        </span>
+      </section>
+    </div>
+  )
+}
+
+function Countdown({
+  copy,
+  count,
+  round,
+  resume,
+}: {
+  copy: GeoMessages
+  count: number
+  round: Round | null
+  resume: boolean
+}) {
+  const roundLabel = round ? roundName(copy, round.type) : copy.briefing
+  const label = resume ? copy.resumeCountdown : roundLabel
+
+  return (
+    <div className={css.overlay}>
+      <section
+        className={css.countdownPanel}
+        aria-label={resume ? copy.resumeCountdown : copy.briefing}
+        aria-live='assertive'
+      >
+        <span className={css.countdownLabel}>{label}</span>
+        <strong className={css.countdownNumber} key={count}>
+          {count}
+        </strong>
+        <span className={css.countdownRound}>
+          {round ? roundInstruction(copy, round.type) : copy.loading}
+        </span>
+        {round && (
+          <small className={css.countdownMeta}>
+            {formatRoundClock(roundSeconds(round) * 1000)} {' // '}{' '}
+            {copy.difficultyRises}
+          </small>
+        )}
+      </section>
+    </div>
+  )
+}
+
+function VisibilityPause({
+  copy,
+  onResume,
+}: {
+  copy: GeoMessages
+  onResume: () => void
+}) {
+  const resumeRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    window.requestAnimationFrame(() => resumeRef.current?.focus())
+  }, [])
+
+  return (
+    <div className={css.overlay}>
+      <section
+        className={css.pausePanel}
+        aria-labelledby='geo-visibility-pause-title'
+      >
+        <p className={css.eyebrow}>UTC {' // '} HOLD</p>
+        <h2 id='geo-visibility-pause-title'>{copy.visibilityPaused}</h2>
+        <p>{copy.visibilityPausedBody}</p>
+        <button
+          ref={resumeRef}
+          type='button'
+          className={css.primaryButton}
+          onClick={onResume}
+        >
+          <span>{copy.resume}</span>
+          <span aria-hidden='true'>↗</span>
+        </button>
+      </section>
+    </div>
+  )
+}
+
+function Completion({
+  copy,
+  locale,
+  onCopy,
+  onNewPracticeGame,
+  onShare,
+  state,
+  stats,
+}: {
+  copy: GeoMessages
+  locale: GeoLocale
+  onCopy: () => void
+  onNewPracticeGame: () => void
+  onShare: () => void
+  state: GeoGameState
+  stats: ReturnType<typeof loadGeoStats>['value']
+}) {
+  const headingRef = useRef<HTMLHeadingElement>(null)
+  const result = calculateRunStatistics(state.challenge, state.answers)
+  const dailyStreak = calculateDailyPlayStreak(stats.runs)
+  const personalBest =
+    personalBestFor(stats.runs, state.challenge.rulesVersion) ??
+    result.totalScore
+
+  useEffect(() => {
+    window.requestAnimationFrame(() => headingRef.current?.focus())
+  }, [])
+
+  return (
+    <section className={css.completion} aria-labelledby='geo-complete-title'>
+      <div className={css.completionLead}>
+        <p className={css.eyebrow}>{copy.completeEyebrow}</p>
+        <h2
+          ref={headingRef}
+          id='geo-complete-title'
+          className={css.completionTitle}
+          tabIndex={-1}
+        >
+          {copy.completeTitle}
+        </h2>
+        <div className={css.completionScore}>
+          <strong>{formatScore(result.totalScore, locale)}</strong>
+          <span>{copy.totalScore}</span>
+        </div>
+        <span className={css.completionStatus}>
+          {state.runKind === 'official'
+            ? `${copy.officialResult} · ${copy.returnTomorrow}`
+            : copy.replayResult}
+        </span>
+        {state.runKind === 'official' && (
+          <DailyCountdownPanel
+            classes={{
+              panel: css.nextGame,
+              readout: css.nextGameReadout,
+              ready: css.nextGameReady,
+              track: css.nextGameTrack,
+            }}
+            labels={{ countdown: copy.nextGameIn, ready: copy.nextGameReady }}
+          />
+        )}
+        <div className={css.completionActions}>
+          <button type='button' className={css.primaryButton} onClick={onShare}>
+            <span>{copy.share}</span>
+            <span aria-hidden='true'>↗</span>
+          </button>
+          <button
+            type='button'
+            className={css.secondaryButton}
+            onClick={onCopy}
+          >
+            {copy.copyResult}
+          </button>
+          {state.runKind === 'practice' && (
+            <button
+              type='button'
+              className={css.secondaryButton}
+              onClick={onNewPracticeGame}
+            >
+              {copy.replay}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className={css.resultsPanel}>
+        <div className={css.roundResults}>
+          {result.rounds.map((round) => {
+            const roundAnswers = state.answers.filter(
+              (answer) => answer.roundType === round.type,
+            )
+            return (
+              <div className={css.roundResult} key={round.type}>
+                <strong>{roundName(copy, round.type)}</strong>
+                <span className={css.resultCells} aria-hidden='true'>
+                  {roundAnswers.map((answer, answerIndex) => (
+                    <span
+                      className={css.resultCell}
+                      data-correct={answer.correct}
+                      key={`${answer.roundId}:${answer.attemptIndex ?? answerIndex}`}
+                    />
+                  ))}
+                </span>
+                <span>{formatScore(round.score, locale)}</span>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className={css.statsGrid}>
+          <span className={css.statCard}>
+            <span>{copy.accuracy}</span>
+            <strong>
+              {result.correctAnswers}/{result.totalQuestions} ·{' '}
+              {Math.round(result.accuracyPercentage)}%
+            </strong>
+          </span>
+          <span className={css.statCard}>
+            <span>{copy.bestStreak}</span>
+            <strong>{result.bestCorrectStreak}</strong>
+          </span>
+          <span className={css.statCard}>
+            <span>{copy.medianTime}</span>
+            <strong>
+              {formatDuration(result.medianChoiceResponseMs, locale)}
+            </strong>
+          </span>
+          <span className={css.statCard}>
+            <span>{copy.medianDistance}</span>
+            <strong>{formatDistance(result.medianMapErrorKm, locale)}</strong>
+          </span>
+          <span className={css.statCard}>
+            <span>{copy.dailyStreak}</span>
+            <strong>
+              {dailyStreak} {copy.days}
+            </strong>
+          </span>
+          <span className={css.statCard}>
+            <span>{copy.personalBest}</span>
+            <strong>{formatScore(personalBest, locale)}</strong>
+          </span>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function GameDialogs({
+  copy,
+  locale,
+  onClose,
+  onLocaleChange,
+  onModeChange,
+  onSettingsChange,
+  opener,
+  mode,
+  settings,
+  state,
+  timedState,
+}: {
+  copy: GeoMessages
+  locale: GeoLocale
+  onClose: () => void
+  onLocaleChange: (locale: GeoLocale) => void
+  onModeChange: (mode: GeoGameMode) => void
+  onSettingsChange: (settings: GeoSettings) => void
+  opener: MutableRefObject<HTMLElement | null>
+  mode: GeoGameMode
+  settings: GeoSettings
+  state: GeoGameState
+  timedState: boolean
+}) {
+  const close = () => {
+    onClose()
+    window.requestAnimationFrame(() => opener.current?.focus())
+  }
+
+  const toggle = (key: 'sound' | 'reducedMotion') => {
+    onSettingsChange({ ...settings, [key]: !settings[key] })
+  }
+
+  return (
+    <>
+      <Modal
+        open={state.overlay === 'settings'}
+        labelId='geo-settings-title'
+        close={close}
+        className={css.dialog}
+      >
+        <DialogHeader
+          close={close}
+          copy={copy}
+          eyebrow='SYSTEM // CONFIG'
+          id='geo-settings-title'
+          title={copy.settingsTitle}
+        />
+        <div className={css.dialogBody}>
+          <ul className={css.settingsList}>
+            <li className={`${css.settingRow} ${css.mobileSettingRow}`}>
+              <span aria-hidden='true'>{copy.edition}</span>
+              <fieldset className={css.settingChoices}>
+                <legend className={css.srOnly}>{copy.edition}</legend>
+                <button
+                  type='button'
+                  className={css.settingChoice}
+                  data-active={mode === 'daily'}
+                  aria-pressed={mode === 'daily'}
+                  disabled={timedState}
+                  onClick={() => onModeChange('daily')}
+                >
+                  {copy.daily}
+                </button>
+                <button
+                  type='button'
+                  className={css.settingChoice}
+                  data-active={mode === 'practice'}
+                  aria-pressed={mode === 'practice'}
+                  disabled={timedState}
+                  onClick={() => onModeChange('practice')}
+                >
+                  {copy.practice}
+                </button>
+              </fieldset>
+            </li>
+            <li className={`${css.settingRow} ${css.mobileSettingRow}`}>
+              <span aria-hidden='true'>{copy.language}</span>
+              <fieldset className={css.settingChoices}>
+                <legend className={css.srOnly}>{copy.language}</legend>
+                <button
+                  type='button'
+                  className={css.settingChoice}
+                  data-active={locale === 'en'}
+                  aria-pressed={locale === 'en'}
+                  onClick={() => onLocaleChange('en')}
+                >
+                  EN
+                </button>
+                <button
+                  type='button'
+                  className={css.settingChoice}
+                  data-active={locale === 'es'}
+                  aria-pressed={locale === 'es'}
+                  onClick={() => onLocaleChange('es')}
+                >
+                  ES
+                </button>
+              </fieldset>
+            </li>
+            {(
+              [
+                ['sound', copy.sound],
+                ['reducedMotion', copy.reducedMotion],
+              ] as const
+            ).map(([key, label], index) => (
+              <li className={css.settingRow} key={key}>
+                <span>{label}</span>
+                <button
+                  type='button'
+                  className={css.toggle}
+                  data-active={settings[key]}
+                  aria-pressed={settings[key]}
+                  aria-label={label}
+                  data-initial-focus={index === 0 ? '' : undefined}
+                  onClick={() => toggle(key)}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Modal>
+
+      <Modal
+        open={state.overlay === 'help'}
+        labelId='geo-help-title'
+        close={close}
+        className={css.dialog}
+      >
+        <DialogHeader
+          close={close}
+          copy={copy}
+          eyebrow='INPUT // KEYBOARD'
+          id='geo-help-title'
+          title={copy.helpTitle}
+        />
+        <div className={css.dialogBody}>
+          <ul className={css.helpList}>
+            {[
+              [['A…', 'Enter'], copy.keyAnswer],
+              [['P'], copy.keyPass],
+              [['←', '↑', '↓', '→'], copy.keyArrows],
+              [['Enter'], copy.keyEnter],
+              [['+', '−'], copy.keyMapZoom],
+              [['Home'], copy.keyHome],
+              [['M'], copy.keySound],
+              [['?'], copy.keyHelp],
+              [['Esc'], copy.keyEscape],
+            ].map(([keys, description], index) => (
+              <li className={css.helpRow} key={description as string}>
+                <span className={css.helpKeys}>
+                  {(keys as string[]).map((key) => (
+                    <kbd
+                      key={key}
+                      data-initial-focus={index === 0 ? '' : undefined}
+                    >
+                      {key}
+                    </kbd>
+                  ))}
+                </span>
+                <span>{description as string}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Modal>
+    </>
+  )
+}
+
+const getGeoMapLabels = (copy: GeoMessages): GeoMapLabels => ({
+  map: copy.worldMap,
+  instructions: copy.mapInstructions,
+  zoomIn: copy.zoomIn,
+  zoomOut: copy.zoomOut,
+  recenter: copy.resetMap,
+  submit: copy.placeMarker,
+  latitude: copy.latitude,
+  longitude: copy.longitude,
+  position: copy.position,
+  projection: copy.projectionNote,
+  zoom: copy.zoom,
+  selectedPoint: copy.selectedPoint,
+  correctPoint: copy.correctPoint,
+  distance: copy.distance,
+  kilometres: copy.kilometres,
+  regions: {
+    africa: copy.africa,
+    antarctic: copy.antarctic,
+    arctic: copy.arctic,
+    asia: copy.asia,
+    europe: copy.europe,
+    northAmerica: copy.northAmerica,
+    oceania: copy.oceania,
+    ocean: copy.ocean,
+    southAmerica: copy.southAmerica,
+  },
+})
+
+function GeoSession({
+  copy,
+  displayRounds,
+  initialState,
+  locale,
+  mode,
+  onLocaleChange,
+  onModeChange,
+  onNewPracticeGame,
+  onPracticeRoundChange,
+  onPracticeTimedChange,
+  onSettingsChange,
+  practiceRound,
+  practiceTimed,
+  settings,
+}: {
+  copy: GeoMessages
+  displayRounds: Round[]
+  initialState: GeoGameState
+  locale: GeoLocale
+  mode: GeoGameMode
+  onLocaleChange: (locale: GeoLocale) => void
+  onModeChange: (mode: GeoGameMode) => void
+  onNewPracticeGame: () => void
+  onPracticeRoundChange: (round: PracticeRound) => void
+  onPracticeTimedChange: (timed: boolean) => void
+  onSettingsChange: (settings: GeoSettings) => void
+  practiceRound: PracticeRound
+  practiceTimed: boolean
+  settings: GeoSettings
+}) {
+  const [state, dispatch] = useReducer(geoGameReducer, initialState)
+  const [roundClock] = useState(() =>
+    createExternalStore(initialState.roundElapsedMs),
+  )
+  const [countdown, setCountdown] = useState(START_COUNTDOWN_SECONDS)
+  const [marker, setMarker] = useState<{
+    attemptKey: string
+    coordinate: GeoCoordinate
+  } | null>(null)
+  const [stats, setStats] = useState(
+    () => loadGeoStats(getBrowserStorage()).value,
+  )
+  const [announcement, setAnnouncement] = useState('')
+  const [audio] = useState(createGeoAudio)
+  const stateRef = useRef(state)
+  const questionElapsedRef = useRef(state.questionElapsedMs)
+  const gameRef = useRef<HTMLDivElement>(null)
+  const questionHeadingRef = useRef<HTMLHeadingElement>(null)
+  const openerRef = useRef<HTMLElement | null>(null)
+  const helpButtonRef = useRef<HTMLButtonElement | null>(null)
+  const recordedCompletionRef = useRef<string | null>(null)
+  const announcementNonceRef = useRef(false)
+  const playedFeedbackRef = useRef(
+    new Set(
+      state.phase === 'feedback' && state.lastAnswer
+        ? [state.lastAnswer.answeredAt]
+        : [],
+    ),
+  )
+  const question = currentQuestion(state)
+  const round = currentRound(state)
+  const playedTimeoutRoundsRef = useRef(
+    new Set(state.phase === 'round-summary' ? [state.roundIndex] : []),
+  )
+  const questionId = question?.id ?? ''
+  const questionAttemptKey = `${state.roundIndex}:${state.questionIndex}:${questionId}`
+  const selectedCoordinate =
+    marker?.attemptKey === questionAttemptKey ? marker.coordinate : null
+  const options = useMemo(
+    () => (question && question.type !== 'map' ? question.options : []),
+    [question],
+  )
+  const autocompleteOptions = useMemo(() => {
+    if (!question || question.type === 'map') return []
+    const roundOptions = state.challenge.rounds
+      .filter((item) => item.type === question.type)
+      .flatMap((item) =>
+        item.questions.flatMap((candidate) =>
+          candidate.type === 'map' ? [] : candidate.options,
+        ),
+      )
+    if (question.type === 'capital') {
+      return mergeCapitalAutocompleteOptions(
+        state.challenge.cityOptions,
+        roundOptions,
+      )
+    }
+
+    const optionsById = new Map(
+      OFFICIAL_COUNTRY_OPTIONS.map((option) => [option.id, option]),
+    )
+    for (const option of roundOptions) optionsById.set(option.id, option)
+    return [...optionsById.values()]
+  }, [question, state.challenge.cityOptions, state.challenge.rounds])
+  const answerPlaceholder =
+    question?.type === 'capital' ? copy.typeCapital : copy.typeCountry
+  // Wrong answers keep the shared round clock ticking through feedback: the
+  // correction-reading time IS the error penalty. Correct feedback is free.
+  const roundClockRunning =
+    state.phase === 'question' ||
+    (state.phase === 'feedback' && state.lastAnswer?.correct === false)
+  useGameInput()
+
+  const announce = useCallback((message: string) => {
+    announcementNonceRef.current = !announcementNonceRef.current
+    setAnnouncement(`${message}${announcementNonceRef.current ? '\u200B' : ''}`)
+  }, [])
+
+  const applyRoundClock = useCallback(
+    (elapsedMs: number, limitMs: number) => {
+      roundClock.set(elapsedMs)
+      const ratio =
+        limitMs > 0 ? Math.max(0, (limitMs - elapsedMs) / limitMs) : 0
+      gameRef.current?.style.setProperty('--timer-ratio', String(ratio))
+    },
+    [roundClock],
+  )
+
+  useEffect(() => () => audio.dispose(), [audio])
+
+  useEffect(() => {
+    audio.setEnabled(settings.sound)
+  }, [audio, settings.sound])
+
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
+
+  useEffect(() => {
+    if (state.phase !== 'question' || !round) return
+    const baseElapsed = state.questionElapsedMs
+    const startedAt = performance.now()
+    let frame = 0
+    questionElapsedRef.current = baseElapsed
+
+    const update = (now: number) => {
+      const cappedElapsed = clamp(
+        baseElapsed + now - startedAt,
+        0,
+        round.questionLimitMs,
+      )
+      questionElapsedRef.current = cappedElapsed
+      if (cappedElapsed >= round.questionLimitMs) return
+      frame = window.requestAnimationFrame(update)
+    }
+
+    frame = window.requestAnimationFrame(update)
+    return () => window.cancelAnimationFrame(frame)
+  }, [round, state.phase, state.questionElapsedMs])
+
+  useEffect(() => {
+    if (!roundClockRunning || !round || !practiceTimed) return
+    const limitMs = roundTimeLimitMs(round)
+    const baseElapsed = state.roundElapsedMs
+    const startedAt = performance.now()
+    let frame = 0
+    let expired = false
+    applyRoundClock(baseElapsed, limitMs)
+
+    const update = (now: number) => {
+      const cappedElapsed = clamp(baseElapsed + now - startedAt, 0, limitMs)
+      applyRoundClock(cappedElapsed, limitMs)
+
+      if (cappedElapsed >= limitMs && !expired) {
+        expired = true
+        dispatch({
+          type: 'ROUND_TIME_EXPIRED',
+          roundElapsedMs: limitMs,
+          answeredAt: new Date().toISOString(),
+        })
+        return
+      }
+      frame = window.requestAnimationFrame(update)
+    }
+
+    frame = window.requestAnimationFrame(update)
+    return () => window.cancelAnimationFrame(frame)
+  }, [
+    applyRoundClock,
+    practiceTimed,
+    round,
+    roundClockRunning,
+    state.roundElapsedMs,
+  ])
+
+  useLayoutEffect(() => {
+    if (roundClockRunning) return
+    applyRoundClock(state.roundElapsedMs, round ? roundTimeLimitMs(round) : 0)
+  }, [applyRoundClock, round, roundClockRunning, state.roundElapsedMs])
+
+  useEffect(() => {
+    if (state.phase !== 'countdown') return
+    const duration =
+      state.countdownReason === 'resume'
+        ? RESUME_COUNTDOWN_MS
+        : START_COUNTDOWN_MS
+    const startedAt = performance.now()
+    let hiddenAt: number | null = document.hidden ? startedAt : null
+    let hiddenElapsed = 0
+    let frame = 0
+
+    const handleVisibility = () => {
+      const now = performance.now()
+      if (document.hidden) {
+        hiddenAt = now
+      } else if (hiddenAt !== null) {
+        hiddenElapsed += now - hiddenAt
+        hiddenAt = null
+      }
+    }
+
+    const update = (now: number) => {
+      if (document.hidden) {
+        frame = window.requestAnimationFrame(update)
+        return
+      }
+      const progressed = now - startedAt - hiddenElapsed
+      const remaining = Math.max(0, duration - progressed)
+      setCountdown(Math.max(1, Math.ceil(remaining / 1000)))
+      if (remaining <= 0) {
+        dispatch({ type: 'COUNTDOWN_FINISHED' })
+        return
+      }
+      frame = window.requestAnimationFrame(update)
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility)
+    frame = window.requestAnimationFrame(update)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility)
+      window.cancelAnimationFrame(frame)
+    }
+  }, [state.countdownReason, state.phase])
+
+  useEffect(() => {
+    if (state.phase !== 'feedback') return
+    const rules = state.challenge.rules
+    const answer = state.lastAnswer
+    // Map answers carry the reveal (true pin, distance) and always hold long.
+    const holdsShort = answer?.correct && answer.kind !== 'map-pin'
+    const duration = holdsShort
+      ? (rules?.feedbackMs ?? DEFAULT_GEO_CHALLENGE_RULES.feedbackMs)
+      : (rules?.wrongFeedbackMs ?? DEFAULT_GEO_CHALLENGE_RULES.wrongFeedbackMs)
+    const timeout = window.setTimeout(() => {
+      dispatch({
+        type: 'FEEDBACK_FINISHED',
+        completedAt: new Date().toISOString(),
+        roundElapsedMs: roundClock.get(),
+      })
+    }, duration)
+    return () => window.clearTimeout(timeout)
+  }, [roundClock, state.challenge.rules, state.lastAnswer, state.phase])
+
+  useEffect(() => {
+    // Untimed practice holds the summary for the Continue button (WCAG 2.2.1).
+    if (state.phase !== 'round-summary' || !state.timed) return
+    const duration =
+      state.challenge.rules?.roundSummaryMs ??
+      DEFAULT_GEO_CHALLENGE_RULES.roundSummaryMs
+    const timeout = window.setTimeout(() => {
+      dispatch({ type: 'ROUND_SUMMARY_FINISHED' })
+    }, duration)
+    return () => window.clearTimeout(timeout)
+  }, [state.challenge.rules?.roundSummaryMs, state.phase, state.timed])
+
+  useEffect(() => {
+    if (state.phase !== 'question' || question?.type !== 'map') return
+    window.requestAnimationFrame(() => questionHeadingRef.current?.focus())
+  }, [question?.type, state.phase])
+
+  useEffect(() => {
+    if (state.phase !== 'feedback' || !state.lastAnswer) return
+    const answer = state.lastAnswer
+    if (playedFeedbackRef.current.has(answer.answeredAt)) return
+    playedFeedbackRef.current.add(answer.answeredAt)
+
+    const message = feedbackHeadline(answer, copy)
+    const correctLabel = options.find(
+      (option) => option.id === correctOptionFor(answer),
+    )?.label[locale]
+    announce(
+      answer.correct || !correctLabel
+        ? message
+        : `${message}. ${copy.correctAnswer}: ${correctLabel}`,
+    )
+    audio.play(FEEDBACK_SOUNDS[feedbackResult(answer)])
+  }, [announce, audio, copy, locale, options, state.lastAnswer, state.phase])
+
+  useEffect(() => {
+    if (state.phase !== 'round-summary' || !round) return
+    const roundAnswers = state.answers.filter(
+      (answer) => answer.roundId === round.id,
+    )
+    const score = sumBy(roundAnswers, (answer) => answer.score)
+    const correct = roundAnswers.filter((answer) => answer.correct).length
+    announce(
+      `${copy.roundComplete}. ${copy.roundScore}: ${formatScore(score, locale)}. ${copy.roundAccuracy}: ${correct}/${roundAnswers.length}.`,
+    )
+  }, [
+    announce,
+    copy.roundAccuracy,
+    copy.roundComplete,
+    copy.roundScore,
+    locale,
+    round,
+    state.answers,
+    state.phase,
+  ])
+
+  useEffect(() => {
+    if (
+      state.phase !== 'round-summary' ||
+      !round ||
+      !practiceTimed ||
+      state.roundElapsedMs < roundTimeLimitMs(round) ||
+      playedTimeoutRoundsRef.current.has(state.roundIndex)
+    ) {
+      return
+    }
+    playedTimeoutRoundsRef.current.add(state.roundIndex)
+    announce(copy.expired)
+    audio.play('timeout')
+  }, [
+    announce,
+    audio,
+    copy.expired,
+    practiceTimed,
+    round,
+    state.phase,
+    state.roundElapsedMs,
+    state.roundIndex,
+  ])
+
+  useEffect(() => {
+    if (state.phase !== 'visibility-paused') return
+    announce(copy.visibilityPaused)
+  }, [announce, copy.visibilityPaused, state.phase])
+
+  useEffect(() => {
+    const serialized = serializeGeoRun(state)
+    if (!serialized) return
+    saveGeoRun(getBrowserStorage(), state.challenge.publicationDate, serialized)
+  }, [state])
+
+  useEffect(() => {
+    if (
+      state.phase !== 'completed' ||
+      state.runKind !== 'official' ||
+      !state.completedAt ||
+      recordedCompletionRef.current === state.completedAt
+    ) {
+      return
+    }
+    recordedCompletionRef.current = state.completedAt
+    const storage = getBrowserStorage()
+    const loaded = loadGeoStats(storage).value
+    const record = createOfficialRunRecord({
+      answers: state.answers,
+      challenge: state.challenge,
+      completedAt: state.completedAt,
+    })
+    const next = recordOfficialRun(loaded, record)
+    saveGeoStats(storage, next)
+    setStats(next)
+  }, [state])
+
+  useEffect(() => {
+    const freezeAndSave = () => {
+      const current = stateRef.current
+      if (
+        current.phase !== 'question' &&
+        current.phase !== 'feedback' &&
+        current.phase !== 'countdown'
+      ) {
+        return
+      }
+      const frozen = geoGameReducer(current, {
+        type: 'VISIBILITY_HIDDEN',
+        elapsedMs: questionElapsedRef.current,
+        roundElapsedMs: roundClock.get(),
+      })
+      const serialized = serializeGeoRun(frozen)
+      if (serialized) {
+        saveGeoRun(
+          getBrowserStorage(),
+          current.challenge.publicationDate,
+          serialized,
+        )
+      }
+      dispatch({
+        type: 'VISIBILITY_HIDDEN',
+        elapsedMs: questionElapsedRef.current,
+        roundElapsedMs: roundClock.get(),
+      })
+    }
+    const handleVisibility = () => {
+      if (document.hidden) freezeAndSave()
+    }
+
+    document.addEventListener('visibilitychange', handleVisibility)
+    window.addEventListener('pagehide', freezeAndSave)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility)
+      window.removeEventListener('pagehide', freezeAndSave)
+    }
+  }, [roundClock])
+
+  const submitTextAnswer = ({
+    optionId,
+    submittedText,
+  }: {
+    optionId: string | null
+    submittedText: string
+  }) => {
+    const current = stateRef.current
+    const activeQuestion = currentQuestion(current)
+    if (
+      current.phase !== 'question' ||
+      !activeQuestion ||
+      activeQuestion.type === 'map'
+    ) {
+      return
+    }
+    dispatch({
+      type: 'SUBMIT_TEXT',
+      optionId,
+      submittedText,
+      elapsedMs: questionElapsedRef.current,
+      roundElapsedMs: roundClock.get(),
+      answeredAt: new Date().toISOString(),
+    })
+  }
+
+  const submitMap = (coordinate: GeoCoordinate) => {
+    dispatch({
+      type: 'SUBMIT_MAP',
+      coordinate,
+      elapsedMs: questionElapsedRef.current,
+      roundElapsedMs: roundClock.get(),
+      answeredAt: new Date().toISOString(),
+    })
+  }
+
+  const passQuestion = useCallback(() => {
+    const current = stateRef.current
+    if (current.phase !== 'question' || !currentQuestion(current)) return
+    dispatch({
+      type: 'SKIP_QUESTION',
+      elapsedMs: questionElapsedRef.current,
+      roundElapsedMs: roundClock.get(),
+      answeredAt: new Date().toISOString(),
+    })
+  }, [roundClock])
+
+  const start = useCallback(() => {
+    const current = stateRef.current
+    if (current.phase === 'visibility-paused') {
+      dispatch({ type: 'RESUME_FROM_VISIBILITY' })
+    } else {
+      dispatch({ type: 'START', startedAt: new Date().toISOString() })
+    }
+    audio.play('start')
+  }, [audio])
+
+  const toggleSound = useCallback(() => {
+    const sound = !settings.sound
+    audio.setEnabled(sound)
+    onSettingsChange({ ...settings, sound })
+    announce(sound ? copy.soundOn : copy.soundOff)
+    if (sound) audio.play('start')
+  }, [announce, audio, copy.soundOff, copy.soundOn, onSettingsChange, settings])
+
+  const openOverlay = useCallback(
+    (overlay: 'settings' | 'help', opener: HTMLButtonElement | null) => {
+      // The '?' shortcut has no opener; close then returns focus to the header help button.
+      openerRef.current = opener ?? helpButtonRef.current
+      dispatch({ type: 'OPEN_OVERLAY', overlay })
+    },
+    [],
+  )
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.isComposing ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey
+      ) {
+        return
+      }
+      const element = event.target instanceof Element ? event.target : null
+      const editable = element?.closest(
+        'input, textarea, select, [contenteditable], [role="textbox"]',
+      )
+      if (editable) return
+
+      if (event.key.toLowerCase() === 'm') {
+        event.preventDefault()
+        toggleSound()
+        return
+      }
+
+      if (stateRef.current.overlay) {
+        if (event.key === 'Escape') {
+          event.preventDefault()
+          dispatch({ type: 'CLOSE_OVERLAY' })
+          window.requestAnimationFrame(() => openerRef.current?.focus())
+        }
+        return
+      }
+
+      if (
+        event.key === '?' &&
+        stateRef.current.phase !== 'question' &&
+        stateRef.current.phase !== 'countdown'
+      ) {
+        event.preventDefault()
+        openOverlay('help', null)
+        return
+      }
+
+      const current = stateRef.current
+      if (current.phase === 'idle' && event.key === 'Enter') {
+        if (element?.closest('button, a, input, select')) return
+        event.preventDefault()
+        start()
+        return
+      }
+      if (current.phase === 'visibility-paused' && event.key === 'Enter') {
+        event.preventDefault()
+        dispatch({ type: 'RESUME_FROM_VISIBILITY' })
+        return
+      }
+      if (current.phase !== 'question') return
+
+      if (event.key.toLowerCase() === 'p') {
+        event.preventDefault()
+        passQuestion()
+        return
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [openOverlay, passQuestion, start, toggleSound])
+
+  const copyResult = async () => {
+    const result = formatGeoShareCard({
+      challenge: state.challenge,
+      answers: state.answers,
+      locale,
+      challengeNumber: challengeSequence(state.challenge),
+    })
+    try {
+      await navigator.clipboard.writeText(result)
+      announce(copy.copied)
+    } catch {
+      announce(copy.shareFailed)
+    }
+  }
+
+  const shareResult = async () => {
+    const result = formatGeoShareCard({
+      challenge: state.challenge,
+      answers: state.answers,
+      locale,
+      challengeNumber: challengeSequence(state.challenge),
+    })
+    const outcome = await shareText({ text: result, title: copy.brand })
+    if (shareHandled(outcome)) return
+    await copyResult()
+  }
+
+  const mapLabels = getGeoMapLabels(copy)
+  const mapAnswer =
+    state.lastAnswer?.kind === 'map-pin' ? state.lastAnswer : null
+  const mapFeedback =
+    mapAnswer?.distanceKm != null
+      ? {
+          answerCoordinate: mapAnswer.answerCoordinate,
+          distanceKm: mapAnswer.distanceKm,
+        }
+      : undefined
+  const timedState =
+    state.phase === 'question' ||
+    state.phase === 'feedback' ||
+    state.phase === 'countdown'
+  const feedbackAttr =
+    state.phase === 'feedback' && state.lastAnswer
+      ? FEEDBACK_ATTRS[feedbackResult(state.lastAnswer)]
+      : undefined
+  const roundAttr =
+    state.phase === 'idle' || state.phase === 'completed'
+      ? 'idle'
+      : (round?.type ?? 'idle')
+
+  const stage =
+    state.phase === 'idle' || state.phase === 'completed'
+      ? state.phase
+      : 'mission'
+  const stageViews: Record<typeof stage, ReactNode> = {
+    idle:
+      mode === 'practice' ? (
+        <PracticeBriefing
+          challenge={state.challenge}
+          copy={copy}
+          displayRounds={displayRounds}
+          locale={locale}
+          onPracticeRoundChange={onPracticeRoundChange}
+          onPracticeTimedChange={onPracticeTimedChange}
+          onStart={start}
+          practiceRound={practiceRound}
+          practiceTimed={practiceTimed}
+        />
+      ) : (
+        <DailyBriefing
+          challenge={state.challenge}
+          copy={copy}
+          displayRounds={displayRounds}
+          locale={locale}
+          onStart={start}
+        />
+      ),
+    completed: (
+      <Completion
+        copy={copy}
+        locale={locale}
+        onCopy={() => void copyResult()}
+        onNewPracticeGame={onNewPracticeGame}
+        onShare={() => void shareResult()}
+        state={state}
+        stats={stats}
+      />
+    ),
+    mission: (
+      <div
+        className={css.missionGrid}
+        data-direct-map={question?.type === 'map'}
+      >
+        <section className={css.questionDeck}>
+          {question && round && (
+            <>
+              <header className={css.questionHeader}>
+                <div className={css.questionHeaderCopy}>
+                  <p>
+                    {copy.round} {state.roundIndex + 1}/
+                    {state.challenge.rounds.length}
+                    {' · '}
+                    {roundName(copy, round.type)}
+                    {' · '}
+                    {copy.attempt} {state.questionIndex + 1}
+                  </p>
+                  {question.type !== 'capital' && (
+                    <h2
+                      id='geo-question-title'
+                      ref={questionHeadingRef}
+                      tabIndex={-1}
+                    >
+                      {question.prompt[locale]}
+                    </h2>
+                  )}
+                </div>
+                <RoundTelemetry
+                  attempt={state.questionIndex + 1}
+                  copy={copy}
+                  difficulty={question.difficulty}
+                  locale={locale}
+                  onPass={passQuestion}
+                  practiceTimed={practiceTimed}
+                  roundClock={roundClock}
+                  roundLimitMs={roundTimeLimitMs(round)}
+                  state={state}
+                />
+              </header>
+              <div className={css.artifactFrame} data-type={question.type}>
+                <span className={css.artifactReadout}>
+                  <span>LIVE {' // '} ITEM</span>
+                  <span>
+                    {String(state.questionIndex + 1).padStart(2, '0')}
+                  </span>
+                </span>
+                {question.type === 'capital' ? (
+                  <div className={css.capitalArtifact}>
+                    <span aria-hidden='true'>CAP {' // '} TX</span>
+                    <h2
+                      id='geo-question-title'
+                      ref={questionHeadingRef}
+                      className={css.capitalPrompt}
+                      tabIndex={-1}
+                    >
+                      {question.prompt[locale]}
+                    </h2>
+                  </div>
+                ) : (
+                  <PromptArtifact
+                    copy={copy}
+                    locale={locale}
+                    mapFeedback={mapFeedback}
+                    mapLabels={mapLabels}
+                    onMapCoordinateChange={(coordinate) =>
+                      setMarker({
+                        attemptKey: questionAttemptKey,
+                        coordinate,
+                      })
+                    }
+                    onMapSubmit={submitMap}
+                    question={question}
+                    selectedCoordinate={selectedCoordinate}
+                    state={state}
+                  />
+                )}
+              </div>
+              <div className={css.feedbackSlot}>
+                {state.phase === 'feedback' && state.lastAnswer && (
+                  <FeedbackBar
+                    answer={state.lastAnswer}
+                    copy={copy}
+                    locale={locale}
+                    options={options}
+                  />
+                )}
+              </div>
+            </>
+          )}
+        </section>
+        {question && question.type !== 'map' && (
+          <TextAnswerConsole
+            key={questionAttemptKey}
+            copy={copy}
+            lexicon={autocompleteOptions}
+            locale={locale}
+            onAnswer={submitTextAnswer}
+            options={question.options}
+            placeholder={answerPlaceholder}
+            state={state}
+          />
+        )}
+        {state.phase === 'countdown' && (
+          <Countdown
+            copy={copy}
+            count={countdown}
+            round={round}
+            resume={state.countdownReason === 'resume'}
+          />
+        )}
+        {state.phase === 'round-summary' && (
+          <RoundSummary
+            copy={copy}
+            locale={locale}
+            state={state}
+            onContinue={() => dispatch({ type: 'ROUND_SUMMARY_FINISHED' })}
+          />
+        )}
+        {state.phase === 'visibility-paused' && (
+          <VisibilityPause
+            copy={copy}
+            onResume={() => dispatch({ type: 'RESUME_FROM_VISIBILITY' })}
+          />
+        )}
+      </div>
+    ),
+  }
+
+  return (
+    <div
+      ref={gameRef}
+      className={css.game}
+      lang={locale}
+      data-reduced-motion={settings.reducedMotion}
+      data-phase={state.phase}
+      data-feedback={feedbackAttr}
+      data-round={roundAttr}
+    >
+      <span className={css.grain} aria-hidden='true' />
+      <AppHeader
+        challenge={state.challenge}
+        copy={copy}
+        helpButtonRef={helpButtonRef}
+        locale={locale}
+        mode={mode}
+        onLocaleChange={onLocaleChange}
+        onModeChange={onModeChange}
+        onSoundToggle={toggleSound}
+        soundEnabled={settings.sound}
+        timedState={timedState}
+        openSettings={(button) => openOverlay('settings', button)}
+        openHelp={(button) => openOverlay('help', button)}
+      />
+      <ProgressTrack
+        challenge={state.challenge}
+        roundClock={roundClock}
+        state={state}
+        timed={practiceTimed}
+      />
+
+      <div className={css.viewport}>{stageViews[stage]}</div>
+
+      <GameDialogs
+        copy={copy}
+        locale={locale}
+        mode={mode}
+        onClose={() => dispatch({ type: 'CLOSE_OVERLAY' })}
+        onLocaleChange={onLocaleChange}
+        onModeChange={onModeChange}
+        onSettingsChange={onSettingsChange}
+        opener={openerRef}
+        settings={settings}
+        state={state}
+        timedState={timedState}
+      />
+      <p className={css.liveRegion} aria-live='polite' aria-atomic='true'>
+        {announcement}
+      </p>
+    </div>
+  )
 }
 
 export default function GeoGame({
@@ -112,15 +2555,15 @@ export default function GeoGame({
   if (!settings || restoredState === undefined) {
     return (
       <>
-        <a className={shell.skipLink} href='#main-content'>
+        <a className={css.skipLink} href='#main-content'>
           {copy.skipToGame}
         </a>
-        <div id='vbody' className={shell.shell}>
+        <div id='vbody' className={css.shell}>
           <main id='main-content' className={css.game}>
-            <div className={overlays.overlay}>
-              <section className={overlays.countdownPanel} role='status'>
-                <span className={overlays.countdownLabel}>{copy.loading}</span>
-                <strong className={overlays.countdownNumber}>M</strong>
+            <div className={css.overlay}>
+              <section className={css.countdownPanel} role='status'>
+                <span className={css.countdownLabel}>{copy.loading}</span>
+                <strong className={css.countdownNumber}>M</strong>
               </section>
             </div>
           </main>
@@ -138,10 +2581,10 @@ export default function GeoGame({
 
   return (
     <>
-      <a className={shell.skipLink} href='#main-content'>
+      <a className={css.skipLink} href='#main-content'>
         {copy.skipToGame}
       </a>
-      <div id='vbody' className={shell.shell}>
+      <div id='vbody' className={css.shell}>
         <main id='main-content' tabIndex={-1}>
           <GeoSession
             key={`${sessionNonce}:${activeChallenge.id}:${practiceTimed ? 'timed' : 'untimed'}`}
@@ -173,7 +2616,7 @@ export default function GeoGame({
           />
         </main>
       </div>
-      <p className={shell.liveRegion} aria-live='polite'>
+      <p className={css.liveRegion} aria-live='polite'>
         {recoveryNotice}
       </p>
     </>

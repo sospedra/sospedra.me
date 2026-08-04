@@ -1,4 +1,4 @@
-import css from './vapor-footer.module.css'
+import css from './about.module.css'
 
 const GHOST_SOLID_AREAS = [
   'top0',

@@ -2,35 +2,173 @@
 
 import cn from 'clsx'
 import { clamp } from 'es-toolkit'
+import type { CSSProperties, Ref } from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { sceneTrap, type Trap, useHotkeys } from 'services/hotkeys'
 import Link, { LinkBack } from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
-import { CrtScreen, formatChannel, volumeBars } from './crt-screen'
-import crt from './crt-screen.module.css'
+import { match } from 'ts-pattern'
 import { createDeckAudio } from './deck-audio'
-import { DeckControls, SEEK_STEP, VOLUME_STEP } from './deck-controls'
-import { TapeDeck } from './tape-deck'
-import { TapeGhost, TapePile } from './tape-pile'
 import { runTapeSwap } from './tape-swap'
-import { TAPES } from './tapes'
-import {
-  BARS_MS,
-  COOL_MS,
-  drawBurst,
-  OSD_STATUS,
-  reducer,
-  SWITCH_MS,
-  type TvStatus,
-  WARM_MS,
-} from './tv-machine'
+import { TAPES, type Tape } from './tapes'
 import css from './videoclub.module.css'
 
+const WARM_MS = 1100
+const SWITCH_MS = 480
+const COOL_MS = 400
+const SEEK_STEP = 15
+const VOLUME_STEP = 0.1
 const OSD_MS = 1800
+const VOLUME_BARS = 10
+
+const DRIFT = ['-0.4rem', '0.7rem', '-0.15rem', '0.9rem', '0.25rem']
+const TIP = ['-0.5deg', '0.4deg', '-0.2deg', '0.6deg', '-0.35deg']
+
+const pileStyle = (index: number): CSSProperties =>
+  ({
+    '--drift': DRIFT[index % DRIFT.length],
+    '--tip': TIP[index % TIP.length],
+  }) as CSSProperties
 
 const isNotAllowed = (error: unknown) =>
   error instanceof DOMException && error.name === 'NotAllowedError'
+
+type TvStatus =
+  | 'off'
+  | 'cooling'
+  | 'warming'
+  | 'inserting'
+  | 'switching'
+  | 'playing'
+  | 'paused'
+
+type TapeBurst = 'snow' | 'bars'
+
+type TvState = {
+  status: TvStatus
+  tape: number
+  incoming: number | null
+  cold: boolean
+  burst: TapeBurst
+}
+
+type TvEvent =
+  | { type: 'power' }
+  | { type: 'ready' }
+  | { type: 'toggle' }
+  | { type: 'insert'; tape: number }
+  | { type: 'inserted'; burst: TapeBurst }
+
+const reducer = (state: TvState, event: TvEvent): TvState =>
+  match(event)
+    .returnType<TvState>()
+    .with({ type: 'power' }, () => {
+      if (state.status === 'off' || state.status === 'cooling')
+        return { ...state, status: 'warming' }
+      return { ...state, status: 'cooling', incoming: null, cold: false }
+    })
+    .with({ type: 'ready' }, () => {
+      if (state.status === 'cooling') return { ...state, status: 'off' }
+      if (state.status !== 'warming' && state.status !== 'switching')
+        return state
+      return { ...state, status: 'playing' }
+    })
+    .with({ type: 'toggle' }, () => {
+      if (state.status === 'playing') return { ...state, status: 'paused' }
+      if (state.status === 'paused') return { ...state, status: 'playing' }
+      return state
+    })
+    .with({ type: 'insert' }, ({ tape }) => {
+      if (state.status === 'inserting' || tape === state.tape) return state
+      return {
+        ...state,
+        status: 'inserting',
+        incoming: tape,
+        cold: state.status === 'off' || state.status === 'cooling',
+      }
+    })
+    .with({ type: 'inserted' }, ({ burst }) => {
+      if (state.status !== 'inserting' || state.incoming === null) return state
+      return {
+        status: state.cold ? 'warming' : 'switching',
+        tape: state.incoming,
+        incoming: null,
+        cold: false,
+        burst,
+      }
+    })
+    .exhaustive()
+
+const drawBurst = (): TapeBurst => (Math.random() < 0.2 ? 'bars' : 'snow')
+
+const BARS_MS = 1150
+
+const OSD_STATUS: Record<TvStatus, string> = {
+  off: '',
+  cooling: '',
+  warming: 'CUE UP',
+  inserting: 'INSERT',
+  switching: 'TRACKING',
+  playing: 'PLAY',
+  paused: 'PAUSE',
+}
+
+const formatCounter = (seconds: number): string => {
+  const total = Math.floor(seconds)
+  const hours = Math.floor(total / 3600)
+  const minutes = Math.floor((total % 3600) / 60)
+  return `${hours}:${String(minutes).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
+}
+
+const formatChannel = (tape: number): string =>
+  `CH ${String(tape + 1).padStart(2, '0')}`
+
+const volumeBars = (volume: number): string => {
+  const lit = Math.round(volume * VOLUME_BARS)
+  return `VOL ${'|'.repeat(lit)}${'.'.repeat(VOLUME_BARS - lit)}`
+}
+
+function SpineBar(props: { index: number; tape: Tape }) {
+  return (
+    <>
+      <i className={css.notch} aria-hidden='true' />
+      <span className={css.vhsLabel} aria-hidden='true'>
+        <b className={css.vhsCode}>
+          [{String(props.index + 1).padStart(2, '0')}]
+        </b>
+        <span className={css.vhsTitle}>
+          <span className={css.vhsName}>{props.tape.title}</span>
+          <small>{props.tape.venue}</small>
+        </span>
+        <b className={css.vhsTag}>[{props.tape.lang}]</b>
+      </span>
+    </>
+  )
+}
+
+function DeckKey(props: {
+  glyph: string
+  hint: string
+  onPress: () => void
+  kind?: 'transport' | 'volume'
+  ref?: Ref<HTMLButtonElement>
+}) {
+  return (
+    <span className={css.keyWrap} data-kind={props.kind ?? 'transport'}>
+      <button
+        ref={props.ref}
+        type='button'
+        className={css.key}
+        onClick={props.onPress}
+        aria-label={props.hint}
+      >
+        <span aria-hidden='true'>{props.glyph}</span>
+      </button>
+      <small aria-hidden='true'>{props.hint}</small>
+    </span>
+  )
+}
 
 export default function VideoclubView() {
   const [state, dispatch] = useReducer(reducer, {
@@ -219,42 +357,195 @@ export default function VideoclubView() {
       </nav>
 
       <section className={css.den} aria-label='Television set'>
-        <div className={cn(css.tv, crt.tv)} data-power={lit ? 'on' : 'off'}>
-          <CrtScreen
-            counterSeconds={counterSeconds}
-            osd={osd}
-            screenHint={screenHint}
-            state={state}
-            tape={tape}
-            videoRef={videoRef}
-            volume={volume}
-            dispatch={dispatch}
-            setCounterSeconds={setCounterSeconds}
-            toggle={toggle}
-          />
+        <div className={css.tv} data-power={lit ? 'on' : 'off'}>
+          <div
+            className={css.screen}
+            data-status={state.status}
+            data-burst={state.burst}
+          >
+            <div className={css.tube}>
+              <div className={css.raster}>
+                {/* biome-ignore lint/a11y/useMediaCaption: no caption tracks exist for these recordings */}
+                <video
+                  key={tape.id}
+                  ref={videoRef}
+                  className={css.film}
+                  src={tape.src}
+                  preload='metadata'
+                  playsInline
+                  onLoadedMetadata={(event) => {
+                    event.currentTarget.volume = volume
+                  }}
+                  onTimeUpdate={(event) =>
+                    setCounterSeconds(
+                      Math.floor(event.currentTarget.currentTime),
+                    )
+                  }
+                  onEnded={() => dispatch({ type: 'toggle' })}
+                />
+                <div className={css.noise} aria-hidden='true' />
+                <div className={css.bars} aria-hidden='true' />
+                <div className={css.bloom} aria-hidden='true' />
+                <div className={css.phosphor} aria-hidden='true' />
+              </div>
+              <div className={css.glass} aria-hidden='true' />
+            </div>
+            <span className={css.screenBadge} aria-hidden='true'>
+              SOSPESONIC
+            </span>
+            <div className={css.osd} aria-hidden='true'>
+              <span className={css.osdStatus}>{OSD_STATUS[state.status]}</span>
+              <span className={css.osdChannel}>
+                {formatChannel(state.tape)}
+              </span>
+              {osd && (
+                <span key={osd.serial} className={css.osdFlash}>
+                  {osd.text}
+                </span>
+              )}
+              <span className={css.osdCounter}>
+                {formatCounter(counterSeconds)}
+              </span>
+            </div>
+            <button
+              type='button'
+              className={css.screenAction}
+              onClick={toggle}
+              aria-label={screenHint}
+            />
+          </div>
 
           <div className={css.fascia}>
-            <TapeDeck activeTape={activeTape} slotRef={slotRef} state={state} />
-            <DeckControls
-              lit={lit}
-              playKeyRef={playKeyRef}
-              powered={powered}
-              state={state}
-              nudgeVolume={nudgeVolume}
-              power={power}
-              seek={seek}
-              toggle={toggle}
-            />
+            <div className={css.deck}>
+              <div
+                ref={slotRef}
+                className={css.slot}
+                data-open={state.status === 'inserting'}
+                aria-busy={state.status === 'inserting'}
+              >
+                <i className={css.flap} aria-hidden='true' />
+                <span className={css.sticker}>
+                  {activeTape.title} · {activeTape.venue} · {activeTape.lang}
+                </span>
+              </div>
+              <div className={css.grille} aria-hidden='true' />
+              <p className={css.brand}>
+                <b>VHS HQ</b>
+                <span>QUICK START · DIGITAL AUTO TRACKING</span>
+                <b>2 HEAD</b>
+              </p>
+            </div>
+
+            <fieldset className={css.controls}>
+              <legend className='sr-only'>Television and tape controls</legend>
+              <p className={css.controlHeader} aria-hidden='true'>
+                <span>FRONT AV / COMBO DECK</span>
+                <b>STEREO</b>
+              </p>
+
+              <div className={css.avInputs} aria-hidden='true'>
+                <span>
+                  <i data-signal='video' />
+                  VIDEO
+                </span>
+                <span>
+                  <i data-signal='audio' />
+                  AUDIO
+                </span>
+                <span>
+                  <i data-signal='phones' />
+                  PHONES
+                </span>
+              </div>
+
+              <span className={css.keyWrap} data-kind='power'>
+                <button
+                  type='button'
+                  className={cn(css.key, css.powerKey)}
+                  onClick={power}
+                  aria-pressed={powered}
+                  aria-label='Power'
+                >
+                  <span aria-hidden='true'>⏻</span>
+                </button>
+                <small aria-hidden='true'>POWER</small>
+                <i className={css.led} data-on={lit} aria-hidden='true' />
+              </span>
+
+              <fieldset className={css.transport}>
+                <legend className='sr-only'>Tape transport</legend>
+                <DeckKey
+                  glyph='◁◁'
+                  hint='REW'
+                  onPress={() => seek(-SEEK_STEP)}
+                />
+                <DeckKey
+                  ref={playKeyRef}
+                  glyph={state.status === 'playing' ? '❚❚' : '▷'}
+                  hint={state.status === 'playing' ? 'PAUSE' : 'PLAY'}
+                  onPress={toggle}
+                />
+                <DeckKey glyph='▷▷' hint='FF' onPress={() => seek(SEEK_STEP)} />
+              </fieldset>
+
+              <fieldset className={css.volumeKeys}>
+                <legend className='sr-only'>Volume controls</legend>
+                <DeckKey
+                  glyph='−'
+                  hint='VOL −'
+                  kind='volume'
+                  onPress={() => nudgeVolume(-VOLUME_STEP)}
+                />
+                <DeckKey
+                  glyph='+'
+                  hint='VOL +'
+                  kind='volume'
+                  onPress={() => nudgeVolume(VOLUME_STEP)}
+                />
+              </fieldset>
+            </fieldset>
           </div>
         </div>
 
-        <TapePile
-          lit={lit}
-          spineFocusRef={spineFocusRef}
-          stackRefs={stackRefs}
-          state={state}
-          insertTape={insertTape}
-        />
+        <section className={css.stack} aria-label='Tape pile'>
+          <span className={css.onAir} data-live={lit} aria-hidden='true'>
+            ON AIR
+          </span>
+          <ul className={css.pile}>
+            {TAPES.map((item, index) => {
+              const pile = pileStyle(index)
+              if (index === state.tape) {
+                return (
+                  <li key={item.id}>
+                    <span className={css.bay} style={pile}>
+                      IN DECK
+                    </span>
+                  </li>
+                )
+              }
+              return (
+                <li key={item.id}>
+                  <button
+                    ref={(element) => {
+                      stackRefs.current[index] = element
+                    }}
+                    type='button'
+                    className={css.vhs}
+                    style={pile}
+                    disabled={state.status === 'inserting'}
+                    onClick={() => {
+                      spineFocusRef.current = index
+                      insertTape(index)
+                    }}
+                    aria-label={`Insert ${item.title}, ${item.venue}`}
+                  >
+                    <SpineBar index={index} tape={item} />
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </section>
 
         <footer className={css.caption}>
           <p>
@@ -272,7 +563,14 @@ export default function VideoclubView() {
       </section>
 
       {state.status === 'inserting' && state.incoming !== null && (
-        <TapeGhost ref={ghostRef} incoming={state.incoming} />
+        <div
+          ref={ghostRef}
+          className={cn(css.vhs, css.ghost)}
+          style={pileStyle(state.incoming)}
+          aria-hidden='true'
+        >
+          <SpineBar index={state.incoming} tape={TAPES[state.incoming]} />
+        </div>
       )}
 
       <p className='sr-only' aria-live='polite'>

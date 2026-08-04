@@ -2,12 +2,10 @@ import { existsSync } from 'node:fs'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import * as clack from '@clack/prompts'
-import og from '../og.mts'
 import {
   defaultMetadata,
   isImage,
   isMdx,
-  isMetadata,
   paperDir,
   transformPaper,
   updatePaperMetadata,
@@ -39,12 +37,11 @@ const promptTitle = async () =>
     }),
   )
 
-// every step rewrites metadata.json: keep them sequential
+// reading and resize both rewrite metadata.json: keep them sequential
 const syncAssets = async (slug: string) => {
   const images = await transformPaper(slug, isImage, resize)
   const texts = await transformPaper(slug, isMdx, reading)
-  const cards = await transformPaper(slug, isMetadata, og)
-  return images + texts + cards
+  return images + texts
 }
 
 export default async function createPaper({ arg }: Context) {

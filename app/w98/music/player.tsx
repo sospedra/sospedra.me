@@ -2,7 +2,6 @@ import type { PointerEvent as ReactPointerEvent } from 'react'
 import { cssVars } from 'services/css-vars'
 import { formatTime } from './format'
 import css from './music.module.css'
-import playerCss from './player.module.css'
 import {
   TIME_GAUGE_SWEEP,
   timeGaugeProgress,
@@ -99,7 +98,7 @@ export default function Player({
   return (
     <section
       id='winamp-player-panel'
-      className={`${css.panel} ${playerCss.playerPanel}`}
+      className={`${css.panel} ${css.playerPanel}`}
       data-calibration-id='P01'
       data-calibration-label='Player panel'
       data-calibration-kind='panel'
@@ -115,27 +114,27 @@ export default function Player({
         draggable={false}
       />
       <span
-        className={`${css.dragHandle} ${playerCss.playerDragHandle}`}
+        className={`${css.dragHandle} ${css.playerDragHandle}`}
         data-touch-slop-ignore
         aria-hidden='true'
       />
 
-      <div className={playerCss.playerDisplay}>
+      <div className={css.playerDisplay}>
         <i
-          className={playerCss.timeSector}
+          className={css.timeSector}
           aria-hidden='true'
           style={cssVars({
             '--gauge-angle': `${(1 - progress) * TIME_GAUGE_SWEEP}deg`,
           })}
         />
         <i
-          className={playerCss.volumeSector}
+          className={css.volumeSector}
           aria-hidden='true'
           style={{ backgroundImage: volumeGaugeBackground(volume) }}
         />
 
-        <div className={playerCss.trackReadout}>
-          <span className={playerCss.marquee}>
+        <div className={css.trackReadout}>
+          <span className={css.marquee}>
             <span>
               {title}
               <i aria-hidden='true'>{title}</i>
@@ -144,16 +143,14 @@ export default function Player({
           <time>{formatTime(position)}</time>
         </div>
 
-        <output className={playerCss.playbackStatus}>
+        <output className={css.playbackStatus}>
           {isPlaying ? 'Playing' : 'Paused'}
         </output>
 
-        <output className={playerCss.durationReadout}>
-          {formatTime(duration)}
-        </output>
+        <output className={css.durationReadout}>{formatTime(duration)}</output>
 
         <label
-          className={`${playerCss.gaugeInput} ${playerCss.timeGauge}`}
+          className={`${css.gaugeInput} ${css.timeGauge}`}
           data-touch-slop-ignore
           data-calibration-id='H01'
           data-calibration-label='Time gauge'
@@ -177,7 +174,7 @@ export default function Player({
           />
         </label>
         <label
-          className={`${playerCss.gaugeInput} ${playerCss.volumeGauge}`}
+          className={`${css.gaugeInput} ${css.volumeGauge}`}
           data-touch-slop-ignore
           data-calibration-id='H02'
           data-calibration-label='Volume gauge'
@@ -203,7 +200,7 @@ export default function Player({
 
       <button
         type='button'
-        className={`${css.hotspot} ${playerCss.playerCloseHotspot}`}
+        className={`${css.hotspot} ${css.playerCloseHotspot}`}
         data-calibration-id='H22'
         data-calibration-label='Close player'
         data-calibration-kind='control'
@@ -212,7 +209,7 @@ export default function Player({
       />
       <button
         type='button'
-        className={`${css.hotspot} ${playerCss.previousHotspot}`}
+        className={`${css.hotspot} ${css.previousHotspot}`}
         data-calibration-id='H04'
         data-calibration-label='Previous'
         data-calibration-kind='control'
@@ -223,7 +220,7 @@ export default function Player({
       />
       <button
         type='button'
-        className={`${css.hotspot} ${playerCss.playPauseHotspot}`}
+        className={`${css.hotspot} ${css.playPauseHotspot}`}
         data-calibration-id='H05'
         data-calibration-label='Play or pause'
         data-calibration-kind='control'
@@ -234,7 +231,7 @@ export default function Player({
       />
       <button
         type='button'
-        className={`${css.hotspot} ${playerCss.openTracklistHotspot}`}
+        className={`${css.hotspot} ${css.openTracklistHotspot}`}
         data-calibration-id='H26'
         data-calibration-label='Open tracklist'
         data-calibration-kind='control'
@@ -246,7 +243,7 @@ export default function Player({
       />
       <button
         type='button'
-        className={`${css.hotspot} ${playerCss.nextHotspot}`}
+        className={`${css.hotspot} ${css.nextHotspot}`}
         data-calibration-id='H07'
         data-calibration-label='Next'
         data-calibration-kind='control'
@@ -257,7 +254,7 @@ export default function Player({
       />
       <button
         type='button'
-        className={`${css.hotspot} ${playerCss.openEqualizerHotspot}`}
+        className={`${css.hotspot} ${css.openEqualizerHotspot}`}
         data-calibration-id='H25'
         data-calibration-label='Open equalizer'
         data-calibration-kind='control'

@@ -50,7 +50,9 @@
 }
 
 .menu a:active,
-.menu button:active {
+.menu button:active,
+.menu a:focus-visible,
+.menu button:focus-visible {
   color: var(--color-text-strong, white);
 }
 
@@ -73,7 +75,9 @@
 }
 
 .menu a:active::before,
-.menu button:active::before {
+.menu button:active::before,
+.menu a:focus-visible::before,
+.menu button:focus-visible::before {
   opacity: 1;
   animation: swing 0.4s ease-out alternate infinite;
 }

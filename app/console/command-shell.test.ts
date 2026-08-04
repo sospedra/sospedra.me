@@ -155,8 +155,8 @@ test('completes tree commands and arguments with directories only', () => {
   }
 
   assert.deepEqual(complete(treeContext, 'tr', options), {
-    value: 'tr',
-    options: ['travel', 'tree'],
+    value: 'tree ',
+    options: [],
   })
   assert.deepEqual(complete(treeContext, 'tree im', options), {
     value: 'tree images/',
@@ -165,40 +165,5 @@ test('completes tree commands and arguments with directories only', () => {
   assert.deepEqual(complete(treeContext, 'tree R', options), {
     value: 'tree R',
     options: [],
-  })
-})
-
-test('goto emits a navigate effect for a known route', () => {
-  const result = runCommand(context, 'goto travel')
-  assert.deepEqual(result.effect, { kind: 'navigate', href: '/travel' })
-  assert.deepEqual(result.output, [
-    { kind: 'text', text: 'Routing signal to TRAVEL...', tone: undefined },
-  ])
-})
-
-test('goto accepts a leading slash and rejects unknown routes', () => {
-  assert.deepEqual(runCommand(context, 'goto /w98').effect, {
-    kind: 'navigate',
-    href: '/w98',
-  })
-  const missing = runCommand(context, 'goto nowhere')
-  assert.equal(missing.effect, undefined)
-  assert.deepEqual(missing.output, [
-    { kind: 'text', text: 'No route named — nowhere', tone: 'error' },
-  ])
-})
-
-test('bare route words and legacy nicknames navigate', () => {
-  assert.deepEqual(runCommand(context, 'meridian').effect, {
-    kind: 'navigate',
-    href: '/meridian',
-  })
-  assert.deepEqual(runCommand(context, 'tapes').effect, {
-    kind: 'navigate',
-    href: '/videoclub',
-  })
-  assert.deepEqual(runCommand(context, 'cube').effect, {
-    kind: 'navigate',
-    href: '/rubiks',
   })
 })

@@ -244,9 +244,7 @@
   text-align: right;
 }
 
-/* page 2 stays rendered: the commissioning checklist observer needs a real
-   box from load, and a skipped page reports an empty rect forever */
-.page:nth-of-type(n + 3) {
+.page:not(:first-of-type) {
   content-visibility: auto;
   contain-intrinsic-size: auto 54rem;
 }

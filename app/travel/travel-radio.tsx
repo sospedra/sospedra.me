@@ -1,10 +1,8 @@
 'use client'
 
-import cn from 'clsx'
 import { clamp, range } from 'es-toolkit'
 import type { CSSProperties } from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
-import fxq from './fx-quiet.module.css'
 import { createRadioController } from './radio-controller'
 import { getRadioStations } from './radio-stations'
 import {
@@ -15,7 +13,7 @@ import {
   wantsPlayback,
 } from './radio-tuner'
 import type { TravelAudio } from './travel-audio'
-import css from './travel-radio.module.css'
+import css from './travel-control.module.css'
 
 type PlaybackState = 'error' | 'idle' | 'loading' | 'paused' | 'playing'
 const TRACE_WIDTH = 120
@@ -159,7 +157,7 @@ export default function TravelRadio({
       : (state.stationIndex / (stations.length - 1)) * 100
 
   return (
-    <div className={cn(css.radioModule, fxq.radioModule)} data-state={playback}>
+    <div className={css.radioModule} data-state={playback}>
       {streamAudio}
 
       <div className={css.radioScreen}>
@@ -173,7 +171,7 @@ export default function TravelRadio({
           {bitrate}
         </small>
         <div
-          className={cn(css.radioScope, fxq.radioScope)}
+          className={css.radioScope}
           role='img'
           aria-label={
             station.bitrateKbps

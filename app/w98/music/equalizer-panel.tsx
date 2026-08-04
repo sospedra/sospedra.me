@@ -1,7 +1,6 @@
 import { type PointerEvent as ReactPointerEvent, useRef } from 'react'
 import { cssVars } from 'services/css-vars'
 import { EQ_FREQUENCIES, formatFrequency } from './equalizer'
-import equalizerCss from './equalizer-panel.module.css'
 import css from './music.module.css'
 import type { DragPanelProps } from './types'
 import { useTouchHitSlop } from './use-touch-hit-slop'
@@ -34,7 +33,7 @@ export default function EqualizerPanel({
   onClose,
   processingEnabled,
 }: EqualizerPanelProps) {
-  const touchHitSlop = useTouchHitSlop(`.${equalizerCss.equalizerCloseHotspot}`)
+  const touchHitSlop = useTouchHitSlop(`.${css.equalizerCloseHotspot}`)
   const bandPointerRef = useRef<{ index: number; pointerId: number } | null>(
     null,
   )
@@ -101,7 +100,7 @@ export default function EqualizerPanel({
   return (
     <section
       id='winamp-equalizer-panel'
-      className={`${css.panel} ${equalizerCss.equalizerPanel}`}
+      className={`${css.panel} ${css.equalizerPanel}`}
       data-calibration-id='P02'
       data-calibration-label='Equalizer panel'
       data-calibration-kind='panel'
@@ -117,7 +116,7 @@ export default function EqualizerPanel({
         draggable={false}
       />
       <span
-        className={`${css.dragHandle} ${equalizerCss.equalizerDragHandle}`}
+        className={`${css.dragHandle} ${css.equalizerDragHandle}`}
         data-touch-slop-ignore
         aria-hidden='true'
       />
@@ -129,7 +128,7 @@ export default function EqualizerPanel({
       </p>
 
       <fieldset
-        className={equalizerCss.frequencyControls}
+        className={css.frequencyControls}
         data-no-drag
         onClickCapture={(event) => {
           if (event.detail === 0) return
@@ -148,14 +147,14 @@ export default function EqualizerPanel({
           return (
             <label
               key={frequency}
-              className={equalizerCss.frequencyControl}
+              className={css.frequencyControl}
               data-calibration-id={`H${String(index + 9).padStart(2, '0')}`}
               data-calibration-label={`${formatFrequency(frequency)} EQ band`}
               data-calibration-kind='control'
               style={levelStyle(value)}
             >
-              <span className={equalizerCss.frequencyFill} aria-hidden='true' />
-              <span className={equalizerCss.frequencyKnob} aria-hidden='true' />
+              <span className={css.frequencyFill} aria-hidden='true' />
+              <span className={css.frequencyKnob} aria-hidden='true' />
               <input
                 type='range'
                 min='-12'
@@ -178,7 +177,7 @@ export default function EqualizerPanel({
       </fieldset>
 
       <label
-        className={equalizerCss.balanceControl}
+        className={css.balanceControl}
         data-calibration-id='H19'
         data-calibration-label='Balance'
         data-calibration-kind='control'
@@ -201,7 +200,7 @@ export default function EqualizerPanel({
 
       <button
         type='button'
-        className={`${css.hotspot} ${equalizerCss.equalizerCloseHotspot}`}
+        className={`${css.hotspot} ${css.equalizerCloseHotspot}`}
         data-calibration-id='H23'
         data-calibration-label='Close equalizer'
         data-calibration-kind='control'

@@ -20,8 +20,6 @@ export const isImage = (file: string) => IMAGE_RE.test(file)
 
 export const isMdx = (file: string) => file.endsWith('.mdx')
 
-export const isMetadata = (file: string) => file === 'metadata.json'
-
 export const paperDir = (slug: string) => absolute(join('repo/papers', slug))
 
 export const slugFromPaperFile = (filename: string) =>

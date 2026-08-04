@@ -1,5 +1,5 @@
 import type React from 'react'
-import css from './neon-tattoos.module.css'
+import css from './about.module.css'
 
 // ignorant-style flash: wobbly single strokes on purpose, like a neon bar sign
 const HeartTattoo: React.FC = () => (

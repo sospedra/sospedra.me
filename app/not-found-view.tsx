@@ -9,7 +9,6 @@ import { useSystem } from 'services/system'
 import { useTheme } from 'services/theme'
 import { useRouteTransition } from 'services/transition/context'
 import css from './not-found.module.css'
-import navCss from './not-found-nav.module.css'
 
 const CHANNELS = [
   { id: 'desk', label: 'DESK FEED', intensity: '0.5s' },
@@ -31,9 +30,9 @@ const LIQUID_LAYER_TIMINGS = [
 const HOME_LINK_WORDS = ['Take', 'me', 'to', 'a', 'safe', 'place'] as const
 
 const HomeLinkLabel = () => (
-  <span className={navCss.homeLinkLabel}>
+  <span className={css.homeLinkLabel}>
     {HOME_LINK_WORDS.map((word) => (
-      <span className={navCss.homeLinkWord} key={word}>
+      <span className={css.homeLinkWord} key={word}>
         {word}
       </span>
     ))}
@@ -184,18 +183,18 @@ const NotFoundView: React.FC = () => {
         </video>
       )}
 
-      <nav aria-label='Recovery route' className={navCss.nav}>
+      <nav aria-label='Recovery route' className={css.nav}>
         <Link
           aria-label='Take me to a safe place'
-          className={navCss.homeLink}
+          className={css.homeLink}
           url='/'
         >
-          <span aria-hidden='true' className={navCss.homeLinkClip}>
-            <span className={navCss.homeLiquidScene}>
-              <span className={navCss.homeLiquidLight} />
+          <span aria-hidden='true' className={css.homeLinkClip}>
+            <span className={css.homeLiquidScene}>
+              <span className={css.homeLiquidLight} />
               {LIQUID_LAYER_TIMINGS.map(({ delay, duration }) => (
                 <span
-                  className={navCss.homeLiquidLayer}
+                  className={css.homeLiquidLayer}
                   key={`${delay}-${duration}`}
                   style={cssVars({
                     '--liquid-delay': delay,
@@ -203,10 +202,10 @@ const NotFoundView: React.FC = () => {
                   })}
                 />
               ))}
-              <span className={navCss.homeLiquidBase} />
-              <span className={navCss.homeLiquidSurface} />
+              <span className={css.homeLiquidBase} />
+              <span className={css.homeLiquidSurface} />
             </span>
-            <span className={navCss.homeLinkText}>
+            <span className={css.homeLinkText}>
               <HomeLinkLabel />
             </span>
           </span>

@@ -112,7 +112,8 @@
   text-wrap: balance;
 }
 
-.headline:hover h2 {
+.headline:hover h2,
+.headline:focus-visible h2 {
   color: var(--color-signal-cyan, #6df7ea);
   text-shadow: 0 0 14px rgb(109 247 234 / 55%);
 }
@@ -146,7 +147,8 @@
     animation-timeline: view();
   }
 
-  .rows li:has(a:hover) {
+  .rows li:has(a:hover),
+  .rows li:has(a:focus-visible) {
     animation: none;
   }
 }
@@ -157,9 +159,9 @@
   color: var(--row-color, var(--color-signal-cyan));
 }
 
-/* teletext cursor,
-softened: a row-color wash instead of the full invert */
-.rows a:hover {
+/* teletext cursor, softened: a row-color wash instead of the full invert */
+.rows a:hover,
+.rows a:focus-visible {
   background: color-mix(
     in oklab,
     var(--row-color, var(--color-signal-cyan)) 16%,
@@ -219,7 +221,9 @@ softened: a row-color wash instead of the full invert */
 }
 
 .rows a:hover .rowMeta,
-.rows a:hover .rowExcerpt {
+.rows a:hover .rowExcerpt,
+.rows a:focus-visible .rowMeta,
+.rows a:focus-visible .rowExcerpt {
   color: inherit;
 }
 
@@ -273,7 +277,8 @@ softened: a row-color wash instead of the full invert */
   color: var(--color-text-muted, rgb(255 255 255 / 64%));
 }
 
-.fastext a:hover {
+.fastext a:hover,
+.fastext a:focus-visible {
   color: var(--color-text-strong, #fff);
 }
 

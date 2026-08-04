@@ -9,7 +9,6 @@ import {
 import { formatTime } from './format'
 import css from './music.module.css'
 import { normalizeSoundCloudPlaylist } from './soundcloud'
-import tracklistCss from './tracklist.module.css'
 import type { DragPanelProps, MusicTrack } from './types'
 import { useTouchHitSlop } from './use-touch-hit-slop'
 
@@ -46,7 +45,7 @@ export default function Tracklist({
   tracks,
 }: TracklistProps) {
   const touchHitSlop = useTouchHitSlop(
-    `.${tracklistCss.addFilesHotspot}, .${tracklistCss.tracklistCloseHotspot}`,
+    `.${css.addFilesHotspot}, .${css.tracklistCloseHotspot}`,
   )
   const [draggingFiles, setDraggingFiles] = useState(false)
   const [pickerView, setPickerView] = useState<'choose' | 'soundcloud'>(
@@ -112,7 +111,7 @@ export default function Tracklist({
   return (
     <section
       id='winamp-tracklist-panel'
-      className={`${css.panel} ${tracklistCss.tracklistPanel}`}
+      className={`${css.panel} ${css.tracklistPanel}`}
       data-calibration-id='P03'
       data-calibration-label='Tracklist panel'
       data-calibration-kind='panel'
@@ -128,7 +127,7 @@ export default function Tracklist({
         draggable={false}
       />
       <span
-        className={`${css.dragHandle} ${tracklistCss.tracklistDragHandle}`}
+        className={`${css.dragHandle} ${css.tracklistDragHandle}`}
         data-touch-slop-ignore
         aria-hidden='true'
       />
@@ -144,7 +143,7 @@ export default function Tracklist({
       />
       <button
         type='button'
-        className={tracklistCss.addFilesHotspot}
+        className={css.addFilesHotspot}
         data-calibration-id='H20'
         data-calibration-label='Add files'
         data-calibration-kind='control'
@@ -155,14 +154,14 @@ export default function Tracklist({
 
       <dialog
         ref={dialogRef}
-        className={tracklistCss.sourceDialog}
+        className={css.sourceDialog}
         data-no-drag
         aria-labelledby={dialogTitleId}
         onClose={resetPicker}
       >
         <h2 id={dialogTitleId}>Add music</h2>
         {pickerView === 'choose' ? (
-          <div className={tracklistCss.sourceDialogActions}>
+          <div className={css.sourceDialogActions}>
             <button type='button' onClick={chooseLocalFiles}>
               Local files
             </button>
@@ -200,7 +199,7 @@ export default function Tracklist({
                 {playlistError}
               </p>
             ) : null}
-            <div className={tracklistCss.sourceDialogActions}>
+            <div className={css.sourceDialogActions}>
               <button type='submit'>Load playlist</button>
               <button type='button' onClick={() => setPickerView('choose')}>
                 Back
@@ -214,7 +213,7 @@ export default function Tracklist({
       </dialog>
 
       <section
-        className={tracklistCss.trackViewport}
+        className={css.trackViewport}
         data-calibration-id='H21'
         data-calibration-label='Track viewport'
         data-calibration-kind='control'
@@ -236,12 +235,12 @@ export default function Tracklist({
         onDrop={dropFiles}
       >
         {tracks.length > 0 ? (
-          <ol className={tracklistCss.trackRows} aria-label='Audio tracklist'>
+          <ol className={css.trackRows} aria-label='Audio tracklist'>
             {tracks.map((track, index) => (
               <li key={track.id}>
                 <button
                   type='button'
-                  className={tracklistCss.trackRow}
+                  className={css.trackRow}
                   data-calibration-id={`T${String(index + 1).padStart(2, '0')}`}
                   data-calibration-label={`Track ${index + 1}`}
                   data-calibration-kind='track'
@@ -263,16 +262,16 @@ export default function Tracklist({
         ) : null}
       </section>
 
-      <output className={tracklistCss.selectedTime}>
+      <output className={css.selectedTime}>
         Selected: {formatTime(selectedDuration)}
       </output>
-      <output className={tracklistCss.totalTime}>
+      <output className={css.totalTime}>
         Total Time: {formatTime(totalDuration)}
       </output>
 
       <button
         type='button'
-        className={`${css.hotspot} ${tracklistCss.tracklistCloseHotspot}`}
+        className={`${css.hotspot} ${css.tracklistCloseHotspot}`}
         data-calibration-id='H24'
         data-calibration-label='Close tracklist'
         data-calibration-kind='control'

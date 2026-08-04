@@ -4,7 +4,8 @@
   @apply text-cyan-400;
 }
 
-.neon:hover {
+.neon:hover,
+.neon:focus-visible {
   animation: neon 2s linear infinite;
 }
 

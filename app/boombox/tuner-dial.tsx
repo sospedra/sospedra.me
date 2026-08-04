@@ -1,5 +1,5 @@
+import css from './boombox.module.css'
 import { type BoomboxState, MAX_GUESSES, type Song } from './engine'
-import css from './tuner-dial.module.css'
 
 /* seven FM stops, one per attempt state 0..6; the needle parks on them */
 const FM_STOPS = ['88', '91', '94', '98', '102', '105', '108']

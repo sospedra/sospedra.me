@@ -1,4 +1,3 @@
-import type { Route } from 'next'
 import { SITE_URL } from '../../services/site.ts'
 import { ANIMATIONS } from './console-art.ts'
 import { entriesAt, joinPath, resolvePath } from './console-path.ts'
@@ -25,7 +24,6 @@ export type Effect =
   | { kind: 'hacker' }
   | { kind: 'animate'; frames: string[] }
   | { kind: 'toggle-audio' }
-  | { kind: 'navigate'; href: Route }
 
 export type ShellResult = { output: Output[]; cwd: string[]; effect?: Effect }
 
@@ -42,7 +40,6 @@ export const HELP = [
   ['pwd', 'print the working directory'],
   ['open <path|code>', 'launch an asset or short link'],
   ['url <path|code>', 'print and copy the canonical url'],
-  ['goto <route>', 'steer the browser to a site route'],
   ['links', 'the short-link registry'],
   ['hacker', 'look busy · any key hacks, esc bails'],
   ['animate --<name>', 'play an ascii loop · --list for names'],
@@ -50,29 +47,6 @@ export const HELP = [
   ['clear', 'wipe the phosphor (alias: cls)'],
   ['exit', 'close the session'],
 ] as const
-
-export const ROUTES = [
-  ['home', '/'],
-  ['about', '/about'],
-  ['bazaar', '/bazaar'],
-  ['boombox', '/boombox'],
-  ['camera', '/camera'],
-  ['crosswords', '/crosswords'],
-  ['game-of-life', '/game-of-life'],
-  ['games', '/games'],
-  ['manual', '/manual'],
-  ['meridian', '/meridian'],
-  ['papers', '/papers'],
-  ['recycle-bin', '/recycle-bin'],
-  ['rubiks', '/rubiks'],
-  ['snake', '/snake'],
-  ['travel', '/travel'],
-  ['uses', '/uses'],
-  ['videoclub', '/videoclub'],
-  ['w98', '/w98'],
-] as const satisfies ReadonlyArray<readonly [string, Route]>
-
-type RouteEntry = (typeof ROUTES)[number] | readonly [string, Route]
 
 const HOME: string[] = []
 
@@ -197,37 +171,6 @@ const hacker: Command = (ctx) =>
 
 const audio: Command = (ctx) => stay(ctx, [], { kind: 'toggle-audio' })
 
-const navigateRoute = (ctx: ShellContext, route: RouteEntry): ShellResult => {
-  const [name, href] = route
-  return stay(ctx, [text(`Routing signal to ${name.toUpperCase()}...`)], {
-    kind: 'navigate',
-    href,
-  })
-}
-
-const goto: Command = (ctx, args) => {
-  const raw = args[0]
-  if (!raw) {
-    return stay(ctx, [
-      text('Usage: GOTO <route>', 'dim'),
-      text(ROUTES.map(([name]) => name).join('  ')),
-    ])
-  }
-
-  const trimmed = raw.startsWith('/') ? raw.slice(1) : raw
-  const query = trimmed === '' ? 'home' : trimmed.toLowerCase()
-  const route = ROUTES.find(([name]) => name === query)
-  if (!route) return stay(ctx, [fault(`No route named — ${raw}`)])
-  return navigateRoute(ctx, route)
-}
-
-const ROUTE_WORDS: Record<string, Command> = Object.fromEntries(
-  ROUTES.map((route) => [
-    route[0],
-    (ctx: ShellContext) => navigateRoute(ctx, route),
-  ]),
-)
-
 const animate: Command = (ctx, args) => {
   const names = Object.keys(ANIMATIONS).sort()
   const flag = args.find((value) => value.startsWith('--'))?.slice(2)
@@ -248,10 +191,6 @@ const animate: Command = (ctx, args) => {
 }
 
 const COMMANDS: Record<string, Command> = {
-  ...ROUTE_WORDS,
-  tapes: (ctx) => navigateRoute(ctx, ['tapes', '/videoclub']),
-  cube: (ctx) => navigateRoute(ctx, ['cube', '/rubiks']),
-  goto,
   help,
   man: help,
   ls,
