@@ -11,7 +11,7 @@ import {
 
 const challenge = JSON.parse(
   readFileSync(
-    new URL('../../repo/geo/challenges/2026-07-27.json', import.meta.url),
+    new URL('./fixtures/run-variants-challenge.json', import.meta.url),
     'utf8',
   ),
 ) as DailyGeoChallenge
