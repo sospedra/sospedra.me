@@ -3,8 +3,10 @@ import { test } from 'node:test'
 import {
   configKey,
   decodeAccount,
+  decodePendingMigrationV1,
   effectiveConfig,
   encodeAccount,
+  encodePendingMigrationV1,
 } from '../src/protocol/state.ts'
 
 test('account roundtrip', () => {
@@ -28,5 +30,26 @@ test('config key bytes', () => {
   assert.equal(
     new TextDecoder().decode(configKey('fee_basis_points')),
     'config/fee_basis_points',
+  )
+})
+
+test('pending migration encode rejects present=0 with non-empty migration', () => {
+  assert.throws(() =>
+    encodePendingMigrationV1({ present: 0, migration: new Uint8Array([1]) }),
+  )
+})
+
+test('pending migration decode rejects present=0 with non-empty migration', () => {
+  const valid = encodePendingMigrationV1({
+    present: 1,
+    migration: new Uint8Array([1]),
+  })
+  const tampered = new Uint8Array([0, 0, ...valid.slice(2)])
+  assert.throws(() => decodePendingMigrationV1(tampered))
+})
+
+test('pending migration encode rejects invalid present value', () => {
+  assert.throws(() =>
+    encodePendingMigrationV1({ present: 2, migration: new Uint8Array() }),
   )
 })
