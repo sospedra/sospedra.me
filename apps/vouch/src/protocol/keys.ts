@@ -15,6 +15,9 @@ export function keypairFromLabel(label: string): Keypair {
 }
 
 export function sign(digest32: Uint8Array, kp: Keypair): Uint8Array {
+  if (digest32.length !== 32) {
+    throw new RangeError(`digest must be 32 bytes, got ${digest32.length}`)
+  }
   return ed25519.sign(digest32, kp.secretKey)
 }
 
@@ -23,5 +26,8 @@ export function verifySig(
   sig: Uint8Array,
   publicKey: Uint8Array,
 ): boolean {
+  if (digest32.length !== 32) {
+    throw new RangeError(`digest must be 32 bytes, got ${digest32.length}`)
+  }
   return ed25519.verify(sig, digest32, publicKey)
 }

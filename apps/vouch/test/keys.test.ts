@@ -27,3 +27,18 @@ test('prng streams deterministically', () => {
   assert.equal(hex(new Prng('s1').bytes(16)), hex(new Prng('s1').bytes(16)))
   assert.notEqual(hex(new Prng('s1').bytes(16)), hex(new Prng('s2').bytes(16)))
 })
+
+test('sign rejects non-32-byte digest', () => {
+  const kp = keypairFromLabel('author-alice')
+  assert.throws(() => sign(new Uint8Array(10), kp), /digest must be 32 bytes/)
+})
+
+test('verifySig rejects non-32-byte digest', () => {
+  const kp = keypairFromLabel('author-alice')
+  const validDigest = hash('author-signing', new Uint8Array([1]))
+  const sig = sign(validDigest, kp)
+  assert.throws(
+    () => verifySig(new Uint8Array(10), sig, kp.publicKey),
+    /digest must be 32 bytes/,
+  )
+})
