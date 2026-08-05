@@ -113,12 +113,12 @@ function renderCheckMark(
   return mark
 }
 
-function startsNewRound(rounds: CheckLog[][], step: number): boolean {
+export function startsNewRound(rounds: CheckLog[][], step: number): boolean {
   const lastEntry = rounds.at(-1)?.at(-1)
   return lastEntry === undefined || step <= lastEntry.step
 }
 
-function groupChecksIntoRounds(checks: CheckLog[]): CheckLog[][] {
+export function groupChecksIntoRounds(checks: CheckLog[]): CheckLog[][] {
   const rounds: CheckLog[][] = []
   for (const check of checks) {
     if (startsNewRound(rounds, check.step)) {
@@ -130,7 +130,7 @@ function groupChecksIntoRounds(checks: CheckLog[]): CheckLog[][] {
   return rounds
 }
 
-function roundOutcomeSuffix(round: CheckLog[]): string {
+export function roundOutcomeSuffix(round: CheckLog[]): string {
   const failure = round.find((check) => !check.pass && !check.skipped)
   if (failure) {
     return `failed at step ${failure.step} (${failure.error ?? failure.name})`
