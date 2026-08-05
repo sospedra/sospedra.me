@@ -1,0 +1,42 @@
+.compass {
+  position: fixed;
+  top: 118px;
+  right: 26px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--cy-faint);
+  border-radius: 50%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(3 6 4 / 40%);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.45s,
+    visibility 0.45s;
+  pointer-events: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.compass[data-show="1"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.compass svg {
+  width: 32px;
+  height: 32px;
+}
+
+@media (max-width: 600px) {
+  .compass {
+    top: 96px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+  }
+}

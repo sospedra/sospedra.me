@@ -1,0 +1,113 @@
+.peak {
+  position: fixed;
+  z-index: 2;
+  transform: translate(-50%, -100%);
+  color: var(--cy);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-align: center;
+  pointer-events: none;
+  white-space: nowrap;
+  text-shadow: 0 0 6px rgb(168 232 176 / 45%);
+}
+
+.peak small {
+  display: block;
+  color: var(--cy-dim);
+  letter-spacing: 0.1em;
+  margin-top: 1px;
+  text-shadow: none;
+}
+
+.peak::after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 30px;
+  margin: 5px auto 0;
+  background: var(--cy-dim);
+}
+
+.peakHot {
+  composes: peak;
+  color: var(--amber);
+  text-shadow: 0 0 8px rgb(255 154 60 / 50%);
+}
+
+.peakHot::after {
+  background: rgb(255 154 60 / 60%);
+}
+
+.marker {
+  position: fixed;
+  z-index: 3;
+  transform: translate(-50%, -100%);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: inherit;
+  text-transform: uppercase;
+}
+
+.city {
+  composes: marker;
+  color: var(--cy-dim);
+}
+
+.city:hover {
+  color: var(--cy);
+}
+
+.city::after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 16px;
+  margin: 3px auto 0;
+  background: var(--cy-faint);
+}
+
+.dest {
+  composes: marker;
+  color: rgb(255 154 60 / 55%);
+}
+
+.dest:hover {
+  color: var(--amber);
+}
+
+.dest::after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 14px;
+  margin: 3px auto 0;
+  background: rgb(255 154 60 / 30%);
+}
+
+.body {
+  position: fixed;
+  z-index: 2;
+  transform: translate(-50%, -140%);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.sunBody {
+  composes: body;
+  color: rgb(255 220 170 / 75%);
+}
+
+.moonBody {
+  composes: body;
+  color: rgb(195 218 204 / 60%);
+}

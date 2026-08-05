@@ -1,0 +1,130 @@
+.panel {
+  position: fixed;
+  z-index: 4;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  width: min(800px, 94vw);
+  color: var(--cy);
+  text-transform: uppercase;
+  user-select: none;
+  pointer-events: none;
+  text-align: center;
+}
+
+.stepRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.btn {
+  pointer-events: auto;
+  background: transparent;
+  color: var(--cy);
+  border: 1px solid var(--cy-faint);
+  padding: 6px 11px;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn:hover {
+  border-color: var(--cy);
+  box-shadow: 0 0 8px rgb(168 232 176 / 35%);
+}
+
+.btnOn {
+  composes: btn;
+  color: var(--amber);
+  border-color: rgb(255 154 60 / 50%);
+}
+
+.dot {
+  pointer-events: auto;
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--cy-dim);
+  cursor: pointer;
+  padding: 4px 1px;
+}
+
+.dotOn {
+  composes: dot;
+  color: var(--amber);
+  text-shadow: 0 0 8px rgb(255 154 60 / 50%);
+}
+
+.stepTitle {
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  text-shadow: 0 0 8px rgb(168 232 176 / 45%);
+}
+
+.caption {
+  margin-top: 6px;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--cy-dim);
+  min-height: 15px;
+}
+
+.exgRow {
+  margin-top: 10px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.exgRow span {
+  font-size: 10px;
+  color: var(--cy-dim);
+  letter-spacing: 0.18em;
+}
+
+.exgSlider {
+  pointer-events: auto;
+  width: 190px;
+  accent-color: #a8e8b0;
+}
+
+@media (max-width: 600px) {
+  .panel {
+    bottom: 10px;
+  }
+
+  .btn,
+  .btnOn {
+    padding: 5px 8px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+
+  .dot,
+  .dotOn {
+    font-size: 10px;
+    padding: 3px 1px;
+  }
+
+  .stepTitle {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+  }
+
+  .caption {
+    font-size: 9px;
+  }
+
+  .exgSlider {
+    width: 130px;
+  }
+}
