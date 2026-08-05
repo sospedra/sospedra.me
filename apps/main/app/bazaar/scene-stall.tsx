@@ -12,6 +12,7 @@ import {
 } from './stalls-manifest'
 
 const HOVER_STEP_MS = 150
+const REVERSE_STEP_MS = 100
 const REST_STEP = -1
 
 const layerZ = (layer: StallLayer) =>
@@ -124,8 +125,10 @@ const stepPose = (
   showPose(layer, index, ctx, step)
   const target = ctx.active ? layer.hover.length - 1 : REST_STEP
   if (step === target) return
-  const next = step + (target > step ? 1 : -1)
-  schedule(ctx.timers, () => stepPose(layer, index, ctx, next), HOVER_STEP_MS)
+  const forward = target > step
+  const next = step + (forward ? 1 : -1)
+  const pace = forward ? HOVER_STEP_MS : REVERSE_STEP_MS
+  schedule(ctx.timers, () => stepPose(layer, index, ctx, next), pace)
 }
 
 const ROLE_DRIVERS: {

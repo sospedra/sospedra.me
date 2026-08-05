@@ -23,14 +23,14 @@ Out: the bus shelter bulb (stays a snap, user call). The brightness lift and glo
 
 - A ref holds the pose step across `active` flips. Value `-1` means rest. Values `0..last` mean hover frame `step` is on screen.
 - Activation walks up from the current step to the last hover frame at 150 ms per step, then holds. From rest it enters at step 0, same as today.
-- Deactivation shows `step - 1` at once, walks down at 150 ms per step, and settles after step 0.
+- Deactivation shows `step - 1` at once, walks down at 100 ms per step, and settles after step 0. The exit paces quicker than the entrance on purpose: a mirrored cadence reads as no reverse at all (user feedback, 2026-08-05).
 - Settle = show prop rests, restart hover-effect frame loops, restart the char idle loop.
 - Re-entry mid-reverse turns around from the current step. Exit mid-greet reverses from the current step.
 - The prop driver skips its rest snap when a reverse is in flight. The settle pass shows the rests instead.
 - Effect layers with a `hover` field defer their loop restart to the settle pass when the scene has a char. No manifest effect uses `hover` today.
 - Reduced motion keeps the instant swap. The reduced branch also sets the ref (`last` when active, `-1` when not), so a mid-session fx-quiet toggle cannot replay a stale reverse.
 
-Timings: full reverse from hold is 450 ms (h3, h2, h1, then idle). This mirrors the 450 ms forward walk. No new assets. No manifest change.
+Timings: full reverse from hold is 300 ms (h3, h2, h1, then idle) against the 450 ms forward walk. No new assets. No manifest change.
 
 ### Door: armed closing phase
 
