@@ -1,0 +1,29 @@
+.node {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* per-regime visibility: each variant hides in the regimes it does not own */
+@container bazaar (max-width: 699.98px) {
+  .hm {
+    display: none;
+  }
+}
+
+@container bazaar (min-width: 700px) and (max-width: 1689.98px) {
+  .hb {
+    display: none;
+  }
+}
+
+@container bazaar (min-width: 1690px) and (max-width: 2559.98px) {
+  .ha {
+    display: none;
+  }
+}
+
+@container bazaar (min-width: 2560px) {
+  .hw {
+    display: none;
+  }
+}

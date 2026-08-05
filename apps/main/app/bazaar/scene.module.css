@@ -1,39 +1,39 @@
 .scene {
-  --m: min(20svh, 10.2vw);
+  --m: min(20cqh, 10.2cqw);
   --hs: 1;
-  --alley-gap: 5svh;
+  --alley-gap: 5cqh;
   /* market meter: derived from the 1248px frame so floors never overflow;
      3 stalls (270u) + gaps + stairs = ~10.5m of content per floor */
-  --mkt-w: min(100vw, calc(1248px + 10svh));
-  --stairs-w: max(calc(var(--mkt-m) * 1.272), 9vw);
+  --mkt-w: min(100cqw, calc(1248px + 10cqh));
+  --stairs-w: max(calc(var(--mkt-m) * 1.272), 9cqw);
   /* outer edges of the two random buildings, for the fg silhouettes */
   --padl-left: calc(
     var(--street-margin) +
     var(--street-shift) +
-    3svh -
-    72.2svh
+    3cqh -
+    72.2cqh
   );
   --padr-right: calc(
     var(--street-margin) -
     var(--street-shift) +
-    17svh -
-    86.4svh
+    17cqh -
+    86.4cqh
   );
-  --mkt-m: min(calc(var(--mkt-w) / 11), 16.5svh);
+  --mkt-m: min(calc(var(--mkt-w) / 11), 16.5cqh);
   /* composition law: per floor, stairs (324 su, fixed) + stalls (1483
      su) form ONE 1807 su group capped at 1440px, with 60px horizontal
      padding around the stall area, centered */
   --su: min(
     calc((1440px - 120px) / 1807),
-    calc((100vw - 136px) / 1807),
-    calc(74svh / 597)
+    calc((100cqw - 136px) / 1807),
+    calc(74cqh / 597)
   );
-  /* A(32.55svh) + gap + CD(53.45svh) centered as one block, then shifted */
-  --street-shift: 5vw;
-  --street-margin: calc((100vw - 109.8svh - var(--alley-gap)) / 2);
+  /* A(32.55cqh) + gap + CD(53.45cqh) centered as one block, then shifted */
+  --street-shift: 5cqw;
+  --street-margin: calc((100cqw - 109.8cqh - var(--alley-gap)) / 2);
   position: relative;
   width: 100%;
-  height: 100svh;
+  height: 100cqh;
   overflow-y: auto;
   overflow-x: clip;
   scroll-snap-type: y proximity;
@@ -49,16 +49,16 @@
   }
 }
 
-@media (max-width: 700px) {
+@container bazaar (max-width: 699.98px) {
   .scene {
-    --m: min(10svh, 13vw);
+    --m: min(10cqh, 13cqw);
     --hs: 2;
   }
 }
 
-@media (min-width: 1024px) {
+@container bazaar (min-width: 1024px) {
   .scene {
-    --stairs-w: max(calc(var(--mkt-m) * 1.7), 15svh);
+    --stairs-w: max(calc(var(--mkt-m) * 1.7), 15cqh);
   }
 }
 
@@ -71,7 +71,7 @@
   display: none;
 }
 
-@media (max-width: 700px) {
+@container bazaar (max-width: 699.98px) {
   .desktopTree {
     display: none;
   }
@@ -82,7 +82,7 @@
 
 .floor {
   position: relative;
-  height: 100svh;
+  height: 100cqh;
   scroll-snap-align: start;
   overflow: hidden;
   transition: filter 0.5s ease;
@@ -90,19 +90,19 @@
 
 .sBus {
   position: absolute;
-  left: calc(var(--street-margin) + var(--street-shift) - 3svh);
-  bottom: 10svh;
-  height: 28.8svh;
+  left: calc(var(--street-margin) + var(--street-shift) - 3cqh);
+  bottom: 10cqh;
+  height: 28.8cqh;
   /* box owns the geometry: both frames fill it identically, no
      width:auto rounding drift between in-flow and absolute images */
   aspect-ratio: 1060 / 1335;
   z-index: 10;
 }
 
-@media (max-width: 700px) {
+@container bazaar (max-width: 699.98px) {
   .sBus {
     left: max(0.5rem, var(--safe-area-left));
-    height: min(28.8svh, 9rem);
+    height: min(28.8cqh, 9rem);
   }
 }
 
@@ -117,7 +117,7 @@
   aspect-ratio: 254 / 1334;
 }
 
-@media (max-width: 700px) {
+@container bazaar (max-width: 699.98px) {
   .sBus > img {
     display: none;
   }
@@ -333,16 +333,16 @@
 .sCar {
   position: absolute;
   left: 0;
-  bottom: -0.5svh;
+  bottom: -0.5cqh;
   z-index: 39;
   pointer-events: none;
-  transform: translateX(-40vw);
+  transform: translateX(-40cqw);
   animation: carDrive 1s cubic-bezier(0.4, 0, 0.6, 0.52) 1.6s both;
 }
 
 @keyframes carDrive {
   to {
-    transform: translateX(110vw);
+    transform: translateX(110cqw);
   }
 }
 
@@ -425,7 +425,7 @@
 
 /* breathing room after the last floor */
 .bottomPad {
-  height: 24svh;
+  height: 24cqh;
   background: #000;
 }
 

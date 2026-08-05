@@ -1,10 +1,20 @@
 /* ---------- street level: gemini extraction kit ---------- */
+/* tiling strips bleed 200px past both edges: the editor nudges them
+   horizontally without exposing a seam; the scene clips the excess */
 .streetBg {
   position: absolute;
-  inset: 0 0 20svh 0;
+  inset: 0 -200px 20cqh;
   background: url("/images/bazaar/street/bg.png") left bottom repeat-x;
   background-size: auto 96%;
   image-rendering: pixelated;
+}
+
+/* the centered composition as one movable unit: buildings, alley
+   cluster, pavement. No z-index, so the children keep stacking in the
+   section context until a translate lands. */
+.sBlock {
+  position: absolute;
+  inset: 0;
 }
 
 /* the lone red tower: the tallest silhouette, appears exactly once.
@@ -12,11 +22,11 @@
 .sTower {
   position: absolute;
   /* right of the bazaar door, deep behind the skyline, tallest peak;
-     art is 317x1510, so width = 64svh * 0.2099 and margin = half */
-  left: 63vw;
-  margin-left: -6.72svh;
-  bottom: 34svh;
-  height: 64svh;
+     art is 317x1510, so width = 64cqh * 0.2099 and margin = half */
+  left: 63cqw;
+  margin-left: -6.72cqh;
+  bottom: 34cqh;
+  height: 64cqh;
   pointer-events: none;
 }
 
@@ -25,7 +35,7 @@
   content: "";
   position: absolute;
   inset: auto 0 0 0;
-  height: 10svh;
+  height: 10cqh;
   background: linear-gradient(
     to top,
     rgb(255 170 220 / 0.34),
@@ -38,8 +48,8 @@
 
 .sFloor {
   position: absolute;
-  inset: auto 0 0 0;
-  height: 20svh;
+  inset: auto -200px 0;
+  height: 20cqh;
   background: url("/images/bazaar/street/floor.png") left bottom repeat-x;
   background-size: auto 100%;
   image-rendering: pixelated;
@@ -50,10 +60,10 @@
 /* alley shadow: darkens the gap from CD's base, fading up over 10u */
 .alleyShade {
   position: absolute;
-  left: calc(var(--street-margin) + var(--street-shift) + 36.5svh);
+  left: calc(var(--street-margin) + var(--street-shift) + 36.5cqh);
   width: var(--alley-gap);
-  bottom: 10svh;
-  height: 10svh;
+  bottom: 10cqh;
+  height: 10cqh;
   background: linear-gradient(to top, rgb(0 0 0 / 0.82), rgb(0 0 0 / 0.98));
   z-index: 1;
   pointer-events: none;
@@ -76,29 +86,29 @@
 /* pads sit in front of A+CD, overlapping the block 1u on each side */
 .sPadL {
   position: absolute;
-  /* right edge = A left edge + 1svh; pad width 52svh * 0.8764 = 45.6svh */
-  left: calc(var(--street-margin) + var(--street-shift) + 3svh - 72.2svh);
-  bottom: 13svh;
-  height: 82.4svh;
+  /* right edge = A left edge + 1cqh; pad width 52cqh * 0.8764 = 45.6cqh */
+  left: calc(var(--street-margin) + var(--street-shift) + 3cqh - 72.2cqh);
+  bottom: 13cqh;
+  height: 82.4cqh;
   z-index: 3;
 }
 
 .sPadR {
   position: absolute;
-  /* left edge = CD right edge - 1svh; pad width 56svh * 0.8764 = 49.1svh */
-  right: calc(var(--street-margin) - var(--street-shift) + 7svh - 86.4svh);
-  bottom: 11svh;
-  height: 98.6svh;
+  /* left edge = CD right edge - 1cqh; pad width 56cqh * 0.8764 = 49.1cqh */
+  right: calc(var(--street-margin) - var(--street-shift) + 7cqh - 86.4cqh);
+  bottom: 11cqh;
+  height: 98.6cqh;
   z-index: 3;
 }
 
 .sA {
   position: absolute;
-  /* right edge = CD left edge - --alley-gap, all in svh so the gap is
-     constant on any viewport: 95vw - CDw(53.45svh) - gap - Aw(32.55svh) */
+  /* right edge = CD left edge - --alley-gap, all in cqh so the gap is
+     constant on any viewport: 95cqw - CDw(53.45cqh) - gap - Aw(32.55cqh) */
   left: calc(var(--street-margin) + var(--street-shift));
-  bottom: 13svh;
-  height: 87.4svh;
+  bottom: 13cqh;
+  height: 87.4cqh;
   z-index: 4;
   filter: brightness(0.8);
 }
@@ -108,8 +118,8 @@
 .sCDWrap {
   position: absolute;
   right: calc(var(--street-margin) - var(--street-shift));
-  bottom: 15svh;
-  height: 46svh;
+  bottom: 15cqh;
+  height: 46cqh;
   aspect-ratio: 1113 / 776;
   z-index: 2;
 }
@@ -147,10 +157,10 @@
 /* neon pink glow spilling out of the alley: rect [50,40] to [70,55] */
 .alleyGlow {
   position: absolute;
-  left: 40vw;
-  top: 50svh;
-  width: 15vw;
-  height: 20svh;
+  left: 40cqw;
+  top: 50cqh;
+  width: 15cqw;
+  height: 20cqh;
   background: radial-gradient(
     ellipse at center,
     rgb(255 60 180 / 0.55),
@@ -166,11 +176,11 @@
 /* the deep-alley sign cluster: on the floor line, centered in the gap */
 .sAlleySigns {
   position: absolute;
-  /* alley center = A left edge + A width (43.8svh) + half gap */
-  left: calc(var(--street-margin) + var(--street-shift) + 46.3svh);
+  /* alley center = A left edge + A width (43.8cqh) + half gap */
+  left: calc(var(--street-margin) + var(--street-shift) + 46.3cqh);
   translate: -50% 0;
-  bottom: 20svh;
-  height: 40svh;
+  bottom: 20cqh;
+  height: 40cqh;
   z-index: 0;
   filter: blur(0.8px);
   pointer-events: none;

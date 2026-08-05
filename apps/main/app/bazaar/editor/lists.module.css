@@ -1,0 +1,164 @@
+/* Outliner rows and catalog cells. Own module, no overrides of the dock
+   base rules: every class here is lower specificity than .dock button
+   and repeats its values, so sheet order cannot change the result. */
+
+/* ---------- outliner ---------- */
+
+.search {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 3px 6px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.groupHead {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0 2px;
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 2px 4px;
+  border: 1px solid transparent;
+  background: none;
+  text-align: left;
+}
+
+.itemRow:hover {
+  border-color: var(--line);
+  background: var(--panel);
+}
+
+.itemRow[data-on] {
+  border-color: var(--amber);
+  background: var(--panel);
+}
+
+.itemGlyph {
+  flex: none;
+  width: 14px;
+  color: var(--dim);
+  text-align: center;
+}
+
+.itemRef {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemMeta {
+  flex: none;
+  color: var(--dim);
+  font-size: 9px;
+}
+
+.itemDots {
+  display: flex;
+  gap: 2px;
+  flex: none;
+}
+
+.itemDot {
+  width: 5px;
+  height: 5px;
+  background: var(--cyan);
+  opacity: 0.75;
+}
+
+.itemDot[data-off] {
+  background: var(--line);
+}
+
+.itemDot[data-fork] {
+  background: var(--amber);
+}
+
+/* ---------- catalog ---------- */
+
+.kindTabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.cellGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.cell {
+  padding: 4px 3px 2px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  cursor: grab;
+  touch-action: none;
+}
+
+.cell:hover {
+  border-color: var(--cyan);
+}
+
+.cell img {
+  width: 100%;
+  height: 56px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.cellName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--dim);
+  font-size: 8px;
+  text-align: center;
+}
+
+.swatchRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+
+.swatch {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line);
+  cursor: grab;
+}
+
+.swatch:hover {
+  border-color: var(--cyan);
+}
+
+.catalogHint {
+  margin-top: 8px;
+  color: var(--dim);
+  font-size: 9px;
+}
+
+.shelfTab {
+  padding: 1px 6px;
+  font-size: 9px;
+  color: var(--dim);
+}
+
+.shelfTab[data-on] {
+  border-color: var(--amber);
+  color: var(--amber);
+}

@@ -6,9 +6,11 @@ import { drop, find, map, pipe } from 'es-toolkit/fp'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'services/link'
 import css from './bazaar.module.css'
-import { STALL_TUNE } from './decor-manifest'
+import { STALL_TUNE } from './decor'
+import HostDecor from './host-decor'
 import SceneStall from './scene-stall'
 import { sfx } from './sounds'
+import { stageBox } from './stage'
 import scene from './stall-box.module.css'
 import { DIMS, STALLS } from './stall-catalog'
 import {
@@ -17,7 +19,6 @@ import {
   GamesDialogs,
   VIEWPORT_GUTTER,
 } from './stall-dialog'
-import StallProps from './stall-props'
 import type { BazaarStallId } from './stalls-manifest'
 
 const MOBILE_BREAKPOINT_PX = 700
@@ -58,20 +59,20 @@ export default function Stall({ id }: { id: BazaarStallId }) {
     const wrap = wrapRef.current
     if (!wrap) return
     const rect = wrap.getBoundingClientRect()
-    const mobile = window.innerWidth <= MOBILE_BREAKPOINT_PX
+    const stage = stageBox()
+    const anchorX = (rect.left + rect.width / 2 - stage.left) / stage.scale
+    const anchorY = (rect.top - stage.top) / stage.scale
+    const mobile = stage.width < MOBILE_BREAKPOINT_PX
     const size = mobile ? DIALOG_SIZE.mobile : DIALOG_SIZE.desktop
-    const maxWidth = Math.min(
-      size.maxWidth,
-      window.innerWidth * size.viewportShare,
-    )
+    const maxWidth = Math.min(size.maxWidth, stage.width * size.viewportShare)
     const half = maxWidth / 2
     setDialogPosition({
       left: clamp(
-        rect.left + rect.width / 2,
+        anchorX,
         half + VIEWPORT_GUTTER,
-        window.innerWidth - half - VIEWPORT_GUTTER,
+        stage.width - half - VIEWPORT_GUTTER,
       ),
-      top: rect.top,
+      top: anchorY,
     })
   }, [])
 
@@ -238,7 +239,7 @@ export default function Stall({ id }: { id: BazaarStallId }) {
         <SceneStall id={id} active={active} />
         <div className={scene.glowWash} />
       </Link>
-      <StallProps id={id} />
+      <HostDecor host={`stall:${id}`} />
       {id === 'games' ? (
         <GamesDialogs
           spec={spec}

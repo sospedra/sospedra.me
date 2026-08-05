@@ -1,7 +1,4 @@
-import { GLOW_COLORS } from './decor-manifest'
-
-export const DECO = '/images/bazaar/deco'
-export const ARCH = '/images/bazaar/arch'
+import { GLOW_COLORS } from '../decor'
 
 /* structural pieces spawnable as loose props */
 export const ARCH_INVENTORY = [
@@ -43,32 +40,12 @@ export const WALL_SKINS = [
   'wf-wood-c',
 ] as const
 
-export type SpawnKind = 'deco' | 'arch' | 'glow' | 'shadow'
-
-export type SpawnItem = {
-  key: string
-  kind: SpawnKind
-  ref: string
-  target: string
-  x: number
-  y: number
-  w: number
-  h: number
-  z: number
-}
-
 /* z law: wf 0 · stairs 1 · props 2+ · stalls 3 · glows 4+ · seps 5 */
-export const SPAWN_DEFAULTS: Record<
-  SpawnKind,
-  { w: number; h: number; z: number }
-> = {
-  deco: { w: 0, h: 160, z: 2 },
-  arch: { w: 0, h: 300, z: 2 },
-  glow: { w: 220, h: 220, z: 4 },
-  shadow: { w: 220, h: 110, z: 4 },
-}
+export const SPAWN_Z = { deco: 2, arch: 2, glow: 4, shadow: 4 } as const
 
-/* spawn heights in su, baked from the editor session (the sizes
+export const SPOT_DEFAULT = { w: 220, h: 220 }
+
+/* spawn heights in su, baked from the editor sessions (the sizes
    that made each prop's art-pixel grain sit right in the scene) */
 export const SPAWN_H: Record<string, number> = {
   'beam-v': 597,
@@ -136,6 +113,8 @@ export const SPAWN_H: Record<string, number> = {
 
 /* unknowns: the batch renders ~400px tall; median approved ratio is ~2.9 */
 export const FALLBACK_PX_PER_SU = 2.9
+
+export const SPAWN_H_CAP = 420
 
 export const GLOW_KEYS = Object.keys(GLOW_COLORS).filter(
   (key) => key !== 'black',

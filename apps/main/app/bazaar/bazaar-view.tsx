@@ -2,20 +2,23 @@
 
 import cn from 'clsx'
 import { sumBy } from 'es-toolkit'
+import dynamic from 'next/dynamic'
 import { Fragment, useRef, useState, useSyncExternalStore } from 'react'
 import SpriteCar from 'services/car/car'
 import Link from 'services/link'
 import Shell from 'services/shell'
 import { prefersQuietFx } from 'services/theme'
 import css from './bazaar.module.css'
-import LayoutEditor from './layout-editor'
+import HostDecor from './host-decor'
 import Stall from './market-stall'
 import scene from './scene.module.css'
 import { sfx, soundPreference } from './sounds'
+import Stage from './stage'
 import { DIMS } from './stall-catalog'
-import { StairsProps } from './stall-props'
 import type { BazaarStallId } from './stalls-manifest'
 import street from './street-backdrop.module.css'
+
+const Editor = dynamic(() => import('./editor/editor'), { ssr: false })
 
 const STREET = '/images/bazaar/street'
 
@@ -31,46 +34,56 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
         aria-hidden
         data-edit-id='street:tower'
       />
-      <div className={street.streetBg} />
-      <div className={street.sAlleySigns} aria-hidden>
-        <img src={`${STREET}/alley-signs-1.png`} alt='' />
-        <img src={`${STREET}/alley-signs-2.png`} alt='' data-alt='' />
-      </div>
-      <div className={street.alleyShade} aria-hidden />
-      <img src={`${STREET}/building-pad.png`} alt='' className={street.sPadL} />
-      <img src={`${STREET}/building-pad.png`} alt='' className={street.sPadR} />
-      <img src={`${STREET}/building-a.png`} alt='' className={street.sA} />
-      <div className={street.sCDWrap}>
-        <img
-          src={`${STREET}/building-cd.png`}
-          alt=''
-          className={street.sCDImg}
-        />
-        <div className={scene.sNeon} aria-hidden>
-          <img src={`${STREET}/neon-off.png`} alt='' />
-          <div className={scene.sNeonOn}>
-            <img src={`${STREET}/neon.png`} alt='Bazaar' />
-          </div>
+      <div className={street.streetBg} data-edit-id='street:bg' />
+      <div className={street.sBlock} data-edit-id='street:block'>
+        <div className={street.sAlleySigns} aria-hidden>
+          <img src={`${STREET}/alley-signs-1.png`} alt='' />
+          <img src={`${STREET}/alley-signs-2.png`} alt='' data-alt='' />
         </div>
-        <button
-          type='button'
-          className={cn(scene.hit, scene.sDoor)}
-          data-label='door'
-          data-edit-id='street:door'
-          aria-label='enter the market'
-          onMouseEnter={() => sfx.hover()}
-          onClick={() => {
-            sfx.door()
-            setTimeout(onDoor, DOOR_OPEN_MS)
-          }}
-        >
-          <img src={`${STREET}/door.png`} alt='' />
-          <img src={`${STREET}/door-open-1.png`} alt='' data-frame='1' />
-          <img src={`${STREET}/door-open-2.png`} alt='' data-frame='2' />
-        </button>
+        <div className={street.alleyShade} aria-hidden />
+        <img
+          src={`${STREET}/building-pad.png`}
+          alt=''
+          className={street.sPadL}
+        />
+        <img
+          src={`${STREET}/building-pad.png`}
+          alt=''
+          className={street.sPadR}
+        />
+        <img src={`${STREET}/building-a.png`} alt='' className={street.sA} />
+        <div className={street.sCDWrap}>
+          <img
+            src={`${STREET}/building-cd.png`}
+            alt=''
+            className={street.sCDImg}
+          />
+          <div className={scene.sNeon} aria-hidden>
+            <img src={`${STREET}/neon-off.png`} alt='' />
+            <div className={scene.sNeonOn}>
+              <img src={`${STREET}/neon.png`} alt='Bazaar' />
+            </div>
+          </div>
+          <button
+            type='button'
+            className={cn(scene.hit, scene.sDoor)}
+            data-label='door'
+            data-edit-id='street:door'
+            aria-label='enter the market'
+            onMouseEnter={() => sfx.hover()}
+            onClick={() => {
+              sfx.door()
+              setTimeout(onDoor, DOOR_OPEN_MS)
+            }}
+          >
+            <img src={`${STREET}/door.png`} alt='' />
+            <img src={`${STREET}/door-open-1.png`} alt='' data-frame='1' />
+            <img src={`${STREET}/door-open-2.png`} alt='' data-frame='2' />
+          </button>
+        </div>
+        <div className={street.alleyGlow} aria-hidden />
+        <div className={street.sFloor} />
       </div>
-      <div className={street.alleyGlow} aria-hidden />
-      <div className={street.sFloor} />
       <div className={scene.sCar} aria-hidden>
         <div className={scene.sCarStretch}>
           <div className={scene.sCarSquash}>
@@ -84,19 +97,21 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
         url='/'
         className={cn(scene.hit, scene.sBus)}
         data-label='bus'
+        data-edit-id='street:bus'
         aria-label='bus stop: exit to the city'
         onMouseEnter={() => sfx.hover()}
         onClick={() => sfx.bus()}
       >
         <img src={`${STREET}/bus.png`} alt='' />
         <img src={`${STREET}/bus-on.png`} alt='' data-on='' />
-        <div className={scene.sBusPost}>
+        <div className={scene.sBusPost} data-edit-id='street:bus-post'>
           <img src={`${STREET}/bus-post.png`} alt='' />
           <div className={scene.sBusPostOn}>
             <img src={`${STREET}/bus-post-on.png`} alt='' />
           </div>
         </div>
       </Link>
+      <HostDecor host='street' />
     </section>
   )
 }
@@ -126,7 +141,7 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
   const totalWidth = sumBy(spec.stalls, (id) => DIMS[id].width)
   const stairs = (
     <div className={css.stairs} aria-hidden data-edit-id={`stairs:${index}`}>
-      <StairsProps floor={index} />
+      <HostDecor host={`stairs:${index}`} />
     </div>
   )
   const band = (
@@ -162,6 +177,7 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
       )}
       {spec.stairsRight ? band : stairs}
       {spec.stairsRight ? stairs : band}
+      <HostDecor host={`floor:${index}`} />
     </section>
   )
 }
@@ -176,7 +192,11 @@ function MobileMarketFloor({
   const minAspectRatio = Math.min(
     ...spec.stalls.map((id) => DIMS[id].width / DIMS[id].height),
   )
-  const sm = <div className={css.sm} aria-hidden />
+  const sm = (
+    <div className={css.sm} aria-hidden data-sm={index}>
+      <HostDecor host={`sm:${index}`} />
+    </div>
+  )
   const stack = (
     <div className={css.stack} data-stage=''>
       <div className={css.deckM} aria-hidden data-edit-id={`deck:${index}`} />
@@ -192,10 +212,12 @@ function MobileMarketFloor({
       className={cn(css.mfloor, spec.smRight && css.mfloorR)}
       data-floor=''
       data-market-index={index}
+      data-mfloor={index}
       style={{ '--armin': minAspectRatio } as React.CSSProperties}
     >
       {spec.smRight ? stack : sm}
       {spec.smRight ? sm : stack}
+      <HostDecor host={`mfloor:${index}`} />
     </section>
   )
 }
@@ -227,72 +249,78 @@ export default function BazaarView() {
 
   return (
     <Shell>
-      <div
-        className={css.scene}
-        ref={sceneRef}
-        data-hitbox={hitbox || undefined}
-      >
-        <h1 className='sr-only'>Bazaar</h1>
-        <div className={scene.hud}>
-          <button
-            type='button'
-            className={scene.hudBtn}
-            aria-pressed={sound}
-            onClick={toggleSound}
-          >
-            SOUND <span aria-hidden='true'>{sound ? 'ON' : 'OFF'}</span>
-          </button>
-          <button
-            type='button'
-            className={scene.hudBtn}
-            aria-pressed={hitbox}
-            onClick={() => setHitbox((previous) => !previous)}
-          >
-            HITBOX <span aria-hidden='true'>{hitbox ? 'ON' : 'OFF'}</span>
-          </button>
-          <button
-            type='button'
-            className={scene.hudBtn}
-            aria-pressed={editor}
-            onClick={() => setEditor((previous) => !previous)}
-          >
-            EDITOR <span aria-hidden='true'>{editor ? 'ON' : 'OFF'}</span>
-          </button>
-        </div>
-        <LayoutEditor enabled={editor} />
-
-        <div className={css.desktopTree}>
-          <div className={cn(scene.scene, css.streetHost)}>
-            <StreetFloor onDoor={scrollToMarket} />
+      <Stage editing={editor}>
+        <div
+          className={css.scene}
+          ref={sceneRef}
+          data-hitbox={hitbox || undefined}
+        >
+          <h1 className='sr-only'>Bazaar</h1>
+          <div className={scene.hud}>
+            <button
+              type='button'
+              className={scene.hudBtn}
+              aria-pressed={sound}
+              onClick={toggleSound}
+            >
+              SOUND <span aria-hidden='true'>{sound ? 'ON' : 'OFF'}</span>
+            </button>
+            <button
+              type='button'
+              className={scene.hudBtn}
+              aria-pressed={hitbox}
+              onClick={() => setHitbox((previous) => !previous)}
+            >
+              HITBOX <span aria-hidden='true'>{hitbox ? 'ON' : 'OFF'}</span>
+            </button>
+            <button
+              type='button'
+              className={scene.hudBtn}
+              aria-pressed={editor}
+              onClick={() => setEditor((previous) => !previous)}
+            >
+              EDITOR <span aria-hidden='true'>{editor ? 'ON' : 'OFF'}</span>
+            </button>
           </div>
-          {DESKTOP_FLOORS.map((spec, i) => (
-            <Fragment key={spec.stalls[0]}>
-              <div
-                className={css.sep}
-                data-bazaar-sep={i}
-                data-edit-id={`sep:${i}`}
-              />
-              <MarketFloor spec={spec} index={i} />
-            </Fragment>
-          ))}
-          <div className={css.sep} data-bazaar-sep={3} data-edit-id='sep:3' />
-          <div className={css.bottomPad} />
-        </div>
 
-        <div className={css.mobileTree}>
-          <div className={cn(scene.scene, css.streetHost)}>
-            <StreetFloor onDoor={scrollToMarket} />
+          <div className={css.desktopTree}>
+            <div className={cn(scene.scene, css.streetHost)}>
+              <StreetFloor onDoor={scrollToMarket} />
+            </div>
+            {DESKTOP_FLOORS.map((spec, i) => (
+              <Fragment key={spec.stalls[0]}>
+                <div
+                  className={css.sep}
+                  data-bazaar-sep={i}
+                  data-edit-id={`sep:${i}`}
+                >
+                  <HostDecor host={`sep:${i}`} />
+                </div>
+                <MarketFloor spec={spec} index={i} />
+              </Fragment>
+            ))}
+            <div className={css.sep} data-bazaar-sep={3} data-edit-id='sep:3'>
+              <HostDecor host='sep:3' />
+            </div>
+            <div className={css.bottomPad} />
           </div>
-          {MOBILE_FLOORS.map((spec, i) => (
-            <Fragment key={spec.stalls[0]}>
-              <div className={css.sepM} />
-              <MobileMarketFloor spec={spec} index={i} />
-            </Fragment>
-          ))}
-          <div className={css.sepM} />
-          <div className={css.bottomPad} />
+
+          <div className={css.mobileTree}>
+            <div className={cn(scene.scene, css.streetHost)}>
+              <StreetFloor onDoor={scrollToMarket} />
+            </div>
+            {MOBILE_FLOORS.map((spec, i) => (
+              <Fragment key={spec.stalls[0]}>
+                <div className={css.sepM} />
+                <MobileMarketFloor spec={spec} index={i} />
+              </Fragment>
+            ))}
+            <div className={css.sepM} />
+            <div className={css.bottomPad} />
+          </div>
         </div>
-      </div>
+        {editor && <Editor />}
+      </Stage>
     </Shell>
   )
 }

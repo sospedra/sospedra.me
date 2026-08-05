@@ -6,7 +6,7 @@
   translate: calc(-50% + var(--dialog-shift-x))
     calc(-100% - 14px + var(--dialog-shift-y));
   width: max-content;
-  max-width: min(300px, 76vw);
+  max-width: min(300px, 76cqw);
   z-index: 2147483000;
   padding: 10px 12px;
   border: 2px solid #f2f2f2;
@@ -60,7 +60,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: min(300px, calc(100vw - 16px));
+  width: min(300px, calc(100cqw - 16px));
   box-sizing: border-box;
   pointer-events: auto;
   translate: calc(-50% + var(--dialog-shift-x))
@@ -113,9 +113,9 @@
   pointer-events: none;
 }
 
-@media (max-width: 700px) {
+@container bazaar (max-width: 699.98px) {
   .dialog {
-    max-width: min(240px, 62vw);
+    max-width: min(240px, 62cqw);
   }
 }
 

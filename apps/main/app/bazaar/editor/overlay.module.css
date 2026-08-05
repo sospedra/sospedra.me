@@ -1,0 +1,117 @@
+/* Canvas chrome: portaled to the body, so it measures in viewport px
+   and never inherits the stage transform. */
+
+.selRing {
+  position: fixed;
+  z-index: 2147482000;
+  outline: 1px solid rgb(255 210 107 / 0.5);
+  pointer-events: none;
+}
+
+.bracket {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 0 solid #ffd26b;
+}
+
+.bracket[data-c="tl"] {
+  top: -2px;
+  left: -2px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+
+.bracket[data-c="tr"] {
+  top: -2px;
+  right: -2px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+}
+
+.bracket[data-c="bl"] {
+  bottom: -2px;
+  left: -2px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+}
+
+.bracket[data-c="br"] {
+  bottom: -2px;
+  right: -2px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+}
+
+.hoverRing {
+  position: fixed;
+  z-index: 2147481999;
+  outline: 1px dashed rgb(55 247 224 / 0.9);
+  outline-offset: 2px;
+  pointer-events: none;
+}
+
+.hostRing {
+  position: fixed;
+  z-index: 2147481998;
+  outline: 1px dashed rgb(55 247 224 / 0.7);
+  outline-offset: -1px;
+  background: rgb(55 247 224 / 0.06);
+  pointer-events: none;
+}
+
+.hostRing span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0 4px;
+  background: #06070d;
+  color: #37f7e0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 9px;
+}
+
+.handle {
+  position: fixed;
+  z-index: 2147482001;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border: 1.5px solid #ffd26b;
+  background: #06070d;
+  touch-action: none;
+}
+
+.handle:hover {
+  background: #ffd26b;
+}
+
+.ghost {
+  position: fixed;
+  z-index: 2147482002;
+  translate: -50% -50%;
+  height: 72px;
+  image-rendering: pixelated;
+  opacity: 0.85;
+  outline: 1px dashed rgb(55 247 224 / 0.8);
+  pointer-events: none;
+}
+
+/* ---------- stage-side editing affordances ---------- */
+
+:global([data-bazaar-editing]) :global([data-edit-id]) {
+  outline: 1px dashed rgb(55 247 224 / 0.3);
+  outline-offset: 1px;
+  cursor: move;
+  pointer-events: auto;
+  user-select: none;
+}
+
+:global([data-bazaar-editing]) :global([data-edit-id]):hover {
+  outline-color: rgb(55 247 224 / 0.85);
+}
+
+:global([data-bazaar-editing][data-anchor-pick]),
+:global([data-bazaar-editing][data-anchor-pick]) :global([data-edit-id]) {
+  cursor: crosshair;
+}

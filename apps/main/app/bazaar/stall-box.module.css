@@ -27,9 +27,9 @@
   pointer-events: none;
 }
 
-@media (max-width: 700px) {
+@container bazaar (max-width: 699.98px) {
   .stallWrap {
-    width: min(calc(43svh * var(--ar)), 74vw);
+    width: min(calc(43cqh * var(--ar)), 74cqw);
     height: auto;
     aspect-ratio: var(--ar);
     margin-bottom: 0;

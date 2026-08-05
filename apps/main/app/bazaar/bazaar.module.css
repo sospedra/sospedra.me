@@ -1,28 +1,62 @@
 /* The LAYOUT_HANDOFF system.
-   Street level + stall internals + dialogs + editor chrome come from
-   scene.module.css (imported by the view); THIS file owns only the
-   validated layout: su law, regimes A/B, mobile SM floors. */
+   Street level + stall internals + dialogs come from scene.module.css
+   (imported by the view); THIS file owns the validated layout: the stage,
+   the su law, regimes M/B/A/W, mobile SM floors.
+
+   Stage law: the scene renders inside a stage capped at 3840px; wider
+   viewports letterbox with black bars. Container queries against the
+   stage replace viewport media queries, so the editor can simulate any
+   stage size in place. Regimes: M <700 · B 700-1689 · A 1690-2559 ·
+   W 2560+ (growth stops, walls extend across the flanks). */
+
+.letterbox {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: #000;
+}
+
+/* keep the reserve in sync with DOCK_W in stage.tsx */
+.letterbox[data-editing] {
+  padding-right: 324px;
+}
+
+/* flex: none is load-bearing: the editor's simulated widths exceed the
+   room, and a shrinkable item would collapse back to it */
+.stage {
+  position: relative;
+  flex: none;
+  width: min(100%, 3840px);
+  height: 100svh;
+  container: bazaar / size;
+  transform-origin: top center;
+}
 
 .scene {
-  /* THE knob: px per sim unit at the cap */
+  /* THE knob: px per sim unit at the 1690px reference */
   --su-cap: 0.9;
-  --vstar: 1690; /* keep in sync with the regime-A media query */
+  --vstar: 1690; /* keep in sync with the regime-A container query */
   /* S soft crop ramp, 1200 -> 700: reclaimed width grows stalls */
-  --shift: clamp(0px, (1200px - 100vw) * 0.132, 66px);
+  --shift: clamp(0px, (1200px - 100cqw) * 0.132, 66px);
+  /* su grows with the stage up to the 2560 cap; the height guard keeps
+     one floor + one sep (822 su) inside 95% of the stage height */
   --su: min(
-    calc(var(--su-cap) * 1px),
-    calc((100vw + var(--shift)) * var(--su-cap) / var(--vstar))
+    calc(2560px * var(--su-cap) / var(--vstar)),
+    calc((100cqw + var(--shift)) * var(--su-cap) / var(--vstar)),
+    calc(95cqh / 822)
   );
   --s-w: calc(var(--su) * 324);
   --floor-h: calc(var(--su) * 597);
-  --sm-h: 75svh;
+  --sm-h: 75cqh;
   --sm-ar: 0.464; /* measured: arch/sm.png trim 705x1518 */
   --sm-split: 0.497; /* measured deck walk line, row 755 of 1518 */
-  --mfloor-h: min(var(--sm-h), 100svh);
+  --mfloor-h: min(var(--sm-h), 100cqh);
   --sm-w: calc(var(--mfloor-h) * var(--sm-ar));
   position: relative;
   width: 100%;
-  height: 100svh;
+  height: 100%;
   overflow-y: auto;
   overflow-x: clip;
   background: var(--color-bg-void);
@@ -43,12 +77,12 @@
    The wrapper carries the .scene class for the vars; these overrides
    turn off its scroll shell so it nests inside the page scroller. */
 .scene .streetHost {
-  height: 100svh;
+  height: 100cqh;
   overflow: visible;
   scroll-snap-type: none;
 }
 
-@media (max-width: 699px) {
+@container bazaar (max-width: 699.98px) {
   .desktopTree {
     display: none;
   }
@@ -68,7 +102,7 @@
   height: var(--floor-h);
   /* n+1 equal gaps, trailing gap included via padding on the stall side */
   --g: calc(
-    (100vw + var(--shift) - var(--s-w) - var(--su) * var(--sum)) /
+    (100cqw + var(--shift) - var(--s-w) - var(--su) * var(--sum)) /
     (var(--n) + 1)
   );
   column-gap: var(--g);
@@ -94,14 +128,14 @@
 
 /* editor-dimmable wall veil: spans the WF wall, stops above the walkway
    strip (177 of the tile's 955 rows = 110.65 of 597 su); opacity is the
-   knob, 0 at rest. Doubles as the viewport-left anchor target. */
+   knob, 0 at rest. Doubles as the stage-left anchor target. */
 .wallDim {
   position: absolute;
   z-index: 0;
   top: 0;
   bottom: calc(var(--su) * 110.65);
   left: calc(-1 * var(--ml, 0px));
-  width: 100vw;
+  width: 100cqw;
   background: #000;
   opacity: 0;
   pointer-events: none;
@@ -213,14 +247,17 @@
   transform: scaleX(-1);
 }
 
-/* regime A: the 1400px container exists, S hangs outside it */
-@media (min-width: 1690px) {
+/* regime A: the capped band exists, S hangs outside it. The band is
+   1400px at the 0.9 reference su (1555.556 su), so the whole composition
+   scales with su and freezes at the 2560 cap: regime W's flanks. */
+@container bazaar (min-width: 1690px) {
   .floor,
   .floorR {
-    --gc: calc((1400px - var(--su) * var(--sum)) / (var(--n) + 1));
-    --group: calc(var(--s-w) + var(--gc) + 1400px);
-    /* centered group; pins the container edge first, S crops on its own side */
-    --ml: min(calc((100vw - var(--group)) / 2), calc(100vw - var(--group)));
+    --band-w: calc(var(--su) * 1555.556);
+    --gc: calc((var(--band-w) - var(--su) * var(--sum)) / (var(--n) + 1));
+    --group: calc(var(--s-w) + var(--gc) + var(--band-w));
+    /* centered group; pins the band edge first, S crops on its own side */
+    --ml: min(calc((100cqw - var(--group)) / 2), calc(100cqw - var(--group)));
     width: max-content;
     column-gap: var(--gc);
     padding: 0;
@@ -229,9 +266,9 @@
     isolation: isolate;
   }
   .floorR {
-    --ml: max(calc((100vw - var(--group)) / 2), 0px);
+    --ml: max(calc((100cqw - var(--group)) / 2), 0px);
   }
-  /* the floor box is max-content; the WF wall still spans the viewport */
+  /* the floor box is max-content; the WF wall still spans the stage */
   .floor::before {
     content: "";
     position: absolute;
@@ -239,7 +276,7 @@
     top: 0;
     bottom: 0;
     left: calc(-1 * var(--ml));
-    width: 100vw;
+    width: 100cqw;
     background-image: var(--wf);
     background-size: calc(var(--su) * 300) calc(var(--su) * 597);
     background-repeat: repeat-x;
@@ -250,7 +287,7 @@
     align-items: flex-end;
     column-gap: var(--gc);
     padding-inline: var(--gc);
-    width: 1400px;
+    width: var(--band-w);
     height: 100%;
   }
 }
@@ -272,7 +309,7 @@
 }
 
 .bottomPad {
-  height: 24svh;
+  height: 24cqh;
   background: #000;
 }
 
@@ -316,27 +353,28 @@
     calc(var(--mfloor-h) * 0.5);
   background-repeat: repeat;
   background-position: left bottom;
-  --mg: 4vw; /* the floor's gap knob: every _ in both stories */
-  --slot-min: 62vw;
+  --mg: 4cqw; /* the floor's gap knob: every _ in both stories */
+  --slot-min: 62cqw;
   --a-cap: calc(var(--mfloor-h) * 0.48 * var(--armin));
   --slot-target: min(var(--slot-min), var(--a-cap));
-  --shift-ramp: calc((700px - 100vw) * 0.8);
+  --shift-ramp: calc((700px - 100cqw) * 0.8);
   --shift-demand: calc(
     var(--slot-target) -
-    (100vw - var(--sm-w) - 2 * var(--mg))
+    (100cqw - var(--sm-w) - 2 * var(--mg))
   );
   --shift-m: clamp(
     0px,
     max(var(--shift-ramp), var(--shift-demand)),
     calc(var(--sm-w) / 2)
   );
-  --slot: calc(100vw - var(--sm-w) + var(--shift-m) - 2 * var(--mg));
+  --slot: calc(100cqw - var(--sm-w) + var(--shift-m) - 2 * var(--mg));
   position: relative;
   display: flex;
   height: var(--mfloor-h);
 }
 
 .sm {
+  position: relative;
   flex: none;
   width: var(--sm-w);
   height: 100%;
@@ -386,7 +424,7 @@
   scale: 1.063 1;
 }
 
-@media (max-width: 699px) {
+@container bazaar (max-width: 699.98px) {
   .stallWrap {
     /* one shared width per floor: all four gaps equal by construction */
     width: min(var(--slot), var(--a-cap));
@@ -397,7 +435,7 @@
 }
 
 .sepM {
-  height: 4svh;
+  height: 4cqh;
   background-image: url("/images/bazaar/arch/beam-h-tile.png");
   background-size: auto 100%;
   background-repeat: repeat-x;
