@@ -8,10 +8,6 @@ const BAR = BEAT * 4
 
 export const TEMPO = { bpm: BPM, step: STEP, bar: BAR, barMs: BAR * 1000 }
 
-/* Graph: voices -> master -> dry (0.8) -------------> destination
-                            -> convolver -> wet (0.3) -> destination
-                            -> analyser (the scope taps here)
-   The convolver runs a synthesized 0.2s impulse response. */
 type Graph = {
   context: AudioContext
   master: GainNode
@@ -55,6 +51,7 @@ function buildGraph(context: AudioContext): Graph {
   const wet = context.createGain()
   wet.gain.value = 0.3
   const convolver = context.createConvolver()
+  // synthesized impulse response, not a loaded sample
   convolver.buffer = makeImpulse(context, 0.2, 2.8)
   master.connect(dry)
   dry.connect(context.destination)
