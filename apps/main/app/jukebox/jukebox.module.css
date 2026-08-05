@@ -56,13 +56,18 @@
   box-shadow: inset 0 0 18px rgb(0 0 0 / 0.5);
 }
 
-.strips {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  gap: 0.25rem;
+.cabinet[data-playing] .marquee {
+  animation: flash 0.5s steps(2, end) 2;
 }
 
-.strip a {
-  color: var(--warmwhite);
+@keyframes flash {
+  50% {
+    color: var(--magenta);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cabinet[data-playing] .marquee {
+    animation: none;
+  }
 }
