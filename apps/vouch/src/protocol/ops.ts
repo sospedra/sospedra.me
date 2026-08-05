@@ -34,12 +34,12 @@ function validateAccountId(id: string): void {
   }
 }
 
-function encodeAccountId(w: Writer, id: string): void {
+export function encodeAccountId(w: Writer, id: string): void {
   validateAccountId(id)
   w.bytes(ascii(id), LIMITS.accountId)
 }
 
-function decodeAccountId(r: Reader): string {
+export function decodeAccountId(r: Reader): string {
   const bytes = r.bytes(LIMITS.accountId)
   const id = new TextDecoder().decode(bytes)
   validateAccountId(id)
