@@ -11,6 +11,15 @@ export type SelectionEvent =
   | { type: 'PICK'; record: JukeRecord }
   | { type: 'CANCEL' }
 
+export const keyToEvent = (key: string): SelectionEvent | null => {
+  if (key === 'Escape') return { type: 'CANCEL' }
+  const letter = key.toUpperCase()
+  if (letter === 'A' || letter === 'B') return { type: 'LETTER', letter }
+  const digit = Number.parseInt(key, 10)
+  if (digit >= 1 && digit <= 6) return { type: 'NUMBER', digit }
+  return null
+}
+
 const COLUMN = 6
 
 export const recordAt = (letter: string, digit: number): JukeRecord | null => {

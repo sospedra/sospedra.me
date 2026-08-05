@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { RECORDS } from './records.ts'
-import { recordAt, reduce } from './selection.ts'
+import { keyToEvent, recordAt, reduce } from './selection.ts'
 
 test('recordAt maps letter and digit to the records grid', () => {
   assert.equal(recordAt('A', 1), RECORDS[0])
@@ -45,4 +45,38 @@ test('cancel returns to idle from any phase', () => {
     reduce({ phase: 'armed', letter: 'A' }, { type: 'CANCEL' }),
     { phase: 'idle' },
   )
+})
+
+test('pick plays a pressed record and rejects a test pressing', () => {
+  const pressed = RECORDS.find((record) => record.status === 'pressed')
+  const dud = RECORDS.find((record) => record.status === 'test-pressing')
+  assert.ok(pressed)
+  assert.ok(dud)
+  assert.deepEqual(
+    reduce({ phase: 'idle' }, { type: 'PICK', record: pressed }),
+    { phase: 'playing', record: pressed },
+  )
+  assert.deepEqual(reduce({ phase: 'idle' }, { type: 'PICK', record: dud }), {
+    phase: 'idle',
+  })
+})
+
+test('playing is terminal for letter, cancel and pick', () => {
+  const pressed = RECORDS.find((record) => record.status === 'pressed')
+  assert.ok(pressed)
+  const playing = { phase: 'playing', record: pressed } as const
+  assert.equal(reduce(playing, { type: 'LETTER', letter: 'A' }), playing)
+  assert.equal(reduce(playing, { type: 'CANCEL' }), playing)
+  assert.equal(reduce(playing, { type: 'PICK', record: pressed }), playing)
+})
+
+test('keyToEvent maps keys to selection events', () => {
+  assert.deepEqual(keyToEvent('a'), { type: 'LETTER', letter: 'A' })
+  assert.deepEqual(keyToEvent('B'), { type: 'LETTER', letter: 'B' })
+  assert.deepEqual(keyToEvent('4'), { type: 'NUMBER', digit: 4 })
+  assert.deepEqual(keyToEvent('Escape'), { type: 'CANCEL' })
+  assert.equal(keyToEvent('7'), null)
+  assert.equal(keyToEvent('0'), null)
+  assert.equal(keyToEvent('F5'), null)
+  assert.equal(keyToEvent('Shift'), null)
 })
