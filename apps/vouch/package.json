@@ -11,7 +11,7 @@
     "dev": "vite",
     "lint": "biome check .",
     "preview": "vite preview",
-    "test": "node --test test/smoke.test.ts test/encode.test.ts test/hash.test.ts",
+    "test": "node --test test/smoke.test.ts test/encode.test.ts test/hash.test.ts test/keys.test.ts",
     "typecheck": "tsc",
     "vectors": "node scripts/vectors.ts"
   },
