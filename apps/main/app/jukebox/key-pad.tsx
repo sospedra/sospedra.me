@@ -43,6 +43,7 @@ export default function KeyPad({
                 armedLetter === letter && css.lit,
                 downKeys.has(letter) && css.down,
               )}
+              aria-pressed={armedLetter === letter}
               onClick={() => onLetter(letter)}
             >
               {letter}

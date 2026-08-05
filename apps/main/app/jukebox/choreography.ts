@@ -15,7 +15,6 @@ export type PlayContext = {
   record: JukeRecord
   onPlatter: JukeRecord
   reduceMotion: boolean
-  machineRoot: HTMLElement
   setArmPose: (pose: ArmPose) => void
   setPlatterRecord: (record: JukeRecord) => void
   setLampText: (text: string) => void
@@ -91,7 +90,7 @@ async function animateSwap(
   await exit.finished
 
   setPlatterRecord(record)
-  hot?.classList.add('hot')
+  hot?.setAttribute('data-hot', '')
   await magazine.animate(
     [
       { transform: 'translateX(0)' },
@@ -123,7 +122,7 @@ async function animateSwap(
   await entry.finished
   glareOut.cancel()
   for (const animation of glare.getAnimations()) animation.cancel()
-  hot?.classList.remove('hot')
+  hot?.removeAttribute('data-hot')
 }
 
 type ScopeFrame = {
@@ -140,8 +139,8 @@ type ScopeFrame = {
 let scopeFrameHandle = 0
 let cachedAmber: string | null = null
 
-function amberTrace(root: HTMLElement): string {
-  cachedAmber ??= getComputedStyle(root).getPropertyValue('--amber').trim()
+function amberTrace(canvas: HTMLCanvasElement): string {
+  cachedAmber ??= getComputedStyle(canvas).color
   return cachedAmber
 }
 
@@ -174,13 +173,12 @@ function drawFrame(frame: ScopeFrame): void {
 type ScopeOptions = {
   canvas: HTMLCanvasElement
   analyserNode: AnalyserNode
-  root: HTMLElement
   seconds: number
 }
 
 // the scope: waveform from the analyser, dpr-aware, amber trace, rAF loop with a deadline
 function startScope(options: ScopeOptions): void {
-  const { canvas, analyserNode, root, seconds } = options
+  const { canvas, analyserNode, seconds } = options
   if (!canvas.clientWidth) return
   const context = canvas.getContext('2d')
   if (!context) return
@@ -192,7 +190,7 @@ function startScope(options: ScopeOptions): void {
     analyserNode,
     context,
     data: new Uint8Array(analyserNode.fftSize),
-    traceColor: amberTrace(root),
+    traceColor: amberTrace(canvas),
     width: canvas.width,
     height: canvas.height,
     dpr,
@@ -237,7 +235,6 @@ async function playFull(
     startScope({
       canvas: ctx.handle.scope,
       analyserNode,
-      root: ctx.machineRoot,
       seconds: TEMPO.bar + 0.25,
     })
   }

@@ -10,6 +10,7 @@ export type SelectionEvent =
   | { type: 'NUMBER'; digit: number }
   | { type: 'PICK'; record: JukeRecord }
   | { type: 'CANCEL' }
+  | { type: 'RESET' }
 
 export const keyToEvent = (key: string): SelectionEvent | null => {
   if (key === 'Escape') return { type: 'CANCEL' }
@@ -50,5 +51,7 @@ export const reduce = (
       return state.phase === 'playing' ? state : play(event.record)
     case 'CANCEL':
       return state.phase === 'playing' ? state : { phase: 'idle' }
+    case 'RESET':
+      return { phase: 'idle' }
   }
 }

@@ -70,6 +70,18 @@ test('playing is terminal for letter, cancel and pick', () => {
   assert.equal(reduce(playing, { type: 'PICK', record: pressed }), playing)
 })
 
+test('reset returns idle from armed and from playing', () => {
+  assert.deepEqual(reduce({ phase: 'armed', letter: 'A' }, { type: 'RESET' }), {
+    phase: 'idle',
+  })
+  const pressed = RECORDS.find((record) => record.status === 'pressed')
+  assert.ok(pressed)
+  assert.deepEqual(
+    reduce({ phase: 'playing', record: pressed }, { type: 'RESET' }),
+    { phase: 'idle' },
+  )
+})
+
 test('keyToEvent maps keys to selection events', () => {
   assert.deepEqual(keyToEvent('a'), { type: 'LETTER', letter: 'A' })
   assert.deepEqual(keyToEvent('B'), { type: 'LETTER', letter: 'B' })

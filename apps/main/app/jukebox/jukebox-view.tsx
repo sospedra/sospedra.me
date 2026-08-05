@@ -47,6 +47,11 @@ function phaseDisplay(state: SelectionState): string {
   return '– –'
 }
 
+function shouldIgnoreKeydown(event: KeyboardEvent): boolean {
+  if (event.metaKey || event.ctrlKey || event.altKey) return true
+  return letterKeysDisabled() || isEditableTarget(event.target)
+}
+
 export default function JukeboxView({
   fontClassName,
 }: {
@@ -60,7 +65,6 @@ export default function JukeboxView({
   )
   useGameInput()
 
-  const machineRef = useRef<HTMLElement>(null)
   const domeHandleRef = useRef<DomeHandle | null>(null)
   const platterRef = useRef<JukeRecord>(RECORDS[0])
   const errorTimerRef = useRef<number | null>(null)
@@ -157,9 +161,9 @@ export default function JukeboxView({
     }, KEY_DOWN_MS)
   }, [])
 
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (letterKeysDisabled() || isEditableTarget(event.target)) return
+  const onKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (shouldIgnoreKeydown(event)) return
       const next = keyToEvent(event.key)
       if (!next) return
       switch (next.type) {
@@ -175,12 +179,27 @@ export default function JukeboxView({
           dispatchCancel()
           return
         case 'PICK':
+        case 'RESET':
           return
       }
-    }
+    },
+    [pressVisual, dispatchLetter, dispatchNumber, dispatchCancel],
+  )
+
+  useEffect(() => {
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [pressVisual, dispatchLetter, dispatchNumber, dispatchCancel])
+  }, [onKeyDown])
+
+  useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted) return
+      clearErrorFlash()
+      dispatch({ type: 'RESET' })
+    }
+    window.addEventListener('pageshow', onPageShow)
+    return () => window.removeEventListener('pageshow', onPageShow)
+  }, [clearErrorFlash])
 
   useEffect(() => {
     if (state.phase !== 'armed') return
@@ -191,8 +210,7 @@ export default function JukeboxView({
   useEffect(() => {
     if (state.phase !== 'playing') return
     const handle = domeHandleRef.current
-    const machineRoot = machineRef.current
-    if (!handle || !machineRoot) return
+    if (!handle) return
     const controller = new AbortController()
     playSequence(
       {
@@ -200,7 +218,6 @@ export default function JukeboxView({
         record: state.record,
         onPlatter: platterRef.current,
         reduceMotion: prefersQuietFx(),
-        machineRoot,
         setArmPose,
         setPlatterRecord,
         setLampText,
@@ -217,7 +234,7 @@ export default function JukeboxView({
 
   return (
     <div className={cn(css.hall, fontClassName)}>
-      <main className={css.machine} data-phase={state.phase} ref={machineRef}>
+      <main className={css.machine} data-phase={state.phase}>
         <div className={css.tubeLeft} aria-hidden />
         <div className={css.tubeRight} aria-hidden />
         <Dome

@@ -65,7 +65,7 @@
     filter 0.25s;
 }
 
-.rec.hot {
+.rec[data-hot] {
   box-shadow:
     inset 0 0 3px rgb(255 255 255 / 0.5),
     0 0 14px color-mix(in oklch, var(--amber) 85%, transparent);
@@ -184,6 +184,7 @@
     inset 0 0 10px #000,
     inset 0 0 0 2px color-mix(in oklch, var(--amber-deep) 60%, transparent),
     0 2px 8px rgb(0 0 0 / 0.5);
+  color: var(--amber);
 }
 
 .tonearm {
