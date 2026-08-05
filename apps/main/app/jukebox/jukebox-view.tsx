@@ -1,7 +1,11 @@
 'use client'
 
 import { useEffect, useReducer, useSyncExternalStore } from 'react'
-import { isEditableTarget, letterKeysDisabled } from 'services/hotkeys'
+import {
+  isEditableTarget,
+  letterKeysDisabled,
+  useGameInput,
+} from 'services/hotkeys'
 import { prefersQuietFx } from 'services/theme'
 import { soundPreference } from '../bazaar/sounds'
 import Dome from './dome'
@@ -27,6 +31,7 @@ export default function JukeboxView() {
     soundPreference.isEnabled,
     serverSoundOff,
   )
+  useGameInput()
 
   const toggleSound = () => {
     const next = !sound
