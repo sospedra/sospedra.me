@@ -347,7 +347,7 @@ export const STALL_SCENES = {
         ],
       },
     ],
-    rect: { left: 518, top: 70, width: 500, height: 884 },
+    rect: { left: 152, top: 24, width: 716, height: 1488 },
   },
   jukebox: {
     layers: [{ id: 'plate', role: 'plate' }],
@@ -408,9 +408,9 @@ export const SIM_DIMS = {
     dispH: 480,
   },
   map: {
-    artW: 500,
-    artH: 884,
-    dispW: 260,
+    artW: 425,
+    artH: 883,
+    dispW: 221,
     dispH: 460,
   },
   jukebox: {
