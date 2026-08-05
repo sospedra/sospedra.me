@@ -76,7 +76,7 @@ type ToneSpec = {
   wet?: boolean
 }
 
-export function tone(spec: ToneSpec) {
+function tone(spec: ToneSpec) {
   if (!isEnabled()) return
   const active = ensure()
   if (!active) return
@@ -116,7 +116,7 @@ type NoiseSpec = {
   wet?: boolean
 }
 
-export function noise(spec: NoiseSpec) {
+function noise(spec: NoiseSpec) {
   if (!isEnabled()) return
   const active = ensure()
   if (!active) return

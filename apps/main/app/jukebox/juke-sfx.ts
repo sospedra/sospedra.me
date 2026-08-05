@@ -1,26 +1,247 @@
-import { noise, tone } from '../bazaar/sounds'
+import { audioContextClass } from 'services/audio/kit'
+import { soundPreference } from '../bazaar/sounds'
 
-const BAR_NOTES = [523, 659, 784, 1046]
+const BPM = 150
+const BEAT = 60 / BPM
+const STEP = BEAT / 2
+const BAR = BEAT * 4
+
+export const TEMPO = { bpm: BPM, step: STEP, bar: BAR, barMs: BAR * 1000 }
+
+/* Graph: voices -> master -> dry (0.8) -------------> destination
+                            -> convolver -> wet (0.3) -> destination
+                            -> analyser (the scope taps here)
+   The convolver runs a synthesized 0.2s impulse response. */
+type Graph = {
+  context: AudioContext
+  master: GainNode
+  noiseBuffer: AudioBuffer
+  analyserNode: AnalyserNode
+}
+
+let graph: Graph | null = null
+
+function makeImpulse(
+  context: AudioContext,
+  seconds: number,
+  decay: number,
+): AudioBuffer {
+  const length = Math.floor(context.sampleRate * seconds)
+  const buffer = context.createBuffer(2, length, context.sampleRate)
+  for (let channel = 0; channel < buffer.numberOfChannels; channel += 1) {
+    const data = buffer.getChannelData(channel)
+    for (let i = 0; i < length; i += 1) {
+      data[i] = (Math.random() * 2 - 1) * (1 - i / length) ** decay
+    }
+  }
+  return buffer
+}
+
+function makeNoiseBuffer(context: AudioContext): AudioBuffer {
+  const length = Math.floor(context.sampleRate * 0.25)
+  const buffer = context.createBuffer(1, length, context.sampleRate)
+  const data = buffer.getChannelData(0)
+  for (let i = 0; i < length; i += 1) {
+    data[i] = Math.random() * 2 - 1
+  }
+  return buffer
+}
+
+function buildGraph(context: AudioContext): Graph {
+  const master = context.createGain()
+  master.gain.value = 1
+  const dry = context.createGain()
+  dry.gain.value = 0.8
+  const wet = context.createGain()
+  wet.gain.value = 0.3
+  const convolver = context.createConvolver()
+  convolver.buffer = makeImpulse(context, 0.2, 2.8)
+  master.connect(dry)
+  dry.connect(context.destination)
+  master.connect(convolver)
+  convolver.connect(wet)
+  wet.connect(context.destination)
+
+  const analyserNode = context.createAnalyser()
+  analyserNode.fftSize = 1024
+  master.connect(analyserNode)
+
+  const noiseBuffer = makeNoiseBuffer(context)
+
+  return { context, master, noiseBuffer, analyserNode }
+}
+
+function ensure(): void {
+  if (!soundPreference.isEnabled()) return
+  if (graph && graph.context.state === 'suspended') void graph.context.resume()
+  if (graph) return
+  const AudioContextClass = audioContextClass()
+  if (!AudioContextClass) return
+  graph = buildGraph(new AudioContextClass())
+}
+
+function envelope(
+  gain: GainNode,
+  t0: number,
+  attack: number,
+  peak: number,
+  duration: number,
+): void {
+  gain.gain.setValueAtTime(0.0001, t0)
+  gain.gain.linearRampToValueAtTime(peak, t0 + attack)
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration)
+}
+
+function blip(
+  freq: number,
+  t0: number,
+  duration: number,
+  type: OscillatorType,
+  peak: number,
+): void {
+  if (!graph) return
+  const oscillator = graph.context.createOscillator()
+  const gain = graph.context.createGain()
+  oscillator.type = type
+  oscillator.frequency.value = freq
+  envelope(gain, t0, 0.005, peak, duration)
+  oscillator.connect(gain).connect(graph.master)
+  oscillator.start(t0)
+  oscillator.stop(t0 + duration + 0.05)
+}
+
+function noiseBurst(
+  t0: number,
+  duration: number,
+  peak: number,
+  frequency: number,
+  type: BiquadFilterType = 'lowpass',
+): void {
+  if (!graph) return
+  const source = graph.context.createBufferSource()
+  source.buffer = graph.noiseBuffer
+  const filter = graph.context.createBiquadFilter()
+  filter.type = type
+  filter.frequency.value = frequency
+  const gain = graph.context.createGain()
+  envelope(gain, t0, 0.003, peak, duration)
+  source.connect(filter)
+  filter.connect(gain)
+  gain.connect(graph.master)
+  source.start(t0)
+  source.stop(t0 + duration + 0.05)
+}
+
+function tick(): void {
+  if (!soundPreference.isEnabled()) return
+  if (!graph) return
+  noiseBurst(graph.context.currentTime, 0.03, 0.07, 3200, 'highpass')
+}
+
+function thump(): void {
+  if (!soundPreference.isEnabled()) return
+  if (!graph) return
+  const t = graph.context.currentTime
+  const oscillator = graph.context.createOscillator()
+  const gain = graph.context.createGain()
+  oscillator.type = 'sine'
+  oscillator.frequency.setValueAtTime(140, t)
+  oscillator.frequency.exponentialRampToValueAtTime(45, t + 0.12)
+  envelope(gain, t, 0.004, 0.5, 0.16)
+  oscillator.connect(gain).connect(graph.master)
+  oscillator.start(t)
+  oscillator.stop(t + 0.2)
+  noiseBurst(t, 0.07, 0.18, 900)
+}
+
+function whoosh(): void {
+  if (!soundPreference.isEnabled()) return
+  if (!graph) return
+  noiseBurst(graph.context.currentTime, 0.28, 0.08, 1100)
+}
+
+function clack(): void {
+  if (!soundPreference.isEnabled()) return
+  if (!graph) return
+  const t = graph.context.currentTime
+  const oscillator = graph.context.createOscillator()
+  const gain = graph.context.createGain()
+  oscillator.type = 'sine'
+  oscillator.frequency.setValueAtTime(300, t)
+  oscillator.frequency.exponentialRampToValueAtTime(110, t + 0.07)
+  envelope(gain, t, 0.003, 0.3, 0.09)
+  oscillator.connect(gain).connect(graph.master)
+  oscillator.start(t)
+  oscillator.stop(t + 0.12)
+  noiseBurst(t, 0.04, 0.12, 1800, 'bandpass')
+}
+
+function buzz(): void {
+  if (!soundPreference.isEnabled()) return
+  if (!graph) return
+  blip(92, graph.context.currentTime, 0.16, 'square', 0.12)
+}
+
+function crackle(seconds = 0.3): void {
+  if (!soundPreference.isEnabled()) return
+  if (!graph) return
+  const t = graph.context.currentTime
+  const bursts = Math.floor(seconds * 14)
+  for (let i = 0; i < bursts; i += 1) {
+    noiseBurst(
+      t + Math.random() * seconds,
+      0.02,
+      0.02 + Math.random() * 0.05,
+      2500,
+      'highpass',
+    )
+  }
+}
+
+function bar(): void {
+  if (!soundPreference.isEnabled()) return
+  if (!graph) return
+  const t = graph.context.currentTime + 0.03
+  const lead = [523.25, 659.25, 784, 987.77, 1046.5, 784, 659.25, 784]
+  for (const [index, freq] of lead.entries()) {
+    blip(freq, t + index * TEMPO.step, TEMPO.step * 0.85, 'square', 0.1)
+  }
+  const bass = [
+    [130.81, 0],
+    [130.81, 2],
+    [98, 4],
+    [130.81, 6],
+  ] as const
+  for (const [freq, beat] of bass) {
+    blip(freq, t + beat * TEMPO.step, TEMPO.step * 1.7, 'triangle', 0.16)
+  }
+  for (let i = 0; i < 8; i += 1) {
+    noiseBurst(
+      t + i * TEMPO.step + TEMPO.step / 2,
+      TEMPO.step * 0.15,
+      0.03,
+      6000,
+      'highpass',
+    )
+  }
+}
+
+function analyser(): AnalyserNode | null {
+  if (!soundPreference.isEnabled()) return null
+  return graph?.analyserNode ?? null
+}
 
 export const jukeSfx = {
-  hover: () =>
-    tone({ shape: 'sine', from: 1318, to: 1046, duration: 0.04, peak: 0.03 }),
-  kaChunk: () => {
-    noise({ duration: 0.05, peak: 0.14, frequency: 600 })
-    tone({ shape: 'square', from: 196, duration: 0.07, peak: 0.06, at: 0.02 })
-  },
-  crackle: () =>
-    noise({ duration: 0.3, peak: 0.03, filter: 'highpass', frequency: 3500 }),
-  bar: () => {
-    for (const [index, from] of BAR_NOTES.entries()) {
-      tone({
-        shape: 'square',
-        from,
-        duration: 0.14,
-        peak: 0.045,
-        at: index * 0.15,
-      })
-    }
-    tone({ shape: 'triangle', from: 262, duration: 0.6, peak: 0.03 })
-  },
+  ensure,
+  tick,
+  buzz,
+  thump,
+  whoosh,
+  clack,
+  crackle,
+  bar,
+  analyser,
+  // v1 aliases for jukebox-view/strip-menu; Task 11 removes these
+  hover: tick,
+  kaChunk: clack,
 }
