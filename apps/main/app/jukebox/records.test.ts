@@ -28,3 +28,11 @@ test('every url is https on a sospedra.me subdomain', () => {
 test('eleven records today', () => {
   assert.equal(RECORDS.length, 11)
 })
+
+test('display order is newest pressing first', () => {
+  const ordered = RECORDS.every(
+    (record, index) =>
+      index === 0 || RECORDS[index - 1].pressed >= record.pressed,
+  )
+  assert.ok(ordered)
+})
