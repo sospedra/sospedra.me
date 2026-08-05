@@ -283,8 +283,8 @@ export default function BazaarView() {
                 <MarketFloor spec={spec} index={i} />
               </Fragment>
             ))}
-            <div className={css.sep} data-bazaar-sep={3} data-edit-id='sep:3'>
-              <HostDecor host='sep:3' />
+            <div className={css.sep} data-bazaar-sep={4} data-edit-id='sep:4'>
+              <HostDecor host='sep:4' />
             </div>
             <div className={css.bottomPad} />
           </div>
