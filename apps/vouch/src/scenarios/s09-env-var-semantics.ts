@@ -100,7 +100,7 @@ function envFeeVarStep(envFeeBp: bigint): TraceStep {
     actor: 'server',
     kind: 'object',
     label:
-      "the server's provisional execution instead reads a mutable process environment variable for the transfer fee, never committed to state",
+      'this scenario models an env-var-driven fee override named FEE_BP, a value outside canonical state, in place of the fee the transfer actually proved',
     objects: [
       obj('env-fee-var', 'untrusted-env-var', u64be(envFeeBp), {
         name: 'FEE_BP',
@@ -119,7 +119,7 @@ function envTaintedResultStep(
   return {
     actor: 'attacker',
     kind: 'act',
-    label: `the provisional execution reports get-balance(${accountId}) = ${balance.balance}, recomputed with the untrusted env fee instead of the committed one`,
+    label: `the forged result claims get-balance(${accountId}) = ${balance.balance}, as if the transfer fee had been recomputed with the modeled env-var override instead of the committed one`,
     objects: [
       {
         ...obj('env-tainted-result', 'balance-result', envResultBytes, {
@@ -165,7 +165,7 @@ function receiptStep(receiptBytes: Uint8Array): TraceStep {
     actor: 'server',
     kind: 'object',
     label:
-      'the server signs an immediate query receipt over the env-tainted result',
+      'the server signs an immediate query receipt over the lying result hash, modeled on the env-var fee override',
     objects: [
       {
         ...obj('receipt', 'query-receipt', receiptBytes, {
@@ -190,7 +190,7 @@ function replayedTrueResultStep(
   return {
     actor: 'client',
     kind: 'object',
-    label: `independently replaying the published query program over the same, untouched state accesses recovers get-balance(${accountId}) = ${balance.balance}, the true committed balance; no environment variable can change what the proven program already computed`,
+    label: `independently replaying the published query program over the same, untouched state accesses recovers get-balance(${accountId}) = ${balance.balance}, the true committed balance; no deployment-time configuration outside canonical state, modeled here as an environment variable, can change what the proven program already computed`,
     objects: [
       {
         ...obj('replayed-true-result', 'balance-result', replayedResultBytes, {
@@ -358,7 +358,7 @@ function run(): Trace {
     verdict: {
       kind: 'REJECT',
       error: result.error,
-      note: `the server's provisional path recomputed the transfer fee from a mutable, untrusted environment variable (${ENV_FEE_BP} basis points) instead of the committed config (${decodeConfig(configBytes).current} basis points); replaying the published query program over the same proven state accesses disagrees with that claim, so rule "${result.rule}" catches it during query-proof verification`,
+      note: `this scenario models the transfer fee as recomputed from a mutable, untrusted environment variable (${ENV_FEE_BP} basis points) instead of the committed config (${decodeConfig(configBytes).current} basis points); replaying the published query program over the same proven state accesses disagrees with that claim, so rule "${result.rule}" catches it during query-proof verification`,
     },
   }
 }

@@ -1,8 +1,24 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
+import type { CheckLog } from '../src/protocol/verify.ts'
 import { scenario as s08 } from '../src/scenarios/s08-database-swap.ts'
 import { scenario as s09 } from '../src/scenarios/s09-env-var-semantics.ts'
 import { scenario as s10 } from '../src/scenarios/s10-returning-rollback.ts'
+
+function splitAtStepReset(checks: CheckLog[]): [CheckLog[], CheckLog[]] {
+  const resetIndex = checks.findIndex(
+    (c, i) => i > 0 && c.step <= checks[i - 1].step,
+  )
+  if (resetIndex === -1) throw new Error('expected two concatenated check logs')
+  return [checks.slice(0, resetIndex), checks.slice(resetIndex)]
+}
+
+function assertFullyAccepted(checks: CheckLog[]): void {
+  assert.equal(checks.length, 19)
+  for (const check of checks) {
+    if (!check.skipped) assert.equal(check.pass, true)
+  }
+}
 
 test('s08 database swap rejects with INVALID_PROOF, rule continuity', () => {
   const t = s08.run()
@@ -91,12 +107,18 @@ test('s10 is deterministic', () => {
   assert.deepEqual(s10.run(), s10.run())
 })
 
-test('s10 fails at step 11, steps 1-10 all pass, nothing later reported', () => {
+test('s10 checks carry all three rounds: rounds 1-2 fully pass, round 3 fails at step 11', () => {
   const t = s10.run()
   assert.ok(t.checks)
-  assert.equal(t.checks.length, 11)
-  for (const check of t.checks.slice(0, 10)) assert.equal(check.pass, true)
-  const failing = t.checks.at(-1)
+  const [round1, afterRound1] = splitAtStepReset(t.checks)
+  const [round2, round3] = splitAtStepReset(afterRound1)
+
+  assertFullyAccepted(round1)
+  assertFullyAccepted(round2)
+
+  assert.equal(round3.length, 11)
+  for (const check of round3.slice(0, 10)) assert.equal(check.pass, true)
+  const failing = round3.at(-1)
   assert.equal(failing?.step, 11)
   assert.equal(failing?.pass, false)
   assert.equal(failing?.error, 'ROLLBACK_DETECTED')

@@ -260,6 +260,7 @@ function run(): Trace {
     ),
     queryRequestStep(requestBytes, firstNonce, 'round 1'),
     receiptStep(firstReceiptBytes, 'round 1'),
+    ...firstResult.checks.map((check) => checkStep(check, 'round 1')),
     acceptSummaryStep('round 1', firstResult, client.trust.highestSequence),
     ...secondRecords.map(describedAuthorEventStep),
     batchSealStep(
@@ -268,6 +269,7 @@ function run(): Trace {
     ),
     queryRequestStep(requestBytes, secondNonce, 'round 2'),
     receiptStep(secondReceiptBytes, 'round 2'),
+    ...secondResult.checks.map((check) => checkStep(check, 'round 2')),
     acceptSummaryStep('round 2', secondResult, client.trust.highestSequence),
     queryRequestStep(
       requestBytes,
@@ -276,12 +278,16 @@ function run(): Trace {
     ),
     staleBundleStep(client.trust.highestSequence, sequence3),
     receiptStep(staleReceiptBytes, 'round 3 (stale)'),
-    ...thirdResult.checks.map((check) => checkStep(check)),
+    ...thirdResult.checks.map((check) => checkStep(check, 'round 3')),
   ]
 
   return {
     steps,
-    checks: thirdResult.checks,
+    checks: [
+      ...firstResult.checks,
+      ...secondResult.checks,
+      ...thirdResult.checks,
+    ],
     verdict: {
       kind: 'REJECT',
       error: thirdResult.error,
