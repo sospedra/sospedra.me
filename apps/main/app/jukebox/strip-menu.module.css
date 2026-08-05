@@ -1,91 +1,242 @@
-.frame {
-  list-style: none;
-  padding: 0.75rem;
+.rack {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.rackHead {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(6, auto);
-  grid-auto-flow: column;
-  gap: 0.4rem 1rem;
-  background: linear-gradient(#3a2313, #2a160b);
-  border: 3px solid color-mix(in srgb, var(--amber) 55%, black);
-  border-radius: 8px;
+  gap: 8px;
+  padding: 0 8px clamp(2px, 0.6vh, 6px);
+  font-size: clamp(8px, 1.4vh, 12px);
+  letter-spacing: 0.22em;
+  color: oklch(0.88 0.05 var(--hue-paper));
+  text-shadow: 0 1px 0 #000;
 }
 
-.slot {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.sideB {
+  text-align: right;
+  color: oklch(0.87 0.08 var(--hue-cool));
 }
 
-.dot {
-  width: 0.6rem;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ff6b6b, #b00020 70%);
-  flex-shrink: 0;
-}
-
-.code {
-  font-family: var(--font-mono, monospace);
-  color: var(--amber);
-  font-size: 0.8rem;
-  width: 2ch;
-}
-
-.strip {
-  position: relative;
+.frame {
   flex: 1;
-  display: grid;
-  gap: 0.15rem;
-  background: var(--warmwhite);
-  color: #241505;
-  padding: 0.35rem 0.6rem;
-  font-family: var(--font-mono, monospace);
-  text-decoration: none;
+  min-height: 0;
+  padding: clamp(6px, 1vh, 12px);
+  border: 3px solid var(--chrome-hi);
+  border-radius: 10px;
+  background: linear-gradient(
+    180deg,
+    oklch(0.16 0.015 var(--hue-paper)),
+    oklch(0.11 0.01 var(--hue-paper))
+  );
+  box-shadow:
+    inset 0 0 0 3px var(--chrome-dk),
+    inset 0 0 30px rgb(0 0 0 / 0.65),
+    0 4px 16px rgb(0 0 0 / 0.5);
   overflow: hidden;
 }
 
-a.strip:hover,
-a.strip:focus-visible {
-  outline: 2px solid var(--magenta);
-  outline-offset: 2px;
-  translate: 0.35rem 0;
+.strips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(6, 1fr);
+  grid-auto-flow: column;
+  gap: clamp(4px, 0.8vh, 8px) clamp(10px, 1.6vw, 18px);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .strip {
-    transition: translate 140ms ease-out;
-  }
+.slot {
+  position: relative;
+  min-height: 0;
 }
 
-.title {
-  font-weight: 700;
-  font-size: 0.85rem;
+.strip {
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: calc(100% - 2px);
+  display: flex;
+  gap: 0.6em;
+  align-items: stretch;
+  padding: 0.3em 0.55em;
+  text-decoration: none;
+  color: var(--ink);
+  border-radius: 3px;
+  overflow: hidden;
+  font-family: var(--type);
+  border-top: 2px solid var(--strip-red);
+  border-bottom: 2px solid var(--strip-red);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(0 0 0 / 0.03) 0 1px,
+      transparent 1px 3px
+    ),
+    linear-gradient(180deg, var(--paper), var(--paper2));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 2px 5px rgb(0 0 0 / 0.55);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    height 0.18s ease;
+}
+
+.slot:nth-child(2n) .strip {
+  rotate: 0.25deg;
+}
+
+.slot:nth-child(3n) .strip {
+  rotate: -0.3deg;
+}
+
+.crest {
+  align-self: center;
+  flex: 0 0 auto;
+  padding: 0.12em 0.4em;
+  border-radius: 3px;
+  font-family: var(--disp);
+  font-size: clamp(9px, 1.55vh, 13px);
+  letter-spacing: 0.05em;
+  color: #fff;
+  background: var(--strip-blue);
+}
+
+.strips li:nth-child(n + 7) .crest {
+  background: var(--strip-red);
+}
+
+.body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.name {
+  font-size: clamp(10px, 1.75vh, 15px);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.one {
+  font-size: clamp(8px, 1.35vh, 11.5px);
+  color: var(--ink2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.linerwrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.2s ease;
 }
 
 .liner {
-  display: grid;
-  gap: 0.1rem;
-  font-size: 0.7rem;
+  overflow: hidden;
+  font-size: clamp(8px, 1.3vh, 11px);
+  color: oklch(0.4 0.07 var(--hue));
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-top: 1px dashed oklch(0.72 0.05 var(--hue-paper));
+  margin-top: 0.22em;
+  padding-top: 0.18em;
 }
 
-.linerMeta {
-  opacity: 0.65;
+.slot:not(.empty):hover .strip,
+.strip:focus-visible {
+  transform: translateX(clamp(6px, 1vw, 14px));
+  z-index: 6;
+  height: auto;
+  min-height: calc(100% - 2px);
+  box-shadow:
+    0 10px 24px rgb(0 0 0 / 0.7),
+    inset 0 1px 0 rgb(255 255 255 / 0.25);
 }
 
-.dud {
-  opacity: 0.45;
-  padding-top: 1.9rem;
+.slot:not(.empty):hover .linerwrap,
+.strip:focus-visible .linerwrap {
+  grid-template-rows: 1fr;
+}
+
+.strip:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
+.strip.blank {
+  opacity: 0.42;
+  justify-content: flex-start;
+  cursor: default;
+  border-top-color: oklch(0.58 0.02 var(--hue-paper));
+  border-bottom-color: oklch(0.58 0.02 var(--hue-paper));
+  color: oklch(0.5 0.02 var(--hue-paper));
+}
+
+.slot .strip.blank .crest {
+  background: oklch(0.5 0.02 var(--hue-paper));
 }
 
 .stamp {
   position: absolute;
-  right: 0.4rem;
-  top: 0.35rem;
+  right: 0.5em;
+  top: 0.3em;
   rotate: -8deg;
-  border: 1px solid #b00020;
-  color: #b00020;
-  font-size: 0.55rem;
-  padding: 0 0.25rem;
+  border: 1px solid var(--strip-red);
+  border-radius: 2px;
+  color: var(--strip-red);
+  font-family: var(--type);
+  font-size: clamp(6px, 1vh, 8px);
+  letter-spacing: 0.05em;
+  padding: 0 0.3em;
   text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding-top: clamp(3px, 0.7vh, 7px);
+}
+
+.tab {
+  font-family: var(--disp);
+  font-size: clamp(9px, 1.4vh, 12px);
+  letter-spacing: 0.14em;
+  color: oklch(0.28 0.03 var(--hue-paper));
+  border: 0;
+  border-radius: 0 0 7px 7px;
+  padding: 0.28em 0.95em;
+  cursor: pointer;
+  background: linear-gradient(var(--paper2), oklch(0.8 0.05 var(--hue-paper)));
+  box-shadow: 0 3px 5px rgb(0 0 0 / 0.5);
+}
+
+.tab[aria-selected="true"] {
+  background: linear-gradient(
+    oklch(0.9 0.09 var(--hue-warm)),
+    oklch(0.8 0.12 var(--hue-warm))
+  );
+}
+
+.tab:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .strip,
+  .linerwrap {
+    transition: none;
+  }
 }

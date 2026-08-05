@@ -1,66 +1,340 @@
 .dome {
-  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-  border: 6px solid var(--amber);
-  box-shadow:
-    0 0 18px color-mix(in srgb, var(--amber) 60%, transparent),
-    inset 0 0 24px rgb(0 0 0 / 0.55);
-  padding: 2rem 2rem 1rem;
-  background: linear-gradient(#2a160b, #1a0d06);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
-.carousel {
-  display: grid;
-  gap: 0.75rem;
-  justify-items: center;
+.marquee {
+  align-self: center;
+  margin: 0 0 clamp(3px, 0.8vh, 8px);
+  font-size: clamp(13px, 2.5vh, 22px);
+  letter-spacing: 0.26em;
+  color: oklch(0.9 0.07 var(--hue-warm));
+  text-shadow: 0 0 16px var(--amber-glow);
+  white-space: nowrap;
 }
 
-.stack {
-  width: 70%;
-  height: 3.5rem;
-  background: repeating-linear-gradient(
-    to bottom,
-    #d9d9d9 0 2px,
-    #4d4d4d 2px 5px
+.marquee span {
+  font-size: 0.68em;
+  letter-spacing: 0.4em;
+  color: oklch(0.88 0.08 var(--hue-cool));
+  text-shadow: 0 0 12px color-mix(in oklch, var(--teal) 60%, transparent);
+}
+
+.domeGlass {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 46% 46% 14px 14px / 82% 82% 14px 14px;
+  border: 3px solid var(--chrome-hi);
+  background: radial-gradient(
+    130% 150% at 50% 120%,
+    var(--plum1) 0%,
+    var(--plum2) 46%,
+    var(--plum3) 78%,
+    var(--plum4)
   );
-  border-radius: 4px;
+  box-shadow:
+    inset 0 0 0 3px var(--chrome-dk),
+    inset 0 16px 44px rgb(0 0 0 / 0.7),
+    0 0 0 4px oklch(0.22 0.01 var(--hue-paper)),
+    0 6px 26px rgb(0 0 0 / 0.6);
+}
+
+.mag {
+  position: absolute;
+  left: 50%;
+  top: 13%;
+  height: 40%;
+  translate: -50% 0;
+  display: flex;
+  gap: clamp(4px, 0.7vw, 8px);
+  align-items: flex-end;
+}
+
+.rec {
+  width: clamp(5px, 0.6vw, 8px);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #050505, #262626 55%, #0a0a0a);
+  box-shadow:
+    inset 0 0 2px rgb(255 255 255 / 0.28),
+    0 0 5px rgb(0 0 0 / 0.8);
+  transition:
+    box-shadow 0.25s,
+    filter 0.25s;
+}
+
+.rec.hot {
+  box-shadow:
+    inset 0 0 3px rgb(255 255 255 / 0.5),
+    0 0 14px color-mix(in oklch, var(--amber) 85%, transparent);
+  filter: brightness(1.7);
+}
+
+.rec i {
+  display: block;
+  height: 3px;
+  margin-top: 46%;
+  border-radius: 2px;
+}
+
+.deck {
+  position: absolute;
+  inset: auto 0 5% 0;
+  display: flex;
+  justify-content: center;
 }
 
 .platter {
-  width: 6rem;
+  position: relative;
+  width: min(29vh, 260px);
   aspect-ratio: 1;
-  display: grid;
-  place-items: center;
+  perspective: 900px;
 }
 
-.disc {
-  width: 100%;
-  height: 100%;
+.carrier {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.vinyl {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
-  background:
-    radial-gradient(circle, var(--magenta) 0 18%, transparent 18%),
-    repeating-radial-gradient(circle, #111 0 3px, #222 3px 4px);
-  animation: spin 3.2s linear infinite;
+  display: grid;
+  place-items: center;
+  background: repeating-radial-gradient(
+    circle at 50% 50%,
+    #0d0d0d 0 1.5px,
+    #1b1b1b 1.5px 3px
+  );
+  box-shadow:
+    0 8px 28px rgb(0 0 0 / 0.75),
+    inset 0 0 12px rgb(255 255 255 / 0.05);
+  -webkit-mask-image: radial-gradient(
+    circle closest-side,
+    transparent 0 4%,
+    #000 4.6% 100%
+  );
+  mask-image: radial-gradient(
+    circle closest-side,
+    transparent 0 4%,
+    #000 4.6% 100%
+  );
+  animation: spin 1.9s linear infinite;
 }
 
 @keyframes spin {
   to {
-    transform: rotate(1turn);
+    rotate: 1turn;
+  }
+}
+
+.vlabel {
+  grid-area: 1 / 1;
+  width: 38%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 7%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    var(--label-hi),
+    var(--label-mid) 62%,
+    var(--label-dk)
+  );
+  color: oklch(0.25 0.06 var(--hue-warm));
+  font-size: clamp(7px, 1.25vh, 11px);
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  box-shadow: inset 0 0 0 2px rgb(0 0 0 / 0.22);
+  overflow: hidden;
+}
+
+.glare {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 210deg,
+    transparent 0 40deg,
+    rgb(255 255 255 / 0.15) 55deg,
+    transparent 95deg 360deg
+  );
+}
+
+.scope {
+  position: absolute;
+  left: 5%;
+  bottom: 9%;
+  width: 24%;
+  height: 12%;
+  border: 2px solid var(--chrome-hi);
+  border-radius: 6px;
+  background:
+    linear-gradient(rgb(255 255 255 / 0.04), rgb(0 0 0 / 0.28)),
+    oklch(0.13 0.02 var(--hue-warm));
+  box-shadow:
+    inset 0 0 10px #000,
+    inset 0 0 0 2px color-mix(in oklch, var(--amber-deep) 60%, transparent),
+    0 2px 8px rgb(0 0 0 / 0.5);
+}
+
+.tonearm {
+  position: absolute;
+  right: 11%;
+  bottom: 6%;
+  width: 36%;
+  height: 52%;
+  pointer-events: none;
+}
+
+.pivot {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 19%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    oklch(0.9 0.02 var(--hue-paper)),
+    var(--chrome-dk) 68%,
+    oklch(0.35 0.02 var(--hue-paper))
+  );
+  box-shadow: 0 3px 9px rgb(0 0 0 / 0.6);
+}
+
+.arm {
+  position: absolute;
+  right: 8%;
+  bottom: 10%;
+  width: 94%;
+  height: 7px;
+  border-radius: 4px;
+  transform-origin: right center;
+  rotate: -38deg;
+  background: linear-gradient(
+    90deg,
+    var(--chrome-hi),
+    var(--chrome-dk) 70%,
+    oklch(0.4 0.02 var(--hue-paper))
+  );
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.6);
+  transition:
+    rotate 0.42s ease,
+    translate 0.42s ease;
+}
+
+.tonearm[data-pose="lift"] .arm {
+  rotate: -52deg;
+  translate: 0 -5px;
+}
+
+.tonearm[data-pose="play"] .arm {
+  rotate: -13deg;
+}
+
+.head {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 18px;
+  height: 16px;
+  border-radius: 3px;
+  background: oklch(0.24 0.02 var(--hue-ink));
+  box-shadow: 0 2px 4px #000;
+}
+
+.glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      115deg,
+      rgb(255 255 255 / 0.13) 0 11%,
+      transparent 12% 40%,
+      rgb(255 255 255 / 0.07) 41% 46%,
+      transparent 47%
+    ),
+    radial-gradient(
+      140% 100% at 50% -12%,
+      color-mix(in oklch, var(--teal) 10%, transparent),
+      transparent 55%
+    );
+}
+
+.lamp {
+  align-self: center;
+  margin: clamp(4px, 1vh, 10px) 0 0;
+  position: relative;
+  padding: 0.42em 1.1em 0.38em 2em;
+  border-radius: 8px;
+  border: 2px solid var(--chrome-hi);
+  background: linear-gradient(
+    oklch(0.18 0.04 var(--hue)),
+    oklch(0.11 0.03 var(--hue))
+  );
+  box-shadow:
+    inset 0 0 14px #000,
+    0 2px 10px rgb(0 0 0 / 0.5);
+  color: var(--amber);
+  font-size: clamp(10px, 1.7vh, 14px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow: 0 0 10px var(--amber-glow);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lamp::before {
+  content: "";
+  position: absolute;
+  left: 0.65em;
+  top: 50%;
+  translate: 0 -50%;
+  width: 0.55em;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    oklch(0.8 0.11 var(--hue)),
+    var(--lamp-red) 60%,
+    oklch(0.33 0.13 var(--hue))
+  );
+  box-shadow: 0 0 10px color-mix(in oklch, var(--lamp-red) 85%, transparent);
+  animation: jewel 2.2s ease-in-out infinite;
+}
+
+@keyframes jewel {
+  50% {
+    box-shadow: 0 0 3px color-mix(in oklch, var(--lamp-red) 85%, transparent);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .disc {
+  .vinyl,
+  .lamp::before {
     animation: none;
+  }
+
+  .arm,
+  .rec {
+    transition: none;
   }
 }
 
-.lamp {
-  text-align: center;
-  color: var(--teal);
-  letter-spacing: 0.12em;
-  font-size: 0.75rem;
-}
-
-.lampTitle {
-  color: var(--warmwhite);
+@media (max-width: 560px) {
+  .marquee {
+    letter-spacing: 0.14em;
+  }
 }

@@ -287,7 +287,4 @@ export const jukeSfx = {
   crackle,
   bar,
   analyser,
-  // v1 aliases for jukebox-view/strip-menu; Task 11 removes these
-  hover: tick,
-  kaChunk: clack,
 }

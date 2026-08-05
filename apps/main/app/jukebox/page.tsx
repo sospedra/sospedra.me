@@ -1,5 +1,20 @@
 import type { Metadata } from 'next'
+import { Righteous, Special_Elite } from 'next/font/google'
 import JukeboxView from './jukebox-view'
+
+const righteous = Righteous({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-disp',
+  display: 'swap',
+})
+
+const specialElite = Special_Elite({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-type',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Side projects',
@@ -9,5 +24,9 @@ export const metadata: Metadata = {
 }
 
 export default function JukeboxPage() {
-  return <JukeboxView />
+  return (
+    <JukeboxView
+      fontClassName={`${righteous.variable} ${specialElite.variable}`}
+    />
+  )
 }

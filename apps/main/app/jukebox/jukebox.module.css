@@ -1,93 +1,183 @@
 .hall {
-  --magenta: #ff2e88;
-  --amber: #ffb84d;
-  --teal: #46e6b0;
-  --lilac: #b98aff;
-  --warmwhite: #fff3d6;
-  --walnut: #5a3a24;
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
+  background: oklch(0.09 0.01 25)
+    radial-gradient(
+      120% 90% at 50% 0%,
+      oklch(0.13 0.02 25),
+      oklch(0.09 0.01 25) 72%
+    );
+  font-family:
+    var(--font-disp), "Righteous", "Arial Black", system-ui, sans-serif;
+  color: #eee;
+}
+
+.machine {
+  /* ============ THEME: ONE KNOB ============
+     --hue tunes the whole machine. 25 = burgundy.
+     Try 250 for midnight blue, 150 for pine green. */
+  --hue: 25;
+
+  /* derived hue lanes */
+  --hue-warm: calc(var(--hue) + 55);
+  --hue-paper: calc(var(--hue) + 70);
+  --hue-cool: calc(var(--hue) + 165);
+  --hue-ink: calc(var(--hue) + 235);
+  --hue-plum: calc(var(--hue) + 305);
+
+  /* cabinet */
+  --cab1: oklch(0.32 0.09 var(--hue));
+  --cab2: oklch(0.22 0.07 var(--hue));
+  --cab3: oklch(0.17 0.05 var(--hue));
+
+  /* metals and paper */
+  --chrome-hi: oklch(0.83 0.015 var(--hue-paper));
+  --chrome-dk: oklch(0.49 0.02 var(--hue-paper));
+  --paper: oklch(0.93 0.035 var(--hue-paper));
+  --paper2: oklch(0.88 0.04 var(--hue-paper));
+  --ink: oklch(0.3 0.03 var(--hue-paper));
+  --ink2: oklch(0.4 0.03 var(--hue-paper));
+
+  /* accents */
+  --strip-red: oklch(0.52 0.15 var(--hue));
+  --strip-blue: oklch(0.46 0.1 var(--hue-ink));
+  --amber: oklch(0.82 0.13 var(--hue-warm));
+  --amber-deep: oklch(0.44 0.1 var(--hue-warm));
+  --amber-glow: color-mix(in oklch, var(--amber) 70%, transparent);
+  --teal: oklch(0.79 0.12 var(--hue-cool));
+  --teal-deep: oklch(0.46 0.09 var(--hue-cool));
+  --lamp-red: oklch(0.56 0.19 var(--hue));
+
+  /* dome backdrop */
+  --plum1: oklch(0.25 0.08 var(--hue-plum));
+  --plum2: oklch(0.17 0.06 var(--hue-plum));
+  --plum3: oklch(0.11 0.04 var(--hue-plum));
+  --plum4: oklch(0.07 0.02 var(--hue-plum));
+
+  /* record label */
+  --label-hi: oklch(0.87 0.1 var(--hue-warm));
+  --label-mid: oklch(0.7 0.13 calc(var(--hue-warm) - 8));
+  --label-dk: oklch(0.52 0.11 calc(var(--hue-warm) - 10));
+
+  /* magazine slat tags, read by JS */
+  --tag1: oklch(0.66 0.15 var(--hue));
+  --tag2: oklch(0.7 0.11 var(--hue-cool));
+  --tag3: oklch(0.78 0.12 var(--hue-warm));
+  --tag4: oklch(0.72 0.11 calc(var(--hue) + 120));
+  --tag5: oklch(0.66 0.11 calc(var(--hue) + 280));
+
+  --disp: var(--font-disp), "Righteous", "Arial Black", system-ui, sans-serif;
+  --type: var(--font-type), "Special Elite", "Courier New", monospace;
+
+  position: relative;
+  height: 100%;
   display: grid;
-  place-content: center;
-  gap: 1rem;
-  background: color-mix(in srgb, var(--walnut) 18%, black);
-  color: var(--warmwhite);
-}
-
-.marquee {
-  text-align: center;
-  color: var(--amber);
-}
-
-.soundBtn {
-  position: fixed;
-  top: max(0.75rem, var(--safe-area-top));
-  right: max(0.75rem, var(--safe-area-right));
-  z-index: 10;
-  min-height: 36px;
-  padding: 0.35rem 0.6rem;
-  border: 2px solid var(--teal);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--walnut) 45%, black);
-  color: var(--teal);
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.6rem;
-  cursor: pointer;
-}
-
-.soundBtn:hover {
-  background: color-mix(in srgb, var(--walnut) 65%, black);
-}
-
-.cabinet {
-  display: grid;
-  gap: 1.25rem;
-  width: min(92vw, 34rem);
-  padding: 1.5rem;
-  border-radius: 45% 45% 12px 12px / 22% 22% 12px 12px;
-  background: linear-gradient(#3a2313, #241203);
-  border: 6px solid var(--walnut);
-  box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--magenta) 75%, black),
-    0 0 34px color-mix(in srgb, var(--magenta) 45%, transparent),
-    inset 0 0 0 4px color-mix(in srgb, var(--teal) 60%, black),
-    inset 0 0 44px rgb(0 0 0 / 0.6);
-}
-
-.cabinet::after {
-  content: "";
-  height: 4.5rem;
-  border-radius: 8px;
+  grid-template-rows: minmax(180px, 36%) minmax(0, 1fr) auto;
+  gap: clamp(6px, 1.2vh, 14px);
+  padding: clamp(8px, 1.4vh, 16px) clamp(46px, 6.5vw, 78px);
   background:
     repeating-linear-gradient(
-      45deg,
-      transparent 0 10px,
-      rgb(0 0 0 / 0.4) 10px 12px
+      90deg,
+      rgb(0 0 0 / 0.1) 0 2px,
+      transparent 2px 7px
     ),
-    repeating-linear-gradient(
-      -45deg,
-      transparent 0 10px,
-      rgb(0 0 0 / 0.4) 10px 12px
-    ),
+    linear-gradient(180deg, var(--cab1), var(--cab2) 34%, var(--cab3));
+  box-shadow: inset 0 0 90px rgb(0 0 0 / 0.65);
+  font-family: var(--disp);
+  color: #eee;
+}
+
+.tube {
+  position: absolute;
+  top: 1.4vh;
+  bottom: 1.4vh;
+  width: clamp(16px, 2.6vw, 26px);
+  border-radius: 20px;
+  background:
     radial-gradient(
-      ellipse at center,
-      var(--amber),
-      color-mix(in srgb, var(--amber) 40%, black)
+      circle 3px at 50% 14px,
+      rgb(255 255 255 / 0.8),
+      rgb(255 255 255 / 0) 62%
+    )
+    0 0 / 100% 56px repeat-y,
+    linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.28),
+      rgb(255 255 255 / 0) 32%,
+      rgb(0 0 0 / 0.4) 86%
+    ),
+    linear-gradient(
+      180deg,
+      var(--teal-deep),
+      var(--teal) 42%,
+      oklch(0.42 0.09 var(--hue-cool))
     );
-  box-shadow: inset 0 0 18px rgb(0 0 0 / 0.5);
+  box-shadow:
+    0 0 20px color-mix(in oklch, var(--teal) 35%, transparent),
+    inset 0 0 7px rgb(0 0 0 / 0.6);
+  animation: rise 5s linear infinite;
 }
 
-.cabinet[data-playing] .marquee {
-  animation: flash 0.5s steps(2, end) 2;
+.tubeLeft {
+  composes: tube;
+  left: clamp(10px, 1.7vw, 22px);
 }
 
-@keyframes flash {
-  50% {
-    color: var(--magenta);
+.tubeRight {
+  composes: tube;
+  right: clamp(10px, 1.7vw, 22px);
+  background:
+    radial-gradient(
+      circle 3px at 50% 14px,
+      rgb(255 255 255 / 0.8),
+      rgb(255 255 255 / 0) 62%
+    )
+    0 0 / 100% 56px repeat-y,
+    linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.28),
+      rgb(255 255 255 / 0) 32%,
+      rgb(0 0 0 / 0.4) 86%
+    ),
+    linear-gradient(
+      180deg,
+      var(--amber-deep),
+      oklch(0.78 0.14 var(--hue-warm)) 42%,
+      oklch(0.4 0.1 var(--hue-warm))
+    );
+  box-shadow:
+    0 0 20px color-mix(in oklch, var(--amber) 40%, transparent),
+    inset 0 0 7px rgb(0 0 0 / 0.6);
+}
+
+@keyframes rise {
+  to {
+    background-position:
+      0 -56px,
+      0 0,
+      0 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cabinet[data-playing] .marquee {
+  .tube {
     animation: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .machine {
+    padding-inline: 38px;
+  }
+}
+
+@media (max-height: 540px) {
+  .hall {
+    overflow: auto;
+  }
+
+  .machine {
+    min-height: 540px;
+    height: auto;
   }
 }
