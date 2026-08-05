@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Sospedra Select·O·Matic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ============ THEME: ONE KNOB ============
+     --hue tunes the whole machine. 25 = burgundy.
+     Try 250 for midnight blue, 150 for pine green. */
+  --hue: 25;
+
+  /* derived hue lanes */
+  --hue-warm:  calc(var(--hue) + 55);   /* amber, brass   */
+  --hue-paper: calc(var(--hue) + 70);   /* cream, chrome  */
+  --hue-cool:  calc(var(--hue) + 165);  /* bubble teal    */
+  --hue-ink:   calc(var(--hue) + 235);  /* strip blue     */
+  --hue-plum:  calc(var(--hue) + 305);  /* dome backdrop  */
+
+  /* cabinet */
+  --cab1: oklch(0.32 0.09 var(--hue));
+  --cab2: oklch(0.22 0.07 var(--hue));
+  --cab3: oklch(0.17 0.05 var(--hue));
+
+  /* metals and paper */
+  --chrome-hi: oklch(0.83 0.015 var(--hue-paper));
+  --chrome-dk: oklch(0.49 0.02 var(--hue-paper));
+  --paper:  oklch(0.93 0.035 var(--hue-paper));
+  --paper2: oklch(0.88 0.04 var(--hue-paper));
+  --ink:  oklch(0.30 0.03 var(--hue-paper));
+  --ink2: oklch(0.40 0.03 var(--hue-paper));
+
+  /* accents */
+  --strip-red:  oklch(0.52 0.15 var(--hue));
+  --strip-blue: oklch(0.46 0.10 var(--hue-ink));
+  --amber:      oklch(0.82 0.13 var(--hue-warm));
+  --amber-deep: oklch(0.44 0.10 var(--hue-warm));
+  --amber-glow: color-mix(in oklch, var(--amber) 70%, transparent);
+  --teal:       oklch(0.79 0.12 var(--hue-cool));
+  --teal-deep:  oklch(0.46 0.09 var(--hue-cool));
+  --lamp-red:   oklch(0.56 0.19 var(--hue));
+
+  /* dome backdrop */
+  --plum1: oklch(0.25 0.08 var(--hue-plum));
+  --plum2: oklch(0.17 0.06 var(--hue-plum));
+  --plum3: oklch(0.11 0.04 var(--hue-plum));
+  --plum4: oklch(0.07 0.02 var(--hue-plum));
+
+  /* record label */
+  --label-hi:  oklch(0.87 0.10 var(--hue-warm));
+  --label-mid: oklch(0.70 0.13 calc(var(--hue-warm) - 8));
+  --label-dk:  oklch(0.52 0.11 calc(var(--hue-warm) - 10));
+
+  /* magazine slat tags, read by JS */
+  --tag1: oklch(0.66 0.15 var(--hue));
+  --tag2: oklch(0.70 0.11 var(--hue-cool));
+  --tag3: oklch(0.78 0.12 var(--hue-warm));
+  --tag4: oklch(0.72 0.11 calc(var(--hue) + 120));
+  --tag5: oklch(0.66 0.11 calc(var(--hue) + 280));
+
+  --disp: "Righteous", "Arial Black", system-ui, sans-serif;
+  --type: "Special Elite", "Courier New", monospace;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; overflow:hidden;
+  background:oklch(0.09 0.01 var(--hue))
+    radial-gradient(120% 90% at 50% 0%, oklch(0.13 0.02 var(--hue)), oklch(0.09 0.01 var(--hue)) 72%);
+  font-family:var(--disp); color:#eee;
+}
+
+/* ============ CABINET ============ */
+.machine{
+  position:relative; height:100dvh;
+  display:grid; grid-template-rows:minmax(180px,36%) minmax(0,1fr) auto;
+  gap:clamp(6px,1.2vh,14px);
+  padding:clamp(8px,1.4vh,16px) clamp(46px,6.5vw,78px);
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,.10) 0 2px, transparent 2px 7px),
+    linear-gradient(180deg, var(--cab1), var(--cab2) 34%, var(--cab3));
+  box-shadow:inset 0 0 90px rgba(0,0,0,.65);
+}
+
+/* bubble tubes, one teal, one amber */
+.tube{
+  position:absolute; top:1.4vh; bottom:1.4vh;
+  width:clamp(16px,2.6vw,26px); border-radius:20px;
+  background:
+    radial-gradient(circle 3px at 50% 14px, rgba(255,255,255,.8), rgba(255,255,255,0) 62%) 0 0/100% 56px repeat-y,
+    linear-gradient(90deg, rgba(255,255,255,.28), rgba(255,255,255,0) 32%, rgba(0,0,0,.4) 86%),
+    linear-gradient(180deg, var(--teal-deep), var(--teal) 42%, oklch(0.42 0.09 var(--hue-cool)));
+  box-shadow:0 0 20px color-mix(in oklch, var(--teal) 35%, transparent), inset 0 0 7px rgba(0,0,0,.6);
+  animation:rise 5s linear infinite;
+}
+.tube-l{left:clamp(10px,1.7vw,22px)}
+.tube-r{
+  right:clamp(10px,1.7vw,22px);
+  background:
+    radial-gradient(circle 3px at 50% 14px, rgba(255,255,255,.8), rgba(255,255,255,0) 62%) 0 0/100% 56px repeat-y,
+    linear-gradient(90deg, rgba(255,255,255,.28), rgba(255,255,255,0) 32%, rgba(0,0,0,.4) 86%),
+    linear-gradient(180deg, var(--amber-deep), oklch(0.78 0.14 var(--hue-warm)) 42%, oklch(0.40 0.10 var(--hue-warm)));
+  box-shadow:0 0 20px color-mix(in oklch, var(--amber) 40%, transparent), inset 0 0 7px rgba(0,0,0,.6);
+}
+@keyframes rise{to{background-position:0 -56px, 0 0, 0 0}}
+
+/* ============ 1 · THE DOME ============ */
+.dome{display:flex; flex-direction:column; min-height:0}
+.marquee{
+  align-self:center; margin:0 0 clamp(3px,.8vh,8px);
+  font-size:clamp(13px,2.5vh,22px); letter-spacing:.26em;
+  color:oklch(0.90 0.07 var(--hue-warm));
+  text-shadow:0 0 16px var(--amber-glow); white-space:nowrap;
+}
+.marquee span{
+  font-size:.68em; letter-spacing:.4em;
+  color:oklch(0.88 0.08 var(--hue-cool));
+  text-shadow:0 0 12px color-mix(in oklch, var(--teal) 60%, transparent);
+}
+.dome-glass{
+  position:relative; flex:1; min-height:0; overflow:hidden;
+  border-radius:46% 46% 14px 14px / 82% 82% 14px 14px;
+  border:3px solid var(--chrome-hi);
+  background:radial-gradient(130% 150% at 50% 120%, var(--plum1) 0%, var(--plum2) 46%, var(--plum3) 78%, var(--plum4));
+  box-shadow:
+    inset 0 0 0 3px var(--chrome-dk),
+    inset 0 16px 44px rgba(0,0,0,.7),
+    0 0 0 4px oklch(0.22 0.01 var(--hue-paper)), 0 6px 26px rgba(0,0,0,.6);
+}
+/* record magazine, edge-on carousel */
+.mag{
+  position:absolute; left:50%; top:13%; height:40%;
+  translate:-50% 0; display:flex; gap:clamp(4px,.7vw,8px); align-items:flex-end;
+}
+.rec{
+  width:clamp(5px,.6vw,8px); border-radius:3px;
+  background:linear-gradient(180deg,#050505,#262626 55%,#0a0a0a);
+  box-shadow:inset 0 0 2px rgba(255,255,255,.28), 0 0 5px rgba(0,0,0,.8);
+  transition:box-shadow .25s, filter .25s;
+}
+.rec.hot{
+  box-shadow:inset 0 0 3px rgba(255,255,255,.5), 0 0 14px color-mix(in oklch, var(--amber) 85%, transparent);
+  filter:brightness(1.7);
+}
+.rec i{display:block; height:3px; margin-top:46%; border-radius:2px}
+/* platter */
+.deck{position:absolute; inset:auto 0 5% 0; display:flex; justify-content:center}
+.platter{position:relative; width:min(29vh,260px); aspect-ratio:1; perspective:900px}
+.carrier{position:absolute; inset:0; transform-style:preserve-3d; will-change:transform}
+.vinyl{
+  position:absolute; inset:0; border-radius:50%;
+  display:grid; place-items:center;
+  background:repeating-radial-gradient(circle at 50% 50%, #0d0d0d 0 1.5px, #1b1b1b 1.5px 3px);
+  box-shadow:0 8px 28px rgba(0,0,0,.75), inset 0 0 12px rgba(255,255,255,.05);
+  /* a real spindle hole: the dome backdrop shows through */
+  -webkit-mask-image:radial-gradient(circle closest-side, transparent 0 4%, #000 4.6% 100%);
+  mask-image:radial-gradient(circle closest-side, transparent 0 4%, #000 4.6% 100%);
+  animation:spin 1.9s linear infinite;
+}
+@keyframes spin{to{rotate:1turn}}
+.vlabel{
+  grid-area:1/1; width:38%; aspect-ratio:1; border-radius:50%;
+  display:grid; place-items:center; text-align:center; padding:7%;
+  background:radial-gradient(circle at 35% 30%, var(--label-hi), var(--label-mid) 62%, var(--label-dk));
+  color:oklch(0.25 0.06 var(--hue-warm));
+  font-size:clamp(7px,1.25vh,11px); letter-spacing:.06em; line-height:1.15;
+  box-shadow:inset 0 0 0 2px rgba(0,0,0,.22);
+  overflow:hidden;
+}
+.glare{
+  position:absolute; inset:0; border-radius:50%; pointer-events:none;
+  background:conic-gradient(from 210deg, transparent 0 40deg, rgba(255,255,255,.15) 55deg, transparent 95deg 360deg);
+}
+/* the scope: analyser waveform during playback */
+.scope{
+  position:absolute; left:5%; bottom:9%;
+  width:24%; height:12%;
+  border:2px solid var(--chrome-hi); border-radius:6px;
+  background:
+    linear-gradient(rgba(255,255,255,.04), rgba(0,0,0,.28)),
+    oklch(0.13 0.02 var(--hue-warm));
+  box-shadow:inset 0 0 10px #000, inset 0 0 0 2px color-mix(in oklch, var(--amber-deep) 60%, transparent), 0 2px 8px rgba(0,0,0,.5);
+}
+/* tonearm */
+.tonearm{position:absolute; right:11%; bottom:6%; width:36%; height:52%; pointer-events:none}
+.pivot{
+  position:absolute; right:0; bottom:0; width:19%; aspect-ratio:1; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, oklch(0.90 0.02 var(--hue-paper)), var(--chrome-dk) 68%, oklch(0.35 0.02 var(--hue-paper)));
+  box-shadow:0 3px 9px rgba(0,0,0,.6);
+}
+.arm{
+  position:absolute; right:8%; bottom:10%; width:94%; height:7px; border-radius:4px;
+  transform-origin:right center; rotate:-38deg;
+  background:linear-gradient(90deg, var(--chrome-hi), var(--chrome-dk) 70%, oklch(0.40 0.02 var(--hue-paper)));
+  box-shadow:0 2px 4px rgba(0,0,0,.6);
+  transition:rotate .42s ease, translate .42s ease;
+}
+.tonearm.lift .arm{rotate:-52deg; translate:0 -5px}
+.tonearm.play .arm{rotate:-13deg}
+.head{position:absolute; left:-5px; top:-5px; width:18px; height:16px; border-radius:3px; background:oklch(0.24 0.02 var(--hue-ink)); box-shadow:0 2px 4px #000}
+/* glass reflections */
+.glass{
+  position:absolute; inset:0; pointer-events:none;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.13) 0 11%, transparent 12% 40%, rgba(255,255,255,.07) 41% 46%, transparent 47%),
+    radial-gradient(140% 100% at 50% -12%, color-mix(in oklch, var(--teal) 10%, transparent), transparent 55%);
+}
+/* NOW PLAYING lamp */
+.lamp{
+  align-self:center; margin:clamp(4px,1vh,10px) 0 0; position:relative;
+  padding:.42em 1.1em .38em 2em; border-radius:8px;
+  border:2px solid var(--chrome-hi);
+  background:linear-gradient(oklch(0.18 0.04 var(--hue)), oklch(0.11 0.03 var(--hue)));
+  box-shadow:inset 0 0 14px #000, 0 2px 10px rgba(0,0,0,.5);
+  color:var(--amber); font-size:clamp(10px,1.7vh,14px);
+  letter-spacing:.18em; text-transform:uppercase; white-space:nowrap;
+  text-shadow:0 0 10px var(--amber-glow);
+  max-width:100%; overflow:hidden; text-overflow:ellipsis;
+}
+.lamp::before{
+  content:""; position:absolute; left:.65em; top:50%; translate:0 -50%;
+  width:.55em; aspect-ratio:1; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, oklch(0.80 0.11 var(--hue)), var(--lamp-red) 60%, oklch(0.33 0.13 var(--hue)));
+  box-shadow:0 0 10px color-mix(in oklch, var(--lamp-red) 85%, transparent);
+  animation:jewel 2.2s ease-in-out infinite;
+}
+@keyframes jewel{50%{box-shadow:0 0 3px color-mix(in oklch, var(--lamp-red) 85%, transparent)}}
+
+/* ============ 2 · THE TITLE-STRIP MENU ============ */
+.rack{display:flex; flex-direction:column; min-height:0}
+.rack-head{
+  display:grid; grid-template-columns:1fr 1fr; gap:8px;
+  padding:0 8px clamp(2px,.6vh,6px);
+  font-size:clamp(8px,1.4vh,12px); letter-spacing:.22em;
+  color:oklch(0.88 0.05 var(--hue-paper)); text-shadow:0 1px 0 #000;
+}
+.rack-head .side-b{text-align:right; color:oklch(0.87 0.08 var(--hue-cool))}
+.frame{
+  flex:1; min-height:0; padding:clamp(6px,1vh,12px);
+  border:3px solid var(--chrome-hi); border-radius:10px;
+  background:linear-gradient(180deg, oklch(0.16 0.015 var(--hue-paper)), oklch(0.11 0.01 var(--hue-paper)));
+  box-shadow:inset 0 0 0 3px var(--chrome-dk), inset 0 0 30px rgba(0,0,0,.65), 0 4px 16px rgba(0,0,0,.5);
+  overflow:hidden;
+}
+.strips{
+  list-style:none; margin:0; padding:0; height:100%;
+  display:grid; grid-template-columns:1fr 1fr; grid-template-rows:repeat(6,1fr);
+  grid-auto-flow:column;
+  gap:clamp(4px,.8vh,8px) clamp(10px,1.6vw,18px);
+}
+.slot{position:relative; min-height:0}
+.strip{
+  position:absolute; inset:1px 1px auto 1px; height:calc(100% - 2px);
+  display:flex; gap:.6em; align-items:stretch; padding:.3em .55em;
+  text-decoration:none; color:var(--ink); border-radius:3px; overflow:hidden;
+  font-family:var(--type);
+  border-top:2px solid var(--strip-red); border-bottom:2px solid var(--strip-red);
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.03) 0 1px, transparent 1px 3px),
+    linear-gradient(180deg, var(--paper), var(--paper2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2), 0 2px 5px rgba(0,0,0,.55);
+  transition:transform .16s ease, box-shadow .16s ease, height .18s ease;
+}
+.slot:nth-child(2n) .strip{rotate:.25deg}
+.slot:nth-child(3n) .strip{rotate:-.3deg}
+.crest{
+  align-self:center; flex:0 0 auto; padding:.12em .4em; border-radius:3px;
+  font-family:var(--disp); font-size:clamp(9px,1.55vh,13px); letter-spacing:.05em;
+  color:#fff; background:var(--strip-blue);
+}
+.strips li:nth-child(n+7) .crest{background:var(--strip-red)}
+.body{min-width:0; flex:1; display:flex; flex-direction:column; justify-content:center}
+.name{
+  font-size:clamp(10px,1.75vh,15px); text-transform:uppercase; letter-spacing:.04em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.one{
+  font-size:clamp(8px,1.35vh,11.5px); color:var(--ink2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+/* 3 · strip hover slides out, liner notes unfold */
+.linerwrap{display:grid; grid-template-rows:0fr; transition:grid-template-rows .2s ease}
+.liner{
+  overflow:hidden; font-size:clamp(8px,1.3vh,11px);
+  color:oklch(0.40 0.07 var(--hue));
+  white-space:nowrap; text-overflow:ellipsis;
+  border-top:1px dashed oklch(0.72 0.05 var(--hue-paper));
+  margin-top:.22em; padding-top:.18em;
+}
+.slot:not(.empty):hover .strip,
+.strip:focus-visible{
+  transform:translateX(clamp(6px,1vw,14px)); z-index:6;
+  height:auto; min-height:calc(100% - 2px);
+  box-shadow:0 10px 24px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.slot:not(.empty):hover .linerwrap,
+.strip:focus-visible .linerwrap{grid-template-rows:1fr}
+.strip:focus-visible{outline:3px solid var(--amber); outline-offset:2px}
+.strip.blank{
+  opacity:.42; justify-content:flex-start; cursor:default;
+  border-top-color:oklch(0.58 0.02 var(--hue-paper));
+  border-bottom-color:oklch(0.58 0.02 var(--hue-paper));
+  color:oklch(0.50 0.02 var(--hue-paper));
+}
+.strip.blank .crest{background:oklch(0.50 0.02 var(--hue-paper)) !important}
+/* growth: flip tabs, hidden while one frame is enough */
+.tabs{display:flex; gap:8px; justify-content:center; padding-top:clamp(3px,.7vh,7px)}
+.tab{
+  font-family:var(--disp); font-size:clamp(9px,1.4vh,12px); letter-spacing:.14em;
+  color:oklch(0.28 0.03 var(--hue-paper)); border:0; border-radius:0 0 7px 7px;
+  padding:.28em .95em; cursor:pointer;
+  background:linear-gradient(var(--paper2), oklch(0.80 0.05 var(--hue-paper)));
+  box-shadow:0 3px 5px rgba(0,0,0,.5);
+}
+.tab[aria-selected="true"]{background:linear-gradient(oklch(0.90 0.09 var(--hue-warm)), oklch(0.80 0.12 var(--hue-warm)))}
+.tab:focus-visible{outline:3px solid var(--amber); outline-offset:2px}
+
+/* ============ 4 · THE KEYS ============ */
+.deckplate{
+  display:flex; flex-direction:column; gap:clamp(4px,.8vh,8px); align-items:center;
+  padding:clamp(6px,1.2vh,12px) clamp(10px,2vw,24px);
+  border:3px solid var(--chrome-hi); border-radius:12px;
+  background:linear-gradient(180deg, oklch(0.30 0.02 var(--hue-paper)), oklch(0.21 0.015 var(--hue-paper)) 60%, oklch(0.17 0.01 var(--hue-paper)));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25), inset 0 -8px 18px rgba(0,0,0,.55), 0 4px 14px rgba(0,0,0,.5);
+}
+.hint{
+  margin:0; font-family:var(--type); font-size:clamp(8px,1.25vh,11px);
+  letter-spacing:.14em; color:oklch(0.82 0.05 var(--hue-paper));
+  text-shadow:0 1px 0 #000; text-align:center;
+}
+.console{display:flex; align-items:center; gap:clamp(10px,2.4vw,28px); flex-wrap:wrap; justify-content:center}
+.keys{display:flex; gap:clamp(6px,1vw,10px)}
+.key{
+  min-width:clamp(36px,5.2vh,52px); height:clamp(32px,4.8vh,46px);
+  border:0; border-radius:9px; cursor:pointer;
+  font-family:var(--disp); font-size:clamp(13px,2.2vh,18px); color:var(--ink);
+  background:linear-gradient(180deg, oklch(0.98 0.01 var(--hue-paper)), oklch(0.88 0.03 var(--hue-paper)));
+  box-shadow:0 4px 0 oklch(0.62 0.03 var(--hue-paper)), 0 7px 12px rgba(0,0,0,.55), inset 0 1px 0 #fff;
+  transition:transform .06s ease, box-shadow .06s ease, background .12s;
+}
+.key:active,.key.down{
+  transform:translateY(3px);
+  box-shadow:0 1px 0 oklch(0.62 0.03 var(--hue-paper)), 0 3px 6px rgba(0,0,0,.5), inset 0 1px 0 #fff;
+}
+.key.lit{
+  background:linear-gradient(180deg, oklch(0.91 0.08 var(--hue-warm)), oklch(0.80 0.12 var(--hue-warm)));
+  box-shadow:0 4px 0 oklch(0.50 0.08 var(--hue-warm)), 0 0 16px color-mix(in oklch, var(--amber) 55%, transparent), inset 0 1px 0 #fff;
+}
+.key:focus-visible{outline:3px solid var(--amber); outline-offset:2px}
+.window{
+  min-width:clamp(80px,12vw,132px); text-align:center; padding:.3em .5em .22em;
+  border-radius:8px; background:oklch(0.13 0.02 var(--hue-warm));
+  font-family:var(--type); font-size:clamp(17px,3.2vh,28px); letter-spacing:.32em;
+  color:var(--amber); text-shadow:0 0 12px var(--amber-glow);
+  box-shadow:inset 0 2px 10px #000, inset 0 0 0 2px oklch(0.28 0.05 var(--hue-warm)), 0 1px 0 rgba(255,255,255,.15);
+}
+.window.err{
+  color:oklch(0.66 0.20 calc(var(--hue) + 5));
+  text-shadow:0 0 12px color-mix(in oklch, oklch(0.60 0.22 var(--hue)) 80%, transparent);
+}
+
+/* ============ 5 · MOTION AND SMALL SCREENS ============ */
+@media (prefers-reduced-motion: reduce){
+  .vinyl,.tube,.lamp::before{animation:none}
+  .arm,.strip,.linerwrap,.key,.rec{transition:none}
+}
+@media (max-width:560px){
+  .machine{padding-inline:38px}
+  .marquee{letter-spacing:.14em}
+}
+@media (max-height:540px){
+  body{overflow:auto}
+  .machine{min-height:540px; height:auto}
+}
+</style>
+</head>
+<body>
+<main class="machine">
+  <div class="tube tube-l" aria-hidden="true"></div>
+  <div class="tube tube-r" aria-hidden="true"></div>
+
+  <!-- 1 · The dome -->
+  <section class="dome">
+    <h1 class="marquee" aria-hidden="true">SOSPEDRA <span>SELECT·O·MATIC</span></h1>
+    <div class="dome-glass" aria-hidden="true">
+      <div class="mag" id="mag"></div>
+      <div class="deck">
+        <div class="platter">
+          <div class="carrier" id="carrier">
+            <div class="vinyl" id="vinyl">
+              <div class="vlabel" id="vlabel"></div>
+            </div>
+          </div>
+          <div class="glare" id="glare"></div>
+        </div>
+        <div class="tonearm" id="tonearm">
+          <div class="arm"><div class="head"></div></div>
+          <div class="pivot"></div>
+        </div>
+      </div>
+      <canvas class="scope" id="scope"></canvas>
+      <div class="glass"></div>
+    </div>
+    <p class="lamp" id="lamp" role="status">NOW PLAYING · —</p>
+  </section>
+
+  <!-- 2 · The title-strip menu. Under the paint: nav > ul > li > a. -->
+  <section class="rack">
+    <div class="rack-head" aria-hidden="true">
+      <span class="side-a">SIDE A · LONG PLAYERS</span>
+      <span class="side-b">SIDE B · STRANGE LOOPS</span>
+    </div>
+    <nav class="frame" aria-label="Projects">
+      <ul class="strips" id="strips"></ul>
+    </nav>
+    <div class="tabs" id="tabs" hidden></div>
+  </section>
+
+  <!-- 4 · The keys -->
+  <section class="deckplate">
+    <p class="hint" aria-hidden="true">TYPE A LETTER, THEN A NUMBER · OR PRESS A STRIP</p>
+    <div class="console">
+      <div class="keys" role="group" aria-label="Letter keys" id="letterKeys"></div>
+      <div class="window" id="display" aria-hidden="true">– –</div>
+      <div class="keys" role="group" aria-label="Number keys" id="numberKeys"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+"use strict";
+
+/* ================= EDIT HERE =================
+   One project, one strip. The code letter picks the column.
+   A, C, E ... left column. B, D, F ... right column.
+   Numbers run 1 to 6. Add a C1 project: flip tabs appear.
+   pressed  = first commit year
+   lastSpin = last deploy, ISO date. The newest one owns the platter.
+   stack    = one line
+   Theme: change --hue in the CSS :root. One number, whole machine.
+*/
+const PROJECTS = [
+  { code:"A1", name:"Melchor",           line:"Private wishlists and gift coordination.", pressed:2024, lastSpin:"2026-07-28", stack:"Expo · Supabase · RevenueCat", url:"https://melchor.sospedra.me" },
+  { code:"A2", name:"Crucigrama",        line:"A Spanish crossword every day. Offline.",  pressed:2023, lastSpin:"2026-05-14", stack:"Next.js · SQLite corpus · PWA", url:"https://crucigrama.sospedra.me" },
+  { code:"A3", name:"sospedra.me",       line:"Essays and build logs. The mothership.",   pressed:2019, lastSpin:"2026-06-02", stack:"Next.js · MDX · Vercel",       url:"https://sospedra.me" },
+  { code:"B1", name:"Cassette Deck",     line:"A tape transport in pure CSS.",            pressed:2022, lastSpin:"2024-11-19", stack:"HTML · CSS",                   url:"https://cassette.sospedra.me" },
+  { code:"B2", name:"Answering Machine", line:"Leave a message after the tone.",          pressed:2022, lastSpin:"2024-12-03", stack:"HTML · CSS · Web Audio",       url:"https://tam.sospedra.me" },
+  { code:"B3", name:"ZK Escrow",         line:"Threshold escrow. Revocable anonymity.",   pressed:2025, lastSpin:"2025-09-30", stack:"TypeScript · Circom",          url:"https://zk.sospedra.me" },
+  { code:"B4", name:"This Jukebox",      line:"You are inside it.",                        pressed:2026, lastSpin:"2026-08-05", stack:"HTML · CSS · Web Audio",       url:"https://jukebox.sospedra.me" }
+];
+/* Selection stays inside the machine while NAVIGATE is false.
+   Set NAVIGATE to true on the real deployment. */
+const NAVIGATE = false;
+/* ============= END OF EDIT ZONE ============= */
+
+/* ---------- tempo: one constant drives the music ---------- */
+const BPM = 150;
+const BEAT = 60 / BPM;      /* 0.4 s  */
+const STEP = BEAT / 2;      /* eighth */
+const BAR  = BEAT * 4;      /* 1.6 s  */
+const BAR_MS = BAR * 1000;
+
+/* ---------- mechanical timings, one table, no inline magic ---------- */
+const T = {
+  armLift: 360,
+  armDrop: 380,
+  exit: 520,
+  shuffle: 650,
+  entry: 680,
+  landClack: 470,
+  glareOut: 260,
+  glareIn: 240,
+  glareInDelay: 430,
+  reduceGo: 220,
+  bar: BAR_MS + 150
+};
+
+const SLOTS = 6;
+const $ = s => document.querySelector(s);
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmt = iso => { const p = String(iso).split("-"); return (MONTHS[+p[1]-1] || "") + " " + p[0]; };
+
+const byCode  = new Map(PROJECTS.map(p => [p.code.toUpperCase(), p]));
+const letters = [...new Set(PROJECTS.map(p => p.code[0].toUpperCase()))].sort();
+const pages   = [];
+for (let i = 0; i < letters.length; i += 2) pages.push(letters.slice(i, i + 2));
+
+let page = 0, armed = null, busy = false, onPlatter = null;
+
+/* ---------- strips ---------- */
+function pageLetters(i){
+  const pg = pages[i] || ["A"];
+  return pg.length === 2 ? pg : [pg[0], String.fromCharCode(pg[0].charCodeAt(0) + 1)];
+}
+function renderStrips(){
+  const ul = $("#strips"); ul.innerHTML = "";
+  for (const letter of pageLetters(page)){
+    for (let n = 1; n <= SLOTS; n++){
+      const code = letter + n, p = byCode.get(code);
+      const li = document.createElement("li");
+      li.className = "slot";
+      if (p){
+        const a = document.createElement("a");
+        a.className = "strip"; a.href = p.url; a.dataset.code = code;
+        a.innerHTML =
+          '<span class="crest" aria-hidden="true">' + code + '</span>' +
+          '<span class="body"><span class="name">' + esc(p.name) + '</span>' +
+          '<span class="one">' + esc(p.line) + '</span>' +
+          '<span class="linerwrap"><span class="liner">Pressed ' + p.pressed +
+            ' · Last spin ' + fmt(p.lastSpin) + ' · ' + esc(p.stack) + '</span></span></span>';
+        a.addEventListener("click", e => {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; /* keep native new-tab behavior */
+          e.preventDefault();
+          select(p);
+        });
+        li.append(a);
+      } else {
+        li.classList.add("empty");
+        li.setAttribute("aria-hidden", "true");
+        li.innerHTML =
+          '<span class="strip blank"><span class="crest">' + code + '</span>' +
+          '<span class="body"><span class="one">· · · open slot · · ·</span></span></span>';
+      }
+      ul.append(li);
+    }
+  }
+}
+
+/* ---------- growth: flip tabs ---------- */
+function syncTabs(){
+  const tabs = $("#tabs");
+  if (pages.length < 2){ tabs.hidden = true; return; }
+  tabs.hidden = false; tabs.innerHTML = "";
+  pages.forEach((pg, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "tab";
+    b.textContent = pg.join("–");
+    b.setAttribute("aria-selected", String(i === page));
+    b.addEventListener("click", () => { page = i; renderStrips(); syncTabs(); });
+    tabs.append(b);
+  });
+}
+
+/* ---------- keys ---------- */
+function makeKey(label, fn){
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "key"; b.dataset.k = label; b.textContent = label;
+  b.addEventListener("click", fn);
+  return b;
+}
+function renderKeys(){
+  const lk = $("#letterKeys"), nk = $("#numberKeys");
+  lk.innerHTML = nk.innerHTML = "";
+  for (const l of letters) lk.append(makeKey(l, () => armLetter(l)));
+  for (let n = 1; n <= SLOTS; n++) nk.append(makeKey(String(n), () => pressNumber(n)));
+}
+function syncLit(){
+  document.querySelectorAll("#letterKeys .key").forEach(b =>
+    b.classList.toggle("lit", b.dataset.k === armed));
+}
+function showDisplay(t){ $("#display").textContent = t; }
+function lamp(t){ $("#lamp").textContent = t; }
+
+function armLetter(l){
+  if (busy) return;
+  ensureAudio(); tick();
+  armed = l; syncLit(); showDisplay(l + " ·");
+  const pi = pages.findIndex(pg => pg.includes(l));
+  if (pi > -1 && pi !== page){ page = pi; renderStrips(); syncTabs(); }
+}
+function pressNumber(n){
+  if (busy) return;
+  ensureAudio();
+  if (!armed){ showDisplay("– " + n); buzz(); setTimeout(() => showDisplay("– –"), 500); return; }
+  const code = armed + n, p = byCode.get(code);
+  showDisplay(armed + " " + n);
+  if (!p){ buzz(); armed = null; syncLit(); setTimeout(() => showDisplay("– –"), 500); return; }
+  select(p);
+}
+function pressVisual(k){
+  const b = document.querySelector('.key[data-k="' + k + '"]');
+  if (!b) return;
+  b.classList.add("down");
+  setTimeout(() => b.classList.remove("down"), 130);
+}
+addEventListener("keydown", e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toUpperCase();
+  if (letters.includes(k)){ pressVisual(k); armLetter(k); }
+  else if (/^[1-6]$/.test(k)){ pressVisual(k); pressNumber(+k); }
+});
+
+/* ---------- dome ---------- */
+function buildMag(){
+  const mag = $("#mag"), N = 21;
+  const tags = ["--tag1","--tag2","--tag3","--tag4","--tag5"];
+  for (let i = 0; i < N; i++){
+    const r = document.createElement("div");
+    r.className = "rec";
+    const k = (i - (N - 1) / 2) / ((N - 1) / 2);
+    r.style.height = (56 + 36 * Math.cos(k * 1.25)) + "%";
+    r.innerHTML = '<i style="background:var(' + tags[i % tags.length] + ')"></i>';
+    mag.append(r);
+  }
+}
+function newest(){
+  return PROJECTS.reduce((a, b) => (a.lastSpin >= b.lastSpin ? a : b));
+}
+function setPlatter(p){ $("#vlabel").textContent = p.name.toUpperCase(); onPlatter = p; }
+
+/* ---------- 5 · selection ---------- */
+/* The record swap:
+   old record spins up into the magazine, flips edge-on, files itself.
+   The magazine shuffles, the picked slat glows.
+   The new record drops face-on and lands with a bounce and a clack. */
+const HIDDEN_POSE = "translateY(-118%) rotateY(84deg) scale(.24)";
+async function animateSwap(p){
+  const carrier = $("#carrier"), glare = $("#glare"), mag = $("#mag");
+  const slats = mag.children;
+  const num = parseInt(p.code.slice(1), 10) || 3;
+  const hot = slats[Math.max(0, Math.min(slats.length - 1, Math.floor(slats.length / 2) + num - 3))];
+
+  whoosh();
+  const gOut = glare.animate([{opacity:1},{opacity:0}], {duration:T.glareOut, fill:"forwards"});
+  const exit = carrier.animate(
+    [{transform:"none", opacity:1},
+     {transform:HIDDEN_POSE, opacity:0}],
+    {duration:T.exit, easing:"cubic-bezier(.5,0,.9,.4)", fill:"forwards"});
+  await exit.finished;
+
+  setPlatter(p);
+  if (hot) hot.classList.add("hot");
+  await mag.animate(
+    [{transform:"translateX(0)"},
+     {transform:"translateX(-30px)", offset:.45},
+     {transform:"translateX(9px)",  offset:.75},
+     {transform:"translateX(0)"}],
+    {duration:T.shuffle, easing:"ease-in-out"}).finished;
+
+  setTimeout(clack, T.landClack);
+  const entry = carrier.animate(
+    [{transform:HIDDEN_POSE, opacity:0},
+     {transform:"translateY(-6%) rotateY(0deg) scale(1.03)", opacity:1, offset:.72},
+     {transform:"none", opacity:1}],
+    {duration:T.entry, easing:"cubic-bezier(.16,.9,.3,1)"});
+  exit.cancel();
+  glare.animate([{opacity:0},{opacity:1}], {duration:T.glareIn, delay:T.glareInDelay});
+  await entry.finished;
+  gOut.cancel();
+  glare.getAnimations().forEach(a => a.cancel());
+  if (hot) hot.classList.remove("hot");
+}
+
+async function select(p){
+  if (busy) return;
+  busy = true;
+  armed = p.code[0].toUpperCase(); syncLit();
+  showDisplay(p.code[0] + " " + p.code.slice(1));
+  ensureAudio();
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const arm = $("#tonearm");
+  lamp("SELECTED · " + p.name.toUpperCase());
+
+  if (reduce){
+    setPlatter(p);
+    arm.classList.remove("lift"); arm.classList.add("play");
+    thump();
+    lamp("NOW PLAYING · " + p.name.toUpperCase());
+    await wait(T.reduceGo);
+    return NAVIGATE ? go(p) : finish();
+  }
+
+  arm.classList.remove("play"); arm.classList.add("lift");
+  await wait(T.armLift);
+  if (!onPlatter || onPlatter.code !== p.code) await animateSwap(p);
+  arm.classList.remove("lift"); arm.classList.add("play");
+  await wait(T.armDrop);
+  thump(); crackle(BAR + 0.3);
+  lamp("NOW PLAYING · " + p.name.toUpperCase());
+  playBar();
+  startScope(BAR + 0.25);
+  await wait(T.bar);
+  if (NAVIGATE) go(p); else finish();
+}
+function finish(){
+  busy = false; armed = null; syncLit();
+  showDisplay("– –");
+}
+function go(p){
+  showDisplay("– –");
+  let embedded = true;
+  try { embedded = window.self !== window.top; } catch (_e) { embedded = true; }
+  if (!embedded){ location.assign(p.url); return; }
+  const w = window.open(p.url, "_blank", "noopener");
+  if (!w) lamp("OPEN · " + p.url.replace(/^https?:\/\//, "").toUpperCase());
+  busy = false; armed = null; syncLit();
+  $("#tonearm").classList.remove("play");
+}
+
+/* ---------- sound ----------
+   Graph: voices → master ─┬→ dry (0.8) ────────→ out
+                           ├→ convolver → wet (0.3) → out
+                           └→ analyser (the scope taps here)
+   The convolver runs a synthesized 0.2 s impulse response.
+   It makes the chiptune sound like it plays inside the cabinet. */
+let AC = null, noiseBuf = null, master = null, analyser = null;
+let scopeRAF = 0, traceColor = null;
+
+function makeImpulse(sec, decay){
+  const rate = AC.sampleRate, len = Math.floor(rate * sec);
+  const buf = AC.createBuffer(2, len, rate);
+  for (let ch = 0; ch < 2; ch++){
+    const d = buf.getChannelData(ch);
+    for (let i = 0; i < len; i++){
+      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+    }
+  }
+  return buf;
+}
+function ensureAudio(){
+  if (AC){ if (AC.state === "suspended") AC.resume(); return; }
+  try {
+    AC = new (window.AudioContext || window.webkitAudioContext)();
+    const len = Math.floor(AC.sampleRate * 0.25);
+    noiseBuf = AC.createBuffer(1, len, AC.sampleRate);
+    const d = noiseBuf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+
+    master = AC.createGain();
+    master.gain.value = 1;
+    const dry = AC.createGain();  dry.gain.value = 0.8;
+    const wet = AC.createGain();  wet.gain.value = 0.3;
+    const verb = AC.createConvolver();
+    verb.buffer = makeImpulse(0.2, 2.8);
+    master.connect(dry);  dry.connect(AC.destination);
+    master.connect(verb); verb.connect(wet); wet.connect(AC.destination);
+
+    analyser = AC.createAnalyser();
+    analyser.fftSize = 1024;
+    master.connect(analyser);
+  } catch (_e) { AC = null; }
+}
+function env(g, t0, a, peak, dur){
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.linearRampToValueAtTime(peak, t0 + a);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+}
+function blip(freq, t0, dur, type, peak){
+  if (!AC) return;
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.value = freq;
+  env(g, t0, 0.005, peak, dur);
+  o.connect(g).connect(master);
+  o.start(t0); o.stop(t0 + dur + 0.05);
+}
+function noise(t0, dur, peak, fc, type){
+  if (!AC) return;
+  const s = AC.createBufferSource(); s.buffer = noiseBuf;
+  const f = AC.createBiquadFilter(); f.type = type || "lowpass"; f.frequency.value = fc;
+  const g = AC.createGain();
+  env(g, t0, 0.003, peak, dur);
+  s.connect(f); f.connect(g); g.connect(master);
+  s.start(t0); s.stop(t0 + dur + 0.05);
+}
+function tick(){ if (AC) noise(AC.currentTime, 0.03, 0.07, 3200, "highpass"); }
+function thump(){
+  if (!AC) return;
+  const t = AC.currentTime;
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = "sine";
+  o.frequency.setValueAtTime(140, t);
+  o.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+  env(g, t, 0.004, 0.5, 0.16);
+  o.connect(g).connect(master);
+  o.start(t); o.stop(t + 0.2);
+  noise(t, 0.07, 0.18, 900);
+}
+function whoosh(){
+  if (AC) noise(AC.currentTime, 0.28, 0.08, 1100);
+}
+function clack(){
+  if (!AC) return;
+  const t = AC.currentTime;
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = "sine";
+  o.frequency.setValueAtTime(300, t);
+  o.frequency.exponentialRampToValueAtTime(110, t + 0.07);
+  env(g, t, 0.003, 0.3, 0.09);
+  o.connect(g).connect(master);
+  o.start(t); o.stop(t + 0.12);
+  noise(t, 0.04, 0.12, 1800, "bandpass");
+}
+function buzz(){
+  ensureAudio();
+  if (AC) blip(92, AC.currentTime, 0.16, "square", 0.12);
+  $("#display").classList.add("err");
+  setTimeout(() => $("#display").classList.remove("err"), 300);
+}
+function crackle(sec){
+  if (!AC) return;
+  const t = AC.currentTime;
+  for (let i = 0; i < Math.floor(sec * 14); i++){
+    noise(t + Math.random() * sec, 0.02, 0.02 + Math.random() * 0.05, 2500, "highpass");
+  }
+}
+/* one bar, all durations derive from STEP */
+function playBar(){
+  if (!AC) return;
+  const t = AC.currentTime + 0.03;
+  const lead = [523.25, 659.25, 784, 987.77, 1046.5, 784, 659.25, 784];
+  lead.forEach((f, i) => blip(f, t + i * STEP, STEP * 0.85, "square", 0.10));
+  [[130.81,0],[130.81,2],[98,4],[130.81,6]].forEach(pair =>
+    blip(pair[0], t + pair[1] * STEP, STEP * 1.7, "triangle", 0.16));
+  for (let i = 0; i < 8; i++) noise(t + i * STEP + STEP / 2, STEP * 0.15, 0.03, 6000, "highpass");
+}
+
+/* ---------- the scope: waveform from the analyser ---------- */
+function cssColor(name){
+  const el = document.createElement("i");
+  el.style.color = "var(" + name + ")";
+  document.body.appendChild(el);
+  const c = getComputedStyle(el).color;
+  el.remove();
+  return c;
+}
+function startScope(sec){
+  if (!analyser) return;
+  const c = $("#scope");
+  if (!c || !c.clientWidth) return;
+  const ctx2 = c.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  c.width = c.clientWidth * dpr;
+  c.height = c.clientHeight * dpr;
+  if (!traceColor) traceColor = cssColor("--amber");
+  const data = new Uint8Array(analyser.fftSize);
+  const until = performance.now() + sec * 1000;
+  cancelAnimationFrame(scopeRAF);
+  (function draw(){
+    analyser.getByteTimeDomainData(data);
+    ctx2.clearRect(0, 0, c.width, c.height);
+    ctx2.lineWidth = 2 * dpr;
+    ctx2.strokeStyle = traceColor;
+    ctx2.beginPath();
+    const step = c.width / data.length;
+    for (let i = 0; i < data.length; i++){
+      const y = (data[i] / 255) * c.height;
+      if (i === 0) ctx2.moveTo(0, y); else ctx2.lineTo(i * step, y);
+    }
+    ctx2.stroke();
+    if (performance.now() < until) scopeRAF = requestAnimationFrame(draw);
+    else ctx2.clearRect(0, 0, c.width, c.height);
+  })();
+}
+
+/* ---------- init ---------- */
+buildMag();
+renderStrips();
+renderKeys();
+syncTabs();
+const np = newest();
+if (np){
+  setPlatter(np);
+  lamp("NOW PLAYING · " + np.name.toUpperCase());
+}
+showDisplay("– –");
+})();
+</script>
+</body>
+</html>
