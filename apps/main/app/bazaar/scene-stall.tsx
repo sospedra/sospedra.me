@@ -1,12 +1,12 @@
 'use client'
 
-import { uniq } from 'es-toolkit'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { prefersQuietFx } from 'services/theme'
 import styles from './stall-box.module.css'
 import {
   type BazaarStallId,
   type FxFrame,
+  layerFiles,
   STALL_SCENES,
   type StallLayer,
 } from './stalls-manifest'
@@ -21,25 +21,6 @@ const restFile = (layer: StallLayer): string => {
   if (layer.role === 'effect') return layer.frames[0].file
   if (layer.role === 'prop') return layer.rest
   return layer.idle[0].file
-}
-
-const layerFiles = (layer: StallLayer): string[] => {
-  if (layer.role === 'plate') return [layer.file ?? 'plate-key.png']
-  if (layer.role === 'effect') {
-    const hover = Array.isArray(layer.hover)
-      ? layer.hover
-      : layer.hover
-        ? [layer.hover]
-        : []
-    return uniq([...layer.frames.map((frame) => frame.file), ...hover])
-  }
-  if (layer.role === 'prop') {
-    return uniq([layer.rest, ...(layer.hover ?? [])])
-  }
-  return uniq([
-    ...layer.idle.map((frame) => frame.file),
-    ...layer.hover.map((frame) => frame.file),
-  ])
 }
 
 const hoverStepFile = (

@@ -1,3 +1,5 @@
+import { uniq } from 'es-toolkit'
+
 export type FxFrame = { file: string; ms: number }
 export type StallLayer =
   | { id: string; role: 'plate'; file?: string }
@@ -21,6 +23,25 @@ export type StallScene = {
   layers: StallLayer[]
   /** content rect inside the 1536x1024 master canvas; images are pre-cropped to it */
   rect: { left: number; top: number; width: number; height: number }
+}
+
+export const layerFiles = (layer: StallLayer): string[] => {
+  if (layer.role === 'plate') return [layer.file ?? 'plate-key.png']
+  if (layer.role === 'effect') {
+    const hover = Array.isArray(layer.hover)
+      ? layer.hover
+      : layer.hover
+        ? [layer.hover]
+        : []
+    return uniq([...layer.frames.map((frame) => frame.file), ...hover])
+  }
+  if (layer.role === 'prop') {
+    return uniq([layer.rest, ...(layer.hover ?? [])])
+  }
+  return uniq([
+    ...layer.idle.map((frame) => frame.file),
+    ...layer.hover.map((frame) => frame.file),
+  ])
 }
 
 export const STALL_SCENES = {
@@ -296,6 +317,38 @@ export const STALL_SCENES = {
     ],
     rect: { left: 415, top: 3, width: 683, height: 960 },
   },
+  map: {
+    layers: [
+      { id: 'plate', role: 'plate' },
+      {
+        id: 'fx-dot',
+        role: 'effect',
+        zorder: 1,
+        frames: [
+          { file: 'fx-dot-f1.png', ms: 600 },
+          { file: 'fx-dot-f2.png', ms: 600 },
+          { file: 'fx-dot-f3.png', ms: 600 },
+        ],
+      },
+      {
+        id: 'char',
+        role: 'char',
+        zorder: 2,
+        idle: [
+          { file: 'char-f1.png', ms: 1800 },
+          { file: 'char-f2.png', ms: 200 },
+          { file: 'char-f3.png', ms: 200 },
+        ],
+        hover: [
+          { file: 'char-h1.png', ms: 150 },
+          { file: 'char-h2.png', ms: 150 },
+          { file: 'char-h3.png', ms: 150 },
+          { file: 'char-h4.png', ms: 0 },
+        ],
+      },
+    ],
+    rect: { left: 518, top: 70, width: 500, height: 884 },
+  },
 } satisfies Record<string, StallScene>
 
 export type BazaarStallId = keyof typeof STALL_SCENES
@@ -349,6 +402,12 @@ export const SIM_DIMS = {
     artH: 950,
     dispW: 341,
     dispH: 480,
+  },
+  map: {
+    artW: 500,
+    artH: 884,
+    dispW: 260,
+    dispH: 460,
   },
 } satisfies Record<
   BazaarStallId,

@@ -101,6 +101,7 @@ export const STALL_TUNE: Record<BazaarStallId, { lift: number; dim?: number }> =
     w98: { lift: 58.7 },
     games: { lift: 62 },
     travel: { lift: 57.4 },
+    map: { lift: 55 },
   }
 
 export type NodeIndex = Map<string, DecorNode>

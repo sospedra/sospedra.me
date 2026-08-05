@@ -57,6 +57,12 @@ const TRAVEL_DIALOG = [
   'Supernova in twenty-two.',
   'Coming?',
 ].join('\n')
+const MAP_DIALOG = [
+  'Mrh. You woke me.',
+  'Lost? We are all lost here.',
+  'Every stall is a door.',
+  'u are here.',
+].join('\n')
 export const GAMES_CONVERSATION = [
   { speaker: 'sister', text: 'NEW CHALLENGER!!!' },
   { speaker: 'brother', text: "We don't know them." },
@@ -120,5 +126,12 @@ export const STALLS: Record<BazaarStallId, StallSpec> = {
     tint: '#7ab0d0',
     desc: PAPERS_DIALOG,
     links: [{ label: 'read the papers', href: '/papers' }],
+  },
+  map: {
+    label: 'map',
+    href: '/papers/bazaar' as Route,
+    tint: '#c86fd6',
+    desc: MAP_DIALOG,
+    links: [{ label: 'read the bazaar paper', href: '/papers/bazaar' }],
   },
 }

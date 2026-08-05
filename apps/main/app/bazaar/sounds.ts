@@ -210,6 +210,10 @@ const STALL_SFX: Record<BazaarStallId, () => void> = {
     noise({ duration: 0.07, peak: 0.2, frequency: 250, at: 0.12 })
     tone({ shape: 'sine', from: 75, duration: 0.1, peak: 0.16, at: 0.12 })
   },
+  map: () => {
+    tone({ shape: 'sine', from: 90, to: 60, duration: 0.28, peak: 0.1 })
+    tone({ shape: 'triangle', from: 520, duration: 0.06, peak: 0.03, at: 0.06 })
+  },
 }
 
 let doorBuffer: AudioBuffer | null = null
