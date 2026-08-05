@@ -1,5 +1,8 @@
 # order: map stall (ninth stall)
 
+Any session executing this order reads `docs/bazaar/HANDOFF.md` first.
+Its standing laws override this brief where they conflict.
+
 Target: 11 files under `public/images/bazaar/map/`, replacing the
 placeholder rectangles shipped 2026-08-05. File names are a contract with
 `app/bazaar/stalls-manifest.ts`. After delivery, update `SIM_DIMS.map`
@@ -39,9 +42,13 @@ the grin.
   law with "use ONLY these colors, nothing else". Scope one-use colors,
   including the accent: "#c86fd6 only the sign glow and dot, never the
   map panel". FLATNESS ABSOLUTE: zero stipple, zero gradients, every
-  region one flat chunk, blocks never smaller than 4x4 px. The site
-  vibe is the midnight design language (doc 16): midnight blacks, neon
-  accents, rust and steel.
+  region one flat chunk, blocks never smaller than 4x4 px, three tones
+  per material, near-black outlines. The site vibe is the midnight
+  design language (doc 16): midnight blacks, neon accents, rust and
+  steel.
+- screen law (HANDOFF standing law 3): the backlit map panel is a
+  screen surface. Pale white-grey family only (#9b9a98 / #c9c8c5 /
+  #f2f1ee). Never cyan, never blue. Teal exists only as tiny LED dots.
 - scale (display px currency, doc 10): board total ~460 display tall;
   curled raccoon ~95 display; calibration: seated Ed 170, w98 robot 294
 - target display box: 260 x 460 su (narrowest stall; travel is 341).
