@@ -5,12 +5,13 @@ import { hex } from '../protocol/bytes.ts'
 import { PROTOCOL_VERSION, ZERO32 } from '../protocol/constants.ts'
 import { Reader } from '../protocol/encode.ts'
 import {
+  decodeAuthorEvent,
   type GlobalEventRecordV1,
   makeSignedEvent,
 } from '../protocol/events.ts'
 import { buildGenesis, GENESIS_ROOT } from '../protocol/genesis.ts'
 import { decodeLatestHead } from '../protocol/head.ts'
-import { encodeSetConfig, OP } from '../protocol/ops.ts'
+import { decodeSetConfig, encodeSetConfig, OP } from '../protocol/ops.ts'
 import { GENESIS_CHAIN, PROGRAM } from '../protocol/program.ts'
 import {
   encodeGetBalanceBody,
@@ -102,6 +103,31 @@ function floatVsU64Step(
       }),
       obj('canonical-u64-read', 'canonical-u64', floatPayload, {
         u64Value: u64Value.toString(),
+      }),
+    ],
+  }
+}
+
+function honestConfigStep(record: GlobalEventRecordV1): TraceStep {
+  const event = decodeAuthorEvent(record.authorEvent)
+  const config = decodeSetConfig(event.payload)
+  return {
+    actor: 'author',
+    kind: 'object',
+    label: `for contrast, this is what a canonical SET_CONFIG decodes to: governance sets ${config.name} to ${config.value}, activating at global sequence ${config.activationSequence} — the honest record the server seals next`,
+    objects: [
+      {
+        ...obj('honest-author-event', 'author-event', record.authorEvent, {
+          authorKeyId: hex(event.authorKeyId),
+          authorSequence: event.authorSequence.toString(),
+          globalSequence: record.globalSequence.toString(),
+        }),
+        hash: hex(record.eventHash),
+      },
+      obj('honest-config-payload', 'set-config-payload', event.payload, {
+        name: config.name,
+        value: config.value.toString(),
+        activationSequence: config.activationSequence.toString(),
       }),
     ],
   }
@@ -265,6 +291,7 @@ function run(): Trace {
     genesisAnchorsStep(),
     honestRefusalStep(refusalRule),
     floatVsU64Step(floatPayload, ieeeValue, u64Value),
+    honestConfigStep(honestRecord),
     batchSealStep(
       sealProof,
       "the honest server seals governance's real SET_CONFIG (a legitimate timeout_ms change) into a transition proof",

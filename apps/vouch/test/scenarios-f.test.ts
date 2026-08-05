@@ -118,5 +118,23 @@ test('s16 shows the float bytes and their competing IEEE-754 and canonical-u64 i
   assert.equal(floatObj?.hex, '3fb3333333333333')
   assert.equal(floatObj?.decoded.ieee754Value, '0.075')
   assert.equal(u64Obj?.hex, floatObj?.hex)
-  assert.notEqual(u64Obj?.decoded.u64Value, '0')
+  assert.equal(u64Obj?.decoded.u64Value, '4590068740216009523')
+})
+
+test('s16 shows the honest record decoded as a real SetConfigV1, before the seal', () => {
+  const t = s16.run()
+  const configStepIndex = t.steps.findIndex((s) =>
+    (s.objects ?? []).some((o) => o.name === 'honest-config-payload'),
+  )
+  const sealStepIndex = t.steps.findIndex((s) =>
+    (s.objects ?? []).some((o) => o.name === 'batch-seal'),
+  )
+  const objects = t.steps.flatMap((s) => s.objects ?? [])
+  const configObj = objects.find((o) => o.name === 'honest-config-payload')
+  assert.notEqual(configStepIndex, -1)
+  assert.notEqual(sealStepIndex, -1)
+  assert.ok(configStepIndex < sealStepIndex)
+  assert.equal(configObj?.decoded.name, 'timeout_ms')
+  assert.equal(configObj?.decoded.value, '60000')
+  assert.equal(configObj?.decoded.activationSequence, '10')
 })

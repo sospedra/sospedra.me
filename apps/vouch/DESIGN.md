@@ -232,6 +232,22 @@ The node suite asserts equality. The future Rust port consumes the same files.
    arrays. The canonical layer is unaffected because Protobuf is
    transport-only per spec 8.3.
 
+## verdict kind for compound scenarios
+
+Several scenarios mix accepting and rejecting beats. The verdict kind names
+what the scenario CLAIMS, not what its last beat did.
+
+- The rejection is the subject. The scenario exists to show the client
+  refusing something. Use `REJECT` with the first rejecting beat's error.
+  s07, s10, and s20 follow this.
+- The rejection is corroboration. The scenario exists to show a positive
+  property holding, and a rejected attempt is the supporting evidence. Use
+  `ACCEPT`. s17 follows this: the claim is that the timelock held, and the
+  failed early application proves the boundary is real.
+
+A scenario author picks by asking what the trace proves, never by counting
+beats or reading the last one.
+
 ## non-goals
 
 zkVM proving, network transport, mobile bindings, persistence beyond the
