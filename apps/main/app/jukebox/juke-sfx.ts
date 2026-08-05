@@ -77,43 +77,57 @@ function ensure(): void {
   graph = buildGraph(new AudioContextClass())
 }
 
+type EnvelopeSpec = {
+  t0: number
+  attack: number
+  peak: number
+  duration: number
+}
+
 function envelope(
   gain: GainNode,
-  t0: number,
-  attack: number,
-  peak: number,
-  duration: number,
+  { t0, attack, peak, duration }: EnvelopeSpec,
 ): void {
   gain.gain.setValueAtTime(0.0001, t0)
   gain.gain.linearRampToValueAtTime(peak, t0 + attack)
   gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration)
 }
 
-function blip(
-  freq: number,
-  t0: number,
-  duration: number,
-  type: OscillatorType,
-  peak: number,
-): void {
+type BlipSpec = {
+  freq: number
+  t0: number
+  duration: number
+  type: OscillatorType
+  peak: number
+}
+
+function blip({ freq, t0, duration, type, peak }: BlipSpec): void {
   if (!graph) return
   const oscillator = graph.context.createOscillator()
   const gain = graph.context.createGain()
   oscillator.type = type
   oscillator.frequency.value = freq
-  envelope(gain, t0, 0.005, peak, duration)
+  envelope(gain, { t0, attack: 0.005, peak, duration })
   oscillator.connect(gain).connect(graph.master)
   oscillator.start(t0)
   oscillator.stop(t0 + duration + 0.05)
 }
 
-function noiseBurst(
-  t0: number,
-  duration: number,
-  peak: number,
-  frequency: number,
-  type: BiquadFilterType = 'lowpass',
-): void {
+type NoiseBurstSpec = {
+  t0: number
+  duration: number
+  peak: number
+  frequency: number
+  type?: BiquadFilterType
+}
+
+function noiseBurst({
+  t0,
+  duration,
+  peak,
+  frequency,
+  type = 'lowpass',
+}: NoiseBurstSpec): void {
   if (!graph) return
   const source = graph.context.createBufferSource()
   source.buffer = graph.noiseBuffer
@@ -121,7 +135,7 @@ function noiseBurst(
   filter.type = type
   filter.frequency.value = frequency
   const gain = graph.context.createGain()
-  envelope(gain, t0, 0.003, peak, duration)
+  envelope(gain, { t0, attack: 0.003, peak, duration })
   source.connect(filter)
   filter.connect(gain)
   gain.connect(graph.master)
@@ -132,7 +146,13 @@ function noiseBurst(
 function tick(): void {
   if (!soundPreference.isEnabled()) return
   if (!graph) return
-  noiseBurst(graph.context.currentTime, 0.03, 0.07, 3200, 'highpass')
+  noiseBurst({
+    t0: graph.context.currentTime,
+    duration: 0.03,
+    peak: 0.07,
+    frequency: 3200,
+    type: 'highpass',
+  })
 }
 
 function thump(): void {
@@ -144,17 +164,22 @@ function thump(): void {
   oscillator.type = 'sine'
   oscillator.frequency.setValueAtTime(140, t)
   oscillator.frequency.exponentialRampToValueAtTime(45, t + 0.12)
-  envelope(gain, t, 0.004, 0.5, 0.16)
+  envelope(gain, { t0: t, attack: 0.004, peak: 0.5, duration: 0.16 })
   oscillator.connect(gain).connect(graph.master)
   oscillator.start(t)
   oscillator.stop(t + 0.2)
-  noiseBurst(t, 0.07, 0.18, 900)
+  noiseBurst({ t0: t, duration: 0.07, peak: 0.18, frequency: 900 })
 }
 
 function whoosh(): void {
   if (!soundPreference.isEnabled()) return
   if (!graph) return
-  noiseBurst(graph.context.currentTime, 0.28, 0.08, 1100)
+  noiseBurst({
+    t0: graph.context.currentTime,
+    duration: 0.28,
+    peak: 0.08,
+    frequency: 1100,
+  })
 }
 
 function clack(): void {
@@ -166,17 +191,29 @@ function clack(): void {
   oscillator.type = 'sine'
   oscillator.frequency.setValueAtTime(300, t)
   oscillator.frequency.exponentialRampToValueAtTime(110, t + 0.07)
-  envelope(gain, t, 0.003, 0.3, 0.09)
+  envelope(gain, { t0: t, attack: 0.003, peak: 0.3, duration: 0.09 })
   oscillator.connect(gain).connect(graph.master)
   oscillator.start(t)
   oscillator.stop(t + 0.12)
-  noiseBurst(t, 0.04, 0.12, 1800, 'bandpass')
+  noiseBurst({
+    t0: t,
+    duration: 0.04,
+    peak: 0.12,
+    frequency: 1800,
+    type: 'bandpass',
+  })
 }
 
 function buzz(): void {
   if (!soundPreference.isEnabled()) return
   if (!graph) return
-  blip(92, graph.context.currentTime, 0.16, 'square', 0.12)
+  blip({
+    freq: 92,
+    t0: graph.context.currentTime,
+    duration: 0.16,
+    type: 'square',
+    peak: 0.12,
+  })
 }
 
 function crackle(seconds = 0.3): void {
@@ -185,13 +222,13 @@ function crackle(seconds = 0.3): void {
   const t = graph.context.currentTime
   const bursts = Math.floor(seconds * 14)
   for (let i = 0; i < bursts; i += 1) {
-    noiseBurst(
-      t + Math.random() * seconds,
-      0.02,
-      0.02 + Math.random() * 0.05,
-      2500,
-      'highpass',
-    )
+    noiseBurst({
+      t0: t + Math.random() * seconds,
+      duration: 0.02,
+      peak: 0.02 + Math.random() * 0.05,
+      frequency: 2500,
+      type: 'highpass',
+    })
   }
 }
 
@@ -201,7 +238,13 @@ function bar(): void {
   const t = graph.context.currentTime + 0.03
   const lead = [523.25, 659.25, 784, 987.77, 1046.5, 784, 659.25, 784]
   for (const [index, freq] of lead.entries()) {
-    blip(freq, t + index * TEMPO.step, TEMPO.step * 0.85, 'square', 0.1)
+    blip({
+      freq,
+      t0: t + index * TEMPO.step,
+      duration: TEMPO.step * 0.85,
+      type: 'square',
+      peak: 0.1,
+    })
   }
   const bass = [
     [130.81, 0],
@@ -210,16 +253,22 @@ function bar(): void {
     [130.81, 6],
   ] as const
   for (const [freq, beat] of bass) {
-    blip(freq, t + beat * TEMPO.step, TEMPO.step * 1.7, 'triangle', 0.16)
+    blip({
+      freq,
+      t0: t + beat * TEMPO.step,
+      duration: TEMPO.step * 1.7,
+      type: 'triangle',
+      peak: 0.16,
+    })
   }
   for (let i = 0; i < 8; i += 1) {
-    noiseBurst(
-      t + i * TEMPO.step + TEMPO.step / 2,
-      TEMPO.step * 0.15,
-      0.03,
-      6000,
-      'highpass',
-    )
+    noiseBurst({
+      t0: t + i * TEMPO.step + TEMPO.step / 2,
+      duration: TEMPO.step * 0.15,
+      peak: 0.03,
+      frequency: 6000,
+      type: 'highpass',
+    })
   }
 }
 
