@@ -283,6 +283,15 @@
   animation: seqEnd 0.56s steps(1, end) forwards;
 }
 
+/* leave: the door swings back through the half-open frame */
+.sDoorArmed:not(:hover) img:first-child {
+  animation: seqEnd 0.28s steps(1, end) forwards;
+}
+
+.sDoorArmed:not(:hover) img[data-frame="1"] {
+  animation: seqOut 0.28s steps(1, end) forwards;
+}
+
 /* hover: the shelter bulb flickers irregularly, then stays lit */
 .sBus img[data-on] {
   opacity: 0;

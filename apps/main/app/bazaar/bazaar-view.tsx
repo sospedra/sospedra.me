@@ -30,6 +30,9 @@ const STREET = '/images/bazaar/street'
 const DOOR_OPEN_MS = 350
 
 function StreetFloor({ onDoor }: { onDoor: () => void }) {
+  // armed on first hover, not on leave: the close must start the same
+  // frame :hover drops, and a re-render would land one frame late
+  const [doorArmed, setDoorArmed] = useState(false)
   return (
     <section className={scene.floor} data-floor='' data-market-scene=''>
       <img
@@ -71,11 +74,18 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
           </div>
           <button
             type='button'
-            className={cn(scene.hit, scene.sDoor)}
+            className={cn(
+              scene.hit,
+              scene.sDoor,
+              doorArmed && scene.sDoorArmed,
+            )}
             data-label='door'
             data-edit-id='street:door'
             aria-label='enter the market'
-            onMouseEnter={() => sfx.hover()}
+            onMouseEnter={() => {
+              setDoorArmed(true)
+              sfx.hover()
+            }}
             onClick={() => {
               sfx.door()
               setTimeout(onDoor, DOOR_OPEN_MS)
