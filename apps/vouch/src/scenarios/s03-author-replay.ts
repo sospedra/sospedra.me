@@ -13,8 +13,6 @@ import { decodeLatestHead } from '../protocol/head.ts'
 import { decodeOpenAccount, encodeOpenAccount, OP } from '../protocol/ops.ts'
 import { GENESIS_CHAIN, PROGRAM } from '../protocol/program.ts'
 import {
-  decodeGetBalanceBody,
-  decodeQueryRequest,
   encodeGetBalanceBody,
   encodeQueryRequest,
   REQ,
@@ -27,7 +25,13 @@ import {
   type TransparentTransitionProofV1,
 } from '../protocol/transition.ts'
 import { genesisTrust } from '../protocol/trust.ts'
-import type { CheckLog } from '../protocol/verify.ts'
+import {
+  accountIdFromRequest,
+  authorEventStep,
+  batchSealStep,
+  checkStep,
+  genesisAnchorsStep,
+} from './helpers.ts'
 import { obj, type Scenario, type Trace, type TraceStep } from './trace.ts'
 
 function requireRecord(server: Server): GlobalEventRecordV1 {
@@ -45,40 +49,10 @@ function requireRecordAt(
   return record
 }
 
-function genesisAnchorsStep(): TraceStep {
-  return {
-    actor: 'server',
-    kind: 'object',
-    label: 'genesis anchors pinned by the client',
-    objects: [
-      obj('genesis-anchors', 'genesis-anchors', GENESIS_ROOT, {
-        genesisRoot: hex(GENESIS_ROOT),
-        updateProgramId: hex(PROGRAM.updateV1),
-        queryProgramId: hex(PROGRAM.queryV1),
-        programChainHash: hex(GENESIS_CHAIN),
-      }),
-    ],
-  }
-}
-
-function authorEventStep(record: GlobalEventRecordV1): TraceStep {
+function authorEventLabel(record: GlobalEventRecordV1): string {
   const event = decodeAuthorEvent(record.authorEvent)
   const open = decodeOpenAccount(event.payload)
-  return {
-    actor: 'author',
-    kind: 'object',
-    label: `alice opens account ${open.accountId} as author-sequence ${event.authorSequence}, global sequence ${record.globalSequence}`,
-    objects: [
-      {
-        ...obj('author-event', 'author-event', record.authorEvent, {
-          authorKeyId: hex(event.authorKeyId),
-          authorSequence: event.authorSequence.toString(),
-          globalSequence: record.globalSequence.toString(),
-        }),
-        hash: hex(record.eventHash),
-      },
-    ],
-  }
+  return `alice opens account ${open.accountId} as author-sequence ${event.authorSequence}, global sequence ${record.globalSequence}`
 }
 
 function honestRefusalStep(rule: string): TraceStep {
@@ -94,28 +68,6 @@ function honestRefusalStep(rule: string): TraceStep {
       pass: false,
       error: rule,
     },
-  }
-}
-
-function batchSealStep(proof: TransparentTransitionProofV1): TraceStep {
-  const journal = decodeTransitionJournal(proof.journal)
-  return {
-    actor: 'server',
-    kind: 'object',
-    label:
-      "the honest server seals alice's two real events into a transition proof",
-    objects: [
-      {
-        ...obj('batch-seal', 'transition-journal', proof.journal, {
-          startRoot: hex(journal.startRoot),
-          endRoot: hex(journal.endRoot),
-          startSequence: journal.startSequence.toString(),
-          endSequence: journal.endSequence.toString(),
-          updateProgramId: hex(journal.updateProgramId),
-        }),
-        hash: hex(journal.batchHash),
-      },
-    ],
   }
 }
 
@@ -175,9 +127,7 @@ function queryRequestStep(
   requestBytes: Uint8Array,
   nonce: Uint8Array,
 ): TraceStep {
-  const { accountId } = decodeGetBalanceBody(
-    decodeQueryRequest(requestBytes).body,
-  )
+  const accountId = accountIdFromRequest(requestBytes)
   return {
     actor: 'client',
     kind: 'act',
@@ -215,16 +165,6 @@ function receiptStep(receiptBytes: Uint8Array): TraceStep {
         hash: hex(receiptSigningInput(receiptBytes)),
       },
     ],
-  }
-}
-
-function checkStep(check: CheckLog): TraceStep {
-  return {
-    actor: 'client',
-    kind: 'check',
-    label: check.name,
-    detail: check.skipped ? 'skipped' : undefined,
-    check: { name: check.name, pass: check.pass, error: check.error },
   }
 }
 
@@ -338,15 +278,18 @@ function run(): Trace {
 
   const steps: TraceStep[] = [
     genesisAnchorsStep(),
-    authorEventStep(record1),
+    authorEventStep(record1, authorEventLabel(record1)),
     honestRefusalStep(refusalRule),
-    authorEventStep(record2),
-    batchSealStep(sealProof),
+    authorEventStep(record2, authorEventLabel(record2)),
+    batchSealStep(
+      sealProof,
+      "the honest server seals alice's two real events into a transition proof",
+    ),
     replaySwapStep(realSecondRecord, forgedRecord),
     maliciousSealStep(forgedProof),
     queryRequestStep(requestBytes, nonce),
     receiptStep(receiptBytes),
-    ...result.checks.map(checkStep),
+    ...result.checks.map((check) => checkStep(check)),
   ]
 
   return {

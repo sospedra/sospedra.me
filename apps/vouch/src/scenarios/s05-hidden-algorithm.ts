@@ -3,19 +3,13 @@ import { Server } from '../actors/server.ts'
 import { encodeBundle } from '../protocol/bundle.ts'
 import { hex } from '../protocol/bytes.ts'
 import { PROTOCOL_VERSION, ZERO32 } from '../protocol/constants.ts'
-import {
-  decodeAuthorEvent,
-  type GlobalEventRecordV1,
-} from '../protocol/events.ts'
 import { buildGenesis, GENESIS_ROOT, seqRecords } from '../protocol/genesis.ts'
 import { decodeLatestHead } from '../protocol/head.ts'
-import { decodeOpenAccount, encodeOpenAccount, OP } from '../protocol/ops.ts'
+import { encodeOpenAccount, OP } from '../protocol/ops.ts'
 import { GENESIS_CHAIN, PROGRAM } from '../protocol/program.ts'
 import {
   decodeBalanceResult,
-  decodeGetBalanceBody,
   decodeQueryJournal,
-  decodeQueryRequest,
   decodeTransparentQueryProof,
   encodeBalanceResult,
   encodeGetBalanceBody,
@@ -36,78 +30,18 @@ import {
   type QueryReceiptV1,
   receiptSigningInput,
 } from '../protocol/receipt.ts'
-import {
-  decodeTransitionJournal,
-  type TransparentTransitionProofV1,
-} from '../protocol/transition.ts'
 import { genesisTrust } from '../protocol/trust.ts'
-import type { CheckLog } from '../protocol/verify.ts'
 import { ReplayView } from '../protocol/view.ts'
+import {
+  accountIdFromRequest,
+  balanceOpenedAuthorEventStep,
+  batchSealStep,
+  checkStep,
+  genesisAnchorsStep,
+} from './helpers.ts'
 import { obj, type Scenario, type Trace, type TraceStep } from './trace.ts'
 
 const BONUS = 1_000n
-
-function genesisAnchorsStep(): TraceStep {
-  return {
-    actor: 'server',
-    kind: 'object',
-    label: 'genesis anchors pinned by the client',
-    objects: [
-      obj('genesis-anchors', 'genesis-anchors', GENESIS_ROOT, {
-        genesisRoot: hex(GENESIS_ROOT),
-        updateProgramId: hex(PROGRAM.updateV1),
-        queryProgramId: hex(PROGRAM.queryV1),
-        programChainHash: hex(GENESIS_CHAIN),
-      }),
-    ],
-  }
-}
-
-function authorEventStep(record: GlobalEventRecordV1): TraceStep {
-  const event = decodeAuthorEvent(record.authorEvent)
-  const open = decodeOpenAccount(event.payload)
-  return {
-    actor: 'author',
-    kind: 'object',
-    label: `alice opens account ${open.accountId} with balance ${open.initialBalance}`,
-    objects: [
-      {
-        ...obj('author-event', 'author-event', record.authorEvent, {
-          authorKeyId: hex(event.authorKeyId),
-          authorSequence: event.authorSequence.toString(),
-          globalSequence: record.globalSequence.toString(),
-        }),
-        hash: hex(record.eventHash),
-      },
-    ],
-  }
-}
-
-function batchSealStep(proof: TransparentTransitionProofV1): TraceStep {
-  const journal = decodeTransitionJournal(proof.journal)
-  return {
-    actor: 'server',
-    kind: 'object',
-    label:
-      'the honest server seals the opening balance into a transition proof',
-    objects: [
-      {
-        ...obj('batch-seal', 'transition-journal', proof.journal, {
-          startRoot: hex(journal.startRoot),
-          endRoot: hex(journal.endRoot),
-          startSequence: journal.startSequence.toString(),
-          endSequence: journal.endSequence.toString(),
-          updateProgramId: hex(journal.updateProgramId),
-        }),
-        hash: hex(journal.batchHash),
-      },
-    ],
-  }
-}
-
-function accountIdFromRequest(requestBytes: Uint8Array): string {
-  return decodeGetBalanceBody(decodeQueryRequest(requestBytes).body).accountId
-}
 
 function queryRequestStep(
   requestBytes: Uint8Array,
@@ -237,16 +171,6 @@ function replayedHonestResultStep(
   }
 }
 
-function checkStep(check: CheckLog): TraceStep {
-  return {
-    actor: 'client',
-    kind: 'check',
-    label: check.name,
-    detail: check.skipped ? 'skipped' : undefined,
-    check: { name: check.name, pass: check.pass, error: check.error },
-  }
-}
-
 function requireCachedProof(server: Server, cacheKey: string): Uint8Array {
   const bytes = server.proofCache.get(cacheKey)
   if (!bytes) throw new Error('s05: expected a cached honest query proof')
@@ -353,14 +277,17 @@ function run(): Trace {
 
   const steps: TraceStep[] = [
     genesisAnchorsStep(),
-    ...records.map(authorEventStep),
-    batchSealStep(sealProof),
+    ...records.map(balanceOpenedAuthorEventStep),
+    batchSealStep(
+      sealProof,
+      'the honest server seals the opening balance into a transition proof',
+    ),
     queryRequestStep(requestBytes, nonce),
     hiddenFunctionStep(hiddenResultBytes, accountId),
     forgedQueryJournalStep(honestJournal, forgedJournal),
     receiptStep(forgedReceiptBytes),
     replayedHonestResultStep(replayedResultBytes, accountId),
-    ...result.checks.map(checkStep),
+    ...result.checks.map((check) => checkStep(check)),
   ]
 
   return {

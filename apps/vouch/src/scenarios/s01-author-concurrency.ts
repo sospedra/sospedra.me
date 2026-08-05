@@ -21,8 +21,6 @@ import {
 import { GENESIS_CHAIN, PROGRAM } from '../protocol/program.ts'
 import {
   decodeBalanceResult,
-  decodeGetBalanceBody,
-  decodeQueryRequest,
   encodeGetBalanceBody,
   encodeQueryRequest,
   REQ,
@@ -30,12 +28,13 @@ import {
   resultHash,
 } from '../protocol/query.ts'
 import { decodeQueryReceipt, receiptSigningInput } from '../protocol/receipt.ts'
-import {
-  decodeTransitionJournal,
-  type TransparentTransitionProofV1,
-} from '../protocol/transition.ts'
 import { genesisTrust } from '../protocol/trust.ts'
-import type { CheckLog } from '../protocol/verify.ts'
+import {
+  accountIdFromRequest,
+  batchSealStep,
+  checkStep,
+  genesisAnchorsStep,
+} from './helpers.ts'
 import { SPEC_ACCEPTANCE_CLAIM } from './s04-honest-query.ts'
 import { obj, type Scenario, type Trace, type TraceStep } from './trace.ts'
 
@@ -91,22 +90,6 @@ function submitAuthorEvent(
   }
 }
 
-function genesisAnchorsStep(): TraceStep {
-  return {
-    actor: 'server',
-    kind: 'object',
-    label: 'genesis anchors pinned by the client',
-    objects: [
-      obj('genesis-anchors', 'genesis-anchors', GENESIS_ROOT, {
-        genesisRoot: hex(GENESIS_ROOT),
-        updateProgramId: hex(PROGRAM.updateV1),
-        queryProgramId: hex(PROGRAM.queryV1),
-        programChainHash: hex(GENESIS_CHAIN),
-      }),
-    ],
-  }
-}
-
 function authorEventStep(
   authorName: string,
   before: AuthorState,
@@ -156,34 +139,11 @@ function authorTipsStep(alice: AuthorState, bob: AuthorState): TraceStep {
   }
 }
 
-function batchSealStep(proof: TransparentTransitionProofV1): TraceStep {
-  const journal = decodeTransitionJournal(proof.journal)
-  return {
-    actor: 'server',
-    kind: 'object',
-    label: 'server seals the interleaved batch into a transition proof',
-    objects: [
-      {
-        ...obj('batch-seal', 'transition-journal', proof.journal, {
-          startRoot: hex(journal.startRoot),
-          endRoot: hex(journal.endRoot),
-          startSequence: journal.startSequence.toString(),
-          endSequence: journal.endSequence.toString(),
-          updateProgramId: hex(journal.updateProgramId),
-        }),
-        hash: hex(journal.batchHash),
-      },
-    ],
-  }
-}
-
 function queryRequestStep(
   requestBytes: Uint8Array,
   nonce: Uint8Array,
 ): TraceStep {
-  const { accountId } = decodeGetBalanceBody(
-    decodeQueryRequest(requestBytes).body,
-  )
+  const accountId = accountIdFromRequest(requestBytes)
   return {
     actor: 'client',
     kind: 'act',
@@ -242,16 +202,6 @@ function receiptStep(receiptBytes: Uint8Array): TraceStep {
         hash: hex(receiptSigningInput(receiptBytes)),
       },
     ],
-  }
-}
-
-function checkStep(check: CheckLog): TraceStep {
-  return {
-    actor: 'client',
-    kind: 'check',
-    label: check.name,
-    detail: check.skipped ? 'skipped' : undefined,
-    check: { name: check.name, pass: check.pass, error: check.error },
   }
 }
 
@@ -339,11 +289,14 @@ function run(): Trace {
     authorEventStep('alice', a1.next, a2.record),
     authorEventStep('bob', b1.next, b2.record),
     authorTipsStep(a2.next, b2.next),
-    batchSealStep(sealProof),
+    batchSealStep(
+      sealProof,
+      'server seals the interleaved batch into a transition proof',
+    ),
     queryRequestStep(requestBytes, nonce),
     queryResultStep(resultBytes, 'bob'),
     receiptStep(receiptBytes),
-    ...result.checks.map(checkStep),
+    ...result.checks.map((check) => checkStep(check)),
   ]
 
   return {
