@@ -132,8 +132,12 @@ function groupChecksIntoRounds(checks: CheckLog[]): CheckLog[][] {
 
 function roundOutcomeSuffix(round: CheckLog[]): string {
   const failure = round.find((check) => !check.pass && !check.skipped)
-  if (!failure) return 'all steps pass'
-  return `failed at step ${failure.step} (${failure.error ?? failure.name})`
+  if (failure) {
+    return `failed at step ${failure.step} (${failure.error ?? failure.name})`
+  }
+  const skipCount = round.filter((check) => check.skipped).length
+  if (skipCount === 0) return 'all steps pass'
+  return `${round.length - skipCount} of ${round.length} steps pass, ${skipCount} skipped`
 }
 
 function roundSummaryText(

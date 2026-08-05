@@ -149,6 +149,13 @@ function errorVerdictContent(message: string): HTMLElement {
   return wrap
 }
 
+function renderTraceError(message: string): HTMLElement {
+  const wrap = el('div', 'trace-error')
+  wrap.append(glyphBadge('badge badge--error', '!', 'ERROR'))
+  wrap.append(el('p', 'trace-error-message', message))
+  return wrap
+}
+
 function verdictContent(state: RowState, expected: string): HTMLElement {
   switch (state.status) {
     case 'pending':
@@ -370,7 +377,13 @@ function buildRow(scenario: Scenario): RowBuild {
   function ensureTraceRendered(): void {
     if (traceRendered) return
     traceRendered = true
-    panel.append(renderTrace(scenario.run()))
+    try {
+      panel.append(renderTrace(scenario.run()))
+    } catch (err) {
+      panel.append(
+        renderTraceError(err instanceof Error ? err.message : String(err)),
+      )
+    }
   }
 
   button.addEventListener('click', () => {

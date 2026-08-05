@@ -534,6 +534,23 @@ tr.scenario-row[data-status="running"] {
   line-height: 1.6;
 }
 
+.trace-error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--v-error);
+  background: var(--bg);
+}
+
+.trace-error-message {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 /* verifier checklist: rounds are <details>, open by default, collapsible;
    each round's own summary states its outcome so a reader never has to
    open a round just to see whether it passed */
