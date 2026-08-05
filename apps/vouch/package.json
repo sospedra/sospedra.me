@@ -1,0 +1,31 @@
+{
+  "name": "vouch",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "biome check .",
+    "preview": "vite preview",
+    "test": "node --test test/smoke.test.ts",
+    "typecheck": "tsc",
+    "vectors": "node scripts/vectors.ts"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@noble/curves": "2.2.0",
+    "@noble/hashes": "2.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vite": "8.2.0"
+  }
+}
