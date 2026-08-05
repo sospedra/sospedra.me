@@ -1,0 +1,492 @@
+/* tokens: light (journal) is the default palette */
+:root {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono:
+    ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --bg: #f5f4ef;
+  --bg-panel: #fbfaf6;
+  --bg-hover: #ecebe3;
+  --line: #d9d5c8;
+  --line-strong: #b9b4a3;
+  --ink: #1c1b17;
+  --ink-dim: #6b6659;
+  --accent: #1d5fa8;
+  --accent-ink: #fbfaf6;
+
+  --tax-math: #1d5fa8;
+  --tax-record: #7a3fa0;
+  --tax-gov: #7d5710;
+  --tax-limit: #55606e;
+
+  --v-accept: #186b41;
+  --v-reject: #a3491f;
+  --v-evidence: #7a3fa0;
+  --v-limitation: #55606e;
+  --v-pending: #6c6a60;
+  --v-running: #1d5fa8;
+  --v-error: #b3261e;
+  --v-mismatch: #b3261e;
+
+  color-scheme: light dark;
+}
+
+/* tokens: dark (instrument panel) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a0c10;
+    --bg-panel: #12151b;
+    --bg-hover: #191d25;
+    --line: #262b35;
+    --line-strong: #3a4150;
+    --ink: #e7e9ee;
+    --ink-dim: #8b93a3;
+    --accent: #6fa8dc;
+    --accent-ink: #0a0c10;
+
+    --tax-math: #6fa8dc;
+    --tax-record: #c298e8;
+    --tax-gov: #e0b34d;
+    --tax-limit: #9aa5b5;
+
+    --v-accept: #4fce93;
+    --v-reject: #e08a56;
+    --v-evidence: #c298e8;
+    --v-limitation: #9aa5b5;
+    --v-pending: #8b93a3;
+    --v-running: #6fa8dc;
+    --v-error: #f0574a;
+    --v-mismatch: #f0574a;
+  }
+}
+
+/* reset */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+pre,
+code {
+  font-family: var(--font-mono);
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+:where(button):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* masthead */
+.masthead {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 28px clamp(16px, 4vw, 40px) 22px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-panel);
+}
+
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.wordmark .name {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.wordmark .expansion {
+  font-size: 12px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.claim-label {
+  margin: 18px 0 6px;
+  font-size: 11px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.claim {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  max-width: 78ch;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.anchors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  margin: 0;
+  padding: 0;
+}
+
+.anchor {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+}
+
+.anchor dt,
+.anchor dd {
+  margin: 0;
+}
+
+.anchor dt {
+  font-size: 10px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.anchor dd {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+/* main layout */
+main {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 20px clamp(16px, 4vw, 40px) 48px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.run-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.run-all {
+  padding: 7px 16px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.run-all:hover {
+  opacity: 0.88;
+}
+
+.progress {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* table */
+.table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+}
+
+.scenario-table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 13px;
+}
+
+col.col-id {
+  width: 46px;
+}
+
+col.col-taxonomy {
+  width: 15%;
+}
+
+col.col-expected {
+  width: 22%;
+}
+
+col.col-verdict {
+  width: 190px;
+}
+
+col.col-time {
+  width: 92px;
+}
+
+.scenario-table th,
+.scenario-table td {
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 400;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+.scenario-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-dim);
+  border-bottom: 1px solid var(--line-strong);
+  z-index: 1;
+}
+
+.scenario-table th.col-id,
+.scenario-table td.col-id {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-dim);
+}
+
+.scenario-table th.col-time,
+.scenario-table td.col-time {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.col-expected code {
+  font-size: 11.5px;
+  color: var(--ink-dim);
+  background: none;
+}
+
+tr.scenario-row:hover,
+tr.scenario-row[data-status="running"] {
+  background: var(--bg-hover);
+}
+
+/* disclosure button */
+.disclosure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 2px 0;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.disclosure::before {
+  content: "▸";
+  display: inline-block;
+  flex: none;
+  color: var(--ink-dim);
+}
+
+.disclosure[aria-expanded="true"]::before {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .disclosure::before {
+    transition: transform 0.15s ease;
+  }
+}
+
+.disclosure:hover {
+  text-decoration: underline;
+}
+
+/* chips and badges: text label is always the primary signal; glyph and
+   border style are secondary, color is a bonus for sighted color-normal users */
+.chip,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  white-space: nowrap;
+  border: 1px solid var(--line-strong);
+}
+
+.glyph {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.chip--math {
+  border-left: 5px solid var(--tax-math);
+  color: var(--tax-math);
+}
+
+.chip--record {
+  border-left: 5px double var(--tax-record);
+  color: var(--tax-record);
+}
+
+.chip--gov {
+  border-left: 5px dashed var(--tax-gov);
+  color: var(--tax-gov);
+}
+
+.chip--limit {
+  border-left: 5px dotted var(--tax-limit);
+  color: var(--tax-limit);
+}
+
+.badge--pending {
+  border-left: 5px dashed var(--v-pending);
+  color: var(--v-pending);
+}
+
+.badge--running {
+  border-left: 5px solid var(--v-running);
+  color: var(--v-running);
+}
+
+.badge--accept {
+  border-left: 5px solid var(--v-accept);
+  color: var(--v-accept);
+}
+
+.badge--reject {
+  border-left: 5px solid var(--v-reject);
+  color: var(--v-reject);
+}
+
+.badge--evidence {
+  border-left: 5px double var(--v-evidence);
+  color: var(--v-evidence);
+}
+
+.badge--limitation {
+  border-left: 5px dotted var(--v-limitation);
+  color: var(--v-limitation);
+}
+
+.badge--error,
+.badge--mismatch {
+  border-left: 5px solid var(--v-error);
+  color: var(--v-error);
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .badge--running .glyph {
+    display: inline-block;
+    animation: spin 900ms linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.verdict-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.verdict-detail {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  background: none;
+}
+
+/* detail row seam: task 23 populates .trace-panel; this file only owns
+   disclosure show/hide and the panel's resting padding */
+.detail-row .col-detail {
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg-panel);
+}
+
+.trace-panel {
+  padding: 16px 20px;
+  min-height: 0;
+}
+
+/* print: force the light palette so nobody prints a near-black page,
+   and drop chrome that has no meaning on paper */
+@media print {
+  :root {
+    --bg: #ffffff;
+    --bg-panel: #ffffff;
+    --bg-hover: #ffffff;
+    --ink: #000000;
+  }
+
+  .run-bar,
+  .disclosure::before {
+    display: none;
+  }
+
+  .table-scroll {
+    overflow-x: visible;
+    border-color: #000000;
+  }
+
+  .scenario-table thead th {
+    position: static;
+  }
+}
