@@ -11,7 +11,7 @@
     "dev": "vite",
     "lint": "biome check .",
     "preview": "vite preview",
-    "test": "node --test test/smoke.test.ts test/encode.test.ts test/hash.test.ts test/keys.test.ts test/smt.test.ts test/state.test.ts test/events.test.ts test/program.test.ts test/transition.test.ts test/query.test.ts test/receipt-head.test.ts test/verify.test.ts test/vectors.test.ts test/scenarios-a.test.ts test/actors.test.ts test/scenarios-b.test.ts test/scenarios-c.test.ts test/scenarios-d.test.ts test/scenarios-e.test.ts",
+    "test": "node --test test/smoke.test.ts test/encode.test.ts test/hash.test.ts test/keys.test.ts test/smt.test.ts test/state.test.ts test/events.test.ts test/program.test.ts test/transition.test.ts test/query.test.ts test/receipt-head.test.ts test/verify.test.ts test/vectors.test.ts test/scenarios-a.test.ts test/actors.test.ts test/scenarios-b.test.ts test/scenarios-c.test.ts test/scenarios-d.test.ts test/scenarios-e.test.ts test/scenarios-h.test.ts",
     "typecheck": "tsc",
     "vectors": "node scripts/vectors.ts"
   },
