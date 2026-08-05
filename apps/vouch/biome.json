@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["@repo/biome-config/base.json"],
   "files": {
-    "includes": ["**"]
+    "includes": ["**", "!fixtures/protocol-v1/vectors.json"]
   },
   "linter": {
     "rules": {
