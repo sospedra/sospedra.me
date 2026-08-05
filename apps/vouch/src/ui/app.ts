@@ -224,6 +224,61 @@ function buildLegend(): HTMLElement {
   return legend
 }
 
+type VerdictLegendEntry = {
+  glyph: string
+  label: string
+  className: string
+  description: string
+}
+
+const VERDICT_LEGEND: VerdictLegendEntry[] = [
+  {
+    glyph: '✕',
+    label: 'REJECT',
+    className: 'badge badge--reject',
+    description: 'the verifier returned a typed error',
+  },
+  {
+    glyph: '◆',
+    label: 'EVIDENCE',
+    className: 'badge badge--evidence',
+    description: 'not blocked, but proven on record',
+  },
+  {
+    glyph: '◐',
+    label: 'LIMITATION',
+    className: 'badge badge--limitation',
+    description: 'an honest gap, not a guarantee',
+  },
+  {
+    glyph: '≠',
+    label: 'MISMATCH',
+    className: 'badge badge--mismatch',
+    description: "live verdict differs from the row's expected one",
+  },
+  {
+    glyph: '!',
+    label: 'ERROR',
+    className: 'badge badge--error',
+    description: 'the scenario threw before reaching a verdict',
+  },
+]
+
+function verdictLegendItem(entry: VerdictLegendEntry): HTMLLIElement {
+  const item = el('li', 'verdict-legend-item')
+  item.append(
+    glyphBadge(entry.className, entry.glyph, entry.label),
+    el('span', '', entry.description),
+  )
+  return item
+}
+
+function buildVerdictLegend(): HTMLElement {
+  const legend = el('ul', 'legend')
+  legend.append(...VERDICT_LEGEND.map(verdictLegendItem))
+  return legend
+}
+
 function headerCell(column: Column): HTMLTableCellElement {
   const th = el('th', `col-${column.key}`, column.label)
   th.scope = 'col'
@@ -275,7 +330,7 @@ function buildRow(scenario: Scenario): RowBuild {
   const button = el('button', 'disclosure', title)
   button.type = 'button'
   button.setAttribute('aria-expanded', 'false')
-  button.setAttribute('aria-controls', `panel-${id}`)
+  button.setAttribute('aria-controls', `detail-${id}`)
   button.dataset.scenarioId = String(id)
   const titleCell = el('td', 'col-title')
   titleCell.append(button)
@@ -415,6 +470,7 @@ export function mount(root: HTMLElement): void {
 
   const header = buildHeader()
   const legend = buildLegend()
+  const verdictLegend = buildVerdictLegend()
   const runBar = buildRunBar(scenarios.length)
   const { wrapper: tableWrapper, tbody } = buildTable()
 
@@ -424,8 +480,11 @@ export function mount(root: HTMLElement): void {
 
   runBar.onRunAll(() => startSweep(handles, runBar))
 
+  const legends = el('div', 'legends')
+  legends.append(legend, verdictLegend)
+
   const toolbar = el('div', 'toolbar')
-  toolbar.append(runBar.element, legend)
+  toolbar.append(runBar.element, legends)
 
   const layout = el('main')
   layout.append(toolbar, tableWrapper)

@@ -21,7 +21,7 @@
   --tax-limit: #55606e;
 
   --v-accept: #186b41;
-  --v-reject: #a3491f;
+  --v-reject: #8d5a1b;
   --v-evidence: #7a3fa0;
   --v-limitation: #55606e;
   --v-pending: #6c6a60;
@@ -55,7 +55,7 @@
     --tax-limit: #9aa5b5;
 
     --v-accept: #4fce93;
-    --v-reject: #e08a56;
+    --v-reject: #e0a257;
     --v-evidence: #c298e8;
     --v-limitation: #9aa5b5;
     --v-pending: #8b93a3;
@@ -168,6 +168,10 @@ button {
   flex-direction: column;
   gap: 2px;
   margin: 0;
+  padding: 4px 10px;
+  border: 1px solid var(--line-strong);
+  border-left: 5px solid var(--accent);
+  background: var(--bg);
 }
 
 .anchor dt,
@@ -231,6 +235,12 @@ main {
   font-variant-numeric: tabular-nums;
 }
 
+.legends {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .legend {
   display: flex;
   flex-wrap: wrap;
@@ -238,6 +248,14 @@ main {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.verdict-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--ink-dim);
 }
 
 /* table */
@@ -832,7 +850,7 @@ summary:focus-visible {
     --ink: #000000;
   }
 
-  .run-bar,
+  .run-all,
   .disclosure::before,
   .checklist-round-summary::before {
     display: none;
