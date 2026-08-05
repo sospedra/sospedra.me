@@ -52,11 +52,16 @@ import {
   SEQUENCE_KEY,
 } from '../src/protocol/state.ts'
 import {
+  applyBatch,
+  batchHash,
+  encodeTransitionJournal,
   encodeTransparentTransitionProof,
   proveBatch,
+  type TransitionJournalV1,
+  type TransparentTransitionProofV1,
 } from '../src/protocol/transition.ts'
 import { type ClientTrustStateV1, genesisTrust } from '../src/protocol/trust.ts'
-import type { AccessV1 } from '../src/protocol/view.ts'
+import { type AccessV1, ProvingView } from '../src/protocol/view.ts'
 
 export const HONEST_ISSUED_AT_MS = 1_800_000_000_000n
 export const HONEST_PROOF_DEADLINE_MS = HONEST_ISSUED_AT_MS + 30_000n
@@ -92,6 +97,9 @@ function buildReceiptKeyWitness(world: World): AccessV1 {
 
 export type HonestBundleOptions = {
   migrateToV2?: boolean
+  migrateQueryOnly?: boolean
+  followUpOnly?: boolean
+  overflowTransfer?: boolean
   revokeReceiptKey?: boolean
   includeHead?: boolean
   accountId?: string
@@ -194,18 +202,178 @@ function buildTransitionsForSingleBatch(
   }
 }
 
+function buildTransitionsForFollowUp(world: World): {
+  transitions: Uint8Array[]
+  migrations: Uint8Array[]
+} {
+  const records = seqRecords(world, [
+    [
+      'alice',
+      OP.TRANSFER,
+      encodeTransfer({ from: 'alice', to: 'bob', amount: 500n }),
+    ],
+  ])
+  const proof = proveBatch(world.tree, records, PROGRAM.updateV1)
+  return {
+    transitions: [encodeTransparentTransitionProof(proof)],
+    migrations: [],
+  }
+}
+
+function buildTransitionsForQueryOnlyMigration(world: World): {
+  transitions: Uint8Array[]
+  migrations: Uint8Array[]
+} {
+  const activationSequence = 1n + TIMELOCK_MIN
+  const migration: ProgramMigrationV1 = {
+    nextUpdateProgramId: PROGRAM.updateV1,
+    nextQueryProgramId: PROGRAM.queryV2,
+    nextProgramManifestHash: ZERO32,
+    activationSequence,
+    governanceAuthorization: new Uint8Array(0),
+  }
+  const setupRecords = seqRecords(world, [
+    ['governance', OP.COMMIT_MIGRATION, encodeMigration(migration)],
+  ])
+  const setupProof = proveBatch(world.tree, setupRecords, PROGRAM.updateV1)
+
+  const straddlingRecords = seqRecords(world, [
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'alice', initialBalance: 10_000n }),
+    ],
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'bob', initialBalance: 0n }),
+    ],
+    [
+      'alice',
+      OP.TRANSFER,
+      encodeTransfer({ from: 'alice', to: 'bob', amount: 1000n }),
+    ],
+  ])
+  const straddlingProof = proveBatch(
+    world.tree,
+    straddlingRecords,
+    PROGRAM.updateV1,
+  )
+
+  return {
+    transitions: [
+      encodeTransparentTransitionProof(setupProof),
+      encodeTransparentTransitionProof(straddlingProof),
+    ],
+    migrations: [encodeMigration(migration)],
+  }
+}
+
+const OVERFLOW_BALANCE = 2n ** 64n - 1n
+
+function buildTransitionsForOverflow(world: World): {
+  transitions: Uint8Array[]
+  migrations: Uint8Array[]
+} {
+  const openRecords = seqRecords(world, [
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({
+        accountId: 'alice',
+        initialBalance: OVERFLOW_BALANCE,
+      }),
+    ],
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'bob', initialBalance: OVERFLOW_BALANCE }),
+    ],
+  ])
+  const openProof = proveBatch(world.tree, openRecords, PROGRAM.updateV1)
+  const startRoot = world.tree.root()
+
+  const transferRecords = seqRecords(world, [
+    [
+      'alice',
+      OP.TRANSFER,
+      encodeTransfer({ from: 'alice', to: 'bob', amount: 10_000n }),
+    ],
+  ])
+  const working = world.tree.clone()
+  const view = new ProvingView(working)
+  let overflowed = false
+  try {
+    applyBatch(view, transferRecords, PROGRAM.updateV1)
+  } catch {
+    overflowed = true
+  }
+  if (!overflowed) {
+    throw new Error(
+      'helpers: expected the overflow transfer to fail while building the fixture',
+    )
+  }
+  const afterOpenSequence = BigInt(openRecords.length)
+  const overflowJournal: TransitionJournalV1 = {
+    startRoot,
+    endRoot: startRoot,
+    startSequence: afterOpenSequence,
+    endSequence: afterOpenSequence,
+    batchHash: batchHash(transferRecords),
+    updateProgramId: PROGRAM.updateV1,
+    activeQueryProgramId: PROGRAM.queryV1,
+    programChainHash: GENESIS_CHAIN,
+  }
+  const overflowProof: TransparentTransitionProofV1 = {
+    journal: encodeTransitionJournal(overflowJournal),
+    records: transferRecords,
+    accesses: view.accesses(),
+  }
+
+  return {
+    transitions: [
+      encodeTransparentTransitionProof(openProof),
+      encodeTransparentTransitionProof(overflowProof),
+    ],
+    migrations: [],
+  }
+}
+
+type TransitionShape = {
+  migrateToV2: boolean
+  migrateQueryOnly: boolean
+  followUpOnly: boolean
+  overflowTransfer: boolean
+  revokeReceiptKey: boolean
+}
+
+function transitionsFor(
+  world: World,
+  shape: TransitionShape,
+): { transitions: Uint8Array[]; migrations: Uint8Array[] } {
+  if (shape.followUpOnly) return buildTransitionsForFollowUp(world)
+  if (shape.overflowTransfer) return buildTransitionsForOverflow(world)
+  if (shape.migrateQueryOnly) {
+    return buildTransitionsForQueryOnlyMigration(world)
+  }
+  if (shape.migrateToV2) return buildTransitionsForMigration(world)
+  return buildTransitionsForSingleBatch(world, shape.revokeReceiptKey)
+}
+
 export function makeHonestBundle(
   world: World,
   options: HonestBundleOptions = {},
 ): HonestBundleResult {
   const accountId = options.accountId ?? 'bob'
-  const migrateToV2 = options.migrateToV2 ?? false
-  const revokeReceiptKey = options.revokeReceiptKey ?? false
   const includeHead = options.includeHead ?? true
 
-  const { transitions, migrations } = migrateToV2
-    ? buildTransitionsForMigration(world)
-    : buildTransitionsForSingleBatch(world, revokeReceiptKey)
+  const { transitions, migrations } = transitionsFor(world, {
+    migrateToV2: options.migrateToV2 ?? false,
+    migrateQueryOnly: options.migrateQueryOnly ?? false,
+    followUpOnly: options.followUpOnly ?? false,
+    overflowTransfer: options.overflowTransfer ?? false,
+    revokeReceiptKey: options.revokeReceiptKey ?? false,
+  })
 
   const requestBytes = encodeQueryRequest({
     requestType: REQ.GET_BALANCE,

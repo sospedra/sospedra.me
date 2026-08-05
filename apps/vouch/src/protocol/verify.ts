@@ -78,6 +78,7 @@ export type CheckLog = {
   name: string
   pass: boolean
   error?: VerifyErrorCode
+  skipped?: boolean
 }
 
 export type VerifyResult =
@@ -244,7 +245,10 @@ function stageBindRequestAndResult(
 
   const computedRequestHash = requestHash(expectedRequest)
   checks.push({ step: 7, name: 'recompute request hash', pass: true })
-  if (!bytesEqual(computedRequestHash, receipt.requestHash)) {
+  const requestOk =
+    bytesEqual(bundle.canonicalRequest, expectedRequest) &&
+    bytesEqual(computedRequestHash, receipt.requestHash)
+  if (!requestOk) {
     checks.push({
       step: 8,
       name: 'verify receipt request hash',
@@ -463,6 +467,16 @@ function walkTransitionSegments(
   return { ok: true, value: journals }
 }
 
+function activationWithinSegment(
+  journal: TransitionJournalV1,
+  activationSequence: bigint,
+): boolean {
+  return (
+    journal.startSequence < activationSequence &&
+    activationSequence <= journal.endSequence
+  )
+}
+
 function advanceEra(
   position: WalkPosition,
   journal: TransitionJournalV1,
@@ -517,7 +531,7 @@ function advanceEra(
       rule: 'migration-query-id',
     }
   }
-  if (migration.activationSequence !== journal.startSequence + 1n) {
+  if (!activationWithinSegment(journal, migration.activationSequence)) {
     return {
       ok: false,
       error: 'INVALID_PROGRAM_CHAIN',
@@ -626,7 +640,7 @@ function stageTransitionAndMigrationWalk(
   return { checks, ok: true, value: eraOutcome.value }
 }
 
-type HeadFacts = { sequence: bigint; latestAsOfMs: bigint }
+type HeadFacts = { latestAsOfMs: bigint }
 
 type HeadCheckParams = {
   headBytes: Uint8Array
@@ -677,7 +691,12 @@ function stageHeadFreshness(
   const checks: CheckLog[] = []
 
   if (!requireFreshHead) {
-    checks.push({ step: 16, name: 'verify latest-head freshness', pass: true })
+    checks.push({
+      step: 16,
+      name: 'verify latest-head freshness',
+      pass: false,
+      skipped: true,
+    })
     return { checks, ok: true, value: null }
   }
 
@@ -730,7 +749,7 @@ function stageHeadFreshness(
   return {
     checks,
     ok: true,
-    value: { sequence: head.head.sequence, latestAsOfMs: head.latestAsOfMs },
+    value: { latestAsOfMs: head.latestAsOfMs },
   }
 }
 
@@ -740,7 +759,6 @@ function maxBigint(a: bigint, b: bigint): bigint {
 
 type BuildTrustParams = {
   trust: ClientTrustStateV1
-  receipt: QueryReceiptV1
   era: EraState
   headFacts: HeadFacts | null
 }
@@ -748,22 +766,20 @@ type BuildTrustParams = {
 function stageBuildNextTrust(
   params: BuildTrustParams,
 ): StageResult<ClientTrustStateV1> {
-  const { trust, receipt, era, headFacts } = params
+  const { trust, era, headFacts } = params
   const checks: CheckLog[] = []
-  const highestSequence =
-    headFacts === null
-      ? receipt.stateSequence
-      : maxBigint(receipt.stateSequence, headFacts.sequence)
   const next: ClientTrustStateV1 = {
     protocolVersion: trust.protocolVersion,
-    highestSequence,
+    highestSequence: era.sequence,
     acceptedRoot: era.root,
     programChainHash: era.chainHash,
     activeUpdateProgramId: era.updateProgramId,
     activeQueryProgramId: era.queryProgramId,
     activeKeyStateHash: trust.activeKeyStateHash,
     lastLatestAsOfMs:
-      headFacts === null ? trust.lastLatestAsOfMs : headFacts.latestAsOfMs,
+      headFacts === null
+        ? trust.lastLatestAsOfMs
+        : maxBigint(trust.lastLatestAsOfMs, headFacts.latestAsOfMs),
   }
   checks.push({
     step: 17,
@@ -771,6 +787,25 @@ function stageBuildNextTrust(
     pass: true,
   })
   return { checks, ok: true, value: next }
+}
+
+const STEP_PRIMARY_ERROR: Record<number, VerifyErrorCode> = {
+  1: 'MALFORMED_TRANSPORT',
+  2: 'MALFORMED_TRANSPORT',
+  3: 'MALFORMED_CANONICAL_OBJECT',
+  4: 'INVALID_PROOF',
+  5: 'INVALID_SIGNATURE',
+  6: 'NONCE_MISMATCH',
+  7: 'REQUEST_HASH_MISMATCH',
+  8: 'REQUEST_HASH_MISMATCH',
+  9: 'RESULT_HASH_MISMATCH',
+  10: 'RESULT_HASH_MISMATCH',
+  11: 'ROLLBACK_DETECTED',
+  12: 'INVALID_PROOF',
+  13: 'JOURNAL_MISMATCH',
+  14: 'INVALID_PROOF',
+  15: 'INVALID_PROGRAM_CHAIN',
+  16: 'INVALID_SIGNATURE',
 }
 
 function runVerification(input: VerifyInput): VerifyResult {
@@ -802,13 +837,14 @@ function runVerification(input: VerifyInput): VerifyResult {
     )
     const next = unwrap(
       checks,
-      stageBuildNextTrust({ trust: input.trust, receipt, era, headFacts }),
+      stageBuildNextTrust({ trust: input.trust, era, headFacts }),
     )
 
     checks.push({
       step: 18,
       name: "persistence is the caller's duty",
-      pass: true,
+      pass: false,
+      skipped: true,
     })
     checks.push({ step: 19, name: 'return verified result', pass: true })
 
@@ -823,7 +859,10 @@ function runVerification(input: VerifyInput): VerifyResult {
     if (err instanceof StageFailure) {
       return { ok: false, error: err.error, rule: err.rule, checks }
     }
-    throw err
+    const step = checks.length + 1
+    const error = STEP_PRIMARY_ERROR[step] ?? 'MALFORMED_TRANSPORT'
+    checks.push({ step, name: 'unexpected internal error', pass: false, error })
+    return { ok: false, error, rule: 'unexpected', checks }
   }
 }
 

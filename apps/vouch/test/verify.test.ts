@@ -82,11 +82,12 @@ test('honest bundle verifies end to end', () => {
   assert.equal(result.ok, true)
   if (!result.ok) return
   assert.equal(result.checks.length, 19)
-  assert.ok(result.checks.every((c) => c.pass))
+  assert.ok(result.checks.every((c) => c.pass || c.skipped))
   assert.deepEqual(
     result.checks.map((c) => c.step),
     Array.from({ length: 19 }, (_, i) => i + 1),
   )
+  assert.equal(result.checks[17].skipped, true)
   assert.deepEqual(result.result, honest.bundle.canonicalResult)
   assert.equal(result.next.highestSequence, honest.receipt.stateSequence)
   assert.deepEqual(result.next.acceptedRoot, honest.receipt.stateRoot)
@@ -393,10 +394,144 @@ test('a genuine migration walk from v1 to v2 accepts end to end', () => {
   assert.equal(result.ok, true)
   if (!result.ok) return
   assert.equal(result.checks.length, 19)
-  assert.ok(result.checks.every((c) => c.pass))
+  assert.ok(result.checks.every((c) => c.pass || c.skipped))
   assert.deepEqual(result.next.activeUpdateProgramId, PROGRAM.updateV2)
   assert.deepEqual(result.next.activeQueryProgramId, PROGRAM.queryV2)
   assert.equal(result.next.highestSequence, honest.receipt.stateSequence)
+})
+
+test('a poisoned head ahead of the receipt does not brick the next honest bundle', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+
+  const poisonedHeadId: HeadIdV1 = {
+    sequence: honest.receipt.stateSequence + 5n,
+    stateRoot: flipByte(honest.receipt.stateRoot),
+    updateProgramId: PROGRAM.updateV1,
+    queryProgramId: honest.receipt.queryProgramId,
+    programChainHash: honest.receipt.programChainHash,
+  }
+  const poisonedHead: LatestHeadV1 = {
+    head: poisonedHeadId,
+    latestAsOfMs: HONEST_ISSUED_AT_MS,
+    headKeyId: honest.world.receiptKey.publicKey,
+  }
+  const poisonedHeadBytes = encodeLatestHead(poisonedHead)
+  const poisonedHeadSignature = sign(
+    headSigningInput(poisonedHeadBytes),
+    honest.world.receiptKey,
+  )
+  const poisonedBundle: ResponseBundle = {
+    ...honest.bundle,
+    latestHead: poisonedHeadBytes,
+    latestHeadSignature: poisonedHeadSignature,
+  }
+
+  const first = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: encodeBundle(poisonedBundle),
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assert.equal(first.ok, true)
+  if (!first.ok) return
+  assert.equal(first.next.highestSequence, honest.receipt.stateSequence)
+  assert.deepEqual(first.next.acceptedRoot, honest.receipt.stateRoot)
+
+  const followUp = makeHonestBundle(world, { followUpOnly: true })
+  const second = verifyBundle({
+    expectedRequest: followUp.expectedRequest,
+    expectedNonce: followUp.expectedNonce,
+    bundleBytes: followUp.bundleBytes,
+    trust: first.next,
+    nowMs: followUp.nowMs,
+    requireFreshHead: true,
+  })
+
+  assert.equal(second.ok, true)
+})
+
+test('a query-only migration straddling a batch boundary still accepts', () => {
+  const honest = makeHonestBundle(buildGenesis(), { migrateQueryOnly: true })
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: honest.bundleBytes,
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assert.equal(result.ok, true)
+  if (!result.ok) return
+  assert.equal(result.checks.length, 19)
+  assert.deepEqual(result.next.activeUpdateProgramId, PROGRAM.updateV1)
+  assert.deepEqual(result.next.activeQueryProgramId, PROGRAM.queryV2)
+})
+
+test('a balance overflow during the transition walk fails typed, not MALFORMED_TRANSPORT', () => {
+  const honest = makeHonestBundle(buildGenesis(), { overflowTransfer: true })
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: honest.bundleBytes,
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assertFailsAtStep(result, 14, 'INVALID_PROOF')
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.equal(result.rule, 'balance-overflow')
+})
+
+test('a bundle carrying a different canonical request is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const bundle: ResponseBundle = {
+    ...honest.bundle,
+    canonicalRequest: flipByte(honest.bundle.canonicalRequest),
+  }
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: encodeBundle(bundle),
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assertFailsAtStep(result, 8, 'REQUEST_HASH_MISMATCH')
+})
+
+test('a caller that does not require a fresh head gets an honestly skipped step 16', () => {
+  const honest = makeHonestBundle(buildGenesis())
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: honest.bundleBytes,
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: false,
+  })
+
+  assert.equal(result.ok, true)
+  if (!result.ok) return
+  assert.equal(result.checks.length, 19)
+  const step16 = result.checks[15]
+  assert.equal(step16.step, 16)
+  assert.equal(step16.pass, false)
+  assert.equal(step16.skipped, true)
+  const step18 = result.checks[17]
+  assert.equal(step18.step, 18)
+  assert.equal(step18.pass, false)
+  assert.equal(step18.skipped, true)
 })
 
 test('decodeBundle round trips an encoded bundle', () => {

@@ -526,6 +526,36 @@ test('a legacy bad fee config fails typed instead of crashing', () => {
   })
 })
 
+test('a transfer that would overflow the receiver balance fails typed instead of crashing', () => {
+  const w = buildGenesis()
+  const maxBalance = 2n ** 64n - 1n
+  const openRecords = seqRecords(w, [
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'alice', initialBalance: maxBalance }),
+    ],
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'bob', initialBalance: maxBalance }),
+    ],
+  ])
+  proveBatch(w.tree, openRecords, PROGRAM.updateV1)
+
+  const transferRecords = seqRecords(w, [
+    [
+      'alice',
+      OP.TRANSFER,
+      encodeTransfer({ from: 'alice', to: 'bob', amount: 10_000n }),
+    ],
+  ])
+
+  assert.throws(() => proveBatch(w.tree, transferRecords, PROGRAM.updateV1), {
+    rule: 'balance-overflow',
+  })
+})
+
 test('proveBatch leaves the caller tree untouched on failure', () => {
   const w = buildGenesis()
   const startRoot = w.tree.root()

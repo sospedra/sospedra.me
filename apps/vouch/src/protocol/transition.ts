@@ -329,6 +329,14 @@ function readFeeBasisPoints(view: StateView): ConfigV1 {
 
 type FeeRounding = (amount: bigint, feeBp: bigint) => bigint
 
+const U64_MAX = 2n ** 64n - 1n
+
+function creditedBalance(balance: bigint, amount: bigint, fee: bigint): bigint {
+  const credited = balance + amount - fee
+  if (credited > U64_MAX) throw new RuleError('balance-overflow')
+  return credited
+}
+
 function applyTransfer(ctx: ApplyContext, feeRounding: FeeRounding): void {
   const payload = decodePayload(() => decodeTransfer(ctx.event.payload))
   if (payload.from === payload.to) throw new RuleError('self-transfer')
@@ -343,14 +351,12 @@ function applyTransfer(ctx: ApplyContext, feeRounding: FeeRounding): void {
   )
   const fee = feeRounding(payload.amount, feeBp)
   if (fee > payload.amount) throw new RuleError('fee-overflow')
+  const creditedTo = creditedBalance(to.balance, payload.amount, fee)
   ctx.view.set(
     accountKey(payload.from),
     encodeAccount({ balance: from.balance - payload.amount }),
   )
-  ctx.view.set(
-    accountKey(payload.to),
-    encodeAccount({ balance: to.balance + payload.amount - fee }),
-  )
+  ctx.view.set(accountKey(payload.to), encodeAccount({ balance: creditedTo }))
   appendTransferLog(ctx.view, payload.from, ctx.record.eventHash)
   appendTransferLog(ctx.view, payload.to, ctx.record.eventHash)
 }
