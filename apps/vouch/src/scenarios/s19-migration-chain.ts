@@ -4,7 +4,7 @@ import { encodeBundle } from '../protocol/bundle.ts'
 import { hex, u64be } from '../protocol/bytes.ts'
 import {
   PROTOCOL_VERSION,
-  TIMELOCK_MIN,
+  TIMELOCK_MIGRATION_MIN,
   ZERO32,
 } from '../protocol/constants.ts'
 import { buildGenesis, GENESIS_ROOT, seqRecords } from '../protocol/genesis.ts'
@@ -40,7 +40,7 @@ import {
 import { obj, type Scenario, type Trace, type TraceStep } from './trace.ts'
 
 const COMMIT_SEQUENCE = 1n
-const ACTIVATION_SEQUENCE = COMMIT_SEQUENCE + TIMELOCK_MIN
+const ACTIVATION_SEQUENCE = COMMIT_SEQUENCE + TIMELOCK_MIGRATION_MIN
 const BOUNDARY_TRANSFER_AMOUNT = 999n
 const GENESIS_FEE_BP = 250n
 

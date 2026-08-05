@@ -268,6 +268,11 @@ test('trust state roundtrip and genesisTrust fields', () => {
   }
   assert.deepEqual(decodeClientTrustState(encodeClientTrustState(trust)), trust)
 
+  const forged: ClientTrustStateV1 = { ...trust, protocolVersion: 2 }
+  assert.throws(() => decodeClientTrustState(encodeClientTrustState(forged)), {
+    code: 'UNSUPPORTED_PROTOCOL_VERSION',
+  })
+
   const anchors = {
     protocolVersion: 1,
     genesisRoot: GENESIS_ROOT,

@@ -1,10 +1,11 @@
 import { decodeBundle, type ResponseBundle } from './bundle.ts'
 import { bytesEqual } from './bytes.ts'
-import { FRESHNESS } from './constants.ts'
+import { FRESHNESS, PROTOCOL_VERSION } from './constants.ts'
 import type { Evidence } from './evidence.ts'
 import {
   checkFreshness,
   decodeLatestHead,
+  type FreshnessResult,
   headSigningInput,
   type LatestHeadV1,
 } from './head.ts'
@@ -649,10 +650,28 @@ type HeadCheckParams = {
   receipt: QueryReceiptV1
   trust: ClientTrustStateV1
   nowMs: bigint
+  requireFreshHead: boolean
+}
+
+function headFreshnessFailure(
+  freshness: FreshnessResult,
+  requireFreshHead: boolean,
+): Failure | null {
+  if (freshness === 'ok') return null
+  if (freshness === 'STALE_HEAD' && !requireFreshHead) return null
+  return { error: freshness, rule: 'head-freshness' }
 }
 
 function checkHeadStatement(params: HeadCheckParams): Failure | null {
-  const { headBytes, head, signature, receipt, trust, nowMs } = params
+  const {
+    headBytes,
+    head,
+    signature,
+    receipt,
+    trust,
+    nowMs,
+    requireFreshHead,
+  } = params
   if (!verifySig(headSigningInput(headBytes), signature, head.headKeyId)) {
     return { error: 'INVALID_SIGNATURE', rule: 'head-signature' }
   }
@@ -660,7 +679,8 @@ function checkHeadStatement(params: HeadCheckParams): Failure | null {
     return { error: 'UNAUTHORIZED_KEY', rule: 'head-key-era' }
   }
   const freshness = checkFreshness(head, nowMs, FRESHNESS)
-  if (freshness !== 'ok') return { error: freshness, rule: 'head-freshness' }
+  const freshnessFailure = headFreshnessFailure(freshness, requireFreshHead)
+  if (freshnessFailure) return freshnessFailure
   if (
     head.head.sequence < receipt.stateSequence ||
     head.head.sequence < trust.highestSequence
@@ -690,17 +710,16 @@ function stageHeadFreshness(
   const { bundle, receipt, trust, nowMs, requireFreshHead } = params
   const checks: CheckLog[] = []
 
-  if (!requireFreshHead) {
-    checks.push({
-      step: 16,
-      name: 'verify latest-head freshness',
-      pass: false,
-      skipped: true,
-    })
-    return { checks, ok: true, value: null }
-  }
-
   if (bundle.latestHead === null || bundle.latestHeadSignature === null) {
+    if (!requireFreshHead) {
+      checks.push({
+        step: 16,
+        name: 'verify latest-head freshness',
+        pass: false,
+        skipped: true,
+      })
+      return { checks, ok: true, value: null }
+    }
     checks.push({
       step: 16,
       name: 'verify latest-head freshness',
@@ -735,6 +754,7 @@ function stageHeadFreshness(
     receipt,
     trust,
     nowMs,
+    requireFreshHead,
   })
   if (failure) {
     checks.push({
@@ -809,6 +829,9 @@ const STEP_PRIMARY_ERROR: Record<number, VerifyErrorCode> = {
 }
 
 function runVerification(input: VerifyInput): VerifyResult {
+  if (input.trust.protocolVersion !== PROTOCOL_VERSION) {
+    return { ok: false, error: 'UNSUPPORTED_PROTOCOL_VERSION', checks: [] }
+  }
   const checks: CheckLog[] = []
   try {
     const { bundle, receipt } = unwrap(checks, stageDecode(input.bundleBytes))

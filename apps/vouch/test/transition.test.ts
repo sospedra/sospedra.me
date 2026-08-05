@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { ascii, hex } from '../src/protocol/bytes.ts'
-import { TIMELOCK_MIN, ZERO32 } from '../src/protocol/constants.ts'
+import {
+  TIMELOCK_CONFIG_MIN,
+  TIMELOCK_MIGRATION_MIN,
+  ZERO32,
+} from '../src/protocol/constants.ts'
 import { DecodeError, Reader } from '../src/protocol/encode.ts'
 import {
   decodeAuthorEvent,
@@ -206,6 +210,42 @@ test('timelock enforced', () => {
   assert.throws(() => proveBatch(w.tree, records, PROGRAM.updateV1), {
     rule: 'timelock',
   })
+})
+
+test('the config timelock requires less lead time than the migration timelock', () => {
+  const configWorld = buildGenesis()
+  const configRecords = seqRecords(configWorld, [
+    [
+      'governance',
+      OP.SET_CONFIG,
+      encodeSetConfig({
+        name: FEE_CONFIG_NAME,
+        value: 500n,
+        activationSequence: 3n,
+      }),
+    ],
+  ])
+  proveBatch(configWorld.tree, configRecords, PROGRAM.updateV1)
+
+  const migrationWorld = buildGenesis()
+  const migrationRecords = seqRecords(migrationWorld, [
+    [
+      'governance',
+      OP.COMMIT_MIGRATION,
+      encodeMigration({
+        nextUpdateProgramId: PROGRAM.updateV2,
+        nextQueryProgramId: PROGRAM.queryV2,
+        nextProgramManifestHash: ZERO32,
+        activationSequence: 3n,
+        governanceAuthorization: new Uint8Array(0),
+      }),
+    ],
+  ])
+
+  assert.throws(
+    () => proveBatch(migrationWorld.tree, migrationRecords, PROGRAM.updateV1),
+    { rule: 'timelock' },
+  )
 })
 
 function openAliceAndBobThenTransfer(w: World): GlobalEventRecordV1[] {
@@ -487,7 +527,7 @@ test('SET_CONFIG rejects a fee_basis_points value above 10000', () => {
       encodeSetConfig({
         name: FEE_CONFIG_NAME,
         value: 10_001n,
-        activationSequence: 1n + TIMELOCK_MIN,
+        activationSequence: 1n + TIMELOCK_CONFIG_MIN,
       }),
     ],
   ])
@@ -604,7 +644,7 @@ test('a governance key can revoke its own author record', () => {
 
 test('migration rollover advances the chain, clears pending, and switches the query program', () => {
   const w = buildGenesis()
-  const activationSequence = 1n + TIMELOCK_MIN
+  const activationSequence = 1n + TIMELOCK_MIGRATION_MIN
   const migration = encodeMigration({
     nextUpdateProgramId: PROGRAM.updateV2,
     nextQueryProgramId: PROGRAM.queryV2,

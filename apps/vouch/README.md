@@ -31,7 +31,7 @@ Open the printed URL. VOUCH runs all 22 scenarios on load. It fills in the verdi
 pnpm --filter vouch test
 ```
 
-222 node tests pass. They cover canonical encoding, hashing, and the sparse Merkle tree. They cover state, events, program identity, and the update and query programs. They cover receipts, heads, the terminal verifier, the golden vectors, all 22 scenarios, the actors, and the registry.
+229 node tests pass. They cover canonical encoding, hashing, and the sparse Merkle tree. They cover state, events, program identity, and the update and query programs. They cover receipts, heads, the terminal verifier, the golden vectors, all 22 scenarios, the actors, and the registry.
 
 ## Deploy
 

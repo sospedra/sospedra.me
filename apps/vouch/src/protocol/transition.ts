@@ -1,5 +1,9 @@
 import { bytesEqual } from './bytes.ts'
-import { TIMELOCK_MIN, ZERO32 } from './constants.ts'
+import {
+  TIMELOCK_CONFIG_MIN,
+  TIMELOCK_MIGRATION_MIN,
+  ZERO32,
+} from './constants.ts'
 import { Reader, Writer } from './encode.ts'
 import {
   type AuthorEventV1,
@@ -377,7 +381,10 @@ function applySetConfig(ctx: ApplyContext): void {
   }
   const key = configKey(payload.name)
   const existing = readConfigOrDefault(ctx.view, key)
-  if (payload.activationSequence < ctx.record.globalSequence + TIMELOCK_MIN) {
+  if (
+    payload.activationSequence <
+    ctx.record.globalSequence + TIMELOCK_CONFIG_MIN
+  ) {
     throw new RuleError('timelock')
   }
   const current = effectiveConfig(existing, ctx.record.globalSequence)
@@ -397,7 +404,10 @@ function applyCommitMigration(ctx: ApplyContext): void {
     requireValue(ctx.view, MIGRATION_KEY, 'migration-pending'),
   )
   if (pending.present !== 0) throw new RuleError('migration-pending')
-  if (payload.activationSequence < ctx.record.globalSequence + TIMELOCK_MIN) {
+  if (
+    payload.activationSequence <
+    ctx.record.globalSequence + TIMELOCK_MIGRATION_MIN
+  ) {
     throw new RuleError('timelock')
   }
   ctx.view.set(

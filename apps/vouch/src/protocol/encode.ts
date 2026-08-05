@@ -9,6 +9,15 @@ export class DecodeError extends Error {
   }
 }
 
+export class UnsupportedVersionError extends Error {
+  readonly code = 'UNSUPPORTED_PROTOCOL_VERSION' as const
+
+  constructor(got: number, supported: number) {
+    super(`unsupported protocol version: got ${got}, supported ${supported}`)
+    this.name = 'UnsupportedVersionError'
+  }
+}
+
 export class Writer {
   private readonly chunks: Uint8Array[] = []
 
@@ -78,6 +87,14 @@ export class Reader {
   u16(): number {
     const value = this.view(2).getUint16(0)
     this.offset += 2
+    return value
+  }
+
+  version(supported: number): number {
+    const value = this.u16()
+    if (value !== supported) {
+      throw new UnsupportedVersionError(value, supported)
+    }
     return value
   }
 

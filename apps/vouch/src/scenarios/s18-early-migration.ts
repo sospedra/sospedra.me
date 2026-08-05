@@ -4,7 +4,7 @@ import { encodeBundle, type ResponseBundle } from '../protocol/bundle.ts'
 import { hex } from '../protocol/bytes.ts'
 import {
   PROTOCOL_VERSION,
-  TIMELOCK_MIN,
+  TIMELOCK_MIGRATION_MIN,
   ZERO32,
 } from '../protocol/constants.ts'
 import { buildGenesis, GENESIS_ROOT, seqRecords } from '../protocol/genesis.ts'
@@ -38,7 +38,7 @@ import type { Actor } from './trace.ts'
 import { obj, type Scenario, type Trace, type TraceStep } from './trace.ts'
 
 const COMMIT_SEQUENCE = 1n
-const ACTIVATION_SEQUENCE = COMMIT_SEQUENCE + TIMELOCK_MIN
+const ACTIVATION_SEQUENCE = COMMIT_SEQUENCE + TIMELOCK_MIGRATION_MIN
 const CLAIMED_ACTIVATION_SEQUENCE = ACTIVATION_SEQUENCE - 1n
 
 const MIGRATION_MANIFEST_HASH = manifestHash(manifestFor('vouch-update-v2'))

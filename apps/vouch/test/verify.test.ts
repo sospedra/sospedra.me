@@ -5,7 +5,11 @@ import {
   encodeBundle,
   type ResponseBundle,
 } from '../src/protocol/bundle.ts'
-import { PROTOCOL_VERSION, ZERO32 } from '../src/protocol/constants.ts'
+import {
+  FRESHNESS,
+  PROTOCOL_VERSION,
+  ZERO32,
+} from '../src/protocol/constants.ts'
 import { buildGenesis, GENESIS_ROOT } from '../src/protocol/genesis.ts'
 import {
   encodeLatestHead,
@@ -318,6 +322,25 @@ test('unknown query program id -> INVALID_PROGRAM_CHAIN', () => {
   if (!result.ok) assert.equal(result.rule, 'migration-unknown-program')
 })
 
+test('trust state with an unsupported protocol version is rejected at verifier entry', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const trust = { ...honest.trust, protocolVersion: PROTOCOL_VERSION + 1 }
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: honest.bundleBytes,
+    trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assert.equal(result.ok, false)
+  if (result.ok) return
+  assert.equal(result.error, 'UNSUPPORTED_PROTOCOL_VERSION')
+  assert.deepEqual(result.checks, [])
+})
+
 test('malformed bundle bytes -> MALFORMED_TRANSPORT', () => {
   const trust = genesisTrust({
     protocolVersion: PROTOCOL_VERSION,
@@ -509,8 +532,67 @@ test('a bundle carrying a different canonical request is rejected', () => {
   assertFailsAtStep(result, 8, 'REQUEST_HASH_MISMATCH')
 })
 
-test('a caller that does not require a fresh head gets an honestly skipped step 16', () => {
+test('a future-dated attached head is rejected even when requireFreshHead is false', () => {
   const honest = makeHonestBundle(buildGenesis())
+  const headId: HeadIdV1 = {
+    sequence: honest.receipt.stateSequence,
+    stateRoot: honest.receipt.stateRoot,
+    updateProgramId: PROGRAM.updateV1,
+    queryProgramId: honest.receipt.queryProgramId,
+    programChainHash: honest.receipt.programChainHash,
+  }
+  const futureHead: LatestHeadV1 = {
+    head: headId,
+    latestAsOfMs: honest.nowMs + FRESHNESS.clockSkewMs + 1_000n,
+    headKeyId: honest.world.receiptKey.publicKey,
+  }
+  const headBytes = encodeLatestHead(futureHead)
+  const headSignature = sign(
+    headSigningInput(headBytes),
+    honest.world.receiptKey,
+  )
+  const bundle: ResponseBundle = {
+    ...honest.bundle,
+    latestHead: headBytes,
+    latestHeadSignature: headSignature,
+  }
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: encodeBundle(bundle),
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: false,
+  })
+
+  assertFailsAtStep(result, 16, 'FUTURE_HEAD')
+})
+
+test('requireFreshHead false still validates signature and future bound, only staleness is skipped', () => {
+  const honest = makeHonestBundle(buildGenesis())
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: honest.bundleBytes,
+    trust: honest.trust,
+    nowMs: honest.nowMs + 1_000_000n,
+    requireFreshHead: false,
+  })
+
+  assert.equal(result.ok, true)
+  if (!result.ok) return
+  assert.equal(result.checks.length, 19)
+  const step16 = result.checks[15]
+  assert.equal(step16.step, 16)
+  assert.equal(step16.pass, true)
+  assert.equal(step16.skipped, undefined)
+  assert.equal(result.next.lastLatestAsOfMs, HONEST_ISSUED_AT_MS)
+})
+
+test('requireFreshHead false with no attached head still skips step 16', () => {
+  const honest = makeHonestBundle(buildGenesis(), { includeHead: false })
 
   const result = verifyBundle({
     expectedRequest: honest.expectedRequest,

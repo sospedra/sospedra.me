@@ -1,4 +1,5 @@
 import { hex } from './bytes.ts'
+import { PROTOCOL_VERSION } from './constants.ts'
 import { Reader, Writer } from './encode.ts'
 import { hash } from './hash.ts'
 import { LIMITS } from './limits.ts'
@@ -29,7 +30,7 @@ export function encodeClientTrustState(trust: ClientTrustStateV1): Uint8Array {
 
 export function decodeClientTrustState(buf: Uint8Array): ClientTrustStateV1 {
   const r = new Reader(buf)
-  const protocolVersion = r.u16()
+  const protocolVersion = r.version(PROTOCOL_VERSION)
   const highestSequence = r.u64()
   const acceptedRoot = r.fixed(32)
   const programChainHash = r.fixed(32)

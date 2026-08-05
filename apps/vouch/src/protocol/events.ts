@@ -1,8 +1,11 @@
-import { Reader, Writer } from './encode.ts'
+import { DecodeError, Reader, Writer } from './encode.ts'
 import { hash } from './hash.ts'
 import type { Keypair } from './keys.ts'
 import { sign } from './keys.ts'
 import { LIMITS } from './limits.ts'
+import { OP } from './ops.ts'
+
+const VALID_OPERATIONS: ReadonlySet<number> = new Set(Object.values(OP))
 
 export type AuthorEventV1 = {
   authorKeyId: Uint8Array
@@ -28,6 +31,9 @@ export function decodeAuthorEvent(buf: Uint8Array): AuthorEventV1 {
   const authorSequence = r.u64()
   const authorPreviousHash = r.fixed(32)
   const operation = r.u16()
+  if (!VALID_OPERATIONS.has(operation)) {
+    throw new DecodeError(`invalid operation discriminant: ${operation}`)
+  }
   const payload = r.bytes(LIMITS.payload)
   r.finish()
   return {

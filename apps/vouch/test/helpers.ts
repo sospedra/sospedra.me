@@ -1,7 +1,7 @@
 import { encodeBundle, type ResponseBundle } from '../src/protocol/bundle.ts'
 import {
   PROTOCOL_VERSION,
-  TIMELOCK_MIN,
+  TIMELOCK_MIGRATION_MIN,
   ZERO32,
 } from '../src/protocol/constants.ts'
 import {
@@ -120,7 +120,7 @@ function buildTransitionsForMigration(world: World): {
   transitions: Uint8Array[]
   migrations: Uint8Array[]
 } {
-  const activationSequence = 1n + TIMELOCK_MIN
+  const activationSequence = 1n + TIMELOCK_MIGRATION_MIN
   const migration: ProgramMigrationV1 = {
     nextUpdateProgramId: PROGRAM.updateV2,
     nextQueryProgramId: PROGRAM.queryV2,
@@ -224,7 +224,7 @@ function buildTransitionsForQueryOnlyMigration(world: World): {
   transitions: Uint8Array[]
   migrations: Uint8Array[]
 } {
-  const activationSequence = 1n + TIMELOCK_MIN
+  const activationSequence = 1n + TIMELOCK_MIGRATION_MIN
   const migration: ProgramMigrationV1 = {
     nextUpdateProgramId: PROGRAM.updateV1,
     nextQueryProgramId: PROGRAM.queryV2,

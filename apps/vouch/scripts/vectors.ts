@@ -4,7 +4,7 @@ import { ascii, hex } from '../src/protocol/bytes.ts'
 import {
   MAGIC,
   PROTOCOL_VERSION,
-  TIMELOCK_MIN,
+  TIMELOCK_MIGRATION_MIN,
   ZERO32,
 } from '../src/protocol/constants.ts'
 import {
@@ -548,7 +548,7 @@ export function buildVectors(): VectorsFile {
     nextUpdateProgramId: PROGRAM.updateV2,
     nextQueryProgramId: PROGRAM.queryV2,
     nextProgramManifestHash: nextManifestHash,
-    activationSequence: 1n + TIMELOCK_MIN,
+    activationSequence: 1n + TIMELOCK_MIGRATION_MIN,
     governanceAuthorization: new Uint8Array(0),
   }
   const trustSample = genesisTrust({

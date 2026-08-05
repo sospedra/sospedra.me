@@ -4,7 +4,7 @@ import { encodeBundle, type ResponseBundle } from '../protocol/bundle.ts'
 import { hex, u64be } from '../protocol/bytes.ts'
 import {
   PROTOCOL_VERSION,
-  TIMELOCK_MIN,
+  TIMELOCK_CONFIG_MIN,
   ZERO32,
 } from '../protocol/constants.ts'
 import type { GlobalEventRecordV1 } from '../protocol/events.ts'
@@ -67,7 +67,7 @@ import { obj, type Scenario, type Trace, type TraceStep } from './trace.ts'
 const NEW_FEE_BP = 500n
 const TRANSFER_AMOUNT = 1_000n
 const SET_CONFIG_SEQUENCE = 3n
-const ACTIVATION_SEQUENCE = SET_CONFIG_SEQUENCE + TIMELOCK_MIN
+const ACTIVATION_SEQUENCE = SET_CONFIG_SEQUENCE + TIMELOCK_CONFIG_MIN
 const EARLY_SEQUENCE = ACTIVATION_SEQUENCE - 1n
 
 function requireHead(latestHead: Uint8Array | null): LatestHeadV1 {

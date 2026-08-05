@@ -2,10 +2,12 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { hex } from '../src/protocol/bytes.ts'
 import { ZERO32 } from '../src/protocol/constants.ts'
+import { DecodeError } from '../src/protocol/encode.ts'
 import {
   decodeAuthorEvent,
   decodeGlobalEventRecord,
   decodeWriteAck,
+  encodeAuthorEvent,
   encodeGlobalEventRecord,
   encodeWriteAck,
   eventHash,
@@ -36,6 +38,15 @@ test('tampered payload breaks the signature', () => {
 
 test('transfer payload rejects uppercase account id', () => {
   assert.throws(() => encodeTransfer({ from: 'Alice', to: 'bob', amount: 1n }))
+})
+
+test('decodeAuthorEvent rejects an invalid operation discriminant', () => {
+  const kp = keypairFromLabel('author-alice')
+  const payload = encodeTransfer({ from: 'alice', to: 'bob', amount: 100n })
+  const s = makeSignedEvent(kp, 1n, ZERO32, OP.TRANSFER, payload)
+  const decoded = decodeAuthorEvent(s.eventBytes)
+  const forged = encodeAuthorEvent({ ...decoded, operation: 9999 })
+  assert.throws(() => decodeAuthorEvent(forged), DecodeError)
 })
 
 test('GlobalEventRecordV1 roundtrip with 64-byte signature', () => {

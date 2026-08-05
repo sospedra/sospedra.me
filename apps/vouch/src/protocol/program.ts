@@ -1,5 +1,5 @@
 import { ascii, u64be } from './bytes.ts'
-import { ZERO32 } from './constants.ts'
+import { PROTOCOL_VERSION, ZERO32 } from './constants.ts'
 import { Reader, Writer } from './encode.ts'
 import { hash } from './hash.ts'
 import { LIMITS } from './limits.ts'
@@ -48,7 +48,7 @@ export function decodeManifest(buf: Uint8Array): ProgramManifestV1 {
   const buildRecipeHash = r.fixed(32)
   const guestBinaryHash = r.fixed(32)
   const programIdField = r.fixed(32)
-  const protocolVersion = r.u16()
+  const protocolVersion = r.version(PROTOCOL_VERSION)
   r.finish()
   return {
     sourceRepository,
