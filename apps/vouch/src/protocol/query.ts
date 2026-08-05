@@ -22,6 +22,7 @@ import {
 } from './view.ts'
 
 export const REQ = { GET_BALANCE: 1, LIST_TRANSFERS: 2 } as const
+const SUPPORTED_REQUEST_VERSION = 1
 
 export type QueryRequestV1 = {
   requestType: number
@@ -201,22 +202,38 @@ export function decodeTransparentQueryProof(
   return { journal, requestBytes, accesses }
 }
 
+export type QueryVerificationCode =
+  | 'MALFORMED_CANONICAL_OBJECT'
+  | 'REQUEST_HASH_MISMATCH'
+  | 'INVALID_PROOF'
+  | 'JOURNAL_MISMATCH'
+
 export class QueryError extends Error {
+  readonly code: QueryVerificationCode
   readonly rule: string
 
-  constructor(rule: string) {
+  constructor(rule: string, code: QueryVerificationCode = 'INVALID_PROOF') {
     super(rule)
     this.name = 'QueryError'
+    this.code = code
     this.rule = rule
   }
 }
 
-function decodePayload<T>(decode: () => T): T {
+function decodeOrRule<T>(
+  decode: () => T,
+  rule: string,
+  code: QueryVerificationCode = 'INVALID_PROOF',
+): T {
   try {
     return decode()
   } catch {
-    throw new QueryError('payload')
+    throw new QueryError(rule, code)
   }
+}
+
+function decodePayload<T>(decode: () => T): T {
+  return decodeOrRule(decode, 'payload')
 }
 
 function isKnownQueryProgram(queryId: Uint8Array): boolean {
@@ -228,24 +245,31 @@ function isKnownQueryProgram(queryId: Uint8Array): boolean {
 function runGetBalance(view: StateView, body: Uint8Array): Uint8Array {
   const parsed = decodePayload(() => decodeGetBalanceBody(body))
   const raw = view.get(accountKey(parsed.accountId))
-  const result: BalanceResultV1 =
-    raw === null
-      ? { exists: false, balance: 0n }
-      : { exists: true, balance: decodeAccount(raw).balance }
-  return encodeBalanceResult(result)
+  if (raw === null) return encodeBalanceResult({ exists: false, balance: 0n })
+  const account = decodeOrRule(
+    () => decodeAccount(raw),
+    'account-decode',
+    'MALFORMED_CANONICAL_OBJECT',
+  )
+  return encodeBalanceResult({ exists: true, balance: account.balance })
 }
 
 function runListTransfers(view: StateView, body: Uint8Array): Uint8Array {
   const parsed = decodePayload(() => decodeListTransfersBody(body))
   const raw = view.get(transfersKey(parsed.accountId))
-  const entries = raw === null ? [] : decodeTransferLogV1(raw).entries
-  const tail = entries.slice(Math.max(0, entries.length - parsed.limit))
+  if (raw === null) return encodeTransfersResult({ entries: [] })
+  const log = decodeOrRule(
+    () => decodeTransferLogV1(raw),
+    'transfer-log-decode',
+    'MALFORMED_CANONICAL_OBJECT',
+  )
+  const tail = log.entries.slice(Math.max(0, log.entries.length - parsed.limit))
   return encodeTransfersResult({ entries: tail })
 }
 
 const REQUEST_HANDLERS: Record<
   number,
-  (view: StateView, body: Uint8Array) => Uint8Array
+  ((view: StateView, body: Uint8Array) => Uint8Array) | undefined
 > = {
   [REQ.GET_BALANCE]: runGetBalance,
   [REQ.LIST_TRANSFERS]: runListTransfers,
@@ -258,6 +282,9 @@ export function runQuery(
 ): Uint8Array {
   if (!isKnownQueryProgram(queryId)) throw new QueryError('unknown-program')
   const request = decodePayload(() => decodeQueryRequest(requestBytes))
+  if (request.requestVersion !== SUPPORTED_REQUEST_VERSION) {
+    throw new QueryError('unsupported-request-version')
+  }
   const handler = REQUEST_HANDLERS[request.requestType]
   if (!handler) throw new QueryError('unknown-request-type')
   return handler(view, request.body)
@@ -292,8 +319,6 @@ export function proveQuery(
     },
   }
 }
-
-export type QueryVerificationCode = 'JOURNAL_MISMATCH' | 'INVALID_PROOF'
 
 export class QueryVerificationError extends Error {
   readonly code: QueryVerificationCode
@@ -337,6 +362,9 @@ export function verifyQuery(
 ): void {
   const journal = decodeQueryJournal(proof.journal)
   checkJournalMatches(journal, expected)
+  if (!bytesEqual(requestHash(proof.requestBytes), journal.requestHash)) {
+    throw new QueryVerificationError('REQUEST_HASH_MISMATCH', 'request-bytes')
+  }
   try {
     const view = new ReplayView(journal.stateRoot, proof.accesses.slice())
     const replayed = runQuery(view, proof.requestBytes, journal.queryProgramId)
@@ -346,7 +374,7 @@ export function verifyQuery(
     }
   } catch (err) {
     if (err instanceof QueryError || err instanceof ReplayError) {
-      throw new QueryVerificationError('INVALID_PROOF', err.rule)
+      throw new QueryVerificationError(err.code, err.rule)
     }
     throw err
   }

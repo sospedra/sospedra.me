@@ -1,16 +1,24 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { hex } from '../src/protocol/bytes.ts'
+import { DecodeError, Writer } from '../src/protocol/encode.ts'
 import type { GlobalEventRecordV1 } from '../src/protocol/events.ts'
 import {
   buildGenesis,
   seqRecords,
   type World,
 } from '../src/protocol/genesis.ts'
-import { encodeOpenAccount, encodeTransfer, OP } from '../src/protocol/ops.ts'
+import { LIMITS } from '../src/protocol/limits.ts'
+import {
+  encodeAccountId,
+  encodeOpenAccount,
+  encodeTransfer,
+  OP,
+} from '../src/protocol/ops.ts'
 import { PROGRAM } from '../src/protocol/program.ts'
 import {
   decodeBalanceResult,
+  decodeListTransfersBody,
   decodeQueryJournal,
   decodeTransfersResult,
   decodeTransparentQueryProof,
@@ -302,5 +310,355 @@ test('a tampered access value fails the witness check', () => {
   assert.throws(() => verifyQuery(tampered, expected), {
     code: 'INVALID_PROOF',
     rule: 'access-witness',
+  })
+})
+
+test('a journal whose requestHash does not match the replayed request bytes is rejected', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId: 'bob' }),
+  })
+  const meta = readMeta(w.tree)
+  const { proof } = proveQuery(w.tree, requestBytes, meta)
+
+  const journal = decodeQueryJournal(proof.journal)
+  const forgedJournal: QueryJournalV1 = {
+    ...journal,
+    requestHash: flipByte(journal.requestHash),
+  }
+  const forgedProof: TransparentQueryProofV1 = {
+    ...proof,
+    journal: encodeQueryJournal(forgedJournal),
+  }
+
+  assert.throws(() => verifyQuery(forgedProof, forgedJournal), {
+    code: 'REQUEST_HASH_MISMATCH',
+    rule: 'request-bytes',
+  })
+})
+
+test('reviewer attack: forged journal.requestHash cannot pass off a truncated list-transfers reply as the fuller answer', () => {
+  const w = buildGenesis()
+  const records = seqRecords(w, [
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'alice', initialBalance: 10_000n }),
+    ],
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'bob', initialBalance: 0n }),
+    ],
+    [
+      'alice',
+      OP.TRANSFER,
+      encodeTransfer({ from: 'alice', to: 'bob', amount: 100n }),
+    ],
+    [
+      'alice',
+      OP.TRANSFER,
+      encodeTransfer({ from: 'alice', to: 'bob', amount: 100n }),
+    ],
+    [
+      'alice',
+      OP.TRANSFER,
+      encodeTransfer({ from: 'alice', to: 'bob', amount: 100n }),
+    ],
+  ])
+  proveBatch(w.tree, records, PROGRAM.updateV1)
+
+  const limit1Bytes = encodeQueryRequest({
+    requestType: REQ.LIST_TRANSFERS,
+    requestVersion: 1,
+    body: encodeListTransfersBody({ accountId: 'bob', limit: 1 }),
+  })
+  const limit3Bytes = encodeQueryRequest({
+    requestType: REQ.LIST_TRANSFERS,
+    requestVersion: 1,
+    body: encodeListTransfersBody({ accountId: 'bob', limit: 3 }),
+  })
+  const meta = readMeta(w.tree)
+  const { resultBytes, proof } = proveQuery(w.tree, limit1Bytes, meta)
+  assert.equal(decodeTransfersResult(resultBytes).entries.length, 1)
+
+  const journal = decodeQueryJournal(proof.journal)
+  const forgedJournal: QueryJournalV1 = {
+    ...journal,
+    requestHash: requestHash(limit3Bytes),
+  }
+  const forgedProof: TransparentQueryProofV1 = {
+    ...proof,
+    journal: encodeQueryJournal(forgedJournal),
+  }
+
+  assert.throws(() => verifyQuery(forgedProof, forgedJournal), {
+    code: 'REQUEST_HASH_MISMATCH',
+    rule: 'request-bytes',
+  })
+})
+
+test('reviewer attack: forged journal.requestHash cannot redirect a balance answer to a different account', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const bobBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId: 'bob' }),
+  })
+  const aliceBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId: 'alice' }),
+  })
+  const meta = readMeta(w.tree)
+  const { resultBytes, proof } = proveQuery(w.tree, bobBytes, meta)
+  assert.equal(decodeBalanceResult(resultBytes).balance, 975n)
+
+  const journal = decodeQueryJournal(proof.journal)
+  const forgedJournal: QueryJournalV1 = {
+    ...journal,
+    requestHash: requestHash(aliceBytes),
+  }
+  const forgedProof: TransparentQueryProofV1 = {
+    ...proof,
+    journal: encodeQueryJournal(forgedJournal),
+  }
+
+  assert.throws(() => verifyQuery(forgedProof, forgedJournal), {
+    code: 'REQUEST_HASH_MISMATCH',
+    rule: 'request-bytes',
+  })
+})
+
+test('unknown query program id is rejected', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId: 'bob' }),
+  })
+  const meta = readMeta(w.tree)
+
+  assert.throws(
+    () =>
+      proveQuery(w.tree, requestBytes, {
+        ...meta,
+        queryProgramId: new Uint8Array(32).fill(0xff),
+      }),
+    { rule: 'unknown-program' },
+  )
+})
+
+test('unknown request type is rejected', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: 99,
+    requestVersion: 1,
+    body: new Uint8Array(0),
+  })
+  const meta = readMeta(w.tree)
+
+  assert.throws(() => proveQuery(w.tree, requestBytes, meta), {
+    rule: 'unknown-request-type',
+  })
+})
+
+test('unsupported request version is rejected', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 2,
+    body: encodeGetBalanceBody({ accountId: 'bob' }),
+  })
+  const meta = readMeta(w.tree)
+
+  assert.throws(() => proveQuery(w.tree, requestBytes, meta), {
+    rule: 'unsupported-request-version',
+  })
+})
+
+test('list-transfers with limit 0 returns no entries', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.LIST_TRANSFERS,
+    requestVersion: 1,
+    body: encodeListTransfersBody({ accountId: 'bob', limit: 0 }),
+  })
+  const meta = readMeta(w.tree)
+  const { resultBytes, proof } = proveQuery(w.tree, requestBytes, meta)
+  const result = decodeTransfersResult(resultBytes)
+
+  assert.deepEqual(result.entries, [])
+  assert.doesNotThrow(() =>
+    verifyQuery(proof, expectedJournal(w.tree, requestBytes, resultBytes)),
+  )
+})
+
+test('list-transfers with limit above the log length returns the whole log', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const transfersRaw = w.tree.get(transfersKey('bob'))
+  assert.ok(transfersRaw)
+  const fullLog = decodeTransferLogV1(transfersRaw).entries
+  assert.equal(fullLog.length, 1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.LIST_TRANSFERS,
+    requestVersion: 1,
+    body: encodeListTransfersBody({ accountId: 'bob', limit: 10 }),
+  })
+  const meta = readMeta(w.tree)
+  const { resultBytes, proof } = proveQuery(w.tree, requestBytes, meta)
+  const result = decodeTransfersResult(resultBytes)
+
+  assert.deepEqual(result.entries.map(hex), fullLog.map(hex))
+  assert.doesNotThrow(() =>
+    verifyQuery(proof, expectedJournal(w.tree, requestBytes, resultBytes)),
+  )
+})
+
+test('list-transfers limit at the 2047 cap is accepted, one past it is rejected', () => {
+  const cap = LIMITS.transferLogEntries
+  assert.equal(cap, 2047)
+
+  const atCap = encodeListTransfersBody({ accountId: 'bob', limit: cap })
+  assert.deepEqual(decodeListTransfersBody(atCap), {
+    accountId: 'bob',
+    limit: cap,
+  })
+
+  assert.throws(
+    () => encodeListTransfersBody({ accountId: 'bob', limit: cap + 1 }),
+    RangeError,
+  )
+
+  const w = new Writer()
+  encodeAccountId(w, 'bob')
+  w.u16(cap + 1)
+  assert.throws(() => decodeListTransfersBody(w.done()), DecodeError)
+})
+
+test('a forged state sequence fails the journal check', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId: 'bob' }),
+  })
+  const meta = readMeta(w.tree)
+  const { resultBytes, proof } = proveQuery(w.tree, requestBytes, meta)
+  const expected: QueryJournalV1 = {
+    ...expectedJournal(w.tree, requestBytes, resultBytes),
+    stateSequence: meta.stateSequence + 1n,
+  }
+
+  assert.throws(() => verifyQuery(proof, expected), {
+    code: 'JOURNAL_MISMATCH',
+    rule: 'state-sequence',
+  })
+})
+
+test('a forged request hash fails the journal check', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId: 'bob' }),
+  })
+  const meta = readMeta(w.tree)
+  const { resultBytes, proof } = proveQuery(w.tree, requestBytes, meta)
+  const expected: QueryJournalV1 = {
+    ...expectedJournal(w.tree, requestBytes, resultBytes),
+    requestHash: flipByte(requestHash(requestBytes)),
+  }
+
+  assert.throws(() => verifyQuery(proof, expected), {
+    code: 'JOURNAL_MISMATCH',
+    rule: 'request-hash',
+  })
+})
+
+test('a forged result hash fails the journal check', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId: 'bob' }),
+  })
+  const meta = readMeta(w.tree)
+  const { resultBytes, proof } = proveQuery(w.tree, requestBytes, meta)
+  const expected: QueryJournalV1 = {
+    ...expectedJournal(w.tree, requestBytes, resultBytes),
+    resultHash: flipByte(resultHash(resultBytes)),
+  }
+
+  assert.throws(() => verifyQuery(proof, expected), {
+    code: 'JOURNAL_MISMATCH',
+    rule: 'result-hash',
+  })
+})
+
+test('a forged query program id fails the journal check', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId: 'bob' }),
+  })
+  const meta = readMeta(w.tree)
+  const { resultBytes, proof } = proveQuery(w.tree, requestBytes, meta)
+  const expected: QueryJournalV1 = {
+    ...expectedJournal(w.tree, requestBytes, resultBytes),
+    queryProgramId: flipByte(meta.queryProgramId),
+  }
+
+  assert.throws(() => verifyQuery(proof, expected), {
+    code: 'JOURNAL_MISMATCH',
+    rule: 'query-program-id',
+  })
+})
+
+test('a forged program chain hash fails the journal check', () => {
+  const w = buildGenesis()
+  proveBatch(w.tree, openAliceAndBobThenTransfer(w), PROGRAM.updateV1)
+
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId: 'bob' }),
+  })
+  const meta = readMeta(w.tree)
+  const { resultBytes, proof } = proveQuery(w.tree, requestBytes, meta)
+  const expected: QueryJournalV1 = {
+    ...expectedJournal(w.tree, requestBytes, resultBytes),
+    programChainHash: flipByte(meta.programChainHash),
+  }
+
+  assert.throws(() => verifyQuery(proof, expected), {
+    code: 'JOURNAL_MISMATCH',
+    rule: 'program-chain-hash',
   })
 })
