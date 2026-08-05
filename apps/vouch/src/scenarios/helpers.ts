@@ -3,7 +3,9 @@ import {
   decodeAuthorEvent,
   type GlobalEventRecordV1,
 } from '../protocol/events.ts'
+import type { SignedHead } from '../protocol/evidence.ts'
 import { GENESIS_ROOT } from '../protocol/genesis.ts'
+import { decodeLatestHead, headSigningInput } from '../protocol/head.ts'
 import { decodeOpenAccount, decodeTransfer, OP } from '../protocol/ops.ts'
 import { GENESIS_CHAIN, PROGRAM } from '../protocol/program.ts'
 import { decodeGetBalanceBody, decodeQueryRequest } from '../protocol/query.ts'
@@ -58,6 +60,31 @@ export function batchSealStep(
 
 export function accountIdFromRequest(requestBytes: Uint8Array): string {
   return decodeGetBalanceBody(decodeQueryRequest(requestBytes).body).accountId
+}
+
+export function headStatementStep(
+  name: string,
+  label: string,
+  statement: SignedHead,
+): TraceStep {
+  const head = decodeLatestHead(statement.headBytes)
+  return {
+    actor: 'server',
+    kind: 'object',
+    label,
+    objects: [
+      {
+        ...obj(name, 'latest-head', statement.headBytes, {
+          sequence: head.head.sequence.toString(),
+          stateRoot: hex(head.head.stateRoot),
+          latestAsOfMs: head.latestAsOfMs.toString(),
+          headKeyId: hex(head.headKeyId),
+          signature: hex(statement.signature),
+        }),
+        hash: hex(headSigningInput(statement.headBytes)),
+      },
+    ],
+  }
 }
 
 export function checkStep(check: CheckLog, who?: string): TraceStep {
