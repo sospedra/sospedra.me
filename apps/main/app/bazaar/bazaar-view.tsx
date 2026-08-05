@@ -9,13 +9,18 @@ import Link from 'services/link'
 import Shell from 'services/shell'
 import { prefersQuietFx } from 'services/theme'
 import css from './bazaar.module.css'
+import {
+  DESKTOP_FLOORS,
+  type DesktopFloor,
+  MOBILE_FLOORS,
+  type MobileFloor,
+} from './floors'
 import HostDecor from './host-decor'
 import Stall from './market-stall'
 import scene from './scene.module.css'
 import { sfx, soundPreference } from './sounds'
 import Stage from './stage'
 import { DIMS } from './stall-catalog'
-import type { BazaarStallId } from './stalls-manifest'
 import street from './street-backdrop.module.css'
 
 const Editor = dynamic(() => import('./editor/editor'), { ssr: false })
@@ -115,27 +120,6 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
     </section>
   )
 }
-
-type DesktopFloor = { stalls: BazaarStallId[]; stairsRight: boolean }
-type MobileFloor = {
-  stalls: [BazaarStallId, BazaarStallId]
-  smRight: boolean
-}
-
-/* S sides: R, L, R (spec rule 5) */
-const DESKTOP_FLOORS: DesktopFloor[] = [
-  { stalls: ['uses', 'papers'], stairsRight: true },
-  { stalls: ['manual', 'console', 'talks'], stairsRight: false },
-  { stalls: ['w98', 'games', 'travel'], stairsRight: true },
-]
-
-/* SM sides: R, L, R, L (spec rule 5) */
-const MOBILE_FLOORS: MobileFloor[] = [
-  { stalls: ['uses', 'papers'], smRight: true },
-  { stalls: ['manual', 'talks'], smRight: false },
-  { stalls: ['console', 'w98'], smRight: true },
-  { stalls: ['games', 'travel'], smRight: false },
-]
 
 function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
   const totalWidth = sumBy(spec.stalls, (id) => DIMS[id].width)
