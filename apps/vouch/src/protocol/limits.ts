@@ -8,6 +8,7 @@ export const LIMITS = {
   proofEvents: 64,
   proofAccesses: 4096,
   migrationChain: 8,
+  transitionChain: 64,
   // encodeTransferLogV1 output (4 + 32*n) must fit inside LIMITS.result (65536)
   transferLogEntries: 2047,
 } as const
