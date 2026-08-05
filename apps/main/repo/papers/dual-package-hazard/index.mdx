@@ -1,8 +1,10 @@
-The ESM migration is on. [Sindre Sorhus committed to ESM-only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) and dragged a thousand packages with him; `node-fetch@3` followed this summer. Your dependency tree is now a mix of CommonJS and ES Modules, and there's a failure mode hiding in that mix. Node's docs name it the [dual package hazard](https://nodejs.org/dist/v16.10.0/docs/api/packages.html#packages_dual_package_hazard). Most people meet it as a cryptic `instanceof` bug.
+The console says `Cannot use GraphQLObjectType "Query" from another module or realm.` There is one realm. There is one process. Node loaded `graphql-js` twice.
 
-## The setup
+The library did nothing careless. It ships both formats through conditional exports, and that responsible-looking shape is what splits it. **Node runs two loaders with two separate caches.**
 
-A library ships both formats through conditional exports:
+## Two loaders, two caches
+
+Conditional exports look like this.
 
 ```json
 {
@@ -16,7 +18,7 @@ A library ships both formats through conditional exports:
 }
 ```
 
-Looks responsible. Now the part nobody explains: **Node runs two loaders with two separate caches**. The ESM loader keys its module map by fully resolved URL (`file:///…/index.mjs`). The CJS loader caches in `require.cache`, keyed by absolute path. They are different data structures in different module systems. When conditional exports hand each loader a different file, deduplication is impossible *by construction*. Two files, two module instances, two of everything inside: two class definitions, two module-level caches, two singletons that were supposed to be single.
+The ESM loader keys its module map by fully resolved URL (`file:///…/index.mjs`). The CJS loader caches in `require.cache`, keyed by absolute path. They are different data structures in different module systems. When conditional exports hand each loader a different file, deduplication is impossible *by construction*. Two files, two module instances, two of everything inside: two class definitions, two module-level caches, two singletons that were supposed to be single.
 
 ```js
 import { Thing } from 'lib'          // ESM loader → dist/index.mjs
@@ -25,17 +27,21 @@ const { Thing: T2 } = require('lib') // CJS loader → dist/index.cjs
 new Thing() instanceof T2 // false. Same name, different module instance.
 ```
 
-The hazard was named by Geoffrey Booth in [nodejs/modules#409](https://github.com/nodejs/modules/issues/409) back in 2019, and the two blessed mitigations landed with [nodejs/node#30345](https://github.com/nodejs/node/pull/30345). This problem was documented before most packages had an `exports` field. We're just meeting it at scale now.
+<Aside label='Hazard // Named'>
+  - **Node's docs** call it the [dual package hazard](https://nodejs.org/dist/v16.10.0/docs/api/packages.html#packages_dual_package_hazard)
+  - **Geoffrey Booth** named it in [nodejs/modules#409](https://github.com/nodejs/modules/issues/409), 2019
+  - **Two blessed mitigations** landed with [nodejs/node#30345](https://github.com/nodejs/node/pull/30345)
+</Aside>
 
-## The symptoms
+Node documented this before most packages had an `exports` field. Then [Sindre Sorhus committed to ESM-only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) and dragged a thousand packages with him, and `node-fetch@3` followed this summer. The old problem now runs at scale.
 
-```
-Cannot use GraphQLObjectType "Query" from another module or realm.
-```
+## The other failures are silent
 
-`graphql-js` keeps that check on purpose. Other libraries fail quieter: a plugin registers itself in copy A and the core reads the registry from copy B; a `WeakMap` keyed on the "shared" class holds nothing. And the sneakiest trigger doesn't need a second package at all. The `import` condition also matches **dynamic `import()` from inside CJS**. One file doing both `require('pkg')` and `await import('pkg')` instantiates both copies by itself. Incremental migrations do exactly this.
+`graphql-js` keeps that realm check on purpose. Other libraries fail without a message. A plugin registers itself in copy A and the core reads the registry from copy B. A `WeakMap` keyed on the shared class holds nothing.
 
-Detection, if you suspect a split (needs `--experimental-import-meta-resolve`):
+The sneakiest trigger needs no second package. The `import` condition also matches **dynamic `import()` from inside CJS**. One file calls both `require('pkg')` and `await import('pkg')`, and it instantiates both copies by itself. Incremental migrations do exactly this.
+
+Detection needs `--experimental-import-meta-resolve`:
 
 ```js
 import { createRequire } from 'node:module'
@@ -46,19 +52,19 @@ const esm = new URL(await import.meta.resolve('graphql')).pathname
 console.log(cjs === esm ? 'single instance' : `split:\n ${cjs}\n ${esm}`)
 ```
 
-## The fixes
+## Three fixes, ranked
 
-You maintain a library? Three options, in order:
+You maintain a library? Take them in order.
 
-1. **Go ESM-only**. The blunt fix. Your CJS consumers stay on the old major. This is the Sorhus route and it's honest.
-2. **Publish CJS with an ESM wrapper**. One source of truth; the `.mjs` entry re-exports the CJS file, so both loaders converge on one instance:
+1. **Go ESM-only**. The blunt fix. Your CJS consumers stay on the old major. This is the Sorhus route and it is honest.
+2. **Publish CJS with an ESM wrapper**. One source of truth. The `.mjs` entry re-exports the CJS file, so both loaders converge on one instance:
 
 ```js
 // index.mjs
 export { Thing, createThing } from './index.cjs'
 ```
 
-This works because of a machine you've never heard of: [cjs-module-lexer](https://github.com/nodejs/node/pull/35249), a Wasm static analyzer Node runs over CJS files at link time to detect named exports. It recognizes `exports.name = …` patterns. It cannot see dynamic ones:
+This works because of a machine you have never heard of: [cjs-module-lexer](https://github.com/nodejs/node/pull/35249). It is a Wasm static analyzer. Node runs it over CJS files at link time to detect named exports. It recognizes `exports.name = …` patterns. It cannot see dynamic ones:
 
 ```js
 // index.cjs
@@ -70,10 +76,10 @@ export { Thing } from './index.cjs'   // works: statically detected
 export { Hidden } from './index.cjs'  // SyntaxError: no named export
 ```
 
-If your CJS builds exports dynamically, re-export the default and destructure instead.
+If your CJS build exports dynamically, re-export the default and destructure instead.
 
-3. **Isolate the state**. Both formats ship as real builds, but every singleton, registry and cache moves into one tiny CJS file both builds require. Instances differ, state doesn't. This is [Approach #2 in the Node docs](https://nodejs.org/dist/v16.10.0/docs/api/packages.html#packages_approach_2_isolate_state), example included.
+3. **Isolate the state**. Both formats ship as real builds, and every singleton, registry and cache moves into one tiny CJS file both builds require. Instances differ, state does not. This is [Approach #2 in the Node docs](https://nodejs.org/dist/v16.10.0/docs/api/packages.html#packages_approach_2_isolate_state), example included.
 
-You maintain an app? Pick `import` and stay there, and when a transitive dep drags the CJS copy in anyway, `npm ls <package>` names the culprit.
+You maintain an app? Pick `import` and stay there. When a transitive dep drags the CJS copy in anyway, `npm ls <package>` names the culprit.
 
-Dual publishing looks like compatibility. It's two packages in a trenchcoat, and Node will happily load both.
+The error was right about the other module. Dual publishing is two packages in a trenchcoat, and Node loads both.

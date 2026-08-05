@@ -1,12 +1,12 @@
 {
   "createdAt": "2025-04-26T09:44:21.000Z",
-  "excerpt": "This story begins in 1993, at the NCSA in Illinois. The web is static files, and Rob McCool needs it not to be. His answer becomes the Common Gateway Interface, later frozen as RFC 3875: drop an executable in cgi-bin/, the server dumps the request into environment variables (QUERY_STRING, REMOTE_ADDR, REQUEST_METHOD, §4 lists them all), the program prints to stdout, that's the response. Any language, any binary, zero ceremony. The dynamic web was born as a folder of scripts talking through pipes.",
+  "excerpt": "MCP is CGI for agents. Same genius. Same sins, already arriving. The genius starts in 1993, at the NCSA in Illinois. The web is static files, and Rob McCool needs it not to be. His answer becomes the Common Gateway Interface, later frozen as RFC 3875. Drop an executable in cgi-bin/. The server dumps the request into environment variables (QUERY_STRING, REMOTE_ADDR, REQUEST_METHOD, §4 lists them all). The program prints to stdout. That is the response. Any language, any binary, zero ceremony. The dynamic web was born as a folder of scripts talking through pipes.",
   "og": "/papers/mcp-is-cgi.png",
   "slug": "mcp-is-cgi",
   "title": "MCP is CGI for agents",
   "updatedAt": "2025-04-26T09:44:21.000Z",
   "images": {},
-  "minutes": 3.34,
+  "minutes": 3.335,
   "categories": [
     "mcp",
     "model context protocol",

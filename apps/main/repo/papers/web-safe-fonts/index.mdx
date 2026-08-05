@@ -1,35 +1,32 @@
-This story begins in 1984. Involves the major R&D companies in Silicon Valley. Machinery. Tech revolutions. And finally, the web.
-**It's the story of the web fonts**. Why are so many? And why it's so difficult to get a standard? And at the end a snippet with the best we can do today.
+In 1985 Apple shipped the [LaserWriter](https://en.wikipedia.org/wiki/LaserWriter). Your font stack still pays for it. Adobe licensed Apple 13 fonts for that machine, and three of them sit in the CSS at the bottom of this page. **Each comma in a font stack sits between an original and its clone.**
 
-Fonts are important since printing became important for the general public. In 1984 the first laser printer intended for mass-market sales was launched. The [HP LaserJet](https://en.wikipedia.org/wiki/HP_LaserJet) was born and with it Silicon Valley, as well.
+The easy story blames the browsers. The real one starts at a printer and ends in a bankruptcy.
 
-This event will change the world dramatically. This is the cradle for the modern digital era. And one fundamental aspect of these ages is the speed. Only one year later, 2 other mastodons of the industry join forces to compete against HP. In 1985, Apple - with the help of Adobe - will release the [LaserWriter](https://en.wikipedia.org/wiki/LaserWriter).
+In 1984 HP shipped the [HP LaserJet](https://en.wikipedia.org/wiki/HP_LaserJet). It was the first laser printer built for mass-market sales. One year later Apple answered with help from Adobe. The LaserWriter carried a built-in PostScript interpreter. With an editor program, **anyone could create, publish and distribute their own content**. That is the [Desktop Publishing revolution](https://en.wikipedia.org/wiki/Desktop_publishing).
 
 ![The original LaserWriter](laserwriter.jpeg)
 
-This new machine has something completely new. A revolutionary idea. It incorporates a built-in PostScript interpreter. Hence, in combination with an editor program, **anyone could create, publish and distribute their own content**. It's the beginning of the [Desktop Publishing revolution](https://en.wikipedia.org/wiki/Desktop_publishing).
+## Printers picked the fonts
 
-## The fonts
+Adobe licensed Apple the first 13 mass-market fonts. Times, Helvetica, Courier and Symbol. Four variants of each, and one for Symbol. The *LaserWriter Plus* added 22 more later, among them AvantGarde, New Century and Bookman.
 
-You might hear about this story before. And probably you're now wondering what's Adobe's role in this play? And how exactly is this connected to the web fonts?
+Why those fonts? **Technical limits picked them.** Times, Helvetica and Courier print easy. They carry little detail. The printer needs simple roller movements.
 
-Adobe licensed to Apple the first 13 mass-market distributed font faces. Times, Helvetica, Courier and Symbol. Four variants of each but for the Symbol who had only one. Later on, the _LaserWriter Plus_ will introduce 22 additional new fonts. Nowadays iconic font faces such as AvantGarde, New Century or Bookman. But more interestingly, why they choose these original fonts?
+Price decided the buyer. Before the revolution IBM sold 600dpi printers at 21.000$. The LaserWriter started at 6.900$.
 
-**Because of technical limitations**. Times, Helvetica and Courier are easy to print. They don't need much detail. And printers only need simple roller movements. Before the Desktop Publishing revolution, IBM was selling 600dpi printers at 21.000$. The *LaserWriter* had a starting price of 6.900$.
+## Microsoft answered with clones
 
-## The web
+Now the web. In 1986 Silicon Valley was young and the big fight was about operating systems. A decade later the fight moved to browser control.
 
-Ok. Enough about the printers. What about the web? Well. We're in 1986. Silicon Valley just started. And the big fight is about operating systems. And a decade later, will be about the web. More specifically about the browser control.
+The record here is thin. No official documents survive, only a [bunch of declarations from key members](http://www.xnet.se/xpo/typetalk/) of different companies at that time. [Monotype](https://www.monotype.com/) was about to go bankrupt. Monotype drew most of the fonts we use today: Arial, Baskerville, Gothic, Bodoni, Gill. Some of them shipped inside those printers. **Microsoft came to the rescue.**
 
-The details of this part are loose. There are no official records but a [bunch of declarations from key members](http://www.xnet.se/xpo/typetalk/) of different companies at that time. Long story short. [Monotype](https://www.monotype.com/) was about to go bankrupt. This is the company that created most of the fonts we use today. Arial, Baskerville, Gothic, Bodoni, Gill, etc. Some of these fonts were part of the printers aforementioned. So, who came to the rescue? **Non-other than Microsoft**.
+Monotype then drew a set of analogous fonts for Microsoft. The new fonts copied the licensed ones. A legal war followed, with many parties in it. I do not know every detail of the case. The result is clear. We do not have standard fonts. We have clones.
 
-Monotype became bedfellow with Microsoft. They designed a set of analogous fonts for the Redmon company. These new fonts were copies of the other licensed ones. And this started a legal war with many implicated parts. I don't know all the nuts and bolts but the result is clear. We don't have standard fonts. We have clones.
+<Pull>Each comma in a font stack sits between an original and its clone.</Pull>
 
-The good part is that the **Microsoft fonts are almost identical to the original ones**. With a bit of classic CSS, we can use a combination of them to create some sort of pseudo-standard.
+The clones are the good news. **The Microsoft fonts are almost identical to the original ones.** So name the original first, name the clone second, and the pair holds anywhere. This is the closest the modern world gets to a common font face set. It is also why no list of web-safe fonts exists.
 
-This is the closest we can get to a **common font face set** in the modern world. It's also the explanation of why there's no standard nor a list of web-safe fonts.
-
-Anyway, **the CSS rules below are safe to use in any combination of browsers and OS**. Embrace them, we need it.
+The CSS rules below are safe in any combination of browsers and OS. Embrace them. We need it.
 
 ```css
 .font-serif {
@@ -45,7 +42,7 @@ Anyway, **the CSS rules below are safe to use in any combination of browsers and
 }
 ```
 
-Finally, if you don't need an absolute 100% support. The following list are the most well-supported fonts. [Almost available everywhere](https://web.mit.edu/jmorzins/www/fonts.html).
+Drop the demand for 100% support and the set widens. The fonts below are the best supported ones. [Almost available everywhere](https://web.mit.edu/jmorzins/www/fonts.html).
 
 <div className='websafe-table'>
 
@@ -111,3 +108,5 @@ Finally, if you don't need an absolute 100% support. The following list are the 
 | New York            | MS Serif            | serif  |
 
 </div>
+
+The web never agreed on a font. It agreed on a comma.

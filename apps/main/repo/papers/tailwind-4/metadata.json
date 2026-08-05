@@ -1,12 +1,12 @@
 {
   "createdAt": "2025-01-25T12:29:34.000Z",
-  "excerpt": "Tailwind 4.0 shipped this week, and the real story isn't the benchmarks. For eight years Tailwind was a JavaScript program that emitted CSS. Version 4 is CSS. The config file is dead and I'm here to celebrate at the funeral.",
+  "excerpt": "A complete Tailwind 4.0 theme, in CSS. No tailwind.config.js. No module.exports. No theme.extend nesting. No dev-server restart, because the config is JavaScript and JavaScript is cached. Tailwind 4.0 shipped this week and the config file died with it. I am here to celebrate at the funeral. For eight years Tailwind was a JavaScript program that emitted CSS. Version 4 is CSS. The content glob array is gone too. Every monorepo got that one wrong once a quarter. Template detection is automatic now, and it respects .gitignore.",
   "og": "/papers/tailwind-4.png",
   "slug": "tailwind-4",
   "title": "Tailwind 4 speaks CSS at last",
   "updatedAt": "2025-01-25T12:29:34.000Z",
   "images": {},
-  "minutes": 2.82,
+  "minutes": 2.79,
   "categories": [
     "tailwind 4",
     "tailwind css v4",

@@ -1,10 +1,18 @@
-Not a single day passes without finding a multi-type TypeScript entity that messes your code. Successful API responses can adopt multiple shapes. Collections may contain many types within them. Parsed user inputs can collapse to different scalars. It's expected. That's why TypeScript supports Unions.
+You typed a response as a union. Then you read a field off it and the compiler stopped you.
+
+```ts
+Property 'a' does not exist on type 'A', 'B'
+```
+
+The union is not wrong. The narrowing is missing. A [union](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html) declares what a value could be. **[Discrimination](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#discriminating-unions) decides what it is right now.**
+
+Multi-type entities show up every day. API responses adopt several shapes. Collections carry several types. Parsed user input collapses to different scalars. Unions describe all of them.
 
 ```ts
 const idk = string | number | Potato
 ```
 
-Being able to define any entity with precision is great. But that's only half of the solution. Once we have a [Union](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html) type in our hands we may want to conditionally act on it. Depending on what type matches the value at each moment. That's a fancy way to define a bunch of if-else. And, indeed, in most cases TypeScript is smart enough to infer the right type.
+For primitives TypeScript does the work alone. A plain if-else narrows the value and the inference follows.
 
 ```ts
 if (typeof idk === 'string') {
@@ -14,16 +22,19 @@ if (typeof idk === 'string') {
 }
 ```
 
-This process is call [Discrimination](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#discriminating-unions). It's the other half of the solution. With simple entities such as the one below it's pretty straightforward. However, discriminating against objects can be tough.
-The good thing is that TypeScript is smart enough to identify when there's a discrimination problem. More often than not I stumble upon it:
+Objects are where the inference runs out. Take the steps in this order.
 
-```ts
-Property 'a' does not exist on type 'A', 'B'
-```
+1. By default, let TypeScript infer.
+2. For simple types, any if-else will do.
+3. For objects, discriminate on an identifier field.
+4. Without an identifier field, run a morphic check.
+5. As a last resort, write a type predicate.
 
-## Identifier keys
+Two coins carry the examples from here on.
 
-The [recommended way](https://github.com/Microsoft/TypeScript/pull/9163) to do it is by having a **constant string-type field in the object**. For TypeScript will infer the type using that field as an anchor. The same way it does with primitive types.
+## An identifier field is the recommended way
+
+The [recommended way](https://github.com/Microsoft/TypeScript/pull/9163) is a **constant string-type field in the object**. TypeScript anchors on that field and infers the type, the same way it does with primitives.
 
 ```ts
 type VaporCoin = { type: 'vapor' }
@@ -41,9 +52,9 @@ const act = (coin: VaporCoin | NeonCoin) => {
 }
 ```
 
-## Morphic check
+## A morphic check reads the shape
 
-But, sometimes it's not possible to rely upon one specific field. Maybe it's not even up to us to decide the object shapes - working with a third-party API. In such cases, we can **infer the type by running a morphic check**. Meaning, looking for differences in their shape.
+Sometimes no single field is reliable. Sometimes the shapes are not yours to decide, as with a third-party API. Then **infer the type by running a morphic check**. The check looks for a difference in shape.
 
 ```ts
 type VaporCoin = { vapor: string }
@@ -58,9 +69,9 @@ const act = (coin: VaporCoin | NeonCoin) => {
 }
 ```
 
-## Type predicates
+## A type predicate is the last resort
 
-Finally, when everything else failed. We can **use a to-be-defined function** or type guards or [type predicates](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates). If the objects don't have an identifier field. If they are morphally equal. We can check their inner differences with a function. And let this TBD function to imperatively coerce the type.
+Everything else failed. The objects carry no identifier field and they are morphally equal. Only their inner values differ. So check those values in a function and let the function coerce the type. TypeScript calls these [type predicates](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates).
 
 ```ts
 type VaporCoin = { key: string }
@@ -79,12 +90,6 @@ const act = (coin: VaporCoin | NeonCoin) => {
 }
 ```
 
-## Conclusion
+The coercion here is imperative. **Your function decides the type, not the inference.** That is the price of step 5, and it is why step 5 comes last.
 
-Unions and Intersections are part of TypeScript's backbone. These are powerful and we must embrace their usage as much as possible. Once we start working with them we must learn how to discriminate different types. For that I recommend that everyone **follows this step-through**:
-
-1. By default, **let TypeScript's inference do its magic**.
-2. Any normal **if-else** will suffice **for simple types**.
-3. When discriminating objects use **identifier fields**.
-4. If that's not possible, use **morphic checks**.
-5. As a last resource, use **TBD functions**.
+Take the first step that compiles. Never open with step 5.

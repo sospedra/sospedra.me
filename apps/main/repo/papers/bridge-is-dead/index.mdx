@@ -1,14 +1,22 @@
-React Native's old architecture is dead. Since [0.82](https://reactnative.dev/blog/2025/10/08/react-native-0.82) no app can run on the bridge (`newArchEnabled=false` is ignored), and the codebase removal is underway for real: [0.85](https://reactnative.dev/blog/2026/04/07/react-native-0.85) deleted `CatalystInstanceImpl`, the Android bridge's core class, while the interop layer for legacy modules stays "for the foreseeable future". [Announced in 2018](https://reactnative.dev/blog/2018/06/14/state-of-react-native-2018), default in 0.76, frozen in [0.80](https://reactnative.dev/blog/2025/06/12/react-native-0.80), unplugged in 0.82. Eight years to swap the foundation under Facebook, Instagram and the Quest Store. Worth a postmortem, because the original sin is one every architecture keeps recommitting: **an asynchronous serialization boundary in a UI hot path**.
+React Native's old architecture is dead. Since [0.82](https://reactnative.dev/blog/2025/10/08/react-native-0.82) no app can run on the bridge, because React Native ignores `newArchEnabled=false`. [0.85](https://reactnative.dev/blog/2026/04/07/react-native-0.85) deleted `CatalystInstanceImpl`, the Android bridge's core class. The interop layer for legacy modules stays "for the foreseeable future".
+
+The obvious reading is that the bridge was slow. [Meta's own numbers](https://github.com/reactwg/react-native-new-architecture/discussions/123) refuse it. The new architecture rendered 5.000 views on an iPhone 12 Pro in 266ms, and the old one took 435ms. On fast Android hardware the gains were single-digit. Throughput was never the prize.
+
+[Announced in 2018](https://reactnative.dev/blog/2018/06/14/state-of-react-native-2018), default in 0.76, frozen in [0.80](https://reactnative.dev/blog/2025/06/12/react-native-0.80), unplugged in 0.82. Eight years to swap the foundation under Facebook, Instagram and the Quest Store. The original sin is one every architecture keeps recommitting: **an asynchronous serialization boundary in a UI hot path**.
 
 ## The original sin, 2015
 
-The bridge was elegant on the whiteboard. JavaScript on one thread, native on another, talking through batched, asynchronous, JSON-serialized messages. Clean separation, no shared memory, no locks.
+The bridge was elegant on the whiteboard. JavaScript ran on one thread, native on another. The two sides talked through batched, asynchronous, JSON-serialized messages. Clean separation, no shared memory, no locks.
 
-Except everything in a UI is latency-sensitive, and every crossing paid three times: serialize, queue, deserialize. How bad was it? Bad enough that the platform **rationed its own events**: the old ScrollView fired a single scroll event per gesture by default, and opting into continuous ones required `scrollEventThrottle={16}` next to a docs warning about bridge traffic. Every parallax header in the ecosystem opted in and paid. The deeper wound was the asynchrony itself: measure a view, then update it, two crossings, and the world moves between them. Whole libraries existed to smuggle work around the bridge; [worklets](/papers/worklets), which I covered in 2023, were literally an escape tunnel with a second JS runtime at the end.
+Everything in a UI is latency-sensitive, and every crossing paid three times: serialize, queue, deserialize. How bad was it? Bad enough that the platform **rationed its own events**. The old ScrollView fired a single scroll event per gesture by default. Continuous events required `scrollEventThrottle={16}`, next to a docs warning about bridge traffic. Every parallax header in the ecosystem opted in and paid.
+
+The deeper wound was the asynchrony itself. Measure a view, then update it. Two crossings, and the world moves between them. Whole libraries existed to smuggle work around the bridge. I covered [worklets](/papers/worklets) in 2023, and they were an escape tunnel with a second JS runtime at the end.
+
+<Pull>An asynchronous serialization boundary in a UI hot path.</Pull>
 
 ## The replacement, piece by piece
 
-Four projects, one idea: kill the serialization boundary. The keystone is JSI, and it's small enough to quote. From [`jsi.h`](https://github.com/facebook/react-native/blob/v0.80.0/packages/react-native/ReactCommon/jsi/jsi/jsi.h):
+Four projects, one idea: kill the serialization boundary. JSI is the keystone, and it is small enough to quote. From [`jsi.h`](https://github.com/facebook/react-native/blob/v0.80.0/packages/react-native/ReactCommon/jsi/jsi/jsi.h):
 
 ```cpp
 class JSI_EXPORT HostObject {
@@ -20,16 +28,24 @@ class JSI_EXPORT HostObject {
 };
 ```
 
-That's the whole trick. A TurboModule is a C++ host object living *inside* the JS runtime: `nativeModule.getItem(key)` is a virtual dispatch and a direct call. No queue, no JSON, no copy beyond arguments. Modules also load lazily now, so startup stops paying for the eighty modules you might use. And the contracts are generated: one TypeScript spec (`interface Spec extends TurboModule`) [codegens](https://reactnative.dev/docs/0.79/turbo-native-modules-introduction) a Kotlin abstract class, an ObjC protocol and the C++ JSI binding. Mistype the native signature and the *build* breaks, which is where type errors belong.
+That is the whole trick. A TurboModule is a C++ host object living *inside* the JS runtime. `nativeModule.getItem(key)` is a virtual dispatch and a direct call. No queue, no JSON, no copy beyond arguments. Modules also load lazily now, so startup stops paying for the eighty modules you might use.
 
-[Fabric](https://reactnative.dev/architecture/fabric-renderer) rebuilt rendering on the same foundation as three phases: render (ShadowNode tree built in C++), commit (Yoga layout on a background thread), mount (diff applied on the UI thread). The [docs say](https://reactnative.dev/architecture/render-pipeline) the load-bearing sentence plainly: "the React Shadow Tree is immutable", each update creates a new tree, and immutability is what makes interruptible, prioritized, concurrent rendering safe. The shared C++ tree is also why `measure` reads layout synchronously instead of two bridge crossings and a stale answer.
+And the contracts are generated. One TypeScript spec (`interface Spec extends TurboModule`) [codegens](https://reactnative.dev/docs/0.79/turbo-native-modules-introduction) a Kotlin abstract class, an ObjC protocol and the C++ JSI binding. Mistype the native signature and the *build* breaks. Type errors belong there.
 
-The piece nobody mentions: the **event loop**. [RFC0744](https://github.com/react-native-community/discussions-and-proposals/blob/main/proposals/0744-well-defined-event-loop.md) gave RN a web-spec processing model, task, microtasks, then rendering, shipped with 0.76. Consequences: `useLayoutEffect` actually blocks paint like the docs always pretended, and `IntersectionObserver`/`ResizeObserver` become implementable with web semantics. The renderer speaks React's language now, and so does the clock.
+[Fabric](https://reactnative.dev/architecture/fabric-renderer) rebuilt rendering on the same foundation, in three phases:
 
-Numbers, honestly framed the way [Meta framed them](https://github.com/reactwg/react-native-new-architecture/discussions/123): rendering 5.000 views on an iPhone 12 Pro took 266ms on the new architecture versus 435ms on the old, but gains on fast Android hardware were single-digit. The win was never raw throughput. It's latency *semantics*: synchronous where correctness demands it, concurrent where React wants it, plus a ~20% smaller Android app from library merging in 0.76.
+- render: C++ builds the ShadowNode tree.
+- commit: Yoga runs layout on a background thread.
+- mount: the UI thread applies the diff.
+
+The [docs say](https://reactnative.dev/architecture/render-pipeline) it plainly: "the React Shadow Tree is immutable". Each update creates a new tree, and immutability makes interruptible, prioritized, concurrent rendering safe. The shared C++ tree is also why `measure` reads layout synchronously instead of two bridge crossings and a stale answer.
+
+The piece nobody mentions is the **event loop**. [RFC0744](https://github.com/react-native-community/discussions-and-proposals/blob/main/proposals/0744-well-defined-event-loop.md) gave RN a web-spec processing model: task, microtasks, then rendering. It shipped with 0.76. `useLayoutEffect` now blocks paint like the docs always pretended, and `IntersectionObserver` and `ResizeObserver` become implementable with web semantics. The renderer speaks React's language now, and so does the clock.
+
+So the prize is latency *semantics*: synchronous where correctness demands it, concurrent where React wants it. Library merging in 0.76 also cut the Android app by ~20%.
 
 ## The eight-year lesson
 
-Two things made the migration survivable, both social. The interop layer let old modules run on the new core for years, so the ecosystem moved library by library. And Meta ran it in production before making it default, so nobody had to trust a slide deck.
+Two things made the migration survivable, both social. The interop layer let old modules run on the new core for years, so the ecosystem moved library by library. And Meta ran it in production before making it the default, so nobody had to trust a slide deck.
 
-The takeaway travels beyond mobile. Async message-passing between subsystems is a beautiful architecture for everything except the path between a human finger and a pixel. There, latency is correctness. Share memory, call synchronously, or accept that you'll spend eight years building tunnels.
+The takeaway travels beyond mobile. Async message-passing between subsystems is a beautiful architecture for everything except the path between a human finger and a pixel. There, latency is correctness. Share memory, call synchronously, or accept eight more years of tunnels.

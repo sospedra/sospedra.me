@@ -1,12 +1,12 @@
 {
   "createdAt": "2026-02-09T10:31:45.000Z",
-  "excerpt": "In 2020, Next 9.5 shipped Incremental Static Regeneration (the beta hid in 9.4 as unstable_revalidate) and it carried half the framework's marketing for years. Static speed, periodic freshness, one revalidate: 60 per page. We all internalized the model: the route is the cache unit. Next 16's Cache Components end that era. The unit is the function now, and ISR turns out to be what it always was underneath: one caching policy, hardcoded at the wrong granularity.",
+  "excerpt": "Before, one line at the top of a route: export const revalidate = 60. After, one line inside the function that owns the data: cacheLife('minutes'). The obvious reading is a rename. It is not. ISR gave a route with five data sources exactly one freshness contract. Product prices want 60 seconds, the nav menu wants a week, markdown wants forever, and the page has one dial. So we split routes artificially, or we over-revalidated everything, and on-demand revalidatePath was a hammer shaped like a URL. The route was never the natural boundary of freshness. It was the boundary Next could see.",
   "og": "/papers/use-cache-killed-isr.png",
   "slug": "use-cache-killed-isr",
   "title": "'use cache' killed ISR",
   "updatedAt": "2026-02-09T10:31:45.000Z",
   "images": {},
-  "minutes": 5.94,
+  "minutes": 5.57,
   "categories": [
     "next 16",
     "use cache",

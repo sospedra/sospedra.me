@@ -1,39 +1,34 @@
-In the past years, GitHub became a technology mastodon. Since the [acquisition by Microsoft](https://news.microsoft.com/2018/06/04/microsoft-to-acquire-github-for-7-5-billion/), the company added a myriad of outstanding features. [GitHub Actions](https://github.com/features/actions), in-house CI/CD, a marketplace, the [integration of npm](https://github.blog/2020-03-16-npm-is-joining-github/), et al. In fact, **GitHub is so powerful nowadays that it can be your all-in-all provider**. You can use **GitHub as a Service**. GaaS, Gaas, Gaas!
+Stop paying for a backend. You already have one, you have had it for years, and it has never sent you a bill.
+
+**GitHub is a cloud provider that forgot to publish a pricing page.** Since [Microsoft bought it in 2018](https://news.microsoft.com/2018/06/04/microsoft-to-acquire-github-for-7-5-billion/) it shipped [Actions](https://github.com/features/actions), in-house CI/CD, a marketplace, and [npm](https://github.blog/2020-03-16-npm-is-joining-github/). Everything a web application needs, behind an API you already hold a token for.
+
+Call it *GaaS*. GitHub as a Service. GaaS, Gaas, Gaas!
 
 ![Gas Gas Gas car](gasgasgas.jpeg)
 
-## What is GaaS?
+## The five things any web app needs
 
-GitHub's variety of products is extensive enough to power most of the web apps out there. Don't believe me? Let's go through my journey building [Request For Maintainers](https://rfm.sospedra.me/) (RFM).
+Score GitHub against the checklist you would hand any provider.
 
-This project is a community-driven platform to track any repository calling for support. From the product point of view, I want to help the community to have a clean record of the OSS status. On the tech side, this project is an experiment I got in my mind for so long. **RFM runs 100% on GitHub services**. And it's [open-sourced](https://github.com/sospedra/rfm) so anyone is welcome to check the nuts and bolts.
+<Aside label='Provider // Audit'>
+  - **Hosting**: repositories, plus [Pages](https://pages.github.com/) for CDN and SSL
+  - **Database**: Issues, with a JSON body and free metadata
+  - **Compute**: Actions, triggered by anything in the repo
+  - **Auth**: [OAuth](https://developer.github.com/apps/building-oauth-apps/), first party
+  - **Secrets**: repository secrets, already encrypted
+</Aside>
 
-If you want to build a web app that runs on GitHub you're gonna need some foundations. Basic things that are common to any web. But, before getting started, a disclaimer. I didn't read the terms and conditions and all the legal dullness. But I can sense this approach ~~maybe~~ exceeds the intended purposes.
+Five for five. No other free tier on the internet fills that row, and the reason is that GitHub never set out to compete for it. Free real estate.
 
-- **Hosting**: for what **GitHub repositories** excel. But wait, there's more! [GitHub pages](https://pages.github.com/) put your web under a CDN, with SSL certs, and all the other goodies you'll expect from your trusted provider.
+One disclaimer before the code. I have not read the terms of service, and I am not going to. This approach ~~maybe~~ exceeds their intent, and that is a real risk to price rather than a joke to wave past.
 
-- **Database**: if you don't have anything to hide 🌝 then **GitHub Issues is a wonderful database**. For example, you can store a stringified JSON in the body. Or benefit from the Issue metadata.
+## RFM, end to end
 
-- **Server**: most of the heavy lifting will happen in the client. But sometimes you need some special functions to run on the cloud. Did anyone say **serverless**? 💊
+[Request For Maintainers](https://rfm.sospedra.me/) is a community platform that tracks repositories asking for help. It runs entirely on the five rows above, and it is [open source](https://github.com/sospedra/rfm), so every claim here is checkable.
 
-- **Auth**: Do you need to put some access restrictions? Well, GitHub has a top-notch [OAuth service](https://developer.github.com/apps/building-oauth-apps/) implemented.
+**Hosting.** The site is statically generated and served from Pages. Jekyll, `create-react-app`, hand-written HTML, the generator does not matter. Static does.
 
-- **Secrets**: Another interesting side-effect is the **env secrets management**. Since GitHub repositories already have a secret values system. We can use that to run out GitHub Actions as serverless functions.
-
-> Let's say you have a **basic ecommerce** of only 3 digital products.
-> Create a **repository**. Put your **product data as issues**. Code and deploy the static **website**.
->
-> Add some **basic authentication** and finally run the **payment confirmation as a GitHub Action**.
->
-> You can store confirmation tokens in another private repo since **secrets are well kept in GitHub**.
-
-## How does it work?
-
-At this point, I guess you get the idea. But how we put together all the pieces? Let's see how I built RFM step by step. You'll see it's not that complex at all.
-
-1. You need your web to be **statically generated**. There are tones of options: `Jekyll`, `create-react-app`, an old-fashion raw `HTML`. Whatever. The important bit is that to use GitHub pages it must be **static**.
-
-2. You consume your fancy database with the public [GitHub API](https://developer.github.com/v3/). The public part is a no key-required standard CRUD. Your web app will **use this API to get GitHub Issues**. You can tweak your query with multiple params: the state, labels, content, assignation, etc.
+**Database.** The client reads Issues through the public [GitHub API](https://developer.github.com/v3/), no key required. The body holds stringified JSON. The metadata comes free.
 
 ```js
 // request first 13 RFM open requests that matches "vapor"
@@ -60,7 +55,7 @@ const items = payload.items.map<Request>((item) => {
 })
 ```
 
-3. When in need of **server functions use GitHub Actions**. These deliver an outstanding experience. They are so powerful. The basic idea is that a custom trigger will execute a custom function. There's a [marketplace](https://github.com/marketplace) you can explore or [you can build your own](https://help.github.com/en/actions/building-actions). It's free real state!
+**Compute.** An Action fires on a label change and opens an issue on the target repository. A trigger and a function, which is the whole definition of serverless. Pull one off the [marketplace](https://github.com/marketplace) or [build your own](https://help.github.com/en/actions/building-actions).
 
 ```yml
 // rfm/.github/workflows/issue.yml
@@ -94,7 +89,7 @@ jobs:
           body: Heeenlo hoomans!
 ```
 
-4. To integrate RFM with GitHub I use the [GitHub Query Parameters](https://help.github.com/en/github/managing-your-work-on-github/about-automation-for-issues-and-pull-requests-with-query-parameters). You know, remember to avoid *Hooman Paws*™️ as much as possible. There's a well-known library that can do the heavy parsing for us: [new-github-issue-url](https://github.com/sindresorhus/new-github-issue-url).
+**Writes.** Users submit through [GitHub query parameters](https://help.github.com/en/github/managing-your-work-on-github/about-automation-for-issues-and-pull-requests-with-query-parameters), so the browser never holds a credential. [new-github-issue-url](https://github.com/sindresorhus/new-github-issue-url) does the encoding, because *Hooman Paws*™️ are to be avoided wherever possible.
 
 ```js
 const createGithubIssue = (request?: SubmitRequest) => {
@@ -109,8 +104,19 @@ const createGithubIssue = (request?: SubmitRequest) => {
 }
 ```
 
-5. Finally, tweak the limitations. You can either add some auth with the GitHub OAuth. Or play with the Issues metadata, Actions triggers, etc. In RFM the actions are **executed only when the issue has a particular label**. Only moderators can assign labels. That's the way I avoid RFM being a spammy tool.
+**Access control.** Actions run only on labelled issues, and only moderators assign labels. That single constraint is what keeps RFM from becoming a spam pipe.
 
-## Conclusion
+## What it costs you
 
-Am I suggesting that y'all should use **GaaS** from now on? Well, absolutely no 🤷🏻‍♂️. But, there are some cases where this can be beneficial. I'm thinking of OSS projects, mostly. In fact, using [GitHub Issues as blog post comments](https://utteranc.es/) it's being a common practice for a long time. This is an evolution of the same concept. The actual point is: **GitHub become an infra beast** lately. We should keep an eye here and consider pushing the limits as much as possible.
+The free tier is real. So are the four bills that arrive later.
+
+1. **Rate limits.** The unauthenticated search API allows 10 requests per minute. That is your ceiling and it arrives sooner than you expect.
+2. **No transactions, no indexes, no schema.** A partial write leaves you inconsistent with no way to detect it.
+3. **Every row is world-readable.** Which rules out anything with a user in it 🌝.
+4. **None of this is a supported product.** The deprecation that breaks you will not ship with a migration guide.
+
+Survives all four: open-source tooling, public registries, anything where the data was always going to be public anyway. [Issues as blog comments](https://utteranc.es/) has run on this bet for years and still holds.
+
+Does not: your company.
+
+GitHub will never send you an invoice for this. That is the entire feature, and the entire risk.

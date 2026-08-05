@@ -1,12 +1,12 @@
 {
   "createdAt": "2021-06-24T08:42:11.000Z",
-  "excerpt": "Your browser renders DOM nobody sees. Every node below the fold pays layout, style and paint. A long article, a feed, a huge table: the user watches one viewport and the engine computes ten. That's the tax. And since Chrome 85 there's a one-line refund: content-visibility.",
+  "excerpt": "Ship content-visibility: auto to a Chrome 89 user and every heading below the fold leaves the accessibility tree. The screen reader gets a page that stops at the viewport. Chrome 90 closed the hole. The property is worth the version floor anyway, because it is the cheapest rendering win of 2021. The name sells the wrong model. content-visibility reads like a visibility switch, so people reach for it as a politer display: none. It is containment machinery. The property did not start as CSS at all.",
   "og": "/papers/content-visibility.png",
   "slug": "content-visibility",
   "title": "content-visibility: the lazy render",
   "updatedAt": "2021-06-24T08:42:11.000Z",
   "images": {},
-  "minutes": 3.38,
+  "minutes": 3.34,
   "categories": [
     "content-visibility",
     "contain-intrinsic-size",

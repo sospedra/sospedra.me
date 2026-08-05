@@ -1,12 +1,12 @@
 {
   "createdAt": "2026-05-14T14:19:27.000Z",
-  "excerpt": "React Native's old architecture is dead. Since 0.82 no app can run on the bridge (newArchEnabled=false is ignored), and the codebase removal is underway for real: 0.85 deleted CatalystInstanceImpl, the Android bridge's core class, while the interop layer for legacy modules stays \"for the foreseeable future\". Announced in 2018, default in 0.76, frozen in 0.80, unplugged in 0.82. Eight years to swap the foundation under Facebook, Instagram and the Quest Store. Worth a postmortem, because the original sin is one every architecture keeps recommitting: an asynchronous serialization boundary in a UI hot path.",
+  "excerpt": "React Native's old architecture is dead. Since 0.82 no app can run on the bridge, because React Native ignores newArchEnabled=false. 0.85 deleted CatalystInstanceImpl, the Android bridge's core class. The interop layer for legacy modules stays \"for the foreseeable future\". The obvious reading is that the bridge was slow. Meta's own numbers refuse it. The new architecture rendered 5.000 views on an iPhone 12 Pro in 266ms, and the old one took 435ms. On fast Android hardware the gains were single-digit. Throughput was never the prize.",
   "og": "/papers/bridge-is-dead.png",
   "slug": "bridge-is-dead",
   "title": "The bridge is dead, long live JSI",
   "updatedAt": "2026-05-14T14:19:27.000Z",
   "images": {},
-  "minutes": 3.34,
+  "minutes": 3.38,
   "categories": [
     "react native",
     "new architecture",

@@ -1,14 +1,18 @@
-You upgraded to React 18. Your effects fire twice. Your fetch runs twice, your analytics event doubles, your WebSocket connects twice. Before you open the issue: it's [documented](https://reactjs.org/docs/strict-mode.html#ensuring-reusable-state), it's dev-only, and it's a test you're failing, not a bug you found.
+You upgraded to React 18. Your effects fire twice. Your fetch runs twice, your analytics event doubles, your WebSocket connects twice.
 
-## What StrictMode actually does
+The folklore says "React mounts, unmounts, and mounts again". Close, and wrong in the way that matters. React does **not** remount anything. The double-invoke is [documented](https://reactjs.org/docs/strict-mode.html#ensuring-reusable-state), it is dev-only, and it is a test you are failing.
 
-The folklore says "React mounts, unmounts, and mounts again". Close, and wrong in a way that matters. React does **not** remount anything. After the first commit, in development, the reconciler walks the fibers flagged for it and runs your effect cleanups, then your effects again: layout cleanups, passive cleanups, layout setups, passive setups, in that order. The function doing it is literally called [`commitDoubleInvokeEffectsInDEV`](https://github.com/facebook/react/blob/v18.0.0/packages/react-reconciler/src/ReactFiberWorkLoop.new.js) in the reconciler source. No second render pass, no fiber deletion. **State, refs and DOM all survive.** It's a rehearsal of "effects destroyed and re-created on a mounted component", not a remount.
+## The reconciler runs a rehearsal
 
-Why rehearse that? Because the team is building an [Offscreen API](https://github.com/reactwg/react-18/discussions/19): React detaches a tree (tab away, virtualized list, back navigation) and later reattaches it *with state preserved*, re-running effects on reappear. The production twins of the dev rehearsal already exist in the same source file, `disappearLayoutEffects` and `reappearLayoutEffects`, and Suspense already uses them: the v18 [changelog](https://github.com/facebook/react/blob/main/CHANGELOG.md) says it plainly, "make Suspense remount layout effects when content reappears". So the question StrictMode asks is precise: **can your effect setup/cleanup cycle run twice with the same deps and leave the world identical?**
+After the first commit, in development, the reconciler walks the fibers flagged for it. It runs your effect cleanups, then your effects again: layout cleanups, passive cleanups, layout setups, passive setups, in that order. The reconciler source calls the function [`commitDoubleInvokeEffectsInDEV`](https://github.com/facebook/react/blob/v18.0.0/packages/react-reconciler/src/ReactFiberWorkLoop.new.js). No second render pass, no fiber deletion. **State, refs and DOM all survive.** This is a rehearsal of "effects destroyed and re-created on a mounted component".
+
+Why rehearse that? The team is building an [Offscreen API](https://github.com/reactwg/react-18/discussions/19). React detaches a tree on tab away, on a virtualized list, on back navigation. Later it reattaches the tree *with state preserved* and runs the effects again. The production twins of the rehearsal already sit in the same source file, `disappearLayoutEffects` and `reappearLayoutEffects`. Suspense uses them today. The v18 [changelog](https://github.com/facebook/react/blob/main/CHANGELOG.md) says it plainly, "make Suspense remount layout effects when content reappears".
+
+So the question StrictMode asks is precise. **Can your effect setup and cleanup cycle run twice with the same deps and leave the world identical?**
 
 ## The failing patterns
 
-The [working group thread](https://github.com/reactwg/react-18/discussions/18) enumerates the shapes. They reduce to three:
+The [working group thread](https://github.com/reactwg/react-18/discussions/18) enumerates the shapes. They reduce to three.
 
 ```js
 // 1. Effect without cleanup. The zombie.
@@ -17,7 +21,7 @@ useEffect(() => {
 }, [])
 ```
 
-Two setups, two sockets, zero teardowns. The fix is symmetry:
+Two setups, two sockets, zero teardowns. The fix is symmetry.
 
 ```js
 useEffect(() => {
@@ -33,7 +37,7 @@ useEffect(() => {
 }, [id])
 ```
 
-Double-fire makes the race visible, but it was always there: change `id` fast and the slow response overwrites the fresh one. `AbortController` closes both holes. Swallow only the abort, not real failures:
+The double-invoke makes the race visible, but the race was always there. Change `id` fast and the slow response overwrites the fresh one. `AbortController` closes both holes. Swallow the abort, and rethrow a real failure.
 
 ```js
 useEffect(() => {
@@ -58,12 +62,13 @@ useEffect(() => {
 }, [])
 ```
 
-Here's where the "no remount" mechanics bite. The double-invoke never resets refs, so `didInit.current` is still `true` on the second run and the guard "passes" the rehearsal. Feels like a win. Now play it forward to Offscreen: hide the tree, reattach it, effects re-run with refs preserved, and your guard turns reconnection into a permanent no-op. The socket never comes back. StrictMode rehearsed exactly the case your guard breaks, and the guard cheated the rehearsal. App-level one-time init belongs at module scope, next to `createRoot`, where the problem dissolves.
+Here the no-remount mechanics bite. The double-invoke never resets refs, so `didInit.current` is still `true` on the second run. The guard passes the rehearsal. Feels like a win.
 
-## Two footnotes for the curious
+Now play it forward to Offscreen. Hide the tree, reattach it, and the effects run again with the refs preserved. Your guard turns reconnection into a permanent no-op. The socket never comes back. StrictMode rehearsed the exact case your guard breaks, and the guard cheated the rehearsal. App-level one-time init belongs at module scope, next to `createRoot`, where the problem dissolves.
 
-The rehearsal runs during the passive-effect flush, **after paint**. A first mount runs layout effects before paint. If you measure DOM in a layout effect, the second invocation behaves differently on the timeline; another reason measurement belongs in refs-on-render or `useLayoutEffect` with idempotent math.
+<Aside label='Footnote // Timeline'>
+  - **After paint** · the rehearsal runs in the passive-effect flush. A first mount runs layout effects before paint, so the second run sits elsewhere on the timeline. Measure with refs-on-render, or keep the layout math idempotent.
+  - **Since 16.3** · the double render is older. Component bodies and `useState` initializers already run twice. React 17 silenced the second `console.log`, [people hated it](https://github.com/facebook/react/issues/21783), and 18 [un-silenced it](https://github.com/reactwg/react-18/discussions/96).
+</Aside>
 
-And the double *render* (not effects) isn't new: component bodies and `useState` initializers double-invoke since 16.3. React 17 silenced the second `console.log`, [people hated it](https://github.com/facebook/react/issues/21783), and 18 [un-silenced it](https://github.com/reactwg/react-18/discussions/96); DevTools now dims the duplicate grey instead.
-
-StrictMode's double-invoke is a free idempotence fuzzer running on every save. Effects that survive it survive fast refresh, survive `id` changing mid-flight, and survive the [Offscreen future](https://reactjs.org/blog/2022/03/29/react-v18.html). Don't silence the alarm. Fix the kitchen.
+The double-invoke is a free idempotence fuzzer running on every save. Effects that survive it survive fast refresh, survive `id` changing mid-flight, and survive the [Offscreen future](https://reactjs.org/blog/2022/03/29/react-v18.html). Do not silence the alarm. Fix the kitchen.

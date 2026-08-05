@@ -1,6 +1,6 @@
 {
   "createdAt": "2026-07-31T20:00:00.000Z",
-  "excerpt": "On the night of July 28, 2026, thirty renders of the same market stall landed in my review gallery, and all thirty were wrong the same way. The order asked for a hacker den: Ed from Cowboy Bebop cross-legged on a rug, one lit CRT, racks of dead machines behind. The renders came back with the camera dropped, the rug bloated into a stage, the furniture rotated inward around the character. I asked the supervisor one question: how do you fail thirty times out of thirty? The audit answered it. The shared order body carried the poison: \"camera slightly LOWER\", \"the rug band is DEEP\", \"racks ROTATED TOWARD Ed, enclosing him\". The model had obeyed perfectly, thirty times in a row. The order was the bug.",
+  "excerpt": "I wrote thirty poisoned orders in one night, then blamed the model for obeying them. The order asked for a hacker den. Ed from Cowboy Bebop sits cross-legged on a rug, one CRT lit, racks of dead machines behind. Thirty renders landed in my review gallery. All thirty were wrong the same way: camera dropped, rug bloated into a stage, furniture rotated inward around the character. I asked the supervisor one question. How do you fail thirty times out of thirty?",
   "og": "/papers/bazaar.png",
   "slug": "bazaar",
   "title": "Bazaar: adversarial art direction",
@@ -75,7 +75,7 @@
       "height": 933
     }
   },
-  "minutes": 32.345,
+  "minutes": 31.995,
   "categories": [
     "bazaar",
     "ai art direction",

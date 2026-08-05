@@ -1,12 +1,12 @@
 {
   "createdAt": "2024-04-02T07:58:19.000Z",
-  "excerpt": "A Postgres developer at Microsoft noticed his SSH logins burned ~500ms of CPU they shouldn't, and that Valgrind was throwing weird errors in liblzma. He profiled it, because Andres Freund is the kind of person who profiles half a second. What he found was a backdoor in xz/liblzma wired into sshd, already shipped to Debian sid, Fedora 40/41 beta and openSUSE Tumbleweed, and weeks from riding stable releases everywhere. The payload is world-class tradecraft. And it's still the boring half of the story.",
+  "excerpt": "The xz backdoor starts here, inside a file nobody reads. Andres Freund noticed his SSH logins burned ~500ms of CPU they should not, and Valgrind threw weird errors in liblzma. He profiled half a second. That is the kind of Postgres developer he is. What he found was a backdoor in xz/liblzma wired into sshd. It had shipped to Debian sid, Fedora 40/41 beta and openSUSE Tumbleweed, weeks from stable releases everywhere.",
   "og": "/papers/xz-backdoor.png",
   "slug": "xz-backdoor",
   "title": "The maintainer was the exploit",
   "updatedAt": "2024-04-02T07:58:19.000Z",
   "images": {},
-  "minutes": 3.395,
+  "minutes": 3.39,
   "categories": [
     "xz backdoor",
     "liblzma",

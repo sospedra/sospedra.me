@@ -1,4 +1,8 @@
-On January 8 the maintainer of `colors.js` shipped commit [`074a0f8`](https://github.com/Marak/colors.js/commit/074a0f8ed0c31c35d13d28632bd8a049ff136fb6), title: "Adds new American flag module". It prints an ASCII Statue of Liberty and enters an infinite loop, at `require` time, before any consumer code runs:
+On January 8 at 04:24 UTC the maintainer of `colors.js` published `1.4.44-liberty-2`. At 19:22 he published `1.4.1`. On January 9, `1.4.2`. The first one got the coverage. The last two burned the ecosystem.
+
+The story everyone told was `1.4.44-liberty-2`. It shipped as a prerelease, and prereleases **never match caret ranges**, so it only hit people installing `latest`. The ecosystem-wide burn came from `1.4.1` and `1.4.2`, legitimate-looking patches inside `^1.4.0`, the range half the registry declares.
+
+Commit [`074a0f8`](https://github.com/Marak/colors.js/commit/074a0f8ed0c31c35d13d28632bd8a049ff136fb6) carries the title "Adds new American flag module". It prints an ASCII Statue of Liberty and enters an infinite loop, at `require` time, before any consumer code runs:
 
 ```js
 /* remove this line after testing */
@@ -12,21 +16,23 @@ for (let i = 666; i < Infinity; i++;) {
 }
 ```
 
-Look closely: `i++;)` is a syntax error and the `if` body is commented out. Sabotage, hand-typed. Days earlier he'd gutted `faker` by publishing an empty `6.6.6`. Between them: 21.500 dependent packages, tens of millions of weekly downloads. This is not a compromise. **The author attacked his own packages**, and his receipts are public: in [faker.js#1046](https://web.archive.org/web/20210704022108/https://github.com/Marak/faker.js/issues/1046), November 2020, he wrote "take this as an opportunity to send me a six figure yearly contract or fork the project". Nobody did either. Then he opened [colors.js#285](https://github.com/Marak/colors.js/issues/285) himself to troll the wreckage: "It's come to our attention that there is a zalgo bug".
+Look closely: `i++;)` is a syntax error and the `if` body is commented out. Sabotage, hand-typed.
 
-## How it actually propagated
+Days earlier he had gutted `faker` by publishing an empty `6.6.6`. Between them: 21.500 dependent packages, tens of millions of weekly downloads. This was not a compromise. **The author attacked his own packages**, and his receipts are public. In [faker.js#1046](https://web.archive.org/web/20210704022108/https://github.com/Marak/faker.js/issues/1046), November 2020, he wrote "take this as an opportunity to send me a six figure yearly contract or fork the project". Nobody did either. Then he opened [colors.js#285](https://github.com/Marak/colors.js/issues/285) himself to troll the wreckage: "It's come to our attention that there is a zalgo bug".
 
-The mechanics matter more than the drama, and they're widely misreported. Three versions shipped: `1.4.44-liberty-2` on Jan 8 at 04:24 UTC, then `1.4.1` at 19:22, then `1.4.2` on Jan 9. The liberty prerelease hit anyone installing `latest`. But prereleases **never match caret ranges**, so the ecosystem-wide burn came from `1.4.1` and `1.4.2`: legitimate-looking patches inside `^1.4.0`, the range half the registry declares. Snyk [counted 95.397 downloads](https://snyk.io/blog/open-source-npm-packages-colors-faker/) of `1.4.1` before npm pulled it. By the same afternoon Amazon's own deploy tool was down: [aws-cdk#18322](https://github.com/aws/aws-cdk/issues/18322), "cannot deploy due to colors dependency". The advisory is [GHSA-5rqg-jm4f-cqx7](https://github.com/advisories/GHSA-5rqg-jm4f-cqx7); `latest` now sits back on 1.4.0.
+## The caret range did the delivery
 
-Timeline summary: payload at 04:24 UTC, Amazon filing issues the same day, advisory on Jan 10. The ecosystem's immune system is fast. The question is whether your build resolves fresh ranges faster than the immune system reacts.
+Snyk [counted 95.397 downloads](https://snyk.io/blog/open-source-npm-packages-colors-faker/) of `1.4.1` before npm pulled it. By the same afternoon Amazon's own deploy tool was down: [aws-cdk#18322](https://github.com/aws/aws-cdk/issues/18322), "cannot deploy due to colors dependency". The advisory [GHSA-5rqg-jm4f-cqx7](https://github.com/advisories/GHSA-5rqg-jm4f-cqx7) landed on Jan 10, and `latest` now sits back on 1.4.0.
+
+The ecosystem's immune system is fast. The question is whether your build resolves fresh ranges faster.
 
 ## The mechanics that protect you
 
-1. **Commit the lockfile and install with `npm ci`**. Never `npm install` in CI. `1.4.1` only reached builds resolving ranges at install time.
+1. **Commit the lockfile and install with `npm ci`**. Never `npm install` in CI. `1.4.1` only reached builds that resolved ranges at install time.
 
-2. **Understand what `^` promises**. A caret range is a standing order: give me the newest thing this stranger publishes, automatically. Marak understood that perfectly; it's why the real payloads were semver-valid patches, not the flashy prerelease.
+2. **Understand what `^` promises**. A caret range is a standing order: give me the newest thing this stranger publishes, automatically. Marak understood that perfectly, so the real payloads were semver-valid patches.
 
-3. **Use `overrides` for transitive pins**. [npm 8.3](https://github.com/npm/cli/releases/tag/v8.3.0) shipped it a month ago, out of [RFC #129](https://github.com/npm/rfcs/pull/129). Yarn's `resolutions` has done this since 2017, pnpm's `overrides` since last year. When a package five levels deep goes rogue, you pin it yourself:
+3. **Use `overrides` for transitive pins**. [npm 8.3](https://github.com/npm/cli/releases/tag/v8.3.0) shipped it a month ago, out of [RFC #129](https://github.com/npm/rfcs/pull/129). Yarn's `resolutions` has done this since 2017, and pnpm's `overrides` since last year. When a package five levels deep goes rogue, you pin it yourself:
 
 ```json
 {
@@ -36,12 +42,14 @@ Timeline summary: payload at 04:24 UTC, Amazon filing issues the same day, advis
 }
 ```
 
-4. **Delay is a feature**. If your dependency updates land weekly instead of instantly, the ecosystem does your triage for free. Auto-merged dependabot PRs invert this: you volunteer as the canary.
+4. **Delay is a feature**. If your dependency updates land weekly instead of instantly, the ecosystem does your triage for free. Auto-merged dependabot PRs invert this, and <u>you volunteer as the canary</u>.
 
-5. **Control install scripts**. `postinstall` runs arbitrary code at install time; that's how [ua-parser-js shipped a cryptominer](https://github.com/advisories/GHSA-pjwm-rvh2-c87w) in October. `ignore-scripts=true` in `.npmrc` closes the door, with a real cost: it also kills your own lifecycle scripts and breaks native addons like `fsevents` until you rebuild explicitly. pnpm's [`neverBuiltDependencies`](https://github.com/pnpm/pnpm/releases/tag/v5.16.0) gives the per-package version of the same lever.
+5. **Control install scripts**. `postinstall` runs arbitrary code at install time, and that is how [ua-parser-js shipped a cryptominer](https://github.com/advisories/GHSA-pjwm-rvh2-c87w) in October. `ignore-scripts=true` in `.npmrc` closes the door, at a real cost. It also kills your own lifecycle scripts. It breaks native addons like `fsevents` until you rebuild explicitly. pnpm's [`neverBuiltDependencies`](https://github.com/pnpm/pnpm/releases/tag/v5.16.0) gives the per-package version of the same lever.
 
-None of this is a colors.js lesson specifically. [event-stream, 2018](https://github.com/dominictarr/event-stream/issues/116): ownership handed to a stranger, payload encrypted with the npm package description as the key, targeting one Bitcoin wallet app. [left-pad, 2016](https://blog.npmjs.org/post/141577284765/kik-left-pad-and-npm): eleven lines unpublished, half the registry broken. Same lesson, six years running.
+None of this is a colors.js lesson. [event-stream, 2018](https://github.com/dominictarr/event-stream/issues/116): ownership handed to a stranger, payload encrypted with the npm package description as the key, targeting one Bitcoin wallet app. [left-pad, 2016](https://blog.npmjs.org/post/141577284765/kik-left-pad-and-npm): eleven lines unpublished, half the registry broken. Same lesson, six years running.
 
 ## The uncomfortable part
 
-Marak's method was hostile. His complaint wasn't. The infrastructure of a trillion-dollar industry sits on volunteers, and the volunteers know it. I built [RFM](https://rfm.sospedra.me/) around that exact asymmetry. Pay your critical maintainers, fund the packages in your money path, or at minimum know their names. Trust is a budget. This month the invoice arrived with an ASCII flag on it.
+Marak's method was hostile. His complaint was not. The infrastructure of a trillion-dollar industry sits on volunteers, and the volunteers know it. I built [RFM](https://rfm.sospedra.me/) around that exact asymmetry. Pay your critical maintainers. Fund the packages in your money path. At minimum, know their names.
+
+Trust is a budget. This month the invoice arrived with an ASCII flag on it.

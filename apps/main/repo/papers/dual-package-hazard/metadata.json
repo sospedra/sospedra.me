@@ -1,6 +1,6 @@
 {
   "createdAt": "2021-10-14T17:05:39.000Z",
-  "excerpt": "The ESM migration is on. Sindre Sorhus committed to ESM-only and dragged a thousand packages with him; node-fetch@3 followed this summer. Your dependency tree is now a mix of CommonJS and ES Modules, and there's a failure mode hiding in that mix. Node's docs name it the dual package hazard. Most people meet it as a cryptic instanceof bug.",
+  "excerpt": "The console says Cannot use GraphQLObjectType \"Query\" from another module or realm. There is one realm. There is one process. Node loaded graphql-js twice. The library did nothing careless. It ships both formats through conditional exports, and that responsible-looking shape is what splits it. Node runs two loaders with two separate caches.",
   "og": "/papers/dual-package-hazard.png",
   "slug": "dual-package-hazard",
   "title": "The dual package hazard",

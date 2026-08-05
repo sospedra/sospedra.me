@@ -1,12 +1,12 @@
 {
   "createdAt": "2022-11-12T11:03:17.000Z",
-  "excerpt": "Next 13 landed two weeks ago with the app/ directory in beta. The discourse treats it as a folder rename with layouts. It's not. app/ inverts the data model of your application, and porting pages/ file by file is the fastest way to hate it.",
+  "excerpt": "The app/ directory is not a folder rename with layouts. Next 13 landed two weeks ago and shipped it in beta. app/ inverts the data model of your application, and porting pages/ file by file is the fastest way to hate it.",
   "og": "/papers/nextjs-app-directory.png",
   "slug": "nextjs-app-directory",
   "title": "app/ is a rewrite, not an upgrade",
   "updatedAt": "2022-11-12T11:03:17.000Z",
   "images": {},
-  "minutes": 3.015,
+  "minutes": 3.01,
   "categories": [
     "next 13",
     "app directory",

@@ -1,12 +1,12 @@
 {
   "createdAt": "2022-04-19T09:57:26.000Z",
-  "excerpt": "You upgraded to React 18. Your effects fire twice. Your fetch runs twice, your analytics event doubles, your WebSocket connects twice. Before you open the issue: it's documented, it's dev-only, and it's a test you're failing, not a bug you found.",
+  "excerpt": "You upgraded to React 18. Your effects fire twice. Your fetch runs twice, your analytics event doubles, your WebSocket connects twice. The folklore says \"React mounts, unmounts, and mounts again\". Close, and wrong in the way that matters. React does not remount anything. The double-invoke is documented, it is dev-only, and it is a test you are failing.",
   "og": "/papers/effects-run-twice.png",
   "slug": "effects-run-twice",
   "title": "Your effect runs twice on purpose",
   "updatedAt": "2022-04-19T09:57:26.000Z",
   "images": {},
-  "minutes": 3.015,
+  "minutes": 2.935,
   "categories": [
     "react 18",
     "strictmode",

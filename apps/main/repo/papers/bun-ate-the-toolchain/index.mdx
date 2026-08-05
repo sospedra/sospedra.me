@@ -1,32 +1,34 @@
-[Bun 1.0](https://bun.sh/blog/bun-v1.0) shipped last week and every benchmark chart is the same shape: tall green bar, short gray bar. Forget the charts. Speed is not why Bun matters. Count the dev dependencies of any Node service you own. Mine had eleven. **Bun's actual pitch is deleting nine of them.**
+One Node service of mine carried eleven dev dependencies. Bun deletes nine of them.
+
+Speed is the wrong reason to look. [Bun 1.0](https://bun.sh/blog/bun-v1.0) shipped last week and every benchmark chart is the same shape: tall green bar, short gray bar. Forget the charts. **Bun's actual pitch is deletion.**
 
 ## The kill list
 
-One binary replaces an ecosystem of duct tape:
+One binary replaces an ecosystem of duct tape.
 
 - `ts-node`, `tsx`, the `tsc --watch` sidecar: Bun runs TypeScript natively. `bun run index.ts`, no transpile step, no `moduleResolution` séance.
 - `nodemon`: `bun --watch`.
 - `dotenv`: `.env` files load natively. The most-installed workaround in the ecosystem, gone.
-- `jest` plus `ts-jest` plus the babel transform to make them talk: `bun test`, Jest-compatible expectations, TypeScript included. Bun's own numbers on Zod's suite: **13x Jest, 8x Vitest**.
-- `npm`: `bun install` against the same registry and `package.json`. Script startup is its own stat: `bun run x` takes ~7ms where `npm run x` takes ~176ms, and yes you feel 170ms a hundred times a day.
+- `jest` plus `ts-jest` plus the babel transform between them: `bun test`, Jest-compatible expectations, TypeScript included. Bun's own numbers on Zod's suite: **13x Jest, 8x Vitest**.
+- `npm`: `bun install` against the same registry and `package.json`. `bun run x` takes ~7ms and `npm run x` takes ~176ms. You feel 170ms a hundred times a day.
 - ESM and CommonJS interoperate in the same file. Bun refused to inherit the holy war.
 
-## Why it's fast, actually
+## Where the speed comes from
 
 Two engineering decisions, not pixie dust.
 
-**JavaScriptCore, not V8.** JSC runs a four-tier pipeline (LLInt interpreter → Baseline JIT → DFG → FTL), tuned by Apple for fast startup and low memory because its life is Safari page loads; Filip Pizlo's [Speculation in JavaScriptCore](https://webkit.org/blog/10308/speculation-in-javascriptcore/) is the canonical deep dive. V8 tolerates slower warmup for peak throughput. A CLI tool and a test runner live and die in the warmup phase, which is why Bun's startup edge is structural, not benchmark gaming. The runtime itself is written in Zig with the perf-critical glue hand-rolled instead of layered over libuv.
+**JavaScriptCore, not V8.** JSC runs a four-tier pipeline: LLInt interpreter → Baseline JIT → DFG → FTL. Apple tuned it for fast startup and low memory. Its life is Safari page loads. Filip Pizlo's [Speculation in JavaScriptCore](https://webkit.org/blog/10308/speculation-in-javascriptcore/) is the canonical deep dive. V8 tolerates slower warmup for peak throughput. A CLI tool and a test runner live and die in the warmup phase, so Bun's startup edge is structural. Bun itself is written in Zig, and the perf-critical glue is hand-rolled instead of layered over libuv.
 
-**`bun install` skips the copy.** Packages land in a global cache (`~/.bun/install/cache`), then materialize into `node_modules` via `clonefile(2)` copy-on-write on macOS and hardlinks on Linux. Registry metadata is cached in a binary format, and the lockfile (`bun.lockb`) is binary too: no YAML parse, no JSON diff. That's where the order of magnitude comes from. The tradeoff is a lockfile you can't read in a PR; `bun install -y` emits a Yarn-format one for auditing.
+**`bun install` skips the copy.** Packages land in a global cache (`~/.bun/install/cache`). They materialize into `node_modules` via `clonefile(2)` copy-on-write on macOS and hardlinks on Linux. Bun caches registry metadata in a binary format, and the lockfile (`bun.lockb`) is binary too. No YAML parse, no JSON diff. That is where the order of magnitude comes from. The tradeoff is a lockfile you cannot read in a PR. `bun install -y` emits a Yarn-format one for auditing.
 
 ## The price
 
 1. **Windows is experimental.** The 1.0 build runs the runtime only: no `bun install`, no `bun test`, no bundler. WSL is the honest recommendation for now.
-2. Node compatibility is extensive, not total. Bun reimplements the `node:*` surface natively rather than running Node's internals, so the long tail bites: native addons expecting V8 internals (JSC has a different object model), packages sniffing `process.versions`, obscure corners of `node:crypto`. Your express app runs. Your fifteen-year-old SOAP client maybe doesn't.
-3. A one-company runtime in year one. Oven [raised $7M from Kleiner Perkins](https://x.com/bunjavascript/status/1562248114773565440) last summer; the [first public release](https://news.ycombinator.com/item?id=31993429) hit 1.400 points on HN in July 2022. Momentum is real, and so is the bus factor. Price accordingly.
+2. Node compatibility is extensive, not total. Bun does not run Node's internals. It reimplements the `node:*` surface natively, so the long tail bites. Native addons want V8 internals, and JSC has a different object model. Packages sniff `process.versions`. `node:crypto` has obscure corners. Your express app runs. Your fifteen-year-old SOAP client maybe does not.
+3. A one-company runtime in year one. Oven [raised $7M from Kleiner Perkins](https://x.com/bunjavascript/status/1562248114773565440) last summer, and the [first public release](https://news.ycombinator.com/item?id=31993429) hit 1.400 points on HN in July 2022. Momentum is real, and so is the bus factor. Price accordingly.
 
 ## The verdict
 
-The interesting move is strategic. Node won by being minimal and let the community fill the gaps. Ten years later the gaps *are* the stack: transpilers, test runners, watchers, env loaders, each with its own config file and its own way to break. Deno saw this first but asked everyone to change their code. **Bun asks you to change nothing and delete things.** Better sales pitch.
+The interesting move is strategic. Node won on minimalism and let the community fill the gaps. Ten years later the gaps *are* the stack: transpilers, test runners, watchers, env loaders. Each one has its own config file and its own way to break. Deno saw this first but asked everyone to change their code. **Bun asks you to change nothing and delete things.** Better sales pitch.
 
-Spend it today on scripts, CLIs, CI pipelines, greenfield services with boring dependencies. Keep it off the money path this quarter and let the point releases land. But notice the pressure already working: Node shipped `node:test` in 18.0, [`--watch` in 18.11](https://nodejs.org/en/blog/release/v18.11.0), and [`--env-file` in 20.6](https://nodejs.org/en/blog/release/v20.6.0), twelve days before Bun hit 1.0. Funny how that goes.
+Spend it today on scripts, CLIs, CI pipelines and greenfield services with boring dependencies. Keep it off the money path this quarter and let the point releases land. The pressure already works. Node shipped `node:test` in 18.0, [`--watch` in 18.11](https://nodejs.org/en/blog/release/v18.11.0), and [`--env-file` in 20.6](https://nodejs.org/en/blog/release/v20.6.0), twelve days before Bun hit 1.0. Three of those deletions now ship inside Node. Funny how that goes.

@@ -1,10 +1,17 @@
-Your browser renders DOM nobody sees. Every node below the fold pays layout, style and paint. A long article, a feed, a huge table: the user watches one viewport and the engine computes ten. That's the tax. And since Chrome 85 there's a one-line refund: [`content-visibility`](https://drafts.csswg.org/css-contain-2/#content-visibility).
+Ship `content-visibility: auto` to a Chrome 89 user and every heading below the fold leaves the accessibility tree. The screen reader gets a page that stops at the viewport. Chrome 90 closed the hole. The property is worth the version floor anyway, because it is the cheapest rendering win of 2021.
 
-## Where it comes from
+The name sells the wrong model. `content-visibility` reads like a visibility switch, so people reach for it as a politer `display: none`. **It is containment machinery.** The property did not start as CSS at all.
 
-This didn't start as a CSS property. It started as [Display Locking](https://github.com/WICG/display-locking), a Chrome project to let developers lock subtrees out of the rendering pipeline. The first public shape was an HTML attribute, `rendersubtree`, with an [intent to implement](https://groups.google.com/a/chromium.org/g/blink-dev/c/Bh0bSdkQlbk/m/7n6b50N6AwAJ) from September 2019. The CSSWG absorbed it into [css-contain-2](https://www.w3.org/TR/2020/WD-css-contain-2-20201216/) as two properties: `contain-intrinsic-size` shipped in Chrome 83, `content-visibility` [in Chrome 85](https://chromestatus.com/feature/4613920211861504). Knowing the lineage matters: this is containment machinery, not a visibility toggle.
+<Aside label='Display // Locking'>
+  - **[Display Locking](https://github.com/WICG/display-locking)**, the Chrome project to lock subtrees out of the rendering pipeline
+  - **`rendersubtree`**, an HTML attribute, [intent to implement](https://groups.google.com/a/chromium.org/g/blink-dev/c/Bh0bSdkQlbk/m/7n6b50N6AwAJ) September 2019
+  - **[css-contain-2](https://www.w3.org/TR/2020/WD-css-contain-2-20201216/)** absorbed it as two CSS properties
+  - **Chrome 83** shipped `contain-intrinsic-size`, **Chrome 85** [shipped `content-visibility`](https://chromestatus.com/feature/4613920211861504)
+</Aside>
 
-## The property
+## What the engine skips
+
+Two declarations buy the win.
 
 ```css
 .section {
@@ -13,30 +20,34 @@ This didn't start as a CSS property. It started as [Display Locking](https://git
 }
 ```
 
-`content-visibility: auto` applies `layout`, `style` and `paint` containment permanently, and adds `size` containment while the element is off-screen. Skipped contents are not painted, as if they had `visibility: hidden`, and skip hit-testing, as if `pointer-events: none`. The element's own box still lays out. No style recalc inside, no layout inside, no paint. The content stays in the DOM and find-in-page still works.
+[`content-visibility: auto`](https://drafts.csswg.org/css-contain-2/#content-visibility) applies `layout`, `style` and `paint` containment permanently. It adds `size` containment while the element sits off-screen. No style recalc inside, no layout inside, no paint. The engine does not paint skipped contents, and they skip hit-testing. Think `visibility: hidden` plus `pointer-events: none`. The element's own box still lays out. The content stays in the DOM, and find-in-page still works.
 
-The spec's trigger is "[relevant to the user](https://drafts.csswg.org/css-contain-2/#relevant-to-the-user)", and it has three conditions, not one: the border box approaches the viewport, the element holds focus, or it holds a selection. Consequence worth knowing: an off-screen element keeps rendering if the user has focus or selected text inside it. Tab order can defeat your optimization.
+The spec triggers on "[relevant to the user](https://drafts.csswg.org/css-contain-2/#relevant-to-the-user)", and that phrase covers three conditions. The border box approaches the viewport. The element holds focus. The element holds a selection. So an off-screen element keeps rendering if the user has focus or selected text inside it. **Tab order can defeat your optimization.**
 
-## The catch: intrinsic size
+## The size you have to guess
 
-A skipped element has size containment, so it has no natural height. Without a hint, your scrollbar jumps around like it owes you money. `contain-intrinsic-size` is the placeholder the engine uses while contents are skipped. Eyeball your average section height and move on. The spec [just gained](https://github.com/w3c/csswg-drafts/issues/5668) an `auto` keyword to make the engine remember the last rendered size, but no engine parses it yet. Today you write the estimate by hand, and a wrong estimate means visible scrollbar drift.
+A skipped element has size containment, so it has no natural height. Without a hint, your scrollbar jumps around like it owes you money. `contain-intrinsic-size` is the placeholder the engine uses while the contents stay skipped. Eyeball your average section height and move on. The spec [just gained](https://github.com/w3c/csswg-drafts/issues/5668) an `auto` keyword so the engine remembers the last rendered size, but no engine parses it yet. Today you write the estimate by hand, and a wrong estimate shows up as scrollbar drift.
 
 ## The numbers
 
-The [web.dev article](https://web.dev/content-visibility/) by Una Kravets and Vladimir Levin (Levin implemented the feature) measures a travel blog: rendering time on load drops from 232ms to 30ms. A 7x win from one CSS rule. Profile your own page: DevTools, Performance tab, the purple layout blocks before and after.
+The [web.dev article](https://web.dev/content-visibility/) by Una Kravets and Vladimir Levin measures a travel blog. Rendering time on load drops from 232ms to 30ms. Levin implemented the feature. A 7x win from one CSS rule. Profile your own page: DevTools, Performance tab, the purple layout blocks before and after.
 
 ## The accessibility scar
 
-For nine months this feature had a hole. Chrome 85 to 89 stripped skipped content from the accessibility tree: screen readers lost the page outline, headings and landmarks below the fold just didn't exist. [Marcy Sutton documented it](https://marcysutton.com/content-visibility-accessible-semantics/) in December 2020, and Chrome 90 fixed it last April: skipped content is now exposed to the a11y tree even though it isn't painted. If you support anything older than 90, this is your blocker.
+For nine months the hole stayed open. Chrome 85 through 89 stripped skipped content from the accessibility tree, so headings and landmarks below the fold did not exist. [Marcy Sutton documented it](https://marcysutton.com/content-visibility-accessible-semantics/) in December 2020. Chrome 90 fixed it last April, and skipped content now reaches the accessibility tree even though the engine never paints it.
 
 ## The hidden variant
 
-`content-visibility: hidden` is the other half of the API. It applies `contain: style layout size`, drops the content from rendering entirely, but **keeps the cached rendering state**. `getBoundingClientRect()` still answers. Toggling back is nearly free, unlike `display: none`, which throws the state away and pays a full re-render. The tradeoff: hidden content is invisible to every UA algorithm, no find-in-page, no anchor navigation. That's why the Display Locking folks are experimenting with [`hidden-matchable`](https://github.com/WICG/display-locking/blob/main/explainers/content-visibility-hidden-matchable.md) and a [`beforematch` event](https://github.com/WICG/display-locking/blob/main/explainers/beforematch.md): find-in-page fires the event, your handler reveals the section. Collapsed sections you can Ctrl+F into. Watch that one.
+`content-visibility: hidden` is the other half of the API. It applies `contain: style layout size` and drops the content from rendering, but it **keeps the cached rendering state**. `getBoundingClientRect()` still answers. Toggling back is nearly free. `display: none` throws the state away and pays a full re-render.
+
+The price: hidden content is invisible to every UA algorithm. Find-in-page misses it. Anchor navigation misses it. So the Display Locking folks experiment with [`hidden-matchable`](https://github.com/WICG/display-locking/blob/main/explainers/content-visibility-hidden-matchable.md) and a [`beforematch` event](https://github.com/WICG/display-locking/blob/main/explainers/beforematch.md). Find-in-page fires the event and your handler reveals the section. Collapsed sections you can Ctrl+F into. Watch that one.
 
 ## Where to use it
 
-1. **Long articles**. Chunk by section, apply to each.
+1. **Long articles**. Chunk by section, apply the rule to each.
 2. **Feeds and lists**. Each card gets the rule.
-3. **Read-only tables**, with a caveat. This is not a `react-window` killer: the DOM memory stays, and the first scroll into a heavy skipped section pays its full render cost right there. It replaces windowing where the win you need is initial render, not scroll-time cost.
+3. **Read-only tables**, with the caveat below.
 
-Chromium only for now (Chrome, Edge, Opera, Samsung Internet). Firefox and Safari haven't shipped it. It degrades to nothing: browsers without support render everything, like they always did. Ship it behind your own judgment on point 3, and enjoy the cheapest rendering win of 2021.
+`content-visibility` is not a `react-window` killer. The DOM memory stays. The first scroll into a heavy skipped section pays its full render cost right there. It replaces windowing when the win you need is initial render.
+
+Chromium only for now: Chrome, Edge, Opera, Samsung Internet. Firefox and Safari have not shipped it. It degrades to nothing, because browsers without support render everything, as they always did. Set your floor at Chrome 90 and ship the rule.

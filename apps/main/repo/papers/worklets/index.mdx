@@ -1,8 +1,10 @@
-Block the JavaScript thread of a React Native app with a `while(true)` and watch a Reanimated gesture keep tracking your finger at 60fps. That shouldn't be possible. The animation is written in JavaScript and the JavaScript thread is dead. The trick: your app runs **two JavaScript runtimes**, and the second one lives on the UI thread.
+I park a `while(true)` on the JavaScript thread of a React Native app. The thread is dead. I wrote the animation in JavaScript. The Reanimated gesture keeps tracking my finger at 60fps.
+
+The obvious read: the animation left JavaScript for native code. It did not. Your app runs **two JavaScript runtimes**, and the second one lives on the UI thread.
 
 ## The second runtime
 
-The design goes back to Krzysztof Magiera's [Introducing Reanimated 2](https://swmansion.com/blog/introducing-reanimated-2-752b913af8b3): instead of a declarative animation DSL (Reanimated 1's approach) or native driver whitelists, spawn a secondary JS context on the UI thread and run real JavaScript there. Functions marked as worklets execute in it:
+Krzysztof Magiera set the design in [Introducing Reanimated 2](https://swmansion.com/blog/introducing-reanimated-2-752b913af8b3). Reanimated 1 shipped a declarative animation DSL. The native driver shipped whitelists. Reanimated 2 spawns a secondary JS context on the UI thread and runs real JavaScript. Functions marked as worklets execute there:
 
 ```js
 const style = useAnimatedStyle(() => {
@@ -11,7 +13,7 @@ const style = useAnimatedStyle(() => {
 })
 ```
 
-The `'worklet'` directive is a compiler hook. The [babel plugin](https://github.com/software-mansion/react-native-reanimated/blob/2.14.4/plugin.js) finds these functions and rewrites each into a factory. This is roughly what ships in your bundle in the 2.x line:
+The `'worklet'` directive is a compiler hook. The [babel plugin](https://github.com/software-mansion/react-native-reanimated/blob/2.14.4/plugin.js) finds these functions and rewrites each into a factory. The 2.x line ships roughly this:
 
 ```js
 const _f = function () {
@@ -23,13 +25,19 @@ _f.__workletHash = 1234567            // identity across runtimes
 _f.__location = '/app/Box.js (12:4)'
 ```
 
-A worklet is code-as-string plus a captured-value bag, rebuilt inside the second runtime. Two phases people conflate: the plugin extracts the closure's *identifier list* at build time; the *values* are copied when the worklet is instantiated and shipped across. That copy is the root of every gotcha below. (In [Reanimated 3](https://github.com/software-mansion/react-native-reanimated/releases/tag/3.0.0), released this February, the string-and-eval mechanism became "shareables": the function and closure are recursively cloned into C++ representations, reconstructed once per runtime, no eval. Same model, sturdier plumbing.)
+A worklet is code-as-string plus a captured-value bag, rebuilt inside the second runtime. People conflate two phases. The plugin extracts the closure's *identifier list* at build time. The runtime copies the *values* at instantiation. **That copy is the root of every gotcha below.**
 
-You rarely write the directive yourself: `useAnimatedStyle`, `useDerivedValue` and Gesture callbacks are auto-workletized by the plugin. Inside one, `global._WORKLET === true` if you want to check where you are.
+<Aside label='Reanimated 3 // Shareables'>
+  - **Shipped this February**: [Reanimated 3](https://github.com/software-mansion/react-native-reanimated/releases/tag/3.0.0) retired the string-and-eval mechanism
+  - **Shareables**: the function and closure clone recursively into C++ representations
+  - **Rebuilt once per runtime**: no eval, same model, sturdier plumbing
+</Aside>
+
+You rarely write the directive. The plugin auto-workletizes `useAnimatedStyle`, `useDerivedValue` and Gesture callbacks. Check `global._WORKLET === true` to know where you are.
 
 ## Shared values, the actual bridge
 
-Two runtimes need shared memory. That's what [shared values](https://docs.swmansion.com/react-native-reanimated/docs/2.x/fundamentals/worklets/) are: C++-backed host objects, reachable from both runtimes over JSI, no serialization on the hot path. The classic RN bridge (async, batched, JSON) never enters the picture, and that's the whole 60fps secret. Not faster JavaScript. Closer JavaScript.
+Two runtimes need shared memory. [Shared values](https://docs.swmansion.com/react-native-reanimated/docs/2.x/fundamentals/worklets/) are that memory: C++-backed host objects, reachable from both runtimes over JSI, no serialization on the hot path. The classic RN bridge is async, batched and JSON. It never enters the picture. That is the whole 60fps secret. <u>Not faster JavaScript. Closer JavaScript.</u>
 
 ```js
 const offset = useSharedValue(0)
@@ -44,13 +52,13 @@ const pan = Gesture.Pan()
   })
 ```
 
-Assign to `.value` from a worklet and the animated style reacts on the same frame. No setState, no render, no reconciliation. React never wakes up.
+Assign to `.value` from a worklet and the animated style reacts on the same frame. No setState, no render, no reconciliation. React never wakes up. My `while(true)` still spins. The box still follows my finger.
 
 ## The gotchas, and they bite
 
-1. **Closures are copied, not referenced.** Mutate a captured plain object from the React side and the worklet won't see it; it has its own copy. Shared values exist precisely to opt out of copy semantics.
+1. **Closures are copied, not referenced.** Mutate a captured plain object from the React side and the worklet never sees it. It holds its own copy. Shared values exist precisely to opt out of copy semantics.
 2. **Big captures cost real money.** Everything in `_closure` serializes at worklet instantiation. Capture a 2.000-item array in a gesture callback and you built a frame-time bomb. Keep captures scalar.
-3. **Crossing back is explicit.** A regular function doesn't exist on the UI runtime; calling it from a worklet throws. `runOnJS(fn)(args)` schedules it back on the React runtime, asynchronously, by handle, which is also why `fn` must be a stable top-level reference and why you can't await its result mid-gesture:
+3. **Crossing back is explicit.** A regular function does not exist on the UI runtime. Call it from a worklet and it throws. `runOnJS(fn)(args)` schedules it back on the React runtime, asynchronously, by handle. So `fn` must be a stable top-level reference, and you cannot await its result mid-gesture:
 
 ```js
 .onEnd(() => {
@@ -58,6 +66,6 @@ Assign to `.value` from a worklet and the animated style reacts on the same fram
 })
 ```
 
-4. `console.log` inside a worklet works, but it's a `runOnJS` in a trenchcoat. Log per frame and you'll profile the mystery jank you created.
+4. `console.log` inside a worklet works. It is a `runOnJS` in a trenchcoat. Log per frame and you profile the mystery jank you just created.
 
-The dogma was one JS thread orchestrating native views over an async bridge. Worklets quietly break it: run the latency-critical 5% of your JavaScript on the UI thread, keep React for the other 95%. The second runtime is not going away; learn its physics now.
+The dogma had one JavaScript thread over an async bridge. Worklets break it quietly. Run the latency-critical 5% of your JavaScript on the UI thread. Keep React for the other 95%. The second runtime is here. Learn its physics now.

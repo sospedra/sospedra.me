@@ -1,6 +1,6 @@
 {
   "createdAt": "2020-07-10T13:48:35.556Z",
-  "excerpt": "This story begins in 1984. Involves the major R&D companies in Silicon Valley. Machinery. Tech revolutions. And finally, the web. It's the story of the web fonts. Why are so many? And why it's so difficult to get a standard?",
+  "excerpt": "In 1985 Apple shipped the LaserWriter. Your font stack still pays for it. Adobe licensed Apple 13 fonts for that machine, and three of them sit in the CSS at the bottom of this page. Each comma in a font stack sits between an original and its clone. The easy story blames the browsers. The real one starts at a printer and ends in a bankruptcy. In 1984 HP shipped the HP LaserJet. It was the first laser printer built for mass-market sales. One year later Apple answered with help from Adobe. The LaserWriter carried a built-in PostScript interpreter. With an editor program, anyone could create, publish and distribute their own content. That is the Desktop Publishing revolution.",
   "og": "/papers/web-safe-fonts.png",
   "slug": "web-safe-fonts",
   "title": "Web-safe fonts",
@@ -11,7 +11,7 @@
       "height": 305
     }
   },
-  "minutes": 4.36,
+  "minutes": 3.625,
   "categories": [
     "Web safe fonts",
     "fonts on all computers",

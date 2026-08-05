@@ -1,6 +1,6 @@
 {
   "createdAt": "2021-03-21T12:21:46.588Z",
-  "excerpt": "According to Google, 53% of visits are abandoned if a mobile site takes longer than three seconds to load. That's a big problem. Thousands of developers look at this issue daily. Thousands of them struggle with the performance of simply dispatching some data online. Yet, it doesn't matter how hard you try to improve your page speed if you don't understand first how the website lifecycle works.",
+  "excerpt": "Three seconds. Past that mark, 53% of mobile visits are abandoned. That is Google's number, and thousands of developers fight it daily. The reflex is to ship less JavaScript. The reflex has no target. Every speed fix lands on one step of one lifecycle, and you cannot optimize a step you cannot name. So name them first.",
   "og": "/papers/browser-lifecycle.png",
   "slug": "browser-lifecycle",
   "title": "The browser lifecycle",
@@ -15,7 +15,7 @@
       "height": 409
     }
   },
-  "minutes": 4.56,
+  "minutes": 4.19,
   "categories": [
     "browser lifecycle",
     "time to interactive",

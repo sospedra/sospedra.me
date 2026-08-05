@@ -1,12 +1,12 @@
 {
   "createdAt": "2023-09-16T15:49:55.000Z",
-  "excerpt": "Bun 1.0 shipped last week and every benchmark chart is the same shape: tall green bar, short gray bar. Forget the charts. Speed is not why Bun matters. Count the dev dependencies of any Node service you own. Mine had eleven. Bun's actual pitch is deleting nine of them.",
+  "excerpt": "One Node service of mine carried eleven dev dependencies. Bun deletes nine of them. Speed is the wrong reason to look. Bun 1.0 shipped last week and every benchmark chart is the same shape: tall green bar, short gray bar. Forget the charts. Bun's actual pitch is deletion.",
   "og": "/papers/bun-ate-the-toolchain.png",
   "slug": "bun-ate-the-toolchain",
   "title": "Bun ate the toolchain",
   "updatedAt": "2023-09-16T15:49:55.000Z",
   "images": {},
-  "minutes": 2.99,
+  "minutes": 2.97,
   "categories": [
     "bun 1.0",
     "bun vs node",

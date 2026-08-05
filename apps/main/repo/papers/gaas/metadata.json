@@ -1,6 +1,6 @@
 {
   "createdAt": "2020-05-18T17:53:20.107Z",
-  "excerpt": "In the past years, GitHub became a technology mastodon. Since the acquisition by Microsoft, the company added a myriad of outstanding features. In fact, GitHub is so powerful nowadays that it can be your all-in-all provider. You can use GitHub as a Service. Don’t believe me? Let’s go through my journey building Request For Maintainers a GitHub-only powered project.",
+  "excerpt": "Stop paying for a backend. You already have one, you have had it for years, and it has never sent you a bill. GitHub is a cloud provider that forgot to publish a pricing page. Since Microsoft bought it in 2018 it shipped Actions, in-house CI/CD, a marketplace, and npm. Everything a web application needs, behind an API you already hold a token for. Call it GaaS. GitHub as a Service. GaaS, Gaas, Gaas!",
   "images": {
     "gasgasgas.jpeg": {
       "width": 640,
@@ -11,7 +11,7 @@
   "slug": "gaas",
   "title": "GaaS: GitHub as a Service",
   "updatedAt": "2020-05-20T17:53:20.107Z",
-  "minutes": 4.88,
+  "minutes": 3.685,
   "categories": [
     "GitHub",
     "SaaS",
