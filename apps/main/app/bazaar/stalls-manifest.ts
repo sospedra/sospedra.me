@@ -349,6 +349,10 @@ export const STALL_SCENES = {
     ],
     rect: { left: 518, top: 70, width: 500, height: 884 },
   },
+  jukebox: {
+    layers: [{ id: 'plate', role: 'plate' }],
+    rect: { left: 0, top: 0, width: 700, height: 1000 },
+  },
 } satisfies Record<string, StallScene>
 
 export type BazaarStallId = keyof typeof STALL_SCENES
@@ -408,6 +412,12 @@ export const SIM_DIMS = {
     artH: 884,
     dispW: 260,
     dispH: 460,
+  },
+  jukebox: {
+    artW: 700,
+    artH: 1000,
+    dispW: 350,
+    dispH: 500,
   },
 } satisfies Record<
   BazaarStallId,
