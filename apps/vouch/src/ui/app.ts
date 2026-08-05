@@ -11,6 +11,7 @@ import type {
   VerdictKind,
 } from '../scenarios/trace.ts'
 import { ms, shortHash } from './format.ts'
+import { renderTrace } from './trace-view.ts'
 
 type RowState =
   | { status: 'pending' }
@@ -310,7 +311,17 @@ function buildRow(scenario: Scenario): RowBuild {
   detailRow.hidden = true
   detailRow.append(detailCell)
 
-  button.addEventListener('click', () => toggleRow(button, detailRow))
+  let traceRendered = false
+  function ensureTraceRendered(): void {
+    if (traceRendered) return
+    traceRendered = true
+    panel.append(renderTrace(scenario.run()))
+  }
+
+  button.addEventListener('click', () => {
+    ensureTraceRendered()
+    toggleRow(button, detailRow)
+  })
 
   function setState(state: RowState): void {
     mainRow.dataset.status = state.status

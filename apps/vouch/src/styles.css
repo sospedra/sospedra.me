@@ -29,6 +29,10 @@
   --v-error: #b3261e;
   --v-mismatch: #b3261e;
 
+  --actor-author: #0f7663;
+  --actor-client: #5b4696;
+  --actor-peer: #5c6b12;
+
   color-scheme: light dark;
 }
 
@@ -58,6 +62,10 @@
     --v-running: #6fa8dc;
     --v-error: #f0574a;
     --v-mismatch: #f0574a;
+
+    --actor-author: #4ecdae;
+    --actor-client: #b6a6e8;
+    --actor-peer: #c3d67a;
   }
 }
 
@@ -352,7 +360,9 @@ tr.scenario-row[data-status="running"] {
 /* chips and badges: text label is always the primary signal; glyph and
    border style are secondary, color is a bonus for sighted color-normal users */
 .chip,
-.badge {
+.badge,
+.actor-badge,
+.check-mark {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -466,6 +476,352 @@ tr.scenario-row[data-status="running"] {
   min-height: 0;
 }
 
+/* trace: verdict banner, verifier checklist, actor timeline, object inspector */
+.trace {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 100ch;
+}
+
+.panel-heading {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-dim);
+}
+
+.verdict-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line-strong);
+  background: var(--bg);
+}
+
+.verdict-banner-error {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  background: none;
+}
+
+.verdict-banner-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* verifier checklist: rounds are <details>, open by default, collapsible;
+   each round's own summary states its outcome so a reader never has to
+   open a round just to see whether it passed */
+.checklist {
+  border: 1px solid var(--line);
+  padding: 14px 16px;
+  background: var(--bg);
+}
+
+.checklist-round + .checklist-round {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.checklist-round-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+}
+
+.checklist-round-summary::-webkit-details-marker {
+  display: none;
+}
+
+.checklist-round-summary::before {
+  content: "▸";
+  display: inline-block;
+  flex: none;
+  color: var(--ink-dim);
+}
+
+.checklist-round[open] > .checklist-round-summary::before {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .checklist-round-summary::before {
+    transition: transform 0.15s ease;
+  }
+}
+
+summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.checklist-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checklist-entry {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 3px 8px;
+  border-left: 3px solid var(--line-strong);
+  font-size: 12px;
+}
+
+.checklist-entry--pass {
+  border-left-color: var(--v-accept);
+}
+
+.checklist-entry--fail {
+  border-left-color: var(--v-reject);
+}
+
+.checklist-entry--skip {
+  border-left-style: dashed;
+  border-left-color: var(--ink-dim);
+}
+
+.check-step-number {
+  flex: none;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-dim);
+}
+
+.checklist-entry-name {
+  flex: 1 1 auto;
+}
+
+/* check marks: shared visual vocabulary between the checklist and the
+   inline check steps in the timeline below */
+.check-mark--pass {
+  border-left: 5px solid var(--v-accept);
+  color: var(--v-accept);
+}
+
+.check-mark--fail {
+  border-left: 5px solid var(--v-reject);
+  color: var(--v-reject);
+}
+
+.check-mark--skip {
+  border-left: 5px dashed var(--ink-dim);
+  color: var(--ink-dim);
+}
+
+.check-mark-error {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  background: none;
+}
+
+/* actor timeline: text label is always the primary signal, per the chip/
+   badge doctrine above; attacker also gets a full outline and bold weight,
+   never color alone, since it must read as distinct in grayscale too */
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.timeline-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.step-label {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.step-detail {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-dim);
+  word-break: break-word;
+}
+
+.step-objects {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.actor-badge {
+  flex: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-left: 5px solid var(--line-strong);
+}
+
+.actor-badge--author {
+  border-left-color: var(--actor-author);
+  color: var(--actor-author);
+}
+
+.actor-badge--server {
+  border-left-color: var(--accent);
+  color: var(--accent);
+}
+
+.actor-badge--client {
+  border-left-color: var(--actor-client);
+  color: var(--actor-client);
+}
+
+.actor-badge--peer {
+  border-left-color: var(--actor-peer);
+  color: var(--actor-peer);
+}
+
+.actor-badge--attacker {
+  border: 1px solid var(--v-reject);
+  border-left-width: 5px;
+  color: var(--v-reject);
+  font-weight: 700;
+}
+
+/* object inspector: name + type, a decoded field table, and a hex view
+   that only exists in the DOM's visible flow once toggled on */
+.object-card {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  background: var(--bg-panel);
+}
+
+.object-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.object-name {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.object-type {
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.object-fields {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.object-fields th,
+.object-fields td {
+  padding: 3px 10px 3px 0;
+  text-align: left;
+  font-weight: 400;
+  vertical-align: top;
+}
+
+.object-fields th {
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.object-fields td {
+  font-family: var(--font-mono);
+  word-break: break-all;
+}
+
+.view-toggle {
+  margin-top: 8px;
+  padding: 3px 10px;
+  border: 1px solid var(--line-strong);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.view-toggle:hover {
+  background: var(--bg-hover);
+}
+
+.view-toggle[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.object-hex-view {
+  margin-top: 8px;
+}
+
+.object-hex-block {
+  margin: 0;
+  padding: 8px 10px;
+  max-height: 220px;
+  overflow: auto;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.object-hash {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.object-hash-label {
+  margin-right: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.object-hash-value {
+  color: var(--ink);
+  background: none;
+  word-break: break-all;
+}
+
 /* print: force the light palette so nobody prints a near-black page,
    and drop chrome that has no meaning on paper */
 @media print {
@@ -477,7 +833,8 @@ tr.scenario-row[data-status="running"] {
   }
 
   .run-bar,
-  .disclosure::before {
+  .disclosure::before,
+  .checklist-round-summary::before {
     display: none;
   }
 
