@@ -59,6 +59,7 @@ test('s02 payload tampering rejects with INVALID_PROOF, rule author-signature', 
   const t = s02.run()
   assert.equal(t.verdict.kind, 'REJECT')
   assert.equal(t.verdict.error, 'INVALID_PROOF')
+  assert.match(t.verdict.note, /rule "author-signature"/)
   assert.ok(t.checks)
 
   const failing = t.checks.at(-1)
@@ -93,6 +94,7 @@ test('s03 author replay rejects with INVALID_PROOF, rule author-sequence', () =>
   const t = s03.run()
   assert.equal(t.verdict.kind, 'REJECT')
   assert.equal(t.verdict.error, 'INVALID_PROOF')
+  assert.match(t.verdict.note, /rule "author-sequence"/)
   assert.ok(t.checks)
 
   const failing = t.checks.at(-1)
