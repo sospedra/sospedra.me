@@ -1,5 +1,5 @@
 import { bytesEqual, hex, unhex } from './bytes.ts'
-import { type Reader, Writer } from './encode.ts'
+import { DecodeError, type Reader, Writer } from './encode.ts'
 import { hash } from './hash.ts'
 
 const TREE_DEPTH = 256
@@ -41,29 +41,19 @@ function setBit(bitmap: Uint8Array, index: number): void {
 
 type Entry = { path: Uint8Array; value: Uint8Array }
 
-function subtree(
-  depth: number,
-  entries: Entry[],
-  memo: Map<string, Uint8Array>,
-): Uint8Array {
+function subtree(depth: number, entries: Entry[]): Uint8Array {
   if (entries.length === 0) return EMPTY[depth]
   if (depth === TREE_DEPTH) {
     return leafHash(entries[0].path, valueHashOf(entries[0].value))
   }
 
-  const memoKey = `${depth}:${hex(entries[0].path)}:${entries.length}`
-  const cached = memo.get(memoKey)
-  if (cached) return cached
-
   const lefts = entries.filter((e) => !bitAt(e.path, depth))
   const rights = entries.filter((e) => bitAt(e.path, depth))
-  const result = hash(
+  return hash(
     'state-node',
-    subtree(depth + 1, lefts, memo),
-    subtree(depth + 1, rights, memo),
+    subtree(depth + 1, lefts),
+    subtree(depth + 1, rights),
   )
-  memo.set(memoKey, result)
-  return result
 }
 
 export class Smt {
@@ -74,22 +64,21 @@ export class Smt {
   }
 
   set(key: Uint8Array, value: Uint8Array): void {
-    this.leaves.set(hex(pathOf(key)), value)
+    this.leaves.set(hex(pathOf(key)), value.slice())
   }
 
   get(key: Uint8Array): Uint8Array | null {
-    return this.leaves.get(hex(pathOf(key))) ?? null
+    return this.leaves.get(hex(pathOf(key)))?.slice() ?? null
   }
 
   root(): Uint8Array {
-    return subtree(0, this.leafEntries(), new Map())
+    return subtree(0, this.leafEntries())
   }
 
   witness(key: Uint8Array): Witness {
     const path = pathOf(key)
     const value = this.leaves.get(hex(path))
     const leaf = value === undefined ? null : valueHashOf(value)
-    const memo = new Map<string, Uint8Array>()
 
     const collect = (depth: number, subset: Entry[]): Uint8Array[] => {
       if (depth === TREE_DEPTH) return []
@@ -98,16 +87,18 @@ export class Smt {
       const [own, other] = bitAt(path, depth)
         ? [rights, lefts]
         : [lefts, rights]
-      return [...collect(depth + 1, own), subtree(depth + 1, other, memo)]
+      return [...collect(depth + 1, own), subtree(depth + 1, other)]
     }
 
+    const folded = collect(0, this.leafEntries())
     const bitmap = new Uint8Array(32)
-    const siblings = collect(0, this.leafEntries()).filter((sibling, i) => {
+    const siblings: Uint8Array[] = []
+    for (let i = 0; i < folded.length; i += 1) {
       const depth = TREE_DEPTH - 1 - i
-      const nonEmpty = !bytesEqual(sibling, EMPTY[depth + 1])
-      if (nonEmpty) setBit(bitmap, depth)
-      return nonEmpty
-    })
+      if (bytesEqual(folded[i], EMPTY[depth + 1])) continue
+      setBit(bitmap, depth)
+      siblings.push(folded[i])
+    }
 
     return { path, leaf, bitmap, siblings }
   }
@@ -136,12 +127,30 @@ export function encodeWitness(w: Witness): Uint8Array {
   return writer.done()
 }
 
+function bytePopcount(byte: number): number {
+  let count = 0
+  for (let mask = 1; mask <= 0x80; mask <<= 1) {
+    if (byte & mask) count += 1
+  }
+  return count
+}
+
+function popcount(bitmap: Uint8Array): number {
+  return bitmap.reduce((sum, byte) => sum + bytePopcount(byte), 0)
+}
+
 export function decodeWitness(r: Reader): Witness {
   const path = r.fixed(32)
   const present = r.bool()
   const leaf = present ? r.fixed(32) : null
   const bitmap = r.fixed(32)
   const siblings = r.list(MAX_SIBLINGS, () => r.fixed(32))
+  const bits = popcount(bitmap)
+  if (bits !== siblings.length) {
+    throw new DecodeError(
+      `witness: bitmap has ${bits} set bit(s), siblings list has ${siblings.length}`,
+    )
+  }
   return { path, leaf, bitmap, siblings }
 }
 

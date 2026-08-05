@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { ascii, hex } from '../src/protocol/bytes.ts'
-import { EMPTY, rootAfter, Smt, verifyWitness } from '../src/protocol/smt.ts'
+import { DecodeError, Reader } from '../src/protocol/encode.ts'
+import {
+  decodeWitness,
+  EMPTY,
+  encodeWitness,
+  rootAfter,
+  Smt,
+  verifyWitness,
+} from '../src/protocol/smt.ts'
 
 test('empty tree root is the protocol constant', () => {
   assert.equal(hex(new Smt().root()), hex(EMPTY[0]))
@@ -49,4 +57,57 @@ test('update through witness composes across keys', () => {
   const w2 = t.witness(ascii('k2'))
   t.set(ascii('k2'), ascii('v2'))
   assert.equal(hex(rootAfter(w2, ascii('v2'))), hex(t.root()))
+})
+
+test('witness codec round-trips a present-leaf witness', () => {
+  const t = new Smt()
+  t.set(ascii('k1'), ascii('v1'))
+  t.set(ascii('k2'), ascii('v2'))
+  const w = t.witness(ascii('k1'))
+
+  const encoded = encodeWitness(w)
+  const decoded = decodeWitness(new Reader(encoded))
+
+  assert.deepEqual(decoded, w)
+  assert.equal(hex(encodeWitness(decoded)), hex(encoded))
+})
+
+test('witness codec round-trips an absent-leaf witness', () => {
+  const t = new Smt()
+  t.set(ascii('k1'), ascii('v1'))
+  const w = t.witness(ascii('absent'))
+
+  const encoded = encodeWitness(w)
+  const decoded = decodeWitness(new Reader(encoded))
+
+  assert.deepEqual(decoded, w)
+  assert.equal(hex(encodeWitness(decoded)), hex(encoded))
+})
+
+test('decodeWitness rejects a padded sibling list beyond the bitmap popcount', () => {
+  const t = new Smt()
+  t.set(ascii('k1'), ascii('v1'))
+  t.set(ascii('k2'), ascii('v2'))
+  const w = t.witness(ascii('k1'))
+  assert.ok(w.siblings.length > 0)
+
+  const padded = { ...w, siblings: [...w.siblings, new Uint8Array(32)] }
+  assert.throws(
+    () => decodeWitness(new Reader(encodeWitness(padded))),
+    DecodeError,
+  )
+})
+
+test('decodeWitness rejects a starved sibling list below the bitmap popcount', () => {
+  const t = new Smt()
+  t.set(ascii('k1'), ascii('v1'))
+  t.set(ascii('k2'), ascii('v2'))
+  const w = t.witness(ascii('k1'))
+  assert.ok(w.siblings.length > 0)
+
+  const starved = { ...w, siblings: w.siblings.slice(0, -1) }
+  assert.throws(
+    () => decodeWitness(new Reader(encodeWitness(starved))),
+    DecodeError,
+  )
 })
