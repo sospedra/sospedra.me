@@ -66,7 +66,7 @@ The first four entries are compile-forced by exhaustive records.
 
 1. The dome: record carousel behind glass. The platter spins the NOW PLAYING record. NOW PLAYING = the latest release, a manifest field in v1, no telemetry.
 2. The title-strip menu: one typed paper strip per project. Name, one-liner, code (A1..A6, B1..B5). Codes are grid coordinates, letter = frame column, number = slot. They carry zero category weight. Red selector dots sit beside the codes, photo-literal.
-3. The keys: a letter row (A, B) and a number row (1..9) as real buttons.
+3. The keys: a letter row (A, B) and a number row (1..6) as real buttons.
 4. Liner notes: hover or focus slides the strip out. Pressed = first release year. Last spin = last deploy. Stack = one line.
 5. Selection: carousel turn, arm lift, needle drop, one chiptune bar, then the subdomain loads. The whole sequence stays under 1.6 seconds.
 

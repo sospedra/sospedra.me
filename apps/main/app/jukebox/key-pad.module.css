@@ -1,0 +1,33 @@
+.pad {
+  display: grid;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.row {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.key {
+  min-width: 2.4rem;
+  padding: 0.45rem 0.6rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: var(--warmwhite);
+  background: linear-gradient(#4a2f19, #2a160b);
+  border: 2px solid color-mix(in srgb, var(--amber) 45%, black);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.key:focus-visible {
+  outline: 2px solid var(--magenta);
+  outline-offset: 2px;
+}
+
+.lit {
+  border-color: var(--teal);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--teal) 70%, transparent);
+}

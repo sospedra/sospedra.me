@@ -1,21 +1,20 @@
 'use client'
 
+import Dome from './dome'
 import css from './jukebox.module.css'
-import { RECORDS, selectorCode } from './records'
+import KeyPad from './key-pad'
+import { RECORDS } from './records'
+import StripMenu from './strip-menu'
 
 export default function JukeboxView() {
   return (
     <main className={css.hall}>
-      <h1 className={css.marquee}>side projects</h1>
-      <ul className={css.strips}>
-        {RECORDS.map((record, index) => (
-          <li key={record.id} className={css.strip}>
-            <a href={record.url}>
-              {selectorCode(index)} {record.title}
-            </a>
-          </li>
-        ))}
-      </ul>
+      <section className={css.cabinet} aria-label='side projects jukebox'>
+        <h1 className={css.marquee}>side projects</h1>
+        <Dome nowPlaying={RECORDS[0]} />
+        <StripMenu onPick={() => {}} />
+        <KeyPad armed={null} onLetter={() => {}} onNumber={() => {}} />
+      </section>
     </main>
   )
 }
