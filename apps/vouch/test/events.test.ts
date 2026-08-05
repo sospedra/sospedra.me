@@ -4,6 +4,10 @@ import { hex } from '../src/protocol/bytes.ts'
 import { ZERO32 } from '../src/protocol/constants.ts'
 import {
   decodeAuthorEvent,
+  decodeGlobalEventRecord,
+  decodeWriteAck,
+  encodeGlobalEventRecord,
+  encodeWriteAck,
   eventHash,
   makeSignedEvent,
   signingInput,
@@ -32,4 +36,41 @@ test('tampered payload breaks the signature', () => {
 
 test('transfer payload rejects uppercase account id', () => {
   assert.throws(() => encodeTransfer({ from: 'Alice', to: 'bob', amount: 1n }))
+})
+
+test('GlobalEventRecordV1 roundtrip with 64-byte signature', () => {
+  const sig64 = new Uint8Array(64).fill(0xab)
+  const record = {
+    globalSequence: 42n,
+    eventHash: new Uint8Array(32).fill(0x12),
+    authorEvent: new Uint8Array(256).fill(0x34),
+    authorSignature: sig64,
+  }
+  const encoded = encodeGlobalEventRecord(record)
+  const decoded = decodeGlobalEventRecord(encoded)
+  assert.deepEqual(decoded, record)
+})
+
+test('GlobalEventRecordV1 rejects signature length != 64', () => {
+  const sig63 = new Uint8Array(63).fill(0xab)
+  const record = {
+    globalSequence: 42n,
+    eventHash: new Uint8Array(32).fill(0x12),
+    authorEvent: new Uint8Array(256).fill(0x34),
+    authorSignature: sig63,
+  }
+  assert.throws(() => encodeGlobalEventRecord(record))
+})
+
+test('WriteAckV1 roundtrip', () => {
+  const ack = {
+    eventHash: new Uint8Array(32).fill(0x56),
+    acceptedAtMs: 123456789n,
+    acceptedAgainstSequence: 99n,
+    mustLandBySequence: 199n,
+    receiptKeyId: new Uint8Array(32).fill(0x78),
+  }
+  const encoded = encodeWriteAck(ack)
+  const decoded = decodeWriteAck(encoded)
+  assert.deepEqual(decoded, ack)
 })

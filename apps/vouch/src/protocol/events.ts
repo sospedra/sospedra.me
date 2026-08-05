@@ -17,7 +17,7 @@ export function encodeAuthorEvent(event: AuthorEventV1): Uint8Array {
   w.fixed(event.authorKeyId, 32)
   w.u64(event.authorSequence)
   w.fixed(event.authorPreviousHash, 32)
-  w.u32(event.operation)
+  w.u16(event.operation)
   w.bytes(event.payload, LIMITS.payload)
   return w.done()
 }
@@ -27,7 +27,7 @@ export function decodeAuthorEvent(buf: Uint8Array): AuthorEventV1 {
   const authorKeyId = r.fixed(32)
   const authorSequence = r.u64()
   const authorPreviousHash = r.fixed(32)
-  const operation = r.u32()
+  const operation = r.u16()
   const payload = r.bytes(LIMITS.payload)
   r.finish()
   return {
@@ -38,6 +38,8 @@ export function decodeAuthorEvent(buf: Uint8Array): AuthorEventV1 {
     payload,
   }
 }
+
+const RECORD_OVERHEAD = LIMITS.payload + 128
 
 export function signingInput(eventBytes: Uint8Array): Uint8Array {
   return hash('author-signing', eventBytes)
@@ -60,8 +62,8 @@ export function encodeGlobalEventRecord(
   const w = new Writer()
   w.u64(record.globalSequence)
   w.fixed(record.eventHash, 32)
-  w.bytes(record.authorEvent, LIMITS.payload + 128)
-  w.bytes(record.authorSignature, 64)
+  w.bytes(record.authorEvent, RECORD_OVERHEAD)
+  w.fixed(record.authorSignature, 64)
   return w.done()
 }
 
@@ -69,8 +71,8 @@ export function decodeGlobalEventRecord(buf: Uint8Array): GlobalEventRecordV1 {
   const r = new Reader(buf)
   const globalSequence = r.u64()
   const eventHash = r.fixed(32)
-  const authorEvent = r.bytes(LIMITS.payload + 128)
-  const authorSignature = r.bytes(64)
+  const authorEvent = r.bytes(RECORD_OVERHEAD)
+  const authorSignature = r.fixed(64)
   r.finish()
   return {
     globalSequence,
@@ -141,11 +143,11 @@ export function makeSignedEvent(
   const eventBytes = encodeAuthorEvent(event)
   const signingDigest = signingInput(eventBytes)
   const signature = sign(signingDigest, kp)
-  const hash_out = eventHash(eventBytes, signature)
+  const computedHash = eventHash(eventBytes, signature)
   return {
     event,
     eventBytes,
     signature,
-    eventHash: hash_out,
+    eventHash: computedHash,
   }
 }
