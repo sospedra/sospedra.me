@@ -26,6 +26,9 @@ export type AccessV1 = {
 }
 
 export function encodeAccess(a: AccessV1): Uint8Array {
+  if (a.op === 2 && a.value !== null) {
+    throw new RangeError('access: op 2 (set) must not carry a value')
+  }
   const w = new Writer()
   w.u16(a.op)
   w.bytes(a.key, LIMITS.payload)
@@ -44,6 +47,9 @@ export function decodeAccess(r: Reader): AccessV1 {
   const key = r.bytes(LIMITS.payload)
   const hasValue = r.bool()
   const value = hasValue ? r.bytes(LIMITS.result) : null
+  if (op === 2 && value !== null) {
+    throw new DecodeError('access: op 2 (set) must not carry a value')
+  }
   const witness = decodeWitness(r)
   return { op, key, value, witness }
 }

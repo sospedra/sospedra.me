@@ -61,7 +61,7 @@ export const decodeAccount = (b: Uint8Array): AccountV1 => {
 
 export const encodeTransferLogV1 = (t: TransferLogV1): Uint8Array => {
   const w = new Writer()
-  w.list(t.entries, LIMITS.listCount, (entry) => {
+  w.list(t.entries, LIMITS.transferLogEntries, (entry) => {
     w.fixed(entry, 32)
   })
   return w.done()
@@ -69,7 +69,7 @@ export const encodeTransferLogV1 = (t: TransferLogV1): Uint8Array => {
 
 export const decodeTransferLogV1 = (b: Uint8Array): TransferLogV1 => {
   const r = new Reader(b)
-  const entries = r.list(LIMITS.listCount, () => r.fixed(32))
+  const entries = r.list(LIMITS.transferLogEntries, () => r.fixed(32))
   r.finish()
   return { entries }
 }

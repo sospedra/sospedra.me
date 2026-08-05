@@ -109,6 +109,10 @@ export class Smt {
     return copy
   }
 
+  replaceWith(source: Smt): void {
+    this.leaves = new Map(source.leaves)
+  }
+
   private leafEntries(): Entry[] {
     return Array.from(this.leaves, ([pathHex, value]) => ({
       path: unhex(pathHex),

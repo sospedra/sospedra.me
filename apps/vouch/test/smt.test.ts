@@ -98,6 +98,18 @@ test('decodeWitness rejects a padded sibling list beyond the bitmap popcount', (
   )
 })
 
+test('replaceWith adopts another tree without merging', () => {
+  const a = new Smt()
+  a.set(ascii('k1'), ascii('v1'))
+  const b = new Smt()
+  b.set(ascii('k2'), ascii('v2'))
+
+  a.replaceWith(b)
+
+  assert.equal(hex(a.root()), hex(b.root()))
+  assert.equal(a.get(ascii('k1')), null)
+})
+
 test('decodeWitness rejects a starved sibling list below the bitmap popcount', () => {
   const t = new Smt()
   t.set(ascii('k1'), ascii('v1'))

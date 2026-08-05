@@ -87,22 +87,26 @@ export type AdvancedAuthor = {
   next: AuthorRecordV1
 }
 
+export type AdvanceSpec = {
+  operation: number
+  payload: Uint8Array
+  globalSequence: bigint
+}
+
 export function advanceAuthor(
   keypair: Keypair,
   current: AuthorRecordV1,
-  operation: number,
-  payload: Uint8Array,
-  globalSequence: bigint,
+  spec: AdvanceSpec,
 ): AdvancedAuthor {
   const signed = makeSignedEvent(
     keypair,
     current.sequence + 1n,
     current.tip,
-    operation,
-    payload,
+    spec.operation,
+    spec.payload,
   )
   const record: GlobalEventRecordV1 = {
-    globalSequence,
+    globalSequence: spec.globalSequence,
     eventHash: signed.eventHash,
     authorEvent: signed.eventBytes,
     authorSignature: signed.signature,
@@ -142,13 +146,11 @@ export function seqRecords(
     const current =
       bookkeeping.get(authorName) ?? readAuthorRecord(world.tree, keypair)
     const globalSequence = startSequence + BigInt(index) + 1n
-    const { record, next } = advanceAuthor(
-      keypair,
-      current,
+    const { record, next } = advanceAuthor(keypair, current, {
       operation,
       payload,
       globalSequence,
-    )
+    })
     bookkeeping.set(authorName, next)
     records.push(record)
   }

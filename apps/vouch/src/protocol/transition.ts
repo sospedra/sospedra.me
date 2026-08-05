@@ -331,6 +331,7 @@ type FeeRounding = (amount: bigint, feeBp: bigint) => bigint
 
 function applyTransfer(ctx: ApplyContext, feeRounding: FeeRounding): void {
   const payload = decodePayload(() => decodeTransfer(ctx.event.payload))
+  if (payload.from === payload.to) throw new RuleError('self-transfer')
   const from = readAccountOrRule(ctx.view, payload.from)
   const to = readAccountOrRule(ctx.view, payload.to)
   if (payload.amount <= 0n || from.balance < payload.amount) {
@@ -341,6 +342,7 @@ function applyTransfer(ctx: ApplyContext, feeRounding: FeeRounding): void {
     ctx.record.globalSequence,
   )
   const fee = feeRounding(payload.amount, feeBp)
+  if (fee > payload.amount) throw new RuleError('fee-overflow')
   ctx.view.set(
     accountKey(payload.from),
     encodeAccount({ balance: from.balance - payload.amount }),
@@ -360,8 +362,13 @@ function readConfigOrDefault(view: StateView, key: Uint8Array): ConfigV1 {
     : decodeConfig(raw)
 }
 
+const FEE_BP_MAX = 10000n
+
 function applySetConfig(ctx: ApplyContext): void {
   const payload = decodePayload(() => decodeSetConfig(ctx.event.payload))
+  if (payload.name === FEE_CONFIG_NAME && payload.value > FEE_BP_MAX) {
+    throw new RuleError('config-range')
+  }
   const key = configKey(payload.name)
   const existing = readConfigOrDefault(ctx.view, key)
   if (payload.activationSequence < ctx.record.globalSequence + TIMELOCK_MIN) {
@@ -437,17 +444,23 @@ const OP_HANDLERS: Record<
 
 function applyOperation(ctx: ApplyContext, feeRounding: FeeRounding): void {
   const handler = OP_HANDLERS[ctx.event.operation]
-  if (!handler) throw new RuleError('payload')
   handler(ctx, feeRounding)
 }
 
-function writeAuthorAdvance(ctx: ApplyContext, author: AuthorRecordV1): void {
+function writeAuthorAdvance(ctx: ApplyContext): void {
+  const current = decodeAuthorRecordV1(
+    requireValue(
+      ctx.view,
+      authorKey(ctx.event.authorKeyId),
+      'unauthorized-author',
+    ),
+  )
   ctx.view.set(
     authorKey(ctx.event.authorKeyId),
     encodeAuthorRecordV1({
-      role: author.role,
-      status: author.status,
-      sequence: author.sequence + 1n,
+      role: current.role,
+      status: current.status,
+      sequence: current.sequence + 1n,
       tip: ctx.record.eventHash,
     }),
   )
@@ -482,7 +495,7 @@ function applyRecord(batch: BatchContext, record: GlobalEventRecordV1): void {
   enforceAuthorSignature(ctx)
   enforceAuthorChain(ctx, author)
   applyOperation(ctx, batch.feeRounding)
-  writeAuthorAdvance(ctx, author)
+  writeAuthorAdvance(ctx)
 }
 
 export function applyBatch(
@@ -553,9 +566,11 @@ export function proveBatch(
   records: GlobalEventRecordV1[],
   expectedUpdateId: Uint8Array,
 ): TransparentTransitionProofV1 {
-  const view = new ProvingView(tree)
+  const working = tree.clone()
+  const view = new ProvingView(working)
   const applied = applyBatch(view, records, expectedUpdateId)
   const journal = encodeTransitionJournal(applied)
+  tree.replaceWith(working)
   return { journal, records, accesses: view.accesses() }
 }
 
@@ -583,6 +598,15 @@ function checkJournalAgreement(
     throw new RuleError('end-sequence')
   if (!bytesEqual(applied.batchHash, journal.batchHash))
     throw new RuleError('batch-hash')
+  if (!bytesEqual(applied.updateProgramId, journal.updateProgramId)) {
+    throw new RuleError('update-program-id')
+  }
+  if (!bytesEqual(applied.activeQueryProgramId, journal.activeQueryProgramId)) {
+    throw new RuleError('query-program-id')
+  }
+  if (!bytesEqual(applied.programChainHash, journal.programChainHash)) {
+    throw new RuleError('program-chain-hash')
+  }
 }
 
 export function verifyTransition(
