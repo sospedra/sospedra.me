@@ -16,8 +16,10 @@ function Liner({ record }: { record: JukeRecord }) {
 
 export default function StripMenu({
   onPick,
+  onHover,
 }: {
   onPick: (record: JukeRecord) => void
+  onHover: () => void
 }) {
   return (
     <ul className={css.frame}>
@@ -37,6 +39,7 @@ export default function StripMenu({
                   event.preventDefault()
                   onPick(record)
                 }}
+                onMouseEnter={onHover}
               >
                 <span className={css.title}>{record.title}</span>
                 <Liner record={record} />
