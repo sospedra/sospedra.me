@@ -1,0 +1,30 @@
+.hall {
+  --magenta: #ff2e88;
+  --amber: #ffb84d;
+  --teal: #46e6b0;
+  --lilac: #b98aff;
+  --warmwhite: #fff3d6;
+  --walnut: #5a3a24;
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  background: color-mix(in srgb, var(--walnut) 18%, black);
+  color: var(--warmwhite);
+}
+
+.marquee {
+  text-align: center;
+  color: var(--amber);
+}
+
+.strips {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.strip a {
+  color: var(--warmwhite);
+}
