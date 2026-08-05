@@ -14,11 +14,11 @@ import {
   chainNext,
   encodeMigration,
   GENESIS_CHAIN,
-  manifestFor,
   manifestHash,
   PROGRAM,
   type ProgramMigrationV1,
-  programId,
+  scenarioFixture,
+  simulatedManifestFor,
 } from '../protocol/program.ts'
 import {
   decodeBalanceResult,
@@ -44,8 +44,12 @@ const ACTIVATION_SEQUENCE = COMMIT_SEQUENCE + TIMELOCK_MIGRATION_MIN
 const BOUNDARY_TRANSFER_AMOUNT = 999n
 const GENESIS_FEE_BP = 250n
 
-const MIGRATION_MANIFEST_HASH = manifestHash(manifestFor('vouch-update-v2'))
-const GOVERNANCE_AUTHORIZATION = programId('governance-authorization-v1-to-v2')
+const MIGRATION_MANIFEST_HASH = manifestHash(
+  simulatedManifestFor('vouch-update-v2-simulated'),
+)
+const GOVERNANCE_AUTHORIZATION = scenarioFixture(
+  'governance-authorization-v1-to-v2',
+)
 
 function floorFeeBp(amount: bigint, feeBp: bigint): bigint {
   return (amount * feeBp) / 10_000n

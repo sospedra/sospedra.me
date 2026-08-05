@@ -14,11 +14,11 @@ import {
   decodeMigration,
   encodeMigration,
   GENESIS_CHAIN,
-  manifestFor,
   manifestHash,
   PROGRAM,
   type ProgramMigrationV1,
-  programId,
+  scenarioFixture,
+  simulatedManifestFor,
 } from '../protocol/program.ts'
 import {
   encodeGetBalanceBody,
@@ -41,8 +41,12 @@ const COMMIT_SEQUENCE = 1n
 const ACTIVATION_SEQUENCE = COMMIT_SEQUENCE + TIMELOCK_MIGRATION_MIN
 const CLAIMED_ACTIVATION_SEQUENCE = ACTIVATION_SEQUENCE - 1n
 
-const MIGRATION_MANIFEST_HASH = manifestHash(manifestFor('vouch-update-v2'))
-const GOVERNANCE_AUTHORIZATION = programId('governance-authorization-v1-to-v2')
+const MIGRATION_MANIFEST_HASH = manifestHash(
+  simulatedManifestFor('vouch-update-v2-simulated'),
+)
+const GOVERNANCE_AUTHORIZATION = scenarioFixture(
+  'governance-authorization-v1-to-v2',
+)
 
 function requireHead(latestHead: Uint8Array | null): LatestHeadV1 {
   if (latestHead === null) {

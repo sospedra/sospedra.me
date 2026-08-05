@@ -97,17 +97,91 @@ published query program over the witnessed reads and compares the result hash.
 ## definitions where the spec is silent
 
 The spec domain list is open ("Required Version 1 domains include"). The PoC
-adds one domain and defines three constructions.
+adds two domains and defines four constructions.
 
 1. Witness encoding. `SmtWitnessV1 { path: [u8;32], leaf: [u8;1] || opt,
    bitmap: [u8;32], siblings: list<[u8;32]> }`. `leaf` is `0x00` for absence
    or `0x01` followed by the 32-byte `value_hash`. The bitmap marks non-empty
    siblings. Empty siblings come from the protocol empty table.
-2. Program identity. The transparent model has no guest binary. The stand-in:
-   `program_id = hash("program-id", ascii_name)`, for example
-   `vouch-update-v1`. The verifier holds a fixed registry from `program_id` to
-   the TS implementation. This registry is the PoC terminal wrapper
-   (spec 15.2).
+2. Program identity (spec 15.1). Real, computed hashes over real artifacts,
+   with one substitution named explicitly:
+   - `lockfile_hash`: SHA-256 over the exact bytes of the repo's single
+     `pnpm-lock.yaml` (normalized to `\n` line endings). A pnpm workspace has
+     one lockfile for every package, so this is coarser than a per-crate
+     `Cargo.lock`: any workspace package's dependency edit flips it, not only
+     `apps/vouch`'s own. Reproducing the finer-grained closure would mean
+     re-deriving pnpm's own resolution graph, a worse source of truth than
+     the lockfile pnpm already wrote.
+   - `toolchain_hash`: SHA-256 over the length-framed concatenation of three
+     pinned facts: `apps/vouch/package.json`'s `engines.node` (`24.x`), the
+     resolved `typescript` version read from `node_modules/typescript/
+     package.json` (kept in sync with the pnpm-workspace catalog by `pnpm
+     install`, not re-derived from the lockfile's YAML to avoid a hand-rolled
+     parser), and the root `package.json`'s `packageManager` field
+     (`pnpm@11.13.0`).
+   - `build_recipe_hash`: SHA-256 over the length-framed concatenation of
+     `vite.config.ts`, `tsconfig.json`, the `@repo/typescript-config/
+     base.json` it extends (resolved via Node module resolution, since it
+     genuinely changes compiler behavior), and the literal `build` script
+     string (`vite build`).
+   - `program_source_hash`, replacing `guest_binary_hash`. A Merkle-ordered
+     list of `(relative_path, sha256(file_bytes))` pairs, sorted by path,
+     hashed together. The file set is the real transitive closure of
+     relative `.ts` imports starting from one entry file per program,
+     computed by walking the TypeScript AST (`scripts/source-graph.ts`), not
+     hand-picked: `src/protocol/transition.ts` for the update program (13
+     files) and `src/protocol/query.ts` for the query program (11 files,
+     strictly missing `events.ts` and `keys.ts`, which only the update
+     program needs to verify author signatures).
+   - `program_id = hash("program-id", lockfile_hash, toolchain_hash,
+     build_recipe_hash, program_source_hash)`. This is the first use of the
+     `program-id` domain for its own literal purpose; previously it hashed a
+     bare label.
+   - `source_commit` and `source_repository` are metadata, excluded from
+     `program_id` exactly as in spec 15.1's own four-field formula.
+     `source_commit` is `git rev-parse HEAD` and `source_repository` is
+     `git remote get-url origin`, both read at generation time; either is an
+     empty byte string, never a fabricated value, if git is unavailable.
+
+   Honesty boundary, stated plainly. `program_source_hash` is a
+   substitution for `guest_binary_hash`, not an equivalent. It binds the
+   source text an independent party can read and re-hash. It does not bind
+   an executed artifact, and it cannot detect a compromised compiler: a
+   corrupted `tsc`, bundler, or JS engine could turn this exact, honestly
+   hashed source into malicious running code without changing
+   `program_source_hash` at all. A real `guest_binary_hash` over a
+   reproducibly compiled binary closes that gap. Nothing in a TypeScript
+   PoC can.
+
+   `manifestFor('update' | 'query')` in `src/protocol/program.ts` is
+   browser-safe: it never touches the filesystem. It reads `lockfile_hash`,
+   `toolchain_hash`, and `build_recipe_hash` from the committed
+   `fixtures/protocol-v1/program-manifest.json`, but actively recomputes
+   `program_source_hash` from that same file's committed per-file digest
+   list, and recomputes `program_id` from all four hashes, on every call.
+   The full recomputation from real files on disk, including every file's
+   own SHA-256, lives in `scripts/program-id.ts`
+   (`pnpm --filter vouch program-id`), which is what wrote that JSON file in
+   the first place and is Node-only by necessity (it walks the filesystem
+   and shells out to `git`). Running it against a clean checkout reproduces
+   the same file byte for byte; `test/program-identity.test.ts` asserts
+   exactly that against the committed fixture, checks it against the
+   `PROGRAM` constants actually running in the app, and checks it is
+   byte-identical across repeated runs in the same process.
+
+   `PROGRAM.updateV2` and `PROGRAM.queryV2` exist only to drive the
+   migration scenarios (s18, s19). This PoC keeps both the v1 and v2 fee
+   curves inside the one `transition.ts` file, gated by an id comparison,
+   rather than maintaining a second source tree the way a real v2 release
+   would. There is therefore no honest file set to hash for "v2": hashing
+   the same files as v1 would silently claim two different programs share
+   one id, and inventing a different file set would be fabrication. Both
+   ids are instead built by `scenarioFixture(label)`, a labeled,
+   non-reproducible placeholder under its own `scenario-fixture` domain,
+   never the `program-id` domain. `simulatedManifestFor(label)` builds the
+   matching placeholder `ProgramManifestV1` the same way. Every identifier
+   involved says "scenario" or "simulated"; treat any id from that path as
+   narrative fixture data, not a claim about real code.
 3. Program chain. `program_chain_hash = hash("program-chain",
    previous_chain_hash, update_program_id, query_program_id,
    u64be(activation_sequence))`. Genesis uses a zero previous hash.
@@ -231,6 +305,15 @@ The node suite asserts equality. The future Rust port consumes the same files.
 3. No Protobuf and no ConnectRPC. Transport is a function call carrying byte
    arrays. The canonical layer is unaffected because Protobuf is
    transport-only per spec 8.3.
+4. `program_id`'s `program_source_hash` field substitutes for spec 15.1's
+   `guest_binary_hash`. It is a real, reproducible SHA-256 over the actual
+   source files that implement each program (see "definitions where the
+   spec is silent" above for the full construction and the honesty
+   boundary). It binds source text, not a compiled, executed artifact, and
+   cannot detect a compromised toolchain the way a real `guest_binary_hash`
+   would. `lockfile_hash`, `toolchain_hash`, and `build_recipe_hash` are
+   real and not substitutes; only `program_source_hash` stands in for
+   something a TypeScript PoC cannot produce.
 
 ## verdict kind for compound scenarios
 

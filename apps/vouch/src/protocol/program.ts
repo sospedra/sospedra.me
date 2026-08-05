@@ -1,27 +1,22 @@
-import { ascii, u64be } from './bytes.ts'
+import { sha256 } from '@noble/hashes/sha2.js'
+import programManifestFixture from '../../fixtures/protocol-v1/program-manifest.json' with {
+  type: 'json',
+}
+import { ascii, concat, u32be, u64be, unhex } from './bytes.ts'
 import { PROTOCOL_VERSION, ZERO32 } from './constants.ts'
 import { Reader, Writer } from './encode.ts'
 import { hash } from './hash.ts'
 import { LIMITS } from './limits.ts'
 
-export function programId(name: string): Uint8Array {
-  return hash('program-id', ascii(name))
-}
-
-export const PROGRAM = {
-  updateV1: programId('vouch-update-v1'),
-  updateV2: programId('vouch-update-v2'),
-  queryV1: programId('vouch-query-v1'),
-  queryV2: programId('vouch-query-v2'),
-}
+export type ProgramKind = 'update' | 'query'
 
 export type ProgramManifestV1 = {
   sourceRepository: Uint8Array
   sourceCommit: Uint8Array
-  cargoLockHash: Uint8Array
-  rustToolchainHash: Uint8Array
+  lockfileHash: Uint8Array
+  toolchainHash: Uint8Array
   buildRecipeHash: Uint8Array
-  guestBinaryHash: Uint8Array
+  programSourceHash: Uint8Array
   programId: Uint8Array
   protocolVersion: number
 }
@@ -30,10 +25,10 @@ export function encodeManifest(m: ProgramManifestV1): Uint8Array {
   const w = new Writer()
   w.bytes(m.sourceRepository, LIMITS.bytesField)
   w.bytes(m.sourceCommit, LIMITS.bytesField)
-  w.fixed(m.cargoLockHash, 32)
-  w.fixed(m.rustToolchainHash, 32)
+  w.fixed(m.lockfileHash, 32)
+  w.fixed(m.toolchainHash, 32)
   w.fixed(m.buildRecipeHash, 32)
-  w.fixed(m.guestBinaryHash, 32)
+  w.fixed(m.programSourceHash, 32)
   w.fixed(m.programId, 32)
   w.u16(m.protocolVersion)
   return w.done()
@@ -43,21 +38,21 @@ export function decodeManifest(buf: Uint8Array): ProgramManifestV1 {
   const r = new Reader(buf)
   const sourceRepository = r.bytes(LIMITS.bytesField)
   const sourceCommit = r.bytes(LIMITS.bytesField)
-  const cargoLockHash = r.fixed(32)
-  const rustToolchainHash = r.fixed(32)
+  const lockfileHash = r.fixed(32)
+  const toolchainHash = r.fixed(32)
   const buildRecipeHash = r.fixed(32)
-  const guestBinaryHash = r.fixed(32)
-  const programIdField = r.fixed(32)
+  const programSourceHash = r.fixed(32)
+  const programId = r.fixed(32)
   const protocolVersion = r.version(PROTOCOL_VERSION)
   r.finish()
   return {
     sourceRepository,
     sourceCommit,
-    cargoLockHash,
-    rustToolchainHash,
+    lockfileHash,
+    toolchainHash,
     buildRecipeHash,
-    guestBinaryHash,
-    programId: programIdField,
+    programSourceHash,
+    programId,
     protocolVersion,
   }
 }
@@ -66,29 +61,97 @@ export function manifestHash(m: ProgramManifestV1): Uint8Array {
   return hash('program-id', encodeManifest(m))
 }
 
-export function manifestFor(name: string): ProgramManifestV1 {
+export function framedDigest(parts: Uint8Array[]): Uint8Array {
+  const framed = parts.flatMap((part) => [u32be(part.length), part])
+  return sha256(concat(...framed))
+}
+
+export type SourceFileDigest = { path: string; digest: Uint8Array }
+
+function byPath(a: SourceFileDigest, b: SourceFileDigest): number {
+  if (a.path < b.path) return -1
+  if (a.path > b.path) return 1
+  return 0
+}
+
+export function deriveProgramSourceHash(files: SourceFileDigest[]): Uint8Array {
+  const sorted = files.toSorted(byPath)
+  const parts = sorted.flatMap((file) => [ascii(file.path), file.digest])
+  return framedDigest(parts)
+}
+
+export type ProgramIdInputs = {
+  lockfileHash: Uint8Array
+  toolchainHash: Uint8Array
+  buildRecipeHash: Uint8Array
+  programSourceHash: Uint8Array
+}
+
+export function deriveProgramId(inputs: ProgramIdInputs): Uint8Array {
+  return hash(
+    'program-id',
+    inputs.lockfileHash,
+    inputs.toolchainHash,
+    inputs.buildRecipeHash,
+    inputs.programSourceHash,
+  )
+}
+
+export function scenarioFixture(label: string): Uint8Array {
+  return hash('scenario-fixture', ascii(label))
+}
+
+export function simulatedManifestFor(label: string): ProgramManifestV1 {
+  const field = (name: string) =>
+    hash('scenario-fixture', ascii(`${label}-manifest-${name}`))
   return {
-    sourceRepository: hash(
-      'program-id',
-      ascii(`${name}-manifest-sourceRepository`),
-    ),
-    sourceCommit: hash('program-id', ascii(`${name}-manifest-sourceCommit`)),
-    cargoLockHash: hash('program-id', ascii(`${name}-manifest-cargoLockHash`)),
-    rustToolchainHash: hash(
-      'program-id',
-      ascii(`${name}-manifest-rustToolchainHash`),
-    ),
-    buildRecipeHash: hash(
-      'program-id',
-      ascii(`${name}-manifest-buildRecipeHash`),
-    ),
-    guestBinaryHash: hash(
-      'program-id',
-      ascii(`${name}-manifest-guestBinaryHash`),
-    ),
-    programId: programId(name),
-    protocolVersion: 1,
+    sourceRepository: ascii(`scenario-fixture:${label}`),
+    sourceCommit: new Uint8Array(0),
+    lockfileHash: field('lockfileHash'),
+    toolchainHash: field('toolchainHash'),
+    buildRecipeHash: field('buildRecipeHash'),
+    programSourceHash: field('programSourceHash'),
+    programId: scenarioFixture(label),
+    protocolVersion: PROTOCOL_VERSION,
   }
+}
+
+function programSourceHashFor(kind: ProgramKind): Uint8Array {
+  const files = programManifestFixture.programs[kind].sourceFiles.map(
+    (file) => ({ path: file.path, digest: unhex(file.sha256) }),
+  )
+  return deriveProgramSourceHash(files)
+}
+
+export function manifestFor(kind: ProgramKind): ProgramManifestV1 {
+  const lockfileHash = unhex(programManifestFixture.lockfile.lockfileHash)
+  const toolchainHash = unhex(programManifestFixture.toolchain.toolchainHash)
+  const buildRecipeHash = unhex(
+    programManifestFixture.buildRecipe.buildRecipeHash,
+  )
+  const programSourceHash = programSourceHashFor(kind)
+  return {
+    sourceRepository: ascii(programManifestFixture.sourceRepository),
+    sourceCommit: ascii(programManifestFixture.sourceCommit),
+    lockfileHash,
+    toolchainHash,
+    buildRecipeHash,
+    programSourceHash,
+    programId: deriveProgramId({
+      lockfileHash,
+      toolchainHash,
+      buildRecipeHash,
+      programSourceHash,
+    }),
+    protocolVersion: PROTOCOL_VERSION,
+  }
+}
+
+export const PROGRAM = {
+  updateV1: manifestFor('update').programId,
+  updateV2: scenarioFixture('vouch-update-v2-simulated'),
+  queryV1: manifestFor('query').programId,
+  queryV2: scenarioFixture('vouch-query-v2-simulated'),
 }
 
 export type ProgramMigrationV1 = {

@@ -51,7 +51,8 @@ import {
   manifestHash,
   PROGRAM,
   type ProgramMigrationV1,
-  programId,
+  scenarioFixture,
+  simulatedManifestFor,
 } from '../src/protocol/program.ts'
 import {
   decodeBalanceResult,
@@ -126,14 +127,13 @@ const DOMAIN_PRESENCE: Record<Domain, true> = {
   'program-chain': true,
   'proof-cache-key': true,
   'program-id': true,
+  'scenario-fixture': true,
 }
 const DOMAINS = Object.keys(DOMAIN_PRESENCE) as Domain[]
 
-const PROGRAM_NAMES = [
-  'vouch-update-v1',
-  'vouch-update-v2',
-  'vouch-query-v1',
-  'vouch-query-v2',
+const SIMULATED_PROGRAM_LABELS = [
+  'vouch-update-v2-simulated',
+  'vouch-query-v2-simulated',
 ] as const
 
 type JsonValue =
@@ -430,11 +430,27 @@ export function buildVectors(): VectorsFile {
     ),
   )
 
-  const programIdEntries = PROGRAM_NAMES.map((name) =>
+  const realProgramIdEntries = (['update', 'query'] as const).map((kind) => {
+    const manifest = manifestFor(kind)
+    return hashEntry(
+      `program-id/${kind}-v1`,
+      {
+        domain: 'program-id',
+        kind,
+        lockfileHash: manifest.lockfileHash,
+        toolchainHash: manifest.toolchainHash,
+        buildRecipeHash: manifest.buildRecipeHash,
+        programSourceHash: manifest.programSourceHash,
+      },
+      manifest.programId,
+    )
+  })
+
+  const simulatedProgramIdEntries = SIMULATED_PROGRAM_LABELS.map((label) =>
     hashEntry(
-      `program-id/${name}`,
-      { domain: 'program-id', label: name, input: ascii(name) },
-      programId(name),
+      `program-id/${label}`,
+      { domain: 'scenario-fixture', label, input: ascii(label) },
+      scenarioFixture(label),
     ),
   )
 
@@ -542,8 +558,12 @@ export function buildVectors(): VectorsFile {
     receiptKeyId: fixture.world.receiptKey.publicKey,
   }
 
-  const manifestSample = manifestFor('vouch-update-v1')
-  const nextManifestHash = manifestHash(manifestFor('vouch-update-v2'))
+  const updateManifestSample = manifestFor('update')
+  const queryManifestSample = manifestFor('query')
+  const simulatedManifestSample = simulatedManifestFor(
+    'vouch-update-v2-simulated',
+  )
+  const nextManifestHash = manifestHash(simulatedManifestSample)
   const migrationSample: ProgramMigrationV1 = {
     nextUpdateProgramId: PROGRAM.updateV2,
     nextQueryProgramId: PROGRAM.queryV2,
@@ -687,9 +707,19 @@ export function buildVectors(): VectorsFile {
     ),
     objectEntry('object/LatestHeadV1', fixture.latestHead, fixture.headBytes),
     objectEntry(
-      'object/ProgramManifestV1',
-      manifestSample,
-      encodeManifest(manifestSample),
+      'object/ProgramManifestV1:update',
+      updateManifestSample,
+      encodeManifest(updateManifestSample),
+    ),
+    objectEntry(
+      'object/ProgramManifestV1:query',
+      queryManifestSample,
+      encodeManifest(queryManifestSample),
+    ),
+    objectEntry(
+      'object/ProgramManifestV1:simulated',
+      simulatedManifestSample,
+      encodeManifest(simulatedManifestSample),
     ),
     objectEntry(
       'object/ProgramMigrationV1',
@@ -729,7 +759,8 @@ export function buildVectors(): VectorsFile {
 
   const entries = [
     ...domainHashEntries,
-    ...programIdEntries,
+    ...realProgramIdEntries,
+    ...simulatedProgramIdEntries,
     genesisChainEntry,
     ...rootEntries,
     ...objectEntries,

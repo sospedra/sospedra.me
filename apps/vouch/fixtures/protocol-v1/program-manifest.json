@@ -1,0 +1,130 @@
+{
+  "sourceRepository": "git@github.com:sospedra/sospedra.me.git",
+  "sourceCommit": "d97b3e1f811d43deed4141beb760e9ff7071d371",
+  "toolchain": {
+    "nodeEngine": "24.x",
+    "typescriptVersion": "5.9.3",
+    "packageManager": "pnpm@11.13.0",
+    "toolchainHash": "17fc5e9d1032b38e4ba9c89bc41fe28d9b40c4e04c8ba4d8b781b9117e0a22e5"
+  },
+  "buildRecipe": {
+    "buildScript": "vite build",
+    "buildRecipeHash": "be12f262c89a3a5049ed8784048e5ce1fae33e65229d3c625ba10540eb565db5"
+  },
+  "lockfile": {
+    "path": "pnpm-lock.yaml",
+    "lockfileHash": "5415c844f28b8f50415439feb75af4abd5d8823abc0785e87d11813de82e4046"
+  },
+  "programs": {
+    "update": {
+      "entryFile": "src/protocol/transition.ts",
+      "sourceFiles": [
+        {
+          "path": "src/protocol/transition.ts",
+          "sha256": "49dd8febd08d68cd0b1427efa7b31421437dc26bbd78a5d81b601e38ad2a7b3c"
+        },
+        {
+          "path": "src/protocol/bytes.ts",
+          "sha256": "dd518b472a2cbe9ff62ae5fcb38a39dfeab850d84e7d1adb06416b49735817a7"
+        },
+        {
+          "path": "src/protocol/constants.ts",
+          "sha256": "3403a1cdcb839d77381e8083325afdc48fd72693742b70e68bf53ba9cf18aac2"
+        },
+        {
+          "path": "src/protocol/encode.ts",
+          "sha256": "bd7f674ffdd1edaf753c502cf0751637670d8e6d2bf58eb29be26b2a381572f4"
+        },
+        {
+          "path": "src/protocol/events.ts",
+          "sha256": "01841995215ad51638cf3cf4eefc74de07b594a5a695e90a452e64d54eb92b17"
+        },
+        {
+          "path": "src/protocol/hash.ts",
+          "sha256": "fe1a91d6be7bcf41f4a1019c801b807c48ea5ea731ba782c103c4ee50b8d674b"
+        },
+        {
+          "path": "src/protocol/keys.ts",
+          "sha256": "b5ec4c9ad1326e0de82f84a579c122dbf41c68860192f79f1b5c77522b0906ff"
+        },
+        {
+          "path": "src/protocol/limits.ts",
+          "sha256": "63d340c20bcecaf5c11d65dfd5eb087cf0044ae7a51b1dd5064e86a2bdc86675"
+        },
+        {
+          "path": "src/protocol/ops.ts",
+          "sha256": "9b940a5b6934ea26ba05fcad5745fae59eb2cf6d7177d3fd550d0009d83eff75"
+        },
+        {
+          "path": "src/protocol/program.ts",
+          "sha256": "06a8d6238c914552a3afc9e5c624bcd1ac1a40f0aadb62ada8b015225390767a"
+        },
+        {
+          "path": "src/protocol/smt.ts",
+          "sha256": "c5b5081ec83a022a9cd2840ebc83ebde94c161c2895a8bcf9085db29b57c3cd8"
+        },
+        {
+          "path": "src/protocol/state.ts",
+          "sha256": "5ac7fa5b08dcc84ed835abd906b48a19005d4b01bbcd1656dbec814860e3344a"
+        },
+        {
+          "path": "src/protocol/view.ts",
+          "sha256": "b4c6bc5a5dd3f01c2b74bc435eeb772c634b14e0bf8f5e02c393edf6d01b6686"
+        }
+      ],
+      "programSourceHash": "be18eef63bea45476620ad96fcd646f4a25d16e38028fb2f36a2c75ee8cb6d65",
+      "programId": "352b90aaafe43a4e835b8ea33171fe6e46ea5d5713186fda449e337e97440346"
+    },
+    "query": {
+      "entryFile": "src/protocol/query.ts",
+      "sourceFiles": [
+        {
+          "path": "src/protocol/query.ts",
+          "sha256": "5fbf879a4d8c74512a3bbd00915dd5a51b55d051ca91943e1198eee66ce90561"
+        },
+        {
+          "path": "src/protocol/bytes.ts",
+          "sha256": "dd518b472a2cbe9ff62ae5fcb38a39dfeab850d84e7d1adb06416b49735817a7"
+        },
+        {
+          "path": "src/protocol/encode.ts",
+          "sha256": "bd7f674ffdd1edaf753c502cf0751637670d8e6d2bf58eb29be26b2a381572f4"
+        },
+        {
+          "path": "src/protocol/hash.ts",
+          "sha256": "fe1a91d6be7bcf41f4a1019c801b807c48ea5ea731ba782c103c4ee50b8d674b"
+        },
+        {
+          "path": "src/protocol/limits.ts",
+          "sha256": "63d340c20bcecaf5c11d65dfd5eb087cf0044ae7a51b1dd5064e86a2bdc86675"
+        },
+        {
+          "path": "src/protocol/ops.ts",
+          "sha256": "9b940a5b6934ea26ba05fcad5745fae59eb2cf6d7177d3fd550d0009d83eff75"
+        },
+        {
+          "path": "src/protocol/program.ts",
+          "sha256": "06a8d6238c914552a3afc9e5c624bcd1ac1a40f0aadb62ada8b015225390767a"
+        },
+        {
+          "path": "src/protocol/smt.ts",
+          "sha256": "c5b5081ec83a022a9cd2840ebc83ebde94c161c2895a8bcf9085db29b57c3cd8"
+        },
+        {
+          "path": "src/protocol/state.ts",
+          "sha256": "5ac7fa5b08dcc84ed835abd906b48a19005d4b01bbcd1656dbec814860e3344a"
+        },
+        {
+          "path": "src/protocol/view.ts",
+          "sha256": "b4c6bc5a5dd3f01c2b74bc435eeb772c634b14e0bf8f5e02c393edf6d01b6686"
+        },
+        {
+          "path": "src/protocol/constants.ts",
+          "sha256": "3403a1cdcb839d77381e8083325afdc48fd72693742b70e68bf53ba9cf18aac2"
+        }
+      ],
+      "programSourceHash": "077da19c510f03429e1461d0832fe051342cc163d720feb09f7990f092e9f249",
+      "programId": "b7a79d407b4174f5f7cc9f028ea235423055e1f1581bd82e5e4c3fd9be325279"
+    }
+  }
+}
