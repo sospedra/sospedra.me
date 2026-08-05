@@ -95,6 +95,13 @@ function requireValue(tree: Smt, key: Uint8Array): Uint8Array {
   return value
 }
 
+function receiptWitnessCacheKey(
+  stateRoot: Uint8Array,
+  receiptKeyId: Uint8Array,
+): string {
+  return `${hex(stateRoot)}:${hex(receiptKeyId)}`
+}
+
 export class Server {
   tree: Smt
   log: GlobalEventRecordV1[]
@@ -103,6 +110,8 @@ export class Server {
   queryId: Uint8Array
   chainHash: Uint8Array
   proofCache: Map<string, Uint8Array>
+  receiptKeyWitnessCache: Map<string, AccessV1>
+  resultOverrides: Map<string, Uint8Array>
   clockMs: bigint
   sealedTransitions: TransparentTransitionProofV1[]
 
@@ -115,6 +124,8 @@ export class Server {
     this.queryId = chain.queryProgramId
     this.chainHash = chain.chainHash
     this.proofCache = new Map()
+    this.receiptKeyWitnessCache = new Map()
+    this.resultOverrides = new Map()
     this.clockMs = CLOCK_START_MS
     this.sealedTransitions = []
   }
@@ -186,13 +197,16 @@ export class Server {
     const { headBytes, sig } = this.signHead(now)
     return {
       canonicalRequest: requestBytes,
-      canonicalResult: this.replayResult(queryProofBytes),
+      canonicalResult: this.canonicalResultFor(
+        input.receiptBytes,
+        queryProofBytes,
+      ),
       receipt: input.receiptBytes,
       receiptSignature: sign(
         receiptSigningInput(input.receiptBytes),
         this.world.receiptKey,
       ),
-      receiptKeyWitness: this.receiptKeyWitnessFor(receipt.receiptKeyId),
+      receiptKeyWitness: this.cachedReceiptKeyWitness(receipt),
       queryProof: queryProofBytes,
       transitions: this.transitionsSince(input.sinceSequence),
       migrations: this.migrationsSince(
@@ -204,8 +218,8 @@ export class Server {
     }
   }
 
-  signedHead(): SignedHeadResult {
-    return this.signHead(this.tick())
+  signedHead(latestAsOfMs: bigint = this.tick()): SignedHeadResult {
+    return this.signHead(latestAsOfMs)
   }
 
   private tick(): bigint {
@@ -268,6 +282,14 @@ export class Server {
     requestBytes: Uint8Array,
     receipt: QueryReceiptV1,
   ): void {
+    this.cacheQueryProofBytes(requestBytes, receipt)
+    this.cacheReceiptKeyWitness(receipt)
+  }
+
+  private cacheQueryProofBytes(
+    requestBytes: Uint8Array,
+    receipt: QueryReceiptV1,
+  ): void {
     const cacheKey = hex(
       proofCacheKey(
         receipt.queryProgramId,
@@ -284,11 +306,33 @@ export class Server {
     this.proofCache.set(cacheKey, encodeTransparentQueryProof(proof))
   }
 
+  private cacheReceiptKeyWitness(receipt: QueryReceiptV1): void {
+    const witnessKey = receiptWitnessCacheKey(
+      receipt.stateRoot,
+      receipt.receiptKeyId,
+    )
+    if (this.receiptKeyWitnessCache.has(witnessKey)) return
+    this.receiptKeyWitnessCache.set(
+      witnessKey,
+      this.receiptKeyWitnessFor(receipt.receiptKeyId),
+    )
+  }
+
   private replayResult(queryProofBytes: Uint8Array): Uint8Array {
     const proof = decodeTransparentQueryProof(queryProofBytes)
     const journal = decodeQueryJournal(proof.journal)
     const view = new ReplayView(journal.stateRoot, proof.accesses.slice())
     return runQuery(view, proof.requestBytes, journal.queryProgramId)
+  }
+
+  private canonicalResultFor(
+    receiptBytes: Uint8Array,
+    queryProofBytes: Uint8Array,
+  ): Uint8Array {
+    const override = this.resultOverrides.get(
+      hex(receiptSigningInput(receiptBytes)),
+    )
+    return override ?? this.replayResult(queryProofBytes)
   }
 
   private receiptKeyWitnessFor(keyId: Uint8Array): AccessV1 {
@@ -299,6 +343,20 @@ export class Server {
       value: this.tree.get(key),
       witness: this.tree.witness(key),
     }
+  }
+
+  private cachedReceiptKeyWitness(receipt: QueryReceiptV1): AccessV1 {
+    const witnessKey = receiptWitnessCacheKey(
+      receipt.stateRoot,
+      receipt.receiptKeyId,
+    )
+    const witness = this.receiptKeyWitnessCache.get(witnessKey)
+    if (!witness) {
+      throw new RangeError(
+        'server: no cached receipt-key witness for this receipt',
+      )
+    }
+    return witness
   }
 
   private transitionsSince(sinceSequence: bigint): Uint8Array[] {

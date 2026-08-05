@@ -18,6 +18,8 @@ import {
 } from '../protocol/ops.ts'
 import { GENESIS_CHAIN, PROGRAM } from '../protocol/program.ts'
 import {
+  decodeGetBalanceBody,
+  decodeQueryRequest,
   encodeGetBalanceBody,
   encodeQueryRequest,
   REQ,
@@ -112,16 +114,18 @@ function queryRequestStep(
   requestBytes: Uint8Array,
   nonce: Uint8Array,
 ): TraceStep {
+  const body = decodeQueryRequest(requestBytes).body
+  const { accountId } = decodeGetBalanceBody(body)
   return {
     actor: 'client',
     kind: 'act',
-    label: 'client requests get-balance(bob) with a fresh nonce',
+    label: `client requests get-balance(${accountId}) with a fresh nonce`,
     detail: `nonce ${hex(nonce)}`,
     objects: [
       {
         ...obj('query-request', 'query-request', requestBytes, {
           requestType: String(REQ.GET_BALANCE),
-          accountId: 'bob',
+          accountId,
         }),
         hash: hex(requestHash(requestBytes)),
       },
