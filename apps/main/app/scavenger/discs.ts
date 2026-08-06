@@ -1,0 +1,151 @@
+export const DISC_LOOKS = ['burn', 'label', 'press', 'rw', 'tape'] as const
+
+export type DiscLook = (typeof DISC_LOOKS)[number]
+
+export type Disc = {
+  id: string
+  title: string
+  oneLiner: string
+  note: string
+  url: string
+  pressed: number
+  stack: string
+  status: 'pressed' | 'test-pressing'
+  hue: number
+  look: DiscLook
+}
+
+export const DISCS: Disc[] = [
+  {
+    id: 'vouch',
+    title: 'vouch',
+    oneLiner: 'Signed API responses with sparse merkle witnesses.',
+    note: 'verify everything',
+    url: 'https://vouch.sospedra.me',
+    pressed: 2026,
+    stack: 'TypeScript, ed25519',
+    status: 'test-pressing',
+    hue: 175,
+    look: 'press',
+  },
+  {
+    id: 'sige',
+    title: 'sige',
+    oneLiner: 'Sealed-identity escrow behind a time-lock delay.',
+    note: 'sealed. wait for it',
+    url: 'https://sige.sospedra.me',
+    pressed: 2026,
+    stack: 'TypeScript, sequential squaring',
+    status: 'test-pressing',
+    hue: 305,
+    look: 'rw',
+  },
+  {
+    id: 'aol',
+    title: 'aol',
+    oneLiner: 'A serverless peer mesh in the browser.',
+    note: 'no servers inside',
+    url: 'https://aol.sospedra.me',
+    pressed: 2026,
+    stack: 'WebRTC, gossip',
+    status: 'test-pressing',
+    hue: 245,
+    look: 'burn',
+  },
+  {
+    id: 'olympics',
+    title: 'olympics',
+    oneLiner: 'Tokyo 2020 results, frozen in amber.',
+    note: 'tokyo, kept frozen',
+    url: 'https://olympics.sospedra.me',
+    pressed: 2021,
+    stack: 'Static snapshot',
+    status: 'test-pressing',
+    hue: 95,
+    look: 'label',
+  },
+  {
+    id: 'bonfire',
+    title: 'bonfire',
+    oneLiner: 'A quiet fire to sit around.',
+    note: 'sit. warm up',
+    url: 'https://bonfire.sospedra.me',
+    pressed: 2020,
+    stack: 'Next, Tailwind',
+    status: 'pressed',
+    hue: 45,
+    look: 'tape',
+  },
+  {
+    id: 'wkc',
+    title: 'which key code',
+    oneLiner: 'Press any key, read its code.',
+    note: 'press any key',
+    url: 'https://keycodes.sospedra.me',
+    pressed: 2019,
+    stack: 'Vite, vanilla TS',
+    status: 'test-pressing',
+    hue: 210,
+    look: 'burn',
+  },
+  {
+    id: 'spg',
+    title: 'semantic password generator',
+    oneLiner: 'Passwords you can read out loud.',
+    note: 'read it out loud',
+    url: 'https://spg.sospedra.me',
+    pressed: 2017,
+    stack: 'TypeScript, zero deps',
+    status: 'test-pressing',
+    hue: 135,
+    look: 'label',
+  },
+  {
+    id: 'len',
+    title: 'len',
+    oneLiner: 'Safe array length access.',
+    note: 'mind the length',
+    url: 'https://len.sospedra.me',
+    pressed: 2017,
+    stack: 'TypeScript micro-lib',
+    status: 'test-pressing',
+    hue: 15,
+    look: 'tape',
+  },
+  {
+    id: 'sti',
+    title: 'sti',
+    oneLiner: 'Semver to integer, safely.',
+    note: 'semver, flattened',
+    url: 'https://sti.sospedra.me',
+    pressed: 2017,
+    stack: 'TypeScript micro-lib',
+    status: 'test-pressing',
+    hue: 65,
+    look: 'press',
+  },
+  {
+    id: 'logatim',
+    title: 'logatim',
+    oneLiner: 'Isomorphic logger with levels and ANSI styles.',
+    note: 'logs, in color',
+    url: 'https://logatim.sospedra.me',
+    pressed: 2016,
+    stack: 'TypeScript, ESM',
+    status: 'test-pressing',
+    hue: 270,
+    look: 'rw',
+  },
+  {
+    id: 'rfm',
+    title: 'rfm',
+    oneLiner: 'Live issue search over the old repo.',
+    note: 'still answering',
+    url: 'https://rfm.sospedra.me',
+    pressed: 2016,
+    stack: 'GitHub issues API',
+    status: 'test-pressing',
+    hue: 335,
+    look: 'burn',
+  },
+]

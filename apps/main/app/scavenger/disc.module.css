@@ -1,0 +1,391 @@
+.hit {
+  position: absolute;
+  left: 50%;
+  top: 47%;
+  width: 72%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  z-index: 1;
+  pointer-events: auto;
+  transition:
+    opacity 0.45s ease,
+    filter 0.45s ease;
+}
+
+.hit:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 6px;
+}
+
+/* the scene stamps data-out while a disc is held; the rest dim out */
+[data-out="true"] .hit[data-state="in"] {
+  opacity: 0.3;
+  filter: saturate(0.5) brightness(0.8);
+  pointer-events: none;
+}
+
+/* the floater owns the flying disc, its sleeve copy vanishes in place */
+.hit[data-state="ghost"] {
+  opacity: 0;
+  transition: none;
+}
+
+.lift {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 7px 9px rgb(0 0 0 / 50%));
+}
+
+/* under the vinyl pocket (z 5): the disc slides out of and into the
+   plastic before and after the free flight, without spin */
+.hit[data-state="ejecting"],
+.hit[data-state="inserting"] {
+  z-index: 4;
+}
+
+.hit[data-state="ejecting"] .lift {
+  animation: eject-up 0.28s ease-out forwards;
+}
+
+@keyframes eject-up {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-75%);
+  }
+}
+
+.hit[data-state="inserting"] .lift {
+  animation: insert-down 0.28s ease-in forwards;
+}
+
+@keyframes insert-down {
+  from {
+    transform: translateY(-75%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.bob {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.persp {
+  display: block;
+  width: 100%;
+  height: 100%;
+  perspective: 1100px;
+}
+
+.cd {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.cdFace {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  mask: radial-gradient(circle, transparent 0 8.2%, #000 8.7%);
+}
+
+/* five pressings; every one keeps the silver base, hub ring and sheen */
+.cdFront {
+  --print: linear-gradient(transparent, transparent);
+  background:
+    radial-gradient(circle at 32% 28%, rgb(255 255 255 / 26%), transparent 42%),
+    var(--print),
+    radial-gradient(
+      circle,
+      #eef0f4 0 9.2%,
+      rgb(255 255 255 / 55%) 9.2% 10%,
+      #dfe3ea 10% 100%
+    );
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 30%),
+    inset 0 0 16px rgb(0 0 0 / 18%);
+}
+
+/* print tick ring near the rim */
+.cdFront::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    rgb(0 0 0 / 12%) 0 0.7deg,
+    transparent 0.7deg 6deg
+  );
+  mask: radial-gradient(
+    circle,
+    transparent 0 72%,
+    #000 74% 80%,
+    transparent 82%
+  );
+}
+
+/* blank cd-r: metallic hub band and a faint dye ring */
+.cdFront[data-look="burn"] {
+  --print:
+    radial-gradient(
+      circle,
+      transparent 0 22%,
+      rgb(120 128 144 / 28%) 23% 30%,
+      transparent 31%
+    ),
+    radial-gradient(
+      circle,
+      transparent 0 32%,
+      oklch(85% 0.05 var(--h) / 45%) 34% 60%,
+      oklch(76% 0.09 var(--h) / 52%) 60% 82%,
+      transparent 84%
+    );
+}
+
+/* magazine cover disc: matte paper label with a printed edge ring */
+.cdFront[data-look="label"] {
+  --print:
+    radial-gradient(
+      circle,
+      transparent 0 84%,
+      oklch(80% 0.1 var(--h) / 70%) 85% 88%,
+      transparent 89%
+    ),
+    radial-gradient(circle, transparent 0 15.5%, #f2f1ec 16.5% 100%);
+}
+
+/* pressed retail cd-rom: hue-tinted metal with soft sheen sweeps */
+.cdFront[data-look="press"] {
+  --print:
+    conic-gradient(
+      from 40deg,
+      rgb(255 255 255 / 14%) 0 40deg,
+      transparent 90deg 160deg,
+      rgb(255 255 255 / 10%) 200deg,
+      transparent 260deg 330deg,
+      rgb(255 255 255 / 12%)
+    ),
+    radial-gradient(
+      circle,
+      transparent 0 16%,
+      oklch(74% 0.07 var(--h) / 85%) 17% 100%
+    );
+}
+
+/* colored cd-rw: saturated body with the white hub band */
+.cdFront[data-look="rw"] {
+  --print:
+    radial-gradient(
+      circle,
+      transparent 0 15.5%,
+      #f4f5f8 16% 24%,
+      transparent 25%
+    ),
+    radial-gradient(
+      circle,
+      transparent 0 15.5%,
+      oklch(55% 0.17 var(--h) / 96%) 16% 92%,
+      oklch(45% 0.14 var(--h) / 96%) 92% 100%
+    );
+}
+
+/* bare home burn: silver blank with faint holo slivers */
+.cdFront[data-look="tape"] {
+  --print: conic-gradient(
+    from 205deg,
+    transparent 0 20deg,
+    oklch(80% 0.14 var(--h) / 25%) 24deg,
+    transparent 30deg,
+    transparent 130deg,
+    rgb(150 220 255 / 20%) 140deg,
+    transparent 150deg,
+    transparent 250deg,
+    rgb(255 190 230 / 18%) 260deg,
+    transparent 268deg
+  );
+}
+
+/* the holographic data side */
+.cdBack {
+  transform: rotateY(180deg);
+  background:
+    repeating-radial-gradient(
+      circle,
+      rgb(0 0 0 / 4.5%) 0 1px,
+      rgb(255 255 255 / 4%) 1px 2px,
+      transparent 2px 3.5px
+    ),
+    radial-gradient(
+      circle,
+      #eef0f4 0 9.2%,
+      #c6c9d2 9.2% 12%,
+      #edeff3 12% 15%,
+      #a9adba 15% 16.6%,
+      #d0d3dc 16.6% 54%,
+      #b9bdc9 54% 82%,
+      #dadce4 82% 100%
+    );
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 35%);
+}
+
+.cdBack::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 25deg in oklch longer hue,
+    oklch(78% 0.15 20),
+    oklch(78% 0.15 20)
+  );
+  filter: blur(9px) saturate(1.35);
+  mix-blend-mode: overlay;
+  opacity: 0.8;
+  mask: radial-gradient(circle, transparent 0 17%, #000 19.5%);
+}
+
+.cdBack::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 205deg,
+    transparent 0 28deg,
+    rgb(255 255 255 / 92%) 46deg,
+    transparent 64deg,
+    transparent 176deg,
+    rgb(255 255 255 / 55%) 196deg,
+    transparent 216deg
+  );
+  filter: blur(3px);
+  mix-blend-mode: screen;
+  mask: radial-gradient(circle, transparent 0 16%, #000 18%);
+}
+
+/* translucent vinyl pocket over the lower half */
+.pocket {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: 3.5%;
+  height: 55%;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: 8px 8px 11px 11px;
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 15%),
+    rgb(255 255 255 / 5%) 32%,
+    rgb(255 255 255 / 10%)
+  );
+  border-top: 1px solid rgb(255 255 255 / 40%);
+  box-shadow:
+    inset 0 10px 14px -10px rgb(255 255 255 / 30%),
+    inset 0 -8px 12px -10px rgb(255 255 255 / 20%),
+    0 -1px 0 rgb(0 0 0 / 25%);
+}
+
+/* the free flight: from the ejected pose to the viewport center while
+   spinning, and the exact reverse on the way back */
+.floater {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: var(--size, 300px);
+  aspect-ratio: 1;
+  z-index: 60;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(1.8);
+  filter: drop-shadow(0 22px 34px rgb(0 0 0 / 55%));
+}
+
+.floater[data-motion="out"] {
+  animation: fly-out 0.62s var(--ease-signal) both;
+}
+
+@keyframes fly-out {
+  from {
+    transform: translate(
+        calc(-50% + var(--dx, 0px)),
+        calc(-50% + var(--dy, 0px))
+      )
+      scale(1);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1.8);
+  }
+}
+
+.floater[data-motion="out"] .cd {
+  animation: spin-twice 0.62s cubic-bezier(0.3, 0.5, 0.3, 0.99) both;
+}
+
+@keyframes spin-twice {
+  to {
+    transform: rotateY(720deg);
+  }
+}
+
+.floater[data-motion="out"] .bob {
+  animation: bob 2.4s 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes bob {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-4.5%);
+  }
+}
+
+.floater[data-motion="back"] {
+  animation: fly-back 0.6s cubic-bezier(0.4, 0.05, 0.55, 1) both;
+}
+
+@keyframes fly-back {
+  from {
+    transform: translate(-50%, -50%) scale(1.8);
+  }
+
+  to {
+    transform: translate(
+        calc(-50% + var(--dx, 0px)),
+        calc(-50% + var(--dy, 0px))
+      )
+      scale(1);
+  }
+}
+
+.floater[data-motion="back"] .cd {
+  animation: spin-back 0.6s cubic-bezier(0.4, 0.05, 0.55, 1) both;
+}
+
+@keyframes spin-back {
+  from {
+    transform: rotateY(720deg);
+  }
+
+  to {
+    transform: rotateY(0deg);
+  }
+}

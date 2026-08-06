@@ -1,0 +1,308 @@
+/* print layers shared by every pressing; positions are % of the disc */
+
+.serial {
+  position: absolute;
+  left: 50%;
+  top: 33.5%;
+  transform: translateX(-50%);
+  font-family: var(--font-code);
+  font-size: clamp(3px, 0.5vw, 4.5px);
+  letter-spacing: 0.3em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: rgb(20 26 36 / 45%);
+}
+
+.brand {
+  position: absolute;
+  left: 50%;
+  top: 12%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(9px, 1.6vw, 14px);
+  letter-spacing: 0.04em;
+  color: #2a3140;
+}
+
+.brandLight {
+  color: #f6f8fc;
+}
+
+.formatMark {
+  position: absolute;
+  left: 13%;
+  top: 44%;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(8px, 1.4vw, 12px);
+  letter-spacing: 0.06em;
+  color: rgb(57 65 82 / 78%);
+}
+
+.formatMarkLight {
+  color: rgb(246 248 252 / 92%);
+}
+
+.formatMarkFaint {
+  color: rgb(57 65 82 / 45%);
+}
+
+.cdMark {
+  position: absolute;
+  right: 13%;
+  top: 42%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font-family: var(--font-body);
+  color: rgb(42 49 64 / 75%);
+}
+
+.cdMarkTop {
+  font-size: clamp(3px, 0.5vw, 4.5px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.cdMarkDisc {
+  font-size: clamp(7px, 1.2vw, 11px);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  border: 1px solid rgb(42 49 64 / 60%);
+  border-top: 0;
+  padding: 0 3px 1px;
+}
+
+.specs {
+  position: absolute;
+  right: 11%;
+  top: 27%;
+  display: flex;
+  flex-direction: column;
+  gap: 4%;
+  align-items: stretch;
+}
+
+.specBox {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(4px, 0.7vw, 6px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: center;
+  color: rgb(42 49 64 / 80%);
+  border: 1px solid rgb(42 49 64 / 55%);
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+
+.linesLight .specBox {
+  color: rgb(246 248 252 / 90%);
+  border-color: rgb(246 248 252 / 70%);
+}
+
+.lines {
+  position: absolute;
+  left: 17%;
+  right: 17%;
+  bottom: 13%;
+  height: 26%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.line {
+  display: block;
+  border-bottom: 1px solid rgb(42 49 64 / 45%);
+  text-align: center;
+  line-height: 1;
+}
+
+.linesLight .line {
+  border-bottom-color: rgb(246 248 252 / 65%);
+}
+
+.handwriting,
+.handwritingSmall,
+.tapeName,
+.tapeNote {
+  font-family:
+    "Marker Felt", "Bradley Hand", "Segoe Print", "Comic Sans MS", cursive;
+  color: #141a24;
+}
+
+.linesLight .handwriting,
+.linesLight .handwritingSmall {
+  color: #f6f8fc;
+}
+
+.handwriting {
+  display: inline-block;
+  transform: rotate(-2deg);
+  font-size: clamp(8px, 1.5vw, 13px);
+}
+
+.handwritingSmall {
+  display: inline-block;
+  transform: rotate(-1.5deg);
+  font-size: clamp(6px, 1.1vw, 9px);
+  opacity: 0.9;
+}
+
+/* suggestion of the printed hub ring on a cd-r */
+.jpBand {
+  position: absolute;
+  left: 50%;
+  top: 26.5%;
+  transform: translateX(-50%);
+  font-size: clamp(3.5px, 0.55vw, 5px);
+  letter-spacing: 0.4em;
+  white-space: nowrap;
+  color: rgb(42 49 64 / 55%);
+}
+
+/* magazine cover pressing */
+.magTitle {
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: 13%;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(11px, 2.1vw, 18px);
+  line-height: 0.95;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: #10151c;
+}
+
+.magHighlight {
+  position: absolute;
+  left: 50%;
+  top: 31%;
+  transform: translateX(-50%) rotate(-1deg);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(6px, 1vw, 9px);
+  text-transform: lowercase;
+  white-space: nowrap;
+  color: #10151c;
+  background: oklch(85% 0.16 var(--h));
+  padding: 1px 5px;
+}
+
+.magIndex {
+  position: absolute;
+  left: 13%;
+  top: 46%;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(5px, 0.9vw, 8px);
+  text-align: left;
+  color: #10151c;
+}
+
+.magPublisher {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: 15%;
+  font-family: var(--font-code);
+  font-size: clamp(4px, 0.65vw, 6px);
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  color: rgb(16 21 28 / 70%);
+}
+
+/* pressed retail cd-rom in quiet serif */
+.pressTitle {
+  position: absolute;
+  left: 11%;
+  top: 24%;
+  width: 34%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(8px, 1.4vw, 12px);
+  line-height: 1.1;
+  text-align: center;
+  color: oklch(32% 0.09 var(--h));
+}
+
+.pressSub {
+  font-size: clamp(5px, 0.85vw, 7px);
+  font-style: italic;
+}
+
+.pressBody {
+  position: absolute;
+  right: 9%;
+  top: 25%;
+  width: 30%;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(4px, 0.7vw, 6px);
+  line-height: 1.45;
+  text-align: left;
+  color: oklch(34% 0.08 var(--h) / 88%);
+}
+
+.pressFoot {
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: 12%;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(4.5px, 0.75vw, 6.5px);
+  text-align: center;
+  letter-spacing: 0.08em;
+  color: oklch(34% 0.08 var(--h) / 85%);
+}
+
+/* masking tape with the sharpie name */
+.tapeStrip {
+  position: absolute;
+  left: 16%;
+  right: 20%;
+  top: 22%;
+  height: 13%;
+  transform: rotate(-7deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    180deg,
+    rgb(238 231 206 / 96%),
+    rgb(226 217 188 / 96%)
+  );
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 25%),
+    inset 0 0 6px rgb(160 148 110 / 35%);
+  clip-path: polygon(1.5% 0%, 100% 2%, 98% 55%, 99.5% 100%, 2% 98%, 0% 45%);
+}
+
+.tapeName {
+  font-size: clamp(9px, 1.7vw, 14px);
+  letter-spacing: 0.02em;
+  transform: rotate(0.5deg);
+}
+
+.tapeNote {
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 22%;
+  text-align: center;
+  transform: rotate(-2deg);
+  font-size: clamp(6px, 1.1vw, 9px);
+  opacity: 0.85;
+}

@@ -18,6 +18,7 @@ const STATIC_ROUTES = [
   '/meridian',
   '/papers',
   '/rubiks',
+  '/scavenger',
   '/videoclub',
   '/travel',
   '/uses',

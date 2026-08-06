@@ -1,0 +1,402 @@
+.scene {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  overscroll-behavior: none;
+  user-select: none;
+  background: radial-gradient(
+    120% 90% at 50% 18%,
+    var(--color-midnight-purple) 0%,
+    var(--color-bg-void) 62%
+  );
+  color: var(--color-text);
+  font-family: var(--font-code);
+}
+
+/* the home skyglow, echoed: far-city light domes rise behind the
+   counter the wallet sits on */
+.scene::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 46vh;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 70vw 30vh at 30vw 100%,
+      rgb(255 79 216 / 12%),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 55vw 24vh at 72vw 100%,
+      rgb(109 247 234 / 9%),
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 40vw 12vh at 52vw 100%,
+      rgb(255 210 150 / 6%),
+      transparent 70%
+    );
+}
+
+/* faint grain so the silver holo has something to sit in */
+.scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgb(255 255 255 / 1.2%) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 2%) 0 1px, transparent 1px 3px);
+}
+
+/* perspective lives in the wallet transform: a scene-level 3d context
+   poisons compositor hit testing for every fixed control on the page */
+.wallet {
+  position: relative;
+  width: min(92vw, 720px);
+  aspect-ratio: 1.9 / 1;
+  transform-style: preserve-3d;
+  transform: perspective(1500px) rotateX(12deg) translateY(4vh);
+  /* the individual translate composes with the animated transform */
+  translate: 0 0;
+  transition: translate 0.7s var(--ease-signal);
+  animation: drop-in 1s var(--ease-signal) both;
+}
+
+.scene[data-out="true"] .wallet {
+  translate: 0 3vh;
+}
+
+.scene[data-closing="true"] .wallet {
+  animation: close-out 0.6s var(--ease-signal) 1.45s forwards;
+}
+
+/* drop-in, exactly backwards; opacity stays off this keyframe because
+   an animated opacity flattens the wallet's preserve-3d mid-close */
+@keyframes close-out {
+  to {
+    transform: perspective(1500px) rotateX(44deg) translateY(14vh) scale(0.9);
+  }
+}
+
+/* the exit fade lives on a sibling veil, never on the 3d ancestor */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 85;
+  pointer-events: none;
+  opacity: 0;
+  background: var(--color-bg-void);
+}
+
+.scene[data-closing="true"] .veil {
+  animation: veil-in 0.45s ease 1.65s forwards;
+}
+
+@keyframes veil-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drop-in {
+  from {
+    transform: perspective(1500px) rotateX(44deg) translateY(14vh) scale(0.9);
+  }
+
+  to {
+    transform: perspective(1500px) rotateX(12deg) translateY(4vh) scale(1);
+  }
+}
+
+/* sleeves hinge at the spine; the view writes --ry and --z, the
+   fallback below is the boot fan */
+.page {
+  position: absolute;
+  left: 50%;
+  top: 4.5%;
+  width: 45.5%;
+  height: 91%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transform: translateZ(var(--z, calc((var(--pages, 8) - var(--i)) * 1.6px)))
+    rotateY(var(--ry, calc(-14deg - var(--i) * 8deg)));
+  transition: transform 0.78s cubic-bezier(0.32, 0.04, 0.14, 1);
+  /* buried page planes still catch the 3d hit ray; only discs take clicks */
+  pointer-events: none;
+}
+
+/* the cover clears first, then the sleeves rise into the fan */
+.scene[data-opening="true"] .page {
+  transition-delay: calc(450ms + var(--i) * 50ms);
+}
+
+/* the zip rewinds the boot: pages flatten onto the cover, last first,
+   and only then the left half folds over them */
+.scene[data-closing="true"] .page {
+  transition-duration: 0.5s;
+  transition-delay: calc((var(--pages, 8) - var(--i)) * 30ms);
+}
+
+.face {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  /* keep the two faces off each other's plane or they z-fight mid-flip */
+  transform: translateZ(0.4px);
+  border-radius: 12px;
+  background:
+    radial-gradient(
+      120% 90% at 30% 0%,
+      rgb(255 255 255 / 4.5%),
+      transparent 42%
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgb(255 255 255 / 2%) 0 1px,
+      transparent 1px 3px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgb(0 0 0 / 5%) 0 1px,
+      transparent 1px 3px
+    ),
+    #1e212a;
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 5.5%),
+    inset 0 -10px 18px rgb(0 0 0 / 35%),
+    0 2px 4px rgb(0 0 0 / 45%);
+}
+
+.faceB {
+  transform: rotateY(180deg) translateZ(0.4px);
+}
+
+.tag {
+  position: absolute;
+  top: 5.5%;
+  left: 6%;
+  font-size: clamp(8px, 1.4vw, 11px);
+  letter-spacing: 0.22em;
+  color: var(--color-text-muted);
+  padding: 2px 6px;
+  border: 1px solid rgb(255 255 255 / 6%);
+  border-radius: 3px;
+  background: rgb(0 0 0 / 25%);
+}
+
+.scene[data-out="true"] {
+  cursor: zoom-out;
+}
+
+.navArrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 80;
+  width: 52px;
+  height: 52px;
+  padding: 0 0 4px;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  background: rgb(10 13 18 / 55%);
+  color: var(--color-text-muted);
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 1;
+  animation: hud-in 1s 1.6s ease both;
+  transition:
+    color var(--motion-micro) var(--ease-signal),
+    border-color var(--motion-micro) var(--ease-signal);
+}
+
+.navArrow:hover {
+  color: var(--color-text-strong);
+  border-color: var(--color-signal-cyan);
+}
+
+.navArrow:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.navArrow[data-side="prev"] {
+  left: max(var(--safe-area-left), 3vw);
+}
+
+.navArrow[data-side="next"] {
+  right: max(var(--safe-area-right), 3vw);
+}
+
+/* the entrance animation owns opacity, so the disabled dim rides
+   channels it never animates */
+.navArrow[aria-disabled="true"] {
+  pointer-events: none;
+  filter: brightness(0.4);
+  border-color: rgb(109 247 234 / 10%);
+  color: rgb(255 255 255 / 30%);
+}
+
+.scene[data-out="true"] .navArrow,
+.scene[data-closing="true"] .navArrow {
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+/* liner notes for the floating disc */
+.card {
+  position: fixed;
+  left: 50%;
+  bottom: 88px;
+  transform: translateX(-50%);
+  z-index: 70;
+  width: min(92vw, 27rem);
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background: rgb(10 13 18 / 88%);
+  box-shadow: var(--shadow-panel);
+  text-align: center;
+  animation: hud-in 0.4s ease both;
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--color-text-strong);
+}
+
+.cardLine {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.cardLiner {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.cardLink {
+  display: inline-block;
+  margin-top: var(--space-3);
+  font-size: var(--text-sm);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-signal-cyan);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.cardLink:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.cardStamp {
+  display: inline-block;
+  margin-top: var(--space-3);
+  padding: 2px 8px;
+  font-size: var(--text-xs);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #e08030;
+  border: 1px dashed rgb(224 128 48 / 55%);
+  border-radius: 3px;
+}
+
+.counter {
+  position: fixed;
+  top: calc(var(--safe-area-top) + 22px);
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: #e08030;
+  animation: hud-in 1s 1.4s ease both;
+}
+
+.hud {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--safe-area-bottom) + 22px);
+  z-index: 80;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em 2.4em;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  animation: hud-in 1s 1.6s ease both;
+}
+
+@keyframes hud-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.hint b {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.hudLink {
+  color: var(--color-signal-cyan);
+  text-decoration: none;
+  letter-spacing: inherit;
+}
+
+.hudLink:focus-visible,
+.hudButton:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+
+.hudButton {
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--color-text-muted);
+}
+
+.hudButton[aria-pressed="true"] {
+  color: var(--color-signal-cyan);
+}
+
+.scene[data-closing="true"] .counter,
+.scene[data-closing="true"] .hud {
+  visibility: hidden;
+}
