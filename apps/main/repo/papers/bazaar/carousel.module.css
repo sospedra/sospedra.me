@@ -43,6 +43,20 @@
   box-shadow: inset 0 0 0 2px var(--color-signal-cyan, #6df7ea);
 }
 
+.stage {
+  position: relative;
+}
+
+/* melt overlay; carousel.tsx flips opacity while the displacement runs */
+.fx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .slide {
   width: 100%;
   height: auto;
@@ -105,6 +119,15 @@
 
 .button:hover {
   background: rgb(109 247 234 / 10%);
+}
+
+.button[aria-disabled="true"] {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.button[aria-disabled="true"]:hover {
+  background: transparent;
 }
 
 .button:focus-visible {

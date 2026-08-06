@@ -5,6 +5,10 @@ import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { prefersQuietFx } from 'services/theme'
 import css from './carousel.module.css'
+import {
+  createDisplacementRenderer,
+  type DisplacementRenderer,
+} from './displacement'
 import { pad } from './pad'
 
 type Slide = {
@@ -15,9 +19,14 @@ type Slide = {
 const SLIDE_WIDTH = 1600
 const SLIDE_HEIGHT = 805
 const SCROLL_THROTTLE_MS = 100
+const FX_MAX_DPR = 2
 
 const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
   const track = useRef<HTMLDivElement>(null)
+  const fx = useRef<HTMLCanvasElement>(null)
+  const renderer = useRef<DisplacementRenderer | null>(null)
+  const rendererFailed = useRef(false)
+  const pendingIndex = useRef<number | null>(null)
   const [index, setIndex] = useState(0)
 
   const handleScroll = useMemo(
@@ -32,19 +41,87 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
   )
 
   useEffect(() => () => handleScroll.cancel(), [handleScroll])
+  useEffect(() => () => renderer.current?.destroy(), [])
 
-  const scrollBySlide = (step: number) => {
-    track.current?.scrollBy({
-      left: step * track.current.clientWidth,
+  const goTo = (target: number) => {
+    track.current?.scrollTo({
+      left: target * track.current.clientWidth,
       behavior: prefersQuietFx() ? 'auto' : 'smooth',
     })
+  }
+
+  const ensureRenderer = (seed: HTMLImageElement) => {
+    if (renderer.current || rendererFailed.current) return renderer.current
+    const canvas = fx.current
+    if (!canvas) return null
+    const created = createDisplacementRenderer(canvas)
+    if (created === null) {
+      rendererFailed.current = true
+      return null
+    }
+    created.setActive(seed)
+    renderer.current = created
+    return created
+  }
+
+  const sizeFx = (node: HTMLDivElement, canvas: HTMLCanvasElement) => {
+    const dpr = Math.min(window.devicePixelRatio || 1, FX_MAX_DPR)
+    const width = Math.round(node.clientWidth * dpr)
+    const height = Math.round(node.clientHeight * dpr)
+    if (canvas.width !== width) canvas.width = width
+    if (canvas.height !== height) canvas.height = height
+  }
+
+  const melt = async (
+    fromImage: HTMLImageElement,
+    toImage: HTMLImageElement,
+    target: number,
+  ) => {
+    pendingIndex.current = target
+    try {
+      await Promise.all([fromImage.decode(), toImage.decode()])
+    } catch {
+      pendingIndex.current = null
+      goTo(target)
+      return
+    }
+    if (pendingIndex.current !== target) return
+    const node = track.current
+    const canvas = fx.current
+    const fxRenderer = canvas ? ensureRenderer(fromImage) : null
+    if (!node || !canvas || fxRenderer === null || fxRenderer.lost) {
+      pendingIndex.current = null
+      goTo(target)
+      return
+    }
+    sizeFx(node, canvas)
+    fxRenderer.transitionTo(toImage, () => {
+      canvas.style.opacity = ''
+      if (pendingIndex.current === target) pendingIndex.current = null
+    })
+    canvas.style.opacity = '1'
+    node.scrollTo({ left: target * node.clientWidth, behavior: 'auto' })
+  }
+
+  const navigate = (step: number) => {
+    const from = pendingIndex.current ?? index
+    const target = clamp(from + step, 0, props.items.length - 1)
+    if (target === from) return
+    const slides = track.current?.querySelectorAll('img')
+    const fromImage = slides?.[from]
+    const toImage = slides?.[target]
+    if (prefersQuietFx() || !fromImage || !toImage) {
+      goTo(target)
+      return
+    }
+    void melt(fromImage, toImage, target)
   }
 
   const handleTrackKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.target !== event.currentTarget) return
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
       event.preventDefault()
-      scrollBySlide(event.key === 'ArrowLeft' ? -1 : 1)
+      navigate(event.key === 'ArrowLeft' ? -1 : 1)
     }
   }
 
@@ -58,20 +135,23 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
       tabIndex={0}
     >
       <span className={css.label}>{props.label}</span>
-      <div className={css.track} onScroll={handleScroll} ref={track}>
-        {props.items.map((item) => (
-          <img
-            alt={item.alt}
-            className={css.slide}
-            decoding='async'
-            draggable={false}
-            height={SLIDE_HEIGHT}
-            key={item.src}
-            loading='lazy'
-            src={item.src}
-            width={SLIDE_WIDTH}
-          />
-        ))}
+      <div className={css.stage}>
+        <div className={css.track} onScroll={handleScroll} ref={track}>
+          {props.items.map((item) => (
+            <img
+              alt={item.alt}
+              className={css.slide}
+              decoding='async'
+              draggable={false}
+              height={SLIDE_HEIGHT}
+              key={item.src}
+              loading='lazy'
+              src={item.src}
+              width={SLIDE_WIDTH}
+            />
+          ))}
+        </div>
+        <canvas className={css.fx} ref={fx} />
       </div>
       <div className={css.deck}>
         <span aria-live='polite' className={css.status}>
@@ -82,20 +162,22 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
         </span>
         <span className={css.controls}>
           <button
+            aria-disabled={index === 0}
             aria-label='Previous shot'
             className={css.button}
-            onClick={() => scrollBySlide(-1)}
+            onClick={() => navigate(-1)}
             type='button'
           >
-            ←
+            ↑
           </button>
           <button
+            aria-disabled={index === props.items.length - 1}
             aria-label='Next shot'
             className={css.button}
-            onClick={() => scrollBySlide(1)}
+            onClick={() => navigate(1)}
             type='button'
           >
-            →
+            ↓
           </button>
         </span>
       </div>
