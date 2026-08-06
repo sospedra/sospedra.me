@@ -109,7 +109,7 @@
 
 .print {
   position: relative;
-  z-index: 3;
+  z-index: 6;
   width: min(100%, 240px);
   aspect-ratio: 0.82;
   margin: 0;
@@ -204,6 +204,28 @@
   animation: photo-develop 1.35s ease-out both;
 }
 
+.slotShade {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(6 9 8 / 88%) 0%,
+    rgb(6 9 8 / 66%) 9%,
+    rgb(6 9 8 / 48%) 19%,
+    rgb(6 9 8 / 28%) 30%,
+    rgb(6 9 8 / 12%) 38%,
+    transparent 46%
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+.booth[data-print-state="printing"] .slotShade {
+  will-change: opacity, transform;
+  animation: slot-shade var(--camera-print) linear both;
+}
+
 .print figcaption {
   display: flex;
   align-items: flex-end;
@@ -227,17 +249,32 @@
 
 @keyframes print-dock {
   0% {
-    clip-path: inset(0 0 100% 0);
+    box-shadow:
+      0 0.15rem 0.3rem rgb(0 0 0 / 18%),
+      inset 0 0 0 1px rgb(70 59 52 / 12%);
+    clip-path: inset(100% 0 0 0);
     opacity: 1;
-    transform: translate3d(var(--print-source-x), var(--print-source-y), -2rem);
+    transform: translate3d(
+      var(--print-source-x),
+      calc(var(--print-source-y) - 100%),
+      -2rem
+    );
     animation-timing-function: cubic-bezier(0.22, 0.7, 0.22, 1);
   }
 
   12% {
-    clip-path: inset(0 0 82% 0);
+    clip-path: inset(82% 0 0 0);
+    transform: translate3d(
+      var(--print-source-x),
+      calc(var(--print-source-y) - 82%),
+      -2rem
+    );
   }
 
   48% {
+    box-shadow:
+      0 0.5rem 0.7rem rgb(0 0 0 / 26%),
+      inset 0 0 0 1px rgb(70 59 52 / 12%);
     clip-path: inset(0);
     transform: translate3d(var(--print-source-x), var(--print-source-y), -2rem);
     animation-timing-function: cubic-bezier(0.16, 0.82, 0.2, 1);
@@ -271,17 +308,24 @@
 
 @keyframes print-drop {
   0% {
-    clip-path: inset(0 0 100% 0);
+    box-shadow:
+      0 0.15rem 0.3rem rgb(0 0 0 / 18%),
+      inset 0 0 0 1px rgb(70 59 52 / 12%);
+    clip-path: inset(100% 0 0 0);
     opacity: 1;
-    transform: translate3d(0, var(--print-source-y), -2rem);
+    transform: translate3d(0, calc(var(--print-source-y) - 100%), -2rem);
     animation-timing-function: cubic-bezier(0.22, 0.7, 0.22, 1);
   }
 
   14% {
-    clip-path: inset(0 0 80% 0);
+    clip-path: inset(80% 0 0 0);
+    transform: translate3d(0, calc(var(--print-source-y) - 80%), -2rem);
   }
 
   58% {
+    box-shadow:
+      0 0.5rem 0.7rem rgb(0 0 0 / 26%),
+      inset 0 0 0 1px rgb(70 59 52 / 12%);
     clip-path: inset(0);
     transform: translate3d(0, var(--print-source-y), -1rem);
     animation-timing-function: cubic-bezier(0.16, 0.82, 0.2, 1);
@@ -296,6 +340,54 @@
     clip-path: inset(0);
     opacity: 1;
     transform: rotate(-1.2deg);
+  }
+}
+
+@keyframes slot-shade {
+  0% {
+    opacity: 1;
+    transform: translateY(100%);
+    animation-timing-function: cubic-bezier(0.22, 0.7, 0.22, 1);
+  }
+
+  12% {
+    transform: translateY(82%);
+  }
+
+  48% {
+    opacity: 1;
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.16, 0.82, 0.2, 1);
+  }
+
+  64%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slot-shade-drop {
+  0% {
+    opacity: 1;
+    transform: translateY(100%);
+    animation-timing-function: cubic-bezier(0.22, 0.7, 0.22, 1);
+  }
+
+  14% {
+    transform: translateY(80%);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.16, 0.82, 0.2, 1);
+  }
+
+  74%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
   }
 }
 
@@ -371,6 +463,10 @@
   .booth[data-print-state="printing"] .print {
     animation-name: print-drop;
   }
+
+  .booth[data-print-state="printing"] .slotShade {
+    animation-name: slot-shade-drop;
+  }
 }
 
 @media (max-height: 800px) and (min-width: 821px) {
@@ -391,7 +487,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .developWash,
-  .print {
+  .print,
+  .slotShade {
     animation: none;
     transition: none;
   }

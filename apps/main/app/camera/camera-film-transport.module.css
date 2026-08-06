@@ -86,40 +86,18 @@
   position: relative;
   z-index: 2;
   display: block;
-  width: 438px;
-  height: 44px;
+  width: 307px;
+  height: 15px;
   margin-top: 64px;
   margin-inline: auto;
-  border: 1px solid #151214;
-  border-radius: 2px 2px 6px 6px;
-  background-image:
-    linear-gradient(90deg, #555b58 90%, #242827 90%),
-    linear-gradient(90deg, #0a0d0c 10%, #4e5552 10%),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 18px,
-      rgb(184 190 176 / 8%) 18px 21px
-    ),
-    linear-gradient(
-      #555c59 4%,
-      #0b0e0d 10% 24%,
-      #343a37 31% 52%,
-      #111513 77% 93%,
-      #747a73 99%
-    );
-  background-position:
-    top left,
-    top right;
-  background-repeat: no-repeat;
-  background-size:
-    8px 100%,
-    8px 100%,
-    100% 100%,
-    100% 100%;
+  border: 1px solid #000;
+  border-radius: 100vmax;
+  background: #030404;
   box-shadow:
-    inset 0 2px 0 rgb(255 255 255 / 7%),
-    0 5px 0 #080b0a,
-    0 10px 14px rgb(0 0 0 / 34%);
+    inset 0 3px 6px rgb(0 0 0 / 92%),
+    inset 0 -1px rgb(255 255 255 / 4%),
+    0 1px 0 rgb(188 192 180 / 12%),
+    0 6px 10px rgb(0 0 0 / 30%);
   transform: translateY(3px);
 }
 

@@ -12,6 +12,7 @@ import finder from './camera-viewfinder.module.css'
 type CameraChassisProps = {
   cameraState: CameraState
   printState: PrintState
+  printerRef: React.RefObject<HTMLDivElement | null>
   setCameraState: React.Dispatch<React.SetStateAction<CameraState>>
   shutterRef: React.RefObject<HTMLButtonElement | null>
   videoRef: React.RefObject<HTMLVideoElement | null>
@@ -21,6 +22,7 @@ type CameraChassisProps = {
 export function CameraChassis({
   cameraState,
   printState,
+  printerRef,
   setCameraState,
   shutterRef,
   videoRef,
@@ -108,7 +110,7 @@ export function CameraChassis({
                 <div className={cn(film.feedCarriage, root.feedCarriage)} />
               </div>
             </div>
-            <div className={film.printer} aria-hidden='true' />
+            <div ref={printerRef} className={film.printer} aria-hidden='true' />
             <div className={casing.labels} aria-hidden='true'>
               <div className={casing.rainbow} />
               <div className={casing.logo}>Sospedroid</div>

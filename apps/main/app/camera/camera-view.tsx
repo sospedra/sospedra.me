@@ -1,7 +1,13 @@
 'use client'
 
 import cn from 'clsx'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import Link, { LinkBack } from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
@@ -21,6 +27,17 @@ import { OutputDock } from './camera-output-dock'
 import bay from './camera-output-dock.module.css'
 
 const DEVELOP_DURATION = 1450
+
+function aimPrintAtSlot(figure: HTMLElement, mouth: DOMRect) {
+  figure.style.animation = 'none'
+  figure.style.transform = 'none'
+  const card = figure.getBoundingClientRect()
+  figure.style.animation = ''
+  figure.style.transform = ''
+  const centeredLeft = mouth.left + (mouth.width - card.width) / 2
+  figure.style.setProperty('--print-source-x', `${centeredLeft - card.left}px`)
+  figure.style.setProperty('--print-source-y', `${mouth.top - 8 - card.top}px`)
+}
 
 function revealMobileActions(element: HTMLElement, motionAllowed: boolean) {
   if (!window.matchMedia('(max-width: 820px)').matches) return
@@ -42,7 +59,10 @@ export default function CameraView() {
   const [captureId, setCaptureId] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const mouthRectRef = useRef<DOMRect | null>(null)
   const photoActionsRef = useRef<HTMLDivElement>(null)
+  const printRef = useRef<HTMLElement>(null)
+  const printerRef = useRef<HTMLDivElement>(null)
   const shutterRef = useRef<HTMLButtonElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const photoUrlRef = useRef<string | null>(null)
@@ -134,6 +154,19 @@ export default function CameraView() {
       }
     }
   }, [clearDevelopTimer, requestCamera])
+
+  useLayoutEffect(() => {
+    if (printState !== 'printing') return
+    mouthRectRef.current = printerRef.current?.getBoundingClientRect() ?? null
+  }, [printState])
+
+  useLayoutEffect(() => {
+    if (printState !== 'printing' || !photoUrl) return
+    const figure = printRef.current
+    const mouth = mouthRectRef.current
+    if (!figure || !mouth) return
+    aimPrintAtSlot(figure, mouth)
+  }, [printState, photoUrl])
 
   useEffect(() => {
     const photoActions = photoActionsRef.current
@@ -289,6 +322,7 @@ export default function CameraView() {
           <CameraChassis
             cameraState={cameraState}
             printState={printState}
+            printerRef={printerRef}
             setCameraState={setCameraState}
             shutterRef={shutterRef}
             videoRef={videoRef}
@@ -303,6 +337,7 @@ export default function CameraView() {
             liveMessage={liveMessage}
             photoActionsRef={photoActionsRef}
             photoUrl={photoUrl}
+            printRef={printRef}
             printState={printState}
             requestCamera={requestCamera}
             resetPhoto={resetPhoto}

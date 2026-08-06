@@ -152,7 +152,7 @@
 
 .booth {
   --print-source-x: -27.5rem;
-  --print-source-y: 17.5rem;
+  --print-source-y: 18.75rem;
 
   position: relative;
   display: grid;
@@ -189,9 +189,6 @@
 
 @media (max-width: 1100px) and (min-width: 821px) {
   .booth {
-    --print-source-x: -23.75rem;
-    --print-source-y: 15.75rem;
-
     grid-template-columns: 434.6px minmax(15rem, 17rem);
   }
 }
@@ -208,17 +205,8 @@
   }
 
   .booth {
-    --print-source-x: 0;
-    --print-source-y: -12rem;
-
     display: block;
     padding-block: 0.5rem 2rem;
-  }
-}
-
-@media (max-width: 640px) {
-  .booth {
-    --print-source-y: -10rem;
   }
 }
 
@@ -230,22 +218,6 @@
 
   .telemetry {
     font-size: 0.62rem;
-  }
-
-  .booth {
-    --print-source-y: -8.5rem;
-  }
-}
-
-@media (max-width: 400px) {
-  .booth {
-    --print-source-y: -8rem;
-  }
-}
-
-@media (max-width: 340px) {
-  .booth {
-    --print-source-y: -7.5rem;
   }
 }
 
@@ -259,9 +231,6 @@
   }
 
   .booth {
-    --print-source-x: -22.5rem;
-    --print-source-y: 15.75rem;
-
     grid-template-columns: 381.6px minmax(13rem, 15rem);
   }
 }
@@ -276,6 +245,7 @@
 :global(.fx-quiet) .cameraShadow,
 :global(.fx-quiet) .developWash,
 :global(.fx-quiet) .print,
+:global(.fx-quiet) .slotShade,
 :global(.fx-quiet) .controlDeck .deckButton > span {
   animation: none;
   transition: none;

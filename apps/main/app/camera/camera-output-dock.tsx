@@ -21,6 +21,7 @@ type OutputDockProps = {
   liveMessage: string
   photoActionsRef: React.RefObject<HTMLDivElement | null>
   photoUrl: string | null
+  printRef: React.RefObject<HTMLElement | null>
   printState: PrintState
   requestCamera: () => Promise<void>
   resetPhoto: () => void
@@ -34,6 +35,7 @@ export function OutputDock({
   liveMessage,
   photoActionsRef,
   photoUrl,
+  printRef,
   printState,
   requestCamera,
   resetPhoto,
@@ -49,6 +51,7 @@ export function OutputDock({
         {photoUrl ? (
           <figure
             key={captureId}
+            ref={printRef}
             className={cn(css.print, root.print)}
             aria-label='Your developed instant picture'
           >
@@ -69,6 +72,10 @@ export function OutputDock({
                 {capturedAt ? formatCaptureTime(capturedAt) : 'developing'}
               </time>
             </figcaption>
+            <span
+              className={cn(css.slotShade, root.slotShade)}
+              aria-hidden='true'
+            />
           </figure>
         ) : (
           <div className={css.paperGuide} aria-hidden='true'>
