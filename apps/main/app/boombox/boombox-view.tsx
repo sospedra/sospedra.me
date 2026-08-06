@@ -40,16 +40,19 @@ const caveat = Caveat({
   subsets: ['latin'],
   weight: ['500', '600', '700'],
   variable: '--font-hand',
+  preload: false,
 })
 const vt323 = VT323({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-lcd',
+  preload: false,
 })
 const shareTechMono = Share_Tech_Mono({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-micro',
+  preload: false,
 })
 
 const FONT_VARIABLES = `${caveat.variable} ${vt323.variable} ${shareTechMono.variable}`

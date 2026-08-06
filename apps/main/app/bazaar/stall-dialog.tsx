@@ -16,7 +16,11 @@ import {
 } from './stall-catalog'
 import scene from './stall-dialog.module.css'
 
-const pixelFont = Press_Start_2P({ weight: '400', subsets: ['latin'] })
+const pixelFont = Press_Start_2P({
+  weight: '400',
+  subsets: ['latin'],
+  preload: false,
+})
 
 export const VIEWPORT_GUTTER = 8
 

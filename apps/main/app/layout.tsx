@@ -1,27 +1,10 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
+import { preload } from 'react-dom'
 import { SITE_URL } from 'services/site'
 import Providers from './providers'
 import 'services/style/global.css'
-
-const wotfard = localFont({
-  src: [
-    { path: '../public/fonts/wotfard.woff2', weight: '400', style: 'normal' },
-    {
-      path: '../public/fonts/wotfard-italic.woff2',
-      weight: '400',
-      style: 'italic',
-    },
-    {
-      path: '../public/fonts/wotfard-semibold.woff2',
-      weight: '600',
-      style: 'normal',
-    },
-  ],
-  display: 'swap',
-  variable: '--font-wotfard',
-})
 
 const vcr = localFont({
   src: '../public/fonts/vcr.woff2',
@@ -45,7 +28,6 @@ const lazer84 = localFont({
 })
 
 const fontVariables = [
-  wotfard.variable,
   vcr.variable,
   inconsolata.variable,
   lazer84.variable,
@@ -123,6 +105,11 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout(props: { children: React.ReactNode }) {
+  preload('/fonts/wotfard.woff2', {
+    as: 'font',
+    type: 'font/woff2',
+    crossOrigin: 'anonymous',
+  })
   return (
     <html lang='en' data-scroll-behavior='smooth' className={fontVariables}>
       <body>

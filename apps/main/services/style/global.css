@@ -1,5 +1,41 @@
 @import "tailwindcss";
 
+/* wotfard leaves next/font so only the regular face preloads (layout.tsx);
+   italic and semibold load on first use */
+@font-face {
+  font-family: Wotfard;
+  src: url("/fonts/wotfard.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Wotfard;
+  src: url("/fonts/wotfard-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Wotfard;
+  src: url("/fonts/wotfard-semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* metrics copied from the next/font build output to keep swap CLS at zero */
+@font-face {
+  font-family: "Wotfard Fallback";
+  src: local("Arial");
+  ascent-override: 94.63%;
+  descent-override: 23.5%;
+  line-gap-override: 0%;
+  size-adjust: 103.66%;
+}
+
 :root {
   color-scheme: dark;
 
@@ -26,7 +62,7 @@
   --color-focus: transparent;
 
   /* Type roles */
-  --font-body: var(--font-wotfard), Helvetica, sans-serif;
+  --font-body: Wotfard, "Wotfard Fallback", Helvetica, sans-serif;
   --font-display: var(--font-vcr), monospace;
   --font-code: var(--font-inconsolata), monospace;
   --font-signage: var(--font-lazer84), cursive;
