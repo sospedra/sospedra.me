@@ -531,6 +531,9 @@ export function applyBatch(
   }
   const endSequence = readSequence(view)
   const chain = readChain(view)
+  if (!bytesEqual(chain.updateProgramId, expectedUpdateId)) {
+    throw new RuleError('wrong-era')
+  }
   return {
     startRoot,
     endRoot: view.root(),

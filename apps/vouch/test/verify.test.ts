@@ -30,6 +30,12 @@ import {
   type QueryReceiptV1,
   receiptSigningInput,
 } from '../src/protocol/receipt.ts'
+import {
+  decodeTransitionJournal,
+  encodeTransitionJournal,
+  encodeTransparentTransitionProof,
+  proveBatch,
+} from '../src/protocol/transition.ts'
 import { genesisTrust } from '../src/protocol/trust.ts'
 import type { VerifyErrorCode, VerifyResult } from '../src/protocol/verify.ts'
 import { verifyBundle } from '../src/protocol/verify.ts'
@@ -189,6 +195,68 @@ test('missing transition link -> INVALID_PROOF continuity', () => {
   assertFailsAtStep(result, 14, 'INVALID_PROOF')
   assert.equal(result.ok, false)
   if (!result.ok) assert.equal(result.rule, 'continuity')
+})
+
+test('an appended zero-record segment cannot forge the active update program id', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const zeroProof = proveBatch(world.tree, [], PROGRAM.updateV1)
+  const forgedJournal = {
+    ...decodeTransitionJournal(zeroProof.journal),
+    updateProgramId: PROGRAM.updateV2,
+  }
+  const forgedProof = {
+    ...zeroProof,
+    journal: encodeTransitionJournal(forgedJournal),
+  }
+  const attackerBundle: ResponseBundle = {
+    ...honest.bundle,
+    transitions: [
+      ...honest.bundle.transitions,
+      encodeTransparentTransitionProof(forgedProof),
+    ],
+  }
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: encodeBundle(attackerBundle),
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assertFailsAtStep(result, 14, 'INVALID_PROOF')
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.equal(result.rule, 'wrong-era')
+})
+
+test('an appended honest zero-record segment still verifies and keeps the update program id', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const zeroProof = proveBatch(world.tree, [], PROGRAM.updateV1)
+  const bundle: ResponseBundle = {
+    ...honest.bundle,
+    transitions: [
+      ...honest.bundle.transitions,
+      encodeTransparentTransitionProof(zeroProof),
+    ],
+  }
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: encodeBundle(bundle),
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assert.equal(result.ok, true)
+  if (!result.ok) return
+  assert.deepEqual(result.next.activeUpdateProgramId, PROGRAM.updateV1)
+  assert.equal(result.next.highestSequence, honest.receipt.stateSequence)
+  assert.deepEqual(result.next.acceptedRoot, honest.receipt.stateRoot)
 })
 
 test('stale head -> STALE_HEAD', () => {
@@ -400,6 +468,45 @@ test('head at equal sequence with a different root -> JOURNAL_MISMATCH', () => {
   assertFailsAtStep(result, 16, 'JOURNAL_MISMATCH')
   assert.equal(result.ok, false)
   if (!result.ok) assert.equal(result.rule, 'head-root')
+})
+
+test('an attached head with a sequence behind the receipt is ROLLBACK_DETECTED', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const laggingHeadId: HeadIdV1 = {
+    sequence: honest.receipt.stateSequence - 2n,
+    stateRoot: honest.receipt.stateRoot,
+    updateProgramId: PROGRAM.updateV1,
+    queryProgramId: honest.receipt.queryProgramId,
+    programChainHash: honest.receipt.programChainHash,
+  }
+  const laggingHead: LatestHeadV1 = {
+    head: laggingHeadId,
+    latestAsOfMs: HONEST_ISSUED_AT_MS,
+    headKeyId: honest.world.receiptKey.publicKey,
+  }
+  const laggingHeadBytes = encodeLatestHead(laggingHead)
+  const laggingHeadSignature = sign(
+    headSigningInput(laggingHeadBytes),
+    honest.world.receiptKey,
+  )
+  const bundle: ResponseBundle = {
+    ...honest.bundle,
+    latestHead: laggingHeadBytes,
+    latestHeadSignature: laggingHeadSignature,
+  }
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: encodeBundle(bundle),
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assertFailsAtStep(result, 16, 'ROLLBACK_DETECTED')
+  assert.equal(result.ok, false)
+  if (!result.ok) assert.equal(result.rule, 'head-sequence')
 })
 
 test('a genuine migration walk from v1 to v2 accepts end to end', () => {

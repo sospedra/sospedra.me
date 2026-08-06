@@ -79,6 +79,14 @@ test('s21 first-contact fork: the world-B bundle genuinely verifies with a full 
   assertFullyAccepted(worldB)
 })
 
+test('s21 does not claim an unskipped ladder, since persistence bookkeeping is skipped by design', () => {
+  const t = s21.run()
+  assert.ok(t.checks)
+  assert.ok(!t.verdict.note.toLowerCase().includes('unskipped'))
+  const skippedCount = t.checks.filter((c) => c.skipped).length
+  assert.equal(skippedCount, 2)
+})
+
 test('s21 reports LIMITATION with the exact spec 18 first-contact sentence', () => {
   const t = s21.run()
   assert.equal(t.verdict.kind, 'LIMITATION')

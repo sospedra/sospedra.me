@@ -280,7 +280,7 @@ export const scenario: Scenario = {
     slug: 'migration-chain',
     title: 'Valid v1 to v2 migration chain',
     taxonomy: 'POSSIBLE_UNDER_GOVERNANCE',
-    specRefs: ['9.4', '15', '17'],
+    specRefs: ['16.2', '15', '17'],
     expected: 'ACCEPT',
   },
   run,

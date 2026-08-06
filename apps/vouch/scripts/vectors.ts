@@ -76,6 +76,7 @@ import {
 } from '../src/protocol/receipt.ts'
 import { EMPTY, encodeWitness, type Smt } from '../src/protocol/smt.ts'
 import {
+  type AccountV1,
   accountKey,
   authorKey,
   CHAIN_KEY,
@@ -419,8 +420,46 @@ function buildFixture(): Fixture {
   }
 }
 
+type FeeRoundingFixture = {
+  transferPayload: TransferV1
+  creditedAccount: AccountV1
+  creditedAccountRaw: Uint8Array
+}
+
+function buildFeeRoundingFixture(): FeeRoundingFixture {
+  const world = buildGenesis()
+  const transferPayload: TransferV1 = { from: 'alice', to: 'bob', amount: 999n }
+
+  const records = seqRecords(world, [
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'alice', initialBalance: 10_000n }),
+    ],
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'bob', initialBalance: 0n }),
+    ],
+    ['alice', OP.TRANSFER, encodeTransfer(transferPayload)],
+  ])
+  proveBatch(world.tree, records, PROGRAM.updateV1)
+
+  const creditedAccountRaw = mustGet(
+    world.tree,
+    accountKey('bob'),
+    'app/account/bob:fee-rounding',
+  )
+  return {
+    transferPayload,
+    creditedAccount: decodeAccount(creditedAccountRaw),
+    creditedAccountRaw,
+  }
+}
+
 export function buildVectors(): VectorsFile {
   const fixture = buildFixture()
+  const feeRounding = buildFeeRoundingFixture()
 
   const domainHashEntries = DOMAINS.map((domain) =>
     hashEntry(
@@ -735,6 +774,16 @@ export function buildVectors(): VectorsFile {
       'object/ResponseBundle',
       fixture.bundle,
       encodeBundle(fixture.bundle),
+    ),
+    objectEntry(
+      'object/TransferV1:fee-rounding-nondivisible',
+      feeRounding.transferPayload,
+      encodeTransfer(feeRounding.transferPayload),
+    ),
+    objectEntry(
+      'object/AccountV1:fee-rounding-floor',
+      feeRounding.creditedAccount,
+      feeRounding.creditedAccountRaw,
     ),
   ]
 

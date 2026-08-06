@@ -2,7 +2,7 @@
 
 VOUCH: Verified Output Under Canonical History.
 
-- Status: approved design, pre-implementation
+- Status: implemented
 - Date: 2026-08-05
 - Source spec: "Verifiable Algorithm and Canonical Data Architecture" v0.1.0 (2026-08-03)
 - Scope: web PoC, rollout Phase 0 per spec section 30 and section 35
@@ -11,7 +11,7 @@ VOUCH: Verified Output Under Canonical History.
 
 The source spec wins over this document in any conflict. This document adds
 definitions only where the spec is silent. The sanctioned deviations are the
-three items in "deviations". Everything else follows spec text.
+five items in "deviations". Everything else follows spec text.
 
 ## locked decisions
 
@@ -139,9 +139,12 @@ adds two domains and defines four constructions.
      bare label.
    - `source_commit` and `source_repository` are metadata, excluded from
      `program_id` exactly as in spec 15.1's own four-field formula.
-     `source_commit` is `git rev-parse HEAD` and `source_repository` is
-     `git remote get-url origin`, both read at generation time; either is an
-     empty byte string, never a fabricated value, if git is unavailable.
+     `scripts/program-id.ts` never reads git. Both fields default to an
+     empty byte string. Each one only carries a value when the caller
+     passes `--source-commit=<hash>` or `--source-repository=<url>`
+     explicitly. A default, flagless run never touches an ambient commit
+     or remote. It reproduces identically from any clone, any fork, or a
+     downloaded tarball.
 
    Honesty boundary, stated plainly. `program_source_hash` is a
    substitution for `guest_binary_hash`, not an equivalent. It binds the
@@ -162,12 +165,13 @@ adds two domains and defines four constructions.
    The full recomputation from real files on disk, including every file's
    own SHA-256, lives in `scripts/program-id.ts`
    (`pnpm --filter vouch program-id`), which is what wrote that JSON file in
-   the first place and is Node-only by necessity (it walks the filesystem
-   and shells out to `git`). Running it against a clean checkout reproduces
-   the same file byte for byte; `test/program-identity.test.ts` asserts
-   exactly that against the committed fixture, checks it against the
-   `PROGRAM` constants actually running in the app, and checks it is
-   byte-identical across repeated runs in the same process.
+   the first place and is Node-only by necessity (it walks the filesystem).
+   Running it against any checkout of this source, including a fork or a
+   downloaded tarball with no `.git` directory at all, reproduces the same
+   file byte for byte; `test/program-identity.test.ts` asserts exactly that
+   against the committed fixture, checks it against the `PROGRAM` constants
+   actually running in the app, and checks it is byte-identical across
+   repeated runs in the same process.
 
    `PROGRAM.updateV2` and `PROGRAM.queryV2` exist only to drive the
    migration scenarios (s18, s19). This PoC keeps both the v1 and v2 fee
@@ -312,8 +316,14 @@ The node suite asserts equality. The future Rust port consumes the same files.
    boundary). It binds source text, not a compiled, executed artifact, and
    cannot detect a compromised toolchain the way a real `guest_binary_hash`
    would. `lockfile_hash`, `toolchain_hash`, and `build_recipe_hash` are
-   real and not substitutes; only `program_source_hash` stands in for
+   real and not substitutes. Only `program_source_hash` stands in for
    something a TypeScript PoC cannot produce.
+5. `ProgramMigrationV1` commits `next_program_manifest_hash` and
+   `governance_authorization`, but `chainNext` does not cover either field.
+   `chainNext` binds only `next_update_program_id`, `next_query_program_id`,
+   and `activation_sequence`. A forged manifest hash or a forged governance
+   authorization inside an otherwise-honest migration still verifies. Never
+   present a manifest hash from this app as verified.
 
 ## verdict kind for compound scenarios
 

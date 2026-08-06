@@ -1,4 +1,3 @@
-import { spawnSync } from 'node:child_process'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
@@ -39,10 +38,22 @@ function requireField<T>(value: T | undefined, label: string): T {
   return value
 }
 
-function runGit(args: string[]): string | null {
-  const result = spawnSync('git', args, { cwd: REPO_ROOT, encoding: 'utf8' })
-  if (result.error || result.status !== 0) return null
-  return result.stdout.trim()
+export type SourceOverrides = {
+  sourceCommit: string
+  sourceRepository: string
+}
+
+function readFlag(argv: string[], name: string): string {
+  const prefix = `--${name}=`
+  const match = argv.find((arg) => arg.startsWith(prefix))
+  return match ? match.slice(prefix.length) : ''
+}
+
+export function parseSourceOverrides(argv: string[]): SourceOverrides {
+  return {
+    sourceCommit: readFlag(argv, 'source-commit'),
+    sourceRepository: readFlag(argv, 'source-repository'),
+  }
 }
 
 type ToolchainFacts = {
@@ -188,7 +199,9 @@ export type ProgramManifestFixture = {
   programs: Record<ProgramKind, ProgramManifestFixtureEntry>
 }
 
-export function computeProgramManifest(): ProgramManifestFixture {
+export function computeProgramManifest(
+  overrides: SourceOverrides = { sourceCommit: '', sourceRepository: '' },
+): ProgramManifestFixture {
   const toolchainFacts = readToolchainFacts()
   const buildRecipeFacts = readBuildRecipeFacts()
 
@@ -198,8 +211,8 @@ export function computeProgramManifest(): ProgramManifestFixture {
   const shared: SharedHashes = { lockfileHash, toolchainHash, buildRecipeHash }
 
   return {
-    sourceRepository: runGit(['remote', 'get-url', 'origin']) ?? '',
-    sourceCommit: runGit(['rev-parse', 'HEAD']) ?? '',
+    sourceRepository: overrides.sourceRepository,
+    sourceCommit: overrides.sourceCommit,
     toolchain: { ...toolchainFacts, toolchainHash },
     buildRecipe: { buildScript: buildRecipeFacts.buildScript, buildRecipeHash },
     lockfile: { path: 'pnpm-lock.yaml', lockfileHash },
@@ -216,8 +229,8 @@ function report(manifest: ProgramManifestFixture): string {
       `${kind}: entry=${program.entryFile} files=${program.sourceFiles.length} sourceHash=${program.programSourceHash} programId=${program.programId}`,
   )
   return [
-    `source commit: ${manifest.sourceCommit || '(absent, not available at build time)'}`,
-    `source repository: ${manifest.sourceRepository || '(absent, not available at build time)'}`,
+    `source commit: ${manifest.sourceCommit || '(not provided, pass --source-commit=<hash>)'}`,
+    `source repository: ${manifest.sourceRepository || '(not provided, pass --source-repository=<url>)'}`,
     `lockfile hash: ${manifest.lockfile.lockfileHash}`,
     `toolchain hash: ${manifest.toolchain.toolchainHash}`,
     `build recipe hash: ${manifest.buildRecipe.buildRecipeHash}`,
@@ -226,7 +239,9 @@ function report(manifest: ProgramManifestFixture): string {
 }
 
 if (import.meta.main) {
-  const manifest = computeProgramManifest()
+  const manifest = computeProgramManifest(
+    parseSourceOverrides(process.argv.slice(2)),
+  )
   const outFile = new URL(
     '../fixtures/protocol-v1/program-manifest.json',
     import.meta.url,

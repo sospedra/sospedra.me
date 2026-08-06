@@ -92,6 +92,35 @@ test('happy batch applies and replays', () => {
   assert.equal(bob.balance, 975n)
 })
 
+test('V1 fee rounding floors a non-divisible amount instead of ceiling it', () => {
+  const w = buildGenesis()
+  const records = seqRecords(w, [
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'alice', initialBalance: 10_000n }),
+    ],
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'bob', initialBalance: 0n }),
+    ],
+    [
+      'alice',
+      OP.TRANSFER,
+      encodeTransfer({ from: 'alice', to: 'bob', amount: 999n }),
+    ],
+  ])
+
+  proveBatch(w.tree, records, PROGRAM.updateV1)
+
+  const bobRaw = w.tree.get(accountKey('bob'))
+  assert.ok(bobRaw)
+  const bob = decodeAccount(bobRaw)
+  assert.equal(bob.balance, 975n)
+  assert.notEqual(bob.balance, 974n)
+})
+
 test('replay rejects a tampered record', () => {
   const w = buildGenesis()
   const startRoot = w.tree.root()
@@ -290,6 +319,44 @@ function forgeJournal(
   return { ...proof, journal: encodeTransitionJournal(journal) }
 }
 
+test('replay rejects a forged start sequence', () => {
+  const w = buildGenesis()
+  const startRoot = w.tree.root()
+  const proof = proveBatch(
+    w.tree,
+    openAliceAndBobThenTransfer(w),
+    PROGRAM.updateV1,
+  )
+  const forged = forgeJournal(proof, (j) => ({
+    ...j,
+    startSequence: j.startSequence + 1n,
+  }))
+
+  assert.throws(() => verifyTransition(startRoot, forged, PROGRAM.updateV1), {
+    code: 'INVALID_PROOF',
+    rule: 'start-sequence',
+  })
+})
+
+test('replay rejects a forged end sequence', () => {
+  const w = buildGenesis()
+  const startRoot = w.tree.root()
+  const proof = proveBatch(
+    w.tree,
+    openAliceAndBobThenTransfer(w),
+    PROGRAM.updateV1,
+  )
+  const forged = forgeJournal(proof, (j) => ({
+    ...j,
+    endSequence: j.endSequence + 1n,
+  }))
+
+  assert.throws(() => verifyTransition(startRoot, forged, PROGRAM.updateV1), {
+    code: 'INVALID_PROOF',
+    rule: 'end-sequence',
+  })
+})
+
 test('replay rejects a forged update program id', () => {
   const w = buildGenesis()
   const startRoot = w.tree.root()
@@ -383,6 +450,26 @@ test('replay rejects a forged batch hash', () => {
     code: 'INVALID_PROOF',
     rule: 'batch-hash',
   })
+})
+
+test('replay of a zero-record segment rejects a foreign expected update program id', () => {
+  const w = buildGenesis()
+  const startRoot = w.tree.root()
+  const proof = proveBatch(w.tree, [], PROGRAM.updateV1)
+
+  assert.throws(() => verifyTransition(startRoot, proof, PROGRAM.updateV2), {
+    code: 'INVALID_PROOF',
+    rule: 'wrong-era',
+  })
+})
+
+test('replay of an honest zero-record segment still verifies', () => {
+  const w = buildGenesis()
+  const startRoot = w.tree.root()
+  const proof = proveBatch(w.tree, [], PROGRAM.updateV1)
+
+  const out = verifyTransition(startRoot, proof, PROGRAM.updateV1)
+  assert.equal(hex(out.endRoot), hex(startRoot))
 })
 
 test('replay rejects an access with the wrong op', () => {

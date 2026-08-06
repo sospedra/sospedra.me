@@ -1,6 +1,6 @@
 {
-  "sourceRepository": "git@github.com:sospedra/sospedra.me.git",
-  "sourceCommit": "d97b3e1f811d43deed4141beb760e9ff7071d371",
+  "sourceRepository": "",
+  "sourceCommit": "",
   "toolchain": {
     "nodeEngine": "24.x",
     "typescriptVersion": "5.9.3",
@@ -21,7 +21,7 @@
       "sourceFiles": [
         {
           "path": "src/protocol/transition.ts",
-          "sha256": "49dd8febd08d68cd0b1427efa7b31421437dc26bbd78a5d81b601e38ad2a7b3c"
+          "sha256": "8b0acffa1c67167b3cbf675c0849dce2e95a60e8b86a18da70ccce1bf84cf9dd"
         },
         {
           "path": "src/protocol/bytes.ts",
@@ -72,8 +72,8 @@
           "sha256": "b4c6bc5a5dd3f01c2b74bc435eeb772c634b14e0bf8f5e02c393edf6d01b6686"
         }
       ],
-      "programSourceHash": "be18eef63bea45476620ad96fcd646f4a25d16e38028fb2f36a2c75ee8cb6d65",
-      "programId": "352b90aaafe43a4e835b8ea33171fe6e46ea5d5713186fda449e337e97440346"
+      "programSourceHash": "7632e0a0a6794ae73a9a397a047f0c79dd0546f3c82e031ca5a3efd489bb2f75",
+      "programId": "81780fa70d0143f2b06e194f3eff6af06d9ba8214ad53b0fe3cfda81d6faa489"
     },
     "query": {
       "entryFile": "src/protocol/query.ts",

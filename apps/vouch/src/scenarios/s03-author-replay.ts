@@ -91,10 +91,16 @@ function replaySwapStep(
         realSecondRecord.authorEvent,
         {
           globalSequence: realSecondRecord.globalSequence.toString(),
+          authorSequence: decodeAuthorEvent(
+            realSecondRecord.authorEvent,
+          ).authorSequence.toString(),
         },
       ),
       obj('replayed-event', 'author-event', forgedRecord.authorEvent, {
         globalSequence: forgedRecord.globalSequence.toString(),
+        authorSequence: decodeAuthorEvent(
+          forgedRecord.authorEvent,
+        ).authorSequence.toString(),
       }),
     ],
   }

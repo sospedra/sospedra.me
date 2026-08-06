@@ -132,3 +132,23 @@ test('s03 trace shows the honest server refusing the replay at submit time, befo
   assert.ok(rejectionCheckSteps.length > 0)
   assert.equal(rejectionCheckSteps.at(-1)?.check?.pass, false)
 })
+
+test('s03 replay-swap object diff shows authorSequence, the field that actually differs', () => {
+  const t = s03.run()
+  const swapStep = t.steps.find((s) =>
+    s.objects?.some((o) => o.name === 'discarded-real-event'),
+  )
+  assert.ok(swapStep)
+  const discarded = swapStep?.objects?.find(
+    (o) => o.name === 'discarded-real-event',
+  )
+  const replayed = swapStep?.objects?.find((o) => o.name === 'replayed-event')
+  assert.ok(discarded)
+  assert.ok(replayed)
+  assert.equal(discarded?.decoded.authorSequence, '2')
+  assert.equal(replayed?.decoded.authorSequence, '1')
+  assert.equal(
+    discarded?.decoded.globalSequence,
+    replayed?.decoded.globalSequence,
+  )
+})
