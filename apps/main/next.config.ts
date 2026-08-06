@@ -29,7 +29,6 @@ const config: NextConfig = {
     browserToTerminal: true,
   },
   experimental: {
-    inlineCss: true,
     webVitalsAttribution: ['CLS', 'LCP', 'INP'],
   },
   // cache revalidation re-runs fs reads at runtime, and the tracer
@@ -67,6 +66,15 @@ const config: NextConfig = {
       destination,
       permanent: true,
     })),
+  ],
+  // /fonts files carry no build hash; immutable matches the old /_next/static behavior
+  headers: async () => [
+    {
+      source: '/fonts/:path*',
+      headers: [
+        { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+      ],
+    },
   ],
 }
 
