@@ -159,7 +159,7 @@ function run(): Trace {
     checks: result.checks,
     verdict: {
       kind: 'LIMITATION',
-      note: `every check in this ladder genuinely passes: alice is a properly authorized author, her signature and author chain are valid, the transition proof honestly seals her event, and the receipt, query proof, and head are all correctly signed over the resulting state — account "${accountId}" now genuinely holds ${balanceResult.balance} in canonical state, exactly as alice claimed. ACCEPT is correct protocol behavior here, not a bug: the protocol has no channel for checking whether ${balanceResult.balance} corresponds to any real audit budget in the physical world; it proves who said it and that it was processed correctly, not that it is true. ${SPEC_AUTHORIZATION_NOT_TRUTH_LIMIT}`,
+      note: `every check the verifier runs passes, and the bookkeeping steps it skips by design stay skipped: alice is a properly authorized author, her signature and author chain are valid, the transition proof honestly seals her event, and the receipt, query proof, and head are all correctly signed over the resulting state — account "${accountId}" now genuinely holds ${balanceResult.balance} in canonical state, exactly as alice claimed. ACCEPT is correct protocol behavior here, not a bug: the protocol has no channel for checking whether ${balanceResult.balance} corresponds to any real audit budget in the physical world; it proves who said it and that it was processed correctly, not that it is true. ${SPEC_AUTHORIZATION_NOT_TRUTH_LIMIT}`,
     },
   }
 }

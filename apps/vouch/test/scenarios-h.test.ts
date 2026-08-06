@@ -3,6 +3,7 @@ import { test } from 'node:test'
 import { hex } from '../src/protocol/bytes.ts'
 import { GENESIS_ROOT } from '../src/protocol/genesis.ts'
 import type { CheckLog } from '../src/protocol/verify.ts'
+import { scenarios } from '../src/scenarios/index.ts'
 import { scenario as s20 } from '../src/scenarios/s20-key-rotation.ts'
 import { scenario as s21 } from '../src/scenarios/s21-first-contact-fork.ts'
 import { scenario as s22 } from '../src/scenarios/s22-authorized-false-data.ts'
@@ -85,6 +86,25 @@ test('s21 does not claim an unskipped ladder, since persistence bookkeeping is s
   assert.ok(!t.verdict.note.toLowerCase().includes('unskipped'))
   const skippedCount = t.checks.filter((c) => c.skipped).length
   assert.equal(skippedCount, 2)
+})
+
+test('no scenario claims every check passes while its own trace skips one', () => {
+  const OVERCLAIMS = [
+    'every check in this ladder genuinely passes',
+    'unskipped',
+  ]
+  for (const scenario of scenarios) {
+    const t = scenario.run()
+    const skipped = t.checks?.filter((c) => c.skipped).length ?? 0
+    if (skipped === 0) continue
+    const note = t.verdict.note.toLowerCase()
+    for (const claim of OVERCLAIMS) {
+      assert.ok(
+        !note.includes(claim),
+        `${scenario.meta.slug} skips ${skipped} check(s) but claims "${claim}"`,
+      )
+    }
+  }
 })
 
 test('s21 reports LIMITATION with the exact spec 18 first-contact sentence', () => {

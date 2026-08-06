@@ -280,7 +280,7 @@ function run(): Trace {
     checks: [...resultA.checks, ...resultB.checks],
     verdict: {
       kind: 'LIMITATION',
-      note: `world A and world B both descend from the identical pinned genesis root ${hex(GENESIS_ROOT)}, then diverge at a single transfer amount (100 in world A, 999 in world B). Each history is honestly sealed, and a fresh client holding only genesis trust fully verifies EITHER bundle, and every check in that ladder genuinely passes — bob's balance is ${balanceA.balance} in world A and ${balanceB.balance} in world B, and nothing in first-contact verification can tell which one is canonical, or whether more forks exist. ${SPEC_FIRST_CONTACT_LIMIT}`,
+      note: `world A and world B both descend from the identical pinned genesis root ${hex(GENESIS_ROOT)}, then diverge at a single transfer amount (100 in world A, 999 in world B). Each history is honestly sealed, and a fresh client holding only genesis trust fully verifies EITHER bundle. Every check the verifier runs passes, and the bookkeeping steps it skips by design are skipped in both worlds alike. Bob's balance is ${balanceA.balance} in world A and ${balanceB.balance} in world B, and nothing in first-contact verification can tell which one is canonical, or whether more forks exist. ${SPEC_FIRST_CONTACT_LIMIT}`,
     },
   }
 }

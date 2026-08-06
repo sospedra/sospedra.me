@@ -213,7 +213,7 @@ function run(): Trace {
     checks: [...firstResult.checks, ...secondResult.checks],
     verdict: {
       kind: 'LIMITATION',
-      note: `round-1 seals the last transition this server will ever produce, at sequence ${firstReceipt.stateSequence}. Round-2 queries again ${secondHead.latestAsOfMs - firstHead.latestAsOfMs}ms later by the server's own clock: the head is freshly signed and every one of the checks the verifier runs genuinely passes, yet the sequence is still ${firstReceipt.stateSequence}, because the server has simply stopped sequencing for this client. Nothing in local verification can distinguish a frozen server from one that is honestly caught up. ${REQUIRED_LIMITATION_SENTENCE}`,
+      note: `round-1 seals the last transition this server will ever produce, at sequence ${firstReceipt.stateSequence}. Round-2 queries again ${secondHead.latestAsOfMs - firstHead.latestAsOfMs}ms later by the server's own clock: the head is freshly signed and every check the verifier runs passes, yet the sequence is still ${firstReceipt.stateSequence}, because the server has simply stopped sequencing for this client. Nothing in local verification can distinguish a frozen server from one that is honestly caught up. ${REQUIRED_LIMITATION_SENTENCE}`,
     },
   }
 }
