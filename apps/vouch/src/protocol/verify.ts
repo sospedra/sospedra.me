@@ -2,6 +2,7 @@ import { decodeBundle, type ResponseBundle } from './bundle.ts'
 import { bytesEqual } from './bytes.ts'
 import { FRESHNESS, PROTOCOL_VERSION } from './constants.ts'
 import type { Evidence } from './evidence.ts'
+import { hash } from './hash.ts'
 import {
   checkFreshness,
   decodeLatestHead,
@@ -776,12 +777,13 @@ type BuildTrustParams = {
   trust: ClientTrustStateV1
   era: EraState
   headFacts: HeadFacts | null
+  keyStateHash: Uint8Array
 }
 
 function stageBuildNextTrust(
   params: BuildTrustParams,
 ): StageResult<ClientTrustStateV1> {
-  const { trust, era, headFacts } = params
+  const { trust, era, headFacts, keyStateHash } = params
   const checks: CheckLog[] = []
   const next: ClientTrustStateV1 = {
     protocolVersion: trust.protocolVersion,
@@ -790,7 +792,7 @@ function stageBuildNextTrust(
     programChainHash: era.chainHash,
     activeUpdateProgramId: era.updateProgramId,
     activeQueryProgramId: era.queryProgramId,
-    activeKeyStateHash: trust.activeKeyStateHash,
+    activeKeyStateHash: keyStateHash,
     lastLatestAsOfMs:
       headFacts === null
         ? trust.lastLatestAsOfMs
@@ -853,9 +855,20 @@ function runVerification(input: VerifyInput): VerifyResult {
         requireFreshHead: input.requireFreshHead,
       }),
     )
+    const receiptKeyValue = bundle.receiptKeyWitness.value
+    if (receiptKeyValue === null) {
+      throw new Error(
+        'receipt key value must not be null after step 4 accepted it',
+      )
+    }
     const next = unwrap(
       checks,
-      stageBuildNextTrust({ trust: input.trust, era, headFacts }),
+      stageBuildNextTrust({
+        trust: input.trust,
+        era,
+        headFacts,
+        keyStateHash: hash('key-state', receiptKeyValue),
+      }),
     )
 
     checks.push({

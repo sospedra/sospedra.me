@@ -11,6 +11,7 @@ import {
   ZERO32,
 } from '../src/protocol/constants.ts'
 import { buildGenesis, GENESIS_ROOT } from '../src/protocol/genesis.ts'
+import { hash } from '../src/protocol/hash.ts'
 import {
   encodeLatestHead,
   type HeadIdV1,
@@ -731,4 +732,28 @@ test('decodeBundle round trips an encoded bundle', () => {
 test('decodeQueryReceipt round trips an encoded receipt', () => {
   const honest = makeHonestBundle(buildGenesis())
   assert.deepEqual(decodeQueryReceipt(honest.bundle.receipt), honest.receipt)
+})
+
+test('the accepted trust state binds the proven receipt-key record', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const receiptKeyValue = honest.bundle.receiptKeyWitness.value
+  assert.ok(receiptKeyValue)
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: honest.bundleBytes,
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assert.equal(result.ok, true)
+  if (!result.ok) return
+  const expected = hash('key-state', receiptKeyValue)
+  assert.deepEqual(result.next.activeKeyStateHash, expected)
+  assert.notDeepEqual(
+    result.next.activeKeyStateHash,
+    honest.trust.activeKeyStateHash,
+  )
 })
