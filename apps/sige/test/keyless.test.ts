@@ -6,7 +6,11 @@ import { type CborValue, encodeCbor } from '../src/core/cbor.ts'
 import type { CongestionPolicy } from '../src/core/congestion.ts'
 import { chainedWork, STAMP_GENESIS } from '../src/core/congestion.ts'
 import { setupParams } from '../src/core/lhtlp.ts'
-import { TransparencyLog, verifyHead } from '../src/core/merkle.ts'
+import {
+  type SignedTreeHead,
+  TransparencyLog,
+  verifyHead,
+} from '../src/core/merkle.ts'
 import type { EvidencePublicKeys } from '../src/world/evidence.ts'
 import { encodeClosingLeafV1 } from '../src/world/evidence.ts'
 import {
@@ -1731,4 +1735,75 @@ test('SIXTEENTH-REVIEW: a partial closing leaf is unparsable, not accounted for'
   assert.equal(report.unparsable, 1, 'the partial leaf was accounted for')
   assert.equal(report.missingFromView, 1, 'so the view is not complete')
   assert.equal(report.congestionChain, 'unknown')
+})
+
+// EIGHTEENTH-REVIEW. Copying a value is not the same as enforcing that it was
+// copied. `anchoredHeads` was read once per field for a whole round and still
+// slipped through, because its type was the caller's own and nothing stopped a
+// raw value reaching a counter. Heads and leaf views now carry a `normalized`
+// marker no presenter value can satisfy, so the compiler holds the line at
+// every entry rather than my memory holding it at each new one.
+//
+// This test covers the runtime half: the exported entry points normalize their
+// own arguments, so a getter that answers differently on each read cannot make
+// two functions disagree about one head.
+test('EIGHTEENTH-REVIEW: exported entries normalize the heads they are handed', async () => {
+  const world = createWorld(GENERIC, { t: tuned(64) })
+  const verifier = verifierFor(world)
+  const enrolled = enroll(world, 'DOC-18TH', {
+    fullLegalName: 'E',
+    dateOfBirth: '1990-01-01',
+    documentNumber: 'ID-18',
+  })
+  assert.ok(!('error' in enrolled))
+  if ('error' in enrolled) return
+  const outcome = await performUnseal(world, enrolled.record, {
+    skipDelay: true,
+  })
+  const published = outcome.published
+  assert.ok(published)
+  const head = world.log.signHead()
+  const real = {
+    index: published.leafIndex,
+    bytes: published.leafBytes,
+    inclusionProof: world.log.inclusionProof(published.leafIndex),
+  }
+
+  const counting = (target: SignedTreeHead, counter: { n: number }) =>
+    new Proxy(target, {
+      get(obj, property, receiver) {
+        if (property === 'treeSize') counter.n += 1
+        return Reflect.get(obj, property, receiver)
+      },
+    })
+
+  // verifyLeafInclusion reads the head for the signature and again for the
+  // inclusion walk. Both must come from one read of the caller's object.
+  const a = { n: 0 }
+  assert.equal(
+    verifyLeafInclusion(verifier, real, counting(head, a), real.inclusionProof),
+    null,
+    'positive control',
+  )
+  assert.equal(a.n, 1, 'verifyLeafInclusion read treeSize more than once')
+
+  // detectEquivocation reads every head in the array.
+  const b = { n: 0 }
+  assert.equal(
+    detectEquivocation(verifier, [counting(head, b), counting(head, b)]),
+    null,
+  )
+  assert.equal(b.n, 2, 'detectEquivocation read treeSize more than once each')
+
+  // provenLeaves reads the head for the signature and for every leaf walk.
+  const c = { n: 0 }
+  assert.equal(
+    provenLeaves(verifier, counting(head, c), {
+      heads: [head],
+      leaves: [real],
+      anchors: [],
+    }).length,
+    1,
+  )
+  assert.equal(c.n, 1, 'provenLeaves read treeSize more than once')
 })

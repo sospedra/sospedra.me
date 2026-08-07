@@ -85,8 +85,8 @@ export function decodeLeaves(leaves: readonly PublicLeafView[]): DecodedLeaf[] {
 // Decoding proves a leaf parses. Only an inclusion proof under a head this
 // log signed proves the log actually holds it, and one index yields one leaf.
 function includedLeaves(
-  head: SignedTreeHead,
-  leaves: readonly PublicLeafView[],
+  head: SafeHead,
+  leaves: readonly SafeLeafView[],
 ): DecodedLeaf[] {
   const byIndex = new Map<number, DecodedLeaf>()
   for (const leaf of decodeLeaves(leaves)) {
@@ -137,7 +137,7 @@ export function createKeylessVerifier(inputs: KeylessInputs): KeylessVerifier {
 // Every head reaching this module is presenter-controlled. verifyHead encodes
 // the tree size as u32be and reads a fixed-length signature, so a junk head
 // throws where the caller expects a verdict.
-function safeVerifyHead(publicKey: Uint8Array, head: SignedTreeHead): boolean {
+function safeVerifyHead(publicKey: Uint8Array, head: SafeHead): boolean {
   try {
     return verifyHead(publicKey, head)
   } catch {
@@ -151,16 +151,12 @@ export function verifyLeafInclusion(
   head: SignedTreeHead,
   proof: readonly Uint8Array[],
 ): string | null {
-  if (!safeVerifyHead(verifier.logPublicKey, head)) {
+  const safeHead = readHead(head)
+  if (!safeVerifyHead(verifier.logPublicKey, safeHead)) {
     return 'tree head signature does not verify'
   }
-  let view: PublicLeafView
-  try {
-    view = { ...leaf, inclusionProof: proof }
-  } catch {
-    return 'leaf is not included under this head'
-  }
-  return provesInclusion(head, view)
+  const view = readLeafView({ ...leaf, inclusionProof: proof })
+  return provesInclusion(safeHead, view)
     ? null
     : 'leaf is not included under this head'
 }
@@ -171,10 +167,10 @@ export function verifyHeadConsistency(
   newHead: SignedTreeHead,
   proof: readonly Uint8Array[],
 ): string | null {
-  if (!safeVerifyHead(verifier.logPublicKey, oldHead)) {
+  if (!safeVerifyHead(verifier.logPublicKey, readHead(oldHead))) {
     return 'old tree head signature does not verify'
   }
-  if (!safeVerifyHead(verifier.logPublicKey, newHead)) {
+  if (!safeVerifyHead(verifier.logPublicKey, readHead(newHead))) {
     return 'new tree head signature does not verify'
   }
   return verifyConsistency(oldHead, newHead, [...proof])
@@ -206,7 +202,7 @@ export function detectEquivocation(
 ): string | null {
   const bySize = new Map<number, string>()
   const byRoot = new Map<string, number>()
-  for (const head of heads) {
+  for (const head of readHeads(heads)) {
     if (!safeVerifyHead(verifier.logPublicKey, head)) continue
     const root = toHex(head.rootHash)
     const seen = bySize.get(head.treeSize)
@@ -340,8 +336,9 @@ export function provenLeaves(
   head: SignedTreeHead,
   log: PublicLogView,
 ): DecodedLeaf[] {
-  return safeVerifyHead(verifier.logPublicKey, head)
-    ? includedLeaves(head, log.leaves)
+  const safeHead = readHead(head)
+  return safeVerifyHead(verifier.logPublicKey, safeHead)
+    ? includedLeaves(safeHead, readLeafViews(log.leaves))
     : []
 }
 
@@ -356,8 +353,8 @@ type LeafCounts = {
 }
 
 function classifyLeaves(
-  head: SignedTreeHead,
-  views: readonly PublicLeafView[],
+  head: SafeHead,
+  views: readonly SafeLeafView[],
 ): { leaves: DecodedLeaf[]; counts: LeafCounts; accountedFor: number } {
   const byIndex = new Map<number, DecodedLeaf>()
   const counts: LeafCounts = {
@@ -428,7 +425,14 @@ function readBytes(value: unknown): Uint8Array {
 // The pinned head decides which anchored trees are admissible, so it is read
 // once and copied. A getter answering differently on each of three reads made
 // the report disagree with itself.
-function readHead(head: SignedTreeHead): SignedTreeHead {
+// The `normalized` marker makes these NOMINAL. Copying a value is not enough:
+// `anchoredHeads` was copied for a round and still slipped, because its type was
+// the caller's own and nothing stopped a raw value reaching a counter. A raw
+// SignedTreeHead cannot satisfy SafeHead, so the compiler holds the line.
+export type SafeHead = SignedTreeHead & { readonly normalized: true }
+export type SafeLeafView = PublicLeafView & { readonly normalized: true }
+
+function readHead(head: SignedTreeHead): SafeHead {
   try {
     const treeSize = head?.treeSize
     const treeId = head?.treeId
@@ -437,6 +441,7 @@ function readHead(head: SignedTreeHead): SignedTreeHead {
       treeSize: Number.isSafeInteger(treeSize) ? treeSize : -1,
       rootHash: readBytes(head?.rootHash),
       signature: readBytes(head?.signature),
+      normalized: true,
     }
   } catch {
     return {
@@ -444,11 +449,12 @@ function readHead(head: SignedTreeHead): SignedTreeHead {
       treeSize: -1,
       rootHash: EMPTY_BYTES,
       signature: EMPTY_BYTES,
+      normalized: true,
     }
   }
 }
 
-function readHeads(heads: readonly SignedTreeHead[]): SignedTreeHead[] {
+function readHeads(heads: readonly SignedTreeHead[]): SafeHead[] {
   try {
     return [...heads].map(readHead)
   } catch {
@@ -459,7 +465,7 @@ function readHeads(heads: readonly SignedTreeHead[]): SignedTreeHead[] {
 // Leaves were left raw when the anchors were normalized. `view.index` was read
 // five times, so a getter could be one leaf for the counters and another for
 // the anchor lookup.
-function readLeafView(view: PublicLeafView): PublicLeafView {
+function readLeafView(view: PublicLeafView): SafeLeafView {
   try {
     const index = view?.index
     const proof = view?.inclusionProof
@@ -467,13 +473,19 @@ function readLeafView(view: PublicLeafView): PublicLeafView {
       index: Number.isSafeInteger(index) ? index : -1,
       bytes: readBytes(view?.bytes),
       inclusionProof: Array.isArray(proof) ? proof.map(readBytes) : [],
+      normalized: true,
     }
   } catch {
-    return { index: -1, bytes: EMPTY_BYTES, inclusionProof: [] }
+    return {
+      index: -1,
+      bytes: EMPTY_BYTES,
+      inclusionProof: [],
+      normalized: true,
+    }
   }
 }
 
-function readLeafViews(views: readonly PublicLeafView[]): PublicLeafView[] {
+function readLeafViews(views: readonly PublicLeafView[]): SafeLeafView[] {
   try {
     return [...views].map(readLeafView)
   } catch {
@@ -547,7 +559,7 @@ function backedByChain(chain: SafeChain, anchor: SafeAnchor): boolean {
   return bytesEqual(payload, anchor.sthHash)
 }
 
-function provesInclusion(head: SignedTreeHead, view: PublicLeafView): boolean {
+function provesInclusion(head: SafeHead, view: SafeLeafView): boolean {
   try {
     return verifyInclusion(
       view.bytes,
@@ -616,7 +628,9 @@ function anchoredTreeFor(
   // Null and hostile shapes reach the catch below, so no separate shape guard.
   try {
     const head = entry.head
-    if (!safeVerifyHead(verifier.logPublicKey, coreSignedTreeHead(head))) {
+    if (
+      !safeVerifyHead(verifier.logPublicKey, readHead(coreSignedTreeHead(head)))
+    ) {
       return null
     }
     // Signed, chain-backed and small enough still leaves a fork: a head on

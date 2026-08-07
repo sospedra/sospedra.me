@@ -215,6 +215,29 @@ const MUTATIONS: Mutation[] = [
       "    return { error: 'ENROLLMENT_REFUSED', message: SUBMITTER_REFUSAL_MESSAGE } as never\n",
     tests: ['test/enrollment.test.ts'],
   },
+  {
+    name: 'keyless:entry-normalizes-head',
+    file: 'src/world/keyless-verifier.ts',
+    find: '  const safeHead = readHead(head)\n  if (!safeVerifyHead(verifier.logPublicKey, safeHead)) {\n',
+    replace:
+      '  const safeHead = head as SafeHead\n  if (!safeVerifyHead(verifier.logPublicKey, safeHead)) {\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'keyless:equivocation-normalizes',
+    file: 'src/world/keyless-verifier.ts',
+    find: '  for (const head of readHeads(heads)) {\n',
+    replace: '  for (const head of heads as readonly SafeHead[]) {\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'keyless:proven-leaves-normalizes',
+    file: 'src/world/keyless-verifier.ts',
+    find: '  const safeHead = readHead(head)\n  return safeVerifyHead(verifier.logPublicKey, safeHead)\n',
+    replace:
+      '  const safeHead = head as SafeHead\n  return safeVerifyHead(verifier.logPublicKey, safeHead)\n',
+    tests: ['test/keyless.test.ts'],
+  },
 ]
 
 function runTests(tests: string[]): boolean {
