@@ -1,0 +1,54 @@
+{
+  "name": "@sospedra/len",
+  "version": "3.0.0",
+  "description": "Go's builtin len for TypeScript",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sospedra/sospedra.me.git",
+    "directory": "packages/len"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./object-keys": {
+      "types": "./dist/handlers/object-keys.d.ts",
+      "default": "./dist/handlers/object-keys.js"
+    },
+    "./string-code-points": {
+      "types": "./dist/handlers/string-code-points.d.ts",
+      "default": "./dist/handlers/string-code-points.js"
+    },
+    "./string-code-units": {
+      "types": "./dist/handlers/string-code-units.d.ts",
+      "default": "./dist/handlers/string-code-units.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/fix-dts.ts",
+    "prepublishOnly": "pnpm build",
+    "lint": "biome check .",
+    "test": "node --test test/len.test.ts",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}
