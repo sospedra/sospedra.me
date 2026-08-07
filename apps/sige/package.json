@@ -11,6 +11,7 @@
     "dev": "vite",
     "lint": "biome check .",
     "preview": "vite preview",
+    "ci:mutation": "node --experimental-strip-types scripts/mutation-gate.mts",
     "test": "SIGE_FAST=1 node --test test/cbor.test.ts test/conformance.test.ts test/core.test.ts test/enrollment.test.ts test/evidence.test.ts test/kem.test.ts test/keyless.test.ts test/lhtlp.test.ts test/lifecycle.test.ts test/log.test.ts test/records.test.ts test/malformed.test.ts test/shamir.test.ts test/vtd.test.ts test/world.test.ts test/scenarios.test.ts test/unseal-evidence.test.ts test/vectors.test.ts",
     "reproduce": "node src/bench/reproduce.ts",
     "typecheck": "tsc"

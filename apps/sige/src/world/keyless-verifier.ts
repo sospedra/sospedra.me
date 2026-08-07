@@ -629,11 +629,11 @@ function anchoredTreeFor(
     ) {
       return null
     }
-    // The head signature covers only the size and the root, so an operator can
-    // sign a size the tree will never reach, anchor it early, and back-date
-    // every later unseal. An anchored tree cannot exceed the pinned one.
+    // A size larger than the pinned tree is already refused by the consistency
+    // proof above: verifyConsistency requires oldSize <= newSize. The separate
+    // bound this used to carry was proven when it landed and became redundant
+    // when the consistency check arrived. The mutation gate found it.
     if (!Number.isSafeInteger(head.tree_size)) return null
-    if (head.tree_size > pinned.treeSize) return null
     const height = heightByDigest.get(toHex(hashSignedTreeHeadV1(head)))
     return height === undefined ? null : { height, treeSize: head.tree_size }
   } catch {
