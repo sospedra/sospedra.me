@@ -4,6 +4,13 @@
 ## changelog
 
 - v0.1.0 (2026-08-03): vendored baseline.
+- v0.1.1 (2026-08-07): migration digest covers the full canonical migration
+  object in the program chain. Manifest pair hash defined. Client trust state
+  binds the proven receipt-key record. Genesis chain link is the era-0
+  migration object. Hash magic renamed VAPI to VOUCH (8.2). Program manifest
+  gains an execution-mode discriminant (15.1). Migration authorization
+  validity is the governance-role event gate; the chain digest gives
+  substitution-proofness only (16.2, 32 item 8).
 
 ---
 
@@ -292,12 +299,14 @@ All protocol hashes MUST use domain separation.
 
 ```text
 hash(domain, parts...) = SHA256(
-    "VAPI" ||
+    "VOUCH" ||
     u16_be(protocol_version) ||
     u16_be(byte_length(domain)) || domain_ascii ||
     for each part: u32_be(byte_length(part)) || part
 )
 ```
+
+Revision v0.1.1 renames the magic from VAPI to VOUCH. See the changelog.
 
 Domain labels are lowercase ASCII and versioned by the enclosing protocol version. Required Version 1 domains include:
 
@@ -688,6 +697,12 @@ The source repository MUST document how to reproducibly build the guest and deri
 
 The cryptographic proof binds to `program_id`, not to a human-readable repository URL.
 
+Revision v0.1.1. The manifest carries an `execution_mode` u8 discriminant:
+1 = source (Phase 0, verifier re-executes from source, identity field is
+`program_source_hash`), 2 = guest (zkVM era, identity field is
+`guest_binary_hash`). The discriminant is encoded, so a fixed-field decoder
+never guesses the identity field's meaning.
+
 ### 15.2 Stable terminal wrapper
 
 The client-pinned terminal wrapper MUST remain deliberately minimal. It MAY:
@@ -737,6 +752,39 @@ Requirements:
 - The final journal of the old era MUST commit the next program IDs and activation sequence.
 - Receipts and proofs MUST identify the program era they use.
 - Clients MUST follow the committed ID chain; explicit per-user approval is not a security control.
+
+Revision v0.1.1. The program chain link MUST commit the digest of the full
+canonical migration object:
+
+    migration_digest = H("program-migration", encode(ProgramMigrationV1))
+    chain_next = H("program-chain", previous_chain, migration_digest)
+
+A client walking migrations MUST recompute the digest from the presented
+migration bytes. A presented migration that differs in any byte from the
+committed one, including `next_program_manifest_hash` and
+`governance_authorization`, MUST fail the walk.
+
+`next_program_manifest_hash` MUST be the manifest pair hash of the next
+era's update and query manifests:
+
+    manifest_pair_hash = H("program-manifest-pair", encode(update_manifest), encode(query_manifest))
+
+When an era's manifests are published, the pair hash MUST derive that era's
+program ids, and a verifier holding the manifests MUST check both derived
+ids against the migration's next ids. Eras with simulated programs commit
+the pair hash as an opaque value.
+
+The genesis chain link is the digest of the era-0 migration object: the
+genesis program ids, the genesis manifest pair hash, activation sequence 0,
+and an empty governance authorization. Genesis needs no governance
+authorization because the client pins genesis directly.
+
+The chain digest gives substitution-proofness: the migration bytes the
+client walks are the committed bytes. Authorization validity is a separate
+control: `OP.COMMIT_MIGRATION` MUST be accepted only from an author holding
+the governance role, enforced in transition replay. The internal structure
+of `governance_authorization` stays an open engineering decision per
+section 32 item 8.
 
 ### 16.3 Key lifecycle
 
@@ -791,6 +839,12 @@ ClientTrustStateV1 {
   last_latest_as_of_ms: u64
 }
 ```
+
+Revision v0.1.1. `active_key_state_hash` MUST equal
+H("key-state", value) where value is the canonical receipt-key record the
+verifier proved at the accepted root in step 4. The field is diagnostic:
+steps 4 and 14 already authenticate key state, and the proofs document shows
+the redundancy.
 
 The mobile verifier SHOULD own serialization of this object. The host application SHOULD persist it using an atomic replace or transactional storage primitive. A crash MUST leave either the old fully valid state or the new fully valid state, never a partially written mixture.
 

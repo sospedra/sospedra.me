@@ -318,13 +318,10 @@ The node suite asserts equality. The future Rust port consumes the same files.
    cannot detect a compromised toolchain the way a real `guest_binary_hash`
    would. `lockfile_hash`, `toolchain_hash`, and `build_recipe_hash` are
    real and not substitutes. Only `program_source_hash` stands in for
-   something a TypeScript PoC cannot produce.
-5. `ProgramMigrationV1` commits `next_program_manifest_hash` and
-   `governance_authorization`, but `chainNext` does not cover either field.
-   `chainNext` binds only `next_update_program_id`, `next_query_program_id`,
-   and `activation_sequence`. A forged manifest hash or a forged governance
-   authorization inside an otherwise-honest migration still verifies. Never
-   present a manifest hash from this app as verified.
+   something a TypeScript PoC cannot produce. Spec revision v0.1.1 assigns
+   it as the identity field for `execution_mode` 1 (15.1).
+5. Closed by spec revision v0.1.1 and the migration-digest chain. See
+   SPEC.md changelog.
 
 ## verdict kind for compound scenarios
 
