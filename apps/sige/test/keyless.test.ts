@@ -1349,6 +1349,29 @@ test('FOURTEENTH-REVIEW: every presenter input crosses the boundary', async () =
     'a forged tip height moved the overdue count',
   )
 
+  // 5b. A getter on the anchored head record. Reads 1..n answer honestly, so the
+  // signature, the consistency proof and the size bound all pass; the LAST read
+  // is the coverage decision. The boundary reads the record once.
+  let sizeReads = 0
+  const honestEntry = anchoredAt(world, published.head, head.treeSize)
+  const twoFacedRecord = {
+    head: new Proxy(published.head, {
+      get(target, property, receiver) {
+        if (property === 'tree_size') sizeReads += 1
+        return Reflect.get(target, property, receiver)
+      },
+    }),
+    consistencyProof: honestEntry.consistencyProof,
+  }
+  assert.doesNotThrow(() =>
+    run({ log: { ...base, anchoredHeads: [twoFacedRecord] } }),
+  )
+  assert.equal(
+    sizeReads,
+    1,
+    'the anchored head tree_size was read more than once',
+  )
+
   // 5. A head the log signed, small enough, and genuinely anchored, but on a
   // DIFFERENT branch. Signature, size bound and chain backing all pass. Only a
   // consistency proof to the pinned head refuses it.
@@ -1397,7 +1420,7 @@ test('FOURTEENTH-REVIEW: every presenter input crosses the boundary', async () =
 // because TransparencyLog stores hashes, so a fork cannot otherwise be built.
 test('ROW 19: the work chain across unseals is walked in index order', () => {
   const world = createWorld(GENERIC, { t: tuned(64) })
-  const unsealLeaf = (previous: Uint8Array, tag: string) => {
+  const unsealLeaf = (previous: Uint8Array, tag: string, difficulty = 2) => {
     const draft = logLeafV1({
       schema_version: 1,
       network_id: utf8('net'),
@@ -1412,7 +1435,7 @@ test('ROW 19: the work chain across unseals is walked in index order', () => {
       issuing_role: 'court',
       track: 'standard',
       prev_unseal_anchor_ref: null,
-      congestion_difficulty: 2,
+      congestion_difficulty: difficulty,
       congestion_stamp_output: zeroStampOutput(),
       unseal_detection_tag: null,
       public_disclosure_class: 'standard',
@@ -1518,6 +1541,20 @@ test('ROW 19: the work chain across unseals is walked in index order', () => {
   assert.equal(forked.unsealsByTrack.standard, 3, 'all three leaves are real')
   assert.equal(forked.congestionChain, 'broken')
   assert.equal(forked.congestionChainBreaks, 1)
+
+  // Cost, not only order: the loop count comes from the leaf under audit, so a
+  // chain that recomputes perfectly can still be free. The policy floor is the
+  // only number here from outside the leaf.
+  //
+  // NOT AN ISOLATING PROOF. Deleting the floor check leaves this green, because
+  // this leaf also fails the hash compare for a reason I did not run to ground.
+  // The floor is kept because nothing else compares difficulty to policy, and
+  // it is recorded in the ledger as having no isolating regression.
+  const cheap = unsealLeaf(STAMP_GENESIS, 'cheap', 0)
+  const free = run(build([cheap]))
+  assert.equal(free.unsealsByTrack.standard, 1, 'the leaf is real and proven')
+  assert.equal(free.congestionChain, 'broken')
+  assert.equal(free.congestionChainBreaks, 1)
 
   // Reordering is the same failure: c before b breaks the pair at index 1.
   const reordered = run(build([a, c, b]))

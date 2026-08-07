@@ -74,7 +74,10 @@ test('enrollment stores no identity and blocks duplicate documents', () => {
   assert.ok(!dump.includes('Ada'))
   assert.ok(!dump.includes('ID-A-4472'))
   const dup = enroll(world, 'DOC-1', PERSON)
-  assert.ok('error' in dup && dup.error === 'CREDENTIAL_ALREADY_ENROLLED')
+  // The duplicate refusal is opaque: a distinct tag here enumerated which
+  // documents are enrolled, before any curve operation.
+  assert.ok('error' in dup && dup.error === 'ENROLLMENT_REFUSED')
+  assert.match(String(world.operatorJournal.at(-1)), /already enrolled/)
 })
 
 test('the envelope carries a public commitment and a verifiable delay proof', () => {

@@ -561,12 +561,55 @@ function provesInclusion(head: SignedTreeHead, view: PublicLeafView): boolean {
   }
 }
 
+// The `normalized` marker is what makes this NOMINAL: a raw AnchoredHeadView
+// cannot satisfy it, so the compiler refuses a presenter value where a safe one
+// is expected. `SafeAnchor` and `SafeChain` already work this way. This array
+// was the sixth to grow the same hole because its type was the caller's own,
+// and enumerating inputs by hand is discipline, not enforcement.
+type SafeAnchoredHead = {
+  readonly head: SignedTreeHeadV1
+  readonly consistencyProof: readonly Uint8Array[]
+  readonly normalized: true
+}
+
+function readAnchoredHead(entry: AnchoredHeadView): SafeAnchoredHead | null {
+  try {
+    const head = entry?.head
+    if (head === null || typeof head !== 'object') return null
+    const proof = entry.consistencyProof
+    return {
+      // One spread reads every field exactly once, so a getter cannot answer
+      // the size checks honestly and the coverage decision differently.
+      head: { ...head },
+      consistencyProof: Array.isArray(proof) ? proof.map(readBytes) : [],
+      normalized: true,
+    }
+  } catch {
+    return null
+  }
+}
+
+function readAnchoredHeads(
+  entries: readonly AnchoredHeadView[],
+): SafeAnchoredHead[] {
+  try {
+    // Reference dedupe BEFORE normalizing. Normalizing first makes every entry a
+    // fresh object, which silently undid D45: 200k copies of one head then cost
+    // 200k spreads and 200k hashes instead of one.
+    return [...new Set(entries)].flatMap(
+      (entry) => readAnchoredHead(entry) ?? [],
+    )
+  } catch {
+    return []
+  }
+}
+
 // A leaf is anchored by the EARLIEST anchored head whose tree already held it.
 type AnchoredTree = { height: number; treeSize: number }
 
 function anchoredTreeFor(
   verifier: KeylessVerifier,
-  entry: AnchoredHeadView,
+  entry: SafeAnchoredHead,
   pinned: SignedTreeHead,
   heightByDigest: ReadonlyMap<string, number>,
 ): AnchoredTree | null {
@@ -602,7 +645,7 @@ function anchoredTreeFor(
 // anchored at two heights let array order alone move the reported window.
 function anchoredTrees(
   verifier: KeylessVerifier,
-  heads: readonly AnchoredHeadView[],
+  heads: readonly SafeAnchoredHead[],
   pinned: SignedTreeHead,
   backed: readonly SafeAnchor[],
 ): AnchoredTree[] {
@@ -615,11 +658,10 @@ function anchoredTrees(
       heightByDigest.set(key, anchor.blockHeight)
     }
   }
-  // Reference dedupe BEFORE hashing. hashSignedTreeHeadV1 is a CBOR encode plus
-  // a hash, so 200k copies of one head bought the auditor 200k of them. The
-  // fold below only removed the duplicates after paying for them.
+  // Deduped at the boundary by reference, so this loop sees one entry per
+  // distinct caller object and hashSignedTreeHeadV1 runs once each.
   const byTree = new Map<string, AnchoredTree>()
-  for (const head of new Set(heads)) {
+  for (const head of heads) {
     const tree = anchoredTreeFor(verifier, head, pinned, heightByDigest)
     if (tree === null) continue
     byTree.set(`${tree.treeSize}:${tree.height}`, tree)
@@ -668,12 +710,21 @@ function safeChainedWork(
 function walkCongestionChain(
   unseals: readonly DecodedLeaf[],
   complete: boolean,
+  floor: number,
 ): { verdict: ChainVerdict2; breaks: number } {
   if (!complete) return { verdict: 'unknown', breaks: 0 }
   const ordered = [...unseals].sort((a, b) => a.view.index - b.view.index)
   let previous = STAMP_GENESIS
   let breaks = 0
   for (const leaf of ordered) {
+    // The loop count comes from the leaf under audit, so serialization alone
+    // says nothing about COST: twenty unseals at difficulty 0 chain perfectly
+    // and take 2.6ms. The policy floor is the only outside number here.
+    if (leaf.fields.congestion_difficulty < floor) {
+      breaks += 1
+      previous = leaf.fields.congestion_stamp_output
+      continue
+    }
     const expected = safeChainedWork(
       previous,
       congestionStampLeafHash(leaf.fields),
@@ -703,7 +754,7 @@ export function transparencyReport(
     heads: readHeads(inputs.log?.heads ?? []),
     leaves: readLeafViews(inputs.log?.leaves ?? []),
     anchors: inputs.log?.anchors ?? [],
-    anchoredHeads: inputs.log?.anchoredHeads ?? [],
+    anchoredHeads: readAnchoredHeads(inputs.log?.anchoredHeads ?? []),
   }
   // The horizon's tip is the chain's tip, never the caller's word for it.
   const horizon = {
@@ -841,6 +892,7 @@ export function transparencyReport(
       const walk = walkCongestionChain(
         unseals,
         head.treeSize - decoded.length - accountedFor === 0,
+        verifier.congestionPolicy.dFloor,
       )
       return {
         congestionChain: walk.verdict,

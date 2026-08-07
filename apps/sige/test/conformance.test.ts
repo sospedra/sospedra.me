@@ -4,6 +4,7 @@ import { bytesEqual, randomBytes, toHex, utf8 } from '../src/core/bytes.ts'
 import { chainedWork } from '../src/core/congestion.ts'
 import { dhash } from '../src/core/hash.ts'
 import { leafHash } from '../src/core/merkle.ts'
+import { SUBMITTER_REFUSAL_MESSAGE } from '../src/world/enrollment-verifier.ts'
 import { tuned } from '../src/world/params.ts'
 import { GENERIC } from '../src/world/profile.ts'
 import {
@@ -111,7 +112,11 @@ test('18.2 a duplicate document nullifier is refused', () => {
   const w = world()
   mustEnroll(w, 'DOC-CONF-DUP')
   const second = enroll(w, 'DOC-CONF-DUP', PERSON)
-  assert.deepEqual(second, { error: 'CREDENTIAL_ALREADY_ENROLLED' })
+  assert.deepEqual(second, {
+    error: 'ENROLLMENT_REFUSED',
+    message: SUBMITTER_REFUSAL_MESSAGE,
+  })
+  assert.match(String(w.operatorJournal.at(-1)), /already enrolled/)
 })
 
 // 18.2 MUST-fail: an order mapped to another enrollment.

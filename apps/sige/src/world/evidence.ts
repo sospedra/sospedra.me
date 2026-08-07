@@ -953,12 +953,11 @@ function checkHeadFieldAgreement(bundle: EvidenceBundleV1): string | null {
     const mismatch = headIdentityMismatch(head, other)
     if (mismatch) return `${name} head ${mismatch}`
   }
-  if (prev.timestamp > head.timestamp) {
-    return 'previous head is stamped after the signed head'
-  }
-  return closingSignedHead.timestamp >= head.timestamp
-    ? null
-    : 'closing head is stamped before the signed head'
+  // The three timestamps are outside headMessage and outside every HSM
+  // pre-image, so one operator authors all three and picks a consistent
+  // triple. An ordering test constrains him against himself. Stated in the
+  // CLAIMS known gaps instead of pretended here.
+  return null
 }
 
 function checkClosingLeafInclusion(

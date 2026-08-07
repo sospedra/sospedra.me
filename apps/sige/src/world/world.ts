@@ -386,7 +386,6 @@ export type Enrolled = {
 // `world.operatorJournal` instead, which no submitter can read.
 export type EnrollResult =
   | Enrolled
-  | { error: 'CREDENTIAL_ALREADY_ENROLLED' }
   | { error: 'ENROLLMENT_REFUSED'; message: typeof SUBMITTER_REFUSAL_MESSAGE }
 
 // DelayedIdentityEnvelopeV1 (SIGE spec section 5.5A): the puzzle now opens to
@@ -764,8 +763,11 @@ function enrollCore(
   }
   // Reserve on read, release on refusal: a later async build must not open a
   // window where a second submission passes the same uniqueness check.
+  // A distinct tag here answered, before any curve operation, whether a given
+  // document is already enrolled. Probing with junk attributes then enumerates
+  // the enrolled population, which is the linkage this system exists to stop.
   if (!reusing && !reserveNullifier(world, nullifier)) {
-    return { error: 'CREDENTIAL_ALREADY_ENROLLED' }
+    return 'refused: the credential is already enrolled'
   }
   const releaseOnRefusal = <T>(value: T): T => {
     if (!reusing) world.nullifiers.delete(toHex(nullifier))

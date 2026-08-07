@@ -156,8 +156,7 @@ export function buildScenarios(profile: AuthorityProfile): DemoScenario[] {
           ok: !leaks,
         })
         const dup = enroll(world, 'DOC-A-4472', PERSON_B)
-        const refused =
-          'error' in dup && dup.error === 'CREDENTIAL_ALREADY_ENROLLED'
+        const refused = 'error' in dup && dup.error === 'ENROLLMENT_REFUSED'
         log({
           label: 'second enrollment with the same document refused',
           ok: refused,

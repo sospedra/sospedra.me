@@ -1594,6 +1594,38 @@ test('ROWS 6, 8, 10: heads are bound to one branch, one log, and the tracks are 
     )
   }
 
+  // The PREVIOUS head arm had no test at all: the row-8 table only ever patched
+  // the closing head, so three of its four checks were unreached on `prev`.
+  for (const [label, patch, refusal] of [
+    [
+      'prev log_key_id',
+      { log_key_id: 'other-key/v1' },
+      'previous head names a different log key than the signed head',
+    ],
+    [
+      'prev schema_version',
+      { schema_version: bundle.signedHead.schema_version + 1 },
+      'previous head declares a different schema version',
+    ],
+    [
+      'prev network_id',
+      { network_id: randomBytes(8) },
+      'previous head names a different network',
+    ],
+  ] as const) {
+    assert.equal(
+      verifyEvidenceBundle(
+        {
+          ...bundle,
+          previousSignedHead: { ...bundle.previousSignedHead, ...patch },
+        },
+        keys,
+      ),
+      refusal,
+      label,
+    )
+  }
+
   // ROW 10. One secret and one nonce across both tracks means the emergency
   // track's separate authorization path buys nothing.
   const shared = buildFixture(CONGESTION_DIFFICULTY, (record) => ({
@@ -1617,5 +1649,33 @@ test('ROWS 6, 8, 10: heads are bound to one branch, one log, and the tracks are 
   assert.equal(
     verifyEvidenceBundle(sharedNonce.bundle, sharedNonce.keys),
     'both tracks reuse one escrow nonce',
+  )
+
+  // The other two arms of the separation check had no test. Each mutation here
+  // keeps the nonces distinct so only the named arm can refuse.
+  const sharedSecret = buildFixture(CONGESTION_DIFFICULTY, (record) => ({
+    ...record,
+    timed_commitment_proof: {
+      standard: record.timed_commitment_proof.standard,
+      emergency: {
+        ...record.timed_commitment_proof.emergency,
+        commitments: record.timed_commitment_proof.standard.commitments,
+      },
+    },
+  }))
+  assert.equal(
+    verifyEvidenceBundle(sharedSecret.bundle, sharedSecret.keys),
+    'both tracks lock the same secret',
+  )
+  const sharedU = buildFixture(CONGESTION_DIFFICULTY, (record) => ({
+    ...record,
+    escrow_ciphertext_emergency: {
+      ...record.escrow_ciphertext_emergency,
+      u: record.escrow_ciphertext_standard.u,
+    },
+  }))
+  assert.equal(
+    verifyEvidenceBundle(sharedU.bundle, sharedU.keys),
+    'both tracks reuse one encapsulation',
   )
 })

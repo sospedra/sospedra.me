@@ -1565,10 +1565,21 @@ test('ROWS 5, 11: enroll() refuses opaquely and journals the reason', () => {
   const first = enroll(world, 'DOC-OPAQUE', person)
   assert.ok(!('error' in first))
 
-  const before = world.operatorJournal.length
   const duplicate = enroll(world, 'DOC-OPAQUE', person)
-  assert.deepEqual(duplicate, { error: 'CREDENTIAL_ALREADY_ENROLLED' })
+  // A duplicate must be indistinguishable from any other refusal. Probing with
+  // junk attributes otherwise enumerates the enrolled population.
+  assert.deepEqual(duplicate, {
+    error: 'ENROLLMENT_REFUSED',
+    message: SUBMITTER_REFUSAL_MESSAGE,
+  })
 
+  assert.match(
+    String(world.operatorJournal.at(-1)),
+    /already enrolled/,
+    'the duplicate reason must reach the operator',
+  )
+
+  const before = world.operatorJournal.length
   // A migration naming a different document. The submitter gets the same
   // opaque shape as any other refusal; only the journal says which.
   if ('error' in first) return
