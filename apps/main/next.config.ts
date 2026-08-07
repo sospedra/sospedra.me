@@ -14,7 +14,11 @@ const withMDX = createMDX({
         'rehype-external-links',
         { target: '_blank', rel: ['nofollow', 'noopener', 'noreferrer'] },
       ],
-      ['@shikijs/rehype', { theme: 'material-theme-darker' }],
+      // bare fences must still emit .line spans: the code gutter padding lives on them
+      [
+        '@shikijs/rehype',
+        { theme: 'material-theme-darker', defaultLanguage: 'text' },
+      ],
     ],
   },
 })

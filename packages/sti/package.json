@@ -1,0 +1,43 @@
+{
+  "name": "@sospedra/sti",
+  "version": "2.0.0",
+  "description": "Safely convert any semver to an integer for easy comparisons",
+  "type": "module",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sospedra/sospedra.me.git",
+    "directory": "packages/sti"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "pnpm build",
+    "lint": "biome check .",
+    "test": "node --test test/index.test.ts",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

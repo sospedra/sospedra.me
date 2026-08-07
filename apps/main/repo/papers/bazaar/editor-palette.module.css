@@ -1,0 +1,82 @@
+/* Doubled class: .markdown > * + * in paper.module.css ties on specificity,
+   and chunk order across CSS modules is not guaranteed. */
+.palette.palette {
+  margin: 2.75rem 0 3rem;
+  overflow: hidden;
+  border: 1px solid rgb(109 247 234 / 24%);
+  border-radius: 0.375rem;
+  background: #0a0c12;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.6rem 1rem 0.55rem;
+  border-bottom: 1px solid rgb(109 247 234 / 18%);
+  background: rgb(109 247 234 / 5%);
+}
+
+.label {
+  flex: 1;
+  color: var(--color-signal-cyan, #6df7ea);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.toggle {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.mode {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid rgb(109 247 234 / 36%);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--color-signal-cyan, #6df7ea);
+  cursor: pointer;
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.mode[aria-pressed="true"] {
+  background: rgb(109 247 234 / 14%);
+}
+
+.mode:focus-visible {
+  outline: 2px solid var(--color-signal-cyan, #6df7ea);
+  outline-offset: 2px;
+}
+
+/* one fixed stage for three shots of different heights: tabs swap
+   opacity in place, nothing below the fold moves */
+.stage {
+  position: relative;
+  aspect-ratio: 648 / 782;
+}
+
+.shot {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: contain;
+  object-position: top center;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.shot[data-active="true"] {
+  opacity: 1;
+}

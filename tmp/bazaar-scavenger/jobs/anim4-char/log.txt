@@ -1,0 +1,638 @@
+Reading prompt from stdin...
+OpenAI Codex v0.145.0
+--------
+workdir: /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+model: gpt-5.6-sol
+provider: openai
+approval: on-request
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: ultra
+reasoning summaries: none
+session id: 019fd797-9ccc-7743-8031-df510feed16d
+--------
+user
+# Codex order — scavenger character master — 3 idle cells on chroma
+
+You are an image-generation subagent. Execute exactly this and nothing else.
+
+Attached: Image 1 = the keeper in his doorway, the identity authority.
+Copy ONLY the hooded seated figure and his pipe. Copy NOTHING of the
+background: no doorway, no wall, no counter.
+
+Steps: call image_gen ONCE to GENERATE a NEW image at size 1536x1024.
+Verify size; retry once if wrong. Copy the result unmodified to exactly
+/Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char/gen-char-sheet.png
+then print GENERATED=<that path>. No post-processing.
+
+The ENTIRE canvas is flat chroma green #00ff00. On it, THREE cells,
+each exactly 300x520: cell 1 at x=150..450, cell 2 at x=620..920,
+cell 3 at x=1090..1390, all at y=250..770. No cell borders, no lines:
+only the figure against flat #00ff00.
+
+Each cell: the SAME seated keeper, identical size and position, seated
+height about 440 px: dark olive hooded cloak #35402f with #4a5a44
+shadow patches, hood interior one flat #030506 void, two amber slit
+eyes, bandaged forearms, one hand raising the churchwarden pipe to the
+mouth, small #e07830 ember in the bowl. NO smoke in any cell. Flat
+pixel-art chunks, near-black outlines, no gradients, no noise, no
+antialiasing, zero green in the figure brighter than the cloak olives:
+the background chroma green must never appear inside the figure.
+
+Cell 1: eyes centered, half-lidded amber slits.
+Cell 2: IDENTICAL, only the eye slits look to HIS LEFT.
+Cell 3: IDENTICAL, only the eye slits look to HIS RIGHT.
+
+Exactly two arms. Between cells only the eyes differ.
+
+codex
+I use imagegen skill now. Why? Exact character transfer, strict canvas geometry, one generation only. Then size check. Retry only if wrong. Good good.
+exec
+/bin/zsh -lc "sed -n '1,240p' /Users/sospedra/.codex/skills/.system/imagegen/SKILL.md" in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+ succeeded in 0ms:
+---
+name: "imagegen"
+description: "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas."
+---
+
+# Image Generation Skill
+
+Generates or edits images for the current project (for example website assets, game assets, UI mockups, product mockups, wireframes, logo design, photorealistic images, or infographics).
+
+## Top-level modes and rules
+
+This skill has exactly two top-level modes:
+
+- **Default built-in tool mode (preferred):** built-in `image_gen` tool for normal image generation, editing, and simple transparent-image requests. Does not require `OPENAI_API_KEY`.
+- **Fallback CLI mode:** `scripts/image_gen.py` CLI. Use when the user explicitly asks for the CLI/API/model path, or after the user explicitly confirms a true model-native transparency fallback with `gpt-image-1.5`. Requires `OPENAI_API_KEY`.
+
+Within CLI fallback, the CLI exposes three subcommands:
+
+- `generate`
+- `edit`
+- `generate-batch`
+
+Rules:
+- Use the built-in `image_gen` tool by default for normal image generation and editing requests.
+- Do not switch to CLI fallback for ordinary quality, size, or file-path control.
+- If the user explicitly asks for a transparent image/background, stay on built-in `image_gen` first: prompt for a flat removable chroma-key background, then remove it locally with the installed helper at `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py`.
+- Never silently switch from built-in `image_gen` or CLI `gpt-image-2` to CLI `gpt-image-1.5`. Treat this as a model/path downgrade and ask the user before doing it, unless the user has already explicitly requested `gpt-image-1.5`, `scripts/image_gen.py`, or CLI fallback.
+- If a transparent request appears too complex for clean chroma-key removal, asks for true/native transparency, or local removal fails validation, explain that true transparency requires CLI `gpt-image-1.5 --background transparent --output-format png` because `gpt-image-2` does not support `background=transparent`, then ask whether to proceed. Run the CLI fallback only after the user confirms.
+- The word `batch` by itself does not mean CLI fallback. If the user asks for many assets or says to batch-generate assets without explicitly asking for CLI/API/model controls, stay on the built-in path and issue one built-in call per requested asset or variant.
+- If the built-in tool fails or is unavailable, tell the user the CLI fallback exists and that it requires `OPENAI_API_KEY`. Proceed only if the user explicitly asks for that fallback.
+- If the user explicitly asks for CLI mode, use the bundled `scripts/image_gen.py` workflow. Do not create one-off SDK runners.
+- Never modify `scripts/image_gen.py`. If something is missing, ask the user before doing anything else.
+
+Built-in save-path policy:
+- In built-in tool mode, Codex saves generated images under `$CODEX_HOME/*` by default.
+- Do not describe or rely on OS temp as the default built-in destination.
+- Do not describe or rely on a destination-path argument (if any) on the built-in `image_gen` tool. If a specific location is needed, generate first and then move or copy the selected output from `$CODEX_HOME/generated_images/...`.
+- Save-path precedence in built-in mode:
+  1. If the user names a destination, move or copy the selected output there.
+  2. If the image is meant for the current project, move or copy the final selected image into the workspace before finishing.
+  3. If the image is only for preview or brainstorming, render it inline; the underlying file can remain at the default `$CODEX_HOME/*` path.
+- Never leave a project-referenced asset only at the default `$CODEX_HOME/*` path.
+- Do not overwrite an existing asset unless the user explicitly asked for replacement; otherwise create a sibling versioned filename such as `hero-v2.png` or `item-icon-edited.png`.
+
+Shared prompt guidance for both modes lives in `references/prompting.md` and `references/sample-prompts.md`.
+
+Fallback-only docs/resources for CLI mode:
+- `references/cli.md`
+- `references/image-api.md`
+- `references/codex-network.md`
+- `scripts/image_gen.py`
+
+Local post-processing helper:
+- `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py`: removes a flat chroma-key background from a generated image and writes a PNG/WebP with alpha. Prefer auto-key sampling, soft matte, and despill for antialiased edges.
+
+## When to use
+- Generate a new image (concept art, product shot, cover, website hero)
+- Generate a new image using one or more reference images for style, composition, or mood
+- Edit an existing image (inpainting, lighting or weather transformations, background replacement, object removal, compositing, transparent background)
+- Produce many assets or variants for one task
+
+## When not to use
+- Extending or matching an existing SVG/vector icon set, logo system, or illustration library inside the repo
+- Creating simple shapes, diagrams, wireframes, or icons that are better produced directly in SVG, HTML/CSS, or canvas
+- Making a small project-local asset edit when the source file already exists in an editable native format
+- Any task where the user clearly wants deterministic code-native output instead of a generated bitmap
+
+## Decision tree
+
+Think about two separate questions:
+
+1. **Intent:** is this a new image or an edit of an existing image?
+2. **Execution strategy:** is this one asset or many assets/variants?
+
+Intent:
+- If the user wants to modify an existing image while preserving parts of it, treat the request as **edit**.
+- If the user provides images only as references for style, composition, mood, or subject guidance, treat the request as **generate**.
+- If the user provides no images, treat the request as **generate**.
+
+Built-in edit semantics:
+- Built-in edit mode is for images already visible in the conversation context, such as attached images or images generated earlier in the thread.
+- If the user wants to edit a local image file with the built-in tool, first load it with built-in `view_image` tool so the image is visible in the conversation context, then proceed with the built-in edit flow.
+- Do not promise arbitrary filesystem-path editing through the built-in tool.
+- If a local file still needs direct file-path control, masks, or other explicit CLI-only parameters, use the explicit CLI fallback only when the user asks for it.
+- For edits, preserve invariants aggressively and save non-destructively by default.
+
+Execution strategy:
+- In the built-in default path, produce many assets or variants by issuing one `image_gen` call per requested asset or variant.
+- In the CLI fallback path, use the CLI `generate-batch` subcommand only when the user explicitly chose CLI mode and needs many prompts/assets.
+- For many distinct assets, do not use `n` as a substitute for separate prompts. `n` is for variants of one prompt; distinct assets need distinct built-in calls or distinct CLI `generate-batch` jobs.
+
+Assume the user wants a new image unless they clearly ask to change an existing one.
+
+## Workflow
+1. Decide the top-level mode: built-in by default, including simple transparent-output requests; fallback CLI only if explicitly requested or after the user explicitly confirms a transparent-output fallback.
+2. Decide the intent: `generate` or `edit`.
+3. Decide whether the output is preview-only or meant to be consumed by the current project.
+4. Decide the execution strategy: single asset vs repeated built-in calls vs CLI `generate-batch`.
+5. Collect inputs up front: prompt(s), exact text (verbatim), constraints/avoid list, and any input images.
+6. For every input image, label its role explicitly:
+   - reference image
+   - edit target
+   - supporting insert/style/compositing input
+7. If the edit target is only on the local filesystem and you are staying on the built-in path, inspect it with `view_image` first so the image is available in conversation context.
+8. If the user asked for a photo, illustration, sprite, product image, banner, or other explicitly raster-style asset, use `image_gen` rather than substituting SVG/HTML/CSS placeholders. If the request is for an icon, logo, or UI graphic that should match existing repo-native SVG/vector/code assets, prefer editing those directly instead.
+9. Augment the prompt based on specificity:
+   - If the user's prompt is already specific and detailed, normalize it into a clear spec without adding creative requirements.
+   - If the user's prompt is generic, add tasteful augmentation only when it materially improves output quality.
+10. Use the built-in `image_gen` tool by default.
+11. For transparent-output requests, follow the transparent image guidance below: generate with built-in `image_gen` on a flat chroma-key background, copy the selected output into the workspace or `tmp/imagegen/`, run the installed `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py` helper, and validate the alpha result before using it. If this path looks unsuitable or fails, ask before switching to CLI `gpt-image-1.5`.
+12. Inspect outputs and validate: subject, style, composition, text accuracy, and invariants/avoid items.
+13. Iterate with a single targeted change, then re-check.
+14. For preview-only work, render the image inline; the underlying file may remain at the default `$CODEX_HOME/generated_images/...` path.
+15. For project-bound work, move or copy the selected artifact into the workspace and update any consuming code or references. Never leave a project-referenced asset only at the default `$CODEX_HOME/generated_images/...` path.
+16. For batches or multi-asset requests, persist every requested deliverable final in the workspace unless the user explicitly asked to keep outputs preview-only. Discarded variants do not need to be kept unless requested.
+17. If the user explicitly chooses or confirms the CLI fallback, then use the fallback-only docs for model, quality, size, `input_fidelity`, masks, output format, output paths, and network setup.
+18. Always report the final saved path(s) for any workspace-bound asset(s), plus the final prompt or prompt set and whether the built-in tool or fallback CLI mode was used.
+
+## Transparent image requests
+
+Transparent-image requests still use built-in `image_gen` first. Because the built-in tool does not expose a true transparent-background control, create a removable chroma-key source image and then convert the key color to alpha locally.
+
+Default sequence:
+1. Use built-in `image_gen` to generate the requested subject on a perfectly flat solid chroma-key background.
+2. Choose a key color that is unlikely to appear in the subject: default `#00ff00`, use `#ff00ff` for green subjects, and avoid `#0000ff` for blue subjects.
+3. After generation, move or copy the selected source image from `$CODEX_HOME/generated_images/...` into the workspace or `tmp/imagegen/`.
+4. Run the installed helper path, not a project-relative script path:
+   ```bash
+   python "${CODEX_HOME:-$HOME/.codex}/skills/.system/imagegen/scripts/remove_chroma_key.py" \
+     --input <source> \
+     --out <final.png> \
+     --auto-key border \
+     --soft-matte \
+     --transparent-threshold 12 \
+     --opaque-threshold 220 \
+     --despill
+   ```
+5. Validate that the output has an alpha channel, transparent corners, plausible subject coverage, and no obvious key-color fringe. If a thin fringe remains, retry once with `--edge-contract 1`; use `--edge-feather 0.25` only when the edge is visibly stair-stepped and the subject is not shiny or reflective.
+6. Save the final alpha PNG/WebP in the project if the asset is project-bound. Never leave a project-referenced transparent asset only under `$CODEX_HOME/*`.
+
+Prompt transparent requests like this:
+
+```text
+Create the requested subject on a perfectly flat solid #00ff00 chroma-key background for background removal.
+The background must be one uniform color with no shadows, gradients, texture, reflections, floor plane, or lighting variation.
+Keep the subject fully separated from the background with crisp edges and generous padding.
+Do not use #00ff00 anywhere in the subject.
+No cast shadow, no contact shadow, no reflection, no watermark, and no text unless explicitly requested.
+```
+
+Do not automatically use CLI `gpt-image-1.5 --background transparent --output-format png` instead of chroma keying. Ask the user first when the user asks for true/native transparency, when local removal fails validation, or when the requested image is complex: hair, fur, feathers, smoke, glass, liquids, translucent materials, reflective objects, soft shadows, realistic product grounding, or subject colors that conflict with all practical key colors.
+
+Use a concise confirmation like:
+
+```text
+This likely needs true native transparency. The default built-in path uses a chroma-key background plus local removal, but true transparency requires the CLI fallback with gpt-image-1.5 because gpt-image-2 does not support background=transparent. It also requires OPENAI_API_KEY. Should I proceed with that CLI fallback?
+```
+
+## Prompt augmentation
+
+Reformat user prompts into a structured, production-oriented spec. Make the user's goal clearer and more actionable, but do not blindly add detail.
+
+Treat this as prompt-shaping guidance, not a closed schema. Use only the lines that help, and add a short extra labeled line when it materially improves clarity.
+
+### Specificity policy
+
+Use the user's prompt specificity to decide how much augmentation is appropriate:
+
+- If the prompt is already specific and detailed, preserve that specificity and only normalize/structure it.
+- If the prompt is generic, you may add tasteful augmentation when it will materially improve the result.
+
+Allowed augmentations:
+- composition or framing hints
+- polish level or intended-use hints
+- practical layout guidance
+- reasonable scene concreteness that supports the stated request
+
+Not allowed augmentations:
+- extra characters or objects that are not implied by the request
+- brand names, slogans, palettes, or narrative beats that are not implied
+- arbitrary side-specific placement unless the surrounding layout supports it
+
+## Use-case taxonomy (exact slugs)
+
+Classify each request into one of these buckets and keep the slug consistent across prompts and references.
+
+Generate:
+- photorealistic-natural — candid/editorial lifestyle scenes with real texture and natural lighting.
+- product-mockup — product/packaging shots, catalog imagery, merch concepts.
+- ui-mockup — app/web interface mockups and wireframes; specify the desired fidelity.
+- infographic-diagram — diagrams/infographics with structured layout and text.
+- scientific-educational — classroom explainers, scientific diagrams, and learning visuals with required labels and accuracy constraints.
+- ads-marketing — campaign concepts and ad creatives with audience, brand position, scene, and exact tagline/copy.
+- productivity-visual — slide, chart, workflow, and data-heavy business visuals.
+- logo-brand — logo/mark exploration, vector-friendly.
+- illustration-story — comics, children’s book art, narrative scenes.
+- stylized-concept — style-driven concept art, 3D/stylized renders.
+- historical-scene — period-accurate/world-knowledge scenes.
+
+Edit:
+- text-localization — translate/replace in-image text, preserve layout.
+- identity-preserve — try-on, person-in-scene; lock face/body/pose.
+- precise-object-edit — remove/replace a specific element (including interior swaps).
+- lighting-weather — time-of-day/season/atmosphere changes only.
+- background-extraction — transparent background / clean cutout. Use built-in `image_gen` with chroma-key removal first for simple opaque subjects; ask before using CLI true transparency for complex subjects.
+- style-transfer — apply reference style while changing subject/scene.
+- compositing — multi-image insert/merge with matched lighting/perspective.
+- sketch-to-render — drawing/line art to photoreal render.
+
+## Shared prompt schema
+
+Use the following labeled spec as shared prompt scaffolding for both top-level modes:
+
+```text
+Use case: <taxonomy slug>
+Asset type: <where the asset will be used>
+Primary request: <user's main prompt>
+Input images: <Image 1: role; Image 2: role> (optional)
+Scene/backdrop: <environment>
+Subject: <main subject>
+Style/medium: <photo/illustration/3D/etc>
+Composition/framing: <wide/close/top-down; placement>
+Lighting/mood: <lighting + mood>
+Color palette: <palette notes>
+Materials/textures: <surface details>
+Text (verbatim): "<exact text>"
+Constraints: <must keep/must avoid>
+Avoid: <negative constraints>
+```
+
+Notes:
+- `Asset type` and `Input images` are prompt scaffolding, not dedicated CLI flags.
+- `Scene/backdrop` refers to the visual setting. It is not the same as the fallback CLI `background` parameter, which controls output transparency behavior.
+- Fallback-only execution notes such as `Quality:`, `Input fidelity:`, masks, output format, and output paths belong in the CLI path only. Do not treat them as built-in `image_gen` tool arguments.
+
+Augmentation rules:
+- Keep it short.
+- Add only the details needed to improve the prompt materially.
+- For edits, explicitly list invariants (`change only X; keep Y unchanged`).
+- If any critical detail is missing and blocks success, ask a question; otherwise proceed.
+
+exec
+/bin/zsh -lc 'rg -n "bazaar|keeper|pixel-art|character|chroma" /Users/sospedra/.codex/memories/MEMORY.md' in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+ succeeded in 0ms:
+55:- Primary remediation areas: `app/boombox/boombox-view.tsx`, `app/boombox/boombox.module.css`, `services/viewport.ts`, `app/snake/snake-view.tsx`, `app/travel/travel-view.tsx`, `app/meridian/geo-game.tsx`, `repo/papers/bazaar/carousel.tsx`, and `app/w98/music/` (`use-draggable-panel.ts`, `use-touch-hit-slop.ts`, `equalizer-panel.tsx`, `tracklist.tsx`, `music.module.css`). [Task 1]
+196:- rollout_summaries/2026-07-26T13-52-52-SpPW-bazaar3_takeover_package_and_failure_ledger.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/26/rollout-2026-07-26T15-52-52-019f9eb3-341d-7870-be61-60ed831f4d88.jsonl, updated_at=2026-07-28T08:45:25+00:00, thread_id=019f9eb3-341d-7870-be61-60ed831f4d88, code/brief context recovered; no runtime edits)
+200:- Bazaar3, Bazaar2, `bazaar2-view.tsx`, `build-bazaar2-assets.mjs`, `gen-places-source.html`, Chrome `openTabs()`, dirty worktree, `listen EPERM`
+206:- rollout_summaries/2026-07-26T13-52-52-SpPW-bazaar3_takeover_package_and_failure_ledger.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/26/rollout-2026-07-26T15-52-52-019f9eb3-341d-7870-be61-60ed831f4d88.jsonl, updated_at=2026-07-28T08:45:25+00:00, thread_id=019f9eb3-341d-7870-be61-60ed831f4d88, `BAZAAR3_TAKEOVER/` created and manifest/copies verified)
+220:- Bazaar2 implementation is `app/bazaar2/bazaar2-view.tsx`, `app/bazaar2/bazaar2.module.css`, `app/bazaar2/prefetch.ts`, with asset generation in `scripts/build-bazaar2-assets.mjs`. The dirty worktree—not Git `HEAD`—is authoritative and contains unrelated user changes; never reset or clean it. [Task 1]
+223:- Integration means shared physical laws, not uniform stalls: shallow frontal-oblique camera, shared scale/palette/light grammar, real H-beam seams, utilities across boundaries, rear bays, open foreground lobby, stairs, contacts/casters, and causal source → receiver → world lighting. Related skill: skills/pixel-art-asset-qa/SKILL.md. [Task 2]
+227:- Browser-first investigation wasted time; start with code and bootstrap/claim the user’s Chrome tab only when needed. The preview server at `localhost:8123` was unreachable, while the preserved source is `app/bazaar3/references/gen-places-source.html`; sandboxed `pnpm dev` hit `listen EPERM` until an escalated start succeeded. [Task 1]
+536:# Task Group: sospedra.me Bazaar2 pixel-art assets and interactive stalls
+538:scope: Build or repair Bazaar2 scenes, conversations, and hover/focus interactions while preserving the locked pixel-art constraints and validating the delivered asset/UI.
+539:applies_to: cwd=/Users/sospedra/labs/sospedra.me; reuse_rule=reuse for app/bazaar2 and similarly constrained pixel-art assets; re-check current dirty worktree and route names before editing.
+545:- rollout_summaries/2026-07-23T18-59-48-iISS-bazaar2_street_scene_master_regeneration.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/23/rollout-2026-07-23T20-59-48-019f9059-2256-7210-a181-2c7a12c2f0ba.jsonl, updated_at=2026-07-23T19:06:45+00:00, thread_id=019f9059-2256-7210-a181-2c7a12c2f0ba, success; final master regeneration)
+550:- bazaar2, scene-street.png, 2400x1120, RGBA, SVG, Sharp, Pillow, alpha, chroma-key, `EXIT TO CITY`
+556:- rollout_summaries/2026-07-26T20-00-58-Tf59-bazaar2_games_conversation_hover_typewriter.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/26/rollout-2026-07-26T22-00-58-019fa004-37f1-7551-90ff-a6903f513233.jsonl, updated_at=2026-07-26T22:16:35+00:00, thread_id=019fa004-37f1-7551-90ff-a6903f513233, success; browser-verified interaction)
+560:- bazaar2, GamesDialogs, useTypewriter, portal, hover bridge, `focusDialogOnTab`, `keepDialogInTabOrder`, typewriter, keyboard navigation
+570:- bazaar2, hover-popup, `.dialog::before`, `closeTimerRef`, openOnHover, closeAfterHover, role=group
+581:- For asset QA, inspect dimensions, RGBA/alpha values, transparent RGB contamination, chroma-key green, required clear margins/edge contact, and composition openings. Related skill: skills/pixel-art-asset-qa/SKILL.md. [Task 1]
+582:- `/bazaar2` is the real route, not `/bazaarv2`. `GamesDialogs` is portalled to `document.body`; manage its pointer bridge and Tab order explicitly. The finished logic types at 9ms with turn pauses, then types links sequentially. [Task 2]
+587:- Built-in image generation returned RGB 1836x857 without alpha; Pillow chroma-key also failed with “Pillow is required for chroma-key removal” -> pivot to deterministic SVG/Sharp rather than shipping a noncompliant master. [Task 1]
+639:- The brief emphasizes tactile CSS materials, pixel-art alignment, route-specific visual identity, accessibility, reduced motion, and no JS-driven rendering. [Task 1]
+679:- rollout_summaries/2026-07-20T13-44-20-N40k-frontend_skills_ui_audit_bazaar_revert_art_style.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/20/rollout-2026-07-20T15-44-20-019f7fc5-3cb9-73b2-852c-eb22be0e430c.jsonl, updated_at=2026-07-22T20:50:06+00:00, thread_id=019f7fc5-3cb9-73b2-852c-eb22be0e430c, success; baseline rollback and art brief)
+683:- Bazaar, master `30d4168`, `app/bazaar/bazaar-view.tsx`, `static-files.json`, `git show master:<path>`, 16-bit, nearest-neighbor, neonpunk
+688:- “revert bazaar to its original state” -> use the identified original baseline and do not sweep away unrelated concurrent work. [Task 2]
+695:- Legacy Bazaar baseline was master `30d4168`; its route is `app/bazaar/bazaar-view.tsx`, `app/bazaar/bazaar.module.css`, and `app/bazaar/page.tsx`. Validate a rollback with scoped Biome, `pnpm exec tsc --noEmit`, `git diff --check`, and `/bazaar` smoke test. [Task 2]
+708:## Task 1: Curate CSS pixel-art materials and retro-futurist UI references, completed
+740:- “wood, grain, metals, glass” and “the kind of texture you’ll use in a pixel-art videogame” -> favor inspectable reusable CSS, not photographic examples; when the user says “keep these,” append rather than replace accepted references. [Task 1]
+777:- rollout_summaries/2026-07-26T14-01-18-PQik-open_local_bazaar2_page.md (cwd=/Users/sospedra/Documents/Codex/2026-07-26/go, rollout_path=/Users/sospedra/.codex/sessions/2026/07/26/rollout-2026-07-26T16-01-18-019f9eba-ed71-7522-bc63-c631698b5818.jsonl, updated_at=2026-07-26T14:02:21+00:00, thread_id=019f9eba-ed71-7522-bc63-c631698b5818, success)
+781:- Chrome Web Store, `The extensions gallery cannot be scripted.`, new tab, `http://localhost:3000/bazaar2`
+924:- rollout_summaries/2026-07-20T13-44-20-N40k-frontend_skills_ui_audit_bazaar_revert_art_style.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/20/rollout-2026-07-20T15-44-20-019f7fc5-3cb9-73b2-852c-eb22be0e430c.jsonl, updated_at=2026-07-22T20:50:06+00:00, thread_id=019f7fc5-3cb9-73b2-852c-eb22be0e430c, success; named third-party URLs)
+
+codex
+Reference inspection now. Also load exact pixel-asset QA rules. Why? Verify dimensions without touching pixels. No cleanup. No color correction. Good.
+exec
+/bin/zsh -lc 'wc -l /Users/sospedra/.codex/skills/.system/imagegen/SKILL.md /Users/sospedra/.codex/memories/skills/pixel-art-asset-qa/SKILL.md' in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+ succeeded in 0ms:
+     356 /Users/sospedra/.codex/skills/.system/imagegen/SKILL.md
+      49 /Users/sospedra/.codex/memories/skills/pixel-art-asset-qa/SKILL.md
+     405 total
+
+exec
+/bin/zsh -lc "sed -n '241,520p' /Users/sospedra/.codex/skills/.system/imagegen/SKILL.md" in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+ succeeded in 0ms:
+
+## Examples
+
+### Generation example (hero image)
+```text
+Use case: product-mockup
+Asset type: landing page hero
+Primary request: a minimal hero image of a ceramic coffee mug
+Style/medium: clean product photography
+Composition/framing: wide composition with usable negative space for page copy if needed
+Lighting/mood: soft studio lighting
+Constraints: no logos, no text, no watermark
+```
+
+### Edit example (invariants)
+```text
+Use case: precise-object-edit
+Asset type: product photo background replacement
+Primary request: replace only the background with a warm sunset gradient
+Constraints: change only the background; keep the product and its edges unchanged; no text; no watermark
+```
+
+## Prompting best practices
+- Structure prompt as scene/backdrop -> subject -> details -> constraints.
+- Include intended use (ad, UI mock, infographic) to set the mode and polish level.
+- Use camera/composition language for photorealism.
+- Only use SVG/vector stand-ins when the user explicitly asked for vector output or a non-image placeholder.
+- Quote exact text and specify typography + placement.
+- For tricky words, spell them letter-by-letter and require verbatim rendering.
+- For multi-image inputs, reference images by index and describe how they should be used.
+- For edits, repeat invariants every iteration to reduce drift.
+- Iterate with single-change follow-ups.
+- If the prompt is generic, add only the extra detail that will materially help.
+- If the prompt is already detailed, normalize it instead of expanding it.
+- For CLI fallback only, see `references/cli.md` and `references/image-api.md` for model, `quality`, `input_fidelity`, masks, output format, and output-path guidance.
+- For transparent images, use the built-in-first chroma-key workflow unless the request is complex enough to need true CLI transparency; ask before switching to CLI `gpt-image-1.5`.
+
+More principles shared by both modes: `references/prompting.md`.
+Copy/paste specs shared by both modes: `references/sample-prompts.md`.
+
+## Guidance by asset type
+Asset-type templates (website assets, game assets, wireframes, logo) are consolidated in `references/sample-prompts.md`.
+
+## gpt-image-2 guidance for CLI fallback
+
+The fallback CLI defaults to `gpt-image-2`.
+
+- Use `gpt-image-2` for new CLI/API workflows unless the request needs true model-native transparent output.
+- If a transparent request may need CLI fallback, ask before using `gpt-image-1.5` unless the user already explicitly requested `gpt-image-1.5`, `scripts/image_gen.py`, or CLI fallback. Explain that the built-in chroma-key path is the default, but true transparency requires `gpt-image-1.5` because `gpt-image-2` does not support `background=transparent`.
+- `gpt-image-2` always uses high fidelity for image inputs; do not set `input_fidelity` with this model.
+- `gpt-image-2` supports `quality` values `low`, `medium`, `high`, and `auto`.
+- Use `quality low` for fast drafts, thumbnails, and quick iterations. Use `medium`, `high`, or `auto` for final assets, dense text, diagrams, identity-sensitive edits, or high-resolution outputs.
+- Square images are typically fastest to generate. Use `1024x1024` for fast square drafts.
+- If the user asks for 4K-style output, use `3840x2160` for landscape or `2160x3840` for portrait.
+- `gpt-image-2` size may be `auto` or `WIDTHxHEIGHT` if all constraints hold: max edge `<= 3840px`, both edges multiples of `16px`, long-to-short ratio `<= 3:1`, total pixels between `655,360` and `8,294,400`.
+
+Popular `gpt-image-2` sizes:
+- `1024x1024` square
+- `1536x1024` landscape
+- `1024x1536` portrait
+- `2048x2048` 2K square
+- `2048x1152` 2K landscape
+- `3840x2160` 4K landscape
+- `2160x3840` 4K portrait
+- `auto`
+
+## Fallback CLI mode only
+
+### Temp and output conventions
+These conventions apply only to the CLI fallback. They do not describe built-in `image_gen` output behavior.
+- Use `tmp/imagegen/` for intermediate files (for example JSONL batches); delete them when done.
+- Write final artifacts under `output/imagegen/`.
+- Use `--out` or `--out-dir` to control output paths; keep filenames stable and descriptive.
+
+### Dependencies
+Prefer `uv` for dependency management in this repo.
+
+Required Python package:
+```bash
+uv pip install openai
+```
+
+Required for local chroma-key removal and optional downscaling:
+```bash
+uv pip install pillow
+```
+
+Portability note:
+- If you are using the installed skill outside this repo, install dependencies into that environment with its package manager.
+- In uv-managed environments, `uv pip install ...` remains the preferred path.
+
+### Environment
+- `OPENAI_API_KEY` must be set for live API calls.
+- Do not ask the user for `OPENAI_API_KEY` when using the built-in `image_gen` tool.
+- Never ask the user to paste the full key in chat. Ask them to set it locally and confirm when ready.
+
+If the key is missing, give the user these steps:
+1. Create an API key in the OpenAI platform UI: https://platform.openai.com/api-keys
+2. Set `OPENAI_API_KEY` as an environment variable in their system.
+3. Offer to guide them through setting the environment variable for their OS/shell if needed.
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it into their active environment.
+
+### Script-mode notes
+- CLI commands + examples: `references/cli.md`
+- API parameter quick reference: `references/image-api.md`
+- Network approvals / sandbox settings for CLI mode: `references/codex-network.md`
+
+## Reference map
+- `references/prompting.md`: shared prompting principles for both modes.
+- `references/sample-prompts.md`: shared copy/paste prompt recipes for both modes.
+- `references/cli.md`: fallback-only CLI usage via `scripts/image_gen.py`.
+- `references/image-api.md`: fallback-only API/CLI parameter reference.
+- `references/codex-network.md`: fallback-only network/sandbox troubleshooting for CLI mode.
+- `scripts/image_gen.py`: fallback-only CLI implementation. Do not load or use it unless the user explicitly chooses CLI mode or explicitly confirms a transparent request's true CLI transparency fallback.
+- `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py`: local post-processing helper for built-in transparent-image requests.
+
+exec
+/bin/zsh -lc "sed -n '1,260p' /Users/sospedra/.codex/memories/skills/pixel-art-asset-qa/SKILL.md" in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+ succeeded in 0ms:
+---
+name: pixel-art-asset-qa
+description: Validate a constrained pixel-art PNG delivery when the user requires exact dimensions, hard alpha, transparent margins, no chroma-key contamination, and crisp raster output.
+argument-hint: "<image-path> [expected-width expected-height]"
+allowed-tools: Bash, Read
+user-invocable: false
+---
+
+# Pixel-art asset QA
+
+## When to use
+
+Use after generating, composing, or regenerating a constrained PNG such as Bazaar2 scene art. Use it for asset QA, not aesthetic ideation or SVG authoring.
+
+## Inputs / context to gather
+
+1. Read the order/style card first: expected dimensions, alpha requirement, required clear margins/openings, prohibited colors, exact lettering, and intended render mode.
+2. Confirm the target file path and whether the master must be RGBA with hard alpha (0/255 only).
+3. Identify the project image tooling. Sharp can inspect raw pixels; Pillow is useful only when available.
+
+## Procedure
+
+1. Inspect the PNG metadata: width, height, channel count, and alpha presence.
+2. Read raw pixels and report the unique alpha values, count partial-alpha pixels, count opaque green/chroma-key-like pixels, and count transparent pixels whose RGB channels are nonzero.
+3. Check the required outer margins/edge strips and any specified transparent opening with coordinate-aware samples or row/column runs.
+4. Inspect composition visually before declaring success: perspective, readable physical signage, and hard pixel edges must satisfy the order as well as the numeric checks.
+5. If generated output is wrong-sized or lacks alpha, do not deliver it. Rebuild deterministically (for example SVG plus Sharp nearest-neighbor rasterization), then repeat QA.
+6. Remove only task-specific temporary composition helpers after the final file is verified.
+
+## Efficiency plan
+
+- Run metadata and raw-pixel checks in one script/tool call and keep a compact QA line as evidence.
+- Check the hard invariants before spending time on visual polish.
+- Stop early and pivot when output is RGB, wrong-sized, or cannot meet transparent-margin constraints; chroma-key cleanup is not a substitute for a noncompliant master.
+
+## Pitfalls and fixes
+
+- Symptom: image generator returns RGB/no alpha or wrong dimensions. Fix: use deterministic vector construction and nearest-neighbor rasterization; rerun all checks.
+- Symptom: chroma-key helper fails with `Pillow is required for chroma-key removal`. Fix: install/use an available supported image tool only if authorized, or bypass chroma-key by generating transparent output directly.
+- Symptom: scene looks like a flat backdrop despite passing alpha QA. Fix: correct perspective, layered drawn objects, and physical signage; numeric checks do not validate composition.
+
+## Verification checklist
+
+- Exact requested width and height.
+- PNG has RGBA/alpha; alpha is only 0/255 when hard transparency is required.
+- Zero opaque chroma-key/green contamination and zero nonzero RGB payload in transparent pixels when required.
+- Required outer strips/margins are transparent; expected floor/edge contact and specified openings are present.
+- Visual inspection confirms crisp no-blur/no-gradient pixel treatment, readable exact text, and requested perspective.
+- Record a compact final QA result and link the delivered file.
+
+codex
+Generation begins. One call only. Image 1 controls keeper identity and pose language. Background ignored completely. Three eye-direction cells only.
+codex
+Size check now. If exact 1536×1024, byte-for-byte copy. No post-processing. Good.
+exec
+/bin/zsh -lc 'sips -g pixelWidth -g pixelHeight "/Users/sospedra/.codex/generated_images/019fd797-9ccc-7743-8031-df510feed16d/exec-3536511d-0fa9-48af-b1c1-cf677b7eea3d.png"' in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+exec
+/bin/zsh -lc 'cp "/Users/sospedra/.codex/generated_images/019fd797-9ccc-7743-8031-df510feed16d/exec-3536511d-0fa9-48af-b1c1-cf677b7eea3d.png" "/Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char/gen-char-sheet.png"' in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+ succeeded in 0ms:
+ succeeded in 103ms:
+/Users/sospedra/.codex/generated_images/019fd797-9ccc-7743-8031-df510feed16d/exec-3536511d-0fa9-48af-b1c1-cf677b7eea3d.png
+  pixelWidth: 1536
+  pixelHeight: 1024
+
+exec
+/bin/zsh -lc 'cmp -s "/Users/sospedra/.codex/generated_images/019fd797-9ccc-7743-8031-df510feed16d/exec-3536511d-0fa9-48af-b1c1-cf677b7eea3d.png" "/Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char/gen-char-sheet.png"' in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+ succeeded in 0ms:
+exec
+/bin/zsh -lc "nl -ba /Users/sospedra/.codex/memories/MEMORY.md | sed -n '536,588p'; nl -ba /Users/sospedra/.codex/memories/skills/pixel-art-asset-qa/SKILL.md | sed -n '1,49p'" in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char
+ succeeded in 0ms:
+   536	# Task Group: sospedra.me Bazaar2 pixel-art assets and interactive stalls
+   537	
+   538	scope: Build or repair Bazaar2 scenes, conversations, and hover/focus interactions while preserving the locked pixel-art constraints and validating the delivered asset/UI.
+   539	applies_to: cwd=/Users/sospedra/labs/sospedra.me; reuse_rule=reuse for app/bazaar2 and similarly constrained pixel-art assets; re-check current dirty worktree and route names before editing.
+   540	
+   541	## Task 1: Generate and regenerate `scene-street.png`, completed
+   542	
+   543	### rollout_summary_files
+   544	
+   545	- rollout_summaries/2026-07-23T18-59-48-iISS-bazaar2_street_scene_master_regeneration.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/23/rollout-2026-07-23T20-59-48-019f9059-2256-7210-a181-2c7a12c2f0ba.jsonl, updated_at=2026-07-23T19:06:45+00:00, thread_id=019f9059-2256-7210-a181-2c7a12c2f0ba, success; final master regeneration)
+   546	- rollout_summaries/2026-07-23T17-48-08-TrQ6-pixel_art_scene_street_generation_and_qa.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/23/rollout-2026-07-23T19-48-08-019f9017-84c2-7020-9f26-95f48e962762.jsonl, updated_at=2026-07-23T18:54:56+00:00, thread_id=019f9017-84c2-7020-9f26-95f48e962762, success; strict alpha/edge QA)
+   547	
+   548	### keywords
+   549	
+   550	- bazaar2, scene-street.png, 2400x1120, RGBA, SVG, Sharp, Pillow, alpha, chroma-key, `EXIT TO CITY`
+   551	
+   552	## Task 2: Implement serialized Games-stall dialogue and portal keyboard flow, completed
+   553	
+   554	### rollout_summary_files
+   555	
+   556	- rollout_summaries/2026-07-26T20-00-58-Tf59-bazaar2_games_conversation_hover_typewriter.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/26/rollout-2026-07-26T22-00-58-019fa004-37f1-7551-90ff-a6903f513233.jsonl, updated_at=2026-07-26T22:16:35+00:00, thread_id=019fa004-37f1-7551-90ff-a6903f513233, success; browser-verified interaction)
+   557	
+   558	### keywords
+   559	
+   560	- bazaar2, GamesDialogs, useTypewriter, portal, hover bridge, `focusDialogOnTab`, `keepDialogInTabOrder`, typewriter, keyboard navigation
+   561	
+   562	## Task 3: Repair Bazaar2 popup hover continuity, completed
+   563	
+   564	### rollout_summary_files
+   565	
+   566	- rollout_summaries/2026-07-26T19-01-06-wTRv-frontend_route_layout_scrollbar_hover_fixes.md (cwd=/Users/sospedra/labs/sospedra.me, rollout_path=/Users/sospedra/.codex/sessions/2026/07/26/rollout-2026-07-26T21-01-06-019f9fcd-672d-70b2-9e69-9bb0f46e8f21.jsonl, updated_at=2026-07-26T19:10:10+00:00, thread_id=019f9fcd-672d-70b2-9e69-9bb0f46e8f21, success; browser-verified hover repair)
+   567	
+   568	### keywords
+   569	
+   570	- bazaar2, hover-popup, `.dialog::before`, `closeTimerRef`, openOnHover, closeAfterHover, role=group
+   571	
+   572	## User preferences
+   573	
+   574	- When ordering Bazaar2 art, the user supplied a locked STYLE CARD: crisp/vector-sharp 16-bit pixel art, flat fills, hard shading bands, exact lettering, transparent background, 3u margins, and exact file delivery -> treat these as hard delivery constraints and run pixel-level QA before handoff. [Task 1]
+   575	- The user rejected “flat theater backdrop rectangles,” photographic grime, and a glowing text box -> use real perspective, drawn-object detail, and physical signage. [Task 1]
+   576	- The user asked for “the girl in its own dialog box, then the boy in its own dialog box, and so on,” all “in the same hitbox,” with links “char by char” -> use distinct alternating bubbles, continuous hover territory, and one serialized typewriter timeline. [Task 2]
+   577	
+   578	## Reusable knowledge
+   579	
+   580	- Do not accept generated imagery as final when its dimensions or alpha fail. The successful recovery was deterministic SVG construction plus Sharp nearest-neighbor rasterization; final `scene-street.png` was 2400x1120, 4-channel PNG, alpha only 0/255, no greenish/partial-alpha pixels, and no opaque pixels in upper outer 20u strips. [Task 1]
+   581	- For asset QA, inspect dimensions, RGBA/alpha values, transparent RGB contamination, chroma-key green, required clear margins/edge contact, and composition openings. Related skill: skills/pixel-art-asset-qa/SKILL.md. [Task 1]
+   582	- `/bazaar2` is the real route, not `/bazaarv2`. `GamesDialogs` is portalled to `document.body`; manage its pointer bridge and Tab order explicitly. The finished logic types at 9ms with turn pauses, then types links sequentially. [Task 2]
+   583	- For a popup separated from its trigger, combine a physical CSS bridge (`.dialog::before`) with a short delayed close (140ms), cancel on re-entry, and clean timers on unmount. The wrapper needs `role='group'` plus accessible label for mouse-handler lint. [Task 3]
+   584	
+   585	## Failures and how to do differently
+   586	
+   587	- Built-in image generation returned RGB 1836x857 without alpha; Pillow chroma-key also failed with “Pillow is required for chroma-key removal” -> pivot to deterministic SVG/Sharp rather than shipping a noncompliant master. [Task 1]
+   588	- CSS `:hover` alone closed the popup across the 14px gap -> use the bridge and delayed JavaScript close together. Portalled choices were initially skipped by Tab -> retain `focusDialogOnTab` and `keepDialogInTabOrder`. [Task 2][Task 3]
+     1	---
+     2	name: pixel-art-asset-qa
+     3	description: Validate a constrained pixel-art PNG delivery when the user requires exact dimensions, hard alpha, transparent margins, no chroma-key contamination, and crisp raster output.
+     4	argument-hint: "<image-path> [expected-width expected-height]"
+     5	allowed-tools: Bash, Read
+     6	user-invocable: false
+     7	---
+     8	
+     9	# Pixel-art asset QA
+    10	
+    11	## When to use
+    12	
+    13	Use after generating, composing, or regenerating a constrained PNG such as Bazaar2 scene art. Use it for asset QA, not aesthetic ideation or SVG authoring.
+    14	
+    15	## Inputs / context to gather
+    16	
+    17	1. Read the order/style card first: expected dimensions, alpha requirement, required clear margins/openings, prohibited colors, exact lettering, and intended render mode.
+    18	2. Confirm the target file path and whether the master must be RGBA with hard alpha (0/255 only).
+    19	3. Identify the project image tooling. Sharp can inspect raw pixels; Pillow is useful only when available.
+    20	
+    21	## Procedure
+    22	
+    23	1. Inspect the PNG metadata: width, height, channel count, and alpha presence.
+    24	2. Read raw pixels and report the unique alpha values, count partial-alpha pixels, count opaque green/chroma-key-like pixels, and count transparent pixels whose RGB channels are nonzero.
+    25	3. Check the required outer margins/edge strips and any specified transparent opening with coordinate-aware samples or row/column runs.
+    26	4. Inspect composition visually before declaring success: perspective, readable physical signage, and hard pixel edges must satisfy the order as well as the numeric checks.
+    27	5. If generated output is wrong-sized or lacks alpha, do not deliver it. Rebuild deterministically (for example SVG plus Sharp nearest-neighbor rasterization), then repeat QA.
+    28	6. Remove only task-specific temporary composition helpers after the final file is verified.
+    29	
+    30	## Efficiency plan
+    31	
+    32	- Run metadata and raw-pixel checks in one script/tool call and keep a compact QA line as evidence.
+    33	- Check the hard invariants before spending time on visual polish.
+    34	- Stop early and pivot when output is RGB, wrong-sized, or cannot meet transparent-margin constraints; chroma-key cleanup is not a substitute for a noncompliant master.
+    35	
+    36	## Pitfalls and fixes
+    37	
+    38	- Symptom: image generator returns RGB/no alpha or wrong dimensions. Fix: use deterministic vector construction and nearest-neighbor rasterization; rerun all checks.
+    39	- Symptom: chroma-key helper fails with `Pillow is required for chroma-key removal`. Fix: install/use an available supported image tool only if authorized, or bypass chroma-key by generating transparent output directly.
+    40	- Symptom: scene looks like a flat backdrop despite passing alpha QA. Fix: correct perspective, layered drawn objects, and physical signage; numeric checks do not validate composition.
+    41	
+    42	## Verification checklist
+    43	
+    44	- Exact requested width and height.
+    45	- PNG has RGBA/alpha; alpha is only 0/255 when hard transparency is required.
+    46	- Zero opaque chroma-key/green contamination and zero nonzero RGB payload in transparent pixels when required.
+    47	- Required outer strips/margins are transparent; expected floor/edge contact and specified openings are present.
+    48	- Visual inspection confirms crisp no-blur/no-gradient pixel treatment, readable exact text, and requested perspective.
+    49	- Record a compact final QA result and link the delivered file.
+
+codex
+GENERATED=/Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char/gen-char-sheet.png
+
+
+tokens used
+39.732
+GENERATED=/Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/anim4-char/gen-char-sheet.png
+
+

@@ -105,6 +105,7 @@
     (100cqw + var(--shift) - var(--s-w) - var(--su) * var(--sum)) /
     (var(--n) + 1)
   );
+  --sign-gap: var(--g);
   column-gap: var(--g);
   padding-right: var(--g);
   background-image: var(--wf);
@@ -229,8 +230,8 @@
   display: contents;
 }
 
-/* z law: wf 0 · stairs 1 · stalls 3 · seps 5; props and glows nest
-   inside the stall wraps (-1 back · 1 front · 2 glow) */
+/* z law: wf 0 · stairs 1 · stalls 3 · seps 5 · signs 14 (max); props and
+   glows nest inside the stall wraps (-1 back · 1 front · 2 glow) */
 .stairs {
   position: relative;
   z-index: 1;
@@ -255,6 +256,7 @@
   .floorR {
     --band-w: calc(var(--su) * 1555.556);
     --gc: calc((var(--band-w) - var(--su) * var(--sum)) / (var(--n) + 1));
+    --sign-gap: var(--gc);
     --group: calc(var(--s-w) + var(--gc) + var(--band-w));
     /* centered group; pins the band edge first, S crops on its own side */
     --ml: min(calc((100cqw - var(--group)) / 2), calc(100cqw - var(--group)));

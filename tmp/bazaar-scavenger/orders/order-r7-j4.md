@@ -1,0 +1,403 @@
+# Codex order — scavenger master r7 — text-only, zero attachments
+
+You are an image-generation subagent. Execute exactly this and nothing else.
+
+NO reference images attach to this order, by ruling: attachment chains
+overfit. Every law below is complete. Follow the text alone. Recorded
+failures from past rounds are named inline; do not repeat them.
+
+Steps: call image_gen ONCE to GENERATE a NEW image at size 1536x1024.
+Verify size; retry once if wrong. Copy the result unmodified to exactly
+/Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r7-j4/gen-scavenger-master.png
+then print GENERATED=<that path>. No post-processing, no repo edits.
+
+## THE SUBJECT
+
+One 16-bit pixel-art night-market stall on a flat chroma background: a
+wide "parada de mercadillo" table stall run by a hooded scavenger who
+sits deep in its shadows smoking a long pipe. The stall sells
+unrelated scavenged goods from a dark futurist city: dense, cluttered,
+asymmetric, layered. It is a game asset, one coherent authored sprite.
+
+## THE PAINT MANNER
+
+Authored low-resolution 16-bit pixel art. Large flat bounded color
+regions. Chunky square clusters. Continuous near-black outlines around
+every object. Exactly three tones per material: body, shadow, light.
+Sparse hard highlights. LOW DETAIL: simplified surfaces, never
+simplified identity. Zero stipple, zero mottle, zero weave, zero
+per-pixel noise, zero gradients, zero glow hazes, zero antialiasing.
+Every color region is one flat chunk; blocks never smaller than 4x4
+px. Rust and wear are one or two flat patches with hard edges, never
+speckle.
+
+## THE CAMERA LAW — absolute
+
+A FLAT STOREFRONT seen dead-on, standing eye height. NOT a room, NOT a
+stage, NOT a diorama, NOT a piece of furniture in space. No vanishing
+points, no perspective convergence, no isometric rotation, no side
+walls, no ceiling, no floor plane. Every box-like object is drawn as:
+one front rectangle + ONE thin horizontal top band about 1/5 of its
+width deep + vertical sides. A visible left or right side face on any
+object is a rejection. Circles (wheel, tire, drum end, hubcap, plate,
+ring) are legal front faces. Depth between objects is OVERLAP ONLY:
+things in front partially cover things behind. Every vertical edge is
+dead vertical. One ground line; flat contact shadow rows only; no
+platform, no slab, no invented floor.
+
+A recorded failure: one round drew the stall as a freestanding 3D
+table with visible legs and a deep tabletop. REJECTED. The counter is
+a wall of the storefront, items in one row on a thin band, skirt cloth
+to the floor.
+
+## THE BOX CONTRACT — absolute
+
+Canvas 1536x1024, background flat chroma green #00ff00, zero art
+pixels in that color. The ENTIRE stall fits inside x=136..1400,
+y=40..920. Not one art pixel outside; nothing touches the canvas
+border. The canopy's thin top band touches y=40; contact shadows sit
+on y=916..920; nothing below y=920.
+
+## THE STEPPED COUNTER
+
+The counter has TWO levels and reads asymmetric:
+- MAIN BAND x=300..1160: top band y=740..778, warm dark wood #482614
+  with a #885323 light lip and #351d12 shadow edge.
+- RIGHT STEP x=1160..1260: the same construction ONE level lower, top
+  band y=788..826.
+Both levels: front face + one thin band, no receding top. Items stand
+in ONE row planted ON the bands, each base touching with a 2 px
+#030506 contact row. The star-print skirt (#1b2a34 cloth, #030506
+fold lines, #34454c four-point stars in flat chunks, #151719 hem
+shadow) covers BOTH fronts from band to floor across the full width.
+ZERO table legs; one visible leg = redo.
+
+## THE LIGHT LAW — fluorescent depth light
+
+No bulb string. TWO cool fluorescent tubes hang at the depth plane
+BETWEEN the furniture line and the counter: tube A x=380..760, tube B
+x=820..1200, both y=288..300: flat bars, #f2f1ee core, #c9c8c5 ends,
+each on two thin #34454c hanger rods from the canopy hem. The tubes
+pass IN FRONT of everything hung on the wall.
+
+The tubes split the world:
+- BEHIND them, everything at wall and furniture depth paints in FLAT
+  SHADOW, one full palette step darker, low contrast, zero
+  highlights: the wall stock, the shelves, the locker, the safe, the
+  crates, the drum, and THE KEEPER.
+- AT and IN FRONT of the counter, everything paints LIT at full
+  palette value: counter bands, counter stock, skirt, bags, floor
+  piles. One flat cool pool, one step lighter, on the band under each
+  tube, hard edges.
+
+No halos, no cones, no fog: light exists only as flat palette steps.
+
+## THE KEEPER — the key effect
+
+He sits DEEP, tucked beside the locker in the darkest gap of the
+furniture line, away from the counter, a still shadow. Seated, slim,
+gaunt: total figure x=668..758, head top y=520, shoulder span at most
+90 px, waist cut by the counter band. If his head rises above y=490
+or he stands near the counter, the image is wrong.
+
+His wardrobe: a dark green hooded cloak in the elven cut, the
+shoulder cape WRAPPING THE NECK as its own scarf, one garment, closed
+at the throat by a small silver leaf clasp (#c9c8c5, dulled). In the
+shadow the cloak paints #35402f-dominant with two small #4a5a44
+patches and NO light edges. Under it a #151719 under-layer. Two
+bandaged forearms #885323 with #683619 wrap lines. Two #151719
+gloves. EXACTLY TWO ARMS, one hand raised holding the pipe, one
+resting low: a recorded failure drew three arms; count them before
+returning.
+
+His face never shows: the hood interior is ONE flat #030506 void. The
+only features are two gold eye SLITS #e6b339, each about 12x5 px, at
+y=545..555 (x=700..714 and x=726..740), at FULL brightness: they and
+the pipe ember are the only bright points on him.
+
+The pipe is a churchwarden: one thin curved #963a23 stem from the
+chin sweeping down-right to a small bowl x=790..810, y=625..650, with
+a #e07830 ember dot about 4x4 at full brightness. ONE smoke wisp:
+three flat #8a8f98 curl chunks, each at least 4x4, rising from the
+bowl x=800 to 765, y=620 up to 540.
+
+## THE WALLET — the hero object
+
+An open CD wallet LIES FLAT on the main band at the band's shallow
+angle, like a book left open on a table: x=700..870, y=726..780,
+nothing of it above y=726. A recorded failure drew it standing
+upright facing the viewer like a book on a stand: REJECTED. Two
+fanned sleeves show two disc faces as wide shallow ellipses about
+70x30 px: #4bd2e1 neon teal left, #c86fd6 neon magenta right, each
+with a plain squashed #f2f1ee hub ring and a #030506 center hole,
+never eye-like, no labels. Case #151719 with #030506 outline and
+#8a8f98 zip teeth along the rim. One dim flat #f2f1ee glare band,
+about 6 px, on the TEAL disc only. Beside the wallet stands one tiny
+tinfoil ORIGAMI UNICORN, about 14 px, #c9c8c5 facets. The 50 px
+around the wallet stays calm; the piles begin beyond it.
+
+## COMPOSITION LAWS
+
+- DEPTH LAYERS, back to front, each overlapping the one behind and
+  separated by flat #030506 gap lines: (1) wall stock, (2) furniture
+  line + the keeper's bay, (3) the tubes, (4) counter bands + stock,
+  (5) skirt + hanging bags, (6) floor piles; plus ceiling hangs
+  beside the tubes. A recorded failure flattened the furniture into
+  the wall and lost all depth: the shelves, locker, safe, crates,
+  and drum must stand PROUD of the wall, and the keeper's bay is a
+  real dark gap.
+- PLANTING: zero floating objects anywhere; everything planted on a
+  band, a shelf, the ground, or hung from a hook.
+- BOXED GOODS: part of the counter stock sits INSIDE open containers:
+  one compartment tray, one tin box, one padded case, one small open
+  crate on the step. Trays are shallow open rectangles, front face +
+  thin band, contents peeking over the rim.
+- STACKS: other goods stack in offset piles, never aligned.
+- CLUTTER GRADIENT: density increases toward both wings; scale
+  mixing everywhere: one big anchor + piles + small details per
+  zone; nothing mirrored, no even spacing, no grid rhythm.
+- MATERIALS: less wood, more plastic and steel. Wood only on: the
+  counter bands, the wine barrel, the mask crate, the book spines,
+  the wall planks, the oar. Plastic ribbed stacking crates, a red
+  plastic beverage crate, a plastic tub, and a steel drum replace
+  every other wooden container.
+
+## LAYOUT — anchors in canvas pixels (±12 px), zones by rule
+
+1. FRAME: two steel posts x=150..182 and x=1354..1386, y=76..916:
+   #34454c body, #1b2a34 shadow, #030506 outline. Canopy top band
+   y=40..76 full width: #1b2a34 with #34454c light edge.
+2. VALANCE y=76..250: vertical stripes alternating #34454c and
+   #8a8f98, each about 48 px, flat, hard edges, ragged torn hem; one
+   #885323 canvas patch x=1080..1160 with #030506 stitch dashes.
+3. CEILING HANGS from the hem, uneven heights, beside the tubes: a
+   spoked bike wheel x=200..280, y=255..350 (#34454c rim, #8a8f98
+   spokes); a CLOSED LED UMBRELLA x=340..380, y=255..380, its shaft
+   one straight #f2f1ee line; a plain red moto helmet x=765..815,
+   y=255..320 (#b73522, #151719 visor); a hanging robot arm, claw
+   down, x=1150..1220, y=250..360 (#34454c, #8a8f98, #030506 cable);
+   a cable bundle x=1060..1120, y=246..286 (#151719 loops).
+4. SCRATCHED SIGN: the word "scavenger", all lowercase, SCRATCHED
+   INTO the wall planks x=600..880, y=290..350: crude knife strokes,
+   #8a8f98 lines with sparse #c9c8c5 highlights. No plank, no board,
+   no ropes. Every letter legible, nothing crossing the word. The
+   ONLY readable text in the image.
+5. JERSEY PAIR at the left aisle, two short-sleeve football shirts
+   on wire hangers from the hem, one slightly in front of the other,
+   overlapping down-right, both flat and frontal, dead vertical:
+   - BACK jersey x=330..460, y=262..470: white #f2f1ee body with
+     #c9c8c5 fold shading, TWO black #151719 stripes running across
+     each shoulder and down each sleeve, each at least 6 px wide,
+     collar #c9c8c5;
+   - FRONT jersey x=385..515, y=286..500: red #b73522 body with
+     #67231d shadow folds, narrow vertical pinstripes #e6b339
+     exactly 4 px wide spaced about 28 px, short BLUE sleeves
+     #1b497d with #151719 shadow, collar #c9c8c5.
+   No numbers, no letters, no crest on either jersey.
+6. BACK WALL x=220..1320, y=250..690: dark planks #151719 with
+   #030506 joints, one step darker than everything, in shadow. Hung
+   stock, flat and iconic, denser toward the sides: cuckoo clock
+   x=520..590, y=270..380 (#482614 house, #683619 roof, #dda23c
+   pendulum dots); a hand saw hung vertical blade-down x=610..650,
+   y=265..400 (#8a8f98 blade, #885323 handle); a dead traffic-light
+   head x=930..980, y=350..460 (#151719 housing, ALL THREE lenses
+   #030506, never colored, bottom hidden behind the crates); a gas
+   mask x=995..1040, y=355..420 (#34454c, #030506 sockets); a
+   vocoder respirator half-mask x=1045..1090, y=350..415 (#34454c,
+   #030506 voice grille); horseshoes x=955..1010, y=270..330; a
+   blank license plate x=1025..1105, y=275..325 (#8a8f98, #030506
+   dashes); a voice-print lock box x=870..915, y=430..480 (#34454c,
+   one #dda23c button); a pinned INSECT DRONE in a flat display case
+   x=1120..1180, y=300..360 (#1b2a34 case, #8a8f98 dragonfly-size
+   unit, dead, pinned); a dead holo-frame x=250..310, y=380..440
+   (#151719 glass, #030506 void); an unlit neon tube ring
+   x=1245..1305, y=265..325 (#c9c8c5 glass, one #030506 crack); a
+   film reel x=1235..1300, y=355..435 (#8a8f98, #34454c); a vertical
+   oar x=1305..1338, y=255..640 (#885323 shaft, #683619 blade); a
+   satellite mini-dish x=200..260, y=420..480 (#8a8f98, #34454c).
+   NO fish. NO flying drone. The wall zone directly above the keeper
+   stays bare except the scratched word.
+7. FURNITURE LINE, standing proud of the wall, all in shadow, each
+   piece separated from the wall and its neighbors by flat #030506
+   lines and real overlap:
+   - INDUSTRIAL STEEL SHELF UNIT x=352..560, y=470..740: slotted
+     #34454c angle uprights with #030506 bolt dots, two thin #1b2a34
+     shelf bands. Upper row: three glass jars with odd contents
+     (#151719 glass, #d6a767 lids), one jar of vacuum tubes, an
+     alarm clock (#c9c8c5 face), a capsule pill bottle (#e8d2b4
+     caps, #963a23 band), a book stack (#67231d #1b2a34 #963a23
+     spines). Lower row: a globe (#1b2a34 sphere, #d6a767
+     meridians, #482614 stand), a dead android head x=435..495
+     (#8a8f98 with #c9c8c5 plates, empty #030506 sockets), a film
+     camera (#1b2a34, #8a8f98 lens ring), a folded-leg spider-bot
+     (#34454c, dead), a jeweler's loupe headset (band + lens
+     tubes). A rope coil hangs on the right upright (#d6a767,
+     #885323).
+   - METAL LOCKER x=575..665, y=300..740: #34454c body, #1b2a34
+     shadow, #030506 vent slits and handles, the LEFT door ajar
+     showing a #030506 slit. A birdcage sits on top x=590..650,
+     y=215..300 (#1b2a34 silhouette, #34454c bars). A motherboard
+     leans on its front x=578..614, y=640..740 (#1b2a34 board,
+     #dda23c trace dots, at most three 2 px #4bd2e1 LED dots).
+   - THE KEEPER'S BAY x=665..765: the darkest gap; the keeper sits
+     here per THE KEEPER law.
+   - SAFE x=780..890, y=560..740: squat steel, #34454c front,
+     #1b2a34 thin top band, #c9c8c5 dial dot, #030506 outline. ON
+     top sits a VOIGHT-KAMPFF DESK UNIT x=785..885, y=490..560: a
+     squat machine with one accordion bellows and one raised
+     iris-camera arm (#34454c body, #151719 bellows, #c9c8c5 lens
+     ring).
+   - PLASTIC CRATE STACK x=900..1055, y=430..740: two ribbed
+     plastic stacking crates (#1b2a34 and #963a23, grid vents)
+     under one wood crate (#885323, #351d12 gaps), staggered, never
+     aligned. A kettle sits on top x=915..965, y=380..430 (#8a8f98,
+     in shadow) beside a tin radio x=975..1040, y=375..430
+     (#963a23 body, #67231d shade, #d6a767 dial).
+   - STEEL DRUM seen end-on x=1035..1145, y=545..665: #34454c
+     circle face, #151719 rings, #030506 center; a #67231d blanket
+     roll on top.
+8. COUNTER STOCK, planted per the composition laws, one row per
+   band:
+   - MAIN BAND center: the flat WALLET + origami unicorn per THE
+     WALLET law;
+   - inner left: binoculars x=420..500 (#1b2a34, #030506 lens
+     voids); a key ring x=520..565 (#dda23c ring, #8a8f98 keys); a
+     magnifier x=585..650 (#dda23c rim, #c9c8c5 glass wedge);
+   - inner right: two dark bottles x=1040..1100, y=650..742
+     (#151719 glass, #34454c glints, #963a23 and #dda23c foils); a
+     POCKET CRT TV x=960..1030, y=690..742 (fishbowl screen in two
+     flat pale bands #c9c8c5 over #8a8f98 ONLY, one chrome dial); a
+     palm MICRO REEL-TO-REEL x=900..950, y=702..742 (two visible
+     tape reels);
+   - LEFT WING PILE x=300..420, heavy, boxed and stacked: an open
+     TIN BOX of dermatrodes (adhesive pads with #030506 wire
+     tails); a DATAPAD STACK (three #1b2a34 slabs, offset); a
+     BLASTER PISTOL lying flat (#1b2a34 body, #34454c bull barrel,
+     two trigger notches); a CYBERDECK slab (#1b2a34, #8a8f98 key
+     rows); a WRIST TERMINAL brick with antenna stub; an open
+     CYBERWARE TOOLKIT roll (#482614 roll, #8a8f98 micro drivers);
+     an E-PAPER sheet (#c9c8c5, #030506 dash blocks); a small
+     stack of blank INCEPT PHOTOS (#e8d2b4, offset); wristwatches;
+     a pager; three stacked tins (offset);
+   - RIGHT WING + STEP x=1080..1260, heavy, boxed and stacked: a
+     COMPARTMENT TRAY (open shallow box, contents peeking over the
+     rim: #dda23c credchip sticks, #c9c8c5 data shards, chrome
+     neural plugs, cortical stack coins); an open padded CYBER-EYE
+     CASE (#151719 case, one optic with a #dda23c iris dot); a
+     BRAINDANCE WREATH half-ring headset (#c9c8c5 band, #963a23
+     pads); a ROM CARTRIDGE STACK (four #1b2a34 cartridges with
+     #dda23c label dashes, offset); a dead HOLO-PUCK disc
+     (#151719); a peg rod with three BIOMONITOR BRACELETS hanging;
+     an air hypo (#8a8f98); a stim inhaler (#963a23); a mechanical
+     robot hand x=1150..1200 (#8a8f98 fingers, #030506 joints); a
+     wire spool; #dda23c coin stacks; spark plugs; camera lenses; a
+     small OPEN CRATE of scrap electronics ON THE STEP (bare
+     boards, chips peeking over the rim).
+9. SKIRT: per THE STEPPED COUNTER law, covering both fronts, star
+   print. Hanging bags pinned to it: left cluster of THREE
+   (#963a23, #885323, and #67231d hanging lower), right cluster of
+   TWO (#d6a767, and #963a23 with strap askew), one steel colander
+   x=760..830 (#8a8f98, #030506 hole dots) between the clusters,
+   blank #e8d2b4 scrap tags on three bags.
+10. FRONT FLOOR, lit, on the ground line y=916, piles denser toward
+    the sides: a suitcase stack far left x=140..280, y=770..916
+    (#67231d case below, #885323 case above, blank sticker patches,
+    #dda23c corner caps) with the ESPER TERMINAL on top x=150..260,
+    y=680..770 (a fishbowl CRT: casing #1b2a34, screen in two flat
+    pale bands #c9c8c5 over #8a8f98 ONLY, one chrome dial, one mic
+    stub); an oxygen tank leaning x=285..330, y=760..916 (#8a8f98,
+    #34454c valve); a wood crate x=380..510, y=830..916 (#885323
+    planks, #351d12 gaps, thin #d6a767 top band) carrying the
+    HOLLOW KNIGHT MASK x=395..495, y=715..835: bone-white shell
+    #f2f1ee with #c9c8c5 shading and #8a8f98 under-rim, two smooth
+    horns curving up and outward, two large empty #030506 eye
+    sockets, one hairline #c9c8c5 crack, upright, facing the
+    viewer; a leaning tire x=520..615, y=800..916 (#151719 torus,
+    #34454c hub, #8a8f98 worn dashes) overlapping the skirt; a
+    toolbox x=930..1000, y=850..916 (#963a23, #8a8f98 latch); a red
+    plastic BEVERAGE CRATE x=1000..1090, y=830..916 (#963a23, grid
+    sides, #151719 bottle necks); an upright wine barrel
+    x=1090..1210, y=690..916 (#885323 staves, #683619 shading,
+    #34454c bands) with three dark bottles ON it x=1110..1190,
+    y=610..696 (#151719 glass, #963a23 #dda23c #67231d foils); a
+    rolled rug x=1230..1290, y=700..916 (#67231d spiral end,
+    #d6a767 turns); a plastic TUB far right x=1290..1390,
+    y=820..916 (#1b2a34) full of springs, gears (#8a8f98, #dda23c),
+    and a dead android torso plate peeking (#8a8f98, one #030506
+    socket); a jerrycan ON the tub x=1300..1355, y=735..820
+    (#34454c, #030506 cap, NEVER green).
+11. GROUND: one line y=916, flat #030506 contact rows under
+    everything that touches it.
+12. DENSITY: at least 70 distinct objects. Fill with the same
+    spirit: unrelated finds and dead futurist tech, flat and iconic,
+    planted or hung, never floating, denser toward the sides, all
+    markings unreadable dashes.
+
+## COLOR LAW
+
+PALETTE CLAMP: use ONLY these colors, nothing else. Merge any stray
+shade into its nearest listed value. No new hues, no intermediate
+blends. The 24 legal hexes:
+
+#030506 #151719 #1b2a34 #34454c #8a8f98 #c9c8c5 #f2f1ee #482614
+#683619 #885323 #351d12 #d6a767 #e8d2b4 #963a23 #b73522 #67231d
+#dda23c #e6b339 #1b497d #4bd2e1 #c86fd6 #e07830 #4a5a44 #35402f
+
+Scopes, absolute:
+- #00ff00 is the background key: ZERO art pixels.
+- #4a5a44 #35402f ONLY the keeper's cloak, #35402f-dominant.
+- #1b497d ONLY the red jersey's sleeves.
+- #4bd2e1 ONLY the teal disc face and at most three 2 px LED dots on
+  the motherboard.
+- #c86fd6 ONLY the magenta disc face.
+- #e07830 ONLY the pipe ember.
+- #e6b339 ONLY the keeper's eyes and the jersey pinstripes.
+- Screens (Esper, pocket CRT): #c9c8c5 and #8a8f98 flat bands ONLY,
+  never cyan, never blue.
+- The traffic-light lenses: #030506 ONLY, dead.
+- The jerrycan: #34454c, NEVER green.
+- NO other greens anywhere: the keyer executes green art pixels.
+
+## TEXT
+
+Only the scratched lowercase "scavenger" on the wall. Every tag,
+label, plate, sticker, and scrap is unreadable dashes. No numbers or
+letters on the jerseys.
+
+## EXCLUDE
+
+No H-beams, no wall beyond the stall, no concrete floor, no street,
+no neighbors, no customers, no slab, no bulb string, no sign plank,
+no fish, no flying drone, NO TRUMPET, no table legs. The asset floats
+on chroma.
+
+## SELF-CHECK before returning
+
+1) DEPTH: shelves, locker, safe, crates, drum stand proud of the
+   wall with separations; the keeper bay is a real dark gap.
+2) THE COUNTER HAS TWO LEVELS, main band + lower right step; zero
+   legs; the skirt covers both fronts.
+3) NO TRUMPET anywhere. COUNT THE KEEPER'S ARMS: exactly two.
+4) Boxed goods: compartment tray, tin box, padded cyber-eye case,
+   open scrap crate on the step. Stacks: ROM cartridges, datapads,
+   tins, coins, incept photos, all offset.
+5) Tubes split the light: shadow behind, lit in front; keeper a
+   silhouette with eye slits + ember only; pipe + three-curl smoke.
+6) Wallet flat on the band, plain hubs, origami unicorn beside it;
+   scratched lowercase sign fully legible.
+7) Catalog present: Voight-Kampff unit, Esper terminal, LED
+   umbrella, blaster, cyberdeck, wrist terminal, toolkit roll,
+   e-paper, braindance wreath, pocket CRT, reel-to-reel, cyber-eye
+   case, holo-puck, loupe headset, pill bottle, vocoder, voice-print
+   box, pinned insect drone, spider-bot, biomonitor pegs,
+   dermatrodes, ROM stack.
+8) Materials: plastic crates, steel drum, plastic tub, plastic
+   beverage crate; wood only where listed; jerrycan #34454c; traffic
+   lenses #030506.
+9) Mandatories: jersey pair (no numbers, no crest), Hollow Knight
+   mask on its crate, wine barrel + bottles + beverage crate, flat
+   wallet with teal + magenta discs, suitcases, tire, toolbox, rug.
+10) At least 70 objects; wings + step heavy, wallet calm; nothing
+    floating; nothing at the canvas border.
+11) 1536x1024; only "scavenger" readable; 24 hexes, scopes
+    respected; flat #00ff00 background.

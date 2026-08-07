@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Aside from 'services/markdown/aside'
 import CodeBlock from 'services/markdown/code'
+import GlitchRoll from 'services/markdown/glitch-roll'
 import PaperImage from 'services/markdown/image'
 import {
   fetchPaper,
@@ -82,6 +83,7 @@ export default async function PaperPage(props: {
   return (
     <PaperShell {...meta}>
       <PaperKeys newer={newer} older={older} />
+      <GlitchRoll />
       <Post components={createMdxComponents(meta)} />
     </PaperShell>
   )

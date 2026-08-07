@@ -30,7 +30,13 @@ export function CameraChassis({
 }: CameraChassisProps) {
   return (
     <div
-      className={cn(css.machine, panel.machine, film.machine, root.machine)}
+      className={cn(
+        css.machine,
+        panel.machine,
+        film.machine,
+        optics.machine,
+        root.machine,
+      )}
       data-camera-state={cameraState}
       data-print-state={printState}
     >

@@ -1,0 +1,37 @@
+name: publish-len
+
+on:
+  push:
+    branches: [master]
+    paths: ["packages/len/**"]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+      - run: pnpm install --frozen-lockfile
+      - name: compare against the published version
+        id: guard
+        run: |
+          local=$(node -p "require('./packages/len/package.json').version")
+          remote=$(npm view @sospedra/len version 2>/dev/null || echo none)
+          echo "changed=$([ "$local" != "$remote" ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - name: gates
+        if: steps.guard.outputs.changed == 'true'
+        run: |
+          pnpm --filter @sospedra/len run lint
+          pnpm --filter @sospedra/len run typecheck
+          pnpm --filter @sospedra/len run test
+      - name: publish
+        if: steps.guard.outputs.changed == 'true'
+        run: pnpm --filter @sospedra/len publish --no-git-checks

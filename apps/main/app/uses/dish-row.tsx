@@ -10,7 +10,7 @@ import pen from './pen-marks.module.css'
 const PEN_RING_SLOT = 'keyboard'
 const PEN_ARROW_SLOT = 'shell'
 const PEN_NOTES: Partial<Record<string, string>> = {
-  laptop: 'since 2014!',
+  laptop: 'fans = myth',
   chair: "chef's fav",
 }
 

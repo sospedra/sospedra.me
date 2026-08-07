@@ -11,7 +11,7 @@ export const DESKTOP_FLOORS: DesktopFloor[] = [
   { stalls: ['uses', 'papers', 'map'], stairsRight: true },
   { stalls: ['manual', 'console', 'talks'], stairsRight: false },
   { stalls: ['w98', 'games', 'travel'], stairsRight: true },
-  { stalls: ['jukebox'], stairsRight: false },
+  { stalls: ['scavenger'], stairsRight: false },
 ]
 
 /* SM sides: L, R, L, R, L, R (spec rule 5); solo map floor sits at the entrance */
@@ -21,5 +21,5 @@ export const MOBILE_FLOORS: MobileFloor[] = [
   { stalls: ['manual', 'talks'], smRight: false },
   { stalls: ['console', 'w98'], smRight: true },
   { stalls: ['games', 'travel'], smRight: false },
-  { stalls: ['jukebox'], smRight: true },
+  { stalls: ['scavenger'], smRight: true },
 ]

@@ -1,0 +1,137 @@
+/* Doubled class: .markdown > * + * in paper.module.css ties on specificity,
+   and chunk order across CSS modules is not guaranteed. */
+.board.board {
+  margin: 2.75rem 0 3rem;
+  overflow: hidden;
+  border: 1px solid rgb(109 247 234 / 24%);
+  border-radius: 0.375rem;
+  background: #100d1a;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.6rem 1rem 0.55rem;
+  border-bottom: 1px solid rgb(109 247 234 / 18%);
+  background: rgb(109 247 234 / 5%);
+}
+
+.label {
+  flex: 1;
+  color: var(--color-signal-cyan, #6df7ea);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.count {
+  color: var(--color-text, #d6dbe6);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.75rem 1rem 0;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgb(109 247 234 / 36%);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--color-text, #d6dbe6);
+  cursor: pointer;
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.tab[aria-pressed="true"] {
+  background: rgb(109 247 234 / 14%);
+  color: var(--color-signal-cyan, #6df7ea);
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--color-signal-cyan, #6df7ea);
+  outline-offset: 2px;
+}
+
+.tabIndex {
+  color: var(--color-signal-cyan, #6df7ea);
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.body {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem 1rem;
+}
+
+.instrument {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.order {
+  margin: 0;
+  padding: 0.75rem 0.9rem;
+  overflow-x: auto;
+  border: 1px solid rgb(109 247 234 / 14%);
+  border-radius: 0.25rem;
+  background: #0a0c12;
+  color: var(--color-text, #d6dbe6);
+  font-family: var(--font-code, monospace);
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.verdict {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.kind {
+  font-family: var(--font-code, monospace);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.verdict[data-tone="win"] .kind {
+  color: var(--color-signal-yellow, #ffea00);
+}
+
+.verdict[data-tone="mid"] .kind {
+  color: var(--color-signal-cyan, #6df7ea);
+}
+
+.verdict[data-tone="loss"] .kind {
+  color: var(--color-signal-pink, #ff5ea8);
+}
+
+@media (max-width: 48rem), (pointer: coarse) {
+  .tab {
+    padding: 0.6rem 0.8rem;
+  }
+}

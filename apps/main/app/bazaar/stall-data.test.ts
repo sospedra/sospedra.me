@@ -31,7 +31,6 @@ test('map stall routes to the bazaar paper', () => {
 const PLACED_STALLS = [
   'console',
   'games',
-  'jukebox',
   'manual',
   'map',
   'papers',

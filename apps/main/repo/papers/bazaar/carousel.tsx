@@ -3,6 +3,7 @@
 import { clamp, throttle } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import Fullscreen from 'services/markdown/fullscreen'
 import { prefersQuietFx } from 'services/theme'
 import css from './carousel.module.css'
 import {
@@ -117,6 +118,17 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
     void melt(fromImage, toImage, target)
   }
 
+  // fullscreen nav: the melt canvas is hidden behind the dialog, so jump plain
+  const jumpTo = (step: number) => {
+    const target = clamp(index + step, 0, props.items.length - 1)
+    if (target === index) return
+    setIndex(target)
+    track.current?.scrollTo({
+      left: target * track.current.clientWidth,
+      behavior: 'auto',
+    })
+  }
+
   const handleTrackKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.target !== event.currentTarget) return
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -179,6 +191,44 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
           >
             ↓
           </button>
+          <Fullscreen
+            caption={props.items[index]?.alt}
+            label={props.label}
+            meta={
+              <>
+                <span className={css.counter}>
+                  {pad(index + 1)}&nbsp;/&nbsp;{pad(props.items.length)}
+                </span>
+                <button
+                  aria-disabled={index === 0}
+                  aria-label='Previous shot'
+                  className={css.button}
+                  onClick={() => jumpTo(-1)}
+                  type='button'
+                >
+                  ↑
+                </button>
+                <button
+                  aria-disabled={index === props.items.length - 1}
+                  aria-label='Next shot'
+                  className={css.button}
+                  onClick={() => jumpTo(1)}
+                  type='button'
+                >
+                  ↓
+                </button>
+              </>
+            }
+            trigger='⛶'
+            triggerClassName={css.button}
+          >
+            <img
+              alt=''
+              height={SLIDE_HEIGHT}
+              src={props.items[index]?.src}
+              width={SLIDE_WIDTH}
+            />
+          </Fullscreen>
         </span>
       </div>
     </section>

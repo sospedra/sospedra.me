@@ -264,6 +264,8 @@ export default function SceneStall(props: {
             alt=''
             draggable={false}
             loading={layer.role === 'plate' ? 'eager' : 'lazy'}
+            data-layer={layer.role}
+            data-frame={file}
           />
         ))
         /* the hologram flickers as a GROUP: an animation on the imgs

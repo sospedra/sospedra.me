@@ -16,56 +16,68 @@
       name="twitter:image"
       content="https://user-images.githubusercontent.com/3116899/88484061-315fc900-cf6c-11ea-9d94-d3b24dd6d1e9.png"
     />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="512x512"
+      href="/favicon-512.png"
+    />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link
+      rel="preload"
+      href="/fonts/DepartureMono-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <link rel="stylesheet" href="/src/styles.css" />
     <script type="module" src="/src/main.ts"></script>
   </head>
 
-  <body class="h-screen w-full">
-    <main
-      class="container mx-auto p-4 h-full flex flex-col justify-between items-center"
-    >
-      <div class="flex flex-col flex-1 justify-center items-center w-full">
-        <div class="h-64 w-full flex flex-col justify-center items-center">
-          <input
-            readonly
-            class="w-full text-6xl"
-            id="js-which"
-            value="Press any key"
-          />
-          <label for="js-which"><code>event.which</code></label>
-        </div>
-        <div class="flex flex-row flex-wrap">
-          <div class="text-center flex flex-col items-center flex-1">
-            <input id="js-key" class="text-2xl flex-1" value="--" readonly />
-            <label class="inline-flex" for="js-key">
-              <code>event.key</code>
-            </label>
-          </div>
-          <div class="text-center flex flex-col items-center flex-1">
-            <input id="js-code" class="text-2xl flex-1" value="--" readonly />
-            <label class="inline-flex" for="js-code">
-              <code>event.code</code>
-            </label>
-          </div>
-        </div>
-      </div>
+  <body>
+    <canvas id="js-wave" class="wave-canvas" aria-hidden="true"></canvas>
 
-      <aside id="js-toast" class="to-fade">Copied to your clipboard!</aside>
-
-      <footer class="p-8">
-        <nav class="w-full text-center">
-          <a href="/codes">Raw codes</a>
-          <span>▼</span>
-          <a href="https://github.com/sospedra/which-key-code">GitHub</a>
+    <main class="frame">
+      <header class="bezel">
+        <span>which key code?<span class="caret"></span></span>
+        <nav class="bezel-nav">
+          <button id="js-sound" class="sound" type="button" aria-pressed="true">
+            sound on
+          </button>
+          <a href="/codes">raw codes</a>
+          <a href="https://github.com/sospedra/which-key-code">github</a>
         </nav>
-        <p>
-          Hand-crafted with
-          <span class="mr-2" role="img" aria-label="purple heart">💜</span>
-          by
-          <a href="https://sospedra.me">@sospedra</a>
-        </p>
+      </header>
+
+      <section class="stage">
+        <input readonly id="js-code" class="glyph is-idle" value="Press any key" />
+        <label for="js-code" class="glyph-label"><code>event.code</code></label>
+        <p id="js-tune" class="tune">waiting for signal</p>
+      </section>
+
+      <section class="readouts">
+        <div class="cell">
+          <input readonly id="js-key" value="--" />
+          <label for="js-key"><code>event.key</code></label>
+        </div>
+        <div class="cell">
+          <input readonly id="js-which" value="--" />
+          <label for="js-which">
+            <code>event.which</code>
+            <span class="tag">deprecated</span>
+          </label>
+        </div>
+      </section>
+
+      <aside id="js-toast" class="toast">Copied</aside>
+
+      <footer class="credit">
+        Hand-crafted with
+        <span role="img" aria-label="purple heart">💜</span>
+        by
+        <a href="https://sospedra.me">@sospedra</a>
       </footer>
     </main>
-    <div class="granimate"></div>
   </body>
 </html>

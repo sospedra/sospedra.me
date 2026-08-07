@@ -125,3 +125,105 @@ div.holoFlicker {
   position: absolute;
   inset: 0;
 }
+
+/* scavenger idle glance: dots + mask over the sprite's baked eyes;
+   rotate(180deg) mirrors the look direction with one sprite */
+.scavEyes {
+  position: absolute;
+  left: 49.21%;
+  top: 40.63%;
+  width: 2.43%;
+  height: 1.26%;
+  z-index: 2;
+  background: #030506;
+  opacity: 0;
+  pointer-events: none;
+  animation: scavGlance 7s infinite;
+}
+
+.scavEyes::before,
+.scavEyes::after {
+  content: "";
+  position: absolute;
+  top: 33%;
+  width: 9%;
+  height: 30%;
+  background: #f0a63c;
+}
+
+.scavEyes::before {
+  left: 9%;
+}
+
+.scavEyes::after {
+  left: 58%;
+}
+
+.stall:hover .scavEyes,
+.stall:focus-within .scavEyes {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes scavGlance {
+  0%,
+  63.9% {
+    opacity: 0;
+    transform: none;
+  }
+
+  64%,
+  79.9% {
+    opacity: 1;
+    transform: none;
+  }
+
+  80%,
+  94.9% {
+    opacity: 1;
+    transform: rotate(180deg);
+  }
+
+  95%,
+  100% {
+    opacity: 0;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scavEyes {
+    animation: none;
+  }
+}
+
+/* scavenger depth: char frames clip at the counter band top (y545/971),
+   so legs read behind the counter with no occluder asset; the hold frame
+   alone keeps a notch (x655..715, down to y585) so the offered palm lies
+   ON the counter while the legs stay behind */
+[data-stall="scavenger"] .sceneStack img[data-layer="char"] {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 56.13%, 0% 56.13%);
+}
+
+[data-stall="scavenger"] .sceneStack img[data-frame="char-h6.png"] {
+  clip-path: polygon(
+    0% 0%,
+    100% 0%,
+    100% 56.13%,
+    47.43% 56.27%,
+    47.29% 57.03%,
+    46.67% 57.12%,
+    46.38% 56.03%,
+    46.29% 57.18%,
+    45.73% 57.63%,
+    45.24% 57.17%,
+    45.24% 55.93%,
+    44.73% 57.52%,
+    44.23% 57.53%,
+    43.92% 56.54%,
+    44.28% 54.3%,
+    43.47% 55.82%,
+    43.16% 56.15%,
+    0% 56.13%
+  );
+}

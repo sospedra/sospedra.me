@@ -53,6 +53,13 @@ hand-directed.
 16. `16-human-craft.md` — the work outside the pipeline: pen-and-paper
     sketches first, the midnight design language, Affinity cleanup and
     hand-repainting, CSS as the second art medium.
+17. `17-scavenger-doctrine.md` — the second-generation pipeline from
+    the eleventh stall (2026-08-06): text-only orders after the
+    hyperfitting ruling, the flatness instrument war, per-frame
+    palette ladders, character-on-chroma with a black plate hole,
+    fixed-canvas animation with user-ruled head lines, clip-path
+    depth replacing occluder assets, CSS eyes, and in-page tuning
+    harnesses that round-trip verdicts as data.
 
 ## Editorial review (2026-08-01 pass)
 

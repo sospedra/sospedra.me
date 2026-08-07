@@ -1,0 +1,36 @@
+{
+  "name": "stv",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev --port 3011",
+    "lint": "biome check .",
+    "start": "next start",
+    "test": "node --test 'services/*.test.ts'",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "cheerio": "1.2.0",
+    "next": "16.3.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "catalog:",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "babel-plugin-react-compiler": "1.0.0",
+    "typescript": "catalog:"
+  },
+  "license": "ISC"
+}

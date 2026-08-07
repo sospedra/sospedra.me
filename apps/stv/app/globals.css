@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+html,
+body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+}
+
+body {
+  background-color: #ffffff;
+  background-image: url("/background.svg");
+}
+
+.text-gradient {
+  background: linear-gradient(to right, #562e66 35%, #64b1a9 100%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-variant: small-caps;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ping,
+  .animate-pulse {
+    animation: none;
+  }
+}

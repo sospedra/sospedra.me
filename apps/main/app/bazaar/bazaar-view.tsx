@@ -8,6 +8,7 @@ import SpriteCar from 'services/car/car'
 import Link from 'services/link'
 import Shell from 'services/shell'
 import { prefersQuietFx } from 'services/theme'
+import { DownSign, UpSign } from './arrow-sign'
 import css from './bazaar.module.css'
 import {
   DESKTOP_FLOORS,
@@ -171,6 +172,10 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
       )}
       {spec.stairsRight ? band : stairs}
       {spec.stairsRight ? stairs : band}
+      <UpSign side={spec.stairsRight ? 'right' : 'left'} index={index} />
+      {index < DESKTOP_FLOORS.length - 1 && (
+        <DownSign side={spec.stairsRight ? 'left' : 'right'} index={index} />
+      )}
       <HostDecor host={`floor:${index}`} />
     </section>
   )

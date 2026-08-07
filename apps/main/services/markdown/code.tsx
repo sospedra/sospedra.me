@@ -2,6 +2,7 @@ import cn from 'clsx'
 import { Children, isValidElement, type ReactNode } from 'react'
 import css from './code.module.css'
 import CopyButton from './copy-button'
+import Fullscreen from './fullscreen'
 
 const getText = (node: ReactNode): string => {
   if (typeof node === 'string' || typeof node === 'number') return String(node)
@@ -46,6 +47,24 @@ const CodeBlock = ({
             {String(lines).padStart(2, '0')} {lineWord.toUpperCase()}
           </span>
           <CopyButton source={source} />
+          <Fullscreen
+            fit='fill'
+            label='CODE // TRANSMISSION'
+            meta={
+              <span>
+                {String(lines).padStart(2, '0')} {lineWord.toUpperCase()}
+              </span>
+            }
+            trigger='FULL'
+            triggerClassName={css.copy}
+          >
+            <pre
+              className={cn(className, css.source, css.viewerSource)}
+              style={{ ...style, backgroundColor: '#100d1a' }}
+            >
+              {children}
+            </pre>
+          </Fullscreen>
         </span>
       </figcaption>
       <pre

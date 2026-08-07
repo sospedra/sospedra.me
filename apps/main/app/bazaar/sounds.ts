@@ -214,16 +214,10 @@ const STALL_SFX: Record<BazaarStallId, () => void> = {
     tone({ shape: 'sine', from: 90, to: 60, duration: 0.28, peak: 0.1 })
     tone({ shape: 'triangle', from: 520, duration: 0.06, peak: 0.03, at: 0.06 })
   },
-  jukebox: () => {
-    tone({ shape: 'triangle', from: 1046, duration: 0.09, peak: 0.05 })
-    tone({ shape: 'triangle', from: 784, duration: 0.12, peak: 0.05, at: 0.1 })
-    noise({
-      duration: 0.04,
-      peak: 0.05,
-      filter: 'highpass',
-      frequency: 2400,
-      at: 0.05,
-    })
+  scavenger: () => {
+    noise({ duration: 0.06, peak: 0.09, frequency: 900 })
+    noise({ duration: 0.05, peak: 0.08, frequency: 2200, at: 0.05 })
+    tone({ from: 1800, duration: 0.02, peak: 0.025, at: 0.11 })
   },
 }
 

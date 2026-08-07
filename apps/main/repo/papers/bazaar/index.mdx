@@ -1,53 +1,60 @@
 import Carousel from './carousel'
+import ClipLab from './clip-lab'
+import EditorPalette from './editor-palette'
 import PaletteClamp from './palette-clamp'
 import Postmortem from './postmortem'
+import ProbeBoard from './probe-board'
+import Sampler from './sampler'
+import SlabLaw from './slab-law'
 import Toc from './toc'
 
-I wrote thirty poisoned orders in one night, then blamed the model for obeying them.
+The bazaar is not an art project, and this paper holds no prompt tricks. The bazaar is this site's index: a pixel-art night market, ten stalls, one route per stall, a talking keeper in each. gpt-image-class models generated every pixel. Codex CLI drove the jobs, Claude supervised the fleets, and I directed by eye. This paper is the engineering method.
 
-The order asked for a hacker den. Ed from Cowboy Bebop sits cross-legged on a rug, one CRT lit, racks of dead machines behind. Thirty renders landed in my review gallery. All thirty were wrong the same way: camera dropped, rug bloated into a stage, furniture rotated inward around the character. I asked the supervisor one question. How do you fail thirty times out of thirty?
+A capable image model is the obvious explanation, and it is the wrong one. A plain prompt never shipped a single asset here. The market shipped 259 files because 314 archived orders pinned every pixel. A human rejected everything else. The fight ran over two weeks. There was no one-prompt big bang. We looked.
 
-The model looks like the suspect. The audit cleared it. All thirty jobs shared one order body, and that body carried the poison. My own capitals: "camera slightly LOWER", "the rug band is DEEP", "racks ROTATED TOWARD Ed, enclosing him". The model had obeyed perfectly, thirty times in a row. **The order was the bug.**
+**An order is a datasheet.** A brief describes a mood. A datasheet pins a measurement. Angles arrive as integer ratios. Positions arrive as pixel coordinates. Color arrives as a closed hex list. Attachments support the data. They are never the base of the generation.
 
-![The thirty stall-war masters, all rejected. Every one obeyed the same poisoned order.](./stall-war-30.webp)
-
-That stall belongs to [the bazaar](/bazaar), a pixel-art night market. The bazaar is this site's index now. Eight stalls, one per section, and every keeper talks. gpt-image-class models generated every pixel. Codex CLI drove them, Claude supervised the fleets, and I art-directed by eye. Twelve days, five rebuilt routes, 311 archived order files, 230 shipped assets.
-
-The console stall is this paper's specimen. It failed the most, so it returns in almost every section below.
-
-The method earned a name along the way: **adversarial art direction**. Every order faces a hostile review before it flies. Every landing faces a ruler. Every approval survives an attempt to refute it. GANs make the adversary a loss function. This pipeline makes it a reviewer with taste.
+The method earned a name: *adversarial asset direction*. Every order faces a hostile review before it flies. Every landing faces a ruler. Every approval survives an attempted refutation. One ratio, 68:81, recurs below. It is the thesis in two integers. The console stall failed the most rounds, so it supplies most of the examples.
 
 <Toc
   items={[
     { href: '#a-market-instead-of-a-menu', title: 'A market instead of a menu' },
-    { href: '#five-bazaars-in-twelve-days', title: 'Five bazaars in twelve days' },
+    { href: '#five-builds-one-survivor', title: 'Five builds, one survivor' },
     { href: '#three-roles-one-law', title: 'Three roles, one law' },
+    { href: '#the-order-is-a-datasheet', title: 'The order is a datasheet' },
     {
-      href: '#every-part-of-an-order-is-scar-tissue',
-      title: 'Every part of an order is scar tissue',
+      href: '#probes-tune-the-model-in-flight',
+      title: 'Probes tune the model in flight',
     },
-    { href: '#attachments-beat-adjectives', title: 'Attachments beat adjectives' },
-    { href: '#language-lost-every-war', title: 'Language lost every war' },
     {
-      href: '#give-the-model-one-plane-to-be-deep-in',
-      title: 'Give the model one plane to be deep in',
+      href: '#attachments-carry-data-or-they-lie',
+      title: 'Attachments carry data, or they lie',
     },
+    { href: '#the-axonometric-camera', title: 'The axonometric camera' },
     { href: '#flatness-is-a-palette-count', title: 'Flatness is a palette count' },
     {
-      href: '#the-animation-never-redraws-the-art',
-      title: 'The animation never redraws the art',
+      href: '#the-animation-never-redraws-the-master',
+      title: 'The animation never redraws the master',
     },
-    { href: '#eight-strangers-one-market', title: 'Eight strangers, one market' },
-    { href: '#ninety-two-props-zero-backgrounds', title: 'Ninety-two props, zero backgrounds' },
-    { href: '#the-street-is-its-own-animal', title: 'The street is its own animal' },
-    { href: '#boxes-first-art-second', title: 'Boxes first, art second' },
-    { href: '#the-editor-lives-in-the-page', title: 'The editor lives in the page' },
-    { href: '#stairs-are-the-coordinate-system', title: 'Stairs are the coordinate system' },
-    { href: '#two-light-systems-one-boundary', title: 'Two light systems, one boundary' },
-    { href: '#a-synthesizer-instead-of-samples', title: 'A synthesizer instead of samples' },
-    { href: '#the-bazaar-is-not-a-link', title: 'The bazaar is not a link' },
-    { href: '#the-human-10', title: 'The human 10%' },
-    { href: '#five-laws-survived-twelve-days', title: 'Five laws survived twelve days' },
+    { href: '#css-replaces-assets', title: 'CSS replaces assets' },
+    { href: '#ten-strangers-one-market', title: 'Ten strangers, one market' },
+    {
+      href: '#ninety-two-props-and-a-sealed-street',
+      title: 'Ninety-two props and a sealed street',
+    },
+    { href: '#boxes-first-sprites-second', title: 'Boxes first, sprites second' },
+    { href: '#mobile-is-its-own-design', title: 'Mobile is its own design' },
+    { href: '#the-last-mile-is-manual', title: 'The last mile is manual' },
+    {
+      href: '#a-synthesizer-instead-of-samples',
+      title: 'A synthesizer instead of samples',
+    },
+    {
+      href: '#the-ride-is-a-performance-budget',
+      title: 'The ride is a performance budget',
+    },
+    { href: '#a-tool-in-the-belt', title: 'A tool in the belt' },
+    { href: '#run-your-own', title: 'Run your own' },
   ]}
 />
 
@@ -59,7 +66,7 @@ A list of links is the predictable index, so this index became a place. Every st
 - **Neo-Tokyo** · the mood: neon, rust, cable clutter
 - **16-bit market scenes** · the rendering: chunky color, outlined sprites, flat depth
 
-The mapping rule: **the stall's fiction rhymes with the route's content**. The console stall is a hacker den because /console is a terminal. The talks stall is a video club because talks are tapes. The w98 stall grows plants because /w98 is a living old machine.
+The mapping rule: **the stall's fiction rhymes with the route's content**. The console stall is a hacker den because /console is a terminal. The talks stall is a video club because talks live on tapes. The w98 stall grows plants because /w98 is an old machine still alive.
 
 <Aside label='Stalls // Keepers'>
   - **uses** · a chef, omakase menu, terse
@@ -70,27 +77,22 @@ The mapping rule: **the stall's fiction rhymes with the route's content**. The c
   - **w98** · a gardener robot watering the racks
   - **games** · two kids, one arcade, sibling banter
   - **travel** · a small alien, "Supernova in twenty-two. Coming?"
+  - **map** · a woken wayfinder, "u are here."
+  - **scavenger** · a hooded tracker, "Found, not stolen. Mostly."
 </Aside>
 
-Characters carry the whole personality budget. Each stall has exactly one focusable interaction. The dialog types at *9ms per character* (`TYPEWRITER_INTERVAL_MS = 9`). Links type in last, so the eye lands on them.
+Keepers carry the whole personality budget. Each stall has exactly one focusable interaction. The dialog types at *9ms per character* (`TYPEWRITER_INTERVAL_MS = 9`). Links type in last, so the eye lands on them.
 
 The market runs vertical. A street sits on top and sells the fiction: bus stop, neon sign, a door that opens. Market floors hang below, chained by spiral stairs. You scroll down into the underground.
 
-## Five bazaars in twelve days
+## Five builds, one survivor
 
-The git log is the honest timeline.
+Five builds happened, and the fifth ships. The four before it each proved one thing and died of another. No build was wasted. Each one turned a vague objection into a law for the next build.
 
-- `/bazaar` · July 19
-- `/bazaar2` · July 24
-- `/bazaar3` · July 28
-- `/bazaar4` and `/bazaar5` · July 31
-
-I took the screenshots below at 19:15 on that last evening. At 19:31 the commit `chore: remove bazaar2-4` deleted three of the four routes.
-
-v1 proved the fiction. Tall framed cards, one keeper each, the first dialog engine, a street sky still raw chroma green. The papers keeper was a print-shop grandmother. The console stall was still called serve, and a hologram staffed it. **It was already a place. It was not yet a market.**
+v1 proved the fiction: tall framed cards, one keeper each, the first dialog engine, a street sky still raw chroma green. **It was a place. It was not yet a market.**
 
 <Carousel
-  label='Lineage // v1 · /bazaar · July 19'
+  label='Lineage // v1 · the fiction'
   items={[
     { src: '/papers/bazaar/v1-0.webp', alt: 'talks, papers and projects: framed card stalls on one floor' },
     { src: '/papers/bazaar/v1-1.webp', alt: 'manual and serve: the first hologram keeper, a dialog mid-typewriter' },
@@ -99,10 +101,10 @@ v1 proved the fiction. Tall framed cards, one keeper each, the first dialog engi
   ]}
 />
 
-v2 built the effects language: neon blink, dust motes, parallax foreground, FFIX dialog styling. Its street composition survived every rebuild since: bus stop, alley, neon sign, door. The papers archivist became a hologram here and never went back.
+v2 built the effects language: neon blink, dust motes, parallax foreground, FFIX dialog styling. Its street composition survived every rebuild since: bus stop, alley, neon sign, door.
 
 <Carousel
-  label='Lineage // v2 · /bazaar2 · July 24'
+  label='Lineage // v2 · the effects language'
   items={[
     { src: '/papers/bazaar/v2-0.webp', alt: 'the street composition that survived: bus stop, alley, neon, door' },
     { src: '/papers/bazaar/v2-1.webp', alt: 'uses and papers in FFIX dress, wayfinding arrows, dialog open' },
@@ -110,10 +112,10 @@ v2 built the effects language: neon blink, dust motes, parallax foreground, FFIX
   ]}
 />
 
-v3 was the takeover: the full AI-asset campaign, an art bible, shared architecture with glass bays and H-beams, behavior cards per keeper. It assembled, it passed mechanical validation, and I rejected it by eye with one sentence: **the stalls still looked placed on top of the environment**. That one sentence steered everything after. The build survives as evidence, not as foundation.
+v3 was the takeover: the full generation campaign, a written bible, shared architecture with glass bays and H-beams, behavior cards per keeper. It assembled, and it passed mechanical validation. I rejected it by eye with one sentence: **the stalls still looked placed on top of the environment**. That sentence steered everything after. The build survives as evidence.
 
 <Carousel
-  label='Lineage // v3 · /bazaar3 · July 28'
+  label='Lineage // v3 · the takeover'
   items={[
     { src: '/papers/bazaar/v3-0.webp', alt: 'two floors of the takeover build in shared glass bays' },
     { src: '/papers/bazaar/v3-1.webp', alt: 'manual, console and the video club, integrated by architecture' },
@@ -122,10 +124,10 @@ v3 was the takeover: the full AI-asset campaign, an art bible, shared architectu
   ]}
 />
 
-v4 mounted the campaign's winners on v2's skeleton: layered animated stalls, new architecture, ninety-two placeable props, the restyled street. It looked right and measured wrong. A layout audit killed it with numbers you will meet below. v5 inverts the order: prove the layout in empty boxes, then mount final assets only. That is what ships next.
+v4 mounted the campaign winners on the v2 skeleton: layered animated stalls, new architecture, ninety-two placeable props, the restyled street. It looked right and measured wrong. A layout audit killed it, and the numbers arrive below. v5 inverted the order and survived: prove the layout in empty boxes, then mount final sprites.
 
 <Carousel
-  label='Lineage // v4 · /bazaar4 · July 31'
+  label='Lineage // v4 · looked right, measured wrong'
   items={[
     { src: '/papers/bazaar/v4-0.webp', alt: 'the restyled street: colder steel, denser skyline, minimap on' },
     { src: '/papers/bazaar/v4-1.webp', alt: 'w98 and games on the walkway, the spiral stair drum to the right' },
@@ -140,7 +142,7 @@ v4 mounted the campaign's winners on v2's skeleton: layered animated stalls, new
 
 Three roles run the pipeline, strictly separated.
 
-1. **Art director.** Rules by eye, supplies reference images, never writes prompts. I pasted film stills, SVG diagrams and crops with circles of anger, and the supervisor translated taste into contracts.
+1. **Director.** Rules by eye, supplies reference images, never writes prompts. I pasted film stills, SVG diagrams and crops with circles of anger. The supervisor translated taste into contracts.
 2. **Supervisor.** Writes orders, flies fleets, verifies mechanically, reports with numbers.
 3. **Contractor.** Executes one order per job. Talented, unreliable, forgetful.
 
@@ -148,7 +150,7 @@ The whole pipeline exists to compensate for that third adjective.
 
 <Pull>Never trust the contractor.</Pull>
 
-The first law: **never trust the contractor**. Every landing gets mechanical verification: canvas dimensions, art bounding box, chroma coverage, hash uniqueness across concurrent jobs, measured angles. *A ruler catches what an eye forgives.* The model claims nothing. The ruler decides.
+The first law: **never trust the contractor**. Every landing gets mechanical verification: canvas dimensions, content bounding box, chroma coverage, hash uniqueness across concurrent jobs, measured angles. *A ruler catches what an eye forgives.* The model claims nothing. The ruler decides.
 
 Each job writes one status file, and a watcher polls for landings.
 
@@ -156,64 +158,112 @@ Each job writes one status file, and a watcher polls for landings.
 nohup bash -c "codex exec ... - < order.md ; echo EXIT=$? >> status" & disown
 ```
 
-The order goes through stdin because positional `"$(cat)"` arguments silently vanish inside `nohup bash -c`. Concurrent jobs share a working directory and collide on image-gen temp files. Two jobs once returned **byte-identical PNGs**, and only md5 caught it. The fix is per-job directory isolation, a random launch stagger, and absolute output paths inside every order. One more physical constant: the model renders 1536x1024 and 1024x1536 exactly, and its "square" is a 1254x1254 preset. Ask for anything else and you get a preset anyway.
+The order goes through stdin because positional `"$(cat)"` arguments silently vanish inside `nohup bash -c`. Concurrent jobs in one working directory collide on image-gen temp files. Two jobs once returned **byte-identical PNGs**, and only md5 caught it. The fix is per-job directory isolation, a random launch stagger, and absolute output paths inside every order. One physical constant: the model renders 1536x1024 and 1024x1536 exactly, and its square is a 1254x1254 preset. Ask for anything else and you get a preset anyway.
 
-![An early whole-floor master, round 1. The campaign starts here: one image, every mistake still undiscovered.](./floor-master-r1.webp)
+![An early whole-floor master, round 1: one image, every mistake still undiscovered.](./floor-master-r1.webp)
 
-Every round ends the same way. The fleet lands into an HTML gallery, captions carry the verdict numbers, references sit at the top, and the art director judges in one tab. Fleets fly detached. Approval never does. **Nothing self-approves.**
+Every round ends the same way. The fleet lands into an HTML gallery. Captions carry the verdict numbers, references sit at the top, and the director judges in one tab. Fleets fly detached. Approval never does. **Nothing self-approves.**
 
-## Every part of an order is scar tissue
+## The order is a datasheet
 
-An order is a markdown file with four parts, and every part comes from a recorded failure.
+An order is a markdown file with four parts. Each part exists because a recorded failure demanded it.
 
-1. **Attachments with roles.** "Image 1 is the composition plan: all invisible constraints. Obey the layout, never draw any of it." The never-draw clause is blood law, because models otherwise paint the attached diagram into the art. It happened.
-2. **Canvas and chroma contract.** Flat `#00ff00` outside the art, explicitly scoped: background key only, zero art pixels.
-3. **The laws, priority-ordered, numbers first.** Camera law, angle law, composition schema with pixel boxes, light law, style law, palette, an avoid list. Scene orders add a verbose inventory of every element.
+1. **Attachment declarations with roles.** "Image 1 is the composition plan: all invisible constraints. Obey the layout, never draw any of it." The never-draw clause is standing law, because models paint attached diagrams into the output. It happened.
+2. **Canvas and chroma contract.** Flat `#00ff00` outside the content, explicitly scoped: background key only, zero content pixels.
+3. **The laws, priority-ordered, numbers first.** Camera law, angle law, composition schema with pixel boxes, light law, style law, palette clamp, an avoid list. Scene orders add a numbered inventory of every element.
 4. **Output contract.** Exact size, exact destination path, print `GENERATED=<path>`.
 
+The deepest lesson sits in part three. **Specificity is the whole game.** A *data-anchored order* pins the picture as data: the slab's six vertices as absolute canvas coordinates, checkpoint dots every 20 rows along each edge, element boxes like x=464..1072, color blocks never smaller than 4x4 pixels, one hex list with one scope per exception. <u>An order is a measurement of the image, taken before the image exists.</u> Adjectives fill the gaps between numbers, and the model fills adjectives with its own taste.
+
 ![Composition plan 9: slab vertices as pixel coordinates, checkpoint dots along each edge, doctrine panels.](./composition9.webp)
+
+Attachments enter as exhibits for that data. A drawn plan restates coordinates the text already carries. A corrective render carries its own measured failure. The numbers lead. The pictures testify.
+
+Verbosity is a dial, not a virtue. Scene orders need inventory-grade transcription, or the model drifts identity. Pose edits on isolated characters need three sentences, and every extra sentence degrades them. The same contractor wants opposite briefings for different jobs. That lesson cost real fleets.
 
 Before a fleet flies, the order itself goes on trial. The draft and its attachments go to a hostile reviewer with one brief: *break this before the model does*. Those reviews convicted real orders of generation-ruining contradictions.
 
 - A keyboard mandated in the inventory and banned in the avoid list.
-- A palette law that excluded its own mandated background color.
+- A palette law with its own mandated background color missing from the list.
 - A diagonal ban no character with hair could satisfy.
 
 Each finding costs one review. Each miss costs a fleet.
 
-Verbosity is a dial, not a virtue. Scene orders need inventory-grade transcription, or the model drifts identity. Pose edits on isolated characters need three sentences, and every extra sentence degrades them. One contractor wants opposite briefings for different jobs, and learning which is which cost real fleets.
+The largest single failure proves the rule from the other side. Thirty concurrent jobs flew one order body for the console den. Thirty renders failed identically: dropped camera, bloated rug, furniture rotated inward. Identical failure across independent samples means the shared input carries the defect. The audit read the order and found my own capitals: "camera slightly LOWER", "the rug band is DEEP", "racks ROTATED TOWARD Ed". The model had obeyed, thirty times. **The order was the bug.**
+
+<Postmortem
+  error='Thirty den masters, thirty rejections, every render failing identically: dropped camera, deep rug, furniture rotated inward.'
+  insight='When every job fails the same way, the shared order is the poison. The model obeys. That is the problem.'
+  fix='Audit your own orders with the hostility you reserve for output. The conviction came from reading the instructions, and the instructions confessed.'
+/>
+
+<Pull>The order was the bug.</Pull>
+
+![The audit that convicted the supervisor: all thirty order texts in one viewer, the shared poison highlighted.](./orders-viewer.webp)
+
+![The thirty den masters, all rejected. Every one obeyed the same poisoned order.](./stall-war-30.webp)
+
+## Probes tune the model in flight
+
+You cannot fine-tune the weights mid-campaign. You can fine-tune the order, per round, with the model in the loop. A round never flies one job. It flies four probes: same layout contract, one instrument varied per probe. The gallery verdict picks the surviving instrument, and the next round breeds from it. Across rounds this behaves like optimization, with the order file as the parameter vector.
+
+The clearest example is the flatness round on the scavenger stall. Renders kept arriving detailed and noisy under a locked layout. Four probes flew four instruments against the same clamp.
+
+<ProbeBoard
+  label='Flatness // one round, four instruments'
+  probes={[
+    {
+      name: 'lean',
+      instrument: 'Cut the style block to its shortest legal form.',
+      order: 'Style: authored low-res 16-bit pixel art, large\nflat bounded regions, near-black outlines,\nLOW DETAIL.\n\n[every optional style word deleted, all other\nlaws unchanged]',
+      verdict: 'Flatter than the baseline and the lowest raw color count. Kept as the lean gospel.',
+      tone: 'mid',
+    },
+    {
+      name: 'object budget',
+      instrument: 'Give every object a hex and shape allowance.',
+      order: 'Every object obeys a budget: at most 4 hexes\nand at most 6 flat shapes. An object over\nbudget is a rejection.\n\n[descends from the prop campaign 8-hex cap]',
+      verdict: 'The weakest probe of the round. Per-object budgets never composed into a flat whole.',
+      tone: 'loss',
+    },
+    {
+      name: 'sprite grid',
+      instrument: 'Redefine the medium instead of policing the style.',
+      order: 'You are rendering a 384x256 sprite enlarged\nexactly 4x with nearest-neighbor. If a detail\ncannot be drawn on that grid, it does not\nexist.',
+      verdict: 'The winner by eye: big flat boards, thick outlines, chunky everything.',
+      tone: 'win',
+    },
+    {
+      name: 'surface dictation',
+      instrument: 'Fix a chunk budget per painted surface.',
+      order: 'Each surface carries a fixed chunk budget:\nthe back wall, the valance, the counter band,\nthe skirt. A surface over its budget is a\nrejection.',
+      verdict: 'Nearly as flat as the winner, zero text fouls. The runner-up instrument.',
+      tone: 'mid',
+    },
+  ]}
+/>
+
+Two verdicts from that round travel. First, redefining the medium beat policing the style: the winner stopped asking for flat paint and declared a grid the render could not escape. Second, the raw color counts measured 120k to 160k on all four probes, and the flattest probe by eye held no advantage in the count. **Raw counts never track macro flatness.** The eye rules. The counts only catch regressions.
 
 ![One round, one war board: probes, references and verdict captions in a single gallery tab.](./war-board.webp)
 
-## Attachments beat adjectives
+The instrument search has a failure mode: searching for the wrong deliverable. One round flew thirty strategies to transplant a single character camera, and two strategies worked. All thirty landed rejected, because the deliverable was the full stall master and every probe shipped an isolated character. Confirm the unit of delivery before you fly thirty jobs.
 
-The campaign's deepest discovery is a hierarchy: **what you attach moves the model more than what you write**. Ranked by measured power.
+![Thirty strategies for one camera transplant on a single board: two worked, zero shipped.](./ed-war-30.webp)
 
-1. **Corrective attachment.** Attach the model's own rejected render, labeled "approved content, rejected geometry: you drew 62 degrees, the law is 50". The only instrument that ever bent geometry.
-2. **Layout-lock repaint.** Attach an approved render as "the layout is CLOSED, your only task is the paint". It shrinks the degrees of freedom to the one axis still wrong.
+## Attachments carry data, or they lie
+
+Attachments outrank prose in raw power, and the ranking comes from measurements.
+
+1. **Corrective attachment.** The model's own rejected render, labeled "approved content, rejected geometry: you drew 62 degrees, the law is 50". The only instrument that ever bent geometry.
+2. **Layout-lock repaint.** An approved render attached as "the layout is CLOSED, your only task is the paint". It shrinks the degrees of freedom to the one axis still wrong.
 3. **Drawn law.** A rendered diagram beats the same rule as text, every time.
 4. **Canvas orientation.** A 1536x1024 canvas pulls every stall wide, whatever the text says. The medium is an instrument.
-5. **World-camera gospel.** Attach the approved neighbor stall: "copy the camera, zero content".
-6. **Character gospel.** Attach the film still: "copy the kid, zero camera". Models split a reference into channels if the order names the channels.
-7. **Verbal geometry.** Coordinates and angles in prose. Necessary, never sufficient.
+5. **World-camera gospel.** The approved neighbor stall: "copy the camera, zero content".
+6. **Character gospel.** The film still: "copy the kid, zero camera". Models split a reference into channels if the order names the channels.
+7. **Verbal geometry.** Coordinates and angles in prose. Necessary on every order, sufficient on none.
 
-The proof is the console slab. Rules-only variants sat at 62 degrees across a whole round. The *corrective attachment* moved it to 55.5, and a second corrective round reached acceptance. **Convergence by self-reference**, measured and repeatable.
-
-<Aside label='War // Log'>
-  - **gen7** · 62.0°, rules only
-  - **gen8a** · 61.7°, more rules
-  - **gen8b** · 55.5°, corrective attachment
-  - **gen10-p2** · layout-lock repaint, flat paint, too wide on page
-  - **gen11-a** · portrait canvas, shipped by eye
-</Aside>
-
-![The console lineage: 62 degrees, then 55.5 after the corrective attachment, then the layout-lock repaint, then the shipped portrait.](./console-convergence.webp)
-
-<Pull>Convergence by self-reference.</Pull>
-
-## Language lost every war
-
-**The width war** ran eleven rounds and never fell to language. Frame guides lost. Measure clauses lost, because "measure before returning" is unexecutable by an image model. Proportional coverage guards lost.
+Rank four decided the longest war. Stall width lost eleven straight rounds to language: frame guides lost, measure clauses lost, coverage guards lost.
 
 <Postmortem
   error='Stalls render 15 to 70% wider than ordered, round after round, on every landscape canvas.'
@@ -221,47 +271,65 @@ The proof is the console slab. Rules-only variants sat at 62 degrees across a wh
   fix='Generate stalls on a 1024x1536 portrait canvas. The page refuses to compose a wide stall.'
 />
 
-**The angle war** ended when I stopped describing and vectorized. The platform slab became an SVG. The top face is a symmetric trapezoid with interior corners 130/50/50/130. The front face is a plain 90-degree rectangle. The sides slope exactly *68 pixels inward per 81 down*, coprime integers on purpose. I flag any rounded restatement as not-the-authority. Orders then carried the six vertices as absolute canvas coordinates and checkpoint dots every 20 rows. A verdict card paired the legal construction with the crossed-out previous failure. **Naming the failure's own numbers is what moved the needle.**
+Rank one is the console slab. Rules-only probes sat at 62 degrees across a whole round. The corrective attachment moved the next round to 55.5, and a second corrective round reached acceptance. **Convergence by self-reference**, measured and repeatable. The shipped master still fails two mechanical checks, aspect 0.92 and a measured slope of 61, and the eye shipped it anyway. Numbers make the conversation precise. The eye is the gate.
 
-![The slab law as vectors: interior corners 130/50/50/130, sides exactly 68:81.](./slab-angles.webp)
+<Aside label='War // Log'>
+  - **gen7** · 62.0°, rules only
+  - **gen8a** · 61.7°, more rules
+  - **gen8b** · 55.5°, corrective attachment
+  - **gen10-p2** · layout-lock repaint, flat paint, 1.81x too wide on page
+  - **gen11-a** · portrait canvas, shipped by eye
+</Aside>
 
-![The verdict card: the legal construction beside the crossed-out 62-degree failure with its measured numbers.](./angle-verdict.webp)
+![The console lineage: 62 degrees, then 55.5 after the corrective attachment, then the layout-lock repaint, then the shipped portrait.](./console-convergence.webp)
 
-**The Ed war** flew thirty strategies to transplant one character camera. Two won: silhouette-fill and place-this-exact-character. Then I rejected all thirty, because I wanted the full stall master, not an isolated Ed. Confirm the deliverable unit before you fly thirty jobs. The supervisor logged it as a scoping failure.
+Then the hierarchy failed upward. On the scavenger campaign, one round flew four probes with four attached gospels: the angle law, the camera authority, two correctives. All four probes returned near-identical renders. Variance is the entire point of a fleet, and the attachment chain had strangled it. **When every probe agrees, the attachments are lying.**
 
-![The thirty Ed-war strategies on one board: thirty ways to move a camera, two that worked, zero that shipped.](./ed-war-30.webp)
+<Pull>When every probe agrees, the attachments are lying.</Pull>
 
-**The stall war** opened this paper. The order was the bug.
+The law inverted for scene masters: attach zero images. The supervisor reads the gospels and transcribes them into the order as prose with numbers. The camera construction as text. The paint manner as text. The full numbered inventory. Every recorded failure with its measurements: "you drew 1333x945, aspect 1.41. The law is 1.12." Identity held for nine straight rounds on words alone. The hierarchy still governs pose sheets. An isolated sprite still needs its anchor attached. For scene masters the second law now reads: **describe, and bring the numbers**.
 
-<Postmortem
-  error='Thirty stall masters, thirty rejections, every render failing identically: dropped camera, deep rug, furniture rotated inward.'
-  insight='When every job fails the same way, the shared order is the poison. The model obeys. That is the problem.'
-  fix='Audit your own orders with the hostility you reserve for output. The conviction came from reading the instructions, and the instructions confessed.'
+<Carousel
+  label='Lineage // scavenger · text-only rounds'
+  items={[
+    { src: '/papers/bazaar/scav-r1.webp', alt: 'round one: the mercadillo lands from prose alone, keeper standing at the counter' },
+    { src: '/papers/bazaar/scav-r4.webp', alt: 'round four: fluorescent depth light, the keeper a silhouette in his doorway' },
+    { src: '/papers/bazaar/scav-r9.webp', alt: 'round nine: the flatness winner, keyed and shipped' },
+    { src: '/papers/bazaar/scav-final.webp', alt: 'the plate returns hand-polished: empty doorway, richer stock' },
+  ]}
 />
-
-![The audit that convicted the supervisor: all thirty order texts in one viewer, the shared poison highlighted.](./orders-viewer.webp)
-
-**The console endgame** stacked every instrument: slab doctrine, corrective convergence, and a *layout lock* that finally flattened the paint. Then a page-scale check ruled the winner 1.81x wider than its neighbors. Then portrait probes. Then a lamp-post sign redesign from a real reference. The shipped master, gen11-a, fails two of the mechanical checks: aspect 0.92 instead of the family target, measured slope 61. I shipped it anyway. **Numbers make the conversation precise. The eye is the gate.**
 
 ---
 
-## Give the model one plane to be deep in
+## The axonometric camera
 
-Diffusion models default to perspective. The bazaar needs a flat, authored, game-like projection. Fourteen rounds went into getting one, and I vectorized it myself at the end. The shipped doctrine: **flat storefront elevation**, camera dead-on at standing eye height, no vanishing points, no room interiors, no side walls. Tall furniture obeys the *two-surface law*: a front rectangle plus one thin horizontal top band. A visible side face is a rejection. Depth between objects is overlap only. Every vertical is dead vertical.
+No order asks for perspective, and every raw render arrives with one. The market needs the opposite: an authored axonometric projection, flat and game-like. Fourteen rounds went into the camera doctrine, and I vectorized the final form myself.
 
-![The first drawn law: the green legal construction beside the red crossed-out isometric. Attached to every scene order since round 13.](./angle-law.webp)
+The shipped doctrine is a **flat storefront elevation**. The camera sits dead-on at standing eye height. No vanishing points, no room interiors, no side walls. Tall furniture obeys the two-surface law: a front rectangle plus one thin horizontal top band, about a fifth of the width deep. A visible side face is a rejection. Depth between objects is overlap only. Every vertical is dead vertical.
 
-The slab is the compromise. It reconciles "flat like the games stall" with "the rug must tilt toward the viewer", and that rug is Ed's. The world stays a flat elevation. Each stall stands on a shallow platform, and the platform's top face is the one legal foreshortened plane: bounded, vectorized, checkpointed. **Give the model exactly one plane to be deep in** and it stops inventing cameras. Floor props copy the slab construction. Constructed diagonals are only ever the 68:81 sides. Organic lines are exempt, because an early absolute diagonal ban made orders unsatisfiable. The review flagged it: a bent pole and spiky hair were both illegal under that ban.
+![The first drawn law: the green legal construction beside the red crossed-out isometric.](./angle-law.webp)
+
+The slab is the one exception, and it ended a war between two demands. The world must read flat like the games stall. The keeper still needs a floor plane under him. The world stays a flat elevation. Each stall stands on a shallow platform, and the platform's top face is the single legal foreshortened plane. That face is a symmetric trapezoid with interior corners 130/50/50/130. The sides slope exactly *68 pixels inward per 81 pixels down*, coprime integers on purpose. Any rounded restatement, 60:72 for instance, got flagged in review as not-the-authority. Orders carried the six vertices as absolute canvas coordinates plus checkpoint dots every 20 rows. **Give the model exactly one plane to be deep in** and it stops inventing cameras.
+
+<SlabLaw label='Slab // 68:81' />
+
+![The slab law as vectors: interior corners 130/50/50/130, sides exactly 68:81.](./slab-angles.webp)
+
+The verdict card closed the argument. It pairs the legal construction with the model's previous failure, crossed out, its measured numbers named in the image and in the text. Naming the failure's own numbers moved the needle.
+
+![The verdict card: the legal construction beside the crossed-out 62-degree failure with its measured numbers.](./angle-verdict.webp)
+
+One early draft banned diagonals outright, and the hostile review convicted it as unsatisfiable: a bent pole and spiky hair were both illegal under the ban. The scope narrowed. Constructed diagonals are only ever the 68:81 sides, and organic lines are exempt.
+
+The games stall is the world-camera authority, and its winning phrasing is canon: "a FLAT STOREFRONT seen dead-on, NOT a room, NOT a stage, NOT a diorama, the floor is a THIN HORIZONTAL STRIP". Every new stall order carries those words untouched. **Winning words travel verbatim across assets.**
 
 ![The world-camera authority: the games stall, flat storefront, floor as a thin strip.](./games-composed.webp)
 
-The games stall is the camera authority. Its winning phrasing is canon: "a FLAT STOREFRONT seen dead-on, NOT a room, NOT a stage, NOT a diorama, the floor is a THIN HORIZONTAL STRIP". Every new stall order carries those words untouched. **Winning words travel verbatim across assets.**
-
 ## Flatness is a palette count
 
-Diffusion output is smooth by nature: gradients, stipple, mottle. The bazaar look is the opposite. Eight rounds turned the style block into canon: "authored low-res 16-bit pixel art, large flat bounded color regions, chunky square clusters, near-black outlines, exactly three tones per material, sparse hard highlights, LOW DETAIL." Renders kept weaving anyway, so the *anti-texture law* joined it. Zero stipple, zero noise, blocks never smaller than 4x4 px. Rust as one or two flat patches. A dead screen as one dark tone plus one flat glare band.
+Diffusion output is smooth by nature: gradients, stipple, mottle. The market look is the opposite. Eight rounds distilled the style block into canon: "authored low-res 16-bit pixel art, large flat bounded color regions, chunky square clusters, near-black outlines, exactly three tones per material, sparse hard highlights, LOW DETAIL". Renders kept weaving anyway, so the *anti-texture law* joined it. Zero stipple, zero noise, blocks never smaller than 4x4 pixels. Rust is one or two flat patches. A dead screen is one dark tone plus one flat glare band.
 
-Palettes are **sampled, never invented**. The sampler runs a 16-level bucketed dominant-color scan of the approved authority image, because exact-hex counting on diffusion output ranks outlines first. Every order clamps to the sampled set: "use ONLY these colors, merge strays into the nearest listed value". The console war drove its clamp from 24 hexes to 15. Below sit both clamps from the real orders. Toggle it.
+Palettes are **sampled, never invented**. A 16-level bucketed dominant-color scan reads the approved authority render, because exact-hex counting on diffusion output ranks outlines first. Every order clamps to the sampled set: "use ONLY these colors, merge strays into the nearest listed value". The console war drove its clamp from 24 hexes to 15. Both clamps sit below, each over its own master. Select a swatch.
 
 <PaletteClamp
   label='Console // The clamp'
@@ -281,13 +349,31 @@ Palettes are **sampled, never invented**. The sampler runs a 16-level bucketed d
     '#8faf6f': 'goggle lenses only',
     '#2f7f78': 'LED dots only',
   }}
+  examples={{
+    sampled: {
+      src: '/papers/bazaar/console-sampled.webp',
+      width: 1200,
+      height: 800,
+      alt: 'an early console master under the sampled palette, cyan still legal',
+    },
+    clamped: {
+      src: '/papers/bazaar/console-clamped.webp',
+      width: 800,
+      height: 1200,
+      alt: 'the shipped console master under the 15-hex clamp, screens white-grey',
+    },
+  }}
 />
 
-Two details in that diff carry the doctrine. The cyan trio from round one is gone, replaced by pale white-grey, because any teal in a palette leaks into screens. **Screens are white-grey forever now, standing law.** And three survivors carry scopes, one legal use each. This hex only Ed's hair. This one only the goggle lenses. None of them ever on a screen. A fenced color cannot leak.
+Two details in that diff carry the doctrine. The cyan trio is gone, replaced by pale white-grey, because any teal in a palette leaks into screens. Select the cyans in the sampled view and watch them light the CRT static. **Screens are white-grey forever now, standing law.** And three survivors carry scopes, one legal use each: one hex for the hair, one for the goggle lenses, one for LED dots. A fenced color cannot leak.
 
-The last round proved the point backwards. Geometry sat frozen under a layout lock, and the flattest probe came from the leanest order. Past a threshold, **more style words add noise, not compliance**. A *style gospel* transfers paint better than any paragraph: the flattest previous render, attached as "this manner, zero layout".
+The scavenger campaign added two palette instruments. The first is *descriptive reduction*: "build the palette yourself: one midnight-navy family of three, one bone pair, one wood pair, one gold, plus these fixed scoped accents". It matched or beat explicit hex lists on law compliance. Families plus scoped accents transfer intent better than long lists.
 
-## The animation never redraws the art
+The second is **palettes per frame**. The scavenger keeper walks from a dark bay into counter light, and lighting prose achieved nothing. Five palettes did. The supervisor computes a five-step lightness ladder per material and pastes each step into its sheet cell as a complete hex list. Flat light is law: no directional light, no rim light. The march from shadow to counter is the palette swap. A deterministic post pass enforces the ladder a second time, multipliers from x0.55 to x1.00. The eyes and the pipe ember stay out of the multiply.
+
+![The shipped cycle: seated in the dark, the wake, two strides up the palette ladder, the offer.](./scav-walk.webp)
+
+## The animation never redraws the master
 
 Three dead ends came first.
 
@@ -299,41 +385,80 @@ Three dead ends came first.
 
 ![The same hover edit, measured twice: whole-frame drift on the left, patch-window drift on the right. Red marks changed pixels.](./drift-diff.webp)
 
-The prime invariant makes the architecture testable: **the rest composite is byte-identical to the approved static**. A script asserts it, and a self-healing pass joins orphan pixels to the nearest layer. "The animation broke the art" stopped being a review argument and became a failing assertion. Where a character overlaps plate furniture, those pixels become named occluder layers. The keeper then animates behind the counter, and the composite stays byte-true at rest.
+The prime invariant makes the architecture testable: **the rest composite is byte-identical to the approved static**. A script asserts it, and a self-healing pass joins orphan pixels to the nearest layer. "The animation broke the master" stopped being a review argument and became a failing assertion.
 
-Poses are diffusion on the flattened character alone, on chroma, three-sentence orders. Chaining each frame from the previous held identity for a while, then compounded: every chained leg re-diffuses the sprite, saturation drifts, detail mushes. The *sheet doctrine* ended it. Poses are now **one generation**. Frame 0 goes in as the only attachment, and the order asks for a four-cell sprite-sheet row whose first cell copies frame 0 exactly. All poses share one diffusion pass and one palette. Slice by column gaps, register to the rest baseline. Start from the good one, never send the ones-to-fix back.
+Poses are diffusion on the flattened character alone, on chroma, three-sentence orders. Chaining each frame from the previous held identity briefly, then compounded: every chained leg re-diffuses the sprite, saturation drifts, detail mushes. The *sheet doctrine* ended it. Poses are one generation. Frame 0 goes in as the only attachment, and the order asks for a four-cell sprite-sheet row. The first cell copies frame 0 exactly. All poses share one diffusion pass and one palette. Slice by column gaps, register to the rest baseline. Start from the good one, never send the ones-to-fix back.
 
-<Pull>Start from the good one, never send the ones-to-fix back.</Pull>
+The scavenger keeper added the *fixed-canvas law*. Every character frame lives in one viewport: full stall height, about 2.2 times the doorway width, at a fixed plate offset. The walk toward the counter is drawn inside that window, never post-scaled into a clipping box. Every cell declares its figure height and its head line in exact pixels. Single-feature rulers on diffusion output lie: sheets draw eyes oversized, and the pipe hand sits at eye height. Rulings happen on a lettered grid instead, and that grid appears two sections down.
 
-The smallest trick is my favorite. The idle head-bob is an *implant*: copy the rest frame, shift only the head region down one pixel, leave the body planted. The one-pixel overlap at the neck swallows the seam. The one-pixel void at the hair top reveals dark wall. The feet never move. Zero new colors, zero diffusion. The failed alternative bobs the whole layer, and then the feet detach and the character floats.
+Keying a black cloak off a black doorway is impossible, so the character generates on chroma green and the plate carries a black bay at his seat. The hole costs one rectangle fill. The cloak greens are chosen keyer-safe by construction, g at most r+24, so the key predicate and the de-green clamp both pass them untouched.
 
-At runtime every frame of every layer mounts once, as absolutely stacked images, and animation flips `opacity` on timers. An earlier src-swapping runtime generated **over 8000 network requests** and flashed mid-decode. Hidden breakpoint trees do not animate. Hover greetings hold until leave. `prefers-reduced-motion` renders final poses statically.
+![The character master, generated on chroma so the keyer has something to key.](./scav-char.webp)
 
-## Eight strangers, one market
+The smallest trick is my favorite. The idle head-bob is an implant: copy the rest frame, shift only the head region down one pixel, leave the body planted. The one-pixel overlap at the neck swallows the seam. The feet never move. Zero new colors, zero diffusion.
 
-A good stall is half the job. Eight independently generated sprites then have to sit in one architecture. Stopping them from reading as stickers cost as many rounds as the art.
+At runtime every frame of every layer mounts once, absolutely stacked, and animation flips `opacity` on timers. An earlier src-swapping runtime generated **over 8000 network requests** and flashed mid-decode. `prefers-reduced-motion` renders final poses statically.
+
+## CSS replaces assets
+
+The scavenger stall shipped ten files, and the older stalls needed more, because depth used to be an asset. The talks pattern cut a byte-true occluder of the counter band and parked the keeper behind it. The occluder is dead. Depth is a clip-path now. This is real shipped CSS:
+
+```css
+/* scavenger depth: char frames clip at the counter band top (y545/971),
+   so legs read behind the counter with no occluder asset */
+[data-stall="scavenger"] .sceneStack img[data-layer="char"] {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 56.13%, 0% 56.13%);
+}
+```
+
+The hold frame alone carries an 18-point polygon. The clip hugs each finger, so the offered palm lies on the counter while the body stays behind it. One sprite, two depths. The runtime stamps `data-layer` and `data-frame` on every image, so one rule targets one stall, one layer, or one frame. The polygon came out of a disposable clip editor: one HTML file over `file://`, the sprite at 400 percent zoom, one finger at a time.
+
+Below is the real pair, live: the shipped plate behind the shipped hold frame, and the shipped polygon on top. Drag the counter line and the legs walk over the counter. Drag the notch and the palm sinks behind it.
+
+<ClipLab
+  label='Clip // the palm polygon'
+  plate='/papers/bazaar/scav-lab-plate.webp'
+  src='/papers/bazaar/scav-lab-char.webp'
+  width={460}
+  height={600}
+  alt='the scavenger hold frame clipped against the stall plate: palm on the counter, legs behind it'
+  points={[
+    [0, 0], [100, 0], [100, 67.5], [44.7, 67.7], [44.2, 69],
+    [42.2, 69.1], [41.2, 67.3], [40.9, 69.2], [39.1, 69.9], [37.4, 69.2],
+    [37.4, 67.2], [35.7, 69.8], [34.1, 69.8], [33, 68.2], [34.2, 64.5],
+    [31.5, 67], [30.5, 67.5], [0, 67.5],
+  ]}
+/>
+
+The idle eyes are HTML and CSS, zero assets: a dark mask over the baked eye slits plus two amber dots, one element, and `rotate(180deg)` mirrors the glance direction. Hover hides them, focus hides them, reduced motion freezes them. The keeper glances left, then right, for the price of two pseudo-elements.
+
+Two light systems coexist, and the boundary is doctrine. **Baked light belongs to the fiction**: the one lit CRT in the den, the story's own neon reflection on a wall. Projected light belongs to the page: if a light moves, responds or repositions, the page projects it. Editor-placed radial glow spots come in seven colors plus black, and the black ones run `mix-blend-mode: multiply` as paintable shadow pools. Sign halos sync to the same keyframes as their sprite swaps. The street neon blinks on an 8-second `steps()` cycle with two stutter clusters, and the tuning ruling was exact: increase the delay between blinks, never the speed. *Motion frequency reads as life.*
+
+One shipped bug earned a law. The papers hologram flickers as a group, from a wrapper div, because animating the frame images directly fought the opacity engine. And one screen per stall is lit, white-grey, maximum. Glow is the easiest thing for diffusion to overdo, and one overdone screen turns a stall into a slot machine.
+
+## Ten strangers, one market
+
+A good stall is half the job. Ten independently generated sprites then have to sit in one architecture, and stopping them from reading as stickers cost as many rounds as the renders.
 
 <Postmortem
   error='The official keyer greyed the w98 violets and turned the games stall half transparent. Clean sprites on white shipped with tinted rims.'
-  insight='Despill color metrics execute hues, not intentions, and diffusion always blends art into the key: a 1-2px tinted rim survives any threshold.'
+  insight='Despill color metrics execute hues, not intentions, and diffusion always blends content into the key: a 1-2px tinted rim survives any threshold.'
   fix='Key without despill, resolve partial alpha geometrically (edges to 0, interiors to 255), then verify every sprite composited on a hostile color, never on white.'
 />
 
-Scale next. Canvas pixels are **not comparable across generations**. Bake scales ranged 0.49 to 0.59, so every cross-stall argument happens in display pixels. Character heights are the calibration instrument. Seated Ed displays at 170px, the same as a standing games kid, and the w98 robot tops the family at 294. The editor then applied per-stall tune factors, console times 0.86, travel times 1.05: *the eye correcting the last five percent*.
+Scale next. Canvas pixels are **not comparable across generations**. Bake scales ranged 0.49 to 0.59, so every cross-stall argument happens in display pixels. Character heights calibrate the family: seated Ed displays at 170 pixels, the same as a standing games kid, and the w98 robot tops out at 294. The editor then applied per-stall tune factors, console times 0.86, travel times 1.05: *the eye correcting the last five percent*.
 
-![Eight stalls at family display scale, bottom aligned. Canvas pixels lie, display pixels do not.](./stall-lineup.webp)
+![Stalls at family display scale, bottom aligned. Canvas pixels lie, display pixels do not.](./stall-lineup.webp)
 
-Grounding last. Stall feet plant on a painted walkway strip that overlaps their base. Contact shadows are CSS ellipses, so they survive repositioning. The beams occlude stall edges by law. The enabling refactor was **one absolute stacking context per floor**. Before it, sibling bands ate z-indexes silently. After it, negative z goes behind stalls and every value works globally. An IntersectionObserver keeps the most visible floor bright and dims the rest. *Depth of field by attention.*
+Grounding last. Stall feet plant on a painted walkway strip that overlaps their base. Contact shadows are CSS ellipses, so they survive repositioning. Beams occlude stall edges by law. The enabling refactor was **one absolute stacking context per floor**. Before it, sibling bands ate z-indexes silently. After it, negative z goes behind stalls and every value works globally. An IntersectionObserver keeps the most visible floor bright and dims the rest. *Depth of field by attention.*
 
-## Ninety-two props, zero backgrounds
+## Ninety-two props and a sealed street
 
-Baked backgrounds die in responsive layouts, so the world's furniture is **ninety-two individually keyed sprites**. The inventory: graffiti with in-jokes, pachinko, a torii gate, a ramen machine, server towers, grow lamps, the sign family. Props stay placeable forever, which is why v5 could unplug them in one move.
-
-The recipe that worked runs in five rules.
+Baked backgrounds die in responsive layouts, so the world's furniture is **ninety-two individually keyed sprites**: graffiti, pachinko, a torii gate, a ramen machine, server towers, grow lamps, a sign family. The recipe runs in five rules.
 
 1. **Sheets.** 1536x1024 with pixel-boxed cells, one prop per cell, sliced by script.
 2. **Per-cell palettes.** Sampled from the previous approved round, capped at *eight hexes per prop*. The verdict "all of them have many colors" rejected an entire fleet first.
-3. **Front-facing law.** One per cell, because cylinders drift isometric.
+3. **Front-facing law.** One prop per cell, frontal, because cylinders drift isometric.
 4. **Completeness law.** Max-footprint numbers per cell. Croppers recur: the toolbox, the standee and the hung bicycle all came back cut before the law.
 5. **Lamp law.** The emitter is lit and the halo hugs the glass, but the sprite carries no projected light.
 
@@ -341,28 +466,24 @@ The recipe that worked runs in five rules.
 
 ![The 92-sprite decoration inventory: graffiti, pachinko, torii gate, ramen machine, server towers, grow lamps.](./prop-inventory.webp)
 
-Two props refused diffusion, so code draws them deterministically. The wall recess, because symmetry kept breaking. The wall-floor tiles, spliced from the approved tile's measured floor strip under new walls, seams fixed by column-luminance trimming. That pipeline also caught two variant files shipped content-swapped, **by luminance fingerprint, not by eye**.
+Two props refused diffusion, so code draws them deterministically. The wall recess, because symmetry kept breaking. The wall-floor tiles, spliced from the approved tile's measured floor strip under new walls, seams fixed by column-luminance trimming. That pipeline also caught two variant files shipped content-swapped. The luminance fingerprint caught what the eye missed.
 
-The contractor works review too. I fed it the manifest and the stall x-ranges and asked for at most six placement adjustments as JSON. It returned six, and five were true hits. Reviewer, not oracle. Verify each suggestion against coordinates before applying.
+The contractor works review too. It read the placement manifest and the stall x-ranges and returned six adjustments as JSON. Five were true hits. Reviewer, never oracle: every suggestion gets verified against coordinates before it lands.
 
-## The street is its own animal
+The street predates the market's unit system and keeps its own, so it ships as a **sealed component** inside its own variable context. Porting it onto the market layout broke it instantly. Its restyle taught the fidelity lesson: every regeneration risks losing an approved property, so orders carry a keep-list. "Magenta side-wall glow mandatory." "Rust as flat two-tone patches." Some originals never lost to a challenger, and keeping them is a ruling too.
 
-The street is the front door, and the only floor that is not market architecture. Its restyle taught the *fidelity lesson*: every regeneration risks losing an approved property, so orders name what must survive. The first round lost the bus's rust and the magenta neon reflection on the alley wall. The second lost the chunky limited colors. The orders grew a keep-list: "magenta side-wall glow mandatory", "rust as flat two-tone patches". Some assets never landed a better version, and **keeping the originals is a ruling too**.
-
-The tileable floor is the street's best pipeline story. Generated edges never matched, so no single image would tile. The fix took three moves. A horizontal rail law, a wider canvas at the exact 1536 size, then a continuation generation with a **500-pixel frozen overlap**. The stitch lands at the column of minimum difference, about 2 units of error per pixel. One 1920 strip, no visible seam, `repeat-x`, forever.
-
-Structurally the street predates the market's unit system and keeps its own. Measured building widths, percent-anchored overlays, a door and neon baked into the host building's geometry. Porting it onto the market layout system broke it instantly, so it ships as a **sealed component** inside its own variable context. Its motion density is deliberate: bus flip, neon stutter, alley signs, the car driving through. *Arrival should feel busier than browsing.*
+The tileable floor is the street's best pipeline story. Generated edges never matched, so no single render would tile. The fix took three moves: a horizontal rail law, the exact 1536 canvas, then a continuation generation with a **500-pixel frozen overlap**. The stitch lands at the column of minimum difference, about 2 units of error per pixel. One 1920 strip on `repeat-x`, and the seam is invisible.
 
 ---
 
-## Boxes first, art second
+## Boxes first, sprites second
 
-v4 looked right and measured wrong. The audit that killed it had numbers, and the numbers were not close.
+v4 looked right and measured wrong, and the audit had numbers. Hand-placed absolute coordinates made every resize a lie.
 
 <Postmortem
   error='Three disagreeing container widths in one view. Floor-3 gaps of 89, 12.7 and 2.2px at 1680w. No regime between 700 and 1400px. A stairs sprite squashed 3.9x by a preflight img rule.'
-  insight='Hand-placed absolute coordinates made every resize a lie. Decorating before validating means auditing never.'
-  fix='A one-knob layout system proven in empty boxes from 500 to 1900px, with live rulers asserting gap equality, before a single sprite rode it.'
+  insight='Decorating before validating means auditing never. Every baked coordinate is a resize bug on a timer.'
+  fix='A layout system proven in empty boxes from 500 to 1900px, with live rulers asserting gap equality, before a single sprite rode it.'
 />
 
 <Pull>Hand-placed absolute coordinates made every resize a lie.</Pull>
@@ -372,69 +493,76 @@ The rebuild started with a spec in my own notation, ratified before any code.
 ```
 _  = gap, dynamic, ALL EQUAL within a floor
 x  = undefined leftover        |  = screen edges
-sc/ec = 1400px container       a = stall   S/SM = stairs desktop/mobile
+sc/ec = container edges        a = stall   S/SM = stairs desktop/mobile
 
->=1400    |xS_sc_a_a_a_ecx|
-700..1400 |S_a_a_a_|
-<700      |SM_a_|   one floor = ONE SM + TWO stalls, one per story
+wide      |xS_sc_a_a_a_ecx|
+mid       |S_a_a_a_|
+narrow    |SM_a_|   one floor = ONE SM + TWO stalls, one per story
           |SM_a_|
 ```
 
-Then a standalone prototype drew dashed rulers between every box. Green means all gaps on a floor are equal within 1.5px. Red means broken. Amber means a stairs crop, with a percentage. Headless Chrome read the real geometry from 500 to 1900px.
+A standalone prototype then drew dashed rulers between every box. Green means all gaps on a floor are equal within 1.5 pixels. Red means broken. Amber means a stairs crop, with a percentage. Headless Chrome read the real geometry from 500 to 1900 pixels wide. The system was proven in empty boxes before one sprite rode it.
 
-![The layout prototype at 1000px: dashed rulers between every box, green means equal gaps within 1.5px.](./proto-b1000.webp)
+![The layout prototype: dashed rulers between every box, green means equal gaps within 1.5px.](./proto-b1000.webp)
 
-The whole system hangs off one knob. Everything else derives.
+The shipped market derives everything from one unit. The stage is a CSS container, so the math runs in container units and never reads the viewport. This is the live stylesheet:
 
 ```css
 .scene {
-  /* THE knob: px per sim unit at the cap */
-  --su-cap: 0.9;
-  --vstar: 1690;
-  /* S soft crop ramp, 1200 -> 700: reclaimed width grows stalls */
-  --shift: clamp(0px, (1200px - 100vw) * 0.132, 66px);
+  /* composition law: per floor, stairs (324 su, fixed) + stalls (1483
+     su) form ONE 1807 su group capped at 1440px, with 60px horizontal
+     padding around the stall area, centered */
   --su: min(
-    calc(var(--su-cap) * 1px),
-    calc((100vw + var(--shift)) * var(--su-cap) / var(--vstar))
+    calc((1440px - 120px) / 1807),
+    calc((100cqw - 136px) / 1807),
+    calc(74cqh / 597)
   );
-  --s-w: calc(var(--su) * 324);
-  --floor-h: calc(var(--su) * 597);
 }
 ```
 
-That is the shipped v5 stylesheet. `--vstar` is **derived, not chosen**: the 1400px container plus one gap plus half the stairs must fit, and the binding floor is the two-stall one. Above 1690px the stalls live in a real container with n+1 equal gaps. Below it the layout goes full bleed and the stairs slide offscreen on a clamp ramp, capped at exactly half their width. The reclaimed width feeds back into `--su`, so it grows stalls, not gaps. *The constants came out of solving that fixpoint, not out of tweaking.*
+Three ceilings, one unit: the container cap, the stage width, and the floor height at 74cqh over 597. The 597 is the stairs sprite. Floor height equals stairs height, the aspect is never modified, and the whole vertical rhythm of the market derives from **one hand-polished sprite**. The same unit then bridges three worlds: su is the pipeline's canvas pixel, the stylesheet's calc math, and the editor's export unit. Every drift bug in the project traced back to a second coordinate system.
 
-![The same prototype at 650px: one mobile stairwell spanning two stories, four gaps equal by construction.](./proto-m650.webp)
+## Mobile is its own design
 
-## The editor lives in the page
+Below 700 pixels the market is a second design. The desktop plan never shrinks into it.
 
-Pixel-perfect placement of AI assets needs a human hand at the end, and every external tool edits a copy. The bazaar's layout is CSS math over live viewport units, so **only the page renders the truth**. The editor mounts as a dev overlay on the real route. It manipulates inline styles on the real DOM, and you watch exactly what ships.
+The floor plans differ at the source. Desktop runs four floors: three stalls and a stairwell each, and the scavenger holds a solo floor. Mobile runs six floors from a separate plan: the map stall alone at the entrance, pairs after it, the scavenger alone at the bottom. Both plans live side by side in `floors.ts`, eleven lines apart.
 
-The details that matter. Picking selects the *smallest target under the pointer*. It collects tagged ancestors with `document.elementsFromPoint` and sorts by area, so occluded props stay selectable behind bigger boxes. Scaling uses eight handles, corners locked to aspect, edges one axis, with sensitivity damped so a full element-width of drag changes scale by 40%. Transform origin stays bottom-center, because **things sit on floors**. Anything can anchor to anything, and anchored props survive relayouts by moving with their stall.
-
-Export puts JSON on the clipboard in sim units, measured band-locally against the floor's stage element, because early viewport-relative exports drifted. The export is **intent, not absolutes**. The standing order was blunt: "don't just apply these, update in a harmonious way and responsively". Every editor session became tune factors, gap rules and anchor offsets. Nothing gets pasted straight in. One unit bridges three worlds: *su* is the asset pipeline's canvas pixel, the stylesheet's calc math, and the editor's screen pixel. **Every drift bug in the project traced back to a second coordinate system.**
-
-## Stairs are the coordinate system
-
-Floor height equals stairs height, 324x597 sim units, aspect never modified. The whole vertical rhythm of the market derives from **one hand-polished sprite**. The mobile stairwell is a separate asset, because it must span two stacked stories. It carries exactly two knobs into CSS, both measured from the art: trim aspect 0.464, and the deck walk line at 0.497 of its height. A script found that line as the densest wide band beyond the cage. The story divider sits at the painted deck. **Art wins, layout bends.** Stairs mirror per floor with `scaleX(-1)`, so the exits always face the stalls, and the side is DOM order, not a flex trick.
+One mobile stairwell spans two stacked stories, so all four gaps across both stories come out equal by construction. The stairwell slides offscreen on a clamp ramp. The crop caps at exactly half the sprite width, and the reclaimed width grows stalls. Its two CSS knobs are measured from the sprite: trim aspect 0.464, deck line at 0.497 of its height. A script found the deck as the densest wide band beyond the cage. The sprite wins. The layout bends.
 
 ![The mobile stairwell gate: candidates side by side, measured aspects and deck lines, a LAW PASS verdict per probe.](./gate-r23.webp)
 
-The desktop stairs file is sacred in a literal sense. A regeneration once clobbered it mid-polish, and the exporter has carried a skip-existing guard since. **Guardrails live in code, not in memory.**
+Hover does not exist here, so the interaction contract changes with it. Dialogs open on hover only under `(hover: hover)`. On coarse pointers the first tap opens the dialog and blocks navigation, and the second tap follows the link (`guardTap` in `market-stall.tsx`). Scroll snap runs `proximity` by default and hardens to `mandatory` only under `(pointer: fine)`, because mandatory snap fights touch momentum.
 
-## Two light systems, one boundary
+![The same prototype at mobile width: one stairwell spanning two stories, four gaps equal by construction.](./proto-m650.webp)
 
-Two light systems coexist, and the boundary is a doctrine. **Baked light belongs to the art's story**: the one lit CRT in Ed's den, a neon reflection on the alley wall the fiction owns. Projected light belongs to the page: anything that moves, responds or repositions. Every stall order names its single source and enumerates the receivers, because *uncounted light is how diffusion invents lamps*.
+## The last mile is manual
 
-The CSS side is the bazaar's second art medium. Editor-placed radial glow spots come in seven colors plus black, and the black ones run `mix-blend-mode: multiply` as **paintable shadow pools**. Sign halos match each asset's own light color and sync to the same keyframes as the sprite swap. A hover wash per stall runs in its tint, runtime only, never baked into hover frames.
+Nearly every shipped file crossed a manual last mile, and the mile has a toolset.
 
-The street neon blinks on an 8-second `steps()` cycle with two stutter clusters. An explicit ruling tuned it: increase the delay between blinks, not the speed. **Motion frequency reads as life.**
+The first tool is the in-page editor. External tools edit a copy, and only the page renders the truth, so the editor mounts as a dev overlay on the real route and manipulates inline styles on the shipping DOM. Picking collects every tagged ancestor under the pointer and sorts by area, so the smallest target wins and occluded props stay reachable. Scaling uses eight handles: corners lock aspect, edges move one axis. The sensitivity is damped: a full element-width drag changes scale by 40 percent. Transform origin stays bottom-center, because things sit on floors. Exports land as JSON in su, band-local to the floor's stage element. **The export is intent, never absolutes.** The standing order: update in a harmonious way and responsively. Every editor session became tune factors, gap rules and anchor offsets.
 
-One shipped bug earned its law. The papers hologram flickers as a group, from a wrapper div carrying the keyframe, because animating the frame images directly fought the opacity-based frame switching. And one screen per stall is lit, white-grey, maximum. Glow is the easiest thing for diffusion to overdo, and *one overdone screen turns a stall into a slot machine*.
+The second tool is the lettered grid, because size arguments need shared nouns. A pink proposal div renders the candidate canvas over the live stall. A 20-line lettered grid, 48.5 pixels per step, turns size talk into "the head starts at H and ends between E and F". A dev tool spread all six frames over the market, played the cycle in place, and returned the verdicts as data: offsets as JSON, clips as the CSS polygon string itself. Then the tool got deleted. **Editors are disposable. The numbers are the deliverable.**
+
+<Pull>Editors are disposable. The numbers are the deliverable.</Pull>
+
+![The negotiation instrument: the lettered grid and the named frame boxes, over the live stall.](./scav-grid.webp)
+
+The third tool is Affinity: edge repair at sprite scale, palette snapping after clamp leaks, limb repaint after chain drift. I reworked three shipped files in place in the assets directory, so a law now forbids scripts from overwriting it and every exporter skips existing files. The generated file is a draft. The polished file is the asset.
+
+The fourth tool is the stylesheet. Ambience is hand-placed CSS: glow spots, shadow pools, reflections masked through a building's own alpha, floor dimming. It iterates in devtools at taste speed, at zero regeneration cost.
+
+<Aside label='Scav // Ledger'>
+  - **9** master rounds, one sitting
+  - **4** probes per round, zero attachments after the hyperfit round
+  - **25 → 14** hexes across the clamp ladder
+  - **10** shipped files, depth and eyes ship as CSS
+  - **18** polygon points, traced at 400%
+</Aside>
 
 ## A synthesizer instead of samples
 
-A [237-line synthesizer](https://github.com/sospedra/sospedra.me/blob/master/app/bazaar/sounds.ts) scores the market. One audio file exists in the whole system, the door slam. Everything else comes from two primitives: an oscillator with an exponential pitch ramp and decay envelope, and filtered white noise. Even the reverb is procedural, a convolver fed a generated impulse response.
+A [309-line synthesizer](https://github.com/sospedra/sospedra.me/blob/master/apps/main/app/bazaar/sounds.ts) scores the market. One audio file exists in the whole system, the door slam. Everything else comes from two primitives: an oscillator with an exponential pitch ramp and decay envelope, and filtered white noise. Even the reverb is procedural, a convolver fed a generated impulse response.
 
 ```ts
 verb = c.createConvolver()
@@ -455,11 +583,17 @@ Every stall has a **leitmotif**, a half-second sting on hover, matched to its ke
 - **travel** · two sine chirps bending like alien small talk
 - **w98** · a pair of descending sweeps, a machine powering down or up depending on your faith
 
-The design rules that emerged: synthesis over samples, because **a recorded foley reads like a photo pasted into a drawing**. One sting per encounter, never looped. Wet equals big, so reverb marks the door and the floor transitions, and dry marks UI. And everything is gesture-gated and opt-in, because sound that autoplays is sound that gets muted.
+The pads below run the shipped recipes on their own bus. The market gates its synth behind an opt-in toggle, and a demo that stays silent proves nothing.
 
-## The bazaar is not a link
+<Sampler label='Synth // ten stings' />
 
-The homepage parks a hand-built SVG car on the hero bridge, engine off. **That parked car is the affordance.** Clicking "bazaar" runs a choreography.
+Four design rules survived. Synthesis over samples, because **a recorded foley reads like a photograph inside a drawing**. One sting per encounter, never looped. Wet equals big, so reverb marks the door and the floor transitions, and dry marks UI. Everything is gesture-gated and opt-in, because autoplay sound gets muted.
+
+## The ride is a performance budget
+
+The homepage parks a hand-built SVG car on the hero bridge, engine off. **That parked car is the affordance**, and the drive it offers is a loading strategy wearing a costume.
+
+The car is code-split, and the intro warms its import 320 milliseconds in, so the sprite never blocks first paint and never misses its cue. The bazaar link prefetches the route on `mouseenter`, `focus` and `touchstart`: intent arrives before the click, and the gap is free loading time. The helper reads `navigator.connection` and skips the prefetch under Save-Data and on 2g, because a guess is only free on a connection that can absorb one. By click time the route payload has a head start.
 
 ```ts
 const duration = isFirstRide
@@ -469,38 +603,50 @@ dispatch({ type: 'depart', duration })
 transition.navigateLater('/bazaar', Math.max(duration - 360, 0))
 ```
 
-The route change fires 360ms before the drive ends. The page swaps while the car exits the viewport, and **the cut hides inside the motion**. The first ride each session takes the long signature drive, and repeats take the express: ceremony on arrival, speed on habit. A sessionStorage flag tracks it, claims optimistically, and falls back to ceremony if storage throws. Reduced motion skips the fiction entirely, because *fiction never blocks access*.
+The route change fires 360 milliseconds before the drive ends. The page swaps while the car exits the viewport, and **the cut hides inside the motion**. The first ride each session takes the signature drive, and repeats take the express: ceremony on arrival, speed on habit. A sessionStorage flag claims the first ride optimistically and falls back to ceremony if storage throws. Escape skips the whole fiction. Reduced motion never enters it: the click navigates plain, and the transition machine still owns the swap so history stays consistent.
 
 <Pull>Ceremony on arrival, speed on habit.</Pull>
 
-The easing curve lives twice: as a CSS custom property for the transform, and solved numerically in JS. The code knows where the car is at any millisecond. **When CSS and JS must agree about a moving object, share the curve, not the guesses.** On the other side, the street scene runs the same car sprite driving through. The way back is the bus stop, linked to the homepage. Two vehicles, one loop. The car is about 200 lines of choreography for a three-second joke, and the joke is the thesis: *this is a place you travel to*.
+The easing curve lives twice. CSS holds it as a custom property for the transform. JS solves it numerically, so the code knows the car position at any millisecond. **When CSS and JS must agree about a moving object, share the curve, never the guesses.** On the far side, the street runs the same car sprite driving through, and the bus stop links back to the homepage. Two vehicles, one loop.
 
-One edge case earned its scar. Next's cache can revive the home page with the car frozen mid-departure. So an effect notices its second run on the same tree, bumps an epoch key, and remounts the stage clean. **Page-transition fiction has state**, and state survives navigation in ways plain pages never test.
+One edge case earned its scar. The router cache can revive the homepage with the car frozen mid-departure. An effect notices its second run on the same tree, bumps an epoch key, and remounts the stage clean. Page-transition fiction has state, and that state survives navigation. Plain pages never test this.
 
-## The human 10%
+The same budget discipline runs through the market itself. The market weighs **259 files and 22 megabytes**, and nobody downloads it at once. Each stall's plate loads eager. Every other layer declares `loading="lazy"`: frames, effects and props arrive as their floor scrolls near. After arrival, every animation frame has mounted once and timers flip `opacity`, so scrolling costs zero network and zero decode. Sound is synthesized, so the score costs one audio file. Sprites render under `image-rendering: pixelated`, so low-resolution files upscale crisp. The fiction is expensive to write and cheap to run.
 
-"AI-generated" describes the pixels' origin, not the work. Five kinds of human labor bracket every generation.
+## A tool in the belt
 
-1. **The sketches.** Pen on paper, first: the vertical market, the street entry, where each keeper sits and what they hold. The pipeline never invented a composition. It executed compositions that existed on paper already, translated into zone contracts and drawn plans.
-2. **The design language.** One midnight city, defined once, spoken in dialects. The bazaar is *the loud room in a quiet house*, the home page keeps a faint skyglow, and the papers keep a navy reading band. Deciding what is canon, what is dialect and what is forbidden is classic art direction. None of it delegates.
-3. **The Affinity pass.** Edge repair at sprite scale, palette snapping where clamps leaked, hand-repainting of limbs where chained diffusion drifted. Three shipped files went back through it directly in the assets directory, so a law now forbids any script from overwriting that directory. <u>The generated file is a draft. The polished file is the asset.</u>
-4. **The software architecture.** Somebody had to decide that every frame mounts once and animation flips opacity. Somebody had to decide that the layout derives from one knob, that sound is synthesized, that light is stylesheet math. Those decisions are why a market carrying 230 sprites scrolls at 60fps and opens under 100ms.
-5. **The CSS.** The second art medium runs beside everything: shadows, glows, reflections masked through a building's own alpha, dimming by attention. It survives relayouts, responds to hover, costs zero image bytes, and iterates at taste speed instead of regeneration speed.
+A tidy arithmetic went around this project early: the model paints 90 percent, the human adds 10. The arithmetic is wrong, and the error is the point. **Generation is one tool in a belt**, and the belt shipped this market.
 
-The model paints fast. It does not design runtimes. The honest division of labor. The model produces 90% of the pixels in seconds. The human produces the 10% that makes them shippable, plus **100% of the direction**. *The 10% is the slow part. The 100% is the job.*
+The composition tool is pen and paper. The vertical market, the street entry and every keeper pose existed as sketches before any order, and the pipeline never invented a composition. The geometry tool is a vector editor: the slab law entered the world as my SVG, and orders restated its integers. The color tool is the sampler and the clamp. The finish tool is Affinity. The atmosphere tool is CSS. The layout tool is a prototype with rulers. The model sits in the middle of that belt and does one thing at industrial speed: it turns closed specifications into pixels.
 
-## Five laws survived twelve days
+The belt's placement tool deserves its own exhibit. The editor from the last mile carries three palettes: props, architecture and light. Props and beams drag onto the scene. Light drops as a glow spot, and the drop point picks its anchor.
 
-Twelve days of adversarial art direction left five laws. Take them.
+<EditorPalette label='Editor // the shelf' />
 
-1. **Never trust, always measure.** Check dimensions, bounding boxes, angles and hashes on every landing. Two concurrent jobs once returned the same file. The model's confidence is not evidence.
-2. **Attach, do not describe.** Corrective attachments beat layout locks. Layout locks beat drawn law. Drawn law beats canvas orientation, and canvas orientation beats gospels. All of them beat prose.
-3. **Audit your own orders.** When every job fails identically, stop reading renders and read instructions. The order was the bug.
-4. **Buy the hostile review.** One hostile read of an order costs minutes. One poisoned fleet costs a night.
+![The editor over the live desktop route: the travel stall selected, the inspector scoped to the 1188px breakpoint.](./editor-desktop.webp)
+
+![The same editor on the mobile street: the neon tower selected, offsets in raw pixels, decor.json saved.](./editor-mobile.webp)
+
+The evidence is the ledger. Over two weeks of daily rounds, 314 archived orders, five builds, ten stalls, 259 shipped files. The one-prompt masterpiece was our first attempt, and it alone shipped nothing. Without the belt the output is generic, unmeasured and unusable at family scale. With it, the model is the fastest painter on the team.
+
+Nothing here is hand-drawn. Everything is hand-specified.
+
+## Run your own
+
+The method transfers. Point an image model at a real asset family and this is the distilled procedure.
+
+1. **Sketch the composition first, on paper.** The model executes compositions and carries none of its own.
+2. **Write data-anchored orders.** Vertices, checkpoint dots, pixel boxes, closed hex lists, a minimum block size. Numbers first.
+3. **Fly four probes per round, one instrument each.** Breed the next round from the verdict. Read zero variance as an indictment of your attachments.
+4. **Measure every landing.** Dimensions, bounding boxes, hashes, angles. Then let the eye rule. The shipped console master fails two of its own checks.
 5. **Freeze what is won.** Close the layout, then fight the paint. One axis of freedom per round.
 
-The method compresses to its name: **adversarial art direction**. Generate under suspicion. Approve by eye.
+The traps cost fleets, so take the list.
+
+- **The one-prompt masterpiece.** At family scale it produces strangers.
+- **Attachments as the base image.** Chains hyperfit, variance dies, and every probe returns the same render.
+- **Whole-frame animation edits.** Decompose into layers and assert byte-identity at rest.
+- **A second coordinate system.** One unit from canvas to stylesheet to editor.
+- **Unguarded hand work.** One rerun clobbered three polished files. Guardrails belong in code. Memory forgets.
 
 The market is open. [Walk in](/bazaar).
-
-Nothing here is hand-drawn. Everything is hand-directed.

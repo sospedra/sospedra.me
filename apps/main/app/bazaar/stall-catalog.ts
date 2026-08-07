@@ -63,11 +63,10 @@ const MAP_DIALOG = [
   'Every stall is a door.',
   'u are here.',
 ].join('\n')
-const JUKEBOX_DIALOG = [
-  'Ka-chunk. Warm tubes.',
-  'Every record pressed in-house.',
-  'No covers. Originals only.',
-  'Press a letter. Press a number.',
+const SCAVENGER_DIALOG = [
+  'Found, not stolen. Mostly.',
+  'Everything has a price.',
+  'Name it. I can find it.',
 ].join('\n')
 export const GAMES_CONVERSATION = [
   { speaker: 'sister', text: 'NEW CHALLENGER!!!' },
@@ -140,11 +139,11 @@ export const STALLS: Record<BazaarStallId, StallSpec> = {
     desc: MAP_DIALOG,
     links: [{ label: 'read the bazaar paper', href: '/papers/bazaar' }],
   },
-  jukebox: {
-    label: 'projects',
-    href: '/jukebox',
-    tint: '#5ec48a',
-    desc: JUKEBOX_DIALOG,
-    links: [{ label: 'browse the records', href: '/jukebox' }],
+  scavenger: {
+    label: 'scavenger',
+    href: '/scavenger',
+    tint: '#e08030',
+    desc: SCAVENGER_DIALOG,
+    links: [{ label: 'find your item', href: '/scavenger' }],
   },
 }

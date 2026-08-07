@@ -337,6 +337,73 @@
   transform: translateZ(0);
 }
 
+/* wayfinding pair: UP hangs over the stair mouth, DOWN sits at the screen
+   mirror capped to stay past the last stall; beams tuck 10px into the sep */
+.sign {
+  position: absolute;
+  top: -10px;
+  width: calc(var(--su) * 78);
+  z-index: 14; /* the max slot of the floor z law */
+  line-height: 0;
+}
+
+/* stair inside edge at 324su minus the B-regime crop; the body (78su)
+   keeps a 15su poke past the edge: 324-78+15 */
+.sign[data-dir="up"] {
+  --sign-in: calc(var(--su) * 261 - var(--shift, 0px));
+  aspect-ratio: 355 / 431;
+}
+
+/* mirror slot (261su, the max) shrinks until the inner edge clears the
+   last stall wrap (--sign-gap), floored at a 4su edge margin */
+.sign[data-dir="down"] {
+  --sign-in: clamp(
+    calc(var(--su) * 4),
+    calc(var(--sign-gap, 0px) - var(--su) * 78),
+    calc(var(--su) * 261 - var(--shift, 0px))
+  );
+  aspect-ratio: 356 / 437;
+}
+
+.signR {
+  right: var(--sign-in);
+}
+
+/* left placements mirror, the stairs law */
+.signL {
+  left: var(--sign-in);
+  transform: scaleX(-1);
+}
+
+.sign img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateZ(0);
+}
+
+/* only the solid plate catches the pointer: chains and margins stay
+   click-through for the stall link behind */
+.sign,
+.sign img {
+  pointer-events: none;
+}
+
+.signHot {
+  position: absolute;
+  inset: 32% 6% 4%;
+  pointer-events: auto;
+}
+
+.sign img[data-on] {
+  opacity: 0;
+}
+
+.sign:hover img[data-on] {
+  animation: bulbFlicker 1.2s steps(1, end) forwards;
+}
+
 /* the home car passes through on load: offscreen left to offscreen
    right, same easing as the home drive (must match --drive-ease there) */
 .sCar {

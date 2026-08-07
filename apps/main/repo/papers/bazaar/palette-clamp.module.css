@@ -63,6 +63,39 @@
   outline-offset: 2px;
 }
 
+/* fixed stage row: the two example masters have opposite aspects, and a
+   height that follows the bitmap makes the whole card jump on toggle */
+.figure {
+  display: grid;
+  margin: 0;
+  border-bottom: 1px solid rgb(109 247 234 / 18%);
+  background: #0a0c12;
+  grid-template-rows: 30rem auto;
+  align-items: center;
+  justify-items: center;
+}
+
+.canvas {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 30rem;
+  image-rendering: pixelated;
+}
+
+.caption {
+  min-height: 3.2rem;
+  justify-self: stretch;
+  padding: 0.55rem 1rem;
+  border-top: 1px solid rgb(109 247 234 / 12%);
+  color: var(--color-text, #d6dbe6);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(4.4rem, 1fr));
@@ -74,7 +107,18 @@
   display: grid;
   gap: 0.3rem;
   justify-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
   text-align: center;
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--color-signal-cyan, #6df7ea);
+  outline-offset: 2px;
 }
 
 .swatch {
@@ -103,6 +147,15 @@
 
 .chip[data-stray="true"] .hex {
   text-decoration: line-through;
+}
+
+.chip[aria-pressed="true"] .swatch {
+  outline: 2px solid var(--color-signal-yellow, #ffea00);
+  outline-offset: 2px;
+}
+
+.chip[aria-pressed="true"] .hex {
+  color: var(--color-signal-yellow, #ffea00);
 }
 
 .scope {

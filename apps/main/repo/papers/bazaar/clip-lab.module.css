@@ -1,0 +1,151 @@
+/* Doubled class: .markdown > * + * in paper.module.css ties on specificity,
+   and chunk order across CSS modules is not guaranteed. */
+.lab.lab {
+  margin: 2.75rem 0 3rem;
+  overflow: hidden;
+  border: 1px solid rgb(109 247 234 / 24%);
+  border-radius: 0.375rem;
+  background: #100d1a;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  padding: 0.6rem 1rem 0.55rem;
+  border-bottom: 1px solid rgb(109 247 234 / 18%);
+  background: rgb(109 247 234 / 5%);
+}
+
+.label {
+  flex: 1;
+  color: var(--color-signal-cyan, #6df7ea);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.reset {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid rgb(109 247 234 / 36%);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--color-signal-cyan, #6df7ea);
+  cursor: pointer;
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+
+.reset:hover {
+  background: rgb(109 247 234 / 10%);
+}
+
+.reset:focus-visible {
+  outline: 2px solid var(--color-signal-cyan, #6df7ea);
+  outline-offset: 2px;
+}
+
+.stage {
+  position: relative;
+  max-width: 27rem;
+  margin: 0 auto;
+  background: #0a0c12;
+  touch-action: none;
+}
+
+.plate,
+.ghost,
+.kept {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  user-select: none;
+  image-rendering: pixelated;
+}
+
+/* the dropped region stays readable as a faint silhouette over the plate */
+.ghost {
+  position: absolute;
+  inset: 0;
+  filter: grayscale(1) brightness(1.6);
+  opacity: 0.22;
+}
+
+.kept {
+  position: absolute;
+  inset: 0;
+}
+
+.outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.outline polygon {
+  fill: rgb(109 247 234 / 8%);
+  stroke: var(--color-signal-cyan, #6df7ea);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.handle {
+  position: absolute;
+  width: 0.9rem;
+  height: 0.9rem;
+  padding: 0;
+  border: 1px solid var(--color-signal-cyan, #6df7ea);
+  border-radius: 50%;
+  background: #100d1a;
+  cursor: grab;
+  touch-action: none;
+  transform: translate(-50%, -50%);
+}
+
+.handle:hover {
+  background: rgb(109 247 234 / 35%);
+}
+
+.handle:focus-visible {
+  outline: 2px solid var(--color-signal-yellow, #ffea00);
+  outline-offset: 2px;
+}
+
+.hint {
+  margin: 0;
+  padding: 0.75rem 1rem 0;
+  color: var(--color-text, #d6dbe6);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.readout {
+  display: block;
+  margin: 0.6rem 1rem 1rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgb(109 247 234 / 14%);
+  border-radius: 0.25rem;
+  background: #0a0c12;
+  color: var(--color-text, #d6dbe6);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 48rem), (pointer: coarse) {
+  .handle {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+}

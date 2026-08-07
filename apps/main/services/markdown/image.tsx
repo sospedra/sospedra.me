@@ -1,6 +1,7 @@
 import NextImage from 'next/image'
 import type React from 'react'
 import { hashString } from 'services/random'
+import Fullscreen from './fullscreen'
 import css from './image.module.css'
 import type { Paper } from './paper.types'
 
@@ -83,6 +84,14 @@ const Image: React.FC<{
             ? `${dimensions.width}×${dimensions.height}px`
             : (extension ?? 'MEDIA')}
         </span>
+        <Fullscreen
+          caption={props.alt}
+          label='VISUAL // ARCHIVE'
+          trigger='FULL'
+          triggerClassName={css.expand}
+        >
+          <img alt='' src={source} />
+        </Fullscreen>
       </span>
     </span>
   )

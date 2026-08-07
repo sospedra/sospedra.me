@@ -19,6 +19,13 @@ operating state: what is true, what is law, what is open.
 - The generation campaign is CLOSED. tmp/bazaar3 is deleted. All
   fundamentals are archived under docs/bazaar/ (notes, takeover/,
   doctrine/, orders/, assets/).
+- 2026-08-06: the eleventh stall (scavenger) shipped on /bazaar with a
+  second-generation pipeline: text-only orders (attachment chains
+  hyperfit), per-frame palette ladders, fixed-canvas animation with
+  user-ruled pixel head lines, clip-path depth instead of occluder
+  assets, CSS-rendered idle eyes, and in-page tuning harnesses. Full
+  doctrine: 17-scavenger-doctrine.md. Campaign dir tmp/bazaar-scavenger
+  is DISPOSABLE; archive before deleting.
 - A blog post about the whole campaign is planned; the 16 notes are
   its raw material. Pen-and-paper sketch photos are pending from the
   user; file them into assets/ and the manifest when they appear.

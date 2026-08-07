@@ -1,10 +1,10 @@
 {
   "createdAt": "2026-07-31T20:00:00.000Z",
-  "excerpt": "I wrote thirty poisoned orders in one night, then blamed the model for obeying them. The order asked for a hacker den. Ed from Cowboy Bebop sits cross-legged on a rug, one CRT lit, racks of dead machines behind. Thirty renders landed in my review gallery. All thirty were wrong the same way: camera dropped, rug bloated into a stage, furniture rotated inward around the character. I asked the supervisor one question. How do you fail thirty times out of thirty?",
+  "excerpt": "The bazaar is not an art project, and this paper holds no prompt tricks. The bazaar is this site's index: a pixel-art night market, ten stalls, one route per stall, a talking keeper in each. gpt-image-class models generated every pixel. Codex CLI drove the jobs, Claude supervised the fleets, and I directed by eye. This paper is the engineering method.",
   "og": "/papers/bazaar.png",
   "slug": "bazaar",
-  "title": "Bazaar: adversarial art direction",
-  "updatedAt": "2026-07-31T20:00:00.000Z",
+  "title": "Bazaar: adversarial asset direction",
+  "updatedAt": "2026-08-07T09:00:00.000Z",
   "images": {
     "stall-war-30.webp": {
       "width": 1100,
@@ -73,12 +73,56 @@
     "gate-r23.webp": {
       "width": 1400,
       "height": 933
+    },
+    "scav-r1.webp": {
+      "width": 1200,
+      "height": 800
+    },
+    "scav-r4.webp": {
+      "width": 1200,
+      "height": 800
+    },
+    "scav-r9.webp": {
+      "width": 1200,
+      "height": 762
+    },
+    "scav-final.webp": {
+      "width": 1200,
+      "height": 762
+    },
+    "scav-grid.webp": {
+      "width": 700,
+      "height": 1015
+    },
+    "scav-char.webp": {
+      "width": 760,
+      "height": 1140
+    },
+    "scav-walk.webp": {
+      "width": 1528,
+      "height": 320
+    },
+    "editor-desktop.webp": {
+      "width": 1512,
+      "height": 982
+    },
+    "editor-mobile.webp": {
+      "width": 1512,
+      "height": 982
+    },
+    "console-sampled.webp": {
+      "width": 1200,
+      "height": 800
+    },
+    "console-clamped.webp": {
+      "width": 800,
+      "height": 1200
     }
   },
-  "minutes": 31.995,
+  "minutes": 39.64,
   "categories": [
     "bazaar",
-    "ai art direction",
+    "adversarial asset direction",
     "image model supervision",
     "codex cli",
     "gpt-image",

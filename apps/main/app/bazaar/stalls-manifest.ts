@@ -351,9 +351,36 @@ export const STALL_SCENES = {
     ],
     rect: { left: 152, top: 24, width: 716, height: 1488 },
   },
-  jukebox: {
-    layers: [{ id: 'plate', role: 'plate' }],
-    rect: { left: 0, top: 0, width: 700, height: 1000 },
+  scavenger: {
+    layers: [
+      { id: 'plate', role: 'plate' },
+      {
+        id: 'char',
+        role: 'char',
+        zorder: 3,
+        idle: [{ file: 'char-idle.png', ms: 1800 }],
+        hover: [
+          { file: 'char-h1.png', ms: 150 },
+          { file: 'char-h2.png', ms: 150 },
+          { file: 'char-h3.png', ms: 150 },
+          { file: 'char-h4.png', ms: 150 },
+          { file: 'char-h5.png', ms: 150 },
+          { file: 'char-h6.png', ms: 0 },
+        ],
+      },
+      {
+        id: 'fx-smoke',
+        role: 'effect',
+        zorder: 5,
+        frames: [
+          { file: 'fx-smoke-f1.png', ms: 320 },
+          { file: 'fx-smoke-f2.png', ms: 320 },
+          { file: 'fx-smoke-f3.png', ms: 320 },
+        ],
+        hover: 'fx-smoke-blank.png',
+      },
+    ],
+    rect: { left: 0, top: 39, width: 1530, height: 971 },
   },
 } satisfies Record<string, StallScene>
 
@@ -415,11 +442,11 @@ export const SIM_DIMS = {
     dispW: 221,
     dispH: 460,
   },
-  jukebox: {
-    artW: 700,
-    artH: 1000,
-    dispW: 350,
-    dispH: 500,
+  scavenger: {
+    artW: 1530,
+    artH: 971,
+    dispW: 819,
+    dispH: 520,
   },
 } satisfies Record<
   BazaarStallId,

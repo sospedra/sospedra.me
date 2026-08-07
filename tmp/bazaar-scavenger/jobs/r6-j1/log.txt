@@ -1,0 +1,714 @@
+Reading prompt from stdin...
+OpenAI Codex v0.145.0
+--------
+workdir: /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r6-j1
+model: gpt-5.6-sol
+provider: openai
+approval: on-request
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: ultra
+reasoning summaries: none
+session id: 019fd706-47db-76e3-8fc0-3d332fb3c8c2
+--------
+user
+# Codex order — scavenger master r6 — depth restored, stepped counter, boxed goods
+
+You are an image-generation subagent. Execute exactly this and nothing else.
+
+Attached:
+- Image 1 = the angle law diagram: GREEN construction only (front
+  rectangle + one thin top band, vertical sides); RED isometric
+  forbidden.
+- Image 2 = the WORLD-CAMERA GOSPEL (the approved games stall): copy
+  the camera, the flatness, the outline weight, and the paint manner.
+  Copy ZERO content from it.
+- Image 3 = YOUR OWN RENDER, the round-4 winner, the DEPTH AND LAYOUT
+  GOSPEL: copy its composition, its furniture depth, its light split,
+  and its keeper. REJECTED from it: the trumpet, the keeper's third
+  arm, and the flat single-level counter.
+- Image 4 = YOUR OWN RENDER, the COUNTER-SHAPE GOSPEL: copy ONLY its
+  asymmetric stepped counter silhouette. REJECTED from it: everything
+  else, especially its flattened furniture depth.
+
+A recorded failure to avoid: a previous repaint FLATTENED the
+furniture line into the wall and lost all depth. The furniture layer
+must stand proud of the wall: shelf unit, locker, safe, crates, and
+drum each separated by flat #030506 lines and real overlap; the
+keeper's bay is a real gap between locker and safe. NEVER draw any
+attachment into the output.
+
+Steps: call image_gen ONCE to GENERATE a NEW image at size 1536x1024.
+Verify size; retry once if wrong. Copy the result unmodified to exactly
+/Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r6-j1/gen-scavenger-master.png
+then print GENERATED=<that path>. No post-processing, no repo edits.
+
+## THE CAMERA LAW — absolute
+
+A FLAT STOREFRONT seen dead-on, standing eye height. NOT a room, NOT a
+stage, NOT a diorama, NOT a piece of furniture in space. No vanishing
+points, no isometric rotation, no side walls, no ceiling. Every box:
+front rectangle + one thin top band, vertical sides, nothing else. A
+visible side face is a rejection. Circles are legal FRONT faces.
+Depth between objects is OVERLAP ONLY. Every vertical is dead
+vertical. NO slab: one ground line, flat contact shadow rows only.
+
+## THE STEPPED COUNTER — asymmetric, still flat
+
+The counter is a storefront wall, never a 3D table, ZERO legs. It has
+TWO levels, copied from Image 4's silhouette:
+- MAIN BAND x=300..1160, top band y=740..778, #482614 with #885323
+  lip and #351d12 shadow edge.
+- RIGHT STEP x=1160..1260, one level DOWN: top band y=788..826, same
+  material. The step makes the counter asymmetric.
+Both levels: front face + ONE thin top band, items in one row planted
+ON the band with 2 px #030506 contact rows. The star-print skirt
+(#1b2a34, #030506 folds, #34454c stars, #151719 hem shadow) covers
+BOTH fronts to the floor, full width. A visible table leg = redo.
+
+## THE LIGHT LAW — fluorescent depth light
+
+NO bulb string. TWO cool fluorescent tubes at the mid-depth plane:
+tube A x=380..760, tube B x=820..1200, y=288..300, flat bars #f2f1ee
+core and #c9c8c5 ends on thin #34454c rods, passing IN FRONT of the
+wall stock. BEHIND the tube plane everything paints in flat shadow,
+one step darker, zero highlights: wall stock, furniture line, THE
+KEEPER. AT and IN FRONT of the counter everything paints lit, with
+one flat cool pool on the band under each tube. No halos, no
+gradients: light is palette steps only.
+
+## THE KEY EFFECT — absolute
+
+The keeper sits DEEP, tucked BESIDE THE LOCKER in the darkest bay, a
+shadow silhouette. ONLY his two eyes and the pipe ember carry full
+brightness. He has EXACTLY TWO ARMS: two bandaged forearms, two
+gloved hands, one hand near the pipe, one resting. Count them.
+
+## THE WALLET LAW
+
+The open CD case LIES FLAT on the main band, at the band's shallow
+angle: x=700..870, y=726..780, nothing above y=726. Two shallow
+ellipse discs ~70x30 px: #4bd2e1 neon teal left, #c86fd6 neon magenta
+right, plain squashed #f2f1ee hub rings (never eyes), #030506 holes.
+Case #151719, #8a8f98 zip teeth. One dim flat #f2f1ee glare band on
+the TEAL disc only. Beside it one tiny tinfoil ORIGAMI UNICORN,
+~14 px, #c9c8c5 facets. The 50 px around the wallet stays calm.
+
+## THE SCALE CONTRACT
+
+- KEEPER: seated, slim, deep: figure x=668..758, head top y=520,
+  shoulders <= 90 px, waist cut by the counter, eye slits y=545..555.
+- The Hollow Knight mask ~120 px tall.
+- Counter item heights, planted: binoculars ~50, keys ~40, magnifier
+  ~55, bottles ~90, trays ~26 deep, pile items 15..30.
+
+## COMPOSITION LAWS
+
+- PLANTING: every counter item's base on its band, 2 px contact row,
+  zero floating anywhere.
+- SURFACE SEPARATION: the counter never merges into furniture tops;
+  flat #030506 gap lines separate every depth layer.
+- DEPTH LAYERS, back to front: (1) wall stock, (2) furniture line +
+  keeper bay, (3) THE TUBES, (4) counter bands + items, (5) skirt +
+  bags, (6) floor piles, plus ceiling hangs beside the tubes. Every
+  layer overlaps the one behind.
+- BOXED GOODS: part of the counter stock sits INSIDE open boxes and
+  trays: a compartment tray, a tin box, an open padded case, a small
+  open crate. Trays are shallow open rectangles seen from the front
+  with a thin top band, contents peeking over the rim.
+- STACKS: other goods stack in offset piles (never aligned): a ROM
+  cartridge stack, a datapad stack, stacked tins, coin stacks.
+- CLUTTER GRADIENT: density increases toward both wings; scale
+  mixing everywhere; nothing mirrored, no even spacing.
+
+## MATERIAL LAW
+
+Less wood, more plastic and steel. Wood ONLY on: the counter bands,
+the wine barrel, the mask crate, the book spines, the wall planks,
+the oar. Plastic ribbed stacking crates (#1b2a34, #963a23), a red
+plastic beverage crate, a plastic tub, a steel drum end-on (#34454c,
+#151719 rings) replace all other wood.
+
+## LAYOUT — anchors in canvas pixels (±12 px), zones by rule
+
+1. FRAME: posts x=150..182 and x=1354..1386, y=76..916 (#34454c,
+   #1b2a34, #030506). Canopy thin top band y=40..76 full width.
+2. VALANCE y=76..250: stripes #34454c / #8a8f98 ~48 px, ragged hem,
+   one #885323 patch x=1080..1160.
+3. CEILING HANGS from the hem, uneven, beside the tubes: spoked bike
+   wheel x=200..280, y=255..350; closed LED umbrella x=340..380,
+   y=255..380, shaft one straight #f2f1ee line, clear of the
+   scratched word; plain red moto helmet x=765..815, y=255..320
+   (#b73522, #151719 visor); hanging robot arm x=1150..1220,
+   y=250..360 (#34454c, #8a8f98); cable bundle x=1060..1120,
+   y=246..286.
+4. SCRATCHED SIGN: lowercase "scavenger" scratched INTO the wall
+   planks x=600..880, y=290..350: crude #8a8f98 strokes, sparse
+   #c9c8c5 highlights. No plank. Every letter legible, nothing
+   crossing it. The only readable text anywhere.
+5. JERSEY PAIR x=330..515, y=262..500 exactly as Image 3: white
+   #f2f1ee + two #151719 stripes per shoulder/sleeve behind; red
+   #b73522 + 4 px #e6b339 pinstripes + #1b497d sleeves in front. No
+   numbers.
+6. BACK WALL x=220..1320, y=250..690: dark planks #151719, #030506
+   joints, in shadow. Hung stock, flat, denser toward the sides:
+   cuckoo clock x=520..590, y=270..380; hand saw x=610..650
+   vertical; dead traffic light x=930..980, y=350..460 (all lenses
+   #030506); gas mask x=995..1040, y=355..420; vocoder respirator
+   half-mask x=1045..1090, y=350..415 (#34454c, #030506 grille);
+   horseshoes x=955..1010, y=270..330; blank license plate
+   x=1025..1105, y=275..325; voice-print lock box x=870..915,
+   y=430..480 (#34454c, one #dda23c button); pinned INSECT DRONE in
+   a flat case x=1120..1180, y=300..360 (#1b2a34 case, #8a8f98
+   dragonfly, dead); dead holo-frame x=250..310, y=380..440
+   (#151719 glass, #030506 void); unlit neon ring x=1245..1305,
+   y=265..325; film reel x=1235..1300, y=355..435; vertical oar
+   x=1305..1338, y=255..640; satellite dish x=200..260, y=420..480.
+   NO fish. NO flying drone. The zone above the keeper stays bare
+   except the scratched word.
+7. FURNITURE LINE, standing PROUD of the wall, all in shadow, each
+   piece separated by #030506 lines and overlap:
+   - INDUSTRIAL STEEL SHELF UNIT x=352..560, y=470..740: slotted
+     #34454c uprights, thin #1b2a34 shelf bands: jars with odd
+     contents + one vacuum-tube jar, alarm clock, capsule pill
+     bottle, book stack; lower row: globe, dead android head
+     (#8a8f98, #030506 sockets) x=435..495, film camera, folded-leg
+     spider-bot (#34454c, dead), jeweler's loupe headset; rope coil
+     on the right upright;
+   - METAL LOCKER x=575..665, y=300..740: #34454c, vents, LEFT door
+     ajar; birdcage on top x=590..650, y=215..300; a motherboard
+     leaning on its front x=578..614, y=640..740 (#1b2a34, #dda23c
+     traces, at most three 2 px #4bd2e1 LED dots);
+   - THE KEEPER'S BAY x=665..765: the darkest gap; the keeper sits
+     here (item 8);
+   - SAFE x=780..890, y=560..740: #34454c, #c9c8c5 dial; ON top the
+     VOIGHT-KAMPFF UNIT x=785..885, y=490..560: squat machine, one
+     accordion bellows, one raised iris-camera arm (#34454c,
+     #151719 bellows, #c9c8c5 lens ring);
+   - PLASTIC CRATE STACK x=900..1055, y=430..740: two ribbed
+     plastic crates (#1b2a34, #963a23, grid vents) under one wood
+     crate, staggered; kettle ON top x=915..965, y=380..430
+     (#8a8f98, in shadow); tin radio beside it x=975..1040,
+     y=375..430;
+   - STEEL DRUM end-on x=1035..1145, y=545..665 (#34454c circle,
+     #151719 rings), #67231d blanket roll on top.
+8. THE KEEPER, tucked beside the locker, seated, slim, a shadow:
+   figure x=668..758, head top y=520. Dark green elven cloak, cape
+   wrapping the neck as the scarf, silver leaf clasp #c9c8c5 dulled.
+   SHADOW RULE: cloak #35402f-dominant with two #4a5a44 patches, no
+   highlights; under-layer #151719; two bandaged forearms #885323
+   with #683619 lines; two gloves #151719. EXACTLY TWO ARMS: one
+   hand raised near the pipe, one resting. Hood interior ONE flat
+   #030506 void; two gold eye SLITS #e6b339 ~12x5 px, y=545..555
+   (x=700..714, x=726..740), full brightness. CHURCHWARDEN PIPE:
+   thin #963a23 stem from the chin to a small bowl x=790..810,
+   y=625..650; #e07830 ember ~4x4, full brightness. ONE smoke wisp:
+   three flat #8a8f98 curls >= 4x4, rising x=800 to 765, y=620 to
+   540.
+9. COUNTER STOCK, planted per the composition laws:
+   - MAIN BAND center: the flat WALLET + origami unicorn (wallet
+     law);
+   - inner left: binoculars x=420..500; key ring x=520..565;
+     magnifier x=585..650;
+   - inner right: two dark bottles x=1040..1100, y=650..742; a
+     POCKET CRT TV x=960..1030, y=690..742 (fishbowl, chrome dial,
+     dead pale screen); a palm MICRO REEL-TO-REEL x=900..950,
+     y=702..742;
+   - LEFT WING PILE x=300..420, heavy, boxed and stacked: an open
+     TIN BOX of dermatrodes (pads + wire tails), a DATAPAD STACK
+     (three #1b2a34 slabs, offset), a BLASTER PISTOL lying flat
+     (#1b2a34, #34454c bull barrel), an Ono-Sendai CYBERDECK slab,
+     a WRIST TERMINAL with antenna stub, an open CYBERWARE TOOLKIT
+     roll (#482614 roll, #8a8f98 micro drivers), an E-PAPER sheet
+     (#c9c8c5, #030506 dash blocks), a small stack of blank INCEPT
+     PHOTOS (#e8d2b4), wristwatches, a pager, stacked tins (three,
+     offset);
+   - RIGHT WING + STEP x=1080..1260, heavy, boxed and stacked: a
+     COMPARTMENT TRAY (open shallow box, thin top band, contents
+     peeking: credchip sticks, data shards, chrome neural plugs,
+     cortical stack coins), an open padded CYBER-EYE CASE (#151719,
+     one optic, #dda23c iris), a BRAINDANCE WREATH half-ring
+     (#c9c8c5 band, #963a23 pads), a ROM CARTRIDGE STACK (four,
+     offset, #1b2a34 with #dda23c label dashes), a dead HOLO-PUCK
+     disc, a peg rod with three BIOMONITOR BRACELETS hanging, an
+     air hypo, a stim inhaler, the robot hand x=1150..1200
+     (#8a8f98), a wire spool, coin stacks #dda23c, spark plugs,
+     camera lenses, a small OPEN CRATE of scrap electronics on the
+     STEP (bare boards, chips peeking).
+10. SKIRT: covers both counter fronts to the floor, full width, star
+    print. Hanging bags as Image 3: left cluster THREE (#963a23,
+    #885323, #67231d lower), right cluster TWO (#d6a767, #963a23
+    askew), colander x=760..830, blank #e8d2b4 tags on three.
+11. FRONT FLOOR, lit, ground line y=916, piles denser at the sides:
+    suitcase stack x=140..280, y=770..916 with the ESPER TERMINAL on
+    top x=150..260, y=680..770 (fishbowl CRT, two flat pale bands
+    #c9c8c5 over #8a8f98 ONLY, chrome dial, mic stub); oxygen tank
+    x=285..330, y=760..916; wood crate x=380..510, y=830..916 with
+    the HOLLOW KNIGHT MASK x=395..495, y=715..835 (bone #f2f1ee,
+    two horns, empty #030506 sockets, hairline crack); leaning tire
+    x=520..615, y=800..916; toolbox x=930..1000, y=850..916; red
+    plastic BEVERAGE CRATE x=1000..1090, y=830..916 (#963a23,
+    bottle necks); upright wine barrel x=1090..1210, y=690..916
+    with three bottles ON it y=610..696; rolled rug x=1230..1290,
+    y=700..916; plastic TUB x=1290..1390, y=820..916 (#1b2a34)
+    with springs, gears, and a dead android torso plate peeking;
+    jerrycan ON it x=1300..1355, y=735..820 (#34454c, NEVER green).
+12. GROUND: one line y=916, flat #030506 contact rows. Nothing below
+    y=920.
+13. DENSITY: at least 70 distinct objects, catalog spirit, flat and
+    iconic, planted or hung, never floating, unreadable markings.
+
+## COLOR LAW
+
+PALETTE CLAMP: use ONLY these colors, nothing else. Merge any stray
+shade into its nearest listed value. No new hues, no intermediate
+blends. The 24 legal hexes:
+
+#030506 #151719 #1b2a34 #34454c #8a8f98 #c9c8c5 #f2f1ee #482614
+#683619 #885323 #351d12 #d6a767 #e8d2b4 #963a23 #b73522 #67231d
+#dda23c #e6b339 #1b497d #4bd2e1 #c86fd6 #e07830 #4a5a44 #35402f
+
+Scopes, absolute:
+- #00ff00 is the background key: ZERO art pixels.
+- #4a5a44 #35402f ONLY the keeper's cloak, #35402f-dominant.
+- #1b497d ONLY the red jersey's sleeves.
+- #4bd2e1 ONLY the teal disc face and at most three 2 px LED dots on
+  the motherboard.
+- #c86fd6 ONLY the magenta disc face.
+- #e07830 ONLY the pipe ember.
+- #e6b339 ONLY the keeper's eyes and the jersey pinstripes.
+- Screens (Esper, pocket CRT): #c9c8c5 and #8a8f98 flat bands ONLY.
+- NO other greens anywhere: the keyer executes green art pixels.
+
+FLATNESS ABSOLUTE: zero stipple, zero mottle, zero weave, zero
+per-pixel noise, zero gradients, zero glow hazes, zero antialiasing.
+Every region one flat chunk, blocks never smaller than 4x4 px. Three
+tones per material. Continuous near-black outlines.
+
+## TEXT
+
+Only the scratched "scavenger". Everything else unreadable dashes.
+
+## EXCLUDE
+
+No H-beams, no world beyond the stall, no neighbors, no customers, no
+slab, no bulb string, no sign plank, no fish, no flying drone, NO
+TRUMPET, no table legs. The asset floats on chroma.
+
+## SELF-CHECK before returning
+
+1) DEPTH: the furniture line stands proud of the wall with real
+   overlap and separation lines; the keeper bay is a real gap. A
+   flattened wall-of-stuff = redo.
+2) THE COUNTER HAS TWO LEVELS: main band + lower right step, per
+   Image 4's silhouette; zero legs; skirt covers everything.
+3) NO TRUMPET anywhere. COUNT THE KEEPER'S ARMS: exactly two.
+4) Boxed goods present: compartment tray, tin box, padded cyber-eye
+   case, open scrap crate on the step. Stacks present: ROM
+   cartridges, datapads, tins, coins, incept photos: all offset.
+5) Tubes split the light; keeper a silhouette beside the locker,
+   eyes + ember only; pipe + smoke.
+6) Wallet flat, plain hubs, origami unicorn beside it; scratched
+   lowercase sign, fully legible, nothing crossing it.
+7) Catalog present: VK unit on the safe, Esper on the suitcases,
+   umbrella, blaster, cyberdeck, wrist terminal, toolkit roll,
+   e-paper, braindance wreath, pocket CRT, reel-to-reel, cyber-eye
+   case, holo-puck, loupe headset, pill bottle, vocoder, voice-print
+   box, pinned insect drone, spider-bot, biomonitor pegs,
+   dermatrodes, ROM stack.
+8) Materials: plastic crates, steel drum, plastic tub, plastic
+   beverage crate; wood only where listed; jerrycan #34454c; traffic
+   lenses #030506.
+9) Mandatories: jerseys (no numbers), mask on crate, wine barrel +
+   bottles + beverage crate, flat wallet, suitcases, tire, toolbox,
+   rug.
+10) At least 70 objects; wings + step heavy, wallet calm; nothing
+    floating; nothing at the canvas border; box x=136..1400,
+    y=40..920.
+11) 1536x1024; only "scavenger" readable; 24 hexes, scopes
+    respected.
+
+codex
+Using imagegen skill now. One generation. Then size check. Retry only if wrong. Exact copy, unmodified. Good good.
+exec
+/bin/zsh -lc "sed -n '1,240p' /Users/sospedra/.codex/skills/.system/imagegen/SKILL.md" in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r6-j1
+ succeeded in 0ms:
+---
+name: "imagegen"
+description: "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas."
+---
+
+# Image Generation Skill
+
+Generates or edits images for the current project (for example website assets, game assets, UI mockups, product mockups, wireframes, logo design, photorealistic images, or infographics).
+
+## Top-level modes and rules
+
+This skill has exactly two top-level modes:
+
+- **Default built-in tool mode (preferred):** built-in `image_gen` tool for normal image generation, editing, and simple transparent-image requests. Does not require `OPENAI_API_KEY`.
+- **Fallback CLI mode:** `scripts/image_gen.py` CLI. Use when the user explicitly asks for the CLI/API/model path, or after the user explicitly confirms a true model-native transparency fallback with `gpt-image-1.5`. Requires `OPENAI_API_KEY`.
+
+Within CLI fallback, the CLI exposes three subcommands:
+
+- `generate`
+- `edit`
+- `generate-batch`
+
+Rules:
+- Use the built-in `image_gen` tool by default for normal image generation and editing requests.
+- Do not switch to CLI fallback for ordinary quality, size, or file-path control.
+- If the user explicitly asks for a transparent image/background, stay on built-in `image_gen` first: prompt for a flat removable chroma-key background, then remove it locally with the installed helper at `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py`.
+- Never silently switch from built-in `image_gen` or CLI `gpt-image-2` to CLI `gpt-image-1.5`. Treat this as a model/path downgrade and ask the user before doing it, unless the user has already explicitly requested `gpt-image-1.5`, `scripts/image_gen.py`, or CLI fallback.
+- If a transparent request appears too complex for clean chroma-key removal, asks for true/native transparency, or local removal fails validation, explain that true transparency requires CLI `gpt-image-1.5 --background transparent --output-format png` because `gpt-image-2` does not support `background=transparent`, then ask whether to proceed. Run the CLI fallback only after the user confirms.
+- The word `batch` by itself does not mean CLI fallback. If the user asks for many assets or says to batch-generate assets without explicitly asking for CLI/API/model controls, stay on the built-in path and issue one built-in call per requested asset or variant.
+- If the built-in tool fails or is unavailable, tell the user the CLI fallback exists and that it requires `OPENAI_API_KEY`. Proceed only if the user explicitly asks for that fallback.
+- If the user explicitly asks for CLI mode, use the bundled `scripts/image_gen.py` workflow. Do not create one-off SDK runners.
+- Never modify `scripts/image_gen.py`. If something is missing, ask the user before doing anything else.
+
+Built-in save-path policy:
+- In built-in tool mode, Codex saves generated images under `$CODEX_HOME/*` by default.
+- Do not describe or rely on OS temp as the default built-in destination.
+- Do not describe or rely on a destination-path argument (if any) on the built-in `image_gen` tool. If a specific location is needed, generate first and then move or copy the selected output from `$CODEX_HOME/generated_images/...`.
+- Save-path precedence in built-in mode:
+  1. If the user names a destination, move or copy the selected output there.
+  2. If the image is meant for the current project, move or copy the final selected image into the workspace before finishing.
+  3. If the image is only for preview or brainstorming, render it inline; the underlying file can remain at the default `$CODEX_HOME/*` path.
+- Never leave a project-referenced asset only at the default `$CODEX_HOME/*` path.
+- Do not overwrite an existing asset unless the user explicitly asked for replacement; otherwise create a sibling versioned filename such as `hero-v2.png` or `item-icon-edited.png`.
+
+Shared prompt guidance for both modes lives in `references/prompting.md` and `references/sample-prompts.md`.
+
+Fallback-only docs/resources for CLI mode:
+- `references/cli.md`
+- `references/image-api.md`
+- `references/codex-network.md`
+- `scripts/image_gen.py`
+
+Local post-processing helper:
+- `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py`: removes a flat chroma-key background from a generated image and writes a PNG/WebP with alpha. Prefer auto-key sampling, soft matte, and despill for antialiased edges.
+
+## When to use
+- Generate a new image (concept art, product shot, cover, website hero)
+- Generate a new image using one or more reference images for style, composition, or mood
+- Edit an existing image (inpainting, lighting or weather transformations, background replacement, object removal, compositing, transparent background)
+- Produce many assets or variants for one task
+
+## When not to use
+- Extending or matching an existing SVG/vector icon set, logo system, or illustration library inside the repo
+- Creating simple shapes, diagrams, wireframes, or icons that are better produced directly in SVG, HTML/CSS, or canvas
+- Making a small project-local asset edit when the source file already exists in an editable native format
+- Any task where the user clearly wants deterministic code-native output instead of a generated bitmap
+
+## Decision tree
+
+Think about two separate questions:
+
+1. **Intent:** is this a new image or an edit of an existing image?
+2. **Execution strategy:** is this one asset or many assets/variants?
+
+Intent:
+- If the user wants to modify an existing image while preserving parts of it, treat the request as **edit**.
+- If the user provides images only as references for style, composition, mood, or subject guidance, treat the request as **generate**.
+- If the user provides no images, treat the request as **generate**.
+
+Built-in edit semantics:
+- Built-in edit mode is for images already visible in the conversation context, such as attached images or images generated earlier in the thread.
+- If the user wants to edit a local image file with the built-in tool, first load it with built-in `view_image` tool so the image is visible in the conversation context, then proceed with the built-in edit flow.
+- Do not promise arbitrary filesystem-path editing through the built-in tool.
+- If a local file still needs direct file-path control, masks, or other explicit CLI-only parameters, use the explicit CLI fallback only when the user asks for it.
+- For edits, preserve invariants aggressively and save non-destructively by default.
+
+Execution strategy:
+- In the built-in default path, produce many assets or variants by issuing one `image_gen` call per requested asset or variant.
+- In the CLI fallback path, use the CLI `generate-batch` subcommand only when the user explicitly chose CLI mode and needs many prompts/assets.
+- For many distinct assets, do not use `n` as a substitute for separate prompts. `n` is for variants of one prompt; distinct assets need distinct built-in calls or distinct CLI `generate-batch` jobs.
+
+Assume the user wants a new image unless they clearly ask to change an existing one.
+
+## Workflow
+1. Decide the top-level mode: built-in by default, including simple transparent-output requests; fallback CLI only if explicitly requested or after the user explicitly confirms a transparent-output fallback.
+2. Decide the intent: `generate` or `edit`.
+3. Decide whether the output is preview-only or meant to be consumed by the current project.
+4. Decide the execution strategy: single asset vs repeated built-in calls vs CLI `generate-batch`.
+5. Collect inputs up front: prompt(s), exact text (verbatim), constraints/avoid list, and any input images.
+6. For every input image, label its role explicitly:
+   - reference image
+   - edit target
+   - supporting insert/style/compositing input
+7. If the edit target is only on the local filesystem and you are staying on the built-in path, inspect it with `view_image` first so the image is available in conversation context.
+8. If the user asked for a photo, illustration, sprite, product image, banner, or other explicitly raster-style asset, use `image_gen` rather than substituting SVG/HTML/CSS placeholders. If the request is for an icon, logo, or UI graphic that should match existing repo-native SVG/vector/code assets, prefer editing those directly instead.
+9. Augment the prompt based on specificity:
+   - If the user's prompt is already specific and detailed, normalize it into a clear spec without adding creative requirements.
+   - If the user's prompt is generic, add tasteful augmentation only when it materially improves output quality.
+10. Use the built-in `image_gen` tool by default.
+11. For transparent-output requests, follow the transparent image guidance below: generate with built-in `image_gen` on a flat chroma-key background, copy the selected output into the workspace or `tmp/imagegen/`, run the installed `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py` helper, and validate the alpha result before using it. If this path looks unsuitable or fails, ask before switching to CLI `gpt-image-1.5`.
+12. Inspect outputs and validate: subject, style, composition, text accuracy, and invariants/avoid items.
+13. Iterate with a single targeted change, then re-check.
+14. For preview-only work, render the image inline; the underlying file may remain at the default `$CODEX_HOME/generated_images/...` path.
+15. For project-bound work, move or copy the selected artifact into the workspace and update any consuming code or references. Never leave a project-referenced asset only at the default `$CODEX_HOME/generated_images/...` path.
+16. For batches or multi-asset requests, persist every requested deliverable final in the workspace unless the user explicitly asked to keep outputs preview-only. Discarded variants do not need to be kept unless requested.
+17. If the user explicitly chooses or confirms the CLI fallback, then use the fallback-only docs for model, quality, size, `input_fidelity`, masks, output format, output paths, and network setup.
+18. Always report the final saved path(s) for any workspace-bound asset(s), plus the final prompt or prompt set and whether the built-in tool or fallback CLI mode was used.
+
+## Transparent image requests
+
+Transparent-image requests still use built-in `image_gen` first. Because the built-in tool does not expose a true transparent-background control, create a removable chroma-key source image and then convert the key color to alpha locally.
+
+Default sequence:
+1. Use built-in `image_gen` to generate the requested subject on a perfectly flat solid chroma-key background.
+2. Choose a key color that is unlikely to appear in the subject: default `#00ff00`, use `#ff00ff` for green subjects, and avoid `#0000ff` for blue subjects.
+3. After generation, move or copy the selected source image from `$CODEX_HOME/generated_images/...` into the workspace or `tmp/imagegen/`.
+4. Run the installed helper path, not a project-relative script path:
+   ```bash
+   python "${CODEX_HOME:-$HOME/.codex}/skills/.system/imagegen/scripts/remove_chroma_key.py" \
+     --input <source> \
+     --out <final.png> \
+     --auto-key border \
+     --soft-matte \
+     --transparent-threshold 12 \
+     --opaque-threshold 220 \
+     --despill
+   ```
+5. Validate that the output has an alpha channel, transparent corners, plausible subject coverage, and no obvious key-color fringe. If a thin fringe remains, retry once with `--edge-contract 1`; use `--edge-feather 0.25` only when the edge is visibly stair-stepped and the subject is not shiny or reflective.
+6. Save the final alpha PNG/WebP in the project if the asset is project-bound. Never leave a project-referenced transparent asset only under `$CODEX_HOME/*`.
+
+Prompt transparent requests like this:
+
+```text
+Create the requested subject on a perfectly flat solid #00ff00 chroma-key background for background removal.
+The background must be one uniform color with no shadows, gradients, texture, reflections, floor plane, or lighting variation.
+Keep the subject fully separated from the background with crisp edges and generous padding.
+Do not use #00ff00 anywhere in the subject.
+No cast shadow, no contact shadow, no reflection, no watermark, and no text unless explicitly requested.
+```
+
+Do not automatically use CLI `gpt-image-1.5 --background transparent --output-format png` instead of chroma keying. Ask the user first when the user asks for true/native transparency, when local removal fails validation, or when the requested image is complex: hair, fur, feathers, smoke, glass, liquids, translucent materials, reflective objects, soft shadows, realistic product grounding, or subject colors that conflict with all practical key colors.
+
+Use a concise confirmation like:
+
+```text
+This likely needs true native transparency. The default built-in path uses a chroma-key background plus local removal, but true transparency requires the CLI fallback with gpt-image-1.5 because gpt-image-2 does not support background=transparent. It also requires OPENAI_API_KEY. Should I proceed with that CLI fallback?
+```
+
+## Prompt augmentation
+
+Reformat user prompts into a structured, production-oriented spec. Make the user's goal clearer and more actionable, but do not blindly add detail.
+
+Treat this as prompt-shaping guidance, not a closed schema. Use only the lines that help, and add a short extra labeled line when it materially improves clarity.
+
+### Specificity policy
+
+Use the user's prompt specificity to decide how much augmentation is appropriate:
+
+- If the prompt is already specific and detailed, preserve that specificity and only normalize/structure it.
+- If the prompt is generic, you may add tasteful augmentation when it will materially improve the result.
+
+Allowed augmentations:
+- composition or framing hints
+- polish level or intended-use hints
+- practical layout guidance
+- reasonable scene concreteness that supports the stated request
+
+Not allowed augmentations:
+- extra characters or objects that are not implied by the request
+- brand names, slogans, palettes, or narrative beats that are not implied
+- arbitrary side-specific placement unless the surrounding layout supports it
+
+## Use-case taxonomy (exact slugs)
+
+Classify each request into one of these buckets and keep the slug consistent across prompts and references.
+
+Generate:
+- photorealistic-natural — candid/editorial lifestyle scenes with real texture and natural lighting.
+- product-mockup — product/packaging shots, catalog imagery, merch concepts.
+- ui-mockup — app/web interface mockups and wireframes; specify the desired fidelity.
+- infographic-diagram — diagrams/infographics with structured layout and text.
+- scientific-educational — classroom explainers, scientific diagrams, and learning visuals with required labels and accuracy constraints.
+- ads-marketing — campaign concepts and ad creatives with audience, brand position, scene, and exact tagline/copy.
+- productivity-visual — slide, chart, workflow, and data-heavy business visuals.
+- logo-brand — logo/mark exploration, vector-friendly.
+- illustration-story — comics, children’s book art, narrative scenes.
+- stylized-concept — style-driven concept art, 3D/stylized renders.
+- historical-scene — period-accurate/world-knowledge scenes.
+
+Edit:
+- text-localization — translate/replace in-image text, preserve layout.
+- identity-preserve — try-on, person-in-scene; lock face/body/pose.
+- precise-object-edit — remove/replace a specific element (including interior swaps).
+- lighting-weather — time-of-day/season/atmosphere changes only.
+- background-extraction — transparent background / clean cutout. Use built-in `image_gen` with chroma-key removal first for simple opaque subjects; ask before using CLI true transparency for complex subjects.
+- style-transfer — apply reference style while changing subject/scene.
+- compositing — multi-image insert/merge with matched lighting/perspective.
+- sketch-to-render — drawing/line art to photoreal render.
+
+## Shared prompt schema
+
+Use the following labeled spec as shared prompt scaffolding for both top-level modes:
+
+```text
+Use case: <taxonomy slug>
+Asset type: <where the asset will be used>
+Primary request: <user's main prompt>
+Input images: <Image 1: role; Image 2: role> (optional)
+Scene/backdrop: <environment>
+Subject: <main subject>
+Style/medium: <photo/illustration/3D/etc>
+Composition/framing: <wide/close/top-down; placement>
+Lighting/mood: <lighting + mood>
+Color palette: <palette notes>
+Materials/textures: <surface details>
+Text (verbatim): "<exact text>"
+Constraints: <must keep/must avoid>
+Avoid: <negative constraints>
+```
+
+Notes:
+- `Asset type` and `Input images` are prompt scaffolding, not dedicated CLI flags.
+- `Scene/backdrop` refers to the visual setting. It is not the same as the fallback CLI `background` parameter, which controls output transparency behavior.
+- Fallback-only execution notes such as `Quality:`, `Input fidelity:`, masks, output format, and output paths belong in the CLI path only. Do not treat them as built-in `image_gen` tool arguments.
+
+Augmentation rules:
+- Keep it short.
+- Add only the details needed to improve the prompt materially.
+- For edits, explicitly list invariants (`change only X; keep Y unchanged`).
+- If any critical detail is missing and blocks success, ask a question; otherwise proceed.
+
+exec
+/bin/zsh -lc "sed -n '241,520p' /Users/sospedra/.codex/skills/.system/imagegen/SKILL.md" in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r6-j1
+ succeeded in 0ms:
+
+## Examples
+
+### Generation example (hero image)
+```text
+Use case: product-mockup
+Asset type: landing page hero
+Primary request: a minimal hero image of a ceramic coffee mug
+Style/medium: clean product photography
+Composition/framing: wide composition with usable negative space for page copy if needed
+Lighting/mood: soft studio lighting
+Constraints: no logos, no text, no watermark
+```
+
+### Edit example (invariants)
+```text
+Use case: precise-object-edit
+Asset type: product photo background replacement
+Primary request: replace only the background with a warm sunset gradient
+Constraints: change only the background; keep the product and its edges unchanged; no text; no watermark
+```
+
+## Prompting best practices
+- Structure prompt as scene/backdrop -> subject -> details -> constraints.
+- Include intended use (ad, UI mock, infographic) to set the mode and polish level.
+- Use camera/composition language for photorealism.
+- Only use SVG/vector stand-ins when the user explicitly asked for vector output or a non-image placeholder.
+- Quote exact text and specify typography + placement.
+- For tricky words, spell them letter-by-letter and require verbatim rendering.
+- For multi-image inputs, reference images by index and describe how they should be used.
+- For edits, repeat invariants every iteration to reduce drift.
+- Iterate with single-change follow-ups.
+- If the prompt is generic, add only the extra detail that will materially help.
+- If the prompt is already detailed, normalize it instead of expanding it.
+- For CLI fallback only, see `references/cli.md` and `references/image-api.md` for model, `quality`, `input_fidelity`, masks, output format, and output-path guidance.
+- For transparent images, use the built-in-first chroma-key workflow unless the request is complex enough to need true CLI transparency; ask before switching to CLI `gpt-image-1.5`.
+
+More principles shared by both modes: `references/prompting.md`.
+Copy/paste specs shared by both modes: `references/sample-prompts.md`.
+
+## Guidance by asset type
+Asset-type templates (website assets, game assets, wireframes, logo) are consolidated in `references/sample-prompts.md`.
+
+## gpt-image-2 guidance for CLI fallback
+
+The fallback CLI defaults to `gpt-image-2`.
+
+- Use `gpt-image-2` for new CLI/API workflows unless the request needs true model-native transparent output.
+- If a transparent request may need CLI fallback, ask before using `gpt-image-1.5` unless the user already explicitly requested `gpt-image-1.5`, `scripts/image_gen.py`, or CLI fallback. Explain that the built-in chroma-key path is the default, but true transparency requires `gpt-image-1.5` because `gpt-image-2` does not support `background=transparent`.
+- `gpt-image-2` always uses high fidelity for image inputs; do not set `input_fidelity` with this model.
+- `gpt-image-2` supports `quality` values `low`, `medium`, `high`, and `auto`.
+- Use `quality low` for fast drafts, thumbnails, and quick iterations. Use `medium`, `high`, or `auto` for final assets, dense text, diagrams, identity-sensitive edits, or high-resolution outputs.
+- Square images are typically fastest to generate. Use `1024x1024` for fast square drafts.
+- If the user asks for 4K-style output, use `3840x2160` for landscape or `2160x3840` for portrait.
+- `gpt-image-2` size may be `auto` or `WIDTHxHEIGHT` if all constraints hold: max edge `<= 3840px`, both edges multiples of `16px`, long-to-short ratio `<= 3:1`, total pixels between `655,360` and `8,294,400`.
+
+Popular `gpt-image-2` sizes:
+- `1024x1024` square
+- `1536x1024` landscape
+- `1024x1536` portrait
+- `2048x2048` 2K square
+- `2048x1152` 2K landscape
+- `3840x2160` 4K landscape
+- `2160x3840` 4K portrait
+- `auto`
+
+## Fallback CLI mode only
+
+### Temp and output conventions
+These conventions apply only to the CLI fallback. They do not describe built-in `image_gen` output behavior.
+- Use `tmp/imagegen/` for intermediate files (for example JSONL batches); delete them when done.
+- Write final artifacts under `output/imagegen/`.
+- Use `--out` or `--out-dir` to control output paths; keep filenames stable and descriptive.
+
+### Dependencies
+Prefer `uv` for dependency management in this repo.
+
+Required Python package:
+```bash
+uv pip install openai
+```
+
+Required for local chroma-key removal and optional downscaling:
+```bash
+uv pip install pillow
+```
+
+Portability note:
+- If you are using the installed skill outside this repo, install dependencies into that environment with its package manager.
+- In uv-managed environments, `uv pip install ...` remains the preferred path.
+
+### Environment
+- `OPENAI_API_KEY` must be set for live API calls.
+- Do not ask the user for `OPENAI_API_KEY` when using the built-in `image_gen` tool.
+- Never ask the user to paste the full key in chat. Ask them to set it locally and confirm when ready.
+
+If the key is missing, give the user these steps:
+1. Create an API key in the OpenAI platform UI: https://platform.openai.com/api-keys
+2. Set `OPENAI_API_KEY` as an environment variable in their system.
+3. Offer to guide them through setting the environment variable for their OS/shell if needed.
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it into their active environment.
+
+### Script-mode notes
+- CLI commands + examples: `references/cli.md`
+- API parameter quick reference: `references/image-api.md`
+- Network approvals / sandbox settings for CLI mode: `references/codex-network.md`
+
+## Reference map
+- `references/prompting.md`: shared prompting principles for both modes.
+- `references/sample-prompts.md`: shared copy/paste prompt recipes for both modes.
+- `references/cli.md`: fallback-only CLI usage via `scripts/image_gen.py`.
+- `references/image-api.md`: fallback-only API/CLI parameter reference.
+- `references/codex-network.md`: fallback-only network/sandbox troubleshooting for CLI mode.
+- `scripts/image_gen.py`: fallback-only CLI implementation. Do not load or use it unless the user explicitly chooses CLI mode or explicitly confirms a transparent request's true CLI transparency fallback.
+- `$CODEX_HOME/skills/.system/imagegen/scripts/remove_chroma_key.py`: local post-processing helper for built-in transparent-image requests.
+
+codex
+References understood. New master only. Image 1 camera geometry. Image 2 paint/camera. Image 3 depth/layout/keeper. Image 4 stepped silhouette only. Generating now.
+codex
+Render returned. Checking pixel dimensions now. If 1536×1024, exact byte copy. No repaint. No processing.
+exec
+/bin/zsh -lc 'sips -g pixelWidth -g pixelHeight /Users/sospedra/.codex/generated_images/019fd706-47db-76e3-8fc0-3d332fb3c8c2/exec-ea99caca-4565-48ba-9323-36950dc7475c.png' in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r6-j1
+ succeeded in 0ms:
+/Users/sospedra/.codex/generated_images/019fd706-47db-76e3-8fc0-3d332fb3c8c2/exec-ea99caca-4565-48ba-9323-36950dc7475c.png
+  pixelWidth: 1536
+  pixelHeight: 1024
+
+exec
+/bin/zsh -lc 'cp /Users/sospedra/.codex/generated_images/019fd706-47db-76e3-8fc0-3d332fb3c8c2/exec-ea99caca-4565-48ba-9323-36950dc7475c.png /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r6-j1/gen-scavenger-master.png' in /Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r6-j1
+ succeeded in 0ms:
+codex
+GENERATED=/Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r6-j1/gen-scavenger-master.png
+tokens used
+50.888
+GENERATED=/Users/sospedra/labs/sospedra.me/tmp/bazaar-scavenger/jobs/r6-j1/gen-scavenger-master.png

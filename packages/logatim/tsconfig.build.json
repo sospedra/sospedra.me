@@ -1,0 +1,12 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "noEmit": false,
+    "outDir": "dist",
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": ["src"]
+}

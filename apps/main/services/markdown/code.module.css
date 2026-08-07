@@ -131,6 +131,22 @@
   counter-reset: code-line;
 }
 
+/* the fullscreen copy fills the takeover stage; the stage owns the scroll,
+   and the portal leaves .frame so the gutter variable rides along */
+.viewerSource.viewerSource {
+  --code-gutter: 3.5rem;
+  min-width: 100%;
+  min-height: 100%;
+  padding: 1.5rem 0 2rem;
+  overflow: visible;
+  background-color: #100d1a;
+}
+
+.viewerSource.viewerSource > code {
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
 .source :global(.line)::before {
   position: absolute;
   left: 0;

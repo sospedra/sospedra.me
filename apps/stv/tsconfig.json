@@ -1,0 +1,21 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "incremental": true,
+    "jsx": "react-jsx",
+    "target": "ES2017",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "exclude": ["node_modules"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ]
+}

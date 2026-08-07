@@ -3,7 +3,7 @@
   "tasks": {
     "build": {
       "cache": false,
-      "env": ["MERIDIAN_PUBLICATION_DATE", "VERCEL_ENV"]
+      "env": ["MERIDIAN_PUBLICATION_DATE", "SOURCE_URL", "VERCEL_ENV"]
     },
     "dev": {
       "cache": false,

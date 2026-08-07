@@ -1,0 +1,38 @@
+{
+  "name": "logatim",
+  "version": "2.0.0",
+  "description": "Isomorphic logger which implements log levels and ANSI styles",
+  "type": "module",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sospedra/sospedra.me.git",
+    "directory": "packages/logatim"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/fix-dts.ts",
+    "prepublishOnly": "pnpm build",
+    "lint": "biome check .",
+    "test": "node --test test/levels.test.ts test/logs.test.ts test/styles.test.ts",
+    "typecheck": "tsc"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

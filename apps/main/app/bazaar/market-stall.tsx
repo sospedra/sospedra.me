@@ -237,6 +237,7 @@ export default function Stall({ id }: { id: BazaarStallId }) {
         url={spec.href}
       >
         <SceneStall id={id} active={active} />
+        {id === 'scavenger' && <span className={scene.scavEyes} aria-hidden />}
         <div className={scene.glowWash} />
       </Link>
       <HostDecor host={`stall:${id}`} />

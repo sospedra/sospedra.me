@@ -3,95 +3,88 @@
     "title": "Workstation",
     "items": [
       {
-        "title": "13'' MacBook Pro, 3.1ghz dual-core i7, 16GB of RAM, Intel Iris 5100 (2014)",
-        "url": "https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i7-3.0-13-mid-2014-retina-display-specs.html",
+        "title": "14'' MacBook Pro, M5 Pro, 48GB of RAM, 1TB (2026)",
+        "url": "https://support.apple.com/en-us/126318",
         "slot": "laptop",
-        "verdict": "fine",
-        "description": "Are there newer MBPs? Yes. Do I need one? No. Plus the horrendous butterfly keyboard: Apple is finally killing it, but not yet on the 13''. And I don't consider anything bigger than that."
+        "verdict": "buy",
+        "description": "Silent under load. All-day battery. 48GB of RAM runs agents, dev servers and the browser at once."
       },
       {
-        "title": "Dell Ultrasharp U2415 24''",
-        "url": "https://www.amazon.com/dp/B00NZTKOQI/",
+        "title": "Dell S2722QC 27'' 4K USB-C",
+        "url": "https://www.dell.com/en-us/shop/dell-27-4k-uhd-usb-c-monitor-s2722qc/apd/210-bbqt/monitors-monitor-accessories",
         "slot": "display",
         "verdict": "buy",
-        "description": "Outstanding price-quality ratio. Rotates to vertical. That pays off on code reviews."
+        "description": "4K text at 27 inches. A single USB-C cable carries video and charges the laptop. Clean desk."
       },
       {
-        "title": "Das Keyboard 4C TKL",
-        "url": "https://www.daskeyboard.com/daskeyboard-4C-tkl/",
+        "title": "BONTEC monitor arm",
+        "url": "https://www.amazon.es/dp/B01MZ70QJB",
+        "slot": "arm",
+        "verdict": "cheap",
+        "description": "The monitor floats and the desk clears. Any brand holds 10 kg. Buy the cheap one."
+      },
+      {
+        "title": "Apple Magic Keyboard with Touch ID",
+        "url": "https://www.apple.com/shop/product/mxck3ll/a/magic-keyboard-with-touch-id-for-mac-models-with-apple-silicon-usb-c-us-english",
         "slot": "keyboard",
-        "verdict": "goat",
-        "description": "German-made mechanical keyboard, 87-key layout of pure excellence. Cherry MX Blue, for a noisy typing experience. The best wired mechanical keyboard on the market."
+        "verdict": "buy",
+        "description": "Touch ID is the purchase: sudo, the password vault and the App Store on one fingerprint. The typing itself is fine."
       },
       {
-        "title": "Ergonomic vertical mouse",
-        "url": "https://www.amazon.com/dp/B00BIFNTMC",
+        "title": "Keychron M5 Wireless Ergonomic Mouse",
+        "url": "https://www.keychron.com/products/keychron-m5-wireless-ergonomic-mouse?variant=42257163452505",
         "slot": "mouse",
-        "verdict": "cheap",
-        "description": "All vertical mice are the same. Don't waste money on an expensive one. The accessory worth real money is the keyboard."
+        "verdict": "buy",
+        "description": "Vertical enough to spare the wrist, normal enough to aim. Quiet clicks and 8K polling."
       },
       {
-        "title": "Razer Kiyo camera",
-        "url": "https://www.razer.com/eu-en/gaming-broadcaster/razer-kiyo",
+        "title": "iPhone 17 Pro + Belkin MagSafe mount",
+        "url": "https://www.apple.com/shop/product/hq642zm/a/belkin-iphone-mount-with-magsafe-for-mac-notebooks",
         "slot": "camera",
-        "verdict": "cheap",
-        "description": "Meets the minimum specs for high-quality streaming: the best out of the cheapest. The ring light and the USB power gave me some trouble. Nothing horrible, a bit cumbersome."
+        "verdict": "goat",
+        "description": "The best webcam Apple sells is the phone. The Belkin clip snaps it to the lid, and Continuity Camera does the rest."
       },
       {
-        "title": "HyperX Cloud MIX",
-        "url": "https://www.hyperxgaming.com/us/headsets/cloud-mix-wired-gaming-headset-with-bluetooth",
-        "slot": "headset",
-        "verdict": "buy",
-        "description": "Before you judge me: there are as many headsets as people nowadays. It's madness. The Cloud MIX fits my requirements per-fect-ly. One headset for gaming and working. Great for music, great bass, fast Bluetooth. And superior for gaming: they're made for that. Worth every single penny."
-      },
-      {
-        "title": "RØDE NT microphone",
-        "url": "http://www.rode.com/microphones/nt-usb",
-        "slot": "mic",
-        "verdict": "buy",
-        "description": "It's this one or the Blue Yeti. Both are USB, so no music-nerd setup required. Plug in and enjoy almost-studio quality on your video calls."
-      },
-      {
-        "title": "Airpods (1st Gen)",
-        "url": "https://www.apple.com/airpods-2nd-generation/",
+        "title": "AirPods Pro 2",
+        "url": "https://support.apple.com/en-us/111851",
         "slot": "earbuds",
-        "verdict": "cheap",
-        "description": "Bought second hand in 2020. I only need an unobtrusive headset for on-the-go calls. Others sound better. None mic better."
+        "verdict": "buy",
+        "description": "The noise cancellation erases an open office. Others sound better. None mic better."
       },
       {
-        "title": "Cyxus Ayanna glasses",
-        "url": "https://www.cyxus.com/collections/men-glasses/products/anti-blue-light-blocking-retro-round-lightweight-computer-glasses-for-men-women-8090-metal-clear-lenses?variant=9091052961839",
+        "title": "Firmoo glasses",
+        "url": "https://www.firmoo.es/eyeglasses-p-6287.html?color=15848&sublink=5399&is_package=5399",
         "slot": "glasses",
         "verdict": "cheap",
-        "description": "I wore blue-filter glasses before they were a thing. My first pair were Gunnar Onyx: best brand, expensive as hell. Then I learned how the tech works. Now I don't spend more than 30 bucks, and neither should you."
+        "description": "Blue-filter glasses are commodity optics. These are ten euros, made to prescription. Never pay boutique prices for a coating."
       },
       {
-        "title": "Electric sit/stand desk",
-        "url": "https://www.amazon.com/dp/B082DG2LQD",
+        "title": "IKEA BEKANT (custom firmware)",
+        "url": "https://github.com/ivanwick/bekantfirmware",
         "slot": "desk",
-        "verdict": "cheap",
-        "description": "For a normal-sized table one motor is enough, and any brand works the same. But buy electric. I had a manual one and you end up never changing modes."
+        "verdict": "buy",
+        "description": "Stock firmware moves the desk only during a button hold. I reflashed the PIC16LF1938: one press now travels to a saved height."
       },
       {
         "title": "Interstuhl UPis1 100U",
-        "url": "https://www.interstuhl.com/I/es-es/modelle.php?modell=100U",
+        "url": "https://www.interstuhl.com/I/us-en/modelle.php?modell=100U",
         "slot": "stool",
         "verdict": "goat",
-        "description": "Hands down, this removes lower back pain. It's a stool with a rounded base, so you stabilize yourself all the time. Height is a non-issue with the desk above."
+        "description": "Hands down, this removes lower back pain. It is a stool with a rounded base, so you stabilize yourself all the time. Height is a non-issue with the desk above."
       },
       {
-        "title": "Eames plastic chair",
-        "url": "https://www.vitra.com/product/eames-plastic-chair",
+        "title": "IKEA ALEFJÄLL, Grann beige",
+        "url": "https://www.ikea.com/es/en/p/alefjall-office-chair-grann-beige-50308686/",
         "slot": "chair",
-        "verdict": "goat",
-        "description": "Best chair ever. Worth it for historical reasons alone: this chair changed the world. Read up on Eames design."
+        "verdict": "buy",
+        "description": "Real grain leather, adjustable everything, a ten year guarantee, an IKEA price. The back holds eight hours without complaint. Beige: a desk chair does not need to look like a cockpit."
       },
       {
-        "title": "Standing desk mat",
-        "url": "https://www.amazon.com/dp/B00V3TO9EK",
-        "slot": "mat",
-        "verdict": "cheap",
-        "description": "Stand long enough and your feet, hips and knees complain. A desk mat releases that stress. Any brand works."
+        "title": "DeltaHub Carpio 2.0",
+        "url": "https://deltahub.io/en-eu/products/carpio-ergonomic-wrist-rest?variant=43234756919462",
+        "slot": "wrist",
+        "verdict": "buy",
+        "description": "Gel pads press straight on the nerve. The Carpio lifts the wrist one centimeter and glides with the arm. A surgeon co-designed it."
       }
     ]
   },
@@ -99,18 +92,18 @@
     "title": "Editor + Terminal",
     "items": [
       {
-        "title": "VS Code",
-        "url": "https://code.visualstudio.com/",
+        "title": "Zed",
+        "url": "https://zed.dev/",
         "slot": "editor",
-        "verdict": "buy",
-        "description": "I was an Atom fanboy: plug-and-play, unlike Sublime. VS Code is Atom on steroids. It's built on TypeScript, so its TypeScript support is the best in town."
+        "verdict": "goat",
+        "description": "Rust and GPU rendering: the window opens before the hand leaves the keyboard. The agent panel is native. Open source."
       },
       {
-        "title": "Hyper",
-        "url": "https://hyper.is/",
+        "title": "iTerm2",
+        "url": "https://iterm2.com/",
         "slot": "terminal",
         "verdict": "fine",
-        "description": "There are many terminals out there. This one is TypeScript-based."
+        "description": "Split panes, instant replay, tmux integration. Fifteen years of releases and none broke anything. Boring, native, correct."
       },
       {
         "title": "Fish shell",
@@ -120,29 +113,50 @@
         "description": "The terminal is nice, but have you ever played with shells? This is the real deal. Fish is out of this world."
       },
       {
-        "title": "SynthWave '84 theme",
-        "url": "https://github.com/robb0wen/synthwave-vscode",
+        "title": "Rosé Pine theme",
+        "url": "https://rosepinetheme.com/",
         "slot": "theme",
         "verdict": "goat",
-        "description": "Of course. What did you expect? The freaking best theme EVER, period. It matches my vapor/retro aesthetic."
+        "description": "All natural pine, faux fur and a bit of soho vibes. Their words. 220 ports, so every window wears the same palette."
       },
       {
-        "title": "Menlo font (Bitstream Vera)",
-        "url": "https://en.wikipedia.org/wiki/Menlo_(typeface)",
+        "title": "Zed Mono (or Menlo)",
+        "url": "https://github.com/zed-industries/zed-fonts",
         "slot": "font",
         "verdict": "fine",
-        "description": "The monospace font that ships with the MacBook. Always favour the standards. Open-sourcerer? Try Bitstream Vera. Menlo descends from it."
+        "description": "Zed Mono ships with the editor, Menlo with the machine. Always favour the standards."
       },
       {
-        "title": "Brave Browser",
-        "url": "https://brave.com/",
+        "title": "Safari (+ Chrome for DevTools)",
+        "url": "https://www.apple.com/safari/",
         "slot": "browser",
+        "verdict": "fine",
+        "description": "Safari for living: battery and Keychain. Chrome for work: DevTools is DevTools. Two browsers, two jobs."
+      },
+      {
+        "title": "Claude Code",
+        "url": "https://claude.com/product/claude-code",
+        "slot": "agent",
+        "verdict": "goat",
+        "description": "It reads the repo, runs the tests and writes the boring half. The terminal has a coworker now."
+      },
+      {
+        "title": "Codex CLI",
+        "url": "https://openai.com/codex/",
+        "slot": "adversary",
         "verdict": "buy",
-        "description": "Best UX. And one subtle developer superpower: block your analytics stack and watch your web break. It will. Believe me."
+        "description": "Claude writes, so a rival reviews. Codex gets the diff cold and one instruction: attack. If both agree, the code ships."
+      },
+      {
+        "title": "Apple Notes",
+        "url": "https://support.apple.com/guide/notes/welcome/mac",
+        "slot": "notes",
+        "verdict": "cheap",
+        "description": "No Notion, no Obsidian, as easy as that. One keystroke, automatic sync, text. Never pay for a notes app."
       },
       {
         "title": "dotfiles",
-        "url": "/serve?o=dotfiles",
+        "url": "https://github.com/sospedra/dotfiles",
         "slot": "config",
         "verdict": "goat",
         "description": "All my cool configs. Steal anything you want. My aliases are legendary."
@@ -153,53 +167,67 @@
     "title": "Desktop Apps",
     "items": [
       {
-        "title": "eqMac equalizer",
-        "url": "https://eqmac.app/",
-        "slot": "audio",
+        "title": "Apple everything",
+        "url": "https://www.apple.com/icloud/",
+        "slot": "ecosystem",
         "verdict": "buy",
-        "description": "How does Apple not include this by default? The missing audio setting. Huge kudos to the maintainers. The bass drops are extra juicy now."
+        "description": "I degoogled completely: Mail, Calendar, Passwords, iCloud, Music. Apple charges money and treats me as the customer, not the product."
       },
       {
-        "title": "Dropbox Paper",
-        "url": "https://www.dropbox.com/paper",
-        "slot": "notes",
-        "verdict": "buy",
-        "description": "Notion is great and has two flaws: my small brain can't handle all the options, and copy-pasting, the 101 of note-taking, is broken. A solid second place. Paper is just perfectly balanced."
-      },
-      {
-        "title": "Avast Password",
-        "url": "https://www.avast.com/passwords",
-        "slot": "vault",
-        "verdict": "cheap",
-        "description": "I know, weird. I don't know anyone else using it. But it covers everything I need for free: multiple devices, cross-platform, notes and cards, top-notch autofill."
-      },
-      {
-        "title": "1clipboard",
-        "url": "http://1clipboard.io/",
-        "slot": "clipboard",
+        "title": "Raycast",
+        "url": "https://www.raycast.com/",
+        "slot": "launcher",
         "verdict": "goat",
-        "description": "I can't live without this. Are you ok sharing your clipboard with Apple? I'm not. Long live the OSS!"
+        "description": "My beloved. Launcher, clipboard history, window tiling, unit math, one hotkey. Anything with an API becomes a keystroke."
       },
       {
-        "title": "Gifski",
-        "url": "https://sindresorhus.com/gifski",
-        "slot": "media",
-        "verdict": "buy",
-        "description": "GitHub doesn't allow mp4/avi/mov videos. It can't resize a gif for you either. It's just... I can't. Thanks, Sindre."
-      },
-      {
-        "title": "Kap",
-        "url": "https://sindresorhus.com/kap",
-        "slot": "capture",
-        "verdict": "buy",
-        "description": "Record anything on your screen, outstanding UX. Again: how is this not part of macOS? Again: thank you, Sindre."
-      },
-      {
-        "title": "Sketch",
-        "url": "https://www.sketch.com/",
+        "title": "Affinity",
+        "url": "https://affinity.studio/",
         "slot": "design",
         "verdict": "buy",
-        "description": "Brilliant piece of software. I found Sketch and designing felt fun again. All my assets are powered by it."
+        "description": "Vector, pixel and layout in one window. Canva bought it and made it free. Pro tools, no monthly toll."
+      },
+      {
+        "title": "Klack",
+        "url": "https://tryklack.com/",
+        "slot": "sound",
+        "verdict": "buy",
+        "description": "Every keypress gets a mechanical thock, in spatial audio. The Magic Keyboard sounds like switches now. Pocket change."
+      },
+      {
+        "title": "MonitorControl",
+        "url": "https://github.com/MonitorControl/MonitorControl",
+        "slot": "brightness",
+        "verdict": "goat",
+        "description": "The MacBook brightness keys drive the Dell over DDC. Free, open source, one menu bar icon. How does Apple not include this by default?"
+      },
+      {
+        "title": "Ghostery + Hush",
+        "url": "https://www.ghostery.com/",
+        "slot": "blocker",
+        "verdict": "cheap",
+        "description": "Ghostery strips the trackers. Hush strips the cookie banners in Safari. Both free. Never pay to un-break the web."
+      },
+      {
+        "title": "Yaak",
+        "url": "https://yaak.app/",
+        "slot": "api",
+        "verdict": "buy",
+        "description": "Postman grew a login wall and a sync cloud. Yaak sends requests: REST, GraphQL, gRPC, plain files under git. Local-first, MIT, zero telemetry."
+      },
+      {
+        "title": "QuickTime Player",
+        "url": "https://support.apple.com/guide/quicktime-player/welcome/mac",
+        "slot": "capture",
+        "verdict": "fine",
+        "description": "Screen recording ships with macOS: File, New Screen Recording, done. No watermark, no account, no extra app."
+      },
+      {
+        "title": "Qwant",
+        "url": "https://www.qwant.com/",
+        "slot": "search",
+        "verdict": "fine",
+        "description": "The degoogle ends at the search box. European, no ad profile. The results are good enough to forget about."
       }
     ]
   }

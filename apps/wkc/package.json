@@ -11,7 +11,7 @@
     "dev": "vite",
     "lint": "biome check .",
     "preview": "vite preview",
-    "test": "node --test test/hue.test.ts",
+    "test": "node --test test/signal.test.ts",
     "typecheck": "tsc"
   },
   "license": "ISC",

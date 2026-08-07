@@ -1,0 +1,30 @@
+{
+  "name": "clave",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "test": "node --test --experimental-strip-types test/*.test.ts",
+    "typecheck": "tsc",
+    "lint": "biome check .",
+    "ci:mutation": "node --experimental-strip-types scripts/mutation-gate.mts",
+    "reproduce": "node --experimental-strip-types scripts/reproduce.mts",
+    "cost": "node --experimental-strip-types scripts/cost-model.mts"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@noble/ciphers": "2.2.0",
+    "@noble/curves": "2.2.0",
+    "@noble/hashes": "2.2.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "@repo/biome-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}
