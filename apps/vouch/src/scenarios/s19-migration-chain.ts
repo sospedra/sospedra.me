@@ -128,7 +128,7 @@ function chainAdvanceStep(
     actor: 'client',
     kind: 'object',
     label:
-      "the client's migration walk recomputes chainNext(previous, v2, v2Id, activation) and finds it matches the journal's own programChainHash exactly",
+      "the client's migration walk recomputes chainNext(previous, migration), the digest of the presented migration object, and finds it matches the journal's own programChainHash exactly",
     objects: [
       obj('chain-advance', 'program-chain-hash', computed, {
         matchesJournal: String(hex(computed) === hex(journalChainHash)),
@@ -265,7 +265,7 @@ function run(): Trace {
     checks: result.checks,
     verdict: {
       kind: 'ACCEPT',
-      note: `the client walks the chain across the era change: transitions are continuous from genesis, chainNext(previous, v2, v2Id, ${migration.activationSequence}) matches the sealed journal's own programChainHash, and the post-migration query proves get-balance(bob) = ${creditedBalance}, crediting the transfer at the v2 ceiling fee (${ceilFeeBp(BOUNDARY_TRANSFER_AMOUNT, GENESIS_FEE_BP)}), not the v1 floor (${floorFeeBp(BOUNDARY_TRANSFER_AMOUNT, GENESIS_FEE_BP)}) -- the migration's manifest hash and governance authorization are committed and covered by the chain digest this walk checks`,
+      note: `the client walks the chain across the era change: transitions are continuous from genesis, chainNext(previous, migration) over the full migration object matches the sealed journal's own programChainHash, and the post-migration query proves get-balance(bob) = ${creditedBalance}, crediting the transfer at the v2 ceiling fee (${ceilFeeBp(BOUNDARY_TRANSFER_AMOUNT, GENESIS_FEE_BP)}), not the v1 floor (${floorFeeBp(BOUNDARY_TRANSFER_AMOUNT, GENESIS_FEE_BP)}) -- the migration's manifest hash and governance authorization are committed and covered by the chain digest this walk checks`,
     },
   }
 }
