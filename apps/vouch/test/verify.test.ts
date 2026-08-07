@@ -10,7 +10,12 @@ import {
   PROTOCOL_VERSION,
   ZERO32,
 } from '../src/protocol/constants.ts'
-import { buildGenesis, GENESIS_ROOT } from '../src/protocol/genesis.ts'
+import {
+  buildGenesis,
+  GENESIS_ROOT,
+  seqRecords,
+  type World,
+} from '../src/protocol/genesis.ts'
 import { hash } from '../src/protocol/hash.ts'
 import {
   encodeLatestHead,
@@ -18,7 +23,8 @@ import {
   headSigningInput,
   type LatestHeadV1,
 } from '../src/protocol/head.ts'
-import { sign } from '../src/protocol/keys.ts'
+import { keypairFromLabel, sign } from '../src/protocol/keys.ts'
+import { encodeOpenAccount, OP } from '../src/protocol/ops.ts'
 import {
   decodeMigration,
   encodeMigration,
@@ -32,16 +38,29 @@ import {
   receiptSigningInput,
 } from '../src/protocol/receipt.ts'
 import {
+  CHAIN_KEY,
+  encodeReceiptKeyV1,
+  MIGRATION_KEY,
+  receiptKeyKey,
+  SEQUENCE_KEY,
+} from '../src/protocol/state.ts'
+import {
+  batchHash,
   decodeTransitionJournal,
   encodeTransitionJournal,
   encodeTransparentTransitionProof,
   proveBatch,
+  type TransitionJournalV1,
 } from '../src/protocol/transition.ts'
 import { genesisTrust } from '../src/protocol/trust.ts'
 import type { VerifyErrorCode, VerifyResult } from '../src/protocol/verify.ts'
 import { verifyBundle } from '../src/protocol/verify.ts'
 import type { AccessV1 } from '../src/protocol/view.ts'
-import { HONEST_ISSUED_AT_MS, makeHonestBundle } from './helpers.ts'
+import {
+  HONEST_ISSUED_AT_MS,
+  type HonestBundleResult,
+  makeHonestBundle,
+} from './helpers.ts'
 
 function flipByte(bytes: Uint8Array): Uint8Array {
   const copy = bytes.slice()
@@ -76,6 +95,63 @@ function reencodeReceipt(
   const receiptBytes = encodeQueryReceipt(receipt)
   const signature = sign(receiptSigningInput(receiptBytes), signerLabel)
   return { receiptBytes, signature }
+}
+
+function assertRule(result: VerifyResult, rule: string): void {
+  assert.equal(result.ok, false)
+  if (result.ok) return
+  assert.equal(result.rule, rule)
+}
+
+function verifyTampered(
+  honest: HonestBundleResult,
+  bundle: ResponseBundle,
+): VerifyResult {
+  return verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: encodeBundle(bundle),
+    trust: honest.trust,
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+}
+
+type DoctoredReceiptKey = { witness: AccessV1; stateRoot: Uint8Array }
+
+function doctorReceiptKey(world: World, value: Uint8Array): DoctoredReceiptKey {
+  const key = receiptKeyKey(world.receiptKey.publicKey)
+  const doctored = world.tree.clone()
+  doctored.set(key, value)
+  return {
+    witness: {
+      op: 1,
+      key,
+      value: doctored.get(key),
+      witness: doctored.witness(key),
+    },
+    stateRoot: doctored.root(),
+  }
+}
+
+function rebindReceiptKey(
+  honest: HonestBundleResult,
+  doctored: DoctoredReceiptKey,
+): ResponseBundle {
+  const forged: QueryReceiptV1 = {
+    ...honest.receipt,
+    stateRoot: doctored.stateRoot,
+  }
+  const { receiptBytes, signature } = reencodeReceipt(
+    forged,
+    honest.world.receiptKey,
+  )
+  return {
+    ...honest.bundle,
+    receipt: receiptBytes,
+    receiptSignature: signature,
+    receiptKeyWitness: doctored.witness,
+  }
 }
 
 test('honest bundle verifies end to end', () => {
@@ -732,6 +808,304 @@ test('decodeBundle round trips an encoded bundle', () => {
 test('decodeQueryReceipt round trips an encoded receipt', () => {
   const honest = makeHonestBundle(buildGenesis())
   assert.deepEqual(decodeQueryReceipt(honest.bundle.receipt), honest.receipt)
+})
+
+test('a receipt-key witness carrying a set access instead of a read is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis())
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    receiptKeyWitness: {
+      ...honest.bundle.receiptKeyWitness,
+      op: 2,
+      value: null,
+    },
+  })
+
+  assertFailsAtStep(result, 4, 'INVALID_PROOF')
+  assertRule(result, 'receipt-key-op')
+})
+
+test('a receipt-key witness proving some other key is rejected', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const otherKey = receiptKeyKey(world.authors.alice.publicKey)
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    receiptKeyWitness: {
+      op: 1,
+      key: otherKey,
+      value: world.tree.get(otherKey),
+      witness: world.tree.witness(otherKey),
+    },
+  })
+
+  assertFailsAtStep(result, 4, 'INVALID_PROOF')
+  assertRule(result, 'receipt-key-target')
+})
+
+test('a receipt naming a key the state never authorized is rejected', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const stranger = keypairFromLabel('receipt-stranger')
+  const forged: QueryReceiptV1 = {
+    ...honest.receipt,
+    receiptKeyId: stranger.publicKey,
+  }
+  const { receiptBytes, signature } = reencodeReceipt(forged, stranger)
+  const strangerKey = receiptKeyKey(stranger.publicKey)
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    receipt: receiptBytes,
+    receiptSignature: signature,
+    receiptKeyWitness: {
+      op: 1,
+      key: strangerKey,
+      value: world.tree.get(strangerKey),
+      witness: world.tree.witness(strangerKey),
+    },
+  })
+
+  assertFailsAtStep(result, 4, 'UNAUTHORIZED_KEY')
+  assertRule(result, 'receipt-key-absent')
+})
+
+test('a witnessed receipt-key record that does not decode is rejected', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const doctored = doctorReceiptKey(world, new Uint8Array([0xff]))
+
+  const result = verifyTampered(honest, rebindReceiptKey(honest, doctored))
+
+  assertFailsAtStep(result, 4, 'MALFORMED_CANONICAL_OBJECT')
+  assertRule(result, 'receipt-key-decode')
+})
+
+test('a receipt-key authorized only after the proven sequence is rejected', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const doctored = doctorReceiptKey(
+    world,
+    encodeReceiptKeyV1({
+      status: 1,
+      sinceSequence: honest.receipt.stateSequence + 1n,
+    }),
+  )
+
+  const result = verifyTampered(honest, rebindReceiptKey(honest, doctored))
+
+  assertFailsAtStep(result, 4, 'UNAUTHORIZED_KEY')
+  assertRule(result, 'receipt-key-since')
+})
+
+test('an undecodable query proof is rejected at step 12', () => {
+  const honest = makeHonestBundle(buildGenesis())
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    queryProof: new Uint8Array([7, 7, 7]),
+  })
+
+  assertFailsAtStep(result, 12, 'INVALID_PROOF')
+  assertRule(result, 'query-proof-decode')
+})
+
+test('an undecodable transition segment is rejected at step 14', () => {
+  const honest = makeHonestBundle(buildGenesis())
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    transitions: [new Uint8Array([7, 7, 7])],
+  })
+
+  assertFailsAtStep(result, 14, 'INVALID_PROOF')
+  assertRule(result, 'transition-decode')
+})
+
+test('a trust sequence that disagrees with the trust root breaks the segment link', () => {
+  const honest = makeHonestBundle(buildGenesis())
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: honest.bundleBytes,
+    trust: { ...honest.trust, highestSequence: 1n },
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assertFailsAtStep(result, 14, 'INVALID_PROOF')
+  assertRule(result, 'continuity')
+})
+
+test('an era change with no migration attached is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis(), { migrateToV2: true })
+
+  const result = verifyTampered(honest, { ...honest.bundle, migrations: [] })
+
+  assertFailsAtStep(result, 15, 'INVALID_PROGRAM_CHAIN')
+  assertRule(result, 'migration-missing')
+})
+
+test('an era change backed by an undecodable migration is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis(), { migrateToV2: true })
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    migrations: [new Uint8Array([7, 7, 7])],
+  })
+
+  assertFailsAtStep(result, 15, 'INVALID_PROGRAM_CHAIN')
+  assertRule(result, 'migration-decode')
+})
+
+test('a migration whose next update program is not the one the era ran is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis(), { migrateToV2: true })
+  const migration = decodeMigration(honest.bundle.migrations[0])
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    migrations: [
+      encodeMigration({ ...migration, nextUpdateProgramId: PROGRAM.updateV1 }),
+    ],
+  })
+
+  assertFailsAtStep(result, 15, 'INVALID_PROGRAM_CHAIN')
+  assertRule(result, 'migration-update-id')
+})
+
+test('a migration whose next query program is not the one the era ran is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis(), { migrateToV2: true })
+  const migration = decodeMigration(honest.bundle.migrations[0])
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    migrations: [
+      encodeMigration({ ...migration, nextQueryProgramId: PROGRAM.queryV1 }),
+    ],
+  })
+
+  assertFailsAtStep(result, 15, 'INVALID_PROGRAM_CHAIN')
+  assertRule(result, 'migration-query-id')
+})
+
+test('a tampered head signature is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const headSignature = honest.bundle.latestHeadSignature
+  assert.ok(headSignature)
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    latestHeadSignature: flipByte(headSignature),
+  })
+
+  assertFailsAtStep(result, 16, 'INVALID_SIGNATURE')
+  assertRule(result, 'head-signature')
+})
+
+test('a head signed by a key other than the receipt key is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const stranger = keypairFromLabel('head-stranger')
+  const headId: HeadIdV1 = {
+    sequence: honest.receipt.stateSequence,
+    stateRoot: honest.receipt.stateRoot,
+    updateProgramId: PROGRAM.updateV1,
+    queryProgramId: honest.receipt.queryProgramId,
+    programChainHash: honest.receipt.programChainHash,
+  }
+  const strangerHead: LatestHeadV1 = {
+    head: headId,
+    latestAsOfMs: HONEST_ISSUED_AT_MS,
+    headKeyId: stranger.publicKey,
+  }
+  const headBytes = encodeLatestHead(strangerHead)
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    latestHead: headBytes,
+    latestHeadSignature: sign(headSigningInput(headBytes), stranger),
+  })
+
+  assertFailsAtStep(result, 16, 'UNAUTHORIZED_KEY')
+  assertRule(result, 'head-key-era')
+})
+
+test('requireFreshHead true with no attached head is STALE_HEAD', () => {
+  const honest = makeHonestBundle(buildGenesis(), { includeHead: false })
+
+  const result = verifyTampered(honest, honest.bundle)
+
+  assertFailsAtStep(result, 16, 'STALE_HEAD')
+  assertRule(result, 'head-absent')
+})
+
+test('an undecodable latest head is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const headSignature = honest.bundle.latestHeadSignature
+  assert.ok(headSignature)
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    latestHead: new Uint8Array([7, 7, 7]),
+    latestHeadSignature: headSignature,
+  })
+
+  assertFailsAtStep(result, 16, 'MALFORMED_CANONICAL_OBJECT')
+  assertRule(result, 'head-decode')
+})
+
+test('a proof over undecodable witnessed state fails typed, not MALFORMED_TRANSPORT', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const doctored = buildGenesis()
+  doctored.tree.set(MIGRATION_KEY, new Uint8Array([0xff]))
+  const records = seqRecords(doctored, [
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'carol', initialBalance: 0n }),
+    ],
+  ])
+  const startRoot = doctored.tree.root()
+  const readAccess = (key: Uint8Array): AccessV1 => ({
+    op: 1,
+    key,
+    value: doctored.tree.get(key),
+    witness: doctored.tree.witness(key),
+  })
+  const journal: TransitionJournalV1 = {
+    startRoot,
+    endRoot: startRoot,
+    startSequence: 0n,
+    endSequence: 1n,
+    batchHash: batchHash(records),
+    updateProgramId: PROGRAM.updateV1,
+    activeQueryProgramId: PROGRAM.queryV1,
+    programChainHash: GENESIS_CHAIN,
+  }
+  const segment = encodeTransparentTransitionProof({
+    journal: encodeTransitionJournal(journal),
+    records,
+    accesses: [
+      readAccess(SEQUENCE_KEY),
+      readAccess(SEQUENCE_KEY),
+      readAccess(CHAIN_KEY),
+      readAccess(MIGRATION_KEY),
+    ],
+  })
+
+  const result = verifyBundle({
+    expectedRequest: honest.expectedRequest,
+    expectedNonce: honest.expectedNonce,
+    bundleBytes: encodeBundle({ ...honest.bundle, transitions: [segment] }),
+    trust: { ...honest.trust, acceptedRoot: startRoot },
+    nowMs: honest.nowMs,
+    requireFreshHead: true,
+  })
+
+  assertFailsAtStep(result, 14, 'INVALID_PROOF')
+  assertRule(result, 'unexpected')
 })
 
 test('the accepted trust state binds the proven receipt-key record', () => {

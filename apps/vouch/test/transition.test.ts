@@ -43,7 +43,10 @@ import {
   decodeChainStateV1,
   decodePendingMigrationV1,
   encodeConfig,
+  encodePendingMigrationV1,
+  encodeSequenceV1,
   MIGRATION_KEY,
+  SEQUENCE_KEY,
 } from '../src/protocol/state.ts'
 import {
   decodeTransitionJournal,
@@ -790,6 +793,54 @@ test('encodeAccess rejects a present value on a set access', () => {
   }
 
   assert.throws(() => encodeAccess(setAccess), RangeError)
+})
+
+test('a plain author cannot commit a migration', () => {
+  const w = buildGenesis()
+  const migration: ProgramMigrationV1 = {
+    nextUpdateProgramId: PROGRAM.updateV2,
+    nextQueryProgramId: PROGRAM.queryV2,
+    nextProgramManifestHash: ZERO32,
+    activationSequence: 1n + TIMELOCK_MIGRATION_MIN,
+    governanceAuthorization: new Uint8Array(0),
+  }
+  const records = seqRecords(w, [
+    ['alice', OP.COMMIT_MIGRATION, encodeMigration(migration)],
+  ])
+
+  assert.throws(() => proveBatch(w.tree, records, PROGRAM.updateV1), {
+    rule: 'operation-not-permitted',
+  })
+})
+
+test('the old update program cannot apply a record past the activation sequence', () => {
+  const w = buildGenesis()
+  const migration: ProgramMigrationV1 = {
+    nextUpdateProgramId: PROGRAM.updateV2,
+    nextQueryProgramId: PROGRAM.queryV2,
+    nextProgramManifestHash: ZERO32,
+    activationSequence: 1n,
+    governanceAuthorization: new Uint8Array(0),
+  }
+  w.tree.set(
+    MIGRATION_KEY,
+    encodePendingMigrationV1({
+      present: 1,
+      migration: encodeMigration(migration),
+    }),
+  )
+  w.tree.set(SEQUENCE_KEY, encodeSequenceV1({ value: 5n }))
+  const records = seqRecords(w, [
+    [
+      'alice',
+      OP.OPEN_ACCOUNT,
+      encodeOpenAccount({ accountId: 'carol', initialBalance: 0n }),
+    ],
+  ])
+
+  assert.throws(() => proveBatch(w.tree, records, PROGRAM.updateV1), {
+    rule: 'era-boundary',
+  })
 })
 
 test('decodeAccess rejects a present value smuggled onto a set access', () => {
