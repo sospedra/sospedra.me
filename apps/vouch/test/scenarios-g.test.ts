@@ -168,17 +168,17 @@ test('s19 the v2 ceiling fee differs from the v1 floor fee, and the actual credi
   assert.notEqual(actual, floor)
 })
 
-test('s19 trace discloses the manifest hash and governance authorization as committed but not chain-verified', () => {
+test('s19 trace discloses the manifest hash and governance authorization as committed and chain-verified', () => {
   const t = s19.run()
   const objects = t.steps.flatMap((s) => s.objects ?? [])
   const commitment = objects.find((o) => o.name === 'migration-commitment')
   assert.ok(commitment)
   assert.equal(
     commitment?.decoded.manifestHashCoverage,
-    'committed, not covered by chainNext',
+    'committed and covered by the chain digest',
   )
   assert.equal(
     commitment?.decoded.governanceAuthorizationCoverage,
-    'committed, not covered by chainNext',
+    'committed and covered by the chain digest',
   )
 })

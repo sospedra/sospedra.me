@@ -8,6 +8,13 @@ import {
 export const concat = (...parts: Uint8Array[]): Uint8Array =>
   concatBytes(...parts)
 
+export const u8be = (n: number): Uint8Array => {
+  if (!Number.isInteger(n) || n < 0 || n > 0xff) {
+    throw new RangeError(`u8be: ${n} is not a valid uint8`)
+  }
+  return Uint8Array.of(n)
+}
+
 export const u16be = (n: number): Uint8Array => {
   if (!Number.isInteger(n) || n < 0 || n > 0xffff) {
     throw new RangeError(`u16be: ${n} is not a valid uint16`)

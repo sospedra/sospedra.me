@@ -129,6 +129,9 @@ const DOMAIN_PRESENCE: Record<Domain, true> = {
   'proof-cache-key': true,
   'program-id': true,
   'scenario-fixture': true,
+  'program-migration': true,
+  'program-manifest-pair': true,
+  'key-state': true,
 }
 const DOMAINS = Object.keys(DOMAIN_PRESENCE) as Domain[]
 

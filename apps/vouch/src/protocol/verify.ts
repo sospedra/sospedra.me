@@ -539,12 +539,7 @@ function advanceEra(
       rule: 'migration-activation-sequence',
     }
   }
-  const expectedChainHash = chainNext(
-    position.era.chainHash,
-    migration.nextUpdateProgramId,
-    migration.nextQueryProgramId,
-    migration.activationSequence,
-  )
+  const expectedChainHash = chainNext(position.era.chainHash, migration)
   if (!bytesEqual(expectedChainHash, journal.programChainHash)) {
     return {
       ok: false,

@@ -30,6 +30,7 @@ import {
   encodeMigration,
   GENESIS_CHAIN,
   PROGRAM,
+  type ProgramMigrationV1,
 } from '../src/protocol/program.ts'
 import { Smt } from '../src/protocol/smt.ts'
 import {
@@ -732,13 +733,14 @@ test('a governance key can revoke its own author record', () => {
 test('migration rollover advances the chain, clears pending, and switches the query program', () => {
   const w = buildGenesis()
   const activationSequence = 1n + TIMELOCK_MIGRATION_MIN
-  const migration = encodeMigration({
+  const migrationObject: ProgramMigrationV1 = {
     nextUpdateProgramId: PROGRAM.updateV2,
     nextQueryProgramId: PROGRAM.queryV2,
     nextProgramManifestHash: ZERO32,
     activationSequence,
     governanceAuthorization: new Uint8Array(0),
-  })
+  }
+  const migration = encodeMigration(migrationObject)
   const setupRecords = seqRecords(w, [
     ['governance', OP.COMMIT_MIGRATION, migration],
     [
@@ -768,14 +770,7 @@ test('migration rollover advances the chain, clears pending, and switches the qu
   const chain = decodeChainStateV1(chainRaw)
   assert.equal(
     hex(chain.chainHash),
-    hex(
-      chainNext(
-        GENESIS_CHAIN,
-        PROGRAM.updateV2,
-        PROGRAM.queryV2,
-        activationSequence,
-      ),
-    ),
+    hex(chainNext(GENESIS_CHAIN, migrationObject)),
   )
   assert.equal(hex(chain.updateProgramId), hex(PROGRAM.updateV2))
   assert.equal(hex(chain.queryProgramId), hex(PROGRAM.queryV2))

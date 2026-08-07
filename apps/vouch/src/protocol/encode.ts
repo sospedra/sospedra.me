@@ -1,4 +1,4 @@
-import { concat, u16be, u32be, u64be } from './bytes.ts'
+import { concat, u8be, u16be, u32be, u64be } from './bytes.ts'
 
 export class DecodeError extends Error {
   readonly code = 'MALFORMED_CANONICAL_OBJECT' as const
@@ -20,6 +20,10 @@ export class UnsupportedVersionError extends Error {
 
 export class Writer {
   private readonly chunks: Uint8Array[] = []
+
+  u8(n: number): void {
+    this.chunks.push(u8be(n))
+  }
 
   u16(n: number): void {
     this.chunks.push(u16be(n))
@@ -82,6 +86,12 @@ export class Reader {
   private view(n: number): DataView {
     this.need(n)
     return new DataView(this.buf.buffer, this.buf.byteOffset + this.offset, n)
+  }
+
+  u8(): number {
+    const value = this.view(1).getUint8(0)
+    this.offset += 1
+    return value
   }
 
   u16(): number {

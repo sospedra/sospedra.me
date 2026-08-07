@@ -185,12 +185,7 @@ function rollover(
   if (!bytesEqual(expectedUpdateId, migration.nextUpdateProgramId)) {
     throw new RuleError('era-boundary')
   }
-  const chainHash = chainNext(
-    chain.chainHash,
-    migration.nextUpdateProgramId,
-    migration.nextQueryProgramId,
-    migration.activationSequence,
-  )
+  const chainHash = chainNext(chain.chainHash, migration)
   view.set(
     CHAIN_KEY,
     encodeChainStateV1({

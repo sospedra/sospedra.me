@@ -21,6 +21,9 @@ export type Domain =
   | 'proof-cache-key'
   | 'program-id'
   | 'scenario-fixture'
+  | 'program-migration'
+  | 'program-manifest-pair'
+  | 'key-state'
 
 export function hash(domain: Domain, ...parts: Uint8Array[]): Uint8Array {
   const preimage = concat(

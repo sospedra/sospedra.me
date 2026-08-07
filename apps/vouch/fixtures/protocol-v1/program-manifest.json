@@ -13,7 +13,7 @@
   },
   "lockfile": {
     "path": "pnpm-lock.yaml",
-    "lockfileHash": "5415c844f28b8f50415439feb75af4abd5d8823abc0785e87d11813de82e4046"
+    "lockfileHash": "82a22fc5a6cb17fdb079a28f40f0708b090d1bc5f7146d777ede9468c3fe2c0f"
   },
   "programs": {
     "update": {
@@ -21,11 +21,11 @@
       "sourceFiles": [
         {
           "path": "src/protocol/transition.ts",
-          "sha256": "8b0acffa1c67167b3cbf675c0849dce2e95a60e8b86a18da70ccce1bf84cf9dd"
+          "sha256": "032045e3a68a4563b831c666e30553d96e1633049c9dc6371218fdb12fba0aa9"
         },
         {
           "path": "src/protocol/bytes.ts",
-          "sha256": "dd518b472a2cbe9ff62ae5fcb38a39dfeab850d84e7d1adb06416b49735817a7"
+          "sha256": "fcdd15d7e4ae58ca4e87c0a4cc385a2da2c5c41c08ebe0401df1baf588d7d333"
         },
         {
           "path": "src/protocol/constants.ts",
@@ -33,7 +33,7 @@
         },
         {
           "path": "src/protocol/encode.ts",
-          "sha256": "bd7f674ffdd1edaf753c502cf0751637670d8e6d2bf58eb29be26b2a381572f4"
+          "sha256": "89ff0826c293fd4598d81067235b260cac11ae8ad0423bfc7d129ecbe020b80b"
         },
         {
           "path": "src/protocol/events.ts",
@@ -41,7 +41,7 @@
         },
         {
           "path": "src/protocol/hash.ts",
-          "sha256": "fe1a91d6be7bcf41f4a1019c801b807c48ea5ea731ba782c103c4ee50b8d674b"
+          "sha256": "830cc083e3ab2958ceb10737acb9d1c98c9d02cb39db5a56f3186a1593463633"
         },
         {
           "path": "src/protocol/keys.ts",
@@ -57,7 +57,7 @@
         },
         {
           "path": "src/protocol/program.ts",
-          "sha256": "06a8d6238c914552a3afc9e5c624bcd1ac1a40f0aadb62ada8b015225390767a"
+          "sha256": "c0783294d48da3cd139ff2846ea782b875a7a7a8529041607cf0ffd2a895a061"
         },
         {
           "path": "src/protocol/smt.ts",
@@ -72,8 +72,8 @@
           "sha256": "b4c6bc5a5dd3f01c2b74bc435eeb772c634b14e0bf8f5e02c393edf6d01b6686"
         }
       ],
-      "programSourceHash": "7632e0a0a6794ae73a9a397a047f0c79dd0546f3c82e031ca5a3efd489bb2f75",
-      "programId": "81780fa70d0143f2b06e194f3eff6af06d9ba8214ad53b0fe3cfda81d6faa489"
+      "programSourceHash": "31b3c8c886753f5e035749c1bc930609fc649075b9b7dca43e8c023598d91c17",
+      "programId": "3f72a433f9020c32caa5cff49886df7fe156f2e6afd8566e91fe20d3d3ddd719"
     },
     "query": {
       "entryFile": "src/protocol/query.ts",
@@ -84,15 +84,15 @@
         },
         {
           "path": "src/protocol/bytes.ts",
-          "sha256": "dd518b472a2cbe9ff62ae5fcb38a39dfeab850d84e7d1adb06416b49735817a7"
+          "sha256": "fcdd15d7e4ae58ca4e87c0a4cc385a2da2c5c41c08ebe0401df1baf588d7d333"
         },
         {
           "path": "src/protocol/encode.ts",
-          "sha256": "bd7f674ffdd1edaf753c502cf0751637670d8e6d2bf58eb29be26b2a381572f4"
+          "sha256": "89ff0826c293fd4598d81067235b260cac11ae8ad0423bfc7d129ecbe020b80b"
         },
         {
           "path": "src/protocol/hash.ts",
-          "sha256": "fe1a91d6be7bcf41f4a1019c801b807c48ea5ea731ba782c103c4ee50b8d674b"
+          "sha256": "830cc083e3ab2958ceb10737acb9d1c98c9d02cb39db5a56f3186a1593463633"
         },
         {
           "path": "src/protocol/limits.ts",
@@ -104,7 +104,7 @@
         },
         {
           "path": "src/protocol/program.ts",
-          "sha256": "06a8d6238c914552a3afc9e5c624bcd1ac1a40f0aadb62ada8b015225390767a"
+          "sha256": "c0783294d48da3cd139ff2846ea782b875a7a7a8529041607cf0ffd2a895a061"
         },
         {
           "path": "src/protocol/smt.ts",
@@ -123,8 +123,8 @@
           "sha256": "3403a1cdcb839d77381e8083325afdc48fd72693742b70e68bf53ba9cf18aac2"
         }
       ],
-      "programSourceHash": "077da19c510f03429e1461d0832fe051342cc163d720feb09f7990f092e9f249",
-      "programId": "b7a79d407b4174f5f7cc9f028ea235423055e1f1581bd82e5e4c3fd9be325279"
+      "programSourceHash": "39b0970836a4bd5da8ec7c6370d87c9ea5403a25c13482d45efe6edf1787b993",
+      "programId": "cb8c279c77722cabba68dfdf80863df2078f114a52a1fd4fb6b7598095ec5cdd"
     }
   }
 }

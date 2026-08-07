@@ -2,15 +2,16 @@ import { sha256 } from '@noble/hashes/sha2.js'
 import programManifestFixture from '../../fixtures/protocol-v1/program-manifest.json' with {
   type: 'json',
 }
-import { ascii, concat, u32be, u64be, unhex } from './bytes.ts'
+import { ascii, concat, u32be, unhex } from './bytes.ts'
 import { PROTOCOL_VERSION, ZERO32 } from './constants.ts'
-import { Reader, Writer } from './encode.ts'
+import { DecodeError, Reader, Writer } from './encode.ts'
 import { hash } from './hash.ts'
 import { LIMITS } from './limits.ts'
 
 export type ProgramKind = 'update' | 'query'
 
 export type ProgramManifestV1 = {
+  executionMode: number
   sourceRepository: Uint8Array
   sourceCommit: Uint8Array
   lockfileHash: Uint8Array
@@ -21,8 +22,16 @@ export type ProgramManifestV1 = {
   protocolVersion: number
 }
 
+function requireExecutionMode(mode: number): number {
+  if (mode !== 1 && mode !== 2) {
+    throw new DecodeError(`executionMode: invalid discriminant ${mode}`)
+  }
+  return mode
+}
+
 export function encodeManifest(m: ProgramManifestV1): Uint8Array {
   const w = new Writer()
+  w.u8(m.executionMode)
   w.bytes(m.sourceRepository, LIMITS.bytesField)
   w.bytes(m.sourceCommit, LIMITS.bytesField)
   w.fixed(m.lockfileHash, 32)
@@ -36,6 +45,7 @@ export function encodeManifest(m: ProgramManifestV1): Uint8Array {
 
 export function decodeManifest(buf: Uint8Array): ProgramManifestV1 {
   const r = new Reader(buf)
+  const executionMode = requireExecutionMode(r.u8())
   const sourceRepository = r.bytes(LIMITS.bytesField)
   const sourceCommit = r.bytes(LIMITS.bytesField)
   const lockfileHash = r.fixed(32)
@@ -46,6 +56,7 @@ export function decodeManifest(buf: Uint8Array): ProgramManifestV1 {
   const protocolVersion = r.version(PROTOCOL_VERSION)
   r.finish()
   return {
+    executionMode,
     sourceRepository,
     sourceCommit,
     lockfileHash,
@@ -105,6 +116,7 @@ export function simulatedManifestFor(label: string): ProgramManifestV1 {
   const field = (name: string) =>
     hash('scenario-fixture', ascii(`${label}-manifest-${name}`))
   return {
+    executionMode: 1,
     sourceRepository: ascii(`scenario-fixture:${label}`),
     sourceCommit: new Uint8Array(0),
     lockfileHash: field('lockfileHash'),
@@ -131,6 +143,7 @@ export function manifestFor(kind: ProgramKind): ProgramManifestV1 {
   )
   const programSourceHash = programSourceHashFor(kind)
   return {
+    executionMode: 1,
     sourceRepository: ascii(programManifestFixture.sourceRepository),
     sourceCommit: ascii(programManifestFixture.sourceCommit),
     lockfileHash,
@@ -189,24 +202,37 @@ export function decodeMigration(buf: Uint8Array): ProgramMigrationV1 {
   }
 }
 
-export function chainNext(
-  prev: Uint8Array,
-  updateId: Uint8Array,
-  queryId: Uint8Array,
-  activationSequence: bigint,
+export function manifestPairHash(
+  update: ProgramManifestV1,
+  query: ProgramManifestV1,
 ): Uint8Array {
   return hash(
-    'program-chain',
-    prev,
-    updateId,
-    queryId,
-    u64be(activationSequence),
+    'program-manifest-pair',
+    encodeManifest(update),
+    encodeManifest(query),
   )
 }
 
-export const GENESIS_CHAIN = chainNext(
-  ZERO32,
-  PROGRAM.updateV1,
-  PROGRAM.queryV1,
-  0n,
-)
+export function migrationDigest(m: ProgramMigrationV1): Uint8Array {
+  return hash('program-migration', encodeMigration(m))
+}
+
+export function chainNext(
+  prev: Uint8Array,
+  migration: ProgramMigrationV1,
+): Uint8Array {
+  return hash('program-chain', prev, migrationDigest(migration))
+}
+
+export const GENESIS_MIGRATION: ProgramMigrationV1 = {
+  nextUpdateProgramId: PROGRAM.updateV1,
+  nextQueryProgramId: PROGRAM.queryV1,
+  nextProgramManifestHash: manifestPairHash(
+    manifestFor('update'),
+    manifestFor('query'),
+  ),
+  activationSequence: 0n,
+  governanceAuthorization: new Uint8Array(0),
+}
+
+export const GENESIS_CHAIN = chainNext(ZERO32, GENESIS_MIGRATION)

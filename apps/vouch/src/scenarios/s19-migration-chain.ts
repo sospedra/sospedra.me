@@ -103,15 +103,16 @@ function migrationCommitmentStep(
   return {
     actor: 'server',
     kind: 'object',
-    label: `governance's committed migration: activation sequence ${migration.activationSequence}, program ids change v1 -> v2; the manifest hash and governance authorization are committed to state but not covered by the chain-hash function the client's walk checks`,
+    label: `governance's committed migration: activation sequence ${migration.activationSequence}, program ids change v1 -> v2; the manifest hash and governance authorization are committed to state and covered by the chain digest the client's walk recomputes and checks`,
     objects: [
       obj('migration-commitment', 'program-migration', migrationBytes, {
         nextUpdateProgramId: hex(migration.nextUpdateProgramId),
         nextQueryProgramId: hex(migration.nextQueryProgramId),
         activationSequence: migration.activationSequence.toString(),
         nextProgramManifestHash: hex(migration.nextProgramManifestHash),
-        manifestHashCoverage: 'committed, not covered by chainNext',
-        governanceAuthorizationCoverage: 'committed, not covered by chainNext',
+        manifestHashCoverage: 'committed and covered by the chain digest',
+        governanceAuthorizationCoverage:
+          'committed and covered by the chain digest',
       }),
     ],
   }
@@ -122,12 +123,7 @@ function chainAdvanceStep(
   migration: ProgramMigrationV1,
   journalChainHash: Uint8Array,
 ): TraceStep {
-  const computed = chainNext(
-    previousChainHash,
-    migration.nextUpdateProgramId,
-    migration.nextQueryProgramId,
-    migration.activationSequence,
-  )
+  const computed = chainNext(previousChainHash, migration)
   return {
     actor: 'client',
     kind: 'object',
@@ -269,7 +265,7 @@ function run(): Trace {
     checks: result.checks,
     verdict: {
       kind: 'ACCEPT',
-      note: `the client walks the chain across the era change: transitions are continuous from genesis, chainNext(previous, v2, v2Id, ${migration.activationSequence}) matches the sealed journal's own programChainHash, and the post-migration query proves get-balance(bob) = ${creditedBalance}, crediting the transfer at the v2 ceiling fee (${ceilFeeBp(BOUNDARY_TRANSFER_AMOUNT, GENESIS_FEE_BP)}), not the v1 floor (${floorFeeBp(BOUNDARY_TRANSFER_AMOUNT, GENESIS_FEE_BP)}) -- the migration's manifest hash and governance authorization are committed but not checked by this walk`,
+      note: `the client walks the chain across the era change: transitions are continuous from genesis, chainNext(previous, v2, v2Id, ${migration.activationSequence}) matches the sealed journal's own programChainHash, and the post-migration query proves get-balance(bob) = ${creditedBalance}, crediting the transfer at the v2 ceiling fee (${ceilFeeBp(BOUNDARY_TRANSFER_AMOUNT, GENESIS_FEE_BP)}), not the v1 floor (${floorFeeBp(BOUNDARY_TRANSFER_AMOUNT, GENESIS_FEE_BP)}) -- the migration's manifest hash and governance authorization are committed and covered by the chain digest this walk checks`,
     },
   }
 }
