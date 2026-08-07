@@ -90,6 +90,12 @@ its known-gaps table.
   guard missing for two later runs before anything noticed.
 - A refusal test asserts the refusal string. `notEqual(null)` lets a weakened
   guard fall through to a later check and stay green.
+- When a defect closes, DELETE the `CLAIMS.md` gaps row it created. Two rows
+  survived their own fix and understated the system. That is the cheap
+  direction to be wrong in, and it is still a table a reviewer stops trusting.
+- A fix is not DONE because its mutation reddened. D54 was marked DONE with
+  four fields pinned and three still free. Check the whole claim, not the line
+  you changed.
 - Scripted edits assert their match count. A replace that silently matches
   nothing leaves the fix unapplied and the suite still green. That has happened.
 - Dispatch an adversarial review after each claim-breaking step. Four separate

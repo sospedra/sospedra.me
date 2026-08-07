@@ -2,11 +2,13 @@ import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
 import { randomBytes, toHex, utf8 } from '../src/core/bytes.ts'
+import { type CborValue, encodeCbor } from '../src/core/cbor.ts'
 import type { CongestionPolicy } from '../src/core/congestion.ts'
 import { chainedWork, STAMP_GENESIS } from '../src/core/congestion.ts'
 import { setupParams } from '../src/core/lhtlp.ts'
 import { TransparencyLog, verifyHead } from '../src/core/merkle.ts'
 import type { EvidencePublicKeys } from '../src/world/evidence.ts'
+import { encodeClosingLeafV1 } from '../src/world/evidence.ts'
 import {
   createKeylessVerifier,
   detectEquivocation,
@@ -1520,4 +1522,176 @@ test('ROW 19: the work chain across unseals is walked in index order', () => {
   // Reordering is the same failure: c before b breaks the pair at index 1.
   const reordered = run(build([a, c, b]))
   assert.equal(reordered.congestionChain, 'broken')
+})
+
+// SIXTEENTH-REVIEW. Two defects that made ROW 19 vacuous in production.
+//
+// The chain walk was gated on `treeSize - decoded.length === 0`, and every
+// completed ceremony appends a closing leaf the strict LogLeafV1 decoder
+// rejects. So the verdict was `unknown` on every log the demo can produce, and
+// the gap widened by one per ceremony. The ROW 19 test used a SYNTHETIC log
+// holding nothing but unseal leaves, a shape performUnseal cannot make, so it
+// never drove the real path.
+test('SIXTEENTH-REVIEW: the chain walk reaches a verdict on a real ceremony log', async () => {
+  const world = createWorld(GENERIC, { t: tuned(64) })
+  const verifier = verifierFor(world)
+  const enrolled = enroll(world, 'DOC-REAL-CHAIN', {
+    fullLegalName: 'R',
+    dateOfBirth: '1990-01-01',
+    documentNumber: 'ID-RC',
+  })
+  assert.ok(!('error' in enrolled))
+  if ('error' in enrolled) return
+  // skipDelay short-circuits before the ceremony closes, so the closing leaf
+  // never lands. The real path is the one that produces it.
+  const outcome = await performUnseal(world, enrolled.record, {})
+  assert.ok(outcome.published)
+  assert.ok(outcome.bundle, 'the ceremony must have closed')
+
+  // Every leaf the log holds, with the log's own proofs. Nothing is withheld.
+  const head = world.log.signHead()
+  const leaves = Array.from({ length: head.treeSize }, (_, index) => ({
+    index,
+    bytes: world.log.leafBytesAt(index),
+    inclusionProof: world.log.inclusionProof(index),
+  }))
+  assert.equal(leaves.length, head.treeSize, 'the view must be the whole log')
+
+  const report = transparencyReport(verifier, {
+    log: { heads: [head], leaves, anchors: [], anchoredHeads: [] },
+    chain: world.chain,
+    docket: [],
+    horizon: { tipHeight: world.chain.tipHeight(), horizonBlocks: 1000 },
+    pinnedHead: head,
+  })
+  assert.equal(report.unparsable, 0, 'a closing leaf is not corrupt')
+  assert.equal(report.missingFromView, 0, 'nothing is missing')
+  assert.notEqual(
+    report.congestionChain,
+    'unknown',
+    'a complete real log still could not be walked',
+  )
+})
+
+// A leaf the log authenticates whose leaf_type and track disagree used to fall
+// between `unseals` and every other set. No counter recorded it, so relabelling
+// one field hid a real unseal from the entire report.
+test('SIXTEENTH-REVIEW: a proven leaf lands in exactly one bucket', () => {
+  const world = createWorld(GENERIC, { t: tuned(64) })
+  const log = new TransparencyLog()
+  const verifier = createKeylessVerifier({
+    evidenceKeys: { ...publicKeysOf(world), logPublicKey: log.publicKey },
+    congestionPolicy: { dFloor: 1, baseline: 1, cap: 4, windowBlocks: 1000 },
+  })
+  const leafFor = (track: 'standard' | 'emergency') =>
+    logLeafV1({
+      schema_version: 1,
+      network_id: utf8('net'),
+      leaf_type: 'UNSEAL_STANDARD',
+      event_id: utf8(`e-${track}`),
+      authorization_hash: randomBytes(32),
+      account_commitment: randomBytes(32),
+      case_reference_commitment: randomBytes(32),
+      order_document_hash: randomBytes(32),
+      ciphertext_hash: randomBytes(32),
+      escrow_epoch: 1,
+      issuing_role: 'court',
+      track,
+      prev_unseal_anchor_ref: null,
+      congestion_difficulty: 1,
+      congestion_stamp_output: randomBytes(32),
+      unseal_detection_tag: null,
+      public_disclosure_class: 'standard',
+      created_at: 1,
+      extension_commitments: [],
+    })
+  // leaf_type says standard, track says emergency. Nothing else differs.
+  const views = [leafFor('standard'), leafFor('emergency')].map((leaf) => {
+    const bytes = encodeLogLeafV1(leaf)
+    return { index: log.append(bytes), bytes }
+  })
+  const head = log.signHead()
+  const report = transparencyReport(verifier, {
+    log: {
+      heads: [head],
+      leaves: views.map((v) => ({
+        ...v,
+        inclusionProof: log.inclusionProof(v.index),
+      })),
+      anchors: [],
+      anchoredHeads: [],
+    },
+    chain: world.chain,
+    docket: [],
+    horizon: { tipHeight: world.chain.tipHeight(), horizonBlocks: 1000 },
+    pinnedHead: head,
+  })
+  assert.equal(report.unparsable, 0)
+  assert.equal(report.notIncluded, 0)
+  assert.equal(report.missingFromView, 0, 'both leaves are proven present')
+  assert.equal(report.unsealsByTrack.standard, 1, 'the honest leaf is counted')
+  assert.equal(
+    report.unsealsByTrack.emergency,
+    0,
+    'a leaf whose fields disagree was counted as a real unseal',
+  )
+  assert.equal(
+    report.mismatched,
+    1,
+    'a proven leaf disappeared from every counter',
+  )
+})
+
+// The closing-leaf decoder decides whether a leaf is ACCOUNTED FOR or corrupt,
+// so it has to be exact. A map carrying a subset of the closing-leaf keys is
+// not a closing leaf, and counting it as one would let a truncated leaf hide
+// inside the completeness arithmetic the chain walk depends on.
+test('SIXTEENTH-REVIEW: a partial closing leaf is unparsable, not accounted for', () => {
+  const world = createWorld(GENERIC, { t: tuned(64) })
+  const log = new TransparencyLog()
+  const verifier = createKeylessVerifier({
+    evidenceKeys: { ...publicKeysOf(world), logPublicKey: log.publicKey },
+    congestionPolicy: { dFloor: 1, baseline: 1, cap: 4, windowBlocks: 1000 },
+  })
+  const whole = encodeClosingLeafV1({
+    unsealLeafHash: randomBytes(32),
+    anchorHash: randomBytes(32),
+    solutionProofCommitment: randomBytes(32),
+    decryptionResultCommitment: randomBytes(32),
+    ceremonyTranscriptHash: randomBytes(32),
+    closedAt: 1,
+  })
+  // Every key is a real closing-leaf key; two are simply missing.
+  const partial = encodeCbor(
+    new Map<string, CborValue>([
+      ['anchor_hash', randomBytes(32)],
+      ['closed_at', 1n],
+      ['decryption_result_commitment', randomBytes(32)],
+      ['solution_proof_commitment', randomBytes(32)],
+      ['unseal_leaf_hash', randomBytes(32)],
+    ]),
+  )
+  const views = [whole, partial].map((bytes) => ({
+    index: log.append(bytes),
+    bytes,
+  }))
+  const head = log.signHead()
+  const report = transparencyReport(verifier, {
+    log: {
+      heads: [head],
+      leaves: views.map((v) => ({
+        ...v,
+        inclusionProof: log.inclusionProof(v.index),
+      })),
+      anchors: [],
+      anchoredHeads: [],
+    },
+    chain: world.chain,
+    docket: [],
+    horizon: { tipHeight: world.chain.tipHeight(), horizonBlocks: 1000 },
+    pinnedHead: head,
+  })
+  assert.equal(report.unparsable, 1, 'the partial leaf was accounted for')
+  assert.equal(report.missingFromView, 1, 'so the view is not complete')
+  assert.equal(report.congestionChain, 'unknown')
 })

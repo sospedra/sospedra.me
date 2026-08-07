@@ -54,6 +54,10 @@ function headMessage(
 
 export class TransparencyLog {
   private leaves: Uint8Array[] = []
+  // A real transparency log serves leaf BYTES, not just their hashes. Without
+  // them no test could build the view an auditor actually holds, which is how
+  // the chain walk shipped verified only against a synthetic log.
+  private bytes: Uint8Array[] = []
   readonly treeId: string
 
   constructor(treeId = 'sige-demo-log/v1') {
@@ -64,7 +68,14 @@ export class TransparencyLog {
 
   append(leaf: Uint8Array): number {
     this.leaves.push(leafHash(leaf))
+    this.bytes.push(Uint8Array.from(leaf))
     return this.leaves.length - 1
+  }
+
+  leafBytesAt(index: number): Uint8Array {
+    const bytes = this.bytes[index]
+    if (bytes === undefined) throw new RangeError(`no leaf at ${index}`)
+    return Uint8Array.from(bytes)
   }
 
   size(): number {

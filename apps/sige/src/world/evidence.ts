@@ -6,7 +6,7 @@ import {
   utf8,
 } from '../core/bytes.ts'
 import type { CborValue } from '../core/cbor.ts'
-import { encodeCbor } from '../core/cbor.ts'
+import { decodeCbor, encodeCbor, strictCborMap } from '../core/cbor.ts'
 import type { CongestionPolicy, WorkStamp } from '../core/congestion.ts'
 import { chainedWork } from '../core/congestion.ts'
 import { dhash } from '../core/hash.ts'
@@ -834,6 +834,25 @@ function closingLeafV1Cbor(leaf: ClosingLeafV1): CborValue {
     ['ceremony_transcript_hash', leaf.ceremonyTranscriptHash],
     ['closed_at', BigInt(leaf.closedAt)],
   ])
+}
+
+const CLOSING_LEAF_KEYS = new Set([
+  'unseal_leaf_hash',
+  'anchor_hash',
+  'solution_proof_commitment',
+  'decryption_result_commitment',
+  'ceremony_transcript_hash',
+  'closed_at',
+])
+
+// A transparency report needs to tell a closing leaf apart from a corrupt one.
+// Without this every completed ceremony raised the unparsable count by one.
+export function decodeClosingLeafV1(bytes: Uint8Array): true | null {
+  const decoded = decodeCbor(bytes)
+  if (!decoded.ok) return null
+  const map = strictCborMap(decoded.value, CLOSING_LEAF_KEYS)
+  if (map === null) return null
+  return map.size === CLOSING_LEAF_KEYS.size ? true : null
 }
 
 export function encodeClosingLeafV1(leaf: ClosingLeafV1): Uint8Array {

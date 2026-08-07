@@ -24,7 +24,7 @@ import {
 import type { DocketRecord, UnsealSighting } from './docket.ts'
 import { type DocketHorizon, type ReconcileEntry, reconcile } from './docket.ts'
 import type { EvidenceBundleV1, EvidencePublicKeys } from './evidence.ts'
-import { verifyEvidenceBundle } from './evidence.ts'
+import { decodeClosingLeafV1, verifyEvidenceBundle } from './evidence.ts'
 import type { LogLeafV1, SignedTreeHeadV1 } from './records.ts'
 import {
   congestionStampLeafHash,
@@ -285,6 +285,9 @@ export type TransparencyReport = {
   unparsable: number
   notIncluded: number
   duplicates: number
+  // Proven leaves whose own fields contradict each other, so no other counter
+  // can classify them. Never silently dropped.
+  mismatched: number
   missingFromView: number
   unmatchedPastHorizon: number
   // Whether the work chain across ALL unseals holds. 'unknown' when the view is
@@ -346,18 +349,32 @@ type LeafCounts = {
   unparsable: number
   notIncluded: number
   duplicates: number
+  // A leaf the log authenticates whose own fields disagree. Without this it
+  // fell between `unseals` and every other set and no counter recorded it, so
+  // relabelling one field hid a real unseal from the whole report.
+  mismatched: number
 }
 
 function classifyLeaves(
   head: SignedTreeHead,
   views: readonly PublicLeafView[],
-): { leaves: DecodedLeaf[]; counts: LeafCounts } {
+): { leaves: DecodedLeaf[]; counts: LeafCounts; accountedFor: number } {
   const byIndex = new Map<number, DecodedLeaf>()
-  const counts: LeafCounts = { unparsable: 0, notIncluded: 0, duplicates: 0 }
+  const counts: LeafCounts = {
+    unparsable: 0,
+    notIncluded: 0,
+    duplicates: 0,
+    mismatched: 0,
+  }
+  let accountedFor = 0
   for (const view of views) {
     const fields = safeReadLeaf(view)
     if (!fields) {
-      counts.unparsable++
+      if (isAccountedFor(view.bytes) && provesInclusion(head, view)) {
+        accountedFor++
+      } else {
+        counts.unparsable++
+      }
       continue
     }
     if (!provesInclusion(head, view)) {
@@ -370,7 +387,19 @@ function classifyLeaves(
     }
     byIndex.set(view.index, { view, fields })
   }
-  return { leaves: [...byIndex.values()], counts }
+  return { leaves: [...byIndex.values()], counts, accountedFor }
+}
+
+// A closing leaf uses its own encoding, so the strict LogLeafV1 decoder
+// rejects it. Counting those rejections as MISSING made the chain walk report
+// `unknown` on every log a real ceremony produces, because each ceremony
+// appends one. A leaf that decodes as either shape is accounted for.
+function isAccountedFor(bytes: Uint8Array): boolean {
+  try {
+    return decodeClosingLeafV1(bytes) !== null
+  } catch {
+    return false
+  }
 }
 
 function safeReadLeaf(view: PublicLeafView): LogLeafV1 | null {
@@ -689,11 +718,21 @@ export function transparencyReport(
   const head = pinnedHead
   const headVerified = safeVerifyHead(verifier.logPublicKey, head)
   const equivocation = detectEquivocation(verifier, [head, ...log.heads])
-  const { leaves: decoded, counts } = classifyLeaves(head, log.leaves)
-  const unseals = decoded.filter(
+  const {
+    leaves: decoded,
+    counts,
+    accountedFor,
+  } = classifyLeaves(head, log.leaves)
+  const claimedUnseals = decoded.filter((leaf) =>
+    UNSEAL_LEAF_TYPES.has(leaf.fields.leaf_type),
+  )
+  const unseals = claimedUnseals.filter(
     (leaf) =>
-      UNSEAL_LEAF_TYPES.has(leaf.fields.leaf_type) &&
       leaf.fields.leaf_type === UNSEAL_LEAF_TYPE_FOR_TRACK[leaf.fields.track],
+  )
+  const mismatched = claimedUnseals.filter(
+    (leaf) =>
+      leaf.fields.leaf_type !== UNSEAL_LEAF_TYPE_FOR_TRACK[leaf.fields.track],
   )
   const enrollments = decoded.filter(
     (leaf) => leaf.fields.leaf_type === 'ENROLLMENT_ACCEPTED',
@@ -745,6 +784,7 @@ export function transparencyReport(
       unparsable: 0,
       notIncluded: 0,
       duplicates: 0,
+      mismatched: 0,
       missingFromView: 0,
       unmatchedPastHorizon: 0,
       congestionChain: 'unknown',
@@ -795,11 +835,12 @@ export function transparencyReport(
     unparsable: counts.unparsable,
     notIncluded: counts.notIncluded,
     duplicates: counts.duplicates,
-    missingFromView: head.treeSize - decoded.length,
+    mismatched: mismatched.length,
+    missingFromView: head.treeSize - decoded.length - accountedFor,
     ...(() => {
       const walk = walkCongestionChain(
         unseals,
-        head.treeSize - decoded.length === 0,
+        head.treeSize - decoded.length - accountedFor === 0,
       )
       return {
         congestionChain: walk.verdict,

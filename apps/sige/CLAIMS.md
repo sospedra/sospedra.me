@@ -61,7 +61,7 @@ numbers.
 | An unsigned or forged head, or an equivocating log, zeroes EVERY counter rather than being partly believed | §17.1 | `world/keyless-verifier.ts` `transparencyReport` | `test/keyless.test.ts` |
 | The head is pinned by the caller from outside the view, so a presenter cannot substitute a stale head to hide leaves | §17.1 | `world/keyless-verifier.ts` `ReportInputs.pinnedHead` | `test/keyless.test.ts` |
 | The bundle digest covers every enrollment field the verifier reads | §6.2.6 | `world/evidence.ts` `evidenceBundleV1Cbor` | `test/unseal-evidence.test.ts` |
-| The closing head must name the same log as the anchored head | §6.2.6 | `world/evidence.ts` `checkClosingHeadLog` | `test/unseal-evidence.test.ts` |
+| The previous and closing heads must agree with the signed head on log id, log key, schema version and network | §6.2.6 | `world/evidence.ts` `checkHeadFieldAgreement` | `test/evidence.test.ts` |
 | An anchor the chain does not carry counts for nothing and is reported as unbacked | §17.1 | `world/keyless-verifier.ts` `transparencyReport` | `test/keyless.test.ts` |
 | Parse failures, inclusion failures and duplicates are counted apart, so padding one cannot drown another | §17.1 | `world/keyless-verifier.ts` `classifyLeaves` | `test/keyless.test.ts` |
 | The silent-share alarm reads only PROVEN leaves | §17.1 | `world/keyless-verifier.ts` `verifyShareArtifact` | `test/keyless.test.ts` |
@@ -133,7 +133,5 @@ absence.
 | The transport ceiling ignores bigint magnitude | `puzzles[].u/v`, `opened[].share/blinding` and the witness secret are unbounded. 192 MiB of bigint payload costs about 10 s, linear, not an amplifier. | `world/enrollment-verifier.ts` |
 | The verifier has no cross-track check | Both tracks may share one secret and one proof nonce. `world.ts` refuses a repeated nonce via `seenVtdNonces`; the verifier sees each track alone. | `world/enrollment-verifier.ts` |
 | The refusal object carries both channels | `submitterMessage` is constant across causes, but the same object carries `operatorReason`, and `describeError` copies thrown text verbatim. No function produces a submitter-only view. | `world/enrollment-verifier.ts` |
-| No consistency proof binds `signedHead` to `closingSignedHead` | An equivocating log could place the closing leaf in a divergent tree and the bundle cannot tell. | `world/evidence.ts` `checkClosingLeafInclusion` |
-| `tree_id` is unauthenticated | `headMessage` does not cover it, so the "anchor names a different log" refusal is self-consistency, not a binding. Not exploitable with a pinned log key. | `core/merkle.ts` |
-| Byte-distinct bundles can share a verdict | Several unread head fields change `hashEvidenceBundleV1` and still verify, so the digest is not the identity of a verified ceremony. | `world/evidence.ts` |
+| Byte-distinct bundles can share a verdict | `previous_tree_size`, `previous_root_hash` and `timestamp` are unpinned on the previous and closing heads, so seven variants of one ceremony verify with seven different digests. Four other head fields ARE pinned. | `world/evidence.ts` `checkHeadFieldAgreement` |
 | A genuine genesis head can stand in for "no prior state" | A gate with no accepted head yet cannot distinguish a real first head from a claimed one | `world/world.ts` `checkHeadConsistency` |
