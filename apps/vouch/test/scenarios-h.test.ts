@@ -7,6 +7,7 @@ import { scenarios } from '../src/scenarios/index.ts'
 import { scenario as s20 } from '../src/scenarios/s20-key-rotation.ts'
 import { scenario as s21 } from '../src/scenarios/s21-first-contact-fork.ts'
 import { scenario as s22 } from '../src/scenarios/s22-authorized-false-data.ts'
+import { scenario as s23 } from '../src/scenarios/s23-forged-governance.ts'
 
 const REQUIRED_FIRST_CONTACT_SENTENCE =
   'First contact proves valid genesis descent, not global freshness or ' +
@@ -165,4 +166,49 @@ test('s22 trace carries the claimed balance as physically unverifiable', () => {
 
 test('s22 is deterministic', () => {
   assert.deepEqual(s22.run(), s22.run())
+})
+
+test('s23: a forged governance authorization inside an honest migration rejects', () => {
+  const trace = s23.run()
+  const verdict = trace.verdict
+  assert.equal(verdict.kind, 'REJECT')
+  assert.equal(verdict.error, 'INVALID_PROGRAM_CHAIN')
+  assert.match(verdict.note, /rule "migration-chain-hash"/)
+})
+
+test('s23 fails at step 15 with rule migration-chain-hash, and no later step passed', () => {
+  const t = s23.run()
+  assert.ok(t.checks)
+  assert.equal(t.checks.length, 15)
+
+  const failing = t.checks.at(-1)
+  assert.equal(failing?.step, 15)
+  assert.equal(failing?.pass, false)
+  assert.equal(failing?.error, 'INVALID_PROGRAM_CHAIN')
+
+  for (const check of t.checks.slice(0, -1)) {
+    assert.equal(check.step < 15, true)
+    assert.equal(check.pass, true)
+  }
+})
+
+test('s23 trace shows the committed governance authorization next to the forged one', () => {
+  const t = s23.run()
+  const objects = t.steps.flatMap((s) => s.objects ?? [])
+  const committed = objects.find((o) => o.name === 'committed-migration')
+  const forged = objects.find((o) => o.name === 'forged-migration')
+  assert.ok(committed)
+  assert.ok(forged)
+  assert.notEqual(
+    committed?.decoded.governanceAuthorization,
+    forged?.decoded.governanceAuthorization,
+  )
+  assert.equal(
+    committed?.decoded.activationSequence,
+    forged?.decoded.activationSequence,
+  )
+})
+
+test('s23 is deterministic', () => {
+  assert.deepEqual(s23.run(), s23.run())
 })

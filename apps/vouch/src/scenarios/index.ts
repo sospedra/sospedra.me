@@ -20,6 +20,7 @@ import { scenario as s19 } from './s19-migration-chain.ts'
 import { scenario as s20 } from './s20-key-rotation.ts'
 import { scenario as s21 } from './s21-first-contact-fork.ts'
 import { scenario as s22 } from './s22-authorized-false-data.ts'
+import { scenario as s23 } from './s23-forged-governance.ts'
 import type { Scenario } from './trace.ts'
 
 export const scenarios: Scenario[] = [
@@ -45,4 +46,5 @@ export const scenarios: Scenario[] = [
   s20,
   s21,
   s22,
+  s23,
 ]

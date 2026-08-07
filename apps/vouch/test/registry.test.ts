@@ -25,6 +25,7 @@ const SLUGS = [
   'key-rotation',
   'first-contact-fork',
   'authorized-false-data',
+  'forged-governance',
 ]
 
 const TAXONOMIES = new Set([
@@ -34,14 +35,14 @@ const TAXONOMIES = new Set([
   'LIMITATION',
 ])
 
-test('registry holds all 22 scenarios', () => {
-  assert.equal(scenarios.length, 22)
+test('registry holds all 23 scenarios', () => {
+  assert.equal(scenarios.length, 23)
 })
 
-test('ids are 1..22, unique and ordered', () => {
+test('ids are 1..23, unique and ordered', () => {
   assert.deepEqual(
     scenarios.map((s) => s.meta.id),
-    Array.from({ length: 22 }, (_, i) => i + 1),
+    Array.from({ length: 23 }, (_, i) => i + 1),
   )
 })
 
