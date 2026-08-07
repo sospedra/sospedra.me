@@ -498,11 +498,11 @@ function applyMutant(scratch: string, mutant: Mutant): void {
 type SuiteRun = { green: boolean; output: string }
 
 function runSuite(scratch: string, files: string[]): SuiteRun {
-  const run = spawnSync(process.execPath, ['--test', ...files], {
-    cwd: scratch,
-    encoding: 'utf8',
-    maxBuffer: 64 * 1024 * 1024,
-  })
+  const run = spawnSync(
+    process.execPath,
+    ['--test', '--test-reporter=tap', ...files],
+    { cwd: scratch, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
+  )
   const output = `${run.stdout ?? ''}${run.stderr ?? ''}`
   return { green: run.status === 0, output }
 }
@@ -526,12 +526,25 @@ function checkBaseline(files: string[]): void {
   process.exit(1)
 }
 
-const REPORTED_FAILURES = /^(?:ℹ|#) fail (\d+)/m
+const FAILURE_MARK = '\nnot ok '
+const BLOCK_END = '\n  ...'
+// node reports a file that dies at import as a synthetic failure with these two
+const FILE_CRASH_MARKS = ["error: 'test failed'", 'exitCode:']
+
+function failureBlocks(output: string): string[] {
+  return `\n${output}`
+    .split(FAILURE_MARK)
+    .slice(1)
+    .map((chunk) => chunk.split(BLOCK_END)[0])
+}
+
+function isFileCrash(block: string): boolean {
+  return FILE_CRASH_MARKS.every((mark) => block.includes(mark))
+}
 
 function sawFailingTest(output: string): boolean {
-  const match = REPORTED_FAILURES.exec(output)
-  if (!match) return false
-  return Number(match[1]) > 0
+  const blocks = failureBlocks(output)
+  return blocks.length > 0 && !blocks.every(isFileCrash)
 }
 
 function killed(mutant: Mutant, files: string[]): boolean {
@@ -542,7 +555,7 @@ function killed(mutant: Mutant, files: string[]): boolean {
     if (sawFailingTest(run.output)) return true
     const tail = run.output.split('\n').slice(-20).join('\n')
     throw new Error(
-      `${mutant.rule}: suite exited non-zero with no failing test\n${tail}`,
+      `${mutant.rule}: the run crashed and no test failed, this is a harness error\n${tail}`,
     )
   })
 }
