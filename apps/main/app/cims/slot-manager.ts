@@ -46,7 +46,6 @@ export type PatchSlot = {
   cont: LineSegments
   pts: Points
   active: boolean
-  k: number
   grid: MaskedGrid | null
   spec: GridSpec
   center: Vector3
@@ -118,7 +117,6 @@ export const createSlotManager = (options: SlotManagerOptions) => {
       cont,
       pts,
       active: false,
-      k: -1,
       grid: null,
       spec: { nx: n, nz: n, ox: 0, oz: 0, cellX: 1, cellZ: 1 },
       center: new Vector3(),
@@ -165,7 +163,6 @@ export const createSlotManager = (options: SlotManagerOptions) => {
   const buildSlot = (slot: PatchSlot, k: number, mode: SurfaceMode) => {
     const mountain = data.mountains[k]
     const grid = heightsOf(k)
-    slot.k = k
     slot.grid = grid
     slot.active = true
     slot.spec = {

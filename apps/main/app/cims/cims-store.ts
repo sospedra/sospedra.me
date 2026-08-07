@@ -3,10 +3,9 @@ import {
   type ExternalStore,
 } from 'services/external-store'
 import type { SurfaceMode } from './scene.ts'
+import type { TourTarget } from './tour-machine.ts'
 
-export type TourTarget =
-  | { kind: 'mountain'; index: number }
-  | { kind: 'city'; index: number }
+export type { TourTarget }
 
 export type PeakLabel = { name: string; elev: number }
 

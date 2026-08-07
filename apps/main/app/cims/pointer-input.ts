@@ -7,6 +7,7 @@ export type PointerHost = {
   canvas: HTMLCanvasElement
   rig: CimsRig
   focusT: Vector3
+  airborne: () => boolean
   clampFocus: () => void
   groundPointAt: (cx: number, cy: number) => { x: number; z: number } | null
   focusAt: (cx: number, cy: number) => void
@@ -96,7 +97,7 @@ export const attachInput = (host: PointerHost): (() => void) => {
   }
 
   const onPinchMove = () => {
-    if (rig.mode === 'fly' || pointers.size < 2) return
+    if (host.airborne() || pointers.size < 2) return
     const it = [...pointers.values()]
     const d1 = Math.max(
       20,
@@ -126,7 +127,7 @@ export const attachInput = (host: PointerHost): (() => void) => {
     const dy = e.clientY - lastY
     lastX = e.clientX
     lastY = e.clientY
-    if (rig.mode === 'fly') {
+    if (host.airborne()) {
       rig.lookYawT -= dx * DRAG_YAW
       rig.lookTiltT = clamp(rig.lookTiltT - dy * DRAG_TILT, -1, 1)
       return
@@ -177,7 +178,7 @@ export const attachInput = (host: PointerHost): (() => void) => {
   const onDoubleClick = (e: MouseEvent) => host.focusAt(e.clientX, e.clientY)
 
   const onWheel = (e: WheelEvent) => {
-    if (rig.mode === 'fly') return
+    if (host.airborne()) return
     e.preventDefault()
     const now = performance.now()
     const delta = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY
@@ -205,7 +206,7 @@ export const attachInput = (host: PointerHost): (() => void) => {
   }
 
   const orbitKey = (e: KeyboardEvent): boolean => {
-    if (rig.mode !== 'orbit') return false
+    if (host.airborne()) return false
     if (e.code === 'ArrowRight') rig.headingT -= KEY_HEADING
     else if (e.code === 'ArrowLeft') rig.headingT += KEY_HEADING
     else if (e.code === 'ArrowUp') {

@@ -1,8 +1,8 @@
 import { type GridSpec, gridX, gridZ, type MaskedGrid } from './decode.ts'
 import { sstep } from './easing.ts'
 import type { HeightSampler } from './flight.ts'
+import { GRID_CYAN_RGB } from './palette.ts'
 import {
-  CYAN,
   contourBrightness,
   contourColor,
   hillshade,
@@ -135,9 +135,9 @@ export const fillPatchLines = (
     const b = visible
       ? lineBrightness(hh, shade, hmax) * sstep(edge / FADE_CELLS)
       : 0
-    out.col[lp] = CYAN[0] * b
-    out.col[lp + 1] = CYAN[1] * b
-    out.col[lp + 2] = CYAN[2] * b
+    out.col[lp] = GRID_CYAN_RGB[0] * b
+    out.col[lp + 1] = GRID_CYAN_RGB[1] * b
+    out.col[lp + 2] = GRID_CYAN_RGB[2] * b
     lp += 3
   }
   const seg = (i0: number, j0: number, i1: number, j1: number) => {
@@ -215,9 +215,9 @@ export const fillPatchPoints = (
       out.pos[pp + 2] = visible ? gridZ(spec, j) : 0
       const shade = hillshade(vN[q * 3], vN[q * 3 + 1], vN[q * 3 + 2])
       const b = visible ? lineBrightness(hh, shade, hmax) * 1.1 : 0
-      out.col[pp] = CYAN[0] * b
-      out.col[pp + 1] = CYAN[1] * b
-      out.col[pp + 2] = CYAN[2] * b
+      out.col[pp] = GRID_CYAN_RGB[0] * b
+      out.col[pp + 1] = GRID_CYAN_RGB[1] * b
+      out.col[pp + 2] = GRID_CYAN_RGB[2] * b
       pp += 3
     }
   }

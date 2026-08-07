@@ -1,33 +1,13 @@
 import { clamp } from 'es-toolkit'
-
-export type Rgb = readonly [number, number, number]
-
-const channel = (hex: number, shift: number): number =>
-  ((hex >> shift) & 255) / 255
-
-const rgbOf = (hex: number): Rgb => [
-  channel(hex, 16),
-  channel(hex, 8),
-  channel(hex, 0),
-]
-
-export const CYAN = rgbOf(0xc4ecc9)
-export const AMBER = rgbOf(0xff9a3c)
-export const BORDER_GREEN = rgbOf(0x6f9a76)
-const CONTOUR_LOW = rgbOf(0x7fd0a0)
-const CONTOUR_HIGH = rgbOf(0xffe9b8)
-
-const RAMP_STOPS: readonly (readonly [number, Rgb])[] = [
-  [0.0, rgbOf(0x061018)],
-  [0.25, rgbOf(0x0a2a24)],
-  [0.5, rgbOf(0x14361c)],
-  [0.72, rgbOf(0x3d4420)],
-  [0.88, rgbOf(0x6b5a2c)],
-  [1.0, rgbOf(0x8a7d6a)],
-]
+import {
+  CONTOUR_HIGH_RGB,
+  CONTOUR_LOW_RGB,
+  ELEVATION_RAMP,
+  type Rgb,
+} from './palette.ts'
 
 const LIGHT_LENGTH = Math.sqrt(0.55 * 0.55 + 0.6 * 0.6 + 0.35 * 0.35)
-const LIGHT: Rgb = [
+const LIGHT: readonly [number, number, number] = [
   -0.55 / LIGHT_LENGTH,
   0.6 / LIGHT_LENGTH,
   -0.35 / LIGHT_LENGTH,
@@ -46,11 +26,11 @@ export const rampInto = (
   hmax: number,
 ): void => {
   const t = rampT(h, hmax)
-  for (let i = 1; i < RAMP_STOPS.length; i++) {
-    const isLast = i === RAMP_STOPS.length - 1
-    if (t > RAMP_STOPS[i][0] && !isLast) continue
-    const [at, a] = RAMP_STOPS[i - 1]
-    const [bt, b] = RAMP_STOPS[i]
+  for (let i = 1; i < ELEVATION_RAMP.length; i++) {
+    const isLast = i === ELEVATION_RAMP.length - 1
+    if (t > ELEVATION_RAMP[i][0] && !isLast) continue
+    const [at, a] = ELEVATION_RAMP[i - 1]
+    const [bt, b] = ELEVATION_RAMP[i]
     const f = clamp((t - at) / (bt - at), 0, 1)
     dst[offset] = a[0] + (b[0] - a[0]) * f
     dst[offset + 1] = a[1] + (b[1] - a[1]) * f
@@ -69,9 +49,9 @@ export const rampColor = (h: number, hmax: number): Rgb => {
 export const contourColor = (lv: number, hmax: number): Rgb => {
   const t = lv / hmax
   return [
-    CONTOUR_LOW[0] + (CONTOUR_HIGH[0] - CONTOUR_LOW[0]) * t,
-    CONTOUR_LOW[1] + (CONTOUR_HIGH[1] - CONTOUR_LOW[1]) * t,
-    CONTOUR_LOW[2] + (CONTOUR_HIGH[2] - CONTOUR_LOW[2]) * t,
+    CONTOUR_LOW_RGB[0] + (CONTOUR_HIGH_RGB[0] - CONTOUR_LOW_RGB[0]) * t,
+    CONTOUR_LOW_RGB[1] + (CONTOUR_HIGH_RGB[1] - CONTOUR_LOW_RGB[1]) * t,
+    CONTOUR_LOW_RGB[2] + (CONTOUR_HIGH_RGB[2] - CONTOUR_LOW_RGB[2]) * t,
   ]
 }
 

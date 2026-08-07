@@ -1,8 +1,7 @@
 import { type GridSpec, gridX, gridZ, type MaskedGrid } from './decode.ts'
 import type { HeightSampler } from './flight.ts'
+import { BORDER_GREEN_RGB, GRID_CYAN_RGB } from './palette.ts'
 import {
-  BORDER_GREEN,
-  CYAN,
   contourBrightness,
   contourColor,
   hillshade,
@@ -111,7 +110,11 @@ export const buildGridLineSegments = (
     posArr.push(gridX(spec, i), h - 10, gridZ(spec, j))
     const hs = hillshade(nrm[q * 3], nrm[q * 3 + 1], nrm[q * 3 + 2])
     const b = lineBrightness(h, hs, hmax)
-    colArr.push(CYAN[0] * b, CYAN[1] * b, CYAN[2] * b)
+    colArr.push(
+      GRID_CYAN_RGB[0] * b,
+      GRID_CYAN_RGB[1] * b,
+      GRID_CYAN_RGB[2] * b,
+    )
   }
   const seg = (i0: number, j0: number, i1: number, j1: number) => {
     const a = j0 * spec.nx + i0
@@ -150,7 +153,11 @@ export const buildBasePoints = (
       posArr.push(gridX(spec, i), h + 2, gridZ(spec, j))
       const hs = hillshade(nrm[q * 3], nrm[q * 3 + 1], nrm[q * 3 + 2])
       const b = lineBrightness(h, hs, hmax) * 1.15
-      colArr.push(CYAN[0] * b, CYAN[1] * b, CYAN[2] * b)
+      colArr.push(
+        GRID_CYAN_RGB[0] * b,
+        GRID_CYAN_RGB[1] * b,
+        GRID_CYAN_RGB[2] * b,
+      )
     }
   }
   return { pos: new Float32Array(posArr), col: new Float32Array(colArr) }
@@ -192,7 +199,11 @@ export const buildBorderSegments = (
           const x = ring[s + o]
           const z = ring[s + o + 1]
           posArr.push(x, heightAt(x, z) + 14, z)
-          colArr.push(BORDER_GREEN[0], BORDER_GREEN[1], BORDER_GREEN[2])
+          colArr.push(
+            BORDER_GREEN_RGB[0],
+            BORDER_GREEN_RGB[1],
+            BORDER_GREEN_RGB[2],
+          )
         }
       }
     }

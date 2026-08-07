@@ -11,7 +11,7 @@ import {
   Vector3,
 } from 'three'
 import type { HeightSampler } from './flight.ts'
-import { AMBER } from './ramps.ts'
+import { TOUR_AMBER, TOUR_AMBER_RGB, TRAIL_HEAD } from './palette.ts'
 
 const TRAIL_POINTS = 180
 const TAIL_WINDOW = 50
@@ -39,7 +39,7 @@ export const createTrail = (
   routeGeo.setAttribute('position', new BufferAttribute(trailPos, 3))
   routeGeo.setDrawRange(0, 0)
   const routeMat = new LineBasicMaterial({
-    color: 0xff9a3c,
+    color: TOUR_AMBER,
     transparent: true,
     opacity: 0.35,
     blending: AdditiveBlending,
@@ -76,7 +76,7 @@ export const createTrail = (
   headGeo.setAttribute('position', new BufferAttribute(headPosition, 3))
   const headMat = new PointsMaterial({
     map: glowTexture,
-    color: 0xffd9a8,
+    color: TRAIL_HEAD,
     size: 26,
     sizeAttenuation: false,
     transparent: true,
@@ -86,7 +86,7 @@ export const createTrail = (
   })
   const haloMat = new PointsMaterial({
     map: glowTexture,
-    color: 0xff9a3c,
+    color: TOUR_AMBER,
     size: 58,
     sizeAttenuation: false,
     transparent: true,
@@ -156,9 +156,9 @@ export const createTrail = (
       const k = d < 0 ? 1 : Math.max(0, 1 - d / TAIL_WINDOW)
       const twinkle = 0.8 + 0.2 * Math.sin(ms * 0.012 + s * 0.7)
       const b = (0.1 + 0.9 * k) * twinkle
-      tailCol[s * 3] = AMBER[0] * b
-      tailCol[s * 3 + 1] = AMBER[1] * b
-      tailCol[s * 3 + 2] = AMBER[2] * b
+      tailCol[s * 3] = TOUR_AMBER_RGB[0] * b
+      tailCol[s * 3 + 1] = TOUR_AMBER_RGB[1] * b
+      tailCol[s * 3 + 2] = TOUR_AMBER_RGB[2] * b
     }
     tailGeo.attributes.color.needsUpdate = true
     headMat.size = 26 + 6 * Math.sin(ms * 0.006)

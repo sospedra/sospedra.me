@@ -15,9 +15,10 @@ import {
 } from './flight.ts'
 import { markerGlowTexture } from './glow-texture.ts'
 import { marchGround } from './ground-hit.ts'
+import { CITY_GREEN, TOUR_AMBER } from './palette.ts'
 import { attachInput } from './pointer-input.ts'
 import { createRig } from './rig.ts'
-import { createCimsScene, SURFACE_MODES, type SurfaceMode } from './scene.ts'
+import { createCimsScene, SURFACE_MODES } from './scene.ts'
 import { createSfx } from './sfx.ts'
 import { createSky, type SkySnapshot } from './sky.ts'
 import { createSlotManager } from './slot-manager.ts'
@@ -27,10 +28,7 @@ import {
   type StageRefs,
 } from './stage-projection.ts'
 import type { TerrainData } from './terrain-schema.ts'
-import {
-  createTourController,
-  type FlightPlanState,
-} from './tour-controller.ts'
+import { createTourController } from './tour-controller.ts'
 import { createTrail } from './trail.ts'
 
 const HUD_INTERVAL_MS = 120
@@ -48,10 +46,10 @@ export type CimsEngine = ReturnType<typeof createCimsEngine>
 
 export const createCimsEngine = (options: CimsEngineOptions) => {
   const { canvas, data, store, quiet, refs } = options
-  let ex = store.get().exaggeration
-  let surfaceMode: SurfaceMode = store.get().surfaceMode
+  const exaggeration = () => store.get().exaggeration
+  const surfaceMode = () => store.get().surfaceMode
 
-  const stage = createCimsScene(canvas, data, ex)
+  const stage = createCimsScene(canvas, data, exaggeration())
   const { renderer, scene, camera, world, fog } = stage
   const edge = createEdgePass(renderer)
   const slotManager = createSlotManager({
@@ -79,12 +77,13 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
     return { x, z, h: stage.heightAtBase(x, z) }
   }
   const destData = data.mountains.map((_, k) => patchCenter(k))
-  stage.addMarkerPoints(cityData, glowTexture, 0xa8e8b0, 8, 16)
-  stage.addMarkerPoints(destData, glowTexture, 0xff9a3c, 7, 20)
+  stage.addMarkerPoints(cityData, glowTexture, CITY_GREEN, 8, 16)
+  stage.addMarkerPoints(destData, glowTexture, TOUR_AMBER, 7, 20)
 
   const sampleAny = (x: number, z: number): number =>
     Math.max(stage.heightAtBase(x, z), slotManager.sampleActive(x, z))
-  const heightAtEx = (x: number, z: number): number => sampleAny(x, z) * ex
+  const heightAtEx = (x: number, z: number): number =>
+    sampleAny(x, z) * exaggeration()
 
   const rig = createRig()
   const focus = new Vector3()
@@ -102,52 +101,52 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
   const headWorld = new Vector3()
   const rayDir = new Vector3()
   const prevCam = new Vector3()
-  const fly: FlightPlanState = {
-    t0: 0,
-    T: 1,
-    H: 0,
-    trail: false,
-    city: null,
-    fp: new Vector3(),
-    ep: new Vector3(),
-    target: new Vector3(),
-  }
 
   const tour = createTourController({
     mountainCount: data.mountains.length,
     cityData,
     store,
     rig,
-    fly,
     slotManager,
     trail,
     sfx,
     focus,
     focusT,
     camPos,
+    now: () => performance.now(),
     quiet,
-    exaggeration: () => ex,
-    surfaceMode: () => surfaceMode,
+    exaggeration,
+    surfaceMode,
     sampleAny,
     heightAtEx,
   })
 
   const flyStep = (dt: number, ms: number) => {
-    const t = Math.min(1, (ms - fly.t0) / fly.T)
+    const plan = tour.plan()
+    if (!plan) return
+    const t = Math.min(1, (ms - plan.startMs) / plan.durationMs)
     const eased = smoother(t)
-    const p = flightPoint(fly.fp, fly.ep, fly.H, eased)
-    camPos.set(p.x, Math.max(p.y, heightAtEx(p.x, p.z) + CLEARANCE_FLY), p.z)
-    desired.set(fly.target.x, fly.target.y * ex + 40, fly.target.z)
-    if (fly.trail) {
+    const point = flightPoint(plan.from, plan.end, plan.arcHeight, eased)
+    camPos.set(
+      point.x,
+      Math.max(point.y, heightAtEx(point.x, point.z) + CLEARANCE_FLY),
+      point.z,
+    )
+    desired.set(
+      plan.target.x,
+      plan.target.y * exaggeration() + 40,
+      plan.target.z,
+    )
+    if (plan.showTrail) {
       trail.update(smoother(Math.min(1, t + 0.12)), ms)
-      headWorld.set(trail.head.x, trail.head.y * ex, trail.head.z)
+      headWorld.set(trail.head.x, trail.head.y * exaggeration(), trail.head.z)
       desired.lerp(headWorld, 0.3)
     }
     rig.lookYawT *= Math.exp(-dt * 2)
     rig.lookTiltT *= Math.exp(-dt * 2)
-    const dk = dampFactor(dt, DAMP_SLOW)
-    rig.lookYaw += (rig.lookYawT - rig.lookYaw) * dk
-    rig.lookTilt += (rig.lookTiltT - rig.lookTilt) * dk
+    const damp = dampFactor(dt, DAMP_SLOW)
+    rig.lookYaw += (rig.lookYawT - rig.lookYaw) * damp
+    rig.lookTilt += (rig.lookTiltT - rig.lookTilt) * damp
     if (t >= 1) tour.arrive()
   }
 
@@ -165,22 +164,22 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
     }
     rig.idleT += dt
     const fastInput = rig.gesture || ms - rig.lastInputMs < 250
-    const dk = dampFactor(dt, fastInput ? DAMP_FAST : DAMP_SLOW)
-    rig.heading += wrapPI(rig.headingT - rig.heading) * dk
-    rig.pitch += (rig.pitchT - rig.pitch) * dk
-    rig.range += (rig.rangeT - rig.range) * dk
-    rig.lookYaw += (rig.lookYawT - rig.lookYaw) * dk
-    rig.lookTilt += (rig.lookTiltT - rig.lookTilt) * dk
-    focus.x += (focusT.x - focus.x) * dk
-    focus.z += (focusT.z - focus.z) * dk
-    focus.y += (rig.focusYT - focus.y) * dk
-    const pos = orbitCameraPosition(rig, focus, ex)
+    const damp = dampFactor(dt, fastInput ? DAMP_FAST : DAMP_SLOW)
+    rig.heading += wrapPI(rig.headingT - rig.heading) * damp
+    rig.pitch += (rig.pitchT - rig.pitch) * damp
+    rig.range += (rig.rangeT - rig.range) * damp
+    rig.lookYaw += (rig.lookYawT - rig.lookYaw) * damp
+    rig.lookTilt += (rig.lookTiltT - rig.lookTilt) * damp
+    focus.x += (focusT.x - focus.x) * damp
+    focus.z += (focusT.z - focus.z) * damp
+    focus.y += (rig.focusYT - focus.y) * damp
+    const pos = orbitCameraPosition(rig, focus, exaggeration())
     camPos.set(
       pos.x,
       Math.max(pos.y, heightAtEx(pos.x, pos.z) + CLEARANCE_ORBIT),
       pos.z,
     )
-    desired.set(focus.x, focus.y * ex + 30, focus.z)
+    desired.set(focus.x, focus.y * exaggeration() + 30, focus.z)
   }
 
   const applyAtmosphere = () => {
@@ -207,6 +206,7 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
     const still = quiet()
     stage.riverMaterial.uniforms.uTime.value = still ? 0 : ms * 0.001
     const sweepH = still ? -10000 : ((ms * 0.00003) % 1) * 3600
+    const ex = exaggeration()
     for (const material of stage.terrainMaterials) {
       material.uniforms.uSweepH.value = sweepH
       material.uniforms.uEx.value = ex
@@ -222,7 +222,7 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
 
   const projector = createStageProjector({ camera, refs, cityData, destData })
   const stageFrame: StageFrame = {
-    ex,
+    ex: exaggeration(),
     camX: 0,
     camY: 0,
     camZ: 0,
@@ -246,7 +246,7 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
   }
 
   const focusAt = (cx: number, cy: number) => {
-    if (rig.mode === 'fly') return
+    if (tour.airborne()) return
     const ground = groundPointAt(cx, cy)
     if (!ground) return
     focusT.set(ground.x, 0, ground.z)
@@ -263,7 +263,7 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
   let lastMoveMs = 0
 
   const cameraMoving = (): boolean =>
-    rig.mode === 'fly' ||
+    tour.airborne() ||
     rig.gesture !== null ||
     rig.showT >= 0 ||
     Math.abs(wrapPI(rig.headingT - rig.heading)) > 0.002 ||
@@ -271,7 +271,7 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
     Math.abs(rig.rangeT - rig.range) / rig.range > 0.002
 
   const updateOverlay = (dt: number, ms: number, sun: SkySnapshot) => {
-    stageFrame.ex = ex
+    stageFrame.ex = exaggeration()
     stageFrame.camX = camPos.x
     stageFrame.camY = camPos.y
     stageFrame.camZ = camPos.z
@@ -283,7 +283,7 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
     if (ms > hudNext) {
       hudNext = ms + HUD_INTERVAL_MS
       const speed = dt > 0 ? prevCam.distanceTo(camPos) / dt : 0
-      projector.updateHud(camPos.y / ex, speed)
+      projector.updateHud(camPos.y / exaggeration(), speed)
     }
     if (cameraMoving()) lastMoveMs = ms
     projector.updateCompass(ms - lastMoveMs < COMPASS_LINGER_MS)
@@ -296,9 +296,9 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
     const dt = Math.min(clock.getDelta(), 0.05)
     const ms = performance.now()
     prevCam.copy(camPos)
-    if (rig.mode === 'fly') flyStep(dt, ms)
+    if (tour.airborne()) flyStep(dt, ms)
     else orbitStep(dt, ms)
-    camTgt.lerp(desired, Math.min(1, dt * (rig.mode === 'fly' ? 3.2 : 7)))
+    camTgt.lerp(desired, Math.min(1, dt * (tour.airborne() ? 3.2 : 7)))
     applyAtmosphere()
     applyCamera()
     const sun = sky.update(new Date())
@@ -310,40 +310,28 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
   }
 
   const bootCamera = () => {
-    tour.boot()
+    const plan = tour.boot()
     focus.copy(slots[0].center)
     focusT.copy(focus)
     rig.focusYT = focus.y
-    const first = slots[0]
-    fly.ep.set(first.center.x, 0, first.center.z + first.approachRange)
-    fly.ep.y = Math.max(
-      first.center.y * ex + first.altitudeOffset,
-      heightAtEx(fly.ep.x, fly.ep.z) + 110,
+    camPos.set(plan.from.x, plan.from.y, plan.from.z)
+    camTgt.set(
+      plan.target.x,
+      plan.target.y * exaggeration() + 40,
+      plan.target.z,
     )
-    fly.fp.set(
-      first.center.x,
-      fly.ep.y + 26000,
-      first.center.z + first.approachRange + 42000,
-    )
-    fly.target.copy(first.center)
-    fly.T = quiet() ? 1 : 2600
-    fly.H = 0
-    fly.trail = false
-    fly.city = null
-    fly.t0 = performance.now()
-    camPos.copy(fly.fp)
-    camTgt.set(first.center.x, first.center.y * ex + 40, first.center.z)
   }
 
   const detachInput = attachInput({
     canvas,
     rig,
     focusT,
+    airborne: () => tour.airborne(),
     clampFocus,
     groundPointAt,
     focusAt,
-    next: () => tour.flyToMountain(tour.destIndex() + 1),
-    prev: () => tour.flyToMountain(tour.destIndex() - 1),
+    next: () => tour.advance(1),
+    prev: () => tour.advance(-1),
     resumeAudio: sfx.resume,
     onResize: () => {
       stage.resize()
@@ -370,21 +358,20 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
   return {
     flyToMountain: tour.flyToMountain,
     flyToCity: tour.flyToCity,
-    next: () => tour.flyToMountain(tour.destIndex() + 1),
-    prev: () => tour.flyToMountain(tour.destIndex() - 1),
+    next: () => tour.advance(1),
+    prev: () => tour.advance(-1),
     toggleAuto: () => {
       rig.autoT = 0
       store.set({ ...store.get(), autoOn: !store.get().autoOn })
     },
     cycleSurface: () => {
-      const at = SURFACE_MODES.indexOf(surfaceMode)
-      surfaceMode = SURFACE_MODES[(at + 1) % SURFACE_MODES.length]
-      stage.showSurface(surfaceMode)
-      for (const slot of slots) slotManager.applyVisibility(slot, surfaceMode)
-      store.set({ ...store.get(), surfaceMode })
+      const at = SURFACE_MODES.indexOf(surfaceMode())
+      const nextMode = SURFACE_MODES[(at + 1) % SURFACE_MODES.length]
+      stage.showSurface(nextMode)
+      for (const slot of slots) slotManager.applyVisibility(slot, nextMode)
+      store.set({ ...store.get(), surfaceMode: nextMode })
     },
     setExaggeration: (value: number) => {
-      ex = value
       world.scale.y = value
       store.set({ ...store.get(), exaggeration: value })
     },

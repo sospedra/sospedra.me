@@ -14,6 +14,7 @@ export const RANGE_MAX = 380000
 export const FLY_DEBOUNCE_MS = 350
 export const CLEARANCE_FLY = 160
 export const CLEARANCE_ORBIT = 50
+export const APPROACH_CLEARANCE = 110
 
 export const wrapStep = (k: number, count: number): number =>
   ((k % count) + count) % count
@@ -37,6 +38,16 @@ export type LaunchPlan = {
   dist: number
 }
 
+export type FlightPlan = {
+  from: Vec3
+  end: Vec3
+  target: Vec3
+  startMs: number
+  durationMs: number
+  arcHeight: number
+  showTrail: boolean
+}
+
 export const planLaunch = (input: LaunchInput): LaunchPlan => {
   const dx = input.cam.x - input.targetX
   const dz = input.cam.z - input.targetZ
@@ -46,7 +57,7 @@ export const planLaunch = (input: LaunchInput): LaunchPlan => {
   const endZ = input.targetZ + dz * inv * input.approachRange
   const endY = Math.max(
     input.targetH * input.ex + input.altitudeOffset,
-    input.heightAtEx(endX, endZ) + 110,
+    input.heightAtEx(endX, endZ) + APPROACH_CLEARANCE,
   )
   const durationMs = input.reduced ? 1 : clamp(1 + dist / 60000, 1, 5) * 1000
   const baseArc = clamp(dist * 0.22, 2000, 28000)

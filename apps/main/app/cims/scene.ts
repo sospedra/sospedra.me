@@ -25,6 +25,7 @@ import {
   sampleClamped,
   smoothGrid,
 } from './decode.ts'
+import { FOG_COLOR } from './palette.ts'
 import {
   RIVER_FRAGMENT,
   RIVER_VERTEX,
@@ -51,7 +52,6 @@ export const SURFACE_MODES: readonly SurfaceMode[] = [
   'points',
 ]
 
-const FOG_COLOR = 0x0a120c
 export const SOLID_LAYER = 1
 
 export const devicePixelRatioCap = (): number =>

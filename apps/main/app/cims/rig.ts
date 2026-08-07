@@ -1,7 +1,6 @@
 export type InputGesture = 'orbit' | 'pan' | 'look' | 'pinch'
 
 export type CimsRig = {
-  mode: 'fly' | 'orbit'
   holdOn: boolean
   heading: number
   pitch: number
@@ -28,7 +27,6 @@ export type CimsRig = {
 }
 
 export const createRig = (): CimsRig => ({
-  mode: 'fly',
   holdOn: false,
   heading: 0,
   pitch: 0.62,

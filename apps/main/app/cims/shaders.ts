@@ -1,4 +1,5 @@
 import { Color, Vector2, Vector3 } from 'three'
+import { EDGE_GLOW } from './palette.ts'
 
 export const TERRAIN_VERTEX = /* glsl */ `
 varying vec3 vColor; varying vec3 vNormal;
@@ -125,6 +126,6 @@ export const edgeUniforms = () => ({
   far: { value: 1500000 },
   fogNear: { value: 1 },
   fogFar: { value: 2 },
-  edgeColor: { value: new Color(0xeef7ee) },
+  edgeColor: { value: new Color(EDGE_GLOW) },
   strength: { value: 1.0 },
 })

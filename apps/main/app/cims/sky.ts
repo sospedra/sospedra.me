@@ -20,6 +20,16 @@ import {
 } from './astronomy.ts'
 import { sstep } from './easing.ts'
 import { radialGlowTexture } from './glow-texture.ts'
+import {
+  MOON_CORE,
+  MOON_GLOW,
+  MOON_HALO,
+  MOON_RING,
+  SUN_CORE,
+  SUN_GLOW,
+  SUN_HALO,
+  SUN_RING,
+} from './palette.ts'
 
 export const SKY_ORBIT_RADIUS = 320000
 const DEG = 180 / Math.PI
@@ -137,35 +147,27 @@ const placeBody = (pair: BodyPair, position: SkyPosition, out: Vector3) => {
 }
 
 export const createSky = (scene: Scene, bootDate: Date): SkyLayer => {
-  const sunTexture = radialGlowTexture([
-    [0, 'rgba(255,250,238,1)'],
-    [0.35, 'rgba(255,232,188,0.8)'],
-    [1, 'rgba(255,210,140,0)'],
-  ])
-  const moonTexture = radialGlowTexture([
-    [0, 'rgba(235,244,238,1)'],
-    [0.35, 'rgba(205,222,212,0.7)'],
-    [1, 'rgba(180,205,192,0)'],
-  ])
+  const sunTexture = radialGlowTexture(SUN_GLOW)
+  const moonTexture = radialGlowTexture(MOON_GLOW)
   const sun = bodyPair(scene, {
     texture: sunTexture,
-    coreColor: 0xfff3da,
+    coreColor: SUN_CORE,
     coreSize: 46,
-    haloColor: 0xffd9a0,
+    haloColor: SUN_HALO,
     haloSize: 96,
     haloOpacity: 0.16,
   })
   const moon = bodyPair(scene, {
     texture: moonTexture,
-    coreColor: 0xe8f2ea,
+    coreColor: MOON_CORE,
     coreSize: 26,
-    haloColor: 0xc7dccd,
+    haloColor: MOON_HALO,
     haloSize: 56,
     haloOpacity: 0.05,
   })
   const rings = [
-    orbitRing(scene, sunPosition(bootDate).dec, 0xffc98a, 0.2),
-    orbitRing(scene, moonPosition(bootDate).dec, 0xa9c9b4, 0.16),
+    orbitRing(scene, sunPosition(bootDate).dec, SUN_RING, 0.2),
+    orbitRing(scene, moonPosition(bootDate).dec, MOON_RING, 0.16),
   ]
 
   const snapshot: SkySnapshot = {
