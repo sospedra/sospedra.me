@@ -32,6 +32,14 @@ import {
   PROGRAM,
 } from '../src/protocol/program.ts'
 import {
+  encodeGetBalanceBody,
+  encodeQueryRequest,
+  encodeTransparentQueryProof,
+  proveQuery,
+  REQ,
+  resultHash,
+} from '../src/protocol/query.ts'
+import {
   decodeQueryReceipt,
   encodeQueryReceipt,
   type QueryReceiptV1,
@@ -115,6 +123,51 @@ function verifyTampered(
     nowMs: honest.nowMs,
     requireFreshHead: true,
   })
+}
+
+type QueryMeta = {
+  stateSequence: bigint
+  queryProgramId: Uint8Array
+  programChainHash: Uint8Array
+}
+
+function honestMeta(honest: HonestBundleResult): QueryMeta {
+  return {
+    stateSequence: honest.receipt.stateSequence,
+    queryProgramId: honest.receipt.queryProgramId,
+    programChainHash: honest.receipt.programChainHash,
+  }
+}
+
+type BalanceProof = { resultBytes: Uint8Array; proofBytes: Uint8Array }
+
+function balanceProof(
+  world: World,
+  accountId: string,
+  meta: QueryMeta,
+): BalanceProof {
+  const requestBytes = encodeQueryRequest({
+    requestType: REQ.GET_BALANCE,
+    requestVersion: 1,
+    body: encodeGetBalanceBody({ accountId }),
+  })
+  const { resultBytes, proof } = proveQuery(world.tree, requestBytes, meta)
+  return { resultBytes, proofBytes: encodeTransparentQueryProof(proof) }
+}
+
+function resignReceipt(
+  honest: HonestBundleResult,
+  receipt: QueryReceiptV1,
+): ResponseBundle {
+  const { receiptBytes, signature } = reencodeReceipt(
+    receipt,
+    honest.world.receiptKey,
+  )
+  return {
+    ...honest.bundle,
+    receipt: receiptBytes,
+    receiptSignature: signature,
+  }
 }
 
 type DoctoredReceiptKey = { witness: AccessV1; stateRoot: Uint8Array }
@@ -1106,6 +1159,147 @@ test('a proof over undecodable witnessed state fails typed, not MALFORMED_TRANSP
 
   assertFailsAtStep(result, 14, 'INVALID_PROOF')
   assertRule(result, 'unexpected')
+})
+
+test('a query journal proving another state root than the receipt is rejected', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const doctored = doctorReceiptKey(
+    world,
+    encodeReceiptKeyV1({ status: 1, sinceSequence: 1n }),
+  )
+
+  const result = verifyTampered(honest, rebindReceiptKey(honest, doctored))
+
+  assertFailsAtStep(result, 13, 'JOURNAL_MISMATCH')
+  assertRule(result, 'state-root')
+})
+
+test('a query journal proving another state sequence than the receipt is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis())
+
+  const result = verifyTampered(
+    honest,
+    resignReceipt(honest, {
+      ...honest.receipt,
+      stateSequence: honest.receipt.stateSequence + 1n,
+    }),
+  )
+
+  assertFailsAtStep(result, 13, 'JOURNAL_MISMATCH')
+  assertRule(result, 'state-sequence')
+})
+
+test('a query proof answering a different request cannot back the receipt', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const other = balanceProof(world, 'alice', honestMeta(honest))
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    queryProof: other.proofBytes,
+  })
+
+  assertFailsAtStep(result, 13, 'JOURNAL_MISMATCH')
+  assertRule(result, 'request-hash')
+})
+
+test('a receipt bound to a result the proof never produced is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const forgedResult = flipByte(honest.bundle.canonicalResult)
+  const rebound = resignReceipt(honest, {
+    ...honest.receipt,
+    resultHash: resultHash(forgedResult),
+  })
+
+  const result = verifyTampered(honest, {
+    ...rebound,
+    canonicalResult: forgedResult,
+  })
+
+  assertFailsAtStep(result, 13, 'JOURNAL_MISMATCH')
+  assertRule(result, 'result-hash')
+})
+
+test('a receipt naming another query program than the journal is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis())
+
+  const result = verifyTampered(
+    honest,
+    resignReceipt(honest, {
+      ...honest.receipt,
+      queryProgramId: PROGRAM.queryV2,
+    }),
+  )
+
+  assertFailsAtStep(result, 13, 'JOURNAL_MISMATCH')
+  assertRule(result, 'query-program-id')
+})
+
+test('a migration attached to a bundle with no era change is rejected', () => {
+  const honest = makeHonestBundle(buildGenesis())
+  const surplus = encodeMigration({
+    nextUpdateProgramId: PROGRAM.updateV2,
+    nextQueryProgramId: PROGRAM.queryV2,
+    nextProgramManifestHash: ZERO32,
+    activationSequence: 2n,
+    governanceAuthorization: new Uint8Array(0),
+  })
+
+  const result = verifyTampered(honest, {
+    ...honest.bundle,
+    migrations: [surplus],
+  })
+
+  assertFailsAtStep(result, 15, 'INVALID_PROGRAM_CHAIN')
+  assertRule(result, 'migration-surplus')
+})
+
+test('a receipt claiming a query program the walked chain never activated is rejected', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const forgedProof = balanceProof(world, 'bob', {
+    ...honestMeta(honest),
+    queryProgramId: PROGRAM.queryV2,
+  })
+  const rebound = resignReceipt(honest, {
+    ...honest.receipt,
+    queryProgramId: PROGRAM.queryV2,
+    resultHash: resultHash(forgedProof.resultBytes),
+  })
+
+  const result = verifyTampered(honest, {
+    ...rebound,
+    canonicalResult: forgedProof.resultBytes,
+    queryProof: forgedProof.proofBytes,
+  })
+
+  assertFailsAtStep(result, 15, 'INVALID_PROGRAM_CHAIN')
+  assertRule(result, 'final-query-program-id')
+})
+
+test('a receipt claiming a chain hash the walked chain never reached is rejected', () => {
+  const world = buildGenesis()
+  const honest = makeHonestBundle(world)
+  const forgedChainHash = new Uint8Array(32).fill(0xcd)
+  const forgedProof = balanceProof(world, 'bob', {
+    ...honestMeta(honest),
+    programChainHash: forgedChainHash,
+  })
+  const rebound = resignReceipt(honest, {
+    ...honest.receipt,
+    programChainHash: forgedChainHash,
+    resultHash: resultHash(forgedProof.resultBytes),
+  })
+
+  const result = verifyTampered(honest, {
+    ...rebound,
+    canonicalResult: forgedProof.resultBytes,
+    queryProof: forgedProof.proofBytes,
+  })
+
+  assertFailsAtStep(result, 15, 'INVALID_PROGRAM_CHAIN')
+  assertRule(result, 'final-chain-hash')
 })
 
 test('the accepted trust state binds the proven receipt-key record', () => {

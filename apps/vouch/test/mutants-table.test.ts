@@ -15,6 +15,16 @@ test('every verifier rule string has at least one mutant', () => {
   }
 })
 
+test('every matcher-return label has at least one mutant', () => {
+  const source = readFileSync(VERIFY_URL, 'utf8')
+  const labels = [...source.matchAll(/return '([a-z0-9-]+)'/g)].map((m) => m[1])
+  assert.ok(labels.length >= 9)
+  const covered = new Set(MUTANTS.map((m) => m.rule))
+  for (const label of new Set(labels)) {
+    assert.ok(covered.has(label), `no mutant for matcher label ${label}`)
+  }
+})
+
 test('the transition role gate and activation boundary have named mutants', () => {
   const covered = new Set(MUTANTS.map((m) => m.rule))
   assert.ok(covered.has('commit-migration-role-gate'))

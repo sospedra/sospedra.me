@@ -109,6 +109,52 @@ export const MUTANTS: Mutant[] = [
     return { checks, ok: true, value: undefined }`,
   },
   {
+    rule: 'state-root',
+    file: VERIFY,
+    find: `  if (!bytesEqual(journal.stateRoot, receipt.stateRoot)) return 'state-root'`,
+    replace: `  if (false) return 'state-root'`,
+  },
+  {
+    rule: 'state-sequence',
+    file: VERIFY,
+    find: `  if (journal.stateSequence !== receipt.stateSequence) return 'state-sequence'`,
+    replace: `  if (false) return 'state-sequence'`,
+  },
+  {
+    rule: 'request-hash',
+    file: VERIFY,
+    find: `  if (!bytesEqual(journal.requestHash, receipt.requestHash))
+    return 'request-hash'`,
+    replace: `  if (false)
+    return 'request-hash'`,
+  },
+  {
+    rule: 'result-hash',
+    file: VERIFY,
+    find: `  if (!bytesEqual(journal.resultHash, receipt.resultHash)) return 'result-hash'`,
+    replace: `  if (false) return 'result-hash'`,
+  },
+  {
+    rule: 'query-program-id',
+    file: VERIFY,
+    find: `  if (!bytesEqual(journal.queryProgramId, receipt.queryProgramId)) {
+    return 'query-program-id'
+  }`,
+    replace: `  if (false) {
+    return 'query-program-id'
+  }`,
+  },
+  {
+    rule: 'program-chain-hash',
+    file: VERIFY,
+    find: `  if (!bytesEqual(journal.programChainHash, receipt.programChainHash)) {
+    return 'program-chain-hash'
+  }`,
+    replace: `  if (false) {
+    return 'program-chain-hash'
+  }`,
+  },
+  {
     rule: 'transition-decode',
     file: VERIFY,
     find: `    return { ok: false, error: 'INVALID_PROOF', rule: 'transition-decode' }`,
@@ -256,6 +302,32 @@ export const MUTANTS: Mutant[] = [
   }`,
   },
   {
+    rule: 'migration-surplus',
+    file: VERIFY,
+    find: `  if (position.cursor !== migrations.length) return 'migration-surplus'`,
+    replace: `  if (false) return 'migration-surplus'`,
+  },
+  {
+    rule: 'final-query-program-id',
+    file: VERIFY,
+    find: `  if (!bytesEqual(position.era.queryProgramId, receipt.queryProgramId)) {
+    return 'final-query-program-id'
+  }`,
+    replace: `  if (false) {
+    return 'final-query-program-id'
+  }`,
+  },
+  {
+    rule: 'final-chain-hash',
+    file: VERIFY,
+    find: `  if (!bytesEqual(position.era.chainHash, receipt.programChainHash)) {
+    return 'final-chain-hash'
+  }`,
+    replace: `  if (false) {
+    return 'final-chain-hash'
+  }`,
+  },
+  {
     rule: 'head-freshness',
     file: VERIFY,
     find: `  if (freshness === 'ok') return null
@@ -390,9 +462,15 @@ type Manifest = { scripts: { test: string } }
 function suiteFiles(): string[] {
   const raw = readFileSync(join(PACKAGE_ROOT, 'package.json'), 'utf8')
   const manifest = JSON.parse(raw) as Manifest
-  return manifest.scripts.test
+  const files = manifest.scripts.test
     .split(/\s+/)
     .filter((arg) => arg.endsWith('.test.ts') && !SKIPPED_IN_SCRATCH.has(arg))
+  if (files.length === 0) {
+    throw new Error(
+      'mutants: the test script named no test files, node would fall back to discovery',
+    )
+  }
+  return files
 }
 
 function stageScratch(): string {
@@ -448,10 +526,24 @@ function checkBaseline(files: string[]): void {
   process.exit(1)
 }
 
+const REPORTED_FAILURES = /^(?:ℹ|#) fail (\d+)/m
+
+function sawFailingTest(output: string): boolean {
+  const match = REPORTED_FAILURES.exec(output)
+  if (!match) return false
+  return Number(match[1]) > 0
+}
+
 function killed(mutant: Mutant, files: string[]): boolean {
   return withScratch((scratch) => {
     applyMutant(scratch, mutant)
-    return !runSuite(scratch, files).green
+    const run = runSuite(scratch, files)
+    if (run.green) return false
+    if (sawFailingTest(run.output)) return true
+    const tail = run.output.split('\n').slice(-20).join('\n')
+    throw new Error(
+      `${mutant.rule}: suite exited non-zero with no failing test\n${tail}`,
+    )
   })
 }
 
