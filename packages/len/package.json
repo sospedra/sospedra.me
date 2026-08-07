@@ -1,7 +1,7 @@
 {
   "name": "@sospedra/len",
   "version": "3.0.0",
-  "description": "Go's builtin len for TypeScript",
+  "description": "The typed length of anything",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -25,13 +25,13 @@
       "types": "./dist/handlers/object-keys.d.ts",
       "default": "./dist/handlers/object-keys.js"
     },
+    "./string-bytes": {
+      "types": "./dist/handlers/string-bytes.d.ts",
+      "default": "./dist/handlers/string-bytes.js"
+    },
     "./string-code-points": {
       "types": "./dist/handlers/string-code-points.d.ts",
       "default": "./dist/handlers/string-code-points.js"
-    },
-    "./string-code-units": {
-      "types": "./dist/handlers/string-code-units.d.ts",
-      "default": "./dist/handlers/string-code-units.js"
     }
   },
   "publishConfig": {

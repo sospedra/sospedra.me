@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { objectKeys } from '../src/handlers/object-keys.ts'
+import { stringBytes } from '../src/handlers/string-bytes.ts'
 import { stringCodePoints } from '../src/handlers/string-code-points.ts'
-import { stringCodeUnits } from '../src/handlers/string-code-units.ts'
 import len, {
   createLen,
   defineHandler,
@@ -31,13 +31,13 @@ test('len measures arrays by element count', () => {
   assert.equal(len(new Array(3)), 3)
 })
 
-test('len measures strings as UTF-8 bytes by default', () => {
+test('len measures strings as UTF-16 code units by default', () => {
   assert.equal(len(''), 0)
-  assert.equal(len('go'), 2)
-  assert.equal(len('héllo'), 6)
-  assert.equal(len('👍'), 4)
-  assert.equal(len('é'), 3)
-  assert.equal(len('\uD800'), 3)
+  assert.equal(len('hi'), 2)
+  assert.equal(len('héllo'), 5)
+  assert.equal(len('👍'), 2)
+  assert.equal(len('é'), 2)
+  assert.equal(len('\uD800'), 1)
 })
 
 test('len measures typed arrays, views, and buffers', () => {
@@ -72,7 +72,7 @@ test('len throws a TypeError for targets without a length', () => {
   assert.throws(() => len(9), /invalid argument \(number\) for built-in len/)
   // @ts-expect-error booleans are not lenable
   assert.throws(() => len(true), TypeError)
-  // @ts-expect-error null carries no type, unlike a Go nil slice
+  // @ts-expect-error null is not lenable
   assert.throws(() => len(null), TypeError)
   // @ts-expect-error undefined is not lenable
   assert.throws(() => len(undefined), TypeError)
@@ -90,14 +90,14 @@ test('len throws a TypeError for targets without a length', () => {
   assert.throws(() => len(new String('a')), /invalid argument \(String\)/)
 })
 
-test('shipped string handlers override the byte default', () => {
-  const units = createLen({ handlers: [stringCodeUnits] })
+test('shipped string handlers override the code-unit default', () => {
+  const bytes = createLen({ handlers: [stringBytes] })
   const points = createLen({ handlers: [stringCodePoints] })
-  assert.equal(units('héllo'), 5)
+  assert.equal(bytes('héllo'), 6)
   assert.equal(points('héllo'), 5)
-  assert.equal(units('👍'), 2)
+  assert.equal(bytes('👍'), 4)
   assert.equal(points('👍'), 1)
-  assert.equal(units('é'), 2)
+  assert.equal(bytes('é'), 3)
   assert.equal(points('é'), 2)
 })
 
@@ -112,7 +112,7 @@ test('fallback zero returns 0 when there is no length', () => {
   assert.equal(zero(null), 0)
   assert.equal(zero({}), 0)
   assert.equal(zero(new WeakMap()), 0)
-  assert.equal(zero('héllo'), 6)
+  assert.equal(zero('héllo'), 5)
 })
 
 test('fallback null returns null when there is no length', () => {
@@ -130,7 +130,7 @@ test('custom handlers measure user types', () => {
   const measureDogs = defineHandler(isDogs, (dogs) => dogs.pack.length)
   const dogsLen = createLen({ handlers: [measureDogs] })
   assert.equal(dogsLen(new Dogs(['rex', 'fido'])), 2)
-  assert.equal(dogsLen('héllo'), 6)
+  assert.equal(dogsLen('héllo'), 5)
   // @ts-expect-error instances without the Dogs handler reject Dogs
   assert.throws(() => len(new Dogs(['rex'])), TypeError)
 })
@@ -153,7 +153,7 @@ test('handlers run before built-ins and first match wins', () => {
 
 test('handlers sharing one predicate throw at creation', () => {
   assert.throws(
-    () => createLen({ handlers: [stringCodePoints, stringCodeUnits] }),
+    () => createLen({ handlers: [stringCodePoints, stringBytes] }),
     /handlers 0 and 1 share one is predicate/,
   )
   const measureDogs = defineHandler(isDogs, (dogs) => dogs.pack.length)
@@ -162,6 +162,17 @@ test('handlers sharing one predicate throw at creation', () => {
     () => createLen({ handlers: [measureDogs, shadowedDogs] }),
     TypeError,
   )
+})
+
+test('a custom number handler measures digits', () => {
+  const measureDigits = defineHandler(
+    (value): value is number => typeof value === 'number',
+    (value) => value.toString().length,
+  )
+  const digits = createLen({ handlers: [measureDigits] })
+  assert.equal(digits(1234), 4)
+  assert.equal(digits(-9.5), 4)
+  assert.equal(digits('héllo'), 5)
 })
 
 const pickMode = (): FallbackMode => 'zero'

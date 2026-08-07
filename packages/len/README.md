@@ -1,14 +1,25 @@
 # `@sospedra/len` 🍥
 
-Go's builtin `len`, in TypeScript.
+The typed length of anything. One function returns the element count of any container: strings, arrays, typed arrays, buffers, `Map`, `Set`, or your own classes through pluggable handlers. Values without a length fail at compile time and at runtime, or return `0` or `null` when you configure that. Zero dependencies, ESM, just 601 bytes gzipped.
 
 ```ts
 import len from '@sospedra/len'
 
-len('héllo') // 6, UTF-8 bytes, like Go
+len('héllo') // 5, UTF-16 code units, like .length
 len([1, 2]) // 2
 len(new Map()) // 0
 len(9) // tsc error, and a TypeError at runtime
+```
+
+Want the byte count instead? Register the shipped handler:
+
+```ts
+import { createLen } from '@sospedra/len'
+import { stringBytes } from '@sospedra/len/string-bytes'
+
+const len = createLen({ handlers: [stringBytes] })
+
+len('héllo') // 6, UTF-8 bytes
 ```
 
 ### Install
@@ -23,27 +34,39 @@ Or add it to a workspace consumer:
 "@sospedra/len": "workspace:*"
 ```
 
+### Why
+
+Vanilla JS spells "how many" differently per container: `.length`, `.size`, `.byteLength`, or nothing at all. Mix two shapes and you get the classic crash report, `Cannot read properties of undefined (reading 'length')`. Every Sentry board has one. `len` is one function for the same question on every container. You choose the no-length behavior at creation: a tsc error plus a TypeError, a `0`, or a `null`.
+
+| ask | vanilla JS | `len` |
+| --- | --- | --- |
+| items in an array | `array.length` | `len(array)` |
+| entries in a `Map` or `Set` | `map.size` | `len(map)` |
+| bytes in a buffer | `buffer.byteLength` | `len(buffer)` |
+| UTF-8 bytes of a string | `new TextEncoder().encode(s).byteLength` | `len(s)` with `stringBytes` |
+| value might be `undefined` | crashes mid-expression | tsc error, or `0` / `null` by config |
+| keys in a plain object | `Object.keys(object).length` | opt-in `objectKeys` handler |
+
 ### Semantics
 
-| target | Go analog | result |
-| --- | --- | --- |
-| `string` | `string` | UTF-8 byte count |
-| `T[]` | slice, array | element count |
-| typed arrays, `Buffer` | `[]byte` and friends | element count |
-| `DataView` | byte window | `byteLength` |
-| `ArrayBuffer`, `SharedArrayBuffer` | backing storage | `byteLength` |
-| `Map` | `map` | `size` |
-| `Set` | `map[T]struct{}` | `size` |
-| anything else | compile error in Go | `TypeError` |
+`len(target)` picks the measurement from the target's shape:
 
-Set, typed arrays, DataView, and buffers are JS adaptations. Go's `len` accepts arrays, pointers to arrays, slices, strings, maps, and channels. Channels and pointer-to-array have no JS analog.
+| target | result |
+| --- | --- |
+| `string` | UTF-16 code units, like `.length` |
+| `T[]` | element count |
+| typed arrays, `Buffer` | element count |
+| `DataView` | `byteLength` |
+| `ArrayBuffer`, `SharedArrayBuffer` | `byteLength` |
+| `Map`, `Set` | `size` |
+| anything else | `TypeError`, or `0` / `null` per `fallback` |
 
 Not lenable: plain objects (see the shipped handlers), numbers, `null`, `undefined`, `WeakMap`, `WeakSet`, functions, boxed `String`.
 
-Two adaptations to know:
+Two details to know:
 
-- Go returns 0 for typed nil slices and maps and rejects only untyped `nil`. JS `null` and `undefined` carry no type, so they take the fallback path.
-- A Go string is a raw byte sequence. A JS string is not. The byte count is the UTF-8 encoding of the JS string, and a lone surrogate encodes as U+FFFD, 3 bytes.
+- `null` and `undefined` carry no type, so they take the fallback path.
+- `stringBytes` encodes the string as UTF-8, and a lone surrogate encodes as U+FFFD, 3 bytes.
 
 ### Configure
 
@@ -67,15 +90,15 @@ const maybe = createLen({ fallback: 'null' })
 
 ### Shipped handlers
 
-Each optional behavior is a handler on its own subpath. Import only what you register.
+Each optional behavior is a handler on its own subpath. Import only what you register: a string handler is under 200 bytes of runtime.
 
 ```ts
 import { createLen } from '@sospedra/len'
 import { objectKeys } from '@sospedra/len/object-keys'
-import { stringCodeUnits } from '@sospedra/len/string-code-units'
+import { stringBytes } from '@sospedra/len/string-bytes'
 
-const units = createLen({ handlers: [stringCodeUnits] })
-units('héllo') // 5
+const bytes = createLen({ handlers: [stringBytes] })
+bytes('héllo') // 6
 
 const keys = createLen({ handlers: [objectKeys] })
 keys({ a: 1, b: 2 }) // 2
@@ -83,11 +106,11 @@ keys({ a: 1, b: 2 }) // 2
 
 | handler | subpath | measures |
 | --- | --- | --- |
-| `stringCodeUnits` | `@sospedra/len/string-code-units` | `'héllo'` → 5, `'👍'` → 2 |
+| `stringBytes` | `@sospedra/len/string-bytes` | `'héllo'` → 6, `'👍'` → 4 |
 | `stringCodePoints` | `@sospedra/len/string-code-points` | `'héllo'` → 5, `'👍'` → 1 |
 | `objectKeys` | `@sospedra/len/object-keys` | own enumerable string keys |
 
-The string handlers override the built-in byte count, because handlers run before built-ins. They share one predicate, so registering both in one instance throws at creation. Pick one per instance. Plain objects read as Go structs by default, so `objectKeys` is the opt-in Go-map reading.
+The string handlers override the built-in code-unit count, because handlers run before built-ins. They share one predicate, so registering both in one instance throws at creation. Pick one per instance. Plain objects are not lenable by default, so `objectKeys` is the opt-in key count.
 
 ### Extend
 
@@ -111,27 +134,51 @@ const measureDogs = defineHandler(
 const len = createLen({ handlers: [measureDogs] })
 
 len(new Dogs(['rex', 'fido'])) // 2
-len('héllo') // 6, built-ins still apply
+len('héllo') // 5, built-ins still apply
 ```
 
-Handlers run before built-ins. First match wins. Registration is per instance. Two handlers with the same `is` reference throw at creation, because the second can never run. Distinct predicates that overlap stay legal, so put the specific one first. Under `fallback: 'throw'` the instance also accepts your handled types at the type level, so the call above needs no cast. Write the predicate through `defineHandler`, or annotate it as `value is T` yourself.
+Any predicate works. Numbers, for example:
 
-### Migrate from v2
+```ts
+const measureDigits = defineHandler(
+  (value): value is number => typeof value === 'number',
+  (value) => value.toString().length,
+)
 
-| call | v2 | v3 |
-| --- | --- | --- |
-| `len('string')` | `0` | `6` |
-| `len({})` | `0` | `TypeError` |
-| `len(9)` | `0` | `TypeError`, and a tsc error |
-| `len(undefined)` | `0` | `TypeError` |
-| `len(new Map([['a', 1]]))` | `0` | `1` |
+const len = createLen({ handlers: [measureDigits] })
 
-`createLen({ fallback: 'zero' })` is the closest v2 shape. It keeps the `(target: unknown) => number` signature, but strings, Maps, Sets, typed arrays, and buffers now measure instead of returning 0.
+len(1234) // 4
+len(-9.5) // 4
+```
 
-### Caveats
+The rules:
 
-- ESM only. `sideEffects: false` plus per-handler subpaths keep bundles minimal, and the default instance carries a pure annotation, so it drops when unused.
-- Consumers need TypeScript >= 5.0. The published types use `const` type parameters.
-- Node >= 20 at runtime. Zero dependencies.
-- `instanceof` misses cross-realm `ArrayBuffer`, `Map`, and `Set` values. They take the fallback path.
-- The type layer is structural. A hand-built `{ buffer, byteLength, byteOffset }` object compiles as lenable and still throws at runtime.
+- Handlers run before built-ins, and the first matching predicate wins
+- Registration is per instance, the default export stays untouched
+- Two handlers sharing one `is` reference throw at creation, because the second can never run
+- Distinct predicates that overlap stay legal, so put the specific one first
+- Under `fallback: 'throw'` the instance accepts your handled types at the type level, so the `Dogs` call above needs no cast
+
+Write the predicate through `defineHandler`, or annotate it as `value is T` yourself.
+
+### FAQ
+
+**Why does `len('héllo')` return 5?**
+
+The default counts UTF-16 code units, the same number `'héllo'.length` returns. Register `stringBytes` for the UTF-8 byte count, 6 here, or `stringCodePoints` to count astral characters like `'👍'` as 1.
+
+**How do I count bytes instead of code units?**
+
+Import `stringBytes` from `@sospedra/len/string-bytes` and pass it to `createLen({ handlers: [stringBytes] })`. The handler overrides the built-in count for every string the instance measures.
+
+**What does `len(null)` or `len(undefined)` return?**
+
+Nothing by default: both are a tsc error and a runtime TypeError. With `fallback: 'zero'` they return `0`, and with `fallback: 'null'` they return `null`.
+
+**Does `len` count plain object keys?**
+
+Not by default. Register `objectKeys` from `@sospedra/len/object-keys` and `len({ a: 1, b: 2 })` returns 2, own enumerable string keys only. Class instances stay non-lenable either way.
+
+**Can I measure my own classes?**
+
+Yes. Build a handler with `defineHandler` and pass it to `createLen`. The instance accepts your type at compile time and measures it at runtime. See Extend above.

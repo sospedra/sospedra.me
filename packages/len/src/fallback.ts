@@ -1,15 +1,11 @@
 export type FallbackMode = 'throw' | 'zero' | 'null'
 
-const constructorName = (target: object): string | undefined => {
-  const { name } =
-    (target as { constructor?: { name?: unknown } }).constructor ?? {}
-  return typeof name === 'string' && name !== '' ? name : undefined
-}
-
 const describeTarget = (target: unknown): string => {
   if (target === null) return 'null'
   if (typeof target !== 'object') return typeof target
-  return constructorName(target) ?? 'object'
+  const { name } =
+    (target as { constructor?: { name?: unknown } }).constructor ?? {}
+  return typeof name === 'string' && name !== '' ? name : 'object'
 }
 
 const throwNotLenable = (target: unknown): never => {

@@ -6,8 +6,6 @@ export type Lenable =
   | ReadonlyMap<unknown, unknown>
   | ReadonlySet<unknown>
 
-const utf8 = new TextEncoder()
-
 const isAnyArrayBuffer = (target: unknown): target is ArrayBufferLike => {
   if (target instanceof ArrayBuffer) return true
   return (
@@ -23,11 +21,10 @@ const viewLength = (view: ArrayBufferView): number => {
 }
 
 export const measureBuiltin = (target: unknown): number | undefined => {
-  if (typeof target === 'string') return utf8.encode(target).byteLength
+  if (typeof target === 'string') return target.length
   if (Array.isArray(target)) return target.length
   if (ArrayBuffer.isView(target)) return viewLength(target)
   if (isAnyArrayBuffer(target)) return target.byteLength
-  if (target instanceof Map) return target.size
-  if (target instanceof Set) return target.size
+  if (target instanceof Map || target instanceof Set) return target.size
   return undefined
 }
