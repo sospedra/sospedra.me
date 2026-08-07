@@ -9,7 +9,10 @@ VOUCH: Verified Output Under Canonical History.
 
 ## rule of interpretation
 
-The source spec is vendored at apps/vouch/SPEC.md. This document adds definitions only where the spec is silent. The sanctioned deviations are the five items in "deviations". Everything else follows spec text.
+The source spec, vendored at apps/vouch/SPEC.md, wins over this document in
+any conflict. This document adds definitions only where the spec is silent. The
+sanctioned deviations are the five items in "deviations". Everything else
+follows spec text.
 
 ## locked decisions
 
