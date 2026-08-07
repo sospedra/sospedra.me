@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { test } from 'node:test'
+import { ed25519 } from '@noble/curves/ed25519.js'
 import { randomBytes, toHex, utf8 } from '../src/core/bytes.ts'
 import { type CborValue, encodeCbor } from '../src/core/cbor.ts'
 import type { CongestionPolicy } from '../src/core/congestion.ts'
 import { chainedWork, STAMP_GENESIS } from '../src/core/congestion.ts'
 import { setupParams } from '../src/core/lhtlp.ts'
 import {
+  cosignHead,
   type SignedTreeHead,
   TransparencyLog,
   verifyHead,
@@ -25,6 +27,7 @@ import {
   verifyHeadConsistency,
   verifyLeafInclusion,
   verifyShareArtifact,
+  viewFromLog,
 } from '../src/world/keyless-verifier.ts'
 import { tuned } from '../src/world/params.ts'
 import { GENERIC } from '../src/world/profile.ts'
@@ -1806,4 +1809,81 @@ test('EIGHTEENTH-REVIEW: exported entries normalize the heads they are handed', 
     1,
   )
   assert.equal(c.n, 1, 'provenLeaves read treeSize more than once')
+})
+
+// EIGHTEENTH-REVIEW, alarm fix 1. Everything else in the verifier defends
+// against a log that publishes a BAD head. None of it defends against a log
+// that publishes DIFFERENT heads to different auditors, because a split view is
+// self-consistent on both sides and the checker only notices if it happens to
+// see both. Independent witnesses countersign the same message the log signs,
+// so splitting the view costs k corrupted witnesses rather than none.
+test('EIGHTEENTH-REVIEW: a head nobody witnessed is reported as unwitnessed', () => {
+  const world = createWorld(GENERIC, { t: tuned(64) })
+  const log = new TransparencyLog()
+  log.append(randomBytes(16))
+  const head = log.signHead()
+
+  const witnesses = [
+    ed25519.utils.randomSecretKey(),
+    ed25519.utils.randomSecretKey(),
+    ed25519.utils.randomSecretKey(),
+  ]
+  const policy = {
+    keys: witnesses.map((k) => ed25519.getPublicKey(k)),
+    threshold: 2,
+  }
+  const withPolicy = createKeylessVerifier({
+    evidenceKeys: { ...publicKeysOf(world), logPublicKey: log.publicKey },
+    congestionPolicy: { dFloor: 1, baseline: 1, cap: 4, windowBlocks: 1000 },
+    witnessPolicy: policy,
+  })
+  const report = (
+    verifier: ReturnType<typeof createKeylessVerifier>,
+    cosignatures?: Uint8Array[],
+  ) =>
+    transparencyReport(verifier, {
+      log: viewFromLog(log),
+      chain: world.chain,
+      docket: [],
+      horizon: { tipHeight: world.chain.tipHeight(), horizonBlocks: 1000 },
+      pinnedHead: head,
+      cosignatures,
+    })
+
+  // No witnesses at all is a WEAKER position than zero witnesses, and must not
+  // read the same. `null` says the deployment has none.
+  const noPolicy = createKeylessVerifier({
+    evidenceKeys: { ...publicKeysOf(world), logPublicKey: log.publicKey },
+    congestionPolicy: { dFloor: 1, baseline: 1, cap: 4, windowBlocks: 1000 },
+  })
+  assert.equal(report(noPolicy).witnessCount, null)
+  assert.equal(report(noPolicy).witnessed, false)
+
+  assert.equal(report(withPolicy, []).witnessCount, 0, 'none supplied')
+  assert.equal(report(withPolicy, []).witnessed, false)
+
+  const one = [cosignHead(head, witnesses[0])]
+  assert.equal(report(withPolicy, one).witnessCount, 1)
+  assert.equal(report(withPolicy, one).witnessed, false, 'below threshold')
+
+  const two = [cosignHead(head, witnesses[0]), cosignHead(head, witnesses[1])]
+  assert.equal(report(withPolicy, two).witnessCount, 2)
+  assert.equal(report(withPolicy, two).witnessed, true)
+
+  // Positional, like the reviewer roster: one witness cannot be the quorum.
+  const doubled = [
+    cosignHead(head, witnesses[0]),
+    cosignHead(head, witnesses[0]),
+  ]
+  assert.equal(report(withPolicy, doubled).witnessCount, 1, 'one witness twice')
+  assert.equal(report(withPolicy, doubled).witnessed, false)
+
+  // A cosignature over a DIFFERENT head does not count for this one.
+  log.append(randomBytes(16))
+  const later = log.signHead()
+  const wrongHead = [
+    cosignHead(later, witnesses[0]),
+    cosignHead(later, witnesses[1]),
+  ]
+  assert.equal(report(withPolicy, wrongHead).witnessCount, 0)
 })

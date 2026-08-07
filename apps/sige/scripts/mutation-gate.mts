@@ -238,6 +238,36 @@ const MUTATIONS: Mutation[] = [
       '  const safeHead = head as SafeHead\n  return safeVerifyHead(verifier.logPublicKey, safeHead)\n',
     tests: ['test/keyless.test.ts'],
   },
+  {
+    name: 'merkle:witness-positional',
+    file: 'src/core/merkle.ts',
+    find: '    const key = policy.keys[i]\n    if (key === undefined) return false\n',
+    replace:
+      '    const key = policy.keys.find((candidate) => {\n      try {\n        return ed25519.verify(signature, message, candidate)\n      } catch {\n        return false\n      }\n    })\n    if (key === undefined) return false\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'merkle:witness-message',
+    file: 'src/core/merkle.ts',
+    find: '  const message = headMessage(\n    cosigned.head.treeId,\n    cosigned.head.treeSize,\n    cosigned.head.rootHash,\n  )\n',
+    replace:
+      '  const message = headMessage(cosigned.head.treeId, 0, cosigned.head.rootHash)\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'keyless:witness-absent-is-null',
+    file: 'src/world/keyless-verifier.ts',
+    find: '  if (policy === null) return { count: null, ok: false }\n',
+    replace: '  if (policy === null) return { count: 0, ok: true }\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'keyless:witness-threshold',
+    file: 'src/world/keyless-verifier.ts',
+    find: '    return { count, ok: count >= policy.threshold }\n',
+    replace: '    return { count, ok: count >= 0 }\n',
+    tests: ['test/keyless.test.ts'],
+  },
 ]
 
 function runTests(tests: string[]): boolean {

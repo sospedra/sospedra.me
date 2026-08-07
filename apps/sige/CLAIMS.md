@@ -68,6 +68,9 @@ numbers.
 | A leaf the build cannot parse is reported as `unparsable`, never silently dropped | §17.1 | `world/keyless-verifier.ts` `transparencyReport` | `test/keyless.test.ts` |
 | Every reviewer approval is verified against the pinned roster, positionally, so one reviewer cannot be a quorum | §6.2.6 | `world/evidence.ts` `countVerifiedApprovals` | `test/evidence.test.ts` |
 | The ceremony transcript is a value the log published: the closing leaf commits its hash under a signed head | §6.2.6 | `world/evidence.ts` `checkClosingLeafBinding` | `test/evidence.test.ts` |
+| A head carrying k of n witness cosignatures cannot be shown to one auditor alone: splitting the view costs k corrupted witnesses, not zero | §8.1 | `core/merkle.ts` `countCosignatures` | `test/keyless.test.ts` |
+| A deployment with NO witnesses reports `witnessCount: null`, never zero, so an unwitnessed log cannot read like a witnessed one with no signatures yet | §8.1 | `world/keyless-verifier.ts` `countWitnesses` | `test/keyless.test.ts` |
+| The auditor's view is served BY the log, so withholding, padding or reordering it is not a role anyone holds | §17.1 | `core/merkle.ts` `serveLeaves`, `world/keyless-verifier.ts` `viewFromLog` | `test/keyless.test.ts` |
 | A head is bound to the log that signed it: the tree id is inside the signature, so a relabelled head fails verification | §8.1 | `core/merkle.ts` `headMessage` | `test/log.test.ts` |
 | The work chain across ALL unseals is walked in authenticated index order, so a fork, a skipped predecessor, a reordering or a second genesis is one failed adjacent-pair check | §5.5D | `world/keyless-verifier.ts` `walkCongestionChain` | `test/keyless.test.ts` |
 | The closing head is a consistent extension of the unseal head, not merely later | §6.2.6 | `world/evidence.ts` `checkClosingLeafInclusion` | `test/evidence.test.ts` |

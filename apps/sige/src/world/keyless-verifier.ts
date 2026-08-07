@@ -10,9 +10,12 @@ import {
 import type { LhtlpParams } from '../core/lhtlp.ts'
 import type { SignedTreeHead } from '../core/merkle.ts'
 import {
+  countCosignatures,
+  type TransparencyLog,
   verifyConsistency,
   verifyHead,
   verifyInclusion,
+  type WitnessPolicy,
 } from '../core/merkle.ts'
 import type { VtdProfile } from '../core/vtd.ts'
 import {
@@ -111,6 +114,7 @@ function includedLeaves(
 
 export type KeylessVerifier = {
   readonly evidenceKeys: EvidencePublicKeys
+  readonly witnessPolicy: WitnessPolicy | null
   readonly logPublicKey: Uint8Array
   readonly congestionPolicy: CongestionPolicy
   readonly chainValidator: ChainValidator
@@ -120,11 +124,15 @@ export type KeylessInputs = {
   evidenceKeys: EvidencePublicKeys
   congestionPolicy: CongestionPolicy
   minConfirmations?: number
+  // Absent means no witnessing, which is the pre-witness behaviour and is
+  // reported as such rather than silently treated as witnessed.
+  witnessPolicy?: WitnessPolicy
 }
 
 export function createKeylessVerifier(inputs: KeylessInputs): KeylessVerifier {
   return {
     evidenceKeys: inputs.evidenceKeys,
+    witnessPolicy: inputs.witnessPolicy ?? null,
     logPublicKey: inputs.evidenceKeys.logPublicKey,
     congestionPolicy: inputs.congestionPolicy,
     chainValidator: createChainValidator({
@@ -273,6 +281,11 @@ export type TransparencyReport = {
   // False unless the latest head verifies under the pinned log key. Every
   // counter below is zero when it is false: an unsigned head proves nothing.
   headVerified: boolean
+  // How many pinned witnesses countersigned the head, and whether that meets
+  // the policy. `null` means the deployment has no witnesses, which is a
+  // weaker position than zero and must not read the same.
+  witnessCount: number | null
+  witnessed: boolean
   // Non-null when two heads this log signed disagree at one tree size. Every
   // counter is zeroed, because a forked log cannot be counted.
   equivocation: string | null
@@ -329,6 +342,8 @@ export type ReportInputs = {
   horizon: DocketHorizon
   // Obtained out of band, e.g. from a witness or a prior gossip round.
   pinnedHead: SignedTreeHead
+  // The witness signatures over `pinnedHead`, if the deployment has witnesses.
+  cosignatures?: readonly Uint8Array[]
 }
 
 export function provenLeaves(
@@ -755,6 +770,35 @@ function walkCongestionChain(
   return { verdict: breaks === 0 ? 'intact' : 'broken', breaks }
 }
 
+// Builds the view from the log itself rather than from a caller's bag. The
+// anchors and the head records still come from outside, because the chain and
+// the anchor records are not the log's to serve.
+// A head nobody but the log vouched for can be shown to one auditor alone.
+// Counting the witnesses is what makes a split view cost more than lying.
+function countWitnesses(
+  verifier: KeylessVerifier,
+  head: SafeHead,
+  cosignatures: readonly Uint8Array[],
+): { count: number | null; ok: boolean } {
+  const policy = verifier.witnessPolicy
+  if (policy === null) return { count: null, ok: false }
+  try {
+    const count = countCosignatures({ head, cosignatures }, policy)
+    return { count, ok: count >= policy.threshold }
+  } catch {
+    return { count: 0, ok: false }
+  }
+}
+
+export function viewFromLog(
+  log: TransparencyLog,
+  anchors: readonly Anchor[] = [],
+  anchoredHeads: readonly AnchoredHeadView[] = [],
+): PublicLogView {
+  const head = log.signHead()
+  return { heads: [head], leaves: log.serveLeaves(), anchors, anchoredHeads }
+}
+
 export function transparencyReport(
   verifier: KeylessVerifier,
   inputs: ReportInputs,
@@ -782,6 +826,7 @@ export function transparencyReport(
   // and show a stale one, hiding every leaf beyond it with no alarm.
   const head = pinnedHead
   const headVerified = safeVerifyHead(verifier.logPublicKey, head)
+  const witness = countWitnesses(verifier, head, inputs.cosignatures ?? [])
   const equivocation = detectEquivocation(verifier, [head, ...log.heads])
   const {
     leaves: decoded,
@@ -832,6 +877,8 @@ export function transparencyReport(
     // counter, so nothing below is reported at all.
     return {
       headVerified: false,
+      witnessCount: witness.count,
+      witnessed: witness.ok,
       equivocation,
       enrollmentsByEpoch: {},
       unsealsByRole: {},
@@ -894,6 +941,8 @@ export function transparencyReport(
     ).length,
     closures: docket.length,
     headVerified,
+    witnessCount: witness.count,
+    witnessed: witness.ok,
     equivocation,
     // Leaves the caller supplied that this build could not prove are in the
     // log, and leaves the head says exist that the caller did not supply.

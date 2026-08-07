@@ -133,6 +133,23 @@ export class TransparencyLog {
     return path
   }
 
+  // Fetch, do not accept. Every view the report checked used to be a bag the
+  // caller assembled, which made "presenter" a role with its own attack
+  // surface: withhold a leaf, pad an array, reorder it. Serving the view from
+  // the log's own state removes that role. It removes nothing else: the log is
+  // still untrusted, the head is still verified, every proof is still checked.
+  serveLeaves(): {
+    index: number
+    bytes: Uint8Array
+    inclusionProof: Uint8Array[]
+  }[] {
+    return this.bytes.map((bytes, index) => ({
+      index,
+      bytes: Uint8Array.from(bytes),
+      inclusionProof: this.inclusionProof(index),
+    }))
+  }
+
   consistencyProof(oldSize: number, newSize: number): Uint8Array[] {
     if (
       !Number.isInteger(oldSize) ||
@@ -150,6 +167,58 @@ export class TransparencyLog {
       complete: true,
     })
   }
+}
+
+// Witness cosigning.
+//
+// Everything else in this file defends against a log that publishes a bad
+// head. None of it defends against a log that publishes DIFFERENT heads to
+// different auditors, because a split view is self-consistent on both sides.
+// The verifier can only notice equivocation if it happens to see both.
+//
+// Independent witnesses countersign the same message the log signs. A head
+// carrying k of n witness signatures cannot be shown to one auditor alone: to
+// split the view the operator must corrupt k witnesses, not just itself.
+export type WitnessPolicy = {
+  keys: readonly Uint8Array[]
+  threshold: number
+}
+
+export type CosignedHead = {
+  head: SignedTreeHead
+  cosignatures: readonly Uint8Array[]
+}
+
+export function cosignHead(
+  head: SignedTreeHead,
+  witnessKey: Uint8Array,
+): Uint8Array {
+  return ed25519.sign(
+    headMessage(head.treeId, head.treeSize, head.rootHash),
+    witnessKey,
+  )
+}
+
+// Positional, like the reviewer roster: cosignature i must verify under
+// witness i. Counting them any-key lets one witness be the whole quorum.
+export function countCosignatures(
+  cosigned: CosignedHead,
+  policy: WitnessPolicy,
+): number {
+  const message = headMessage(
+    cosigned.head.treeId,
+    cosigned.head.treeSize,
+    cosigned.head.rootHash,
+  )
+  return cosigned.cosignatures.filter((signature, i) => {
+    const key = policy.keys[i]
+    if (key === undefined) return false
+    try {
+      return ed25519.verify(signature, message, key)
+    } catch {
+      return false
+    }
+  }).length
 }
 
 export function verifyHead(
