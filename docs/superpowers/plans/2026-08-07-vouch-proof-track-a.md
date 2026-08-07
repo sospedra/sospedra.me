@@ -78,7 +78,10 @@ git commit -m "docs(vouch): vendor the source spec"
 - v0.1.1 (2026-08-07): migration digest covers the full canonical migration
   object in the program chain. Manifest pair hash defined. Client trust state
   binds the proven receipt-key record. Genesis chain link is the era-0
-  migration object.
+  migration object. Hash magic renamed VAPI to VOUCH (8.2). Program manifest
+  gains an execution-mode discriminant (15.1). Migration authorization
+  validity is the governance-role event gate; the chain digest gives
+  substitution-proofness only (16.2, 32 item 8).
 ```
 
 - [ ] **Step 2: Revise section 16.2**
@@ -102,10 +105,22 @@ era's update and query manifests:
 
     manifest_pair_hash = H("program-manifest-pair", encode(update_manifest), encode(query_manifest))
 
+When an era's manifests are published, the pair hash MUST derive that era's
+program ids, and a verifier holding the manifests MUST check both derived
+ids against the migration's next ids. Eras with simulated programs commit
+the pair hash as an opaque value.
+
 The genesis chain link is the digest of the era-0 migration object: the
 genesis program ids, the genesis manifest pair hash, activation sequence 0,
 and an empty governance authorization. Genesis needs no governance
 authorization because the client pins genesis directly.
+
+The chain digest gives substitution-proofness: the migration bytes the
+client walks are the committed bytes. Authorization validity is a separate
+control: `OP.COMMIT_MIGRATION` MUST be accepted only from an author holding
+the governance role, enforced in transition replay. The internal structure
+of `governance_authorization` stays an open engineering decision per
+section 32 item 8.
 ```
 
 - [ ] **Step 3: Revise section 15.1**
@@ -113,11 +128,16 @@ authorization because the client pins genesis directly.
 Add one paragraph at the end of 15.1:
 
 ```markdown
-Revision v0.1.1. `program_source_hash` identifies Phase 0 programs, which the
-verifier re-executes from source. `guest_binary_hash` identifies zkVM-era
-programs. A manifest MUST carry exactly one of the two, matched to its
-execution mode.
+Revision v0.1.1. The manifest carries an `execution_mode` u8 discriminant:
+1 = source (Phase 0, verifier re-executes from source, identity field is
+`program_source_hash`), 2 = guest (zkVM era, identity field is
+`guest_binary_hash`). The discriminant is encoded, so a fixed-field decoder
+never guesses the identity field's meaning.
 ```
+
+Also revise section 8.2 in place: the domain-separation magic is `VOUCH`.
+DESIGN.md deviation 1 promised this rename at the next spec revision. Add
+one changelog-referencing sentence at the 8.2 edit.
 
 - [ ] **Step 4: Revise section 18**
 
@@ -202,6 +222,8 @@ Expected: FAIL. `chainNext` rejects the object argument, `GENESIS_MIGRATION` is 
 - [ ] **Step 3: Implement**
 
 In `hash.ts`, extend the `Domain` union with `'program-migration'` and `'program-manifest-pair'` and `'key-state'` (task 5 uses the third; add all three here so the union changes once).
+
+In `program.ts`, add `executionMode: number` to `ProgramManifestV1` with value 1 for both Phase 0 manifests. `encodeManifest` writes it as u8 first, `decodeManifest` reads and rejects values other than 1 or 2. Spec 15.1 v0.1.1 defines the discriminant. Extend the task test with a round-trip assertion and a rejection assertion for mode 0.
 
 In `program.ts`, replace `chainNext` and `GENESIS_CHAIN`:
 
@@ -395,6 +417,12 @@ test('every verifier rule string has at least one mutant', () => {
   }
 })
 
+test('the transition role gate and activation boundary have named mutants', () => {
+  const covered = new Set(MUTANTS.map((m) => m.rule))
+  assert.ok(covered.has('commit-migration-role-gate'))
+  assert.ok(covered.has('activation-boundary'))
+})
+
 test('every mutant find-string is unique in its file', () => {
   for (const mutant of MUTANTS) {
     const source = readFileSync(new URL(`../${mutant.file}`, import.meta.url), 'utf8')
@@ -429,6 +457,8 @@ export const MUTANTS: Mutant[] = [
 ```
 
 The runner, for each mutant: copy `src/` to `mkdtempSync` scratch, apply the single string replacement (throw if `find` is absent), copy `test/` and `fixtures/` and `scripts/` beside it, run `node --test` in the scratch via `spawnSync`, and record whether the suite went red. Print one line per mutant: `killed` or `SURVIVED`. Exit 1 if any mutant survived. Skip-list: none. Build the full table by reading every `rule: '...'` site in `verify.ts` and flipping its guard, the same shape as the example. Each `find` must include enough surrounding lines to be unique; the uniqueness test enforces this.
+
+Two mutants target `src/protocol/transition.ts` instead of `verify.ts`: rule `commit-migration-role-gate` empties the `[OP.COMMIT_MIGRATION]: [GOVERNANCE_ROLE]` entry (line 261) so any author may commit a migration, and rule `activation-boundary` flips the activation-sequence comparison the old update program enforces. The rule names are harness-local labels, not verify.ts strings. Both mutants must die like the rest.
 
 Add to `apps/vouch/package.json` scripts: `"mutants": "node scripts/mutants.ts"`.
 
@@ -489,7 +519,7 @@ test('migration encoding round-trips over a seeded corpus', () => {
   }
 })
 
-test('decode rejects every single-byte mutation of valid bytes', () => {
+test('no single-byte mutation round-trips to the original bytes', () => {
   const rng = new Prng('fuzz-encode-mutation')
   const bytes = encodeMigration(randomMigration(rng))
   for (let i = 0; i < bytes.length; i += 1) {
@@ -508,7 +538,7 @@ test('decode rejects every single-byte mutation of valid bytes', () => {
 })
 ```
 
-Adapt `Prng` construction and method names to what `rand.ts` actually exports; the seeded-corpus and mutation-sweep shapes stay. The mutation property asserts a flip never round-trips to the original bytes, which is what canonical one-representation encoding promises.
+Adapt `Prng` construction and method names to what `rand.ts` actually exports; the seeded-corpus and mutation-sweep shapes stay. The mutation property asserts a flip never round-trips to the original bytes, which is what canonical one-representation encoding promises. A content flip that decodes to a DIFFERENT valid object is correct decoder behavior, authentication rejects it later, so the property is uniqueness, not rejection. Add a third test in the same file for malformed encodings: truncation at every length, one trailing byte, an oversized length prefix, and an invalid enum discriminant must throw.
 
 - [ ] **Step 2: Write fuzz-smt**
 
@@ -584,18 +614,30 @@ SHA-256 collision resistance. Ed25519 existential unforgeability. Spec 5.3.
 ## definitions
 Verifier, bundle, trust state, era walk. Each term names its type and file.
 
+## scope
+The steps vouch models. Steps 1 and 2 (Protobuf transport) have no
+counterpart per DESIGN deviation 3. Step 18 is proved for the in-memory
+persistence model. State the boundary before any theorem.
+
 ## theorem S: safety induction
 Statement: every trust state the verifier accepts descends from the pinned
-genesis through valid authenticated transitions.
+genesis through valid authenticated transitions, PROVIDED the input trust
+state is the pinned genesis or the atomically persisted output of a prior
+accepting run (spec 5.2, 18). State the hypothesis in the theorem.
 Proof: induction over walkTransitionSegments and advanceEra. Base: genesis
 anchors. Step: each journal extends the accepted root chain or the walk
 fails. Case analysis over the rules each step can raise.
 
 ## theorems T1 to T7
-One subsection per spec 6.1 item, the statement from the design doc table.
-Each proof: assume the verifier accepts the forbidden behavior, name the
-check that passed, derive a collision or a forgery. Cite each rule string
-in backticks and the scenario plus vector that exercise it.
+One subsection per spec 6.1 item, the statement from the design doc table
+as amended 2026-08-07: T2 covers receipt, head, author, and governance
+signatures (steps 4, 5, 14, 16). T3 spans steps 12 and 14. T4 is
+conditional on proof-system and verifier correctness per spec 5.3. T5
+chains steps 7-10, 12, 13, and 15. T6 carries the client-nonce-freshness
+hypothesis. T7 needs descent (step 14) plus persisted monotonicity (11,
+18). Each proof: assume the verifier accepts the forbidden behavior, name
+the check that passed, derive a collision or a forgery. Cite each rule
+string in backticks and the scenario plus vector that exercise it.
 
 ## theorem C: completeness
 An honest server passes all 19 steps. Witness: the honest scenario beats and
@@ -614,10 +656,12 @@ any updateProgramId comparison could run. The absent guard is sound.
 Steps 4 and 14 authenticate the receipt-key record; the bound
 activeKeyStateHash is diagnostic. Spec 18 v0.1.1.
 
-## assumption discharge
-Replay mode evaluates active_published_program directly, discharging the
-spec 5.3 zkVM and binary-binding assumptions. Track C replaces evaluation
-with a proof system and discharges them constructively.
+## assumption instantiation
+The theorems stay conditional on spec 5.3 in every mode. Replay mode
+replaces the zkVM soundness assumption with evaluator and runtime
+correctness. Track C instantiates it with a concrete audited proof system
+and a real guest_binary_hash. Neither mode discharges an assumption. State
+the per-mode assumption set.
 
 ## audit matrix
 One row per spec 6.1 item: lemma, verify.ts rule strings, scenario ids,
