@@ -519,7 +519,11 @@ function readLeafViews(views: readonly PublicLeafView[]): SafeLeafView[] {
 
 // SimBitcoin is a live object the caller owns, and `confirmations` is a method
 // it can replace. Depth is recomputed here from the block array instead.
-type SafeChain = { payloads: (Uint8Array | null)[]; tipHeight: number }
+type SafeChain = {
+  payloads: (Uint8Array | null)[]
+  hashes: (Uint8Array | null)[]
+  tipHeight: number
+}
 
 function readChain(chain: SimBitcoin): SafeChain {
   try {
@@ -530,10 +534,13 @@ function readChain(chain: SimBitcoin): SafeChain {
           ? Uint8Array.from(block.payload)
           : null,
       ),
+      hashes: blocks.map((block) =>
+        block?.hash instanceof Uint8Array ? Uint8Array.from(block.hash) : null,
+      ),
       tipHeight: blocks.length - 1,
     }
   } catch {
-    return { payloads: [], tipHeight: -1 }
+    return { payloads: [], hashes: [], tipHeight: -1 }
   }
 }
 
@@ -802,9 +809,29 @@ function countWitnesses(
 // The heartbeat's freshness comes from the chain tip it names, never from a
 // timestamp the operator writes. A self-authored clock lets a week of missing
 // heartbeats be manufactured the moment somebody asks.
+// A heartbeat is only worth the block it names. The operator writes both the
+// height and the hash, so the verifier has to hold them against the chain: an
+// unchecked height is one integer, and one integer used to silence the freeze
+// alarm forever.
+function namedTipHeight(leaf: DecodedLeaf, chain: SafeChain): number | null {
+  const height = leaf.fields.prev_unseal_anchor_ref
+  if (!Number.isSafeInteger(height) || height === null) return null
+  // No separate range bound: any height outside the array has no hash, and
+  // the lookup below already refuses that. The gate found the duplicate.
+  const hash = chain.hashes[height]
+  if (hash === null || hash === undefined) return null
+  // The hash is what stops a heartbeat naming a block it never saw. A height
+  // alone is guessable; a block hash is not, before that block exists.
+  return bytesEqual(hash, leaf.fields.order_document_hash) ? height : null
+}
+
+// The WORST gap, never only the latest one. Reporting the trailing gap alone
+// let a year of silence erase itself with one honest heartbeat: a log that
+// froze and resumed was byte-identical in every report field to one that never
+// missed a beat.
 function heartbeatStatus(
   decoded: readonly DecodedLeaf[],
-  tipHeight: number,
+  chain: SafeChain,
   intervalBlocks: number,
 ): { heartbeatGapBlocks: number | null; heartbeatBreached: boolean } {
   if (intervalBlocks <= 0) {
@@ -812,13 +839,19 @@ function heartbeatStatus(
   }
   const heights = decoded
     .filter((leaf) => leaf.fields.leaf_type === 'HEARTBEAT')
-    .map((leaf) => leaf.fields.prev_unseal_anchor_ref)
-    .filter((height): height is number => Number.isSafeInteger(height))
+    .flatMap((leaf) => namedTipHeight(leaf, chain) ?? [])
+    .sort((a, b) => a - b)
   if (heights.length === 0) {
     return { heartbeatGapBlocks: null, heartbeatBreached: true }
   }
-  const gap = tipHeight - Math.max(...heights)
-  return { heartbeatGapBlocks: gap, heartbeatBreached: gap > intervalBlocks }
+  const worst = heights.reduce<number>(
+    (gap, height, i) => Math.max(gap, height - (heights[i - 1] ?? height)),
+    chain.tipHeight - (heights[heights.length - 1] ?? 0),
+  )
+  return {
+    heartbeatGapBlocks: worst,
+    heartbeatBreached: worst > intervalBlocks,
+  }
 }
 
 export function viewFromLog(
@@ -908,8 +941,10 @@ export function transparencyReport(
     // counter, so nothing below is reported at all.
     return {
       headVerified: false,
-      witnessCount: witness.count,
-      witnessed: witness.ok,
+      // A head the log never signed is not witnessed, whatever cosignatures
+      // came with it. Every other counter zeroes here and these two did not.
+      witnessCount: null,
+      witnessed: false,
       heartbeatGapBlocks: null,
       heartbeatBreached: true,
       equivocation,
@@ -976,11 +1011,7 @@ export function transparencyReport(
     headVerified,
     witnessCount: witness.count,
     witnessed: witness.ok,
-    ...heartbeatStatus(
-      decoded,
-      chain.tipHeight,
-      verifier.heartbeatIntervalBlocks,
-    ),
+    ...heartbeatStatus(decoded, chain, verifier.heartbeatIntervalBlocks),
     equivocation,
     // Leaves the caller supplied that this build could not prove are in the
     // log, and leaves the head says exist that the caller did not supply.

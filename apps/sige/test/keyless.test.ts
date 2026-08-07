@@ -9,9 +9,12 @@ import { chainedWork, STAMP_GENESIS } from '../src/core/congestion.ts'
 import { setupParams } from '../src/core/lhtlp.ts'
 import {
   cosignHead,
+  countCosignatures,
+  newWitnessState,
   type SignedTreeHead,
   TransparencyLog,
   verifyHead,
+  witnessPolicyFault,
 } from '../src/core/merkle.ts'
 import type { EvidencePublicKeys } from '../src/world/evidence.ts'
 import { encodeClosingLeafV1 } from '../src/world/evidence.ts'
@@ -29,6 +32,7 @@ import {
   verifyShareArtifact,
   viewFromLog,
 } from '../src/world/keyless-verifier.ts'
+import { heartbeatLeaf } from '../src/world/log-records.ts'
 import { tuned } from '../src/world/params.ts'
 import { GENERIC } from '../src/world/profile.ts'
 import {
@@ -1818,32 +1822,24 @@ test('EIGHTEENTH-REVIEW: exported entries normalize the heads they are handed', 
 // self-consistent on both sides and the checker only notices if it happens to
 // see both. Independent witnesses countersign the same message the log signs,
 // so splitting the view costs k corrupted witnesses rather than none.
-test('EIGHTEENTH-REVIEW: a head nobody witnessed is reported as unwitnessed', () => {
+test('EIGHTEENTH-REVIEW: a witness with memory refuses the second branch of a fork', () => {
   const world = createWorld(GENERIC, { t: tuned(64) })
   const log = new TransparencyLog()
   log.append(randomBytes(16))
-  const head = log.signHead()
 
-  const witnesses = [
-    ed25519.utils.randomSecretKey(),
-    ed25519.utils.randomSecretKey(),
-    ed25519.utils.randomSecretKey(),
-  ]
+  const secrets = [0, 1, 2].map(() => ed25519.utils.randomSecretKey())
   const policy = {
-    keys: witnesses.map((k) => ed25519.getPublicKey(k)),
+    keys: secrets.map((k) => ed25519.getPublicKey(k)),
     threshold: 2,
   }
-  const withPolicy = createKeylessVerifier({
+  const verifier = createKeylessVerifier({
     evidenceKeys: { ...publicKeysOf(world), logPublicKey: log.publicKey },
     congestionPolicy: { dFloor: 1, baseline: 1, cap: 4, windowBlocks: 1000 },
     witnessPolicy: policy,
   })
-  const report = (
-    verifier: ReturnType<typeof createKeylessVerifier>,
-    cosignatures?: Uint8Array[],
-  ) =>
+  const report = (head: SignedTreeHead, cosignatures?: Uint8Array[]) =>
     transparencyReport(verifier, {
-      log: viewFromLog(log),
+      log: { heads: [head], leaves: [], anchors: [], anchoredHeads: [] },
       chain: world.chain,
       docket: [],
       horizon: { tipHeight: world.chain.tipHeight(), horizonBlocks: 1000 },
@@ -1851,49 +1847,137 @@ test('EIGHTEENTH-REVIEW: a head nobody witnessed is reported as unwitnessed', ()
       cosignatures,
     })
 
-  // No witnesses at all is a WEAKER position than zero witnesses, and must not
-  // read the same. `null` says the deployment has none.
+  // THE PROPERTY. Two roots at one tree size. A witness that keeps no state
+  // signs both, so three honest witnesses produce two fully witnessed views on
+  // incompatible trees and the fork costs zero corrupted witnesses.
+  const states = secrets.map(() => newWitnessState())
+  const branchA = log.signHead()
+  const branchB = log.signArbitraryHead(branchA.treeSize, randomBytes(32))
+  assert.notDeepEqual(branchA.rootHash, branchB.rootHash)
+  assert.equal(branchA.treeSize, branchB.treeSize)
+
+  const onA = secrets.map((key, i) => cosignHead(states[i], branchA, [], key))
+  assert.ok(
+    onA.every((signature) => signature !== null),
+    'the first branch is cosigned by every witness',
+  )
+  const onB = secrets.map((key, i) => cosignHead(states[i], branchB, [], key))
+  assert.deepEqual(
+    onB,
+    [null, null, null],
+    'a witness cosigned a second root at a size it had already signed',
+  )
+  assert.equal(report(branchA, onA as Uint8Array[]).witnessed, true)
+  assert.equal(report(branchB, []).witnessed, false, 'the fork is unwitnessed')
+
+  // A witness follows the log forward, so an honest extension still passes.
+  log.append(randomBytes(16))
+  const later = log.signHead()
+  const onLater = secrets.map((key, i) =>
+    cosignHead(
+      states[i],
+      later,
+      log.consistencyProof(branchA.treeSize, later.treeSize),
+      key,
+    ),
+  )
+  assert.ok(
+    onLater.every((signature) => signature !== null),
+    'honest growth',
+  )
+  assert.equal(report(later, onLater as Uint8Array[]).witnessed, true)
+
+  // Counting. Absent means null, not zero: unwitnessed and unsigned must not
+  // read the same. Below threshold is not witnessed. One witness twice is one.
   const noPolicy = createKeylessVerifier({
     evidenceKeys: { ...publicKeysOf(world), logPublicKey: log.publicKey },
     congestionPolicy: { dFloor: 1, baseline: 1, cap: 4, windowBlocks: 1000 },
   })
-  assert.equal(report(noPolicy).witnessCount, null)
-  assert.equal(report(noPolicy).witnessed, false)
+  assert.equal(
+    transparencyReport(noPolicy, {
+      log: { heads: [later], leaves: [], anchors: [], anchoredHeads: [] },
+      chain: world.chain,
+      docket: [],
+      horizon: { tipHeight: world.chain.tipHeight(), horizonBlocks: 1000 },
+      pinnedHead: later,
+    }).witnessCount,
+    null,
+  )
+  const one = [onLater[0] as Uint8Array]
+  assert.equal(report(later, one).witnessCount, 1)
+  assert.equal(report(later, one).witnessed, false, 'below threshold')
+  const doubled = [onLater[0] as Uint8Array, onLater[0] as Uint8Array]
+  assert.equal(report(later, doubled).witnessCount, 1, 'one witness twice')
 
-  assert.equal(report(withPolicy, []).witnessCount, 0, 'none supplied')
-  assert.equal(report(withPolicy, []).witnessed, false)
+  // More cosignatures than the roster holds counts for nothing at all.
+  assert.equal(
+    report(later, [...(onLater as Uint8Array[]), onLater[0] as Uint8Array])
+      .witnessCount,
+    0,
+    'a cosignature array longer than the roster was still counted',
+  )
 
-  const one = [cosignHead(head, witnesses[0])]
-  assert.equal(report(withPolicy, one).witnessCount, 1)
-  assert.equal(report(withPolicy, one).witnessed, false, 'below threshold')
-
-  const two = [cosignHead(head, witnesses[0]), cosignHead(head, witnesses[1])]
-  assert.equal(report(withPolicy, two).witnessCount, 2)
-  assert.equal(report(withPolicy, two).witnessed, true)
-
-  // Positional, like the reviewer roster: one witness cannot be the quorum.
-  const doubled = [
-    cosignHead(head, witnesses[0]),
-    cosignHead(head, witnesses[0]),
-  ]
-  assert.equal(report(withPolicy, doubled).witnessCount, 1, 'one witness twice')
-  assert.equal(report(withPolicy, doubled).witnessed, false)
-
-  // A cosignature over a DIFFERENT head does not count for this one.
-  log.append(randomBytes(16))
-  const later = log.signHead()
-  const wrongHead = [
-    cosignHead(later, witnesses[0]),
-    cosignHead(later, witnesses[1]),
-  ]
-  assert.equal(report(withPolicy, wrongHead).witnessCount, 0)
+  // A head the log never signed is not witnessed, whatever came with it.
+  const forged = { ...later, signature: randomBytes(64) }
+  const unsigned = report(forged, onLater as Uint8Array[])
+  assert.equal(unsigned.headVerified, false)
+  assert.equal(unsigned.witnessCount, null, 'an unsigned head read as counted')
+  assert.equal(unsigned.witnessed, false)
 })
 
-// EIGHTEENTH-REVIEW, the heartbeat. Freezing the log is the cheapest way to
-// hide a leaf the gate forced you to write, and silence only means something if
-// a signal was promised. One heartbeat per interval turns absence into the
-// alarm. Its freshness comes from the chain tip it names, never from a
-// timestamp the operator writes, or a week of them gets manufactured on demand.
+// The log's own head signature must not be a valid cosignature, or a roster
+// containing the log key lets the operator fill a slot with bytes it already
+// published. A distinct domain tag is the whole defence.
+test('EIGHTEENTH-REVIEW: a witness roster the verifier cannot trust is refused', () => {
+  const log = new TransparencyLog()
+  log.append(randomBytes(16))
+  const head = log.signHead()
+  const secret = ed25519.utils.randomSecretKey()
+  const witness = ed25519.getPublicKey(secret)
+  const state = newWitnessState()
+  const cosignature = cosignHead(state, head, [], secret)
+  assert.ok(cosignature)
+  if (!cosignature) return
+
+  // Domain separated both ways.
+  assert.equal(
+    countCosignatures(
+      { head, cosignatures: [head.signature] },
+      {
+        keys: [log.publicKey],
+        threshold: 1,
+      },
+    ),
+    0,
+    'a log head signature counted as a witness cosignature',
+  )
+  assert.equal(
+    verifyHead(witness, { ...head, signature: cosignature }),
+    false,
+    'a cosignature verified as a head signature',
+  )
+
+  // And a roster that cannot support a count is named as such.
+  const faults: Array<[string, { keys: Uint8Array[]; threshold: number }]> = [
+    ['empty roster, threshold 0', { keys: [], threshold: 0 }],
+    ['negative threshold', { keys: [witness], threshold: -1 }],
+    ['threshold above the roster', { keys: [witness], threshold: 2 }],
+    ['a key twice', { keys: [witness, witness], threshold: 2 }],
+    [
+      'the log witnesses itself',
+      { keys: [log.publicKey, witness], threshold: 2 },
+    ],
+  ]
+  for (const [label, policy] of faults) {
+    assert.notEqual(witnessPolicyFault(policy, log.publicKey), null, label)
+  }
+  assert.equal(
+    witnessPolicyFault({ keys: [witness], threshold: 1 }, log.publicKey),
+    null,
+    'a sound roster must pass',
+  )
+})
+
 test('EIGHTEENTH-REVIEW: a frozen log breaches the heartbeat promise', () => {
   const world = createWorld(GENERIC, { t: tuned(64) })
   const INTERVAL = 6
@@ -1936,27 +2020,89 @@ test('EIGHTEENTH-REVIEW: a frozen log breaches the heartbeat promise', () => {
   assert.equal(frozen.heartbeatGapBlocks, INTERVAL + 1)
   assert.equal(frozen.heartbeatBreached, true, 'a frozen log read as healthy')
 
-  // And it cannot catch up by backdating: the heartbeat names the tip it saw,
-  // so a new one published now says NOW, and the gap it left stays in the log.
+  // Resuming does NOT clear it. The report holds the WORST gap, not the latest
+  // one. Reporting only the trailing gap let a year of silence erase itself
+  // with one honest heartbeat: a log that froze and resumed was identical in
+  // every report field to one that never missed a beat.
   publishHeartbeat(world)
-  assert.equal(report().heartbeatBreached, false)
-  const heights = world.log
-    .serveLeaves()
-    .map((leaf) => parseLeaf(leaf.bytes))
-    .filter((leaf) => leaf?.leaf_type === 'HEARTBEAT')
-    .map((leaf) => leaf?.prev_unseal_anchor_ref)
-  assert.deepEqual(
-    heights,
-    [...heights].sort((a, b) => (a ?? 0) - (b ?? 0)),
-    'heartbeats must name tips in the order they were seen',
+  const resumed = report()
+  assert.equal(resumed.heartbeatGapBlocks, INTERVAL + 1, 'the worst gap stands')
+  assert.equal(
+    resumed.heartbeatBreached,
+    true,
+    'a log that froze and resumed read as healthy',
   )
-  const largestGap = heights.reduce<number>(
-    (worst, height, i) =>
-      i === 0 ? worst : Math.max(worst, (height ?? 0) - (heights[i - 1] ?? 0)),
-    0,
+
+  // A heartbeat naming a block the chain does not have is not a heartbeat. One
+  // unchecked integer used to buy silence forever.
+  const forged = createWorld(GENERIC, { t: tuned(64) })
+  forged.log.append(
+    encodeLogLeafV1(
+      heartbeatLeaf({
+        networkId: forged.networkId,
+        tipHeight: 1_000_000,
+        tipHash: randomBytes(32),
+        createdAt: forged.clockMs,
+      }),
+    ),
   )
-  assert.ok(
-    largestGap > INTERVAL,
-    'the interval it skipped is still visible in the log afterwards',
+  for (let i = 0; i < 50; i++) forged.chain.mine(null)
+  const forgedHead = forged.log.signHead()
+  const forgedVerifier = createKeylessVerifier({
+    evidenceKeys: {
+      ...publicKeysOf(forged),
+      logPublicKey: forged.log.publicKey,
+    },
+    congestionPolicy: { dFloor: 1, baseline: 1, cap: 4, windowBlocks: 1000 },
+    heartbeatIntervalBlocks: INTERVAL,
+  })
+  const forgedReport = transparencyReport(forgedVerifier, {
+    log: viewFromLog(forged.log),
+    chain: forged.chain,
+    docket: [],
+    horizon: { tipHeight: forged.chain.tipHeight(), horizonBlocks: 1000 },
+    pinnedHead: forgedHead,
+  })
+  assert.equal(
+    forgedReport.heartbeatGapBlocks,
+    null,
+    'a fabricated tip counted',
+  )
+  assert.equal(forgedReport.heartbeatBreached, true)
+
+  // The height alone is not enough either: a real height with the wrong hash
+  // names a block this heartbeat never saw.
+  const wrongHash = createWorld(GENERIC, { t: tuned(64) })
+  wrongHash.log.append(
+    encodeLogLeafV1(
+      heartbeatLeaf({
+        networkId: wrongHash.networkId,
+        tipHeight: wrongHash.chain.tipHeight(),
+        tipHash: randomBytes(32),
+        createdAt: wrongHash.clockMs,
+      }),
+    ),
+  )
+  const wrongHead = wrongHash.log.signHead()
+  const wrongVerifier = createKeylessVerifier({
+    evidenceKeys: {
+      ...publicKeysOf(wrongHash),
+      logPublicKey: wrongHash.log.publicKey,
+    },
+    congestionPolicy: { dFloor: 1, baseline: 1, cap: 4, windowBlocks: 1000 },
+    heartbeatIntervalBlocks: INTERVAL,
+  })
+  const wrongReport = transparencyReport(wrongVerifier, {
+    log: viewFromLog(wrongHash.log),
+    chain: wrongHash.chain,
+    docket: [],
+    horizon: { tipHeight: wrongHash.chain.tipHeight(), horizonBlocks: 1000 },
+    pinnedHead: wrongHead,
+  })
+  assert.equal(wrongReport.headVerified, true, 'the head must really verify')
+  assert.equal(
+    wrongReport.heartbeatBreached,
+    true,
+    'a real height with a wrong block hash counted as a heartbeat',
   )
 })

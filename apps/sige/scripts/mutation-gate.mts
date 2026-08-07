@@ -247,14 +247,6 @@ const MUTATIONS: Mutation[] = [
     tests: ['test/keyless.test.ts'],
   },
   {
-    name: 'merkle:witness-message',
-    file: 'src/core/merkle.ts',
-    find: '  const message = headMessage(\n    cosigned.head.treeId,\n    cosigned.head.treeSize,\n    cosigned.head.rootHash,\n  )\n',
-    replace:
-      '  const message = headMessage(cosigned.head.treeId, 0, cosigned.head.rootHash)\n',
-    tests: ['test/keyless.test.ts'],
-  },
-  {
     name: 'keyless:witness-absent-is-null',
     file: 'src/world/keyless-verifier.ts',
     find: '  if (policy === null) return { count: null, ok: false }\n',
@@ -277,17 +269,83 @@ const MUTATIONS: Mutation[] = [
     tests: ['test/keyless.test.ts'],
   },
   {
-    name: 'keyless:heartbeat-gap',
-    file: 'src/world/keyless-verifier.ts',
-    find: '  return { heartbeatGapBlocks: gap, heartbeatBreached: gap > intervalBlocks }\n',
-    replace: '  return { heartbeatGapBlocks: gap, heartbeatBreached: false }\n',
-    tests: ['test/keyless.test.ts'],
-  },
-  {
     name: 'world:heartbeat-names-tip',
     file: 'src/world/log-records.ts',
     find: '    prev_unseal_anchor_ref: input.tipHeight,\n',
     replace: '    prev_unseal_anchor_ref: 0,\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'merkle:cosign-domain-tag',
+    file: 'src/core/merkle.ts',
+    find: "    'tree-head-cosign',\n",
+    replace: "    'tree-head',\n",
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'merkle:witness-memory',
+    file: 'src/core/merkle.ts',
+    find: '    if (!verifyConsistency(previous, head, consistencyProof)) return null\n',
+    replace: '    if (previous === head) return null\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'merkle:cosign-count-bound',
+    file: 'src/core/merkle.ts',
+    find: '  if (cosigned.cosignatures.length > policy.keys.length) return 0\n',
+    replace: '  ',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'merkle:policy-duplicate-key',
+    file: 'src/core/merkle.ts',
+    find: "    if (seen.has(hex)) return 'a witness key appears twice in the roster'\n",
+    replace: '    ',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'merkle:policy-self-witness',
+    file: 'src/core/merkle.ts',
+    find: "    if (bytesEqual(key, logPublicKey)) return 'the log witnesses itself'\n",
+    replace: '    ',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'merkle:policy-threshold-floor',
+    file: 'src/core/merkle.ts',
+    find: "  if (policy.threshold < 1) return 'threshold must be at least one witness'\n",
+    replace: '  ',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'merkle:serve-proof-copy',
+    file: 'src/core/merkle.ts',
+    find: '        const sibl = level[idx ^ 1]\n        if (sibl !== undefined) path.push(Uint8Array.from(sibl))\n',
+    replace:
+      '        const sibl = level[idx ^ 1]\n        if (sibl !== undefined) path.push(sibl)\n',
+    tests: ['test/log.test.ts'],
+  },
+  {
+    name: 'keyless:heartbeat-tip-hash',
+    file: 'src/world/keyless-verifier.ts',
+    find: '  return bytesEqual(hash, leaf.fields.order_document_hash) ? height : null\n',
+    replace: '  return height\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'keyless:heartbeat-worst-gap',
+    file: 'src/world/keyless-verifier.ts',
+    find: '  const worst = heights.reduce<number>(\n    (gap, height, i) => Math.max(gap, height - (heights[i - 1] ?? height)),\n    chain.tipHeight - (heights[heights.length - 1] ?? 0),\n  )\n',
+    replace:
+      '  const worst = chain.tipHeight - (heights[heights.length - 1] ?? 0)\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'keyless:unsigned-head-unwitnessed',
+    file: 'src/world/keyless-verifier.ts',
+    find: '      witnessCount: null,\n      witnessed: false,\n',
+    replace:
+      '      witnessCount: witness.count,\n      witnessed: witness.ok,\n',
     tests: ['test/keyless.test.ts'],
   },
 ]

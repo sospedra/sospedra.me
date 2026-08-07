@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { concatBytes, randomBytes, utf8 } from '../src/core/bytes.ts'
+import { concatBytes, randomBytes, toHex, utf8 } from '../src/core/bytes.ts'
 import { anchorHead, SimBitcoin } from '../src/core/chain.ts'
 import {
   chainedWork,
@@ -426,4 +426,44 @@ test('a head is bound to the log that signed it', () => {
     'a relabelled head verified against the log that signed the original',
   )
   assert.equal(relabelled.treeId, beta.treeId)
+})
+
+// EIGHTEENTH-REVIEW. `serveLeaves` exists so the log serves its own audit view
+// instead of a caller assembling one. It handed the stored node out by
+// reference, so a write through a served proof rewrote the log's own tree: the
+// log then signed a different root at the same size, which is the definition of
+// the equivocation this file exists to detect, reachable without its key.
+test('a served inclusion proof cannot be written back into the log', () => {
+  const log = new TransparencyLog()
+  for (const n of [0, 1, 2, 3]) log.append(utf8(`served-${n}`))
+  const before = toHex(log.root())
+  const head = log.signHead()
+
+  const served = log.serveLeaves()
+  assert.equal(served.length, 4)
+  assert.ok(served[1].inclusionProof.length > 0, 'the proof must be non-empty')
+
+  // Every byte an auditor holds is theirs to scribble on.
+  for (const leaf of served) {
+    leaf.bytes.fill(0xff)
+    for (const node of leaf.inclusionProof) node.fill(0xff)
+  }
+
+  assert.equal(toHex(log.root()), before, 'the log root moved')
+  assert.ok(
+    verifyHead(log.publicKey, head),
+    'a head signed before the write no longer matches the tree',
+  )
+  // And the log still serves the truth afterwards.
+  const again = log.serveLeaves()
+  assert.deepEqual(again[1].bytes, utf8('served-1'))
+  assert.ok(
+    verifyInclusion(
+      again[1].bytes,
+      1,
+      head.treeSize,
+      again[1].inclusionProof,
+      head.rootHash,
+    ),
+  )
 })

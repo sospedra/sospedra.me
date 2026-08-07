@@ -1,5 +1,5 @@
 import { ed25519 } from '@noble/curves/ed25519.js'
-import { bytesEqual, concatBytes, u32be, utf8 } from './bytes.ts'
+import { bytesEqual, concatBytes, toHex, u32be, utf8 } from './bytes.ts'
 import { dhash, sha256 } from './hash.ts'
 
 // Append-only Merkle log with signed tree heads: inclusion and consistency
@@ -125,7 +125,10 @@ export class TransparencyLog {
       const sibling = idx ^ 1
       if (sibling < level.length) {
         const sibl = level[sibling]
-        if (sibl !== undefined) path.push(sibl)
+        // Copied. Handing the stored node out by reference let a write through
+        // a served proof rewrite the log's own tree, so it signed a different
+        // root at the same size without anyone holding its key.
+        if (sibl !== undefined) path.push(Uint8Array.from(sibl))
       }
       level = collapseLevel(level)
       idx = idx >> 1
@@ -143,11 +146,25 @@ export class TransparencyLog {
     bytes: Uint8Array
     inclusionProof: Uint8Array[]
   }[] {
-    return this.bytes.map((bytes, index) => ({
-      index,
-      bytes: Uint8Array.from(bytes),
-      inclusionProof: this.inclusionProof(index),
-    }))
+    // Build every level ONCE. Calling inclusionProof per leaf rebuilt the whole
+    // tree each time, which measured O(n^2): 70 seconds at 8000 leaves, and a
+    // SIGE log appends a leaf per enrollment, unseal, disclosure and heartbeat.
+    // The auditor is the one who pays for that, which is the wrong party.
+    const levels: Uint8Array[][] = [this.leaves.slice()]
+    while (levels[levels.length - 1].length > 1) {
+      levels.push(collapseLevel(levels[levels.length - 1]))
+    }
+    return this.bytes.map((bytes, index) => {
+      const path: Uint8Array[] = []
+      let idx = index
+      for (const level of levels) {
+        if (level.length <= 1) break
+        const sibl = level[idx ^ 1]
+        if (sibl !== undefined) path.push(Uint8Array.from(sibl))
+        idx >>= 1
+      }
+      return { index, bytes: Uint8Array.from(bytes), inclusionProof: path }
+    })
   }
 
   consistencyProof(oldSize: number, newSize: number): Uint8Array[] {
@@ -189,14 +206,68 @@ export type CosignedHead = {
   cosignatures: readonly Uint8Array[]
 }
 
-export function cosignHead(
-  head: SignedTreeHead,
-  witnessKey: Uint8Array,
-): Uint8Array {
-  return ed25519.sign(
-    headMessage(head.treeId, head.treeSize, head.rootHash),
-    witnessKey,
+// A witness with no memory is not a witness. `cosignHead` used to be a pure
+// function of (head, key), so an honest witness asked twice signed both
+// branches of a fork: three honest witnesses, zero corrupted, and two auditors
+// each reading a fully witnessed clean log on incompatible trees. The whole
+// point of witnessing is the refusal, and a stateless function has nothing to
+// refuse with.
+export type WitnessState = { lastHead: SignedTreeHead | null }
+
+export function newWitnessState(): WitnessState {
+  return { lastHead: null }
+}
+
+// Distinct from headMessage. Without a role tag a log's own head signature is
+// a valid cosignature, so a roster containing the log key lets the operator
+// fill a slot with a signature it already published.
+function cosignMessage(head: SignedTreeHead): Uint8Array {
+  return dhash(
+    'tree-head-cosign',
+    utf8(head.treeId),
+    u32be(head.treeSize),
+    head.rootHash,
   )
+}
+
+// Returns null when the witness refuses, which is the only interesting case.
+export function cosignHead(
+  state: WitnessState,
+  head: SignedTreeHead,
+  consistencyProof: Uint8Array[],
+  witnessKey: Uint8Array,
+): Uint8Array | null {
+  const previous = state.lastHead
+  if (previous !== null) {
+    if (head.treeId !== previous.treeId) return null
+    if (head.treeSize < previous.treeSize) return null
+    if (!verifyConsistency(previous, head, consistencyProof)) return null
+  }
+  state.lastHead = head
+  return ed25519.sign(cosignMessage(head), witnessKey)
+}
+
+// A roster the verifier cannot trust makes the count meaningless. Repeated keys
+// let one witness fill two slots, the log's own key lets it witness itself, and
+// an unbounded threshold lets an empty roster read as satisfied.
+export function witnessPolicyFault(
+  policy: WitnessPolicy,
+  logPublicKey: Uint8Array,
+): string | null {
+  if (!Number.isSafeInteger(policy.threshold)) return 'threshold is not a count'
+  if (policy.threshold < 1) return 'threshold must be at least one witness'
+  if (policy.threshold > policy.keys.length) {
+    return 'threshold exceeds the number of witnesses'
+  }
+  const seen = new Set<string>()
+  for (const key of policy.keys) {
+    if (!(key instanceof Uint8Array)) return 'witness key is not bytes'
+    const hex = toHex(key)
+    if (seen.has(hex)) return 'a witness key appears twice in the roster'
+    seen.add(hex)
+    if (bytesEqual(key, logPublicKey)) return 'the log witnesses itself'
+  }
+  return null
 }
 
 // Positional, like the reviewer roster: cosignature i must verify under
@@ -205,11 +276,8 @@ export function countCosignatures(
   cosigned: CosignedHead,
   policy: WitnessPolicy,
 ): number {
-  const message = headMessage(
-    cosigned.head.treeId,
-    cosigned.head.treeSize,
-    cosigned.head.rootHash,
-  )
+  if (cosigned.cosignatures.length > policy.keys.length) return 0
+  const message = cosignMessage(cosigned.head)
   return cosigned.cosignatures.filter((signature, i) => {
     const key = policy.keys[i]
     if (key === undefined) return false
