@@ -45,6 +45,7 @@ import {
   createWorld,
   enroll,
   performUnseal,
+  publishHeartbeat,
   signHeadRecord,
 } from '../src/world/world.ts'
 
@@ -1886,4 +1887,76 @@ test('EIGHTEENTH-REVIEW: a head nobody witnessed is reported as unwitnessed', ()
     cosignHead(later, witnesses[1]),
   ]
   assert.equal(report(withPolicy, wrongHead).witnessCount, 0)
+})
+
+// EIGHTEENTH-REVIEW, the heartbeat. Freezing the log is the cheapest way to
+// hide a leaf the gate forced you to write, and silence only means something if
+// a signal was promised. One heartbeat per interval turns absence into the
+// alarm. Its freshness comes from the chain tip it names, never from a
+// timestamp the operator writes, or a week of them gets manufactured on demand.
+test('EIGHTEENTH-REVIEW: a frozen log breaches the heartbeat promise', () => {
+  const world = createWorld(GENERIC, { t: tuned(64) })
+  const INTERVAL = 6
+  const verifier = createKeylessVerifier({
+    evidenceKeys: publicKeysOf(world),
+    congestionPolicy: { dFloor: 1, baseline: 1, cap: 4, windowBlocks: 1000 },
+    heartbeatIntervalBlocks: INTERVAL,
+  })
+  const report = () => {
+    const head = world.log.signHead()
+    return transparencyReport(verifier, {
+      log: viewFromLog(world.log),
+      chain: world.chain,
+      docket: [],
+      horizon: { tipHeight: world.chain.tipHeight(), horizonBlocks: 1000 },
+      pinnedHead: head,
+    })
+  }
+
+  // A log that has never published one is in breach from the first interval,
+  // not sitting on a clean slate.
+  const never = report()
+  assert.equal(never.heartbeatGapBlocks, null)
+  assert.equal(never.heartbeatBreached, true, 'silence read as healthy')
+
+  publishHeartbeat(world)
+  const fresh = report()
+  assert.equal(fresh.heartbeatGapBlocks, 0)
+  assert.equal(fresh.heartbeatBreached, false)
+
+  // Blocks pass and the operator keeps publishing. Still healthy.
+  for (let i = 0; i < INTERVAL; i++) world.chain.mine(null)
+  publishHeartbeat(world)
+  assert.equal(report().heartbeatBreached, false, 'a kept promise')
+
+  // Now it stops. The chain keeps moving, which is the part the operator does
+  // not control, so the gap grows whether or not it writes anything.
+  for (let i = 0; i <= INTERVAL; i++) world.chain.mine(null)
+  const frozen = report()
+  assert.equal(frozen.heartbeatGapBlocks, INTERVAL + 1)
+  assert.equal(frozen.heartbeatBreached, true, 'a frozen log read as healthy')
+
+  // And it cannot catch up by backdating: the heartbeat names the tip it saw,
+  // so a new one published now says NOW, and the gap it left stays in the log.
+  publishHeartbeat(world)
+  assert.equal(report().heartbeatBreached, false)
+  const heights = world.log
+    .serveLeaves()
+    .map((leaf) => parseLeaf(leaf.bytes))
+    .filter((leaf) => leaf?.leaf_type === 'HEARTBEAT')
+    .map((leaf) => leaf?.prev_unseal_anchor_ref)
+  assert.deepEqual(
+    heights,
+    [...heights].sort((a, b) => (a ?? 0) - (b ?? 0)),
+    'heartbeats must name tips in the order they were seen',
+  )
+  const largestGap = heights.reduce<number>(
+    (worst, height, i) =>
+      i === 0 ? worst : Math.max(worst, (height ?? 0) - (heights[i - 1] ?? 0)),
+    0,
+  )
+  assert.ok(
+    largestGap > INTERVAL,
+    'the interval it skipped is still visible in the log afterwards',
+  )
 })

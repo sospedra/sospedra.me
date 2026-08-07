@@ -268,6 +268,28 @@ const MUTATIONS: Mutation[] = [
     replace: '    return { count, ok: count >= 0 }\n',
     tests: ['test/keyless.test.ts'],
   },
+  {
+    name: 'keyless:heartbeat-never-is-breach',
+    file: 'src/world/keyless-verifier.ts',
+    find: '    return { heartbeatGapBlocks: null, heartbeatBreached: true }\n',
+    replace:
+      '    return { heartbeatGapBlocks: null, heartbeatBreached: false }\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'keyless:heartbeat-gap',
+    file: 'src/world/keyless-verifier.ts',
+    find: '  return { heartbeatGapBlocks: gap, heartbeatBreached: gap > intervalBlocks }\n',
+    replace: '  return { heartbeatGapBlocks: gap, heartbeatBreached: false }\n',
+    tests: ['test/keyless.test.ts'],
+  },
+  {
+    name: 'world:heartbeat-names-tip',
+    file: 'src/world/log-records.ts',
+    find: '    prev_unseal_anchor_ref: input.tipHeight,\n',
+    replace: '    prev_unseal_anchor_ref: 0,\n',
+    tests: ['test/keyless.test.ts'],
+  },
 ]
 
 function runTests(tests: string[]): boolean {

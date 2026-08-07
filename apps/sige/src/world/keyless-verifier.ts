@@ -115,6 +115,7 @@ function includedLeaves(
 export type KeylessVerifier = {
   readonly evidenceKeys: EvidencePublicKeys
   readonly witnessPolicy: WitnessPolicy | null
+  readonly heartbeatIntervalBlocks: number
   readonly logPublicKey: Uint8Array
   readonly congestionPolicy: CongestionPolicy
   readonly chainValidator: ChainValidator
@@ -127,12 +128,15 @@ export type KeylessInputs = {
   // Absent means no witnessing, which is the pre-witness behaviour and is
   // reported as such rather than silently treated as witnessed.
   witnessPolicy?: WitnessPolicy
+  // 0 disables the check, which is the pre-heartbeat behaviour.
+  heartbeatIntervalBlocks?: number
 }
 
 export function createKeylessVerifier(inputs: KeylessInputs): KeylessVerifier {
   return {
     evidenceKeys: inputs.evidenceKeys,
     witnessPolicy: inputs.witnessPolicy ?? null,
+    heartbeatIntervalBlocks: inputs.heartbeatIntervalBlocks ?? 0,
     logPublicKey: inputs.evidenceKeys.logPublicKey,
     congestionPolicy: inputs.congestionPolicy,
     chainValidator: createChainValidator({
@@ -286,6 +290,11 @@ export type TransparencyReport = {
   // weaker position than zero and must not read the same.
   witnessCount: number | null
   witnessed: boolean
+  // Blocks since the most recent heartbeat, and whether that exceeds the
+  // promised cadence. `null` means the log never published one, which is a
+  // breach from the first interval onward rather than a clean slate.
+  heartbeatGapBlocks: number | null
+  heartbeatBreached: boolean
   // Non-null when two heads this log signed disagree at one tree size. Every
   // counter is zeroed, because a forked log cannot be counted.
   equivocation: string | null
@@ -790,6 +799,28 @@ function countWitnesses(
   }
 }
 
+// The heartbeat's freshness comes from the chain tip it names, never from a
+// timestamp the operator writes. A self-authored clock lets a week of missing
+// heartbeats be manufactured the moment somebody asks.
+function heartbeatStatus(
+  decoded: readonly DecodedLeaf[],
+  tipHeight: number,
+  intervalBlocks: number,
+): { heartbeatGapBlocks: number | null; heartbeatBreached: boolean } {
+  if (intervalBlocks <= 0) {
+    return { heartbeatGapBlocks: null, heartbeatBreached: false }
+  }
+  const heights = decoded
+    .filter((leaf) => leaf.fields.leaf_type === 'HEARTBEAT')
+    .map((leaf) => leaf.fields.prev_unseal_anchor_ref)
+    .filter((height): height is number => Number.isSafeInteger(height))
+  if (heights.length === 0) {
+    return { heartbeatGapBlocks: null, heartbeatBreached: true }
+  }
+  const gap = tipHeight - Math.max(...heights)
+  return { heartbeatGapBlocks: gap, heartbeatBreached: gap > intervalBlocks }
+}
+
 export function viewFromLog(
   log: TransparencyLog,
   anchors: readonly Anchor[] = [],
@@ -879,6 +910,8 @@ export function transparencyReport(
       headVerified: false,
       witnessCount: witness.count,
       witnessed: witness.ok,
+      heartbeatGapBlocks: null,
+      heartbeatBreached: true,
       equivocation,
       enrollmentsByEpoch: {},
       unsealsByRole: {},
@@ -943,6 +976,11 @@ export function transparencyReport(
     headVerified,
     witnessCount: witness.count,
     witnessed: witness.ok,
+    ...heartbeatStatus(
+      decoded,
+      chain.tipHeight,
+      verifier.heartbeatIntervalBlocks,
+    ),
     equivocation,
     // Leaves the caller supplied that this build could not prove are in the
     // log, and leaves the head says exist that the caller did not supply.

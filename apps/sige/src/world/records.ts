@@ -657,6 +657,10 @@ export const LEAF_TYPES = [
   'RECOVERY',
   'UNSEAL_STANDARD',
   'UNSEAL_EMERGENCY',
+  // A promised, regular publication. Its absence is the signal: without a
+  // cadence, a frozen log and an idle log look identical, and freezing is the
+  // cheapest way to hide a leaf you were forced to write.
+  'HEARTBEAT',
 ] as const
 
 export type LeafType = (typeof LEAF_TYPES)[number]

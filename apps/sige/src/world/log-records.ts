@@ -1,3 +1,4 @@
+import { randomBytes } from '../core/bytes.ts'
 import type { Block } from '../core/chain.ts'
 import type { SignedTreeHead } from '../core/merkle.ts'
 import type {
@@ -79,6 +80,39 @@ export function bitcoinAnchorRecord(input: AnchorRecordInput): BitcoinAnchorV1 {
 
 // The ENROLLMENT_ACCEPTED leaf. It commits the hash of the exact canonical
 // record that was persisted, so activation can verify what the log holds.
+// The heartbeat commits to the chain tip it saw. Without that an operator
+// publishes a week of backdated heartbeats the moment somebody asks: a
+// timestamp it writes itself proves nothing about when it wrote it. The tip
+// hash is unpredictable before the block exists, so a heartbeat cannot be
+// manufactured earlier than the block it names.
+export function heartbeatLeaf(input: {
+  networkId: Uint8Array
+  tipHeight: number
+  tipHash: Uint8Array
+  createdAt: number
+}): LogLeafV1 {
+  return logLeafV1({
+    ...recordHeader(input.networkId),
+    leaf_type: 'HEARTBEAT',
+    event_id: randomBytes(16),
+    authorization_hash: new Uint8Array(32),
+    account_commitment: new Uint8Array(32),
+    case_reference_commitment: new Uint8Array(32),
+    order_document_hash: Uint8Array.from(input.tipHash),
+    ciphertext_hash: new Uint8Array(32),
+    escrow_epoch: 0,
+    issuing_role: 'operator',
+    track: 'standard',
+    prev_unseal_anchor_ref: input.tipHeight,
+    congestion_difficulty: 0,
+    congestion_stamp_output: zeroStampOutput(),
+    unseal_detection_tag: null,
+    public_disclosure_class: 'heartbeat',
+    created_at: input.createdAt,
+    extension_commitments: [],
+  })
+}
+
 export function enrollmentAcceptedLeaf(input: {
   networkId: Uint8Array
   stored: EnrollmentRecordV1

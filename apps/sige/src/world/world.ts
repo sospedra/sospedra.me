@@ -98,6 +98,7 @@ import {
 import {
   bitcoinAnchorRecord,
   enrollmentAcceptedLeaf,
+  heartbeatLeaf,
   recordHeader,
   signedHeadRecord,
 } from './log-records.ts'
@@ -2197,6 +2198,24 @@ export async function performUnseal(
 
 // Every field is published. A verifier built from this cannot hold a secret,
 // which is what makes the keyless claim structural (SIGE spec 5.8).
+// The promise: one heartbeat every `heartbeatIntervalBlocks`. Its absence is
+// the only signal that separates a frozen log from an idle one, and freezing
+// is the cheapest way to hide a leaf the gate forced you to write.
+export function publishHeartbeat(world: DemoWorld): number {
+  const tip = world.chain.blocks[world.chain.tipHeight()]
+  if (tip === undefined) throw new RangeError('chain has no tip')
+  return world.log.append(
+    encodeLogLeafV1(
+      heartbeatLeaf({
+        networkId: world.networkId,
+        tipHeight: tip.height,
+        tipHash: tip.hash,
+        createdAt: world.clockMs,
+      }),
+    ),
+  )
+}
+
 export function evidencePublicKeys(world: DemoWorld): EvidencePublicKeys {
   return {
     roleKeys: new Map(

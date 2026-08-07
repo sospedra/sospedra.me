@@ -623,6 +623,7 @@ test('the log leaf catalog covers every spec leaf type and refuses any other', (
     'DISCLOSURE',
     'ENROLLMENT_ACCEPTED',
     'ESCROW_EPOCH',
+    'HEARTBEAT',
     'POLICY',
     'RECOVERY',
     'UNSEAL_EMERGENCY',
