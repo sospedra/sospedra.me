@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "category": "congestion",
+  "description": "Congestion difficulty schedule and chained work stamp (SIGE spec 5.5D). requiredDifficulty(policy, windowedUnseals) = dFloor * 2^clamp(windowedUnseals-baseline, 0, cap). chainedWork(prevOutput, leafHash, difficulty) = SHA256(\"SIGE-DEMO-UWC\"||prevOutput||leafHash) hashed difficulty more times. Seed derivation (src/core/vectors.ts): prevOutputHex = seededBytes(prevOutputSeed, 32) and leafHashHex = seededBytes(leafHashSeed, 32), where seededBytes(label, length) concatenates SHA-256 blocks sha256(seedDomain + '/' + label + u32be(counter)) for counter = 0, 1, 2, ..., truncated to length bytes. Independently cross-checked: the difficulty schedule by hand (exact integer doubling); the chained-work output against node:crypto sha256 looped difficulty times.",
+  "seedDomain": "SIGE-VECTORS/v1",
+  "vectors": [
+    {
+      "id": "difficulty-schedule",
+      "description": "difficulty escalates above baseline and saturates at cap",
+      "kind": "schedule",
+      "policy": {
+        "dFloor": 50,
+        "baseline": 2,
+        "cap": 5,
+        "windowBlocks": 100
+      },
+      "windowedUnseals": [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      "expectedDifficulties": [50, 50, 50, 100, 200, 400, 800, 1600, 1600]
+    },
+    {
+      "id": "chained-work",
+      "description": "a chained work stamp verifies at its own difficulty and refuses a higher requirement",
+      "kind": "chained-work",
+      "prevOutputSeed": "congestion/prevOutput",
+      "prevOutputHex": "3f003aba0c4d589724b703be1696ba82703a30725d284ef5d15c8d47e10fb166",
+      "leafHashSeed": "congestion/leafHash",
+      "leafHashHex": "2a04184ee56614b2cbd034b4c32b17c3f826c53b9d506030e38d1b17271a45af",
+      "difficulty": 5,
+      "expectedOutputHex": "adf1cdda5dea038e1759313c0d990d33186a4b8874f52a1dd4f28841c3c47a67"
+    }
+  ]
+}

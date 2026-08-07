@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "category": "kem",
+  "description": "Two-gate KEM encapsulation (SIGE spec 5.2-5.5) from fixed randomness. Seed derivation (src/core/vectors.ts): seededBytes(label, length) concatenates SHA-256 blocks sha256(seedDomain + '/' + label + u32be(counter)) for counter = 0, 1, 2, ..., truncated to length bytes; seededScalar(label, order) reduces seededBytes(label + '#' + attempt, 48) mod order, retrying attempt = 0..7 on a zero result. xA = seededScalar(xASeed, Fr.ORDER), xB = seededScalar(xBSeed, Fr.ORDER), full-range BLS12-381 scalars; pkA/pkB = G2.BASE * x, compressed hex. idWarrant/idLog are gateIdentity() outputs (see gate-identity.json, same networkId/accountId/enrollmentId/epoch), hashed to G1 under domain-separation tags DST.warrant = \"SIGE-DEMO-WARRANT-V1\" and DST.log = \"SIGE-DEMO-LOG-V1\". transcriptHash = seededBytes(transcriptHashSeed, 32), context = seededBytes(contextSeed, 32); plaintext is a literal utf8 string, not seeded. U/K come from encapsulate(), whose randomness is r = reduce(dhash(\"fo-randomness\", plaintext, transcriptHash, context)) mod Fr.ORDER, rehashing and retrying on a zero result, where dhash(domain, ...parts) = SHA256(\"SIGE-DEMO/v1\" || u32be(len(domain)) || domain || u32be(len(part)) + part for each part). zA/zB from deriveContribution() on each gate; combineContributions(zA,zB,...) must equal K. Independently cross-checked: U via a from-scratch dhash (node:crypto sha256) FO-randomness rederivation, K via node:crypto hkdfSync over the captured zA||zB.",
+  "seedDomain": "SIGE-VECTORS/v1",
+  "vectors": [
+    {
+      "id": "warrant-log-epoch1",
+      "description": "full round trip: encapsulate, both gate contributions, recombination",
+      "networkIdHex": "736967652d766563746f72732d6e6574",
+      "accountIdHex": "736967652d766563746f72732d6163636f756e742d30303031",
+      "enrollmentIdHex": "736967652d766563746f72732d656e726f6c6c2d30303031",
+      "epoch": 1,
+      "idWarrantHex": "534947452f76312f77617272616e7400000010736967652d766563746f72732d6e657400000019736967652d766563746f72732d6163636f756e742d3030303100000018736967652d766563746f72732d656e726f6c6c2d3030303100000001",
+      "idLogHex": "534947452f76312f6c6f6700000010736967652d766563746f72732d6e657400000019736967652d766563746f72732d6163636f756e742d3030303100000018736967652d766563746f72732d656e726f6c6c2d3030303100000001",
+      "xASeed": "kem/xA",
+      "xADecimal": "15041284818330138208282118505495415912235775891308005211350146939134047543629",
+      "xBSeed": "kem/xB",
+      "xBDecimal": "26520848801699119571997605981807118940920155385187871842183666299943969342706",
+      "pkAHex": "a41a0cee3ad164b0c4847f17ed773ada9dfef40aeaecff2a39951c5b9af9fa08ba78705500c2f075178c813f8ef1210d1212d5c039a45bf00a22d2de483168701d3760cde3b777bd0c98bbda9e8c7c40c28aa0f5a879f1492f6b701ec410168b",
+      "pkBHex": "a18da72f5134fcec38411ecd78e6d44a0b114f8cf6ccce6572295c123eb064f77ae00c1459c28a71d00e41015f5f61f900f49fedf896ce84821b11712a0a1be99209d24f7a794ea1273c536ea2b1d8aa9f45911f8e501629607698cbdd57b7d5",
+      "transcriptHashSeed": "kem/transcriptHash",
+      "transcriptHashHex": "b2db49c87f5f7a2976dcb86d58897b2e3d99ee5e67ddc23d3120d734c23db2db",
+      "contextSeed": "kem/context",
+      "contextHex": "b935ed3a0f2aec7fbb6c3b3c805a463c9d148a8a71c93c807e9046b5f5543f4e",
+      "plaintextUtf8": "sige golden vector plaintext v1",
+      "UHex": "b6d2b0c9e5dc4ce6a80ded290fca7f3df4fb7f6c0747e2b9aa8099e1f20a2b2dfe0f9f56da08a4eb9ada5dd7816fa2f80c8a127a2f1f4c93874ec15efcc0dd32c58132f70c667659342dd57a802471130f5f3e947ab6ef5d4df3fc27391bdd5f",
+      "KHex": "0b1ab34c815758f19f2b6f9f9f33e816afd99e8318a39502f56203f3a4c5b573",
+      "zAHex": "064fdac58b468988aaf4ffd660563e47e1e882f6d3e1f73f73dba88fcec2a0cc4b028e29e8a15567a0e669b0b1f951720e41e786fd5bb2b011789c4bb6b1d8bea7d2822ec576e283b9ad3fa777b833b25f5d08683928a9513202fe02a3ae94df0d5566478a105750257b78a0a27cb844e6d61b9f1e8a92d8c4fffb92ba60d670324c3d6c54ec583633ab53293ef342d718787d46d8e1362d8327681ee73be9305c611cf8377cb31cc42b774332d83f9be854bd44ab94a6d6d2fb59a5cc7e493f09fec7e08a6677bf2c5ebe3065076203e02836386165dc640c1cb5c3dc0cd12d5b5e312ed1afce9da3f76589138ebee609a70e419f701dcafa5063f13a9e5629c507f0d2b82f8bf50678cd27085073c751d1e6f6138b06102580d2261af6e7310d5fc945d2cf2f3f9c344987ae92825c16d3c1c49b05c6fc7eb9dc9fa1f9a96111393e8e742eb4916e50b195051f5f3e0d19ec3ef77ab391b136358df3d678a8fa29c0c9aa33765ae057bb841b20d95d0d74d6c1b1704bdd473d94afb4a93820134eb6f74e7fd0ac8a3d4fb032035db9c6f7957f9bb3832521180cb60eeb1690a04340e278a7dc0929ce9f2d43c8ba170337ef18f3bcf07a2b6019850e967f8c4a0ff35a82ee610537e20353c3ae99881c2ef17364f2bf925d352539eee13fe809f4ea0cd9ca8eb646b1390c609c740c44d700997ee1613006a6b050bc370cb91b9811c9a86a9276eb3458c89b018f8003a48530c46a88939dc7429283b636b2b37e372b88af1ebb04a2eec9d54500935c629c98ad936c028fd30a6c332b03f3",
+      "zBHex": "1291ca4ac1ad05b6c9ce34d292ba505c3b0dfb36e6128ba24b75ea974383f81108d0fe3bd2aa81dac4714d88ceee7a6d0fcd43415b0201f2771261a756d57be3aad5271ae774aca042efe4cec56800478110175ea862d6d11e8995526cf7b5460a5d92e81cc62802252bb0d3622bb96e1258f142c9946cd976f48cc6352fcd08481d36c5b8fd8f139372a10b3bb273e8174e30c8b4c88579893200a903d3266098cf39321fda3960c31b3909e85f765229f6fb88a4d9fc6c754bbbc67c08f8ea02dad55e9103d6c67fc08314671b1a369ba903339c39596055bf28bab752dea4a4486505839d57441991c76309864ccb14705faa2b6a3f2d88d5cecb5e42143ce405c24d7c7899e59fbeeab08b165ccdd9b21962c343baa3e04c94ea63faf4b20f8f223f3313b9e537f39a195adc11c68304e92fbb1a94f0ff3cb256936c48909c3137a1baef205d25998a696f876f3e1859566925d60ac3dd960d01ee1d33c596d5f98f66ac6b329bd5347a99554478552c9664f21393ee916fc97d69673e20032c42b2af4c7d766d9307d716151e3db39706658a4c026b00d5329d592832b91de50d1ef4e4d36f9f2c7de840b00707149f63cc720759bc58e38bd7d4306f380d9e8563b754668bf6755ab06cdbdab09860e553ed9c2c9111b1eb9f5ba10a910cfcf3be44d9b15a9acbfe62b7f85341e47a02d93f2de4e35f4edb30f26fa6333e7ff5f16d6b4d39e8cdf3efa5702b96109a4d0b2b2511bc586ebcf02a007eadf822434952ce307a419667e31d683aab9af26bb671b0a0364f9596d636dd77ed"
+    }
+  ]
+}

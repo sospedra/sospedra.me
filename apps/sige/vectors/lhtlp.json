@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "category": "lhtlp",
+  "description": "LHTLP puzzles (Malavolta-Thyagarajan 2019) from fixed parameters. Seed derivation (src/core/vectors.ts): seededBytes(label, length) concatenates SHA-256 blocks sha256(seedDomain + '/' + label + u32be(counter)) for counter = 0, 1, 2, ..., truncated to length bytes; seededScalar(label, order) reduces seededBytes(label + '#' + attempt, 48) mod order, retrying attempt = 0..7 on a zero result; seededSquareUnit(label, n) squares seededScalar(label, n) mod n after checking it is coprime to n. p, q are the public Mersenne primes 2^31-1 and 2^61-1 (independently verifiable primality) -- this is a toy-scale, 92-bit modulus chosen for test speed, not a sizing suggestion; contrast the VTD vectors' full ~648-bit modulus and the KEM vectors' full-range BLS12-381 scalars, both realistic. g = seededSquareUnit(gSeed, n); h = g^(2^t) mod n. Each \"create\" vector derives r = seededScalar(rSeed, n) and pins u, v, and the value solvePuzzle recovers. \"add\" and \"scale\" vectors reference other vectors by id and pin the homomorphic result. All bigints are decimal strings. Independently cross-checked: h and u via a from-scratch recursive modPow; the full create/add/scale/solve chain via exact-arithmetic assertions (solvedSum == secret1+secret2, solvedScaled == secret1*7).",
+  "seedDomain": "SIGE-VECTORS/v1",
+  "params": {
+    "pDecimal": "2147483647",
+    "qDecimal": "2305843009213693951",
+    "nDecimal": "4951760154835678088235319297",
+    "t": 20,
+    "gSeed": "lhtlp/g0",
+    "gDecimal": "1115745687647789546711264078",
+    "hDecimal": "2956640700244416749019596654"
+  },
+  "vectors": [
+    {
+      "id": "secret-1",
+      "description": "a puzzle created from secret1 with a seeded blinding",
+      "operation": "create",
+      "secretDecimal": "424242",
+      "rSeed": "lhtlp/r1",
+      "rDecimal": "4418651373014827457340577776",
+      "uDecimal": "2306182613619938264696420076",
+      "vDecimal": "12253618775290981751771196148821327918080013483419341021",
+      "solvedDecimal": "424242"
+    },
+    {
+      "id": "secret-2",
+      "description": "a second puzzle created from secret2 with a seeded blinding",
+      "operation": "create",
+      "secretDecimal": "314159",
+      "rSeed": "lhtlp/r2",
+      "rDecimal": "708692903096996679828134398",
+      "uDecimal": "1446674353297855034339695699",
+      "vDecimal": "3840118932347510187603195468825704907263461050306414354",
+      "solvedDecimal": "314159"
+    },
+    {
+      "id": "sum-1-2",
+      "description": "addPuzzles(secret-1, secret-2) solves to secret1 + secret2",
+      "operation": "add",
+      "left": "secret-1",
+      "right": "secret-2",
+      "uDecimal": "3088159443294665267108899776",
+      "vDecimal": "8426357774326447700463649425266918547187748100316383394",
+      "solvedDecimal": "738401"
+    },
+    {
+      "id": "scaled-1-by-7",
+      "description": "scalePuzzle(secret-1, 7) solves to secret1 * 7",
+      "operation": "scale",
+      "source": "secret-1",
+      "scalarDecimal": "7",
+      "uDecimal": "2994015833992289968693055085",
+      "vDecimal": "20643604318614636805042293402066759902417153818888534657",
+      "solvedDecimal": "2969694"
+    }
+  ]
+}

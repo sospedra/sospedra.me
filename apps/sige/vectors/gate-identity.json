@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "category": "gate-identity",
+  "description": "Account-scoped gate identity strings (SIGE spec 5.3): utf8(label) || u32be(len)+networkId || u32be(len)+accountId || u32be(len)+enrollmentId || u32be(epoch), label is \"SIGE/v1/warrant\" or \"SIGE/v1/log\". gateIdentity(gate, networkId, accountId, enrollmentId, epoch) must equal expectedHex. Hand-verified: pure length-prefixed concatenation, independently rebuilt byte for byte.",
+  "seedDomain": "SIGE-VECTORS/v1",
+  "vectors": [
+    {
+      "id": "warrant-epoch1",
+      "description": "warrant gate, epoch 1",
+      "gate": "warrant",
+      "networkIdHex": "736967652d766563746f72732d6e6574",
+      "accountIdHex": "736967652d766563746f72732d6163636f756e742d30303031",
+      "enrollmentIdHex": "736967652d766563746f72732d656e726f6c6c2d30303031",
+      "epoch": 1,
+      "expectedHex": "534947452f76312f77617272616e7400000010736967652d766563746f72732d6e657400000019736967652d766563746f72732d6163636f756e742d3030303100000018736967652d766563746f72732d656e726f6c6c2d3030303100000001"
+    },
+    {
+      "id": "log-epoch1",
+      "description": "log gate, epoch 1",
+      "gate": "log",
+      "networkIdHex": "736967652d766563746f72732d6e6574",
+      "accountIdHex": "736967652d766563746f72732d6163636f756e742d30303031",
+      "enrollmentIdHex": "736967652d766563746f72732d656e726f6c6c2d30303031",
+      "epoch": 1,
+      "expectedHex": "534947452f76312f6c6f6700000010736967652d766563746f72732d6e657400000019736967652d766563746f72732d6163636f756e742d3030303100000018736967652d766563746f72732d656e726f6c6c2d3030303100000001"
+    },
+    {
+      "id": "warrant-epoch2",
+      "description": "warrant gate, epoch 2 (epoch changes the identity)",
+      "gate": "warrant",
+      "networkIdHex": "736967652d766563746f72732d6e6574",
+      "accountIdHex": "736967652d766563746f72732d6163636f756e742d30303031",
+      "enrollmentIdHex": "736967652d766563746f72732d656e726f6c6c2d30303031",
+      "epoch": 2,
+      "expectedHex": "534947452f76312f77617272616e7400000010736967652d766563746f72732d6e657400000019736967652d766563746f72732d6163636f756e742d3030303100000018736967652d766563746f72732d656e726f6c6c2d3030303100000002"
+    }
+  ]
+}

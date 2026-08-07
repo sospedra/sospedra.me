@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "category": "object-hash",
+  "description": "Framed object hash (SIGE spec 6.1): SHA256(\"SIGE/object-hash/v1\" || u32be(len(type_url)) || type_url || u64be(len(canonical_cbor)) || canonical_cbor). value uses the same tagged JsonCborValue shape as cbor.json. objectHash(typeUrl, value) must equal expectedHex. Independently cross-checked against node:crypto sha256 over hand-framed bytes.",
+  "seedDomain": "SIGE-VECTORS/v1",
+  "vectors": [
+    {
+      "id": "empty-map",
+      "description": "empty map record",
+      "typeUrl": "sige.vectors/v1",
+      "value": {
+        "type": "map",
+        "value": []
+      },
+      "expectedHex": "8c05ba1a4cad8dec3a696eb6578a7e779059ad8b711291c266ea8c8db81b8b7b"
+    },
+    {
+      "id": "n-10",
+      "description": "single numeric field",
+      "typeUrl": "sige.vectors/v1",
+      "value": {
+        "type": "map",
+        "value": [
+          [
+            "n",
+            {
+              "type": "int",
+              "value": "10"
+            }
+          ]
+        ]
+      },
+      "expectedHex": "0fdeb6833acd64178013d4d58ae59f6a106cdda82b08c124804c23e26044582f"
+    },
+    {
+      "id": "array-record",
+      "description": "non-map payload under a different type_url",
+      "typeUrl": "sige.example/record",
+      "value": {
+        "type": "array",
+        "value": [
+          {
+            "type": "int",
+            "value": "1"
+          },
+          {
+            "type": "int",
+            "value": "2"
+          },
+          {
+            "type": "int",
+            "value": "3"
+          }
+        ]
+      },
+      "expectedHex": "5ef4c7cae2875b0d729daa6a784d28a9ad5165ccd67ff6bddf5ca3cb35a1e81a"
+    }
+  ]
+}
