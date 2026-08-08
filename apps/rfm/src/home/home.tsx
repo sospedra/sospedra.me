@@ -10,7 +10,9 @@ import { Search } from './search.tsx'
 
 export const Home = () => {
   const [query, setQuery] = useState(' ')
-  const { data, error } = useSWR(query, fetcherRequestList)
+  const { data, error } = useSWR(query, fetcherRequestList, {
+    keepPreviousData: true,
+  })
 
   useEffect(() => {
     if (query !== ' ') {
