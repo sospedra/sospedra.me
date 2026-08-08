@@ -57,6 +57,7 @@ export const ROUTES = [
   ['bazaar', '/bazaar'],
   ['boombox', '/boombox'],
   ['camera', '/camera'],
+  ['cims', '/cims'],
   ['crosswords', '/crosswords'],
   ['game-of-life', '/game-of-life'],
   ['games', '/games'],

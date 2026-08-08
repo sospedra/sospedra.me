@@ -53,6 +53,18 @@ export const DISCS: Disc[] = [
     look: 'press',
   },
   {
+    id: 'cims',
+    title: 'cims',
+    oneLiner: 'A terrain console over the Catalan peaks.',
+    note: 'twelve peaks',
+    url: 'https://sospedra.me/cims',
+    pressed: 2026,
+    stack: 'three.js, 30 m terrain',
+    status: 'test-pressing',
+    hue: 127,
+    look: 'label',
+  },
+  {
     id: 'stv',
     title: 'sportv',
     oneLiner: 'What sport is on TV in Spain.',

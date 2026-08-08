@@ -45,6 +45,7 @@
 
 .msdosIcon,
 .recycleIcon,
+.cimsIcon,
 .minesIcon,
 .paintIcon,
 .winampIcon,
@@ -58,6 +59,7 @@
 }
 
 .msdosIcon,
+.cimsIcon,
 .minesIcon,
 .paintIcon,
 .winampIcon,
@@ -105,6 +107,10 @@
   border: 1px solid #17465e;
   background: #c7e9f3;
   box-shadow: inset 1px 1px 0 white;
+}
+
+.cimsIcon {
+  background-image: url("/images/w98/cims-32x32.png");
 }
 
 .minesIcon {

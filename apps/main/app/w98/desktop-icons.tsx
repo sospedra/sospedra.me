@@ -5,7 +5,14 @@ import Link from 'services/link'
 import type { AppId } from './desktop.ts'
 import css from './desktop-icons.module.css'
 
-type IconId = 'msdos' | 'recycle' | 'mines' | 'paint' | 'winamp' | 'realplayer'
+type IconId =
+  | 'msdos'
+  | 'recycle'
+  | 'cims'
+  | 'mines'
+  | 'paint'
+  | 'winamp'
+  | 'realplayer'
 
 // W98 icon ritual: a mouse click only selects, the double click opens;
 // touch and keyboard activations (click detail 0) open in one go
@@ -91,6 +98,15 @@ export const DesktopIcons: React.FC<{
       ariaLabel='Open the recycle bin'
       icon={css.recycleIcon}
       iconId='recycle'
+      icons={icons}
+      guardNav={guardNav}
+    />
+    <DesktopLink
+      url='/cims'
+      label='Cims'
+      ariaLabel='Cims, open the terrain console'
+      icon={css.cimsIcon}
+      iconId='cims'
       icons={icons}
       guardNav={guardNav}
     />

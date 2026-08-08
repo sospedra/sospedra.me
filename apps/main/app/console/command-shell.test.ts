@@ -193,6 +193,10 @@ test('bare route words and legacy nicknames navigate', () => {
     kind: 'navigate',
     href: '/meridian',
   })
+  assert.deepEqual(runCommand(context, 'cims').effect, {
+    kind: 'navigate',
+    href: '/cims',
+  })
   assert.deepEqual(runCommand(context, 'tapes').effect, {
     kind: 'navigate',
     href: '/videoclub',

@@ -135,6 +135,14 @@ export const Taskbar: React.FC<{
                   <span className={w98.msdosAppIcon} aria-hidden='true' />
                   MS-DOS
                 </Link>
+                <Link
+                  url='/cims'
+                  className={css.programItem}
+                  onClick={(event) => guardNav(event, '/cims')}
+                >
+                  <span className={w98.cimsAppIcon} aria-hidden='true' />
+                  Cims
+                </Link>
                 <button
                   type='button'
                   className={css.programItem}

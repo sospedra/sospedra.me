@@ -143,6 +143,7 @@
 .winampAppIcon,
 .realplayerAppIcon,
 .msdosAppIcon,
+.cimsAppIcon,
 .gameIcon {
   display: inline-block;
   width: 1rem;
@@ -156,6 +157,10 @@
 
 .msdosAppIcon {
   background-image: url("/images/w98/ms-dos-32x32.png");
+}
+
+.cimsAppIcon {
+  background-image: url("/images/w98/cims-16x16.png");
 }
 
 .appIcon {
