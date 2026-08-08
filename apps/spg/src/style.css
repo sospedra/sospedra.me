@@ -229,35 +229,6 @@ a:visited {
   padding: 1.5rem 0;
 }
 
-.stores {
-  display: flex;
-  justify-content: center;
-  padding: 1rem 1rem 3rem;
-}
-
-.store-link {
-  display: flex;
-  align-items: center;
-  margin: 0 0.5rem;
-  padding: 0.25rem;
-  border: 1px solid var(--gray-400);
-  border-radius: var(--radius);
-  background: #fff;
-  box-shadow:
-    0 1px 3px rgb(0 0 0 / 10%),
-    0 1px 2px rgb(0 0 0 / 6%);
-}
-
-.store-icon {
-  width: 2rem;
-  height: 2rem;
-  margin-right: 0.5rem;
-}
-
-.nowrap {
-  white-space: nowrap;
-}
-
 .colophon {
   font-family: ui-monospace, sfmono-regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.875rem;
