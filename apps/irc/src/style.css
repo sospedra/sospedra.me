@@ -515,6 +515,10 @@ aside fieldset:last-child {
   white-space: nowrap;
 }
 
+.task-button[hidden] {
+  display: none;
+}
+
 .task-button[aria-pressed="true"] {
   font-weight: 700;
   box-shadow:
@@ -580,6 +584,10 @@ aside fieldset:last-child {
   flex-direction: column;
   width: min(560px, calc(100vw - 24px));
   max-height: min(600px, calc(100dvh - 70px));
+}
+
+.help-window[hidden] {
+  display: none;
 }
 
 .help-body {
