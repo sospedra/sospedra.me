@@ -6,6 +6,7 @@
   --blue-600: #3182ce;
   --purple-600: #805ad5;
   --radius: 0.25rem;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 *,
@@ -203,23 +204,20 @@ a:visited {
   text-align: center;
   opacity: 0;
   transform: translate(-50%, 0);
+  transition:
+    opacity 200ms var(--ease-out),
+    transform 200ms var(--ease-out);
 }
 
-@keyframes fadein {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 0);
-  }
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, -2rem);
+}
 
-  10%,
-  90% {
-    opacity: 1;
+@media (prefers-reduced-motion: reduce) {
+  .toast {
     transform: translate(-50%, -2rem);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -2rem);
+    transition: opacity 200ms ease;
   }
 }
 
