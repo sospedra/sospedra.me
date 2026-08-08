@@ -90,7 +90,7 @@ export const Group = (props: NodeGroup) => {
 
   return (
     <li
-      className={`relative ${
+      className={`relative transition-[opacity,filter] duration-300 ${
         props.anchor === 'past' ? 'grayscale opacity-40' : ''
       }`}
       id={isNext ? NOW_ANCHOR_ID : undefined}
