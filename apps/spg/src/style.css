@@ -114,10 +114,12 @@ a:visited {
   background: var(--gray-300);
   font: inherit;
   cursor: pointer;
+  transition: transform 160ms var(--ease-out);
 }
 
 .renew-button:active {
   background: var(--gray-400);
+  transform: scale(0.97);
 }
 
 .hint {
