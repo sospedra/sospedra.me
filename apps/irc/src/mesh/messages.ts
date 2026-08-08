@@ -1,16 +1,30 @@
 import { isHexOfBytes, utf8 } from './bytes.ts'
 
 export type MeshMessage =
-  | { t: 'chat'; text: string; ts: number }
+  | { t: 'chat'; text: string; ts: number; nick: string }
   | { t: 'beat' }
   | { t: 'view'; peers: string[] }
   | { t: 'leave'; peers: string[] }
   | { t: 'dial-offer'; dialId: string; sdp: string }
   | { t: 'dial-answer'; dialId: string; sdp: string }
+  | { t: 'hello'; nick: string }
 
 export const CHAT_TEXT_MAX = 16_000
+export const NICK_MAX = 24
 const PEER_LIST_MAX = 48
 const SDP_MAX = 20_000
+
+const isControl = (char: string): boolean => {
+  const code = char.charCodeAt(0)
+  return code < 32 || code === 127
+}
+
+export const isValidNick = (value: unknown): value is string =>
+  typeof value === 'string' &&
+  value.length > 0 &&
+  value.length <= NICK_MAX &&
+  value === value.trim() &&
+  ![...value].some(isControl)
 
 export const encodeMessage = (message: MeshMessage): Uint8Array =>
   utf8(JSON.stringify(message))
@@ -44,9 +58,15 @@ const VALIDATORS: Record<
       typeof raw.text === 'string' &&
       raw.text.length <= CHAT_TEXT_MAX &&
       typeof raw.ts === 'number' &&
-      Number.isFinite(raw.ts)
+      Number.isFinite(raw.ts) &&
+      isValidNick(raw.nick)
     if (!valid) return null
-    return { t: 'chat', text: raw.text as string, ts: raw.ts as number }
+    return {
+      t: 'chat',
+      text: raw.text as string,
+      ts: raw.ts as number,
+      nick: raw.nick as string,
+    }
   },
   beat: () => ({ t: 'beat' }),
   view: (raw) => {
@@ -59,6 +79,8 @@ const VALIDATORS: Record<
   },
   'dial-offer': (raw) => asDial('dial-offer', raw),
   'dial-answer': (raw) => asDial('dial-answer', raw),
+  hello: (raw) =>
+    isValidNick(raw.nick) ? { t: 'hello', nick: raw.nick } : null,
 }
 
 export const decodeMessage = (bytes: Uint8Array): MeshMessage | null => {

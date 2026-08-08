@@ -36,16 +36,27 @@ import {
 } from './peer-link.ts'
 import { type AttachInput, Rendezvous } from './rendezvous.ts'
 
+export type PeerEntry = { hex: string; nick?: string }
+
 export type RoomEvent =
-  | { kind: 'chat'; from: string; text: string; ts: number; self: boolean }
+  | {
+      kind: 'chat'
+      from: string
+      nick: string
+      text: string
+      ts: number
+      self: boolean
+    }
+  | { kind: 'presence'; hex: string; nick?: string; action: 'joined' | 'left' }
   | { kind: 'log'; line: string }
-  | { kind: 'peers'; active: string[]; passive: number }
+  | { kind: 'peers'; active: PeerEntry[]; passive: number }
   | { kind: 'relay'; url: string; state: RelayState }
 
 type RoomConfig = {
   identity: Identity
   roomId: string
   topicSecret: string
+  nick: string
   relays: string[]
   onEvent(event: RoomEvent): void
 }
@@ -65,6 +76,7 @@ export class Room {
   private readonly selfHex: string
   private readonly groupKey: Uint8Array
   private readonly links = new Map<string, PeerLink>()
+  private readonly nicks = new Map<string, string>()
   private readonly passive = new Set<string>()
   private readonly ejected = new Set<string>()
   private readonly refusedUntil = new Map<string, number>()
@@ -77,9 +89,11 @@ export class Room {
   private timers: ReturnType<typeof setInterval>[] = []
   private seq = 0
   private joined = false
+  private nick: string
 
   constructor(config: RoomConfig) {
     this.config = config
+    this.nick = config.nick
     this.selfHex = config.identity.peerIdHex
     this.groupKey = deriveGroupKey(config.topicSecret)
     this.router = new Router({
@@ -136,14 +150,21 @@ export class Room {
 
   broadcastChat(text: string): void {
     const ts = Date.now()
-    this.sendMessage('wildcard', { t: 'chat', text, ts })
+    this.sendMessage('wildcard', { t: 'chat', text, ts, nick: this.nick })
     this.config.onEvent({
       kind: 'chat',
       from: this.selfHex,
+      nick: this.nick,
       text,
       ts,
       self: true,
     })
+  }
+
+  setNick(nick: string): void {
+    if (nick === this.nick) return
+    this.nick = nick
+    this.sendMessage('wildcard', { t: 'hello', nick })
   }
 
   private nextSeq(): number {
@@ -210,13 +231,29 @@ export class Room {
   private dispatch(srcHex: string, message: MeshMessage): void {
     switch (message.t) {
       case 'chat': {
+        this.nicks.set(srcHex, message.nick)
         this.config.onEvent({
           kind: 'chat',
           from: srcHex,
+          nick: message.nick,
           text: message.text,
           ts: message.ts,
           self: false,
         })
+        return
+      }
+      case 'hello': {
+        const known = this.nicks.get(srcHex)
+        this.nicks.set(srcHex, message.nick)
+        if (known === undefined && this.links.has(srcHex)) {
+          this.config.onEvent({
+            kind: 'presence',
+            hex: srcHex,
+            nick: message.nick,
+            action: 'joined',
+          })
+        }
+        this.emitPeers()
         return
       }
       case 'beat':
@@ -330,13 +367,22 @@ export class Room {
     this.passive.delete(input.peerHex)
     this.rendezvous.setLonely(false)
     this.log(`linked with ${short(input.peerHex)}`)
+    this.sendMessage(input.peerHex, { t: 'hello', nick: this.nick })
     this.emitPeers()
     this.gossipView()
   }
 
   private onLinkClose(peerHex: string): void {
     if (!this.links.delete(peerHex)) return
+    const nick = this.nicks.get(peerHex)
+    this.nicks.delete(peerHex)
     this.log(`link to ${short(peerHex)} closed`)
+    this.config.onEvent({
+      kind: 'presence',
+      hex: peerHex,
+      nick,
+      action: 'left',
+    })
     this.emitPeers()
     if (this.joined && this.links.size === 0) this.rendezvous.setLonely(true)
   }
@@ -422,7 +468,10 @@ export class Room {
   private emitPeers(): void {
     this.config.onEvent({
       kind: 'peers',
-      active: [...this.links.keys()],
+      active: [...this.links.keys()].map((hex) => ({
+        hex,
+        nick: this.nicks.get(hex),
+      })),
       passive: this.passive.size,
     })
   }

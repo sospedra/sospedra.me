@@ -13,15 +13,30 @@ const roundtrip = (message: MeshMessage) =>
 test('every message variant roundtrips', () => {
   const peer = toHex(randomBytes(32))
   const variants: MeshMessage[] = [
-    { t: 'chat', text: 'hola', ts: 1_800_000_000_000 },
+    { t: 'chat', text: 'hola', ts: 1_800_000_000_000, nick: 'ana' },
     { t: 'beat' },
     { t: 'view', peers: [peer] },
     { t: 'leave', peers: [peer, peer] },
     { t: 'dial-offer', dialId: toHex(randomBytes(16)), sdp: 'v=0 offer' },
     { t: 'dial-answer', dialId: toHex(randomBytes(16)), sdp: 'v=0 answer' },
+    { t: 'hello', nick: 'guest-1a2b' },
   ]
   const decoded = variants.map(roundtrip)
   assert.deepEqual(decoded, variants)
+})
+
+test('nicks reject empty, oversize, untrimmed, and control chars', () => {
+  assert.equal(roundtrip({ t: 'hello', nick: '' }), null)
+  assert.equal(roundtrip({ t: 'hello', nick: 'x'.repeat(25) }), null)
+  assert.equal(roundtrip({ t: 'hello', nick: ' pad ' }), null)
+  assert.equal(roundtrip({ t: 'hello', nick: 'two\nlines' }), null)
+  assert.equal(roundtrip({ t: 'hello', nick: 'be\u0007ll' }), null)
+  assert.equal(roundtrip({ t: 'hello', nick: 'x'.repeat(24) })?.t, 'hello')
+})
+
+test('chat requires a valid nick', () => {
+  assert.equal(roundtrip({ t: 'chat', text: 'hi', ts: 0, nick: '' }), null)
+  assert.equal(decodeMessage(utf8('{"t":"chat","text":"hi","ts":0}')), null)
 })
 
 test('junk bytes decode to null', () => {
@@ -35,6 +50,7 @@ test('oversize chat text is rejected', () => {
     t: 'chat',
     text: 'x'.repeat(16_001),
     ts: 0,
+    nick: 'ana',
   }
   assert.equal(roundtrip(message), null)
 })

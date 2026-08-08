@@ -2,11 +2,14 @@ import '98.css'
 import './style.css'
 import { randomBytes, toHex } from './mesh/bytes.ts'
 import { DEFAULT_RELAYS } from './mesh/constants.ts'
-import type { Identity } from './mesh/keys.ts'
+import { isValidNick, NICK_MAX } from './mesh/messages.ts'
+import { kvGet, kvPut } from './platform/idb.ts'
 import { loadStoredIdentity } from './platform/identity-store.ts'
 import { Room, type RoomEvent } from './platform/room.ts'
 import { awaitTabOwnership, claimTabOwnership } from './platform/tab-owner.ts'
 import { mountStandby, mountUi, type UiHandles } from './ui.ts'
+
+const NICK_KEY = 'nickname'
 
 const roomFromHash = (): { roomId: string; topicSecret: string } => {
   const params = new URLSearchParams(location.hash.slice(1))
@@ -25,6 +28,10 @@ const dispatchToUi = (ui: UiHandles, event: RoomEvent): void => {
   switch (event.kind) {
     case 'chat': {
       ui.appendChat(event)
+      return
+    }
+    case 'presence': {
+      ui.appendPresence(event)
       return
     }
     case 'log': {
@@ -58,23 +65,35 @@ const boot = async (): Promise<void> => {
   const ui = mountUi(root)
   ui.setRoom(roomId)
 
-  let room: Room | null = null
-  const startRoom = (identity: Identity): void => {
-    room?.leave()
-    ui.setIdentity(identity.peerIdHex)
-    room = new Room({
-      identity,
-      roomId,
-      topicSecret,
-      relays: DEFAULT_RELAYS,
-      onEvent: (event) => dispatchToUi(ui, event),
-    })
-    room.join()
-  }
+  const identity = await loadStoredIdentity()
+  const storedNick = await kvGet<string>(NICK_KEY)
+  let nick = storedNick ?? `guest-${identity.peerIdHex.slice(0, 4)}`
+  ui.setIdentity(identity.peerIdHex)
+  ui.setNick(nick)
 
-  startRoom(await loadStoredIdentity())
+  const room = new Room({
+    identity,
+    roomId,
+    topicSecret,
+    nick,
+    relays: DEFAULT_RELAYS,
+    onEvent: (event) => dispatchToUi(ui, event),
+  })
+  room.join()
 
-  ui.onSend((text) => room?.broadcastChat(text))
+  ui.onSend((text) => room.broadcastChat(text))
+  ui.onNick((value) => {
+    const clean = value.trim().slice(0, NICK_MAX)
+    if (!isValidNick(clean) || clean === nick) {
+      ui.setNick(nick)
+      return
+    }
+    nick = clean
+    void kvPut(NICK_KEY, clean)
+    room.setNick(clean)
+    ui.setNick(clean)
+    ui.log(`nick set to ${clean}`)
+  })
   ui.onNewRoom(() => {
     location.hash = ''
     location.reload()
@@ -85,7 +104,7 @@ const boot = async (): Promise<void> => {
       .then(() => ui.log('invite link copied'))
   })
 
-  window.addEventListener('pagehide', () => room?.leave())
+  window.addEventListener('pagehide', () => room.leave())
   window.addEventListener('hashchange', () => location.reload())
 }
 

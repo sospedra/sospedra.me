@@ -45,7 +45,22 @@ body {
 
 .toolbar {
   display: flex;
+  align-items: center;
   gap: 6px;
+}
+
+.toolbar .spacer {
+  flex: 1;
+}
+
+.nick-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nick-form input {
+  width: 150px;
 }
 
 .content {
@@ -91,6 +106,10 @@ body {
 .message .body {
   overflow-wrap: anywhere;
   white-space: pre-wrap;
+}
+
+.message.system .body {
+  color: var(--chat-system);
 }
 
 .composer {

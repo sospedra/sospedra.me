@@ -1,19 +1,28 @@
+import { NICK_MAX } from './mesh/messages.ts'
 import type { RelayState } from './platform/nostr-pool.ts'
+import type { PeerEntry } from './platform/room.ts'
 import { short } from './util.ts'
 
 export type UiHandles = {
   setIdentity(peerIdHex: string): void
   setRoom(roomId: string): void
+  setNick(nick: string): void
   appendChat(input: {
-    from: string
+    nick: string
     text: string
     ts: number
     self: boolean
   }): void
-  setPeers(active: string[], passiveCount: number): void
+  appendPresence(input: {
+    hex: string
+    nick?: string
+    action: 'joined' | 'left'
+  }): void
+  setPeers(active: PeerEntry[], passiveCount: number): void
   setRelay(url: string, state: RelayState): void
   log(line: string): void
   onSend(callback: (text: string) => void): void
+  onNick(callback: (nick: string) => void): void
   onNewRoom(callback: () => void): void
   onCopyLink(callback: () => void): void
 }
@@ -78,10 +87,19 @@ export const mountUi = (root: HTMLElement): UiHandles => {
 
   const { bar, title } = titleBar('irc')
 
+  const nickInput = el('input')
+  nickInput.maxLength = NICK_MAX
+  nickInput.id = 'nick'
+  const nickLabel = el('label', '', 'nick')
+  nickLabel.htmlFor = 'nick'
+  const nickForm = el('form', 'nick-form')
+  nickForm.append(nickLabel, nickInput)
+
   const newRoomButton = el('button', '', 'new room')
   const copyButton = el('button', '', 'copy invite link')
+  const spacer = el('span', 'spacer')
   const toolbar = el('div', 'toolbar')
-  toolbar.append(newRoomButton, copyButton)
+  toolbar.append(newRoomButton, copyButton, spacer, nickForm)
 
   const messages = el('div', 'messages sunken-panel')
   const input = el('input')
@@ -124,6 +142,7 @@ export const mountUi = (root: HTMLElement): UiHandles => {
 
   const relayItems = new Map<string, HTMLLIElement>()
   let sendCallback: (text: string) => void = () => {}
+  let nickCallback: (nick: string) => void = () => {}
 
   composer.addEventListener('submit', (event) => {
     event.preventDefault()
@@ -133,6 +152,13 @@ export const mountUi = (root: HTMLElement): UiHandles => {
     input.value = ''
   })
 
+  nickForm.addEventListener('submit', (event) => {
+    event.preventDefault()
+    nickCallback(nickInput.value)
+    nickInput.blur()
+  })
+  nickInput.addEventListener('change', () => nickCallback(nickInput.value))
+
   return {
     setIdentity(peerIdHex) {
       identityField.textContent = `you ${short(peerIdHex)}`
@@ -141,21 +167,37 @@ export const mountUi = (root: HTMLElement): UiHandles => {
       title.textContent = `irc - #${roomId}`
       roomField.textContent = `room #${roomId}`
     },
+    setNick(nick) {
+      nickInput.value = nick
+    },
     appendChat(entry) {
       const row = el('div', entry.self ? 'message self' : 'message')
       row.append(
         el('span', 'meta', timeOf(entry.ts)),
-        el('span', 'who', `<${entry.self ? 'you' : short(entry.from)}>`),
+        el('span', 'who', `<${entry.nick}>`),
         el('span', 'body', entry.text),
+      )
+      messages.append(row)
+      messages.scrollTop = messages.scrollHeight
+    },
+    appendPresence(entry) {
+      const name = entry.nick ?? short(entry.hex)
+      const row = el('div', 'message system')
+      row.append(
+        el('span', 'meta', timeOf(Date.now())),
+        el('span', 'body', `*** ${name} has ${entry.action} the room`),
       )
       messages.append(row)
       messages.scrollTop = messages.scrollHeight
     },
     setPeers(active, passiveCount) {
       peersList.replaceChildren()
-      for (const hex of active) {
+      for (const peer of active) {
         const item = el('li', 'open')
-        item.append(el('span', 'dot'), el('span', '', short(hex)))
+        item.append(
+          el('span', 'dot'),
+          el('span', '', peer.nick ?? short(peer.hex)),
+        )
         peersList.append(item)
       }
       peersField.textContent = `${active.length} active · ${passiveCount} passive`
@@ -180,6 +222,9 @@ export const mountUi = (root: HTMLElement): UiHandles => {
     },
     onSend(callback) {
       sendCallback = callback
+    },
+    onNick(callback) {
+      nickCallback = callback
     },
     onNewRoom(callback) {
       newRoomButton.addEventListener('click', callback)
