@@ -234,6 +234,17 @@ function LookSection({ node }: { node: DecorNode }) {
             flip {node.flip ? '◀' : '▶'}
           </button>
         )}
+        {isSpotKind(node.kind) && (
+          <button
+            type='button'
+            aria-pressed={node.pulse === true}
+            onClick={() =>
+              editNode(node.id, { pulse: node.pulse ? undefined : true })
+            }
+          >
+            pulse {node.pulse ? '●' : '○'}
+          </button>
+        )}
         <button type='button' onClick={() => duplicateNode(node.id)}>
           duplicate
         </button>

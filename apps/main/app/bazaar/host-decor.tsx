@@ -78,6 +78,11 @@ const scaleOf = (node: DecorNode, place: Placement) => {
   return { scale: `${sx} ${sy}`, transformOrigin: 'bottom center' }
 }
 
+/* sprites with a runtime flicker twin: the twin blinks over the base */
+const FLICKER_REF: Record<string, string> = {
+  'holo-fish': 'holo-fish-flicker',
+}
+
 const variantStyle = (
   node: DecorNode,
   corner: Corner,
@@ -109,18 +114,22 @@ function Variant(props: {
     return (
       <div
         aria-hidden
-        className={className}
+        className={cn(className, node.pulse && css.pulse)}
         data-edit-id={node.id}
-        style={{
-          ...style,
-          width: lengthX(space, variant.place.w ?? variant.place.h),
-          background: `radial-gradient(ellipse, ${GLOW_COLORS[node.ref]} 0%, transparent 68%)`,
-          mixBlendMode: node.kind === 'shadow' ? 'multiply' : 'screen',
-        }}
+        style={
+          {
+            ...style,
+            '--op': node.opacity ?? 1,
+            width: lengthX(space, variant.place.w ?? variant.place.h),
+            background: `radial-gradient(ellipse, ${GLOW_COLORS[node.ref]} 0%, transparent 68%)`,
+            mixBlendMode: node.kind === 'shadow' ? 'multiply' : 'screen',
+          } as React.CSSProperties
+        }
       />
     )
   }
-  return (
+  const flickerRef = FLICKER_REF[node.ref]
+  const base = (
     <img
       src={spriteSrc(node.kind, node.ref)}
       alt=''
@@ -130,6 +139,21 @@ function Variant(props: {
       data-edit-id={node.id}
       style={style}
     />
+  )
+  if (!flickerRef) return base
+  return (
+    <>
+      {base}
+      <img
+        src={spriteSrc(node.kind, flickerRef)}
+        alt=''
+        aria-hidden
+        draggable={false}
+        loading='lazy'
+        className={cn(className, css.flicker)}
+        style={style}
+      />
+    </>
   )
 }
 

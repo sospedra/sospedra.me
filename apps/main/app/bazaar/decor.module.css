@@ -3,6 +3,65 @@
   pointer-events: none;
 }
 
+/* runtime flicker twin: blinks its frame over the base sprite */
+.flicker {
+  opacity: 0;
+  animation: decor-flicker 2.7s steps(1, end) infinite;
+}
+
+@keyframes decor-flicker {
+  0%,
+  71% {
+    opacity: 0;
+  }
+  72%,
+  77% {
+    opacity: 1;
+  }
+  78%,
+  83% {
+    opacity: 0;
+  }
+  84%,
+  86% {
+    opacity: 1;
+  }
+  87%,
+  93% {
+    opacity: 0;
+  }
+  94%,
+  96% {
+    opacity: 1;
+  }
+  97%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* lights breathe: dips from the node's own opacity, never above it */
+.pulse {
+  animation: glow-pulse 3.4s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: var(--op, 1);
+  }
+  50% {
+    opacity: calc(var(--op, 1) * 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flicker,
+  .pulse {
+    animation: none;
+  }
+}
+
 /* per-regime visibility: each variant hides in the regimes it does not own */
 @container bazaar (max-width: 699.98px) {
   .hm {

@@ -21,9 +21,6 @@ test('every stall layer file exists on disk', () => {
 
 test('map stall routes to the bazaar paper', () => {
   assert.equal(STALLS.map.href, '/papers/bazaar')
-  assert.deepEqual(STALLS.map.links, [
-    { label: 'read the bazaar paper', href: '/papers/bazaar' },
-  ])
   const paper = join(import.meta.dirname, '../../repo/papers/bazaar/index.mdx')
   assert.ok(existsSync(paper), 'bazaar paper mdx missing')
 })

@@ -18,6 +18,7 @@ export type ChromePatch = Partial<
     | 'zIndex'
     | 'filter'
     | 'opacity'
+    | 'veil'
     | 'backgroundImage'
     | 'display'
     | 'wf',
@@ -41,6 +42,11 @@ const effectivePatch = (map: ChromeMap, id: string): ChromePatch =>
 export const chromeTouched = (map: ChromeMap, id: string) =>
   Object.keys(map).some((key) => idOfKey(key) === id)
 
+const applyVar = (el: HTMLElement, name: string, value: string | null) => {
+  if (value) el.style.setProperty(name, value)
+  else el.style.removeProperty(name)
+}
+
 const applyChromeTo = (el: HTMLElement, patch: ChromePatch) => {
   el.style.translate = patch.translate ?? ''
   el.style.scale = patch.scale ?? ''
@@ -49,10 +55,9 @@ const applyChromeTo = (el: HTMLElement, patch: ChromePatch) => {
   el.style.opacity = patch.opacity ?? ''
   el.style.display = patch.display ?? ''
   el.style.backgroundImage = patch.backgroundImage ?? ''
+  applyVar(el, '--veil', patch.veil ?? null)
   const floor = el.closest<HTMLElement>('[data-floor]')
-  if (!floor) return
-  if (patch.wf) floor.style.setProperty('--wf', `url("${patch.wf}")`)
-  else floor.style.removeProperty('--wf')
+  if (floor) applyVar(floor, '--wf', patch.wf ? `url("${patch.wf}")` : null)
 }
 
 const applyAll = (next: ChromeMap, previous: ChromeMap) => {

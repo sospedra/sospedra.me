@@ -2,6 +2,8 @@
 
 import { useStoreSelector } from 'services/external-store'
 import { ARCH, regimeAt } from '../decor'
+import { STALLS } from '../stall-catalog'
+import type { BazaarStallId } from '../stalls-manifest'
 import { SEP_SKINS, WALL_SKINS } from './catalog-data'
 import {
   beginChromeGesture,
@@ -15,7 +17,7 @@ import {
 } from './chrome-store'
 import css from './editor.module.css'
 import { Scrub, Section } from './fields'
-import { round2, stageSizeStore } from './store'
+import { round2, stageSizeStore, swapStalls } from './store'
 import { useGesture } from './use-gesture'
 
 const parseNums = (raw: string | undefined) =>
@@ -70,10 +72,16 @@ const displayPatch = (hidden: boolean): ChromePatch => ({
   display: hidden ? undefined : 'none',
 })
 
-const veilValue = (patch: ChromePatch, isWall: boolean) => {
+const veilPatch = (veil: number): ChromePatch => ({
+  veil: veil === 0 ? undefined : String(veil),
+})
+
+const veilValue = (patch: ChromePatch) =>
+  Number.parseFloat(patch.veil ?? '') || 0
+
+const opacityValue = (patch: ChromePatch) => {
   const parsed = Number.parseFloat(patch.opacity ?? '')
-  if (Number.isFinite(parsed)) return parsed
-  return isWall ? 0 : 1
+  return Number.isFinite(parsed) ? parsed : 1
 }
 
 const cycleSkin = (id: string, isWall: boolean, patch: ChromePatch) => {
@@ -82,6 +90,55 @@ const cycleSkin = (id: string, isWall: boolean, patch: ChromePatch) => {
   const next = list[(list.indexOf(current as never) + 1) % list.length]
   if (isWall) editChrome(id, { wf: `${ARCH}/${next}.png` })
   else editChrome(id, { backgroundImage: `url("${ARCH}/${next}.png")` })
+}
+
+type PatchGesture = {
+  begin: () => void
+  live: (patch: ChromePatch) => void
+  commit: (patch: ChromePatch) => void
+}
+
+/* the third look knob: veil for WF layers, plain opacity elsewhere */
+function AlphaScrub(props: {
+  veiled: boolean
+  patch: ChromePatch
+  gesture: PatchGesture
+}) {
+  const { veiled, patch, gesture } = props
+  const toPatch = veiled ? veilPatch : opacityPatch
+  return (
+    <Scrub
+      label={veiled ? 'veil' : 'op'}
+      value={veiled ? veilValue(patch) : opacityValue(patch)}
+      step={0.01}
+      min={0}
+      max={1}
+      precision={2}
+      onBegin={gesture.begin}
+      onLive={(value) => gesture.live(toPatch(value))}
+      onCommit={(value) => gesture.commit(toPatch(value))}
+    />
+  )
+}
+
+const STALL_IDS = Object.keys(STALLS) as BazaarStallId[]
+
+function SwapSection({ id }: { id: BazaarStallId }) {
+  return (
+    <Section title='swap slot with'>
+      <div className={css.rowBtns}>
+        {STALL_IDS.filter((other) => other !== id).map((other) => (
+          <button
+            key={other}
+            type='button'
+            onClick={() => swapStalls(id, other)}
+          >
+            {other}
+          </button>
+        ))}
+      </div>
+    </Section>
+  )
 }
 
 export default function ChromeInspector({ id }: { id: string }) {
@@ -94,8 +151,10 @@ export default function ChromeInspector({ id }: { id: string }) {
     beginChromeGesture,
     endChromeGesture,
   )
-  const isWall = id.startsWith('wall:')
-  const skinnable = isWall || id.startsWith('sep:')
+  const isWall = id.startsWith('wall:') || id.startsWith('mwall:')
+  const veiled = isWall || id.startsWith('wfloor:')
+  const skinnable = isWall || id.startsWith('sep:') || id.startsWith('msep:')
+  const stall = id in STALLS ? (id as BazaarStallId) : null
   const move = parseMove(patch.translate)
   const scale = parseScale(patch.scale)
   const hidden = patch.display === 'none'
@@ -179,17 +238,7 @@ export default function ChromeInspector({ id }: { id: string }) {
             onLive={(b) => gesture.live(brightPatch(b))}
             onCommit={(b) => gesture.commit(brightPatch(b))}
           />
-          <Scrub
-            label={isWall ? 'veil' : 'op'}
-            value={veilValue(patch, isWall)}
-            step={0.01}
-            min={0}
-            max={1}
-            precision={2}
-            onBegin={gesture.begin}
-            onLive={(o) => gesture.live(opacityPatch(o))}
-            onCommit={(o) => gesture.commit(opacityPatch(o))}
-          />
+          <AlphaScrub veiled={veiled} patch={patch} gesture={gesture} />
         </div>
         <div className={css.rowBtns} style={{ marginTop: 6 }}>
           {skinnable && (
@@ -212,6 +261,7 @@ export default function ChromeInspector({ id }: { id: string }) {
           </button>
         </div>
       </Section>
+      {stall && <SwapSection id={stall} />}
     </>
   )
 }

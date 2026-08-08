@@ -4,15 +4,19 @@ import scene from './scene.module.css'
 
 type Side = 'left' | 'right'
 
-type SignProps = { side: Side; index: number }
+type SignProps = { side: Side; index: number; m?: boolean }
 
 function ArrowSign(props: { dir: 'up' | 'down' } & SignProps) {
-  const { dir, side, index } = props
+  const { dir, side, index, m } = props
   return (
     <div
-      className={cn(scene.sign, side === 'left' ? scene.signL : scene.signR)}
+      className={cn(
+        scene.sign,
+        side === 'left' ? scene.signL : scene.signR,
+        m && scene.signM,
+      )}
       data-dir={dir}
-      data-edit-id={`sign-${dir}:${index}`}
+      data-edit-id={`sign-${dir}:${m ? 'm' : ''}${index}`}
       aria-hidden
     >
       <img src={`${DECO}/${dir}-off.png`} alt='' draggable={false} />

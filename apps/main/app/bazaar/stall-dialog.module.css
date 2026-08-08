@@ -1,16 +1,17 @@
-/* ---------- FFIX dialog: a popover bubble anchored to its stall ---------- */
+/* ---------- FFIX dialog: a popover bubble anchored to its stall's
+   character; display-only, clicks fall through to the stall link ---------- */
 .dialog {
   position: fixed;
   --dialog-shift-x: 0px;
   --dialog-shift-y: 0px;
   translate: calc(-50% + var(--dialog-shift-x))
-    calc(-100% - 14px + var(--dialog-shift-y));
+    calc(-100% - 12px + var(--dialog-shift-y));
   width: max-content;
-  max-width: min(300px, 76cqw);
+  max-width: min(240px, 62cqw);
   z-index: 2147483000;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border: 2px solid #f2f2f2;
-  border-radius: 8px;
+  border-radius: 6px;
   background:
     repeating-linear-gradient(
       0deg,
@@ -23,31 +24,22 @@
     inset -1px -1px 0 rgba(0, 0, 0, 0.45),
     0 0 0 1px rgba(0, 0, 0, 0.6),
     0 6px 16px rgba(0, 0, 0, 0.5);
-  font-size: 10px;
+  font-size: 8px;
   line-height: 1.8;
   color: #fff;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
   text-transform: none;
+  pointer-events: none;
 }
 
-/* keep the stall and its bubble in one continuous hover target */
-.dialog::before {
-  content: "";
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  height: 16px;
-}
-
-/* speech tail pointing at the stall below */
+/* speech tail pointing at the character below */
 .dialog::after {
   content: "";
   position: absolute;
   top: 100%;
   left: 50%;
   translate: -50% 0;
-  border: 7px solid transparent;
+  border: 6px solid transparent;
   border-top-color: #f2f2f2;
 }
 
@@ -59,22 +51,11 @@
   z-index: 2147483000;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: min(300px, calc(100cqw - 16px));
+  width: min(240px, calc(100cqw - 16px));
   box-sizing: border-box;
-  pointer-events: auto;
+  pointer-events: none;
   translate: calc(-50% + var(--dialog-shift-x))
-    calc(-100% - 14px + var(--dialog-shift-y));
-}
-
-/* one continuous hover bridge for the full conversation */
-.gamesDialogs::before {
-  content: "";
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  height: 16px;
+    calc(-100% - 12px + var(--dialog-shift-y));
 }
 
 .dialog.gamesDialog {
@@ -86,17 +67,20 @@
   overflow-wrap: anywhere;
 }
 
-/* the wrapper owns the bridge; each turn only owns its visible bubble */
-.dialog.gamesDialog::before {
-  display: none;
+/* the turns shingle: each bubble rides over the previous one's edge */
+.dialog.gamesDialog + .dialog.gamesDialog {
+  margin-top: -7px;
 }
 
+/* pulled toward the center line instead of hugging the edges */
 .gamesDialogSister {
   align-self: flex-start;
+  margin-left: 9%;
 }
 
 .gamesDialogBrother {
   align-self: flex-end;
+  margin-right: 9%;
 }
 
 /* alternate the tails toward the two siblings below */
@@ -110,23 +94,18 @@
 
 .gamesDialogPending {
   opacity: 0;
-  pointer-events: none;
 }
 
 @container bazaar (max-width: 699.98px) {
   .dialog {
-    max-width: min(240px, 62cqw);
+    max-width: min(192px, 62cqw);
   }
 }
 
 .dialogDesc {
   position: relative;
-  margin: 0 0 8px;
+  margin: 0;
   white-space: pre-line;
-}
-
-.dialogDescSolo {
-  margin-bottom: 0;
 }
 
 .srOnly {
@@ -158,47 +137,4 @@
   50% {
     opacity: 0;
   }
-}
-
-.dialogLinks {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.dialogLinks a {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  width: max-content;
-  max-width: 100%;
-  /* 10px type on 1.8 leading is an 18px row; pad the target to 24px */
-  padding-block: 3px;
-  color: #ffe9a8;
-  text-decoration: none;
-}
-
-.dialogLinks a::before {
-  content: "\25B8 ";
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.linkTypeMeasure,
-.linkTypeText {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.linkTypeMeasure {
-  visibility: hidden;
-}
-
-.dialogLinkPending::before,
-.dialogLinkPending .linkTypeText {
-  visibility: hidden;
-}
-
-.dialogLinks a:hover {
-  color: #ffffff;
 }

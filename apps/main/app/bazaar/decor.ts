@@ -3,6 +3,7 @@
    saves it back to disk through the dev-only save route. */
 
 import rawDecor from './decor.json'
+import type { FloorsConfig } from './floors'
 import type { BazaarStallId } from './stalls-manifest'
 
 export const DECO = '/images/bazaar/deco'
@@ -65,11 +66,16 @@ export type DecorNode = Placement & {
   flip?: boolean
   bright?: number
   opacity?: number
+  pulse?: boolean
   hide?: Regime[]
   over?: Partial<Record<Regime, Partial<Placement>>>
 }
 
-export type DecorDoc = { counter: number; nodes: DecorNode[] }
+export type DecorDoc = {
+  counter: number
+  nodes: DecorNode[]
+  floors?: FloorsConfig
+}
 
 export const INITIAL_DECOR = rawDecor as DecorDoc
 

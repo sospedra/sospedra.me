@@ -62,7 +62,10 @@
   }
 }
 
+/* height-driven sprites keep their intrinsic width: the preflight
+   max-width clamp squished building-a under ~450px and widened the alley */
 .scene img {
+  max-width: none;
   image-rendering: pixelated;
   user-select: none;
 }
@@ -396,12 +399,37 @@
   pointer-events: auto;
 }
 
+/* lit by default; the neon dips out now and then, up/down out of phase */
 .sign img[data-on] {
-  opacity: 0;
+  animation: neonBlink 8s steps(1, end) -2.2s infinite;
+}
+
+.sign[data-dir="down"] img[data-on] {
+  animation-delay: -5.6s;
 }
 
 .sign:hover img[data-on] {
   animation: bulbFlicker 1.2s steps(1, end) forwards;
+}
+
+/* the mobile pair speaks mu: sized off the SM tower, tucked into the
+   ceiling. UP pokes 15mu past the SM inside edge; DOWN hugs the far side */
+.signM {
+  width: calc(var(--mfloor-h) / 597 * 78);
+}
+
+.signM[data-dir="up"] {
+  --sign-in: calc(
+    var(--sm-w) -
+    var(--shift-m, 0px) -
+    var(--mfloor-h) /
+    597 *
+    63
+  );
+}
+
+.signM[data-dir="down"] {
+  --sign-in: calc(var(--mfloor-h) / 597 * 8);
 }
 
 /* the home car passes through on load: offscreen left to offscreen

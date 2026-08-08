@@ -108,10 +108,6 @@
   --sign-gap: var(--g);
   column-gap: var(--g);
   padding-right: var(--g);
-  background-image: var(--wf);
-  background-size: calc(var(--su) * 300) calc(var(--su) * 597);
-  background-repeat: repeat-x;
-  background-position: left bottom;
 }
 
 /* per-floor WF variants */
@@ -123,28 +119,41 @@
   --wf: url("/images/bazaar/arch/wf-wood-c.png");
 }
 
-.floor .stairs {
-  margin-left: calc(-1 * var(--shift));
-}
-
-/* editor-dimmable wall veil: spans the WF wall, stops above the walkway
-   strip (177 of the tile's 955 rows = 110.65 of 597 su); opacity is the
-   knob, 0 at rest. Doubles as the stage-left anchor target. */
-.wallDim {
+/* the WF paints on two stage-wide layers so brt (filter) and veil
+   (--veil, the black ::after) tune live per band. The walkway strip is
+   177 of the tile's 955 rows = 110.65 of 597 su. */
+.wf {
   position: absolute;
   z-index: 0;
-  top: 0;
-  bottom: calc(var(--su) * 110.65);
+  inset: 0;
   left: calc(-1 * var(--ml, 0px));
   width: 100cqw;
-  background: #000;
-  opacity: 0;
+  background-image: var(--wf);
+  background-size: calc(var(--su) * 300) calc(var(--su) * 597);
+  background-repeat: repeat-x;
+  background-position: left bottom;
   pointer-events: none;
 }
 
+.wf[data-wf-wall] {
+  clip-path: inset(0 0 calc(var(--su) * 110.65) 0);
+}
+
+.wf[data-wf-floor] {
+  clip-path: inset(calc(100% - var(--su) * 110.65) 0 0 0);
+}
+
+.wf::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--veil, 0);
+}
+
 /* session: floor 2's wood wall reads at bright 0.2 (veil = 1 - bright) */
-.floor[data-market-index="2"] .wallDim {
-  opacity: 0.8;
+.floor[data-market-index="2"] .wf[data-wf-wall] {
+  --veil: 0.8;
 }
 
 /* ambient rat: 5-frame strip (2,4,3,5,7) at 80ms/frame; art feet sit
@@ -221,26 +230,30 @@
   padding-left: var(--g);
 }
 
-.floorR .stairs {
-  margin-left: 0;
-  margin-right: calc(-1 * var(--shift));
-}
-
 .band {
   display: contents;
 }
 
-/* z law: wf 0 · stairs 1 · stalls 3 · seps 5 · signs 14 (max); props and
+/* z law: wf 0 · stalls 3 · stairs 4 · seps 5 · signs 14 (max); props and
    glows nest inside the stall wraps (-1 back · 1 front · 2 glow) */
 .stairs {
   position: relative;
-  z-index: 1;
+  z-index: 4;
   flex: none;
   width: var(--s-w);
   height: 110%; /* test: +10% vertical stretch, bottom stays pinned */
   background:
     url("/images/bazaar/arch/stairs.png") center / 100% 100% no-repeat;
   image-rendering: pixelated;
+}
+
+.floor .stairs {
+  margin-left: calc(-1 * var(--shift));
+}
+
+.floorR .stairs {
+  margin-left: 0;
+  margin-right: calc(-1 * var(--shift));
 }
 
 /* the base art faces right-placement; mirror when the stairs sit left */
@@ -264,25 +277,10 @@
     column-gap: var(--gc);
     padding: 0;
     margin-left: var(--ml);
-    background-image: none;
     isolation: isolate;
   }
   .floorR {
     --ml: max(calc((100cqw - var(--group)) / 2), 0px);
-  }
-  /* the floor box is max-content; the WF wall still spans the stage */
-  .floor::before {
-    content: "";
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    bottom: 0;
-    left: calc(-1 * var(--ml));
-    width: 100cqw;
-    background-image: var(--wf);
-    background-size: calc(var(--su) * 300) calc(var(--su) * 597);
-    background-repeat: repeat-x;
-    background-position: left bottom;
   }
   .band {
     display: flex;
@@ -291,6 +289,26 @@
     padding-inline: var(--gc);
     width: var(--band-w);
     height: 100%;
+  }
+}
+
+/* wide flanks fall off into darkness: screen edge darkest, content side
+   lighter. The overlay spans the stage; only its two edge strips paint. */
+@container bazaar (min-width: 2900px) {
+  .floor::after {
+    content: "";
+    position: absolute;
+    z-index: 6;
+    inset: 0;
+    left: calc(-1 * var(--ml, 0px));
+    width: 100cqw;
+    pointer-events: none;
+    --flank: calc((100cqw - var(--group)) / 2 + var(--su) * 140);
+    background:
+      linear-gradient(to right, rgb(0 0 0 / 0.88), transparent) left /
+      var(--flank) 100% no-repeat,
+      linear-gradient(to left, rgb(0 0 0 / 0.88), transparent) right /
+      var(--flank) 100% no-repeat;
   }
 }
 
@@ -350,18 +368,12 @@
 /* ---------- mobile: one floor = one SM spanning two stories ---------- */
 
 .mfloor {
-  background-image: url("/images/bazaar/arch/wf-tile.png");
-  background-size: calc(var(--mfloor-h) * 0.5 / 597 * 300)
-    calc(var(--mfloor-h) * 0.5);
-  background-repeat: repeat;
-  background-position: left bottom;
+  --wf: url("/images/bazaar/arch/wf-tile.png");
   --mg: 4cqw; /* the floor's gap knob: every _ in both stories */
   --slot-min: 62cqw;
-  --a-cap: calc(var(--mfloor-h) * 0.48 * var(--armin));
-  --slot-target: min(var(--slot-min), var(--a-cap));
   --shift-ramp: calc((700px - 100cqw) * 0.8);
   --shift-demand: calc(
-    var(--slot-target) -
+    var(--slot-min) -
     (100cqw - var(--sm-w) - 2 * var(--mg))
   );
   --shift-m: clamp(
@@ -375,8 +387,31 @@
   height: var(--mfloor-h);
 }
 
+/* the mobile WF layer: same live brt/veil/skin contract as desktop .wf */
+.mwf {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background-image: var(--wf);
+  background-size: calc(var(--mfloor-h) * 0.5 / 597 * 300)
+    calc(var(--mfloor-h) * 0.5);
+  background-repeat: repeat;
+  background-position: left bottom;
+  pointer-events: none;
+}
+
+.mwf::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: var(--veil, 0);
+}
+
+/* mobile z law: wf 0 · stalls 1 · sm 2 · deck 13 · signs 14 */
 .sm {
   position: relative;
+  z-index: 2;
   flex: none;
   width: var(--sm-w);
   height: 100%;
@@ -428,8 +463,8 @@
 
 @container bazaar (max-width: 699.98px) {
   .stallWrap {
-    /* one shared width per floor: all four gaps equal by construction */
-    width: min(var(--slot), var(--a-cap));
+    /* fill the slot; the stall's own ratio caps it at the story height */
+    width: min(var(--slot), calc(var(--mfloor-h) * 0.48 * var(--ar)));
     height: auto;
     aspect-ratio: var(--ar);
     margin-inline: auto;
@@ -437,7 +472,7 @@
 }
 
 .sepM {
-  height: 4cqh;
+  height: 8cqh;
   background-image: url("/images/bazaar/arch/beam-h-tile.png");
   background-size: auto 100%;
   background-repeat: repeat-x;

@@ -1,8 +1,6 @@
 'use client'
 
-import cn from 'clsx'
-import { clamp, isNotNil } from 'es-toolkit'
-import { drop, find, map, pipe } from 'es-toolkit/fp'
+import { clamp } from 'es-toolkit'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'services/link'
 import css from './bazaar.module.css'
@@ -24,21 +22,12 @@ import type { BazaarStallId } from './stalls-manifest'
 const MOBILE_BREAKPOINT_PX = 700
 const HOVER_CLOSE_DELAY_MS = 140
 const DIALOG_SIZE = {
-  mobile: { maxWidth: 240, viewportShare: 0.62 },
-  desktop: { maxWidth: 300, viewportShare: 0.76 },
+  mobile: { maxWidth: 192, viewportShare: 0.62 },
+  desktop: { maxWidth: 240, viewportShare: 0.76 },
 }
 
-const focusNextStall = (wrap: HTMLElement): boolean => {
-  const siblings = Array.from(wrap.parentElement?.children ?? [])
-  const target = pipe(
-    siblings,
-    drop(siblings.indexOf(wrap) + 1),
-    map((sibling) => sibling.querySelector<HTMLAnchorElement>('a[href]')),
-    find(isNotNil),
-  )
-  target?.focus()
-  return Boolean(target)
-}
+/* the bubble hangs over the character's head, inside the stall box */
+const DEFAULT_ANCHOR = { x: 0.5, y: 0.34 }
 
 export default function Stall({ id }: { id: BazaarStallId }) {
   const spec = STALLS[id]
@@ -60,8 +49,11 @@ export default function Stall({ id }: { id: BazaarStallId }) {
     if (!wrap) return
     const rect = wrap.getBoundingClientRect()
     const stage = stageBox()
-    const anchorX = (rect.left + rect.width / 2 - stage.left) / stage.scale
-    const anchorY = (rect.top - stage.top) / stage.scale
+    const anchor = spec.anchor ?? DEFAULT_ANCHOR
+    const anchorX =
+      (rect.left + rect.width * anchor.x - stage.left) / stage.scale
+    const anchorY =
+      (rect.top + rect.height * anchor.y - stage.top) / stage.scale
     const mobile = stage.width < MOBILE_BREAKPOINT_PX
     const size = mobile ? DIALOG_SIZE.mobile : DIALOG_SIZE.desktop
     const maxWidth = Math.min(size.maxWidth, stage.width * size.viewportShare)
@@ -74,18 +66,12 @@ export default function Stall({ id }: { id: BazaarStallId }) {
       ),
       top: anchorY,
     })
-  }, [])
+  }, [spec.anchor])
 
   useEffect(() => {
     if (!open) return
     const close = (event: PointerEvent) => {
-      const target = event.target as Node
-      if (
-        !wrapRef.current?.contains(target) &&
-        !dialogRef.current?.contains(target)
-      ) {
-        setOpen(false)
-      }
+      if (!wrapRef.current?.contains(event.target as Node)) setOpen(false)
     }
     document.addEventListener('pointerdown', close)
     return () => document.removeEventListener('pointerdown', close)
@@ -152,47 +138,14 @@ export default function Stall({ id }: { id: BazaarStallId }) {
   }
 
   const handleLinkKeyDown = (event: React.KeyboardEvent<HTMLAnchorElement>) => {
-    if (event.key === 'Escape') {
-      dismissDialog()
-      return
-    }
-    if (event.key !== 'Tab' || event.shiftKey) return
-    const firstLink =
-      dialogRef.current?.querySelector<HTMLAnchorElement>('a[href]')
-    if (!firstLink) return
-    event.preventDefault()
-    firstLink.focus()
-  }
-
-  const handleDialogKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Escape') {
-      dismissDialog()
-      return
-    }
-    if (event.key !== 'Tab') return
-    const links =
-      dialogRef.current?.querySelectorAll<HTMLAnchorElement>('a[href]')
-    if (!links?.length) return
-
-    if (event.shiftKey && document.activeElement === links[0]) {
-      event.preventDefault()
-      wrapRef.current?.querySelector<HTMLAnchorElement>('a[href]')?.focus()
-      return
-    }
-    if (event.shiftKey || document.activeElement !== links[links.length - 1]) {
-      return
-    }
-
-    if (wrapRef.current && focusNextStall(wrapRef.current)) {
-      event.preventDefault()
-    }
+    if (event.key === 'Escape') dismissDialog()
   }
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: coordinates hover and focus state for the child link and its portalled dialog
     <div
       ref={wrapRef}
-      className={cn(css.stallWrap, active && scene.dialogOpen)}
+      className={css.stallWrap}
       style={
         {
           '--tint': spec.tint,
@@ -217,19 +170,13 @@ export default function Stall({ id }: { id: BazaarStallId }) {
       }}
       onBlurCapture={(event) => {
         const next = event.relatedTarget as Node | null
-        if (
-          !event.currentTarget.contains(next) &&
-          !dialogRef.current?.contains(next)
-        ) {
-          setFocused(false)
-        }
+        if (!event.currentTarget.contains(next)) setFocused(false)
       }}
     >
       <Link
         className={scene.stall}
         aria-label={spec.label}
         aria-expanded={active}
-        aria-haspopup='dialog'
         data-label={spec.label}
         onClick={guardTap}
         onMouseEnter={() => sfx.stall(id)}
@@ -243,13 +190,9 @@ export default function Stall({ id }: { id: BazaarStallId }) {
       <HostDecor host={`stall:${id}`} />
       {id === 'games' ? (
         <GamesDialogs
-          spec={spec}
           active={active}
           position={dialogPosition}
           dialogRef={dialogRef}
-          onMouseEnter={openOnHover}
-          onMouseLeave={closeAfterHover}
-          onKeyDown={handleDialogKeyDown}
         />
       ) : (
         <Dialog
@@ -257,9 +200,6 @@ export default function Stall({ id }: { id: BazaarStallId }) {
           active={active}
           position={dialogPosition}
           dialogRef={dialogRef}
-          onMouseEnter={openOnHover}
-          onMouseLeave={closeAfterHover}
-          onKeyDown={handleDialogKeyDown}
         />
       )}
     </div>

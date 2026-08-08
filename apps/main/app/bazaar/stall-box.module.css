@@ -1,42 +1,6 @@
 /* ---------- stalls ---------- */
-/* r15 contract scale: --sw/--sh are the stall box in sim units; feet
-   ride 44 sim px up so the walkway strip tucks them 16 px deep */
-.stallWrap {
-  position: relative;
-  z-index: 2;
-  flex: 0 0 auto;
-  width: calc(var(--su) * var(--sw));
-  height: calc(var(--su) * var(--sh));
-  margin-bottom: calc(var(--su) * 44);
-  isolation: isolate;
-}
-
-/* contact shadow: grounds the place on the walkable band */
-.stallWrap::after {
-  content: "";
-  position: absolute;
-  left: 3%;
-  right: 3%;
-  bottom: calc(var(--su) * -20);
-  height: calc(var(--su) * 34);
-  background: radial-gradient(
-    ellipse at 50% 50%,
-    rgb(0 0 0 / 0.55),
-    transparent 68%
-  );
-  pointer-events: none;
-}
-
-@container bazaar (max-width: 699.98px) {
-  .stallWrap {
-    width: min(calc(43cqh * var(--ar)), 74cqw);
-    height: auto;
-    aspect-ratio: var(--ar);
-    margin-bottom: 0;
-    justify-self: center;
-  }
-}
-
+/* the wrap box lives in bazaar.module.css; this file owns the scene
+   internals inside the stall link */
 .stall {
   position: absolute;
   inset: 0;
@@ -82,8 +46,8 @@
 }
 
 /* hover illumination: same pixels, slightly brighter */
-.stallWrap:hover .sceneStack img,
-.stallWrap:focus-within .sceneStack img {
+.stall:hover .sceneStack img,
+.stall:focus-within .sceneStack img {
   filter: brightness(1.12) saturate(1.12);
 }
 
@@ -101,19 +65,11 @@
   pointer-events: none;
 }
 
-.stallWrap:hover .glowWash,
-.stallWrap:focus-within .glowWash {
+.stall:hover .glowWash,
+.stall:focus-within .glowWash {
   opacity: 1;
 }
 
-/* the open stall paints above its market-row siblings */
-.stallWrap:hover,
-.stallWrap:focus-within,
-.dialogOpen {
-  z-index: 5;
-}
-
-/* HITBOX mode: the two composition areas per floor */
 .holoFlicker img {
   position: absolute;
   inset: 0;

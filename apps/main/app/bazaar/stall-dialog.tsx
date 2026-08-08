@@ -1,19 +1,13 @@
 'use client'
 
 import cn from 'clsx'
-import { clamp, sum, sumBy } from 'es-toolkit'
+import { clamp, sum } from 'es-toolkit'
 import { join, pipe, take } from 'es-toolkit/fp'
-import type { Route } from 'next'
 import { Press_Start_2P } from 'next/font/google'
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import Link from 'services/link'
 import { sfx } from './sounds'
-import {
-  GAMES_CONVERSATION,
-  type StallLink,
-  type StallSpec,
-} from './stall-catalog'
+import { GAMES_CONVERSATION, type StallSpec } from './stall-catalog'
 import scene from './stall-dialog.module.css'
 
 const pixelFont = Press_Start_2P({
@@ -27,17 +21,12 @@ export const VIEWPORT_GUTTER = 8
 export type DialogPosition = { left: number; top: number }
 
 const TYPEWRITER_INTERVAL_MS = 9
+const TYPE_BLIP_EVERY = 3
 const GAMES_TURN_PAUSE_CHARS = 10
 
 const countCharacters = (value: string) => Array.from(value).length
 const sliceCharacters = (value: string, length: number) =>
   pipe(Array.from(value), take(length), join(''))
-
-function getDialogCharacterCount(desc: string, links: readonly StallLink[]) {
-  return (
-    countCharacters(desc) + sumBy(links, (link) => countCharacters(link.label))
-  )
-}
 
 function getVisibleCharacters(
   timelinePosition: number,
@@ -61,7 +50,10 @@ function useTypewriter(active: boolean, totalCharacters: number) {
     }
 
     setVisibleChars(0)
+    let ticks = 0
     const timer = window.setInterval(() => {
+      ticks += 1
+      if (ticks % TYPE_BLIP_EVERY === 0) sfx.type()
       setVisibleChars((current) => {
         const next = Math.min(current + 1, totalCharacters)
         if (next >= totalCharacters) window.clearInterval(timer)
@@ -71,120 +63,27 @@ function useTypewriter(active: boolean, totalCharacters: number) {
     return () => window.clearInterval(timer)
   }, [active, totalCharacters])
 
-  const finish = useCallback(
-    () => setVisibleChars(totalCharacters),
-    [totalCharacters],
-  )
-
-  return { finish, visibleChars }
+  return visibleChars
 }
 
-function DialogContent(props: {
-  desc: string
-  links: readonly StallLink[]
-  visibleChars: number
-  onLinkFocus: () => void
-}) {
-  const { desc, links, onLinkFocus, visibleChars } = props
+function DialogContent(props: { desc: string; visibleChars: number }) {
+  const { desc, visibleChars } = props
   const descLength = countCharacters(desc)
   const descVisibleChars = Math.min(visibleChars, descLength)
-  const linkLengths = links.map((link) => countCharacters(link.label))
-  const linkStarts = linkLengths.map(
-    (_, index) => descLength + sum(linkLengths.slice(0, index)),
-  )
 
   return (
-    <>
-      <p
-        className={cn(
-          scene.dialogDesc,
-          links.length === 0 && scene.dialogDescSolo,
+    <p className={scene.dialogDesc}>
+      <span className={scene.srOnly}>{desc}</span>
+      <span className={scene.typeMeasure} aria-hidden>
+        {desc}
+      </span>
+      <span className={scene.typeText} aria-hidden>
+        {sliceCharacters(desc, descVisibleChars)}
+        {descVisibleChars < descLength && (
+          <span className={scene.typeCursor}>_</span>
         )}
-      >
-        <span className={scene.srOnly}>{desc}</span>
-        <span className={scene.typeMeasure} aria-hidden>
-          {desc}
-        </span>
-        <span className={scene.typeText} aria-hidden>
-          {sliceCharacters(desc, descVisibleChars)}
-          {descVisibleChars < descLength && (
-            <span className={scene.typeCursor}>_</span>
-          )}
-        </span>
-      </p>
-      {links.length > 0 && (
-        <div className={scene.dialogLinks}>
-          {links.map((link, index) => {
-            const linkLength = linkLengths[index]
-            const linkVisibleChars = getVisibleCharacters(
-              visibleChars,
-              linkStarts[index],
-              linkLength,
-            )
-            const started = visibleChars >= linkStarts[index]
-            const content = (
-              <>
-                <span className={scene.linkTypeMeasure} aria-hidden>
-                  {link.label}
-                </span>
-                <span className={scene.linkTypeText} aria-hidden>
-                  {sliceCharacters(link.label, linkVisibleChars)}
-                  {started && linkVisibleChars < linkLength && (
-                    <span className={scene.typeCursor}>_</span>
-                  )}
-                </span>
-              </>
-            )
-            const className = cn(!started && scene.dialogLinkPending)
-
-            return link.external ? (
-              <a
-                key={link.href}
-                href={link.href}
-                target='_blank'
-                rel='noreferrer'
-                aria-label={link.label}
-                className={className}
-                onClick={() => sfx.click()}
-                onFocus={onLinkFocus}
-              >
-                {content}
-              </a>
-            ) : (
-              <Link
-                key={link.href}
-                url={link.href as Route}
-                aria-label={link.label}
-                className={className}
-                onClick={() => sfx.click()}
-                onFocus={onLinkFocus}
-              >
-                {content}
-              </Link>
-            )
-          })}
-        </div>
-      )}
-    </>
-  )
-}
-
-function AnimatedDialogContent(props: {
-  desc: string
-  links: readonly StallLink[]
-  active: boolean
-}) {
-  const { active, desc, links } = props
-  const totalCharacters = getDialogCharacterCount(desc, links)
-  const { finish, visibleChars } = useTypewriter(active, totalCharacters)
-
-  return (
-    <DialogContent
-      desc={desc}
-      links={links}
-      visibleChars={visibleChars}
-      onLinkFocus={finish}
-    />
+      </span>
+    </p>
   )
 }
 
@@ -220,19 +119,9 @@ export function Dialog(props: {
   active: boolean
   position: DialogPosition | null
   dialogRef: React.RefObject<HTMLDivElement | null>
-  onMouseEnter: () => void
-  onMouseLeave: () => void
-  onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void
 }) {
-  const {
-    spec,
-    active,
-    position,
-    dialogRef,
-    onMouseEnter,
-    onMouseLeave,
-    onKeyDown,
-  } = props
+  const { spec, active, position, dialogRef } = props
+  const visibleChars = useTypewriter(active, countCharacters(spec.desc))
   useViewportClamp(dialogRef, active, position)
 
   if (!active || !position) return null
@@ -244,48 +133,25 @@ export function Dialog(props: {
       aria-label={`${spec.label} stall details`}
       className={cn(scene.dialog, pixelFont.className)}
       style={{ left: position.left, top: position.top }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onKeyDown={onKeyDown}
     >
-      <AnimatedDialogContent
-        desc={spec.desc}
-        links={spec.links}
-        active={active}
-      />
+      <DialogContent desc={spec.desc} visibleChars={visibleChars} />
     </div>,
     document.body,
   )
 }
 
 export function GamesDialogs(props: {
-  spec: StallSpec
   active: boolean
   position: DialogPosition | null
   dialogRef: React.RefObject<HTMLDivElement | null>
-  onMouseEnter: () => void
-  onMouseLeave: () => void
-  onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void
 }) {
-  const {
-    spec,
-    active,
-    position,
-    dialogRef,
-    onMouseEnter,
-    onMouseLeave,
-    onKeyDown,
-  } = props
-  const lastTurnIndex = GAMES_CONVERSATION.length - 1
-  const turnLengths = GAMES_CONVERSATION.map((turn, index) =>
-    getDialogCharacterCount(
-      turn.text,
-      index === lastTurnIndex ? spec.links : [],
-    ),
+  const { active, position, dialogRef } = props
+  const turnLengths = GAMES_CONVERSATION.map((turn) =>
+    countCharacters(turn.text),
   )
   const totalCharacters =
-    sum(turnLengths) + GAMES_TURN_PAUSE_CHARS * lastTurnIndex
-  const { finish, visibleChars } = useTypewriter(active, totalCharacters)
+    sum(turnLengths) + GAMES_TURN_PAUSE_CHARS * (GAMES_CONVERSATION.length - 1)
+  const visibleChars = useTypewriter(active, totalCharacters)
   useViewportClamp(dialogRef, active, position)
 
   if (!active || !position) return null
@@ -297,12 +163,8 @@ export function GamesDialogs(props: {
       aria-label='Games stall conversation'
       className={cn(scene.gamesDialogs, pixelFont.className)}
       style={{ left: position.left, top: position.top }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onKeyDown={onKeyDown}
     >
       {GAMES_CONVERSATION.map((turn, index) => {
-        const links = index === lastTurnIndex ? spec.links : []
         const turnStart =
           sum(turnLengths.slice(0, index)) + GAMES_TURN_PAUSE_CHARS * index
         const started = visibleChars >= turnStart
@@ -325,12 +187,7 @@ export function GamesDialogs(props: {
             )}
           >
             <span className={scene.srOnly}>{turn.speaker} says: </span>
-            <DialogContent
-              desc={turn.text}
-              links={links}
-              visibleChars={turnVisibleChars}
-              onLinkFocus={finish}
-            />
+            <DialogContent desc={turn.text} visibleChars={turnVisibleChars} />
           </div>
         )
       })}

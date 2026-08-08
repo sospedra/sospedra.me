@@ -279,6 +279,13 @@ function playDoorFile() {
 
 export const sfx = {
   hover: () => tone({ from: 1200, to: 900, duration: 0.035, peak: 0.035 }),
+  /* RPG dialog blip: one short square tick per few typed characters */
+  type: () =>
+    tone({
+      from: 1700 + Math.random() * 500,
+      duration: 0.014,
+      peak: 0.018,
+    }),
   click: () => {
     tone({ from: 660, duration: 0.06, peak: 0.06 })
     tone({ from: 990, duration: 0.1, peak: 0.06, at: 0.07 })

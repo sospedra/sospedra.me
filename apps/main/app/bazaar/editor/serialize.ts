@@ -1,7 +1,24 @@
 import { z } from 'zod'
 import type { DecorDoc, DecorNode } from '../decor'
+import { STALL_SCENES } from '../stalls-manifest'
 
 const regime = z.enum(['m', 'b', 'a', 'w'])
+
+const stallId = z
+  .string()
+  .refine((id) => id in STALL_SCENES, { message: 'unknown stall' })
+
+const desktopFloor = z
+  .object({ stalls: z.array(stallId).min(1), stairsRight: z.boolean() })
+  .strict()
+
+const mobileFloor = z
+  .object({ stalls: z.array(stallId).min(1).max(2), smRight: z.boolean() })
+  .strict()
+
+const floorsConfig = z
+  .object({ desktop: z.array(desktopFloor), mobile: z.array(mobileFloor) })
+  .strict()
 
 const placementPatch = z
   .object({
@@ -32,6 +49,7 @@ const decorNode = z
     z: z.number().int(),
     bright: z.number().optional(),
     opacity: z.number().optional(),
+    pulse: z.boolean().optional(),
     hide: z.array(regime).optional(),
     over: z.partialRecord(regime, placementPatch).optional(),
   })
@@ -41,6 +59,7 @@ export const decorDocSchema = z
   .object({
     counter: z.number().int().nonnegative(),
     nodes: z.array(decorNode),
+    floors: floorsConfig.optional(),
   })
   .strict()
 
@@ -60,6 +79,7 @@ const NODE_KEYS = [
   'z',
   'bright',
   'opacity',
+  'pulse',
   'hide',
   'over',
 ] satisfies (keyof DecorNode)[]
@@ -75,7 +95,11 @@ const orderKeys = (node: DecorNode) =>
 /** document order is render order: serialize verbatim, stable keys */
 export const serializeDoc = (doc: DecorDoc): string => {
   const body = JSON.stringify(
-    { counter: doc.counter, nodes: doc.nodes.map(orderKeys) },
+    {
+      counter: doc.counter,
+      ...(doc.floors ? { floors: doc.floors } : {}),
+      nodes: doc.nodes.map(orderKeys),
+    },
     null,
     2,
   )

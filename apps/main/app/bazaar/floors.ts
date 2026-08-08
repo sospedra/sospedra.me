@@ -6,20 +6,22 @@ export type MobileFloor = {
   smRight: boolean
 }
 
-/* S sides: R, L, R, L (spec rule 5) */
+export type FloorsConfig = { desktop: DesktopFloor[]; mobile: MobileFloor[] }
+
+/* defaults; a saved decor.json floors block overrides them.
+   S sides: R, L, R, L (spec rule 5) */
 export const DESKTOP_FLOORS: DesktopFloor[] = [
-  { stalls: ['uses', 'papers', 'map'], stairsRight: true },
-  { stalls: ['manual', 'console', 'talks'], stairsRight: false },
-  { stalls: ['w98', 'games', 'travel'], stairsRight: true },
-  { stalls: ['scavenger'], stairsRight: false },
+  { stalls: ['scavenger', 'map'], stairsRight: true },
+  { stalls: ['manual', 'console', 'games'], stairsRight: false },
+  { stalls: ['uses', 'talks'], stairsRight: true },
+  { stalls: ['w98', 'papers', 'travel'], stairsRight: false },
 ]
 
-/* SM sides: L, R, L, R, L, R (spec rule 5); solo map floor sits at the entrance */
+/* SM sides: L, R, L, R, L (spec rule 5); stalls listed top story first */
 export const MOBILE_FLOORS: MobileFloor[] = [
-  { stalls: ['map'], smRight: false },
-  { stalls: ['uses', 'papers'], smRight: true },
-  { stalls: ['manual', 'talks'], smRight: false },
-  { stalls: ['console', 'w98'], smRight: true },
-  { stalls: ['games', 'travel'], smRight: false },
-  { stalls: ['scavenger'], smRight: true },
+  { stalls: ['map', 'scavenger'], smRight: false },
+  { stalls: ['console', 'manual'], smRight: true },
+  { stalls: ['games', 'uses'], smRight: false },
+  { stalls: ['talks', 'w98'], smRight: true },
+  { stalls: ['papers', 'travel'], smRight: false },
 ]

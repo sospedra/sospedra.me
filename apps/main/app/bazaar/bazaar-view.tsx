@@ -5,11 +5,13 @@ import { sumBy } from 'es-toolkit'
 import dynamic from 'next/dynamic'
 import { Fragment, useRef, useState, useSyncExternalStore } from 'react'
 import SpriteCar from 'services/car/car'
+import { useStoreSelector } from 'services/external-store'
 import Link from 'services/link'
 import Shell from 'services/shell'
 import { prefersQuietFx } from 'services/theme'
 import { DownSign, UpSign } from './arrow-sign'
 import css from './bazaar.module.css'
+import { decorStore } from './decor-store'
 import {
   DESKTOP_FLOORS,
   type DesktopFloor,
@@ -132,7 +134,12 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
   )
 }
 
-function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
+function MarketFloor(props: {
+  spec: DesktopFloor
+  index: number
+  last: boolean
+}) {
+  const { spec, index, last } = props
   const totalWidth = sumBy(spec.stalls, (id) => DIMS[id].width)
   const stairs = (
     <div className={css.stairs} aria-hidden data-edit-id={`stairs:${index}`}>
@@ -158,7 +165,18 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
         } as React.CSSProperties
       }
     >
-      <div className={css.wallDim} aria-hidden data-edit-id={`wall:${index}`} />
+      <div
+        className={css.wf}
+        aria-hidden
+        data-wf-wall
+        data-edit-id={`wall:${index}`}
+      />
+      <div
+        className={css.wf}
+        aria-hidden
+        data-wf-floor
+        data-edit-id={`wfloor:${index}`}
+      />
       {index === 0 && (
         <div className={css.ratLane} aria-hidden data-edit-id={`rat:${index}`}>
           <div className={css.ratView}>
@@ -173,7 +191,7 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
       {spec.stairsRight ? band : stairs}
       {spec.stairsRight ? stairs : band}
       <UpSign side={spec.stairsRight ? 'right' : 'left'} index={index} />
-      {index < DESKTOP_FLOORS.length - 1 && (
+      {!last && (
         <DownSign side={spec.stairsRight ? 'left' : 'right'} index={index} />
       )}
       <HostDecor host={`floor:${index}`} />
@@ -181,16 +199,12 @@ function MarketFloor({ spec, index }: { spec: DesktopFloor; index: number }) {
   )
 }
 
-function MobileMarketFloor({
-  spec,
-  index,
-}: {
+function MobileMarketFloor(props: {
   spec: MobileFloor
   index: number
+  last: boolean
 }) {
-  const minAspectRatio = Math.min(
-    ...spec.stalls.map((id) => DIMS[id].width / DIMS[id].height),
-  )
+  const { spec, index, last } = props
   const sm = (
     <div className={css.sm} aria-hidden data-sm={index}>
       <HostDecor host={`sm:${index}`} />
@@ -212,10 +226,14 @@ function MobileMarketFloor({
       data-floor=''
       data-market-index={index}
       data-mfloor={index}
-      style={{ '--armin': minAspectRatio } as React.CSSProperties}
     >
+      <div className={css.mwf} aria-hidden data-edit-id={`mwall:${index}`} />
       {spec.smRight ? stack : sm}
       {spec.smRight ? sm : stack}
+      <UpSign side={spec.smRight ? 'right' : 'left'} index={index} m />
+      {!last && (
+        <DownSign side={spec.smRight ? 'left' : 'right'} index={index} m />
+      )}
       <HostDecor host={`mfloor:${index}`} />
     </section>
   )
@@ -225,6 +243,9 @@ const serverSoundOff = () => false
 
 export default function BazaarView() {
   const sceneRef = useRef<HTMLDivElement>(null)
+  const floors = useStoreSelector(decorStore, (doc) => doc.floors)
+  const desktopFloors = floors?.desktop ?? DESKTOP_FLOORS
+  const mobileFloors = floors?.mobile ?? MOBILE_FLOORS
   const sound = useSyncExternalStore(
     soundPreference.subscribe,
     soundPreference.isEnabled,
@@ -286,7 +307,7 @@ export default function BazaarView() {
             <div className={cn(scene.scene, css.streetHost)}>
               <StreetFloor onDoor={scrollToMarket} />
             </div>
-            {DESKTOP_FLOORS.map((spec, i) => (
+            {desktopFloors.map((spec, i) => (
               <Fragment key={spec.stalls[0]}>
                 <div
                   className={css.sep}
@@ -295,11 +316,19 @@ export default function BazaarView() {
                 >
                   <HostDecor host={`sep:${i}`} />
                 </div>
-                <MarketFloor spec={spec} index={i} />
+                <MarketFloor
+                  spec={spec}
+                  index={i}
+                  last={i === desktopFloors.length - 1}
+                />
               </Fragment>
             ))}
-            <div className={css.sep} data-bazaar-sep={4} data-edit-id='sep:4'>
-              <HostDecor host='sep:4' />
+            <div
+              className={css.sep}
+              data-bazaar-sep={desktopFloors.length}
+              data-edit-id={`sep:${desktopFloors.length}`}
+            >
+              <HostDecor host={`sep:${desktopFloors.length}`} />
             </div>
             <div className={css.bottomPad} />
           </div>
@@ -308,13 +337,20 @@ export default function BazaarView() {
             <div className={cn(scene.scene, css.streetHost)}>
               <StreetFloor onDoor={scrollToMarket} />
             </div>
-            {MOBILE_FLOORS.map((spec, i) => (
+            {mobileFloors.map((spec, i) => (
               <Fragment key={spec.stalls[0]}>
-                <div className={css.sepM} />
-                <MobileMarketFloor spec={spec} index={i} />
+                <div className={css.sepM} data-edit-id={`msep:${i}`} />
+                <MobileMarketFloor
+                  spec={spec}
+                  index={i}
+                  last={i === mobileFloors.length - 1}
+                />
               </Fragment>
             ))}
-            <div className={css.sepM} />
+            <div
+              className={css.sepM}
+              data-edit-id={`msep:${mobileFloors.length}`}
+            />
             <div className={css.bottomPad} />
           </div>
         </div>

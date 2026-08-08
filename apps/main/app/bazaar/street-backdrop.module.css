@@ -4,7 +4,9 @@
 .streetBg {
   position: absolute;
   inset: 0 -200px 20cqh;
-  background: url("/images/bazaar/street/bg.png") left bottom repeat-x;
+  /* round: fractional tile widths leave hairline seams between tiles */
+  background: url("/images/bazaar/street/bg.png") left bottom;
+  background-repeat: round no-repeat;
   background-size: auto 96%;
   image-rendering: pixelated;
 }
@@ -22,11 +24,12 @@
 .sTower {
   position: absolute;
   /* right of the bazaar door, deep behind the skyline, tallest peak;
-     art is 317x1510, so width = 64cqh * 0.2099 and margin = half */
+     top pinned 50px past the frame, base on the skyline; art is
+     317x1510, so width follows the height and margin = half of it */
   left: 63cqw;
-  margin-left: -6.72cqh;
-  bottom: 34cqh;
-  height: 64cqh;
+  margin-left: calc((66cqh + 50px) * -0.10495);
+  top: -50px;
+  height: calc(66cqh + 50px);
   pointer-events: none;
 }
 

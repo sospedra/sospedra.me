@@ -17,6 +17,8 @@ import {
   spriteSrc,
 } from '../decor'
 import { decorStore } from '../decor-store'
+import { DESKTOP_FLOORS, type FloorsConfig, MOBILE_FLOORS } from '../floors'
+import type { BazaarStallId } from '../stalls-manifest'
 import {
   FALLBACK_PX_PER_SU,
   SPAWN_H,
@@ -115,9 +117,21 @@ export const editNode = (id: string, patch: Partial<DecorNode>) => {
 export const writeNode = (id: string, patch: Partial<DecorNode>) =>
   setDoc(patchNodeIn(decorStore.get(), id, patch))
 
-/* placement writes land on the current regime's fork when one exists */
+const forkSeed = (node: DecorNode, regime: Regime): Partial<Placement> => {
+  const place = placementAt(node, regime)
+  const fork: Partial<Placement> = { x: place.x, y: place.y, h: place.h }
+  if (place.w !== undefined) fork.w = place.w
+  if (place.sx !== undefined) fork.sx = place.sx
+  if (place.sy !== undefined) fork.sy = place.sy
+  return fork
+}
+
+/* placement writes land on the current regime's fork when one exists.
+   The mobile tree owns its placement outright: writes at M auto-fork,
+   and base writes freeze M first, so the two never cross. */
 export const placementTarget = (node: DecorNode): Regime | 'base' => {
   const regime = currentRegime()
+  if (regime === 'm') return 'm'
   return node.over?.[regime] ? regime : 'base'
 }
 
@@ -126,9 +140,12 @@ const placementPatchFor = (
   patch: Partial<Placement>,
 ): Partial<DecorNode> => {
   const target = placementTarget(node)
-  if (target === 'base') return patch
-  const fork = { ...node.over?.[target], ...patch }
-  return { over: { ...node.over, [target]: fork } }
+  if (target !== 'base') {
+    const fork = { ...forkSeed(node, target), ...patch }
+    return { over: { ...node.over, [target]: fork } }
+  }
+  if (node.over?.m) return patch
+  return { ...patch, over: { ...node.over, m: forkSeed(node, 'm') } }
 }
 
 export const writePlacement = (id: string, patch: Partial<Placement>) => {
@@ -150,12 +167,7 @@ export const forkRegime = (id: string) => {
   const node = getNode(id)
   if (!node) return
   const regime = currentRegime()
-  const place = placementAt(node, regime)
-  const fork: Partial<Placement> = { x: place.x, y: place.y, h: place.h }
-  if (place.w !== undefined) fork.w = place.w
-  if (place.sx !== undefined) fork.sx = place.sx
-  if (place.sy !== undefined) fork.sy = place.sy
-  editNode(id, { over: { ...node.over, [regime]: fork } })
+  editNode(id, { over: { ...node.over, [regime]: forkSeed(node, regime) } })
 }
 
 export const dropFork = (id: string) => {
@@ -247,6 +259,36 @@ export const duplicateNode = (id: string) => {
     x: round1(node.x + 16),
     y: round1(node.y + 16),
   })
+}
+
+/* ---------- stall slots ---------- */
+
+const swapIn = <F extends { stalls: readonly BazaarStallId[] }>(
+  floorList: F[],
+  swap: Partial<Record<BazaarStallId, BazaarStallId>>,
+): F[] =>
+  floorList.map((floor) => ({
+    ...floor,
+    stalls: floor.stalls.map((id) => swap[id] ?? id) as F['stalls'],
+  }))
+
+/** exchange two stalls' slots in the current regime's tree only */
+export const swapStalls = (a: BazaarStallId, b: BazaarStallId) => {
+  const before = decorStore.get()
+  const floors: FloorsConfig = before.floors ?? {
+    desktop: DESKTOP_FLOORS,
+    mobile: MOBILE_FLOORS,
+  }
+  const swap: Partial<Record<BazaarStallId, BazaarStallId>> = {
+    [a]: b,
+    [b]: a,
+  }
+  const next: FloorsConfig =
+    currentRegime() === 'm'
+      ? { ...floors, mobile: swapIn(floors.mobile, swap) }
+      : { ...floors, desktop: swapIn(floors.desktop, swap) }
+  setDoc({ ...before, floors: next })
+  record({ scope: 'doc', before, after: decorStore.get() })
 }
 
 /* deleting a parent re-bases its children onto the parent's host, so
