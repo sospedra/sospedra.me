@@ -323,8 +323,10 @@
   filter: drop-shadow(0 22px 34px rgb(0 0 0 / 55%));
 }
 
+/* the flight mirrors fly-back: a slow start picks up where the
+   decelerating eject hands over, no velocity pop at the seam */
 .floater[data-motion="out"] {
-  animation: fly-out 0.62s var(--ease-signal) both;
+  animation: fly-out 0.62s cubic-bezier(0.4, 0.05, 0.55, 1) both;
 }
 
 @keyframes fly-out {
