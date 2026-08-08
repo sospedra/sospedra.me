@@ -211,7 +211,7 @@ function NavArrows({
 
 export default function ScavengerView() {
   const [state, dispatch] = useReducer(reduce, INITIAL_STATE)
-  useBootSequence(dispatch)
+  useBootSequence(state, dispatch)
   const sound = useSyncExternalStore(
     soundPreference.subscribe,
     soundPreference.isEnabled,

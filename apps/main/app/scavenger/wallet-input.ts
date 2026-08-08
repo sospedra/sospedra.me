@@ -34,7 +34,10 @@ const markDragFlip = () => {
 export const dragFlipJustEnded = () =>
   Date.now() - lastDragFlipAt < DRAG_CLICK_GRACE_MS
 
-export function useBootSequence(dispatch: React.Dispatch<WalletEvent>): void {
+export function useBootSequence(
+  state: WalletState,
+  dispatch: React.Dispatch<WalletEvent>,
+): void {
   useEffect(() => {
     if (prefersQuietFx()) {
       dispatch({ type: 'BOOTED' })
@@ -53,6 +56,25 @@ export function useBootSequence(dispatch: React.Dispatch<WalletEvent>): void {
       window.clearTimeout(settle)
     }
   }, [dispatch])
+
+  const booting = state.phase === 'boot' || state.phase === 'opening'
+
+  useEffect(() => {
+    if (!booting) return
+    const skip = () => {
+      // a skip press also fires a click; the drag grace swallows it
+      markDragFlip()
+      dispatch({ type: 'BOOTED' })
+    }
+    window.addEventListener('pointerdown', skip, { passive: true })
+    window.addEventListener('wheel', skip, { passive: true })
+    window.addEventListener('keydown', skip)
+    return () => {
+      window.removeEventListener('pointerdown', skip)
+      window.removeEventListener('wheel', skip)
+      window.removeEventListener('keydown', skip)
+    }
+  }, [booting, dispatch])
 }
 
 type TimedStep = { ms: number; fire: () => WalletEvent }
