@@ -68,7 +68,7 @@ export const Issue = (props: {
               ({ id, url, title, user, createdAt, comments, number, body }) => (
                 <label
                   key={id}
-                  className='flex flex-row items-baseline p-4 border-t cursor-pointer'
+                  className='flex flex-row items-baseline p-4 transition-colors duration-150 border-t cursor-pointer has-[:checked]:bg-pink-50'
                 >
                   <input
                     name='issue'
@@ -107,7 +107,7 @@ export const Issue = (props: {
             {!data ? (
               <PlaceholderList />
             ) : (
-              <label className='flex flex-row items-baseline p-4 border-t cursor-pointer'>
+              <label className='flex flex-row items-baseline p-4 transition-colors duration-150 border-t cursor-pointer has-[:checked]:bg-pink-50'>
                 <input
                   name='issue'
                   type='radio'
