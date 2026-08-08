@@ -570,6 +570,54 @@ aside fieldset:last-child {
   color: #fff;
 }
 
+.help-window {
+  position: fixed;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: min(560px, calc(100vw - 24px));
+  max-height: min(600px, calc(100dvh - 70px));
+}
+
+.help-body {
+  overflow-y: auto;
+  background: #fff;
+  margin: 3px;
+  padding: 10px 12px;
+  font-family: var(--chat-font);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: auto;
+  box-shadow:
+    inset -1px -1px #fff,
+    inset 1px 1px grey,
+    inset -2px -2px #dfdfdf,
+    inset 2px 2px #0a0a0a;
+}
+
+.help-body p {
+  margin: 0 0 10px;
+}
+
+.help-hero {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.help-heading {
+  margin: 14px 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--chat-nick);
+}
+
+.help-footer {
+  margin-top: 14px;
+}
+
 .standby-window {
   width: min(420px, 100%);
 }
@@ -604,6 +652,10 @@ aside fieldset:last-child {
 @media (max-width: 720px) {
   #app {
     padding: 0;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
   }
 
   .app-window {

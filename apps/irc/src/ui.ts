@@ -1,4 +1,6 @@
 import { initDesktop } from './desktop.ts'
+import { el, logoImg, titleBar } from './dom.ts'
+import { buildHelpWindow } from './help.ts'
 import { NICK_MAX } from './mesh/messages.ts'
 import type { RelayState } from './platform/nostr-pool.ts'
 import type { PeerEntry } from './platform/room.ts'
@@ -76,17 +78,6 @@ type RoomView = {
   unread: number
 }
 
-const el = <K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  className = '',
-  text = '',
-): HTMLElementTagNameMap[K] => {
-  const node = document.createElement(tag)
-  if (className) node.className = className
-  if (text) node.textContent = text
-  return node
-}
-
 const timeOf = (ts: number): string => {
   const stamp = new Date(ts).toLocaleTimeString(undefined, {
     hour: '2-digit',
@@ -94,45 +85,6 @@ const timeOf = (ts: number): string => {
     hour12: false,
   })
   return `[${stamp}]`
-}
-
-type TitleBarParts = {
-  bar: HTMLElement
-  title: HTMLElement
-  minimizeButton: HTMLButtonElement
-  maximizeButton: HTMLButtonElement
-  closeButton: HTMLButtonElement
-}
-
-const logoImg = (className: string, size: number): HTMLImageElement => {
-  const img = el('img', className)
-  img.src = '/logo-32.png'
-  img.alt = ''
-  img.width = size
-  img.height = size
-  return img
-}
-
-const titleBar = (text: string): TitleBarParts => {
-  const title = el('div', 'title-bar-text', text)
-  const brand = el('div', 'title-bar-brand')
-  brand.append(logoImg('title-icon', 16), title)
-  const controls = el('div', 'title-bar-controls')
-  const buttons = ['Minimize', 'Maximize', 'Close'].map((label) => {
-    const control = el('button')
-    control.setAttribute('aria-label', label)
-    controls.append(control)
-    return control
-  })
-  const bar = el('div', 'title-bar')
-  bar.append(brand, controls)
-  return {
-    bar,
-    title,
-    minimizeButton: buttons[0],
-    maximizeButton: buttons[1],
-    closeButton: buttons[2],
-  }
 }
 
 const group = (legend: string): HTMLFieldSetElement => {
@@ -175,9 +127,17 @@ export const mountUi = (root: HTMLElement): UiHandles => {
   const newRoomButton = el('button', '', 'new room')
   const leaveRoomButton = el('button', '', 'leave room')
   const copyButton = el('button', '', 'copy invite link')
+  const helpButton = el('button', '', 'help')
   const spacer = el('span', 'spacer')
   const toolbar = el('div', 'toolbar')
-  toolbar.append(newRoomButton, leaveRoomButton, copyButton, spacer, nickForm)
+  toolbar.append(
+    newRoomButton,
+    leaveRoomButton,
+    copyButton,
+    helpButton,
+    spacer,
+    nickForm,
+  )
 
   const roomList = el('ul', 'room-list')
   const channelsSection = group('channels')
@@ -252,12 +212,13 @@ export const mountUi = (root: HTMLElement): UiHandles => {
 
   const menuNewRoom = el('button', 'menu-item', 'new room')
   const menuNotify = el('button', 'menu-item', 'notifications: off')
+  const menuHelp = el('button', 'menu-item', 'help')
   const menuHome = el('a', 'menu-item', 'sospedra.me')
   menuHome.href = 'https://sospedra.me'
   menuHome.rel = 'noreferrer'
   const startMenu = el('div', 'start-menu')
   startMenu.hidden = true
-  startMenu.append(menuNewRoom, menuNotify, menuHome)
+  startMenu.append(menuNewRoom, menuNotify, menuHelp, menuHome)
 
   const desktopIcon = el('button', 'desktop-icon')
   desktopIcon.append(
@@ -266,7 +227,8 @@ export const mountUi = (root: HTMLElement): UiHandles => {
   )
   desktopIcon.setAttribute('aria-label', 'open sIRC')
 
-  root.append(desktopIcon, appWindow, taskbar, startMenu)
+  const help = buildHelpWindow()
+  root.append(desktopIcon, appWindow, help.root, taskbar, startMenu)
 
   const views = new Map<string, RoomView>()
   const relayItems = new Map<string, HTMLLIElement>()
@@ -320,6 +282,11 @@ export const mountUi = (root: HTMLElement): UiHandles => {
   menuNotify.addEventListener('click', () => {
     closeMenu()
     notifyCallback()
+  })
+  helpButton.addEventListener('click', help.open)
+  menuHelp.addEventListener('click', () => {
+    closeMenu()
+    help.open()
   })
 
   const renderPeers = (view: RoomView): void => {
