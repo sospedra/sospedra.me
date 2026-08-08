@@ -20,9 +20,15 @@ test('every message variant roundtrips', () => {
     { t: 'dial-offer', dialId: toHex(randomBytes(16)), sdp: 'v=0 offer' },
     { t: 'dial-answer', dialId: toHex(randomBytes(16)), sdp: 'v=0 answer' },
     { t: 'hello', nick: 'guest-1a2b' },
+    { t: 'kick', target: toHex(randomBytes(32)) },
   ]
   const decoded = variants.map(roundtrip)
   assert.deepEqual(decoded, variants)
+})
+
+test('kick rejects a malformed target', () => {
+  assert.equal(roundtrip({ t: 'kick', target: 'abcd' }), null)
+  assert.equal(decodeMessage(utf8('{"t":"kick","target":42}')), null)
 })
 
 test('nicks reject empty, oversize, untrimmed, and control chars', () => {

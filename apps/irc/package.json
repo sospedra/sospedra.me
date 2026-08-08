@@ -11,7 +11,7 @@
     "dev": "vite",
     "lint": "biome check .",
     "preview": "vite preview",
-    "test": "node --test test/bytes.test.ts test/topics.test.ts test/keys.test.ts test/offer.test.ts test/frame.test.ts test/seal.test.ts test/seq-window.test.ts test/rate-limit.test.ts test/router.test.ts test/messages.test.ts test/nostr-event.test.ts",
+    "test": "node --test test/bytes.test.ts test/topics.test.ts test/keys.test.ts test/offer.test.ts test/frame.test.ts test/seal.test.ts test/seq-window.test.ts test/rate-limit.test.ts test/router.test.ts test/messages.test.ts test/nostr-event.test.ts test/votes.test.ts",
     "typecheck": "tsc"
   },
   "license": "ISC",

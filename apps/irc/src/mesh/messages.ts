@@ -8,6 +8,7 @@ export type MeshMessage =
   | { t: 'dial-offer'; dialId: string; sdp: string }
   | { t: 'dial-answer'; dialId: string; sdp: string }
   | { t: 'hello'; nick: string }
+  | { t: 'kick'; target: string }
 
 export const CHAT_TEXT_MAX = 16_000
 export const NICK_MAX = 24
@@ -81,6 +82,8 @@ const VALIDATORS: Record<
   'dial-answer': (raw) => asDial('dial-answer', raw),
   hello: (raw) =>
     isValidNick(raw.nick) ? { t: 'hello', nick: raw.nick } : null,
+  kick: (raw) =>
+    isHexOfBytes(raw.target, 32) ? { t: 'kick', target: raw.target } : null,
 }
 
 export const decodeMessage = (bytes: Uint8Array): MeshMessage | null => {

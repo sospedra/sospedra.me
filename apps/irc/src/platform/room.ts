@@ -14,6 +14,7 @@ import {
   SCORE_FLOOR,
   SEQ_EPOCH_SEC,
   VIEW_GOSSIP_MS,
+  VOTE_WINDOW_MS,
 } from '../mesh/constants.ts'
 import { buildFrame, encodeFrame, type Frame, WILDCARD } from '../mesh/frame.ts'
 import type { Identity } from '../mesh/keys.ts'
@@ -26,8 +27,9 @@ import { ByteBudget, PeerScores } from '../mesh/rate-limit.ts'
 import { type DropRecord, Router } from '../mesh/router.ts'
 import { deriveGroupKey, open, seal } from '../mesh/seal.ts'
 import { roomTopic } from '../mesh/topics.ts'
+import { KickTally, majorityOf } from '../mesh/votes.ts'
 import { sample, short } from '../util.ts'
-import { NostrPool, type RelayState } from './nostr-pool.ts'
+import type { NostrPool } from './nostr-pool.ts'
 import {
   acceptAnswer,
   createAnswerPeer,
@@ -48,16 +50,20 @@ export type RoomEvent =
       self: boolean
     }
   | { kind: 'presence'; hex: string; nick?: string; action: 'joined' | 'left' }
+  | { kind: 'system'; line: string; command?: string }
+  | { kind: 'ejected'; hex: string }
   | { kind: 'log'; line: string }
   | { kind: 'peers'; active: PeerEntry[]; passive: number }
-  | { kind: 'relay'; url: string; state: RelayState }
+
+export type KickResult = { ok: true } | { ok: false; error: string }
 
 type RoomConfig = {
   identity: Identity
   roomId: string
   topicSecret: string
   nick: string
-  relays: string[]
+  ejected: string[]
+  pool: NostrPool
   onEvent(event: RoomEvent): void
 }
 
@@ -78,12 +84,12 @@ export class Room {
   private readonly links = new Map<string, PeerLink>()
   private readonly nicks = new Map<string, string>()
   private readonly passive = new Set<string>()
-  private readonly ejected = new Set<string>()
+  private readonly ejected: Set<string>
+  private readonly kickTally = new KickTally(VOTE_WINDOW_MS)
   private readonly refusedUntil = new Map<string, number>()
   private readonly scores = new PeerScores()
   private readonly budget = new ByteBudget(FORWARD_BUDGET_BYTES_PER_SEC)
   private readonly router: Router
-  private readonly pool: NostrPool
   private readonly rendezvous: Rendezvous
   private readonly pendingDials = new Map<string, PendingDial>()
   private timers: ReturnType<typeof setInterval>[] = []
@@ -94,6 +100,7 @@ export class Room {
   constructor(config: RoomConfig) {
     this.config = config
     this.nick = config.nick
+    this.ejected = new Set(config.ejected)
     this.selfHex = config.identity.peerIdHex
     this.groupKey = deriveGroupKey(config.topicSecret)
     this.router = new Router({
@@ -101,15 +108,10 @@ export class Room {
       isEjected: (hex) => this.ejected.has(hex),
       onDrop: (record) => this.onDrop(record),
     })
-    this.pool = new NostrPool({
-      urls: config.relays,
-      log: (line) => this.log(line),
-      onState: (url, state) => config.onEvent({ kind: 'relay', url, state }),
-    })
     this.rendezvous = new Rendezvous({
       identity: config.identity,
       topic: roomTopic(APP_ID, config.roomId, config.topicSecret),
-      pool: this.pool,
+      pool: config.pool,
       canLink: (hex) => this.canLink(hex),
       isBlocked: (hex) => this.isBlocked(hex),
       roomFull: () => this.links.size + this.passive.size + 1 >= ROOM_CAP,
@@ -121,7 +123,6 @@ export class Room {
   join(): void {
     if (this.joined) return
     this.joined = true
-    this.pool.start()
     this.rendezvous.start()
     this.rendezvous.setLonely(true)
     this.timers = [
@@ -145,7 +146,6 @@ export class Room {
     for (const dial of this.pendingDials.values()) dial.pc.close()
     this.pendingDials.clear()
     this.rendezvous.stop()
-    this.pool.stop()
   }
 
   broadcastChat(text: string): void {
@@ -165,6 +165,40 @@ export class Room {
     if (nick === this.nick) return
     this.nick = nick
     this.sendMessage('wildcard', { t: 'hello', nick })
+  }
+
+  kick(targetHex: string): void {
+    if (targetHex === this.selfHex || this.ejected.has(targetHex)) return
+    this.sendMessage('wildcard', { t: 'kick', target: targetHex })
+    this.recordKickVote(this.selfHex, targetHex)
+  }
+
+  kickByNick(query: string): KickResult {
+    const nickMatches = [...this.nicks.entries()].filter(
+      ([, known]) => known === query,
+    )
+    if (nickMatches.length === 1) {
+      this.kick(nickMatches[0][0])
+      return { ok: true }
+    }
+    if (nickMatches.length > 1)
+      return {
+        ok: false,
+        error: `${query} is ambiguous, kick from the peer list`,
+      }
+    const hexMatches = [...this.links.keys()].filter((hex) =>
+      hex.startsWith(query.toLowerCase()),
+    )
+    if (hexMatches.length === 1) {
+      this.kick(hexMatches[0])
+      return { ok: true }
+    }
+    if (hexMatches.length > 1)
+      return {
+        ok: false,
+        error: `${query} is ambiguous, kick from the peer list`,
+      }
+    return { ok: false, error: `no known peer named ${query}` }
   }
 
   private nextSeq(): number {
@@ -266,6 +300,10 @@ export class Room {
         this.onLeave(srcHex, message.peers)
         return
       }
+      case 'kick': {
+        this.recordKickVote(srcHex, message.target)
+        return
+      }
       case 'dial-offer': {
         void this.onDialOffer(srcHex, message.dialId, message.sdp)
         return
@@ -275,6 +313,38 @@ export class Room {
         return
       }
     }
+  }
+
+  private nameOf(hex: string): string {
+    if (hex === this.selfHex) return 'you'
+    return this.nicks.get(hex) ?? short(hex)
+  }
+
+  private system(line: string, command?: string): void {
+    this.config.onEvent({ kind: 'system', line: `*** ${line}`, command })
+  }
+
+  private recordKickVote(voterHex: string, targetHex: string): void {
+    if (this.ejected.has(targetHex)) return
+    const tally = this.kickTally.add(voterHex, targetHex, Date.now())
+    const needed = majorityOf(this.links.size + 1)
+    const name = this.nameOf(targetHex)
+    const command =
+      targetHex === this.selfHex || voterHex === this.selfHex
+        ? undefined
+        : `/kick ${name}`
+    this.system(`kick vote: ${name} (${tally} of ${needed})`, command)
+    if (targetHex === this.selfHex) return
+    if (tally >= needed) this.eject(targetHex)
+  }
+
+  private eject(targetHex: string): void {
+    this.ejected.add(targetHex)
+    this.kickTally.clear(targetHex)
+    this.system(`${this.nameOf(targetHex)} was kicked from the room`)
+    this.config.onEvent({ kind: 'ejected', hex: targetHex })
+    this.links.get(targetHex)?.close()
+    this.passive.delete(targetHex)
   }
 
   private onLeave(srcHex: string, gift: string[]): void {
@@ -377,12 +447,14 @@ export class Room {
     const nick = this.nicks.get(peerHex)
     this.nicks.delete(peerHex)
     this.log(`link to ${short(peerHex)} closed`)
-    this.config.onEvent({
-      kind: 'presence',
-      hex: peerHex,
-      nick,
-      action: 'left',
-    })
+    if (!this.ejected.has(peerHex)) {
+      this.config.onEvent({
+        kind: 'presence',
+        hex: peerHex,
+        nick,
+        action: 'left',
+      })
+    }
     this.emitPeers()
     if (this.joined && this.links.size === 0) this.rendezvous.setLonely(true)
   }
@@ -414,6 +486,7 @@ export class Room {
     const now = Date.now()
     this.router.prune(now)
     this.rendezvous.tick(now)
+    this.kickTally.prune(now)
     for (const [hex, until] of this.refusedUntil) {
       if (until <= now) this.refusedUntil.delete(hex)
     }

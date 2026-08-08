@@ -29,6 +29,8 @@ export const STUN_SERVERS = [
   'stun:stun.l.google.com:19302',
 ]
 
+export const VOTE_WINDOW_MS = 600_000
+
 export const SEQ_EPOCH_SEC = 1_767_225_600
 export const SEQ_IDLE_MS = 600_000
 export const FORWARD_BUDGET_BYTES_PER_SEC = 262_144

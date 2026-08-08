@@ -59,13 +59,14 @@ export class Rendezvous {
   private readonly pendingAnswers = new Map<string, PendingAnswer>()
   private lonely = false
   private minting = false
+  private subscriptionId: string | null = null
 
   constructor(deps: RendezvousDeps) {
     this.deps = deps
   }
 
   start(): void {
-    this.deps.pool.subscribe(this.deps.topic, (event) => {
+    this.subscriptionId = this.deps.pool.subscribe(this.deps.topic, (event) => {
       this.handleContent(event.content)
     })
   }
@@ -91,6 +92,10 @@ export class Rendezvous {
   }
 
   stop(): void {
+    if (this.subscriptionId !== null) {
+      this.deps.pool.unsubscribe(this.subscriptionId)
+      this.subscriptionId = null
+    }
     for (const offer of this.myOffers.values()) offer.pc.close()
     for (const pending of this.pendingAnswers.values()) pending.pc.close()
     this.myOffers.clear()

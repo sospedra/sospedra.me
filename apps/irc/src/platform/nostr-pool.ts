@@ -18,13 +18,13 @@ type Subscription = {
 
 const BACKOFF_START_MS = 1000
 const BACKOFF_CAP_MS = 30_000
-const SEEN_CAP = 512
+const SEEN_CAP = 2048
 
 export class NostrPool {
   private readonly deps: PoolDeps
   private readonly sockets = new Map<string, WebSocket>()
   private readonly backoff = new Map<string, number>()
-  private subscription: Subscription | null = null
+  private readonly subscriptions = new Map<string, Subscription>()
   private readonly seenIds = new Set<string>()
   private readonly seenQueue: string[] = []
   private stopped = false
@@ -37,9 +37,18 @@ export class NostrPool {
     for (const url of this.deps.urls) this.connect(url)
   }
 
-  subscribe(topic: string, onEvent: (event: NostrEvent) => void): void {
-    this.subscription = { id: `irc-${toHex(randomBytes(4))}`, topic, onEvent }
-    for (const socket of this.openSockets()) this.sendReq(socket)
+  subscribe(topic: string, onEvent: (event: NostrEvent) => void): string {
+    const id = `irc-${toHex(randomBytes(4))}`
+    const subscription = { id, topic, onEvent }
+    this.subscriptions.set(id, subscription)
+    for (const socket of this.openSockets()) this.sendReq(socket, subscription)
+    return id
+  }
+
+  unsubscribe(id: string): void {
+    if (!this.subscriptions.delete(id)) return
+    const payload = JSON.stringify(['CLOSE', id])
+    for (const socket of this.openSockets()) socket.send(payload)
   }
 
   publish(event: NostrEvent): number {
@@ -53,6 +62,7 @@ export class NostrPool {
     this.stopped = true
     for (const socket of this.sockets.values()) socket.close()
     this.sockets.clear()
+    this.subscriptions.clear()
   }
 
   private openSockets(): WebSocket[] {
@@ -69,7 +79,8 @@ export class NostrPool {
     socket.addEventListener('open', () => {
       this.backoff.set(url, BACKOFF_START_MS)
       this.deps.onState(url, 'open')
-      this.sendReq(socket)
+      for (const subscription of this.subscriptions.values())
+        this.sendReq(socket, subscription)
     })
     socket.addEventListener('message', (event) => {
       this.handleMessage(String(event.data))
@@ -86,14 +97,13 @@ export class NostrPool {
     setTimeout(() => this.connect(url), wait)
   }
 
-  private sendReq(socket: WebSocket): void {
-    if (this.subscription === null) return
+  private sendReq(socket: WebSocket, subscription: Subscription): void {
     const filter = {
       kinds: [NOSTR_KIND],
-      '#t': [this.subscription.topic],
+      '#t': [subscription.topic],
       since: Math.floor(Date.now() / 1000) - 180,
     }
-    socket.send(JSON.stringify(['REQ', this.subscription.id, filter]))
+    socket.send(JSON.stringify(['REQ', subscription.id, filter]))
   }
 
   private handleMessage(data: string): void {
@@ -111,13 +121,17 @@ export class NostrPool {
   }
 
   private handleEvent(raw: unknown): void {
-    const subscription = this.subscription
-    if (subscription === null) return
+    if (this.subscriptions.size === 0) return
     const event = verifyEvent(raw)
-    if (event === null || topicOf(event) !== subscription.topic) return
+    if (event === null) return
+    const topic = topicOf(event)
+    const targets = [...this.subscriptions.values()].filter(
+      (subscription) => subscription.topic === topic,
+    )
+    if (targets.length === 0) return
     if (this.seenIds.has(event.id)) return
     this.remember(event.id)
-    subscription.onEvent(event)
+    for (const subscription of targets) subscription.onEvent(event)
   }
 
   private remember(id: string): void {

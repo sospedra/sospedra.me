@@ -1,4 +1,6 @@
-# irc
+# sIRC
+
+The program is sIRC. The logo renders from a 32px pixel grid in `scripts/make-logo.mjs` into `public/` (favicon, title bar, taskbar, desktop icon).
 
 Browser-to-browser text mesh. PoC of the peer mesh spec v0.2.
 
@@ -12,6 +14,8 @@ pnpm --filter irc dev
 
 Open the printed URL. The app creates a room and writes `#r=<roomId>&s=<topicSecret>` into the hash. Open the full link in a second browser or device. The peers meet on public relays and link direct. Type in either window.
 
+Rooms stack in a left sidebar and persist in IndexedDB. Invite links add rooms. The title bar close button leaves the active room. The nick field renames you across all rooms. Nicks are self-declared and carry no ownership.
+
 The fragment never reaches a server. The topic is `SHA256(appId || roomId || topicSecret)`, so relays see only a hash.
 
 ## Test
@@ -20,7 +24,7 @@ The fragment never reaches a server. The topic is `SHA256(appId || roomId || top
 pnpm --filter irc test
 ```
 
-72 node tests cover the pure core: frame codec, router pipeline, sequence windows, rate limits, seal padding, offer verification, NIP-01 events.
+82 node tests cover the pure core: frame codec, router pipeline, sequence windows, rate limits, seal padding, offer verification, NIP-01 events, nick rules, kick tallies.
 
 ## Deploy
 
@@ -33,12 +37,13 @@ Vercel project settings: root directory `apps/irc`, framework Vite. Build is `vi
 | 4 constants | Full table in `src/mesh/constants.ts` |
 | 6.2 gossip loop | `src/mesh/router.ts`, receiver-side order: sig, ejected, seq, hop, rate |
 | 7.2 identity | Ed25519 seed in IndexedDB. 7.1 PRF passkeys dropped by decision |
-| 7.4 multi-tab | Web Locks election per room. Standby tabs park and take over on owner close |
+| 7.4 multi-tab | Web Locks election, one owner tab for the app. Standby tabs park and take over on owner close |
 | 8 rendezvous | Signed offer envelopes on an ephemeral kind (21313), 5 relays, 8.4 checks |
 | 9 connection | STUN only, no TURN, vanilla ICE with a gathering timeout |
 | 11 membership | Active 8, passive 40, view gossip, leave gift, heartbeat death after 3 misses |
 | 12 frames | Binary codec, sig excludes hop, per-source windows, 4 rate layers |
 | 13.4 padding | XChaCha20-Poly1305, payloads land exactly on 256/1024/4096/16384 |
+| 15 moderation | `/kick <nick>` or the peer-list button starts a vote. Kick messages flood the mesh, each peer tallies distinct voters over a 10 minute window, and a majority of its local view (`floor(n/2)+1`, links plus self) writes the target into `ejected`. Enforcement: router drops their frames, rendezvous refuses their offers, ejections persist per member in IndexedDB. Without MLS rekey the kick is a shun, and tallies converge only as views overlap. Two-member rooms cannot kick |
 | 16.1 open room | Lone peer keeps a pool of 2 fresh offers and republishes on staleness |
 | 18 content | Chat renders through `textContent`. No markup, no images |
 
@@ -49,7 +54,7 @@ Vercel project settings: root directory `apps/irc`, framework Vite. Build is `vi
 | 13.1 MLS | Group key is `HKDF(topicSecret)`, static per room | `deriveGroupKey` in `src/mesh/seal.ts` |
 | 13.3 whispers | No pairwise sessions | `dst` routing already works |
 | 14 invites | Join is by room link, not single-use invite | `inviteTopic` exists in `src/mesh/topics.ts` |
-| 15 moderation | No votes. `ejected` set and router check exist and stay empty | `Room.ejected` |
+| 15 moderation | Votes land without MLS: local-view majority, no rekey. A kicked peer who kept the secret can still decrypt captured frames | `deriveGroupKey` rekey seam in `src/mesh/seal.ts` |
 | 10 peer relay | Failed ICE pairs stay unlinked | frame format carries `dst` and `hop` |
 
 ## Deviations from the letter
@@ -63,4 +68,4 @@ Vercel project settings: root directory `apps/irc`, framework Vite. Build is `vi
 
 ## Next
 
-Implementation order from spec section 23, remaining: MLS via `ts-mls` (blocks 13, 14, 15), then invites, then vote records.
+Implementation order from spec section 23, remaining: MLS via `ts-mls` (blocks 13.1 rekey and 14), then invites, then vote-record hardening on MLS membership (thresholds over the member list instead of the local view).
