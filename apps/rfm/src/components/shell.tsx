@@ -11,7 +11,7 @@ const Header = () => (
     </Link>
     <Link
       to='/submit'
-      className='px-2 py-1 text-pink-600 border border-pink-600 rounded'
+      className='px-2 py-1 text-pink-600 transition-[background-color,scale] duration-150 ease-out border border-pink-600 rounded hover:bg-pink-50 active:scale-[0.97]'
     >
       Submit new repo
     </Link>
