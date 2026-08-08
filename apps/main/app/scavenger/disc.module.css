@@ -11,9 +11,10 @@
   cursor: pointer;
   z-index: 1;
   pointer-events: auto;
+  /* the dim recedes over the 0.62s flight, one clock for the scene */
   transition:
-    opacity 0.45s ease,
-    filter 0.45s ease;
+    opacity 0.62s var(--ease-signal),
+    filter 0.62s var(--ease-signal);
 }
 
 .hit:focus-visible {
