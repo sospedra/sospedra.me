@@ -17,7 +17,6 @@ const PaperShell: React.FC<{
     <Shell stage className={css.frame}>
       <div className={css.scanhead} aria-hidden='true' />
       <RouteHeader
-        backFallback='/papers'
         sector='02.1'
         status='Transmission open'
         title={props.title}

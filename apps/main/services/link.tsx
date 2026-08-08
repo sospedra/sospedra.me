@@ -4,6 +4,7 @@ import cn from 'clsx'
 import type { Route } from 'next'
 import type React from 'react'
 import Icon from 'services/icon/icon'
+import { navigateBackOrHome } from 'services/navigation-history'
 import { useRouteTransition } from 'services/transition/context'
 import { usePrefetch } from 'services/transition/use-prefetch'
 import css from './link.module.css'
@@ -79,12 +80,10 @@ export default function Link(props: LinkProps) {
   )
 }
 
-type GoBackProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  fallback?: Route
-}
+type GoBackProps = React.AnchorHTMLAttributes<HTMLAnchorElement>
 
 export function GoBack(props: GoBackProps) {
-  const { children, onClick, fallback = '/', ...nativeProps } = props
+  const { children, download, onClick, target, ...nativeProps } = props
   const transition = useRouteTransition()
 
   const navigateBack = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -93,23 +92,26 @@ export function GoBack(props: GoBackProps) {
       event.metaKey ||
       event.ctrlKey ||
       event.shiftKey ||
-      event.altKey
+      event.altKey ||
+      target === '_blank' ||
+      (download !== undefined && download !== false)
     if (shouldUseNativeNavigation) return
 
     onClick?.(event)
     if (event.defaultPrevented) return
 
     event.preventDefault()
-    // direct entries have no history to pop; the href promises the fallback
-    if (window.history.length <= 1) {
-      transition.navigate(fallback)
-      return
-    }
-    window.history.back()
+    navigateBackOrHome(() => transition.navigate('/'))
   }
 
   return (
-    <a {...nativeProps} href={fallback} onClick={navigateBack}>
+    <a
+      {...nativeProps}
+      href='/'
+      target={target}
+      download={download}
+      onClick={navigateBack}
+    >
       {children}
     </a>
   )

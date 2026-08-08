@@ -308,7 +308,9 @@ export default function ScavengerView() {
                 play it
               </External>
             ) : (
-              <span className={css.cardStamp}>test pressing</span>
+              <External href={record.url} className={css.cardStamp}>
+                test pressing <span aria-hidden='true'>↗</span>
+              </External>
             )}
           </aside>
         ) : null}

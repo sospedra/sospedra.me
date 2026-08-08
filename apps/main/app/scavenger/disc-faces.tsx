@@ -54,7 +54,7 @@ function WritingLines({ disc, ink }: { disc: Disc; ink: 'dark' | 'light' }) {
 function BurnFace({ disc }: { disc: Disc }) {
   return (
     <>
-      <span className={print.brand}>sospedra.me</span>
+      <span className={print.brand}>{disc.id}</span>
       <span className={print.jpBand}>このディスクはCD-Rです</span>
       <span className={print.formatMark}>cd-r</span>
       <CompactDiscMark line='recordable' />
@@ -76,7 +76,7 @@ function LabelFace({ disc }: { disc: Disc }) {
         <span>{disc.stack.toLowerCase()}</span>
       </span>
       <span className={print.magPublisher}>
-        {`sospedra.me © ${disc.pressed} · not for resale`}
+        {`${disc.id} © ${disc.pressed} · not for resale`}
       </span>
       <Serial disc={disc} />
     </>
@@ -103,7 +103,7 @@ function PressFace({ disc }: { disc: Disc }) {
 function RwFace({ disc }: { disc: Disc }) {
   return (
     <>
-      <span className={cn(print.brand, print.brandLight)}>sospedra.me</span>
+      <span className={cn(print.brand, print.brandLight)}>{disc.id}</span>
       <span className={cn(print.formatMark, print.formatMarkLight)}>cd-rw</span>
       <SpecBoxes speed='12x' />
       <WritingLines disc={disc} ink='light' />

@@ -329,6 +329,22 @@
   color: #e08030;
   border: 1px dashed rgb(224 128 48 / 55%);
   border-radius: 3px;
+  text-decoration: none;
+}
+
+.cardStamp::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.cardStamp:hover {
+  border-style: solid;
+}
+
+.cardStamp:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
 }
 
 .counter {

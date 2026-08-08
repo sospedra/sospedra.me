@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
+import { navigateBackOrHome } from 'services/navigation-history'
 import { prefersQuietFx } from 'services/theme'
 import {
   clampSpread,
@@ -127,7 +128,10 @@ export function useCloseNavigation(state: WalletState): void {
   useEffect(() => {
     if (state.phase !== 'closing') return
     const delay = prefersQuietFx() ? 60 : CLOSE_MS
-    const timer = window.setTimeout(() => router.back(), delay)
+    const timer = window.setTimeout(
+      () => navigateBackOrHome(() => router.push('/')),
+      delay,
+    )
     return () => window.clearTimeout(timer)
   }, [state, router])
 }

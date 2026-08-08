@@ -1,6 +1,7 @@
 import { usePathname, useRouter } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef } from 'react'
+import { installSiteHistoryTracker } from 'services/navigation-history'
 import { recordPathname } from './altitude'
 import Background from './background'
 import { TransitionCTX } from './context'
@@ -16,6 +17,18 @@ export const Provider: React.FunctionComponent<{
   const pathname = usePathname()
   const router = useRouter()
   const lastPathname = useRef(pathname)
+
+  useEffect(() => {
+    let cancelled = false
+    let uninstall: (() => void) | undefined
+    queueMicrotask(() => {
+      if (!cancelled) uninstall = installSiteHistoryTracker()
+    })
+    return () => {
+      cancelled = true
+      uninstall?.()
+    }
+  }, [])
 
   useEffect(() => {
     if (lastPathname.current === pathname) return
