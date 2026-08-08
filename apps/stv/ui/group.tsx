@@ -58,9 +58,7 @@ const Event = (props: { event: TvEvent; isLast: boolean }) => {
             <Competition competition={event.competition} />
           </span>
           {event.matchtime && (
-            <span className='font-bold text-teal-600 animate-pulse'>
-              {event.matchtime}'
-            </span>
+            <span className='font-bold text-teal-600'>{event.matchtime}'</span>
           )}
         </p>
 

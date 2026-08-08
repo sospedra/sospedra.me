@@ -21,8 +21,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-ping,
-  .animate-pulse {
+  .animate-ping {
     animation: none;
   }
 }
