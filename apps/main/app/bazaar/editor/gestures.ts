@@ -10,6 +10,7 @@ import { stageBox } from '../stage'
 import {
   beginChromeGesture,
   chromePatchOf,
+  chromeTranslateOf,
   endChromeGesture,
   writeChrome,
 } from './chrome-store'
@@ -135,7 +136,7 @@ const beginChromeDrag = (
   event: PointerEvent,
 ): Drag => {
   selectionStore.set({ kind: 'chrome', id })
-  const base = parsePair(chromePatchOf(id).translate ?? el.style.translate)
+  const base = parsePair(chromeTranslateOf(id))
   return {
     mode: 'chrome',
     id,

@@ -18,21 +18,18 @@ export type StallSpec = {
 }
 
 const USES_DIALOG = [
-  'Omakase.',
-  'Hardware. Software.',
-  'Only what survives service',
-  'makes the menu.',
+  'Only the best of the best.',
+  "It's not much,",
+  "but it's good quality.",
 ].join('\n')
 const PAPERS_DIALOG = [
   '[signal stabilizes]',
   'Types. Platforms. Politics.',
   'Epistemics get messy.',
-  'Choose a paper.',
 ].join('\n')
 const MANUAL_DIALOG = [
-  'Right then, colleague!',
-  'Values: sound.',
-  'Blind spots: BZZT...',
+  'Morning, sir!',
+  'How can I help you today?',
   'Trust needs servicing.',
 ].join('\n')
 const CONSOLE_DIALOG = [
@@ -44,23 +41,17 @@ const TALKS_DIALOG = [
   'First rule of Video Club:',
   'pick a tape.',
   'The talks get technical.',
-  'Be kind. Rewind.',
 ].join('\n')
-const W98_DIALOG = [
-  'Bzzt. Mind the hose.',
-  'The plants grew on me.',
-  'Booting takes a minute.',
-].join('\n')
+const W98_DIALOG = ['Bzzt. Mind the hose.', 'The plants grew on me.'].join('\n')
 const TRAVEL_DIALOG = [
   'New friend!',
   'Supernova in twenty-two.',
-  'Coming?',
+  'Use the Signalscope!',
 ].join('\n')
 const MAP_DIALOG = [
-  'Mrh. You woke me.',
   'Lost? We are all lost here.',
   'Every stall is a door.',
-  'u are here.',
+  '. . . and u are here',
 ].join('\n')
 const SCAVENGER_DIALOG = [
   'Found, not stolen. Mostly.',

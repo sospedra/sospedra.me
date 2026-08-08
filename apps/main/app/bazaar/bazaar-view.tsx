@@ -3,7 +3,7 @@
 import cn from 'clsx'
 import { sumBy } from 'es-toolkit'
 import dynamic from 'next/dynamic'
-import { Fragment, useRef, useState, useSyncExternalStore } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import SpriteCar from 'services/car/car'
 import { useStoreSelector } from 'services/external-store'
 import Link from 'services/link'
@@ -12,6 +12,7 @@ import { prefersQuietFx } from 'services/theme'
 import RainLayer from '../home/rain-layer'
 import { DownSign, UpSign } from './arrow-sign'
 import css from './bazaar.module.css'
+import { chromeCss } from './chrome'
 import { decorStore } from './decor-store'
 import {
   DESKTOP_FLOORS,
@@ -22,12 +23,17 @@ import {
 import HostDecor from './host-decor'
 import Stall from './market-stall'
 import scene from './scene.module.css'
-import { sfx, soundPreference } from './sounds'
+import { sfx } from './sounds'
 import Stage from './stage'
 import { DIMS } from './stall-catalog'
 import street from './street-backdrop.module.css'
 
-const Editor = dynamic(() => import('./editor/editor'), { ssr: false })
+/* dev-only: the statically-false branch keeps every editor
+   chunk out of preview and production builds */
+const Editor =
+  process.env.NODE_ENV === 'development'
+    ? dynamic(() => import('./editor/editor'), { ssr: false })
+    : null
 
 const STREET = '/images/bazaar/street'
 
@@ -37,6 +43,7 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
   // armed on first hover, not on leave: the close must start the same
   // frame :hover drops, and a re-render would land one frame late
   const [doorArmed, setDoorArmed] = useState(false)
+  const [carGone, setCarGone] = useState(false)
   return (
     <section className={scene.floor} data-floor='' data-market-scene=''>
       <img
@@ -62,6 +69,30 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
           src={`${STREET}/building-pad.png`}
           alt=''
           className={street.sPadR}
+        />
+        <img
+          src={`${STREET}/building-pad.png`}
+          alt=''
+          className={cn(street.sPadOut, street.sPadL2)}
+          data-edit-id='street:padl2'
+        />
+        <img
+          src={`${STREET}/building-pad.png`}
+          alt=''
+          className={cn(street.sPadOut, street.sPadL3)}
+          data-edit-id='street:padl3'
+        />
+        <img
+          src={`${STREET}/building-pad.png`}
+          alt=''
+          className={cn(street.sPadOut, street.sPadR2)}
+          data-edit-id='street:padr2'
+        />
+        <img
+          src={`${STREET}/building-pad.png`}
+          alt=''
+          className={cn(street.sPadOut, street.sPadR3)}
+          data-edit-id='street:padr3'
         />
         <img src={`${STREET}/building-a.png`} alt='' className={street.sA} />
         <div className={street.sCDWrap}>
@@ -103,15 +134,24 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
         <div className={street.alleyGlow} aria-hidden />
         <div className={street.sFloor} />
       </div>
-      <div className={scene.sCar} aria-hidden>
-        <div className={scene.sCarStretch}>
-          <div className={scene.sCarSquash}>
-            <div className={scene.sCarScale}>
-              <SpriteCar engineOn isMoving />
+      {!carGone && (
+        <div
+          className={scene.sCar}
+          aria-hidden
+          onAnimationEnd={(event) => {
+            // the car sprite's own finite animations bubble up; only carDrive ends on this node
+            if (event.target === event.currentTarget) setCarGone(true)
+          }}
+        >
+          <div className={scene.sCarStretch}>
+            <div className={scene.sCarSquash}>
+              <div className={scene.sCarScale}>
+                <SpriteCar engineOn isMoving />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
       <Link
         url='/'
         className={cn(scene.hit, scene.sBus)}
@@ -132,7 +172,70 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
       </Link>
       <HostDecor host='street' />
       <RainLayer />
+      <div className={scene.fgLayer} aria-hidden data-bazaar-fg=''>
+        <span className={scene.fgL} data-edit-id='street:fg-l' />
+        <span className={scene.fgR} data-edit-id='street:fg-r' />
+      </div>
     </section>
+  )
+}
+
+/* the fg silhouettes belong to the street: they slide up at 0.35x and
+   are gone by half a viewport of scroll */
+const useForegroundParallax = (
+  sceneRef: React.RefObject<HTMLDivElement | null>,
+) => {
+  useEffect(() => {
+    const scroller = sceneRef.current
+    if (!scroller) return
+    const layers = scroller.querySelectorAll<HTMLElement>('[data-bazaar-fg]')
+    if (layers.length === 0) return
+    const onScroll = () => {
+      const top = scroller.scrollTop
+      const quiet = prefersQuietFx()
+      const opacity = String(
+        Math.max(0, 1 - top / (scroller.clientHeight * 0.5)),
+      )
+      for (const fg of layers) {
+        if (!quiet) fg.style.transform = `translateY(${-top * 0.35}px)`
+        fg.style.opacity = opacity
+      }
+    }
+    scroller.addEventListener('scroll', onScroll, { passive: true })
+    return () => scroller.removeEventListener('scroll', onScroll)
+  }, [sceneRef])
+}
+
+function RatLane({ index }: { index: number }) {
+  const laneRef = useRef<HTMLDivElement>(null)
+  const [run, setRun] = useState(false)
+  useEffect(() => {
+    const floor = laneRef.current?.closest('[data-floor]')
+    if (!floor) return
+    const observer = new IntersectionObserver(([entry]) => {
+      setRun(entry.isIntersecting)
+    })
+    observer.observe(floor)
+    return () => observer.disconnect()
+  }, [])
+  return (
+    <div
+      ref={laneRef}
+      className={css.ratLane}
+      aria-hidden
+      data-edit-id={`rat:${index}`}
+      data-run={run ? '' : undefined}
+    >
+      <div className={css.ratRunner}>
+        <div className={css.ratView}>
+          <img
+            className={css.ratStrip}
+            src='/images/bazaar/ambient/rat-run.png'
+            alt=''
+          />
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -151,7 +254,7 @@ function MarketFloor(props: {
   const band = (
     <div className={css.band} data-stage='' data-edit-id={`band:${index}`}>
       {spec.stalls.map((id) => (
-        <Stall key={id} id={id} />
+        <Stall key={id} id={id} eager={index === 0} />
       ))}
     </div>
   )
@@ -179,17 +282,7 @@ function MarketFloor(props: {
         data-wf-floor
         data-edit-id={`wfloor:${index}`}
       />
-      {index === 0 && (
-        <div className={css.ratLane} aria-hidden data-edit-id={`rat:${index}`}>
-          <div className={css.ratView}>
-            <img
-              className={css.ratStrip}
-              src='/images/bazaar/ambient/rat-run.png'
-              alt=''
-            />
-          </div>
-        </div>
-      )}
+      {index === 0 && <RatLane index={index} />}
       {spec.stairsRight ? band : stairs}
       {spec.stairsRight ? stairs : band}
       <UpSign side={spec.stairsRight ? 'right' : 'left'} index={index} />
@@ -217,7 +310,7 @@ function MobileMarketFloor(props: {
       <div className={css.deckM} aria-hidden data-edit-id={`deck:${index}`} />
       {spec.stalls.map((id) => (
         <div key={id} className={css.storyRow}>
-          <Stall id={id} />
+          <Stall id={id} eager={index === 0} />
         </div>
       ))}
     </div>
@@ -241,26 +334,14 @@ function MobileMarketFloor(props: {
   )
 }
 
-const serverSoundOff = () => false
-
 export default function BazaarView() {
   const sceneRef = useRef<HTMLDivElement>(null)
+  useForegroundParallax(sceneRef)
   const floors = useStoreSelector(decorStore, (doc) => doc.floors)
   const desktopFloors = floors?.desktop ?? DESKTOP_FLOORS
   const mobileFloors = floors?.mobile ?? MOBILE_FLOORS
-  const sound = useSyncExternalStore(
-    soundPreference.subscribe,
-    soundPreference.isEnabled,
-    serverSoundOff,
-  )
-  const [hitbox, setHitbox] = useState(false)
   const [editor, setEditor] = useState(false)
-
-  const toggleSound = () => {
-    const next = !sound
-    soundPreference.setEnabled(next)
-    if (next) sfx.click()
-  }
+  const chrome = useStoreSelector(decorStore, (doc) => doc.chrome)
 
   const scrollToMarket = () => {
     sceneRef.current?.scrollTo({
@@ -272,38 +353,21 @@ export default function BazaarView() {
   return (
     <Shell>
       <Stage editing={editor}>
-        <div
-          className={css.scene}
-          ref={sceneRef}
-          data-hitbox={hitbox || undefined}
-        >
+        {chrome && <style>{chromeCss(chrome)}</style>}
+        <div className={css.scene} ref={sceneRef} data-bazaar-scene=''>
           <h1 className='sr-only'>Bazaar</h1>
-          <div className={scene.hud}>
-            <button
-              type='button'
-              className={scene.hudBtn}
-              aria-pressed={sound}
-              onClick={toggleSound}
-            >
-              SOUND <span aria-hidden='true'>{sound ? 'ON' : 'OFF'}</span>
-            </button>
-            <button
-              type='button'
-              className={scene.hudBtn}
-              aria-pressed={hitbox}
-              onClick={() => setHitbox((previous) => !previous)}
-            >
-              HITBOX <span aria-hidden='true'>{hitbox ? 'ON' : 'OFF'}</span>
-            </button>
-            <button
-              type='button'
-              className={scene.hudBtn}
-              aria-pressed={editor}
-              onClick={() => setEditor((previous) => !previous)}
-            >
-              EDITOR <span aria-hidden='true'>{editor ? 'ON' : 'OFF'}</span>
-            </button>
-          </div>
+          {Editor && (
+            <div className={scene.hud}>
+              <button
+                type='button'
+                className={scene.hudBtn}
+                aria-pressed={editor}
+                onClick={() => setEditor((previous) => !previous)}
+              >
+                EDITOR <span aria-hidden='true'>{editor ? 'ON' : 'OFF'}</span>
+              </button>
+            </div>
+          )}
 
           <div className={css.desktopTree}>
             <div className={cn(scene.scene, css.streetHost)}>
@@ -356,7 +420,7 @@ export default function BazaarView() {
             <div className={css.bottomPad} />
           </div>
         </div>
-        {editor && <Editor />}
+        {Editor && editor && <Editor />}
       </Stage>
     </Shell>
   )

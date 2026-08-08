@@ -7,6 +7,7 @@ import {
   isSpotKind,
   type Placement,
   REGIMES,
+  type Regime,
   regimeAt,
   spriteSrc,
 } from '../decor'
@@ -24,6 +25,7 @@ import {
   editPlacement,
   endGesture,
   forkRegime,
+  isMobileOnlyNode,
   placementTarget,
   rehostNode,
   removeNode,
@@ -245,6 +247,17 @@ function LookSection({ node }: { node: DecorNode }) {
             pulse {node.pulse ? '●' : '○'}
           </button>
         )}
+        {!isSpotKind(node.kind) && (
+          <button
+            type='button'
+            aria-pressed={node.shade === true}
+            onClick={() =>
+              editNode(node.id, { shade: node.shade ? undefined : true })
+            }
+          >
+            shade {node.shade ? '●' : '○'}
+          </button>
+        )}
         <button type='button' onClick={() => duplicateNode(node.id)}>
           duplicate
         </button>
@@ -258,6 +271,12 @@ function LookSection({ node }: { node: DecorNode }) {
       </div>
     </Section>
   )
+}
+
+const writeTargetLabel = (node: DecorNode, regime: Regime) => {
+  if (regime === 'm' && !isMobileOnlyNode(node)) return 'mobile copy (splits)'
+  const target = placementTarget(node)
+  return target === 'base' ? 'base' : `${target} fork`
 }
 
 function RegimeSection({ node }: { node: DecorNode }) {
@@ -291,8 +310,7 @@ function RegimeSection({ node }: { node: DecorNode }) {
         )}
       </div>
       <div className={css.writeTarget}>
-        placement writes →{' '}
-        <b>{target === 'base' ? 'base' : `${target} fork`}</b>
+        placement writes → <b>{writeTargetLabel(node, regime)}</b>
       </div>
     </Section>
   )

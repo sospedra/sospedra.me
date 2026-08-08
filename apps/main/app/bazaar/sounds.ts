@@ -77,7 +77,6 @@ type ToneSpec = {
 }
 
 function tone(spec: ToneSpec) {
-  if (!isEnabled()) return
   const active = ensure()
   if (!active) return
   const {
@@ -117,7 +116,6 @@ type NoiseSpec = {
 }
 
 function noise(spec: NoiseSpec) {
-  if (!isEnabled()) return
   const active = ensure()
   if (!active) return
   const {
@@ -261,7 +259,6 @@ function doorSynth() {
 }
 
 function playDoorBuffer(buffer: AudioBuffer) {
-  if (!isEnabled()) return
   const active = ensure()
   if (!active) return
   const { context, master } = active
@@ -290,10 +287,7 @@ export const sfx = {
     tone({ from: 660, duration: 0.06, peak: 0.06 })
     tone({ from: 990, duration: 0.1, peak: 0.06, at: 0.07 })
   },
-  door: () => {
-    if (!isEnabled()) return
-    playDoorFile()
-  },
+  door: () => playDoorFile(),
   bus: () => {
     noise({ duration: 0.03, peak: 0.09, filter: 'highpass', frequency: 3000 })
     noise({

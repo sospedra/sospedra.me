@@ -5,8 +5,10 @@ import test from 'node:test'
 import { DESKTOP_FLOORS, MOBILE_FLOORS } from './floors'
 import { STALLS } from './stall-catalog'
 import { layerFiles, STALL_SCENES } from './stalls-manifest'
+import { SKYLINE_WARM, STREET_WARM } from './warm-list'
 
 const bazaarImages = join(import.meta.dirname, '../../public/images/bazaar')
+const publicDir = join(import.meta.dirname, '../../public')
 
 test('every stall layer file exists on disk', () => {
   for (const [id, scene] of Object.entries(STALL_SCENES)) {
@@ -52,4 +54,28 @@ test('desktop floors place the launched stalls exactly once', () => {
 
 test('mobile floors place the launched stalls exactly once', () => {
   assertPlacedOnce(MOBILE_FLOORS.flatMap((floor) => floor.stalls))
+})
+
+test('home warm lists ship and cover the floor 0 plates', () => {
+  for (const url of STREET_WARM) {
+    assert.ok(existsSync(join(publicDir, url)), `missing ${url}`)
+  }
+  for (const url of SKYLINE_WARM) {
+    assert.ok(STREET_WARM.includes(url), `${url} misses the commit tier`)
+  }
+  const floorZero = new Set([
+    ...DESKTOP_FLOORS[0].stalls,
+    ...MOBILE_FLOORS[0].stalls,
+  ])
+  for (const id of floorZero) {
+    const plate = STALL_SCENES[id].layers.find(
+      (layer) => layer.role === 'plate',
+    )
+    assert.ok(plate, `${id} has no plate layer`)
+    const file = layerFiles(plate)[0]
+    assert.ok(
+      STREET_WARM.includes(`/images/bazaar/${id}/${file}`),
+      `floor 0 plate ${id}/${file} misses the warm list`,
+    )
+  }
 })

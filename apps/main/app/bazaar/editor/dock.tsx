@@ -109,6 +109,21 @@ const selectionLabel = (
   return node ? `${node.id} ${node.ref}` : selection.id
 }
 
+/* the fixed-mobile-height workflow: measure every visible stall's
+   rendered height (owner tunes at 320, values bake into MOBILE_STALL_H) */
+const copyStallHeights = () => {
+  const wraps = [
+    ...document.querySelectorAll<HTMLElement>('[data-stall]'),
+  ].filter((el) => el.offsetParent !== null)
+  const heights = Object.fromEntries(
+    wraps.map((el) => [
+      el.dataset.stall,
+      Math.round(el.getBoundingClientRect().height),
+    ]),
+  )
+  navigator.clipboard.writeText(JSON.stringify(heights, null, 2))
+}
+
 function Footer() {
   const size = useStoreSelector(stageSizeStore, (value) => value)
   const selection = useStoreSelector(selectionStore, (value) => value)
@@ -119,6 +134,9 @@ function Footer() {
         {regimeAt(size.w).toUpperCase()} {size.w}px
       </span>
       <span className={css.footerSel}>{selectionLabel(selection)}</span>
+      <button type='button' className={css.keysBtn} onClick={copyStallHeights}>
+        copy stall px
+      </button>
       <button
         type='button'
         className={css.keysBtn}

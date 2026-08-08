@@ -1,115 +1,112 @@
+'use client'
+
+import dynamic from 'next/dynamic'
+import { useRef, useState } from 'react'
+import { useSystem } from 'services/system'
+import PixelGhost from './pixel-ghost'
+import type { Origin } from './seance'
 import css from './vapor-footer.module.css'
 
-const GHOST_SOLID_AREAS = [
-  'top0',
-  'top1',
-  'top2',
-  'top3',
-  'top4',
-  'st0',
-  'st1',
-  'st2',
-  'st3',
-  'st4',
-  'st5',
-] as const
+const Seance = dynamic(() => import('./seance'))
 
-const GHOST_FEET = [
-  { area: 'an1', phase: 0 },
-  { area: 'an2', phase: 1 },
-  { area: 'an3', phase: 1 },
-  { area: 'an4', phase: 1 },
-  { area: 'an6', phase: 0 },
-  { area: 'an7', phase: 0 },
-  { area: 'an8', phase: 0 },
-  { area: 'an9', phase: 1 },
-  { area: 'an10', phase: 1 },
-  { area: 'an11', phase: 0 },
-  { area: 'an12', phase: 0 },
-  { area: 'an13', phase: 0 },
-  { area: 'an15', phase: 1 },
-  { area: 'an16', phase: 1 },
-  { area: 'an17', phase: 1 },
-  { area: 'an18', phase: 0 },
-] as const
-
-function PixelGhost() {
-  return (
-    <span aria-hidden='true' className={css.pixelGhost}>
-      <span className={css.pixelGhostBody}>
-        <span className={css.pixelGhostEye} />
-        <span className={`${css.pixelGhostEye} ${css.pixelGhostEyeRight}`} />
-        <span className={css.pixelGhostPupil} />
-        <span
-          className={`${css.pixelGhostPupil} ${css.pixelGhostPupilRight}`}
-        />
-        {GHOST_SOLID_AREAS.map((area) => (
-          <span
-            className={css.pixelGhostSolid}
-            key={area}
-            style={{ gridArea: area }}
-          />
-        ))}
-        {GHOST_FEET.map(({ area, phase }) => (
-          <span
-            className={phase === 0 ? css.pixelGhostFootA : css.pixelGhostFootB}
-            key={area}
-            style={{ gridArea: area }}
-          />
-        ))}
-      </span>
-      <span className={css.pixelGhostShadow} />
-    </span>
-  )
-}
+type SeanceState = 'unsummoned' | 'open' | 'closed'
 
 export default function VaporFooter() {
+  const [seance, setSeance] = useState<SeanceState>('unsummoned')
+  const originRef = useRef<Origin | null>(null)
+  const ghostRef = useRef<HTMLButtonElement>(null)
+  const { discover } = useSystem()
+
+  const summon = () => {
+    if (seance !== 'unsummoned') return
+    const rect = ghostRef.current?.getBoundingClientRect()
+    if (rect) {
+      originRef.current = {
+        x: rect.x + rect.width / 2,
+        y: rect.y + rect.height / 2,
+      }
+    }
+    discover('ghost')
+    setSeance('open')
+  }
+
   return (
-    <div className={css.vapor} aria-hidden='true'>
-      <span className={css.vaporSun} />
-      <span className={css.vaporGrid} />
-      <PixelGhost />
-      <svg
-        aria-hidden='true'
-        className={css.vaporScene}
-        viewBox='0 0 1200 240'
-        preserveAspectRatio='xMidYMax slice'
-        xmlns='http://www.w3.org/2000/svg'
-      >
-        <g className={css.vaporStars}>
-          <path d='M180 40 h8 M184 36 v8' />
-          <path d='M260 84 h8 M264 80 v8' />
-          <path d='M420 30 h8 M424 26 v8' />
-          <path d='M760 52 h8 M764 48 v8' />
-          <path d='M930 26 h8 M934 22 v8' />
-          <path d='M1020 70 h8 M1024 66 v8' />
-          <circle cx='90' cy='60' r='1.5' />
-          <circle cx='350' cy='96' r='1.5' />
-          <circle cx='820' cy='90' r='1.5' />
-          <circle cx='1160' cy='40' r='1.5' />
-        </g>
-        <g className={css.vaporPlanet}>
-          <circle cx='300' cy='58' r='9' />
-          <ellipse
-            cx='300'
-            cy='59'
-            rx='16'
-            ry='4'
-            transform='rotate(-16 300 59)'
-          />
-        </g>
-        <g className={css.vaporComet}>
-          <path d='M880 34 L936 22' />
-          <path d='M936 22 h6 M939 19 v6' />
-        </g>
-        <g className={css.vaporPalms}>
-          <path d='M1080 240 Q1072 190 1082 150' />
-          <path d='M1082 150 Q1102 138 1122 146 M1082 150 Q1096 128 1112 118 M1082 150 Q1078 126 1076 112 M1082 150 Q1062 130 1046 122 M1082 150 Q1066 142 1042 148' />
-          <circle cx='1088' cy='154' r='3' />
-          <path d='M60 240 Q68 202 62 176' />
-          <path d='M62 176 Q76 166 90 172 M62 176 Q72 158 84 152 M62 176 Q58 156 60 146 M62 176 Q46 160 36 156 M62 176 Q50 170 34 176' />
-        </g>
-      </svg>
-    </div>
+    <>
+      <div className={css.band}>
+        <div aria-hidden='true' className={css.vapor}>
+          <span className={css.vaporSun} />
+          <span className={css.vaporGrid} />
+          <svg
+            aria-hidden='true'
+            className={css.vaporScene}
+            viewBox='0 0 1200 240'
+            preserveAspectRatio='xMidYMax slice'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <g className={css.vaporStars}>
+              <path d='M180 58 h8 M184 54 v8' />
+              <path d='M470 66 h8 M474 62 v8' />
+              <path d='M700 52 h8 M704 48 v8' />
+              <path d='M980 72 h8 M984 68 v8' />
+              <circle cx='120' cy='84' r='1.5' />
+              <circle cx='520' cy='100' r='1.5' />
+              <circle cx='820' cy='92' r='1.5' />
+              <circle cx='1080' cy='58' r='1.5' />
+            </g>
+            <g className={css.vaporPlanet}>
+              <ellipse
+                cx='280'
+                cy='94'
+                rx='27'
+                ry='7'
+                transform='rotate(-18 280 94)'
+              />
+              <circle className={css.vaporPlanetBody} cx='280' cy='94' r='12' />
+            </g>
+            <g className={css.vaporComet}>
+              <path d='M846 84 L906 66' />
+              <path d='M906 66 h7 M909.5 62 v7' />
+            </g>
+            <g className={css.vaporPalms}>
+              <path d='M60 240 C 66 196 70 144 74 96' />
+              <path d='M74 96 C 54 82 34 82 20 96' />
+              <path d='M74 96 C 50 92 30 100 18 118' />
+              <path d='M74 96 C 52 100 38 116 32 138' />
+              <path d='M74 96 C 94 82 114 82 128 94' />
+              <path d='M74 96 C 98 92 118 100 130 116' />
+              <path d='M74 96 C 96 100 110 116 116 136' />
+              <circle cx='74' cy='96' r='3' />
+              <path d='M1140 240 C 1134 196 1130 144 1126 96' />
+              <path d='M1126 96 C 1146 82 1166 82 1180 96' />
+              <path d='M1126 96 C 1150 92 1170 100 1182 118' />
+              <path d='M1126 96 C 1148 100 1162 116 1168 138' />
+              <path d='M1126 96 C 1106 82 1086 82 1072 94' />
+              <path d='M1126 96 C 1102 92 1082 100 1070 116' />
+              <path d='M1126 96 C 1104 100 1090 116 1084 136' />
+              <circle cx='1126' cy='96' r='3' />
+            </g>
+          </svg>
+        </div>
+        <button
+          aria-label='Wake the ghost'
+          className={css.pixelGhost}
+          data-lifted={seance !== 'unsummoned'}
+          onClick={summon}
+          onMouseEnter={summon}
+          ref={ghostRef}
+          type='button'
+        >
+          <PixelGhost />
+          <span className={css.pixelGhostShadow} />
+        </button>
+      </div>
+      {seance !== 'unsummoned' && (
+        <Seance
+          close={() => setSeance('closed')}
+          open={seance === 'open'}
+          origin={originRef.current}
+        />
+      )}
+    </>
   )
 }

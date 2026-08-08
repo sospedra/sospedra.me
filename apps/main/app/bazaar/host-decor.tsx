@@ -78,7 +78,7 @@ const scaleOf = (node: DecorNode, place: Placement) => {
   return { scale: `${sx} ${sy}`, transformOrigin: 'bottom center' }
 }
 
-/* sprites with a runtime flicker twin: the twin blinks over the base */
+/* sprites with a runtime flicker twin: the frames alternate */
 const FLICKER_REF: Record<string, string> = {
   'holo-fish': 'holo-fish-flicker',
 }
@@ -129,30 +129,39 @@ function Variant(props: {
     )
   }
   const flickerRef = FLICKER_REF[node.ref]
-  const base = (
-    <img
-      src={spriteSrc(node.kind, node.ref)}
-      alt=''
-      draggable={false}
-      loading='lazy'
-      className={className}
-      data-edit-id={node.id}
-      style={style}
-    />
-  )
-  if (!flickerRef) return base
   return (
     <>
-      {base}
+      {node.shade && (
+        <img
+          src={spriteSrc(node.kind, node.ref)}
+          alt=''
+          aria-hidden
+          draggable={false}
+          loading='lazy'
+          className={cn(className, css.shade)}
+          style={{ ...style, filter: undefined, opacity: undefined }}
+        />
+      )}
       <img
-        src={spriteSrc(node.kind, flickerRef)}
+        src={spriteSrc(node.kind, node.ref)}
         alt=''
-        aria-hidden
         draggable={false}
         loading='lazy'
-        className={cn(className, css.flicker)}
+        className={cn(className, flickerRef && css.flickerBase)}
+        data-edit-id={node.id}
         style={style}
       />
+      {flickerRef && (
+        <img
+          src={spriteSrc(node.kind, flickerRef)}
+          alt=''
+          aria-hidden
+          draggable={false}
+          loading='lazy'
+          className={cn(className, css.flicker)}
+          style={style}
+        />
+      )}
     </>
   )
 }

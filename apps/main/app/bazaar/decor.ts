@@ -2,6 +2,7 @@
    decor.json as one node. The editor mutates the document at runtime and
    saves it back to disk through the dev-only save route. */
 
+import type { ChromeMap } from './chrome'
 import rawDecor from './decor.json'
 import type { FloorsConfig } from './floors'
 import type { BazaarStallId } from './stalls-manifest'
@@ -67,6 +68,7 @@ export type DecorNode = Placement & {
   bright?: number
   opacity?: number
   pulse?: boolean
+  shade?: boolean
   hide?: Regime[]
   over?: Partial<Record<Regime, Partial<Placement>>>
 }
@@ -75,6 +77,7 @@ export type DecorDoc = {
   counter: number
   nodes: DecorNode[]
   floors?: FloorsConfig
+  chrome?: ChromeMap
 }
 
 export const INITIAL_DECOR = rawDecor as DecorDoc
@@ -107,9 +110,48 @@ export const STALL_TUNE: Record<BazaarStallId, { lift: number; dim?: number }> =
     w98: { lift: 58.7 },
     games: { lift: 62 },
     travel: { lift: 57.4 },
-    map: { lift: 55 },
+    map: { lift: 55, dim: 0.9 },
     scavenger: { lift: 0 },
   }
+
+/* fixed mobile stall heights in px, measured by the editor's "copy
+   stall px" button at the owner's 320px tuning session (2026-08-08);
+   a listed stall renders at this exact height on every mobile width */
+export const MOBILE_STALL_H: Partial<Record<BazaarStallId, number>> = {
+  map: 338,
+  scavenger: 285,
+  console: 355,
+  manual: 316,
+  games: 332,
+  uses: 314,
+  talks: 375,
+  w98: 338,
+  papers: 334,
+  travel: 321,
+}
+
+/* the fixed mobile heights re-crop the art inside the stall box, so the
+   box-fraction dialog anchor misses the head; per-stall px drops re-seat it */
+export const MOBILE_DIALOG_DROP: Partial<Record<BazaarStallId, number>> = {
+  uses: 40,
+  manual: 40,
+  papers: 20,
+}
+
+/* desktop px offsets off the box-fraction dialog anchor, owner notes
+   2026-08-08; mobile keeps MOBILE_DIALOG_DROP */
+export const DIALOG_NUDGE: Partial<
+  Record<BazaarStallId, { x?: number; y?: number }>
+> = {
+  uses: { y: -50 },
+  map: { y: -50 },
+  manual: { y: -120 },
+  console: { y: 60 },
+  games: { x: 20, y: 90 },
+  scavenger: { x: 50, y: -20 },
+  papers: { y: -50 },
+  w98: { y: -20 },
+}
 
 export type NodeIndex = Map<string, DecorNode>
 

@@ -233,6 +233,13 @@
   color: var(--amber);
 }
 
+.suRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 6px;
+}
+
 /* ---------- tabs ---------- */
 
 .tabs {

@@ -8,7 +8,7 @@ type NetworkInformation = {
 
 const SLOW_EFFECTIVE_TYPES = new Set(['slow-2g', '2g'])
 
-const canPrefetch = () => {
+export const canPrefetch = () => {
   const connection = (
     navigator as Navigator & { connection?: NetworkInformation }
   ).connection

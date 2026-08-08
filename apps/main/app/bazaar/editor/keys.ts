@@ -1,6 +1,6 @@
 import { indexNodes, isSpotKind, rootCornerOf } from '../decor'
 import { decorStore } from '../decor-store'
-import { chromePatchOf, editChrome } from './chrome-store'
+import { chromePatchOf, chromeTranslateOf, editChrome } from './chrome-store'
 import { parsePair } from './gestures'
 import { redo, undo } from './history'
 import { CORNER_SIGN } from './probe'
@@ -24,7 +24,7 @@ const nudgeSelection = (dx: number, dy: number) => {
   const selection = selectionStore.get()
   if (!selection) return
   if (selection.kind === 'chrome') {
-    const base = parsePair(chromePatchOf(selection.id).translate)
+    const base = parsePair(chromeTranslateOf(selection.id))
     editChrome(selection.id, {
       translate: `${Math.round(base.x + dx)}px ${Math.round(base.y + dy)}px`,
     })

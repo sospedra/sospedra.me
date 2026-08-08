@@ -352,20 +352,24 @@ export const STALL_SCENES = {
     rect: { left: 152, top: 24, width: 716, height: 1488 },
   },
   scavenger: {
+    /* r14-e2 master (uses-footprint rebuild) with an emptied doorway;
+       the approved v6 keeper stack rides on it, translated as one unit
+       (dx -178, dy +62), scale 1: char2-* and fx2-* are the old
+       owner-tuned frames verbatim */
     layers: [
-      { id: 'plate', role: 'plate' },
+      { id: 'plate', role: 'plate', file: 'plate2-key.png' },
       {
         id: 'char',
         role: 'char',
         zorder: 3,
-        idle: [{ file: 'char-idle.png', ms: 1800 }],
+        idle: [{ file: 'char2-idle.png', ms: 1800 }],
         hover: [
-          { file: 'char-h1.png', ms: 150 },
-          { file: 'char-h2.png', ms: 150 },
-          { file: 'char-h3.png', ms: 150 },
-          { file: 'char-h4.png', ms: 150 },
-          { file: 'char-h5.png', ms: 150 },
-          { file: 'char-h6.png', ms: 0 },
+          { file: 'char2-h1.png', ms: 150 },
+          { file: 'char2-h2.png', ms: 150 },
+          { file: 'char2-h3.png', ms: 150 },
+          { file: 'char2-h4.png', ms: 150 },
+          { file: 'char2-h5.png', ms: 150 },
+          { file: 'char2-h6.png', ms: 0 },
         ],
       },
       {
@@ -373,14 +377,14 @@ export const STALL_SCENES = {
         role: 'effect',
         zorder: 5,
         frames: [
-          { file: 'fx-smoke-f1.png', ms: 320 },
-          { file: 'fx-smoke-f2.png', ms: 320 },
-          { file: 'fx-smoke-f3.png', ms: 320 },
+          { file: 'fx2-smoke-f1.png', ms: 320 },
+          { file: 'fx2-smoke-f2.png', ms: 320 },
+          { file: 'fx2-smoke-f3.png', ms: 320 },
         ],
-        hover: 'fx-smoke-blank.png',
+        hover: 'fx2-smoke-blank.png',
       },
     ],
-    rect: { left: 0, top: 39, width: 1530, height: 971 },
+    rect: { left: 0, top: 0, width: 1209, height: 1011 },
   },
 } satisfies Record<string, StallScene>
 
@@ -443,9 +447,9 @@ export const SIM_DIMS = {
     dispH: 460,
   },
   scavenger: {
-    artW: 1530,
-    artH: 971,
-    dispW: 819,
+    artW: 1209,
+    artH: 1011,
+    dispW: 622,
     dispH: 520,
   },
 } satisfies Record<

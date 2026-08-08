@@ -4,7 +4,12 @@ import { clamp } from 'es-toolkit'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'services/link'
 import css from './bazaar.module.css'
-import { STALL_TUNE } from './decor'
+import {
+  DIALOG_NUDGE,
+  MOBILE_DIALOG_DROP,
+  MOBILE_STALL_H,
+  STALL_TUNE,
+} from './decor'
 import HostDecor from './host-decor'
 import SceneStall from './scene-stall'
 import { sfx } from './sounds'
@@ -29,7 +34,32 @@ const DIALOG_SIZE = {
 /* the bubble hangs over the character's head, inside the stall box */
 const DEFAULT_ANCHOR = { x: 0.5, y: 0.34 }
 
-export default function Stall({ id }: { id: BazaarStallId }) {
+const dialogPositionFor = (
+  wrap: HTMLElement,
+  id: BazaarStallId,
+  anchor = DEFAULT_ANCHOR,
+): DialogPosition => {
+  const rect = wrap.getBoundingClientRect()
+  const stage = stageBox()
+  const anchorX = (rect.left + rect.width * anchor.x - stage.left) / stage.scale
+  const anchorY = (rect.top + rect.height * anchor.y - stage.top) / stage.scale
+  const mobile = stage.width < MOBILE_BREAKPOINT_PX
+  const size = mobile ? DIALOG_SIZE.mobile : DIALOG_SIZE.desktop
+  const maxWidth = Math.min(size.maxWidth, stage.width * size.viewportShare)
+  const half = maxWidth / 2
+  const nudge = mobile ? undefined : DIALOG_NUDGE[id]
+  return {
+    left: clamp(
+      anchorX + (nudge?.x ?? 0),
+      half + VIEWPORT_GUTTER,
+      stage.width - half - VIEWPORT_GUTTER,
+    ),
+    top: anchorY + (mobile ? (MOBILE_DIALOG_DROP[id] ?? 0) : (nudge?.y ?? 0)),
+  }
+}
+
+export default function Stall(props: { id: BazaarStallId; eager?: boolean }) {
+  const { id, eager } = props
   const spec = STALLS[id]
   const dims = DIMS[id]
   const tune = STALL_TUNE[id]
@@ -47,26 +77,8 @@ export default function Stall({ id }: { id: BazaarStallId }) {
   const updateDialogPosition = useCallback(() => {
     const wrap = wrapRef.current
     if (!wrap) return
-    const rect = wrap.getBoundingClientRect()
-    const stage = stageBox()
-    const anchor = spec.anchor ?? DEFAULT_ANCHOR
-    const anchorX =
-      (rect.left + rect.width * anchor.x - stage.left) / stage.scale
-    const anchorY =
-      (rect.top + rect.height * anchor.y - stage.top) / stage.scale
-    const mobile = stage.width < MOBILE_BREAKPOINT_PX
-    const size = mobile ? DIALOG_SIZE.mobile : DIALOG_SIZE.desktop
-    const maxWidth = Math.min(size.maxWidth, stage.width * size.viewportShare)
-    const half = maxWidth / 2
-    setDialogPosition({
-      left: clamp(
-        anchorX,
-        half + VIEWPORT_GUTTER,
-        stage.width - half - VIEWPORT_GUTTER,
-      ),
-      top: anchorY,
-    })
-  }, [spec.anchor])
+    setDialogPosition(dialogPositionFor(wrap, id, spec.anchor))
+  }, [spec.anchor, id])
 
   useEffect(() => {
     if (!open) return
@@ -148,15 +160,16 @@ export default function Stall({ id }: { id: BazaarStallId }) {
       className={css.stallWrap}
       style={
         {
-          '--tint': spec.tint,
           '--w': dims.width,
           '--h': dims.height,
           '--ar': dims.width / dims.height,
           '--lift': tune.lift,
           '--dim': tune.dim ?? 1,
+          '--mh': MOBILE_STALL_H[id] && `${MOBILE_STALL_H[id]}px`,
         } as React.CSSProperties
       }
       data-stall={id}
+      data-mh={MOBILE_STALL_H[id] !== undefined || undefined}
       data-edit-id={id}
       onMouseEnter={openOnHover}
       onMouseLeave={closeAfterHover}
@@ -183,9 +196,8 @@ export default function Stall({ id }: { id: BazaarStallId }) {
         onKeyDown={handleLinkKeyDown}
         url={spec.href}
       >
-        <SceneStall id={id} active={active} />
+        <SceneStall id={id} active={active} eager={eager} />
         {id === 'scavenger' && <span className={scene.scavEyes} aria-hidden />}
-        <div className={scene.glowWash} />
       </Link>
       <HostDecor host={`stall:${id}`} />
       {id === 'games' ? (

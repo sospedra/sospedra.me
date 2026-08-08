@@ -16,8 +16,9 @@ import Link from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
 import { useRouteTransition } from 'services/transition/context'
-import { usePrefetch } from 'services/transition/use-prefetch'
 import { match } from 'ts-pattern'
+import { useWarmBazaarEntry, warmBazaarArt } from '../bazaar/warm'
+import { STREET_WARM } from '../bazaar/warm-list'
 import SpriteCity from './city-sprite'
 import css from './home.module.css'
 import SpriteMoon from './moon-sprite'
@@ -148,6 +149,13 @@ function carDockState(stage: StageState, isDeparting: boolean) {
   return 'parked'
 }
 
+const prefersNativeNavigation = (event: ReactMouseEvent<HTMLAnchorElement>) =>
+  event.button !== 0 ||
+  event.metaKey ||
+  event.ctrlKey ||
+  event.shiftKey ||
+  event.altKey
+
 function claimFirstRide() {
   try {
     const isFirstRide =
@@ -187,7 +195,7 @@ function HomeStage() {
   const motionAllowed = fxMode === 'full' && !prefersReducedMotion
   const isDeparting = offsetX === BAZAAR_OFFSET
   const isWorldMoving = offsetX !== 0 || offsetY !== 0
-  const prefetchBazaar = usePrefetch('/bazaar')
+  const warmBazaarEntry = useWarmBazaarEntry()
   const { transform } = useSpring({
     transform: `translate3d(${offsetX}vw, ${offsetY}vh, 0)`,
     immediate: !motionAllowed,
@@ -245,14 +253,7 @@ function HomeStage() {
   }, [isDeparting, router])
 
   const departForBazaar = (event: ReactMouseEvent<HTMLAnchorElement>) => {
-    const shouldUseNativeNavigation =
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey
-
-    if (shouldUseNativeNavigation) return
+    if (prefersNativeNavigation(event)) return
     event.preventDefault()
 
     if (isDeparting) {
@@ -261,6 +262,7 @@ function HomeStage() {
     }
 
     void loadSpriteCar()
+    warmBazaarArt(STREET_WARM)
     dispatch({ type: 'engine-on' })
 
     const isFirstRide = claimFirstRide()
@@ -323,9 +325,9 @@ function HomeStage() {
                     <a
                       ref={refs[2]}
                       href='/bazaar'
-                      onMouseEnter={prefetchBazaar}
-                      onFocus={prefetchBazaar}
-                      onTouchStart={prefetchBazaar}
+                      onMouseEnter={warmBazaarEntry}
+                      onFocus={warmBazaarEntry}
+                      onTouchStart={warmBazaarEntry}
                       onClick={departForBazaar}
                     >
                       Bazaar

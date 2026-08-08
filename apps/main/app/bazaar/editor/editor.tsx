@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { regimeAt } from '../decor'
 import { decorStore, stageSimStore } from '../decor-store'
-import { reapplyChrome, restoreChromeFromStorage } from './chrome-store'
+import { reapplyChrome, scrubStaleChromeStorage } from './chrome-store'
 import Dock from './dock'
 import {
   applyDrag,
@@ -30,6 +30,7 @@ import {
   hoverStore,
   selectionStore,
   stageSizeStore,
+  suSimStore,
 } from './store'
 
 const usePointerControls = () => {
@@ -101,7 +102,8 @@ const useStageWiring = () => {
     const observer = new ResizeObserver(measure)
     observer.observe(stage)
     measure()
-    restoreChromeFromStorage()
+    scrubStaleChromeStorage()
+    reapplyChrome()
     let regime = regimeAt(stage.offsetWidth)
     const unsubscribeSize = stageSizeStore.subscribe(() => {
       const next = regimeAt(stageSizeStore.get().w)
@@ -126,6 +128,7 @@ const useStageWiring = () => {
       unsubscribeDoc()
       stage.removeAttribute('data-anchor-pick')
       stageSimStore.set(null)
+      suSimStore.set(null)
       anchorPickStore.set(null)
       dragSpawnStore.set(null)
       hoverStore.set(null)

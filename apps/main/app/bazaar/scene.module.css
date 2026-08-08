@@ -1,7 +1,10 @@
 .scene {
+  /* the street unit: 1cqh until the stage passes 1000px of height,
+     frozen there — the composition caps and the rest is sky */
+  --sv: min(1cqh, 10px);
   --m: min(20cqh, 10.2cqw);
   --hs: 1;
-  --alley-gap: 5cqh;
+  --alley-gap: calc(var(--sv) * 5);
   /* market meter: derived from the 1248px frame so floors never overflow;
      3 stalls (270u) + gaps + stairs = ~10.5m of content per floor */
   --mkt-w: min(100cqw, calc(1248px + 10cqh));
@@ -10,14 +13,18 @@
   --padl-left: calc(
     var(--street-margin) +
     var(--street-shift) +
-    3cqh -
-    72.2cqh
+    var(--sv) *
+    3 -
+    var(--sv) *
+    72.2
   );
   --padr-right: calc(
     var(--street-margin) -
     var(--street-shift) +
-    17cqh -
-    86.4cqh
+    var(--sv) *
+    17 -
+    var(--sv) *
+    86.4
   );
   --mkt-m: min(calc(var(--mkt-w) / 11), 16.5cqh);
   /* composition law: per floor, stairs (324 su, fixed) + stalls (1483
@@ -28,9 +35,9 @@
     calc((100cqw - 136px) / 1807),
     calc(74cqh / 597)
   );
-  /* A(32.55cqh) + gap + CD(53.45cqh) centered as one block, then shifted */
+  /* A(32.55u) + gap + CD(53.45u) centered as one block, then shifted */
   --street-shift: 5cqw;
-  --street-margin: calc((100cqw - 109.8cqh - var(--alley-gap)) / 2);
+  --street-margin: calc((100cqw - var(--sv) * 109.8 - var(--alley-gap)) / 2);
   position: relative;
   width: 100%;
   height: 100cqh;
@@ -62,10 +69,7 @@
   }
 }
 
-/* height-driven sprites keep their intrinsic width: the preflight
-   max-width clamp squished building-a under ~450px and widened the alley */
 .scene img {
-  max-width: none;
   image-rendering: pixelated;
   user-select: none;
 }
@@ -93,34 +97,70 @@
 
 .sBus {
   position: absolute;
-  left: calc(var(--street-margin) + var(--street-shift) - 3cqh);
-  bottom: 10cqh;
-  height: 28.8cqh;
+  left: calc(var(--street-margin) + var(--street-shift) - var(--sv) * 3);
+  bottom: calc(var(--sv) * 10);
+  height: calc(var(--sv) * 28.8);
   /* box owns the geometry: both frames fill it identically, no
      width:auto rounding drift between in-flow and absolute images */
   aspect-ratio: 1060 / 1335;
   z-index: 10;
 }
 
-@container bazaar (max-width: 699.98px) {
+/* regime-B bake: the shelter's tuned spot */
+@container bazaar (min-width: 1100px) {
   .sBus {
-    left: max(0.5rem, var(--safe-area-left));
-    height: min(28.8cqh, 9rem);
+    translate: 81px -2px;
+  }
+
+  /* ground contact under the shelter, same law as the stall shadows */
+  .sBus::after {
+    content: "";
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    bottom: calc(var(--sv) * -1.5);
+    height: calc(var(--sv) * 3.5);
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      rgb(0 0 0 / 0.35),
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
   }
 }
 
-/* mobile swaps the shelter for the flag post: right edge of the same
-   box, the edge nearest the screen center */
+/* post alignment inside REF: right-0 at 1100 → centered at 600 →
+   left-0 at 320, piecewise linear; tan(atan2()) divides lengths into
+   the unitless mix ratio */
 .sBusPost {
+  --align: calc(
+    clamp(0, tan(atan2(100cqw - 320px, 560px)), 0.5) +
+    clamp(0, tan(atan2(100cqw - 600px, 1000px)), 0.5)
+  );
   display: none;
   position: absolute;
   top: 0;
-  right: 0;
+  left: calc(var(--align) * 100%);
+  /* own width = 23.98% of REF width (254/1334 over 1060/1335) */
+  margin-left: calc(var(--align) * -23.98%);
   height: 100%;
   aspect-ratio: 254 / 1334;
 }
 
-@container bazaar (max-width: 699.98px) {
+/* under 1100 the shelter folds into the flag post; the box (REF) keeps
+   its street anchor and pins at the screen edge once the anchor would
+   drag it out */
+@container bazaar (max-width: 1099.98px) {
+  .sBus {
+    left: max(
+      0.5rem,
+      var(--safe-area-left),
+      calc(var(--street-margin) + var(--street-shift) - var(--sv) * 3)
+    );
+    height: min(calc(var(--sv) * 28.8), 9rem);
+  }
+
   .sBus > img {
     display: none;
   }
@@ -128,6 +168,24 @@
   .sBusPost {
     display: block;
   }
+}
+
+/* the folded flag post casts a pole-foot blob; renders only while the
+   post displays (under 1100) */
+.sBusPost::after {
+  content: "";
+  position: absolute;
+  left: -45%;
+  right: -45%;
+  bottom: -1.2%;
+  height: 4%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgb(0 0 0 / 0.35),
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* lit lamp + its glow in one animated wrapper, same law as .sNeonOn;
@@ -341,12 +399,16 @@
 }
 
 /* wayfinding pair: UP hangs over the stair mouth, DOWN sits at the screen
-   mirror capped to stay past the last stall; beams tuck 10px into the sep */
+   mirror capped to stay past the last stall; beams tuck 10px into the sep.
+   Each sign is a button: it scrolls the scene one floor its way. */
 .sign {
   position: absolute;
   top: -10px;
   width: calc(var(--su) * 78);
   z-index: 14; /* the max slot of the floor z law */
+  padding: 0;
+  border: 0;
+  background: none;
   line-height: 0;
 }
 
@@ -397,56 +459,133 @@
   position: absolute;
   inset: 32% 6% 4%;
   pointer-events: auto;
+  cursor: pointer;
 }
 
-/* lit by default; the neon dips out now and then, up/down out of phase */
-.sign img[data-on] {
+/* lit by default; frame + glow live in one wrapper, the sNeonOn law,
+   up/down out of phase */
+.signOn {
+  position: absolute;
+  inset: 0;
   animation: neonBlink 8s steps(1, end) -2.2s infinite;
 }
 
-.sign[data-dir="down"] img[data-on] {
+.sign[data-dir="down"] .signOn {
   animation-delay: -5.6s;
 }
 
-.sign:hover img[data-on] {
-  animation: bulbFlicker 1.2s steps(1, end) forwards;
+.signOn::after {
+  content: "";
+  position: absolute;
+  inset: 24% -18% -8%;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(255 64 150 / 0.34),
+    rgb(255 64 150 / 0.12) 55%,
+    transparent 75%
+  );
+  mix-blend-mode: screen;
+  filter: blur(5px);
 }
 
-/* the mobile pair speaks mu: sized off the SM tower, tucked into the
-   ceiling. UP pokes 15mu past the SM inside edge; DOWN hugs the far side */
-.signM {
-  width: calc(var(--mfloor-h) / 597 * 78);
-}
-
-.signM[data-dir="up"] {
-  --sign-in: calc(
-    var(--sm-w) -
-    var(--shift-m, 0px) -
-    var(--mfloor-h) /
-    597 *
-    63
+.sign[data-dir="down"] .signOn::after {
+  background: radial-gradient(
+    ellipse at center,
+    rgb(66 240 220 / 0.32),
+    rgb(66 240 220 / 0.12) 55%,
+    transparent 75%
   );
 }
 
+.sign:hover .signOn {
+  animation: bulbFlicker 1.2s steps(1, end) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signOn {
+    animation: none;
+  }
+}
+
+/* the mobile pair speaks mu at half size, each hanging a third off
+   screen on its own side. UP: top at the stair top. DOWN: top hangs
+   from the halfway deck's bottom. */
+.signM {
+  width: calc(var(--mfloor-h) / 597 * 39);
+}
+
+/* data-dir matches the desktop rules' specificity, so the mobile inset wins */
+.signM[data-dir] {
+  --sign-in: calc(var(--mfloor-h) / 597 * -13);
+}
+
+.signM[data-dir="up"] {
+  top: 0;
+}
+
 .signM[data-dir="down"] {
-  --sign-in: calc(var(--mfloor-h) / 597 * 8);
+  top: calc(var(--sm-split, 0.5) * 100% + var(--mfloor-h) * 0.05);
+}
+
+/* foreground parallax silhouettes, home-bridge style: one per side,
+   anchored off the outer edges of the random buildings. The wide-street
+   dressing: they frame the flanks from 1800px up. */
+.fgLayer {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  will-change: transform;
+}
+
+@container bazaar (min-width: 1800px) {
+  .fgLayer {
+    display: block;
+  }
+}
+
+.fgL,
+.fgR {
+  position: absolute;
+  bottom: calc(var(--sv) * -6);
+  height: calc(var(--sv) * 112);
+  width: 24cqw;
+  background: url("/images/foreground-tower.svg") bottom / 100% 100% no-repeat;
+  --baked-blur: blur(3px);
+  filter: brightness(0.5) blur(3px);
+  transform: scaleY(1.2);
+  transform-origin: bottom;
+}
+
+/* tower svg content ends at 90% of its box: compensate */
+.fgL {
+  left: calc(max(var(--padl-left), 0px) + var(--sv) * 8 - 21.5cqw);
+}
+
+/* block svg content starts at 4.5% of its box: compensate */
+.fgR {
+  background-image: url("/images/foreground-block.svg");
+  right: calc(max(var(--padr-right), 0px) + var(--sv) * 8 - 22.9cqw);
 }
 
 /* the home car passes through on load: offscreen left to offscreen
-   right, same easing as the home drive (must match --drive-ease there) */
+   right, same easing as the home drive (must match --drive-ease there).
+   -200% covers the visual box at any scale, so the parked car stays
+   hidden when the drive never runs (reduced motion). */
 .sCar {
   position: absolute;
   left: 0;
-  bottom: -0.5cqh;
+  bottom: calc(var(--sv) * -0.5);
   z-index: 39;
   pointer-events: none;
-  transform: translateX(-40cqw);
+  transform: translateX(-200%);
   animation: carDrive 1s cubic-bezier(0.4, 0, 0.6, 0.52) 1.6s both;
 }
 
 @keyframes carDrive {
   to {
-    transform: translateX(110cqw);
+    transform: translateX(calc(100cqw + 40px));
   }
 }
 
@@ -463,8 +602,11 @@
   filter: blur(1.5px);
 }
 
+/* 1.8x on desktop, capped at 38cqw of visual length on narrow stages
+   so the car keeps scene proportion (tan∘atan2 divides the lengths) */
 .sCarScale {
-  transform: scale(1.8);
+  --car-scale: min(1.8, tan(atan2(38cqw, clamp(9rem, 30vh, 18rem))));
+  transform: scale(var(--car-scale));
   transform-origin: bottom left;
   filter: brightness(0.45);
 }

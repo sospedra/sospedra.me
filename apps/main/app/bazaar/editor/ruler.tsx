@@ -7,7 +7,7 @@ import { stageSimStore } from '../decor-store'
 import { stageBox } from '../stage'
 import css from './editor.module.css'
 import { Scrub } from './fields'
-import { stageSizeStore } from './store'
+import { measuredSu, stageSizeStore, suSimStore } from './store'
 
 const BANDS: { regime: Regime; from: number; to: number }[] = [
   { regime: 'm', from: 0, to: 700 },
@@ -20,6 +20,9 @@ const PRESETS = [390, 768, 1024, 1366, 1690, 1920, 2560, 3440, STAGE_MAX]
 
 const SIM_MIN = 320
 
+/* keep in sync with bazaar.module.css --band-w: band = su × 1555.556 */
+const BAND_SU = 1555.556
+
 const clampSim = (value: number) =>
   Math.round(Math.min(STAGE_MAX, Math.max(SIM_MIN, value)))
 
@@ -27,9 +30,11 @@ const clampSim = (value: number) =>
 export default function Ruler() {
   const size = useStoreSelector(stageSizeStore, (value) => value)
   const sim = useStoreSelector(stageSimStore, (value) => value)
+  const simSu = useStoreSelector(suSimStore, (value) => value)
   const trackRef = useRef<HTMLDivElement>(null)
   const regime = regimeAt(size.w)
   const scale = stageBox().scale
+  const su = simSu ?? measuredSu()
 
   const setFromPoint = (clientX: number) => {
     const rect = trackRef.current?.getBoundingClientRect()
@@ -130,6 +135,35 @@ export default function Ruler() {
           </button>
         ))}
       </div>
+      {regime !== 'm' && (
+        <div className={css.suRow}>
+          <span className={css.stageReadout}>
+            su <b>{su.toFixed(3)}</b>
+            {(regime === 'a' || regime === 'w') && (
+              <> · band {Math.round(su * BAND_SU)}px</>
+            )}
+          </span>
+          <Scrub
+            label='su'
+            value={su}
+            step={0.002}
+            min={0.1}
+            max={4}
+            precision={3}
+            nudge={0.01}
+            onLive={(value) => suSimStore.set(value)}
+            onCommit={(value) => suSimStore.set(value)}
+          />
+          <button
+            type='button'
+            className={css.chip}
+            data-on={simSu === null || undefined}
+            onClick={() => suSimStore.set(null)}
+          >
+            AUTO
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -206,8 +206,9 @@ const driveScene = (ctx: LayerContext) => {
 export default function SceneStall(props: {
   id: BazaarStallId
   active: boolean
+  eager?: boolean
 }) {
-  const { id, active } = props
+  const { id, active, eager = false } = props
   const scene = STALL_SCENES[id]
   const layers = useMemo(
     () =>
@@ -263,7 +264,7 @@ export default function SceneStall(props: {
             src={`/images/bazaar/${id}/${file}`}
             alt=''
             draggable={false}
-            loading={layer.role === 'plate' ? 'eager' : 'lazy'}
+            loading={layer.role === 'plate' && eager ? 'eager' : 'lazy'}
             data-layer={layer.role}
             data-frame={file}
           />

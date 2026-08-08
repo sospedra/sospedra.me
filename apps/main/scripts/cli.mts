@@ -73,7 +73,10 @@ const COMMANDS = {
     run: async () => {
       const steps = [
         ['python3', ['scripts/bazaar/diet.py']],
-        ['oxipng', ['-r', '-o', '4', '--strip', 'safe', 'public/images/bazaar']],
+        [
+          'oxipng',
+          ['-r', '-o', '4', '--strip', 'safe', 'public/images/bazaar'],
+        ],
       ] as const
       for (const [command, args] of steps) {
         const { status } = spawnSync(command, args, { stdio: 'inherit' })

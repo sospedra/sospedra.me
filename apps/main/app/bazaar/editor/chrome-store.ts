@@ -1,85 +1,58 @@
 'use client'
 
 import { createExternalStore } from 'services/external-store'
+import {
+  applyChromeTo,
+  type ChromeMap,
+  type ChromePatch,
+  chromeEls,
+  chromeIdOf,
+  chromeKey,
+  chromeScopeOf,
+} from '../chrome'
+import { INITIAL_DECOR } from '../decor'
 import { record, registerChromeApplier } from './history'
-import { editEls } from './probe'
-import { currentRegime } from './store'
+import { currentRegime, refreshSaveState, registerChromeSource } from './store'
 
-/* Scene chrome: inline style patches on the baked scene elements (walls,
-   seps, stairs, stalls, street pieces). Patches key by `id@regime`, so a
-   position tuned in one regime never leaks into another and the mobile
-   tree tunes apart from the desktop trees. Preview only: the values
-   graduate into CSS by hand. */
+export type { ChromeMap, ChromePatch } from '../chrome'
 
-export type ChromePatch = Partial<
-  Record<
-    | 'translate'
-    | 'scale'
-    | 'zIndex'
-    | 'filter'
-    | 'opacity'
-    | 'veil'
-    | 'backgroundImage'
-    | 'display'
-    | 'wf',
-    string
-  >
->
+/* the live chrome map: seeded from the saved doc, persisted through
+   SAVE as decor.json's chrome block; edits between saves are previews
+   that die on reload */
+export const chromeStore = createExternalStore<ChromeMap>(
+  INITIAL_DECOR.chrome ?? {},
+)
 
-export type ChromeMap = Record<string, ChromePatch>
+const STALE_CHROME_LS = [
+  'bazaar-editor-chrome',
+  'bazaar-editor-chrome-v2',
+  'bazaar-editor-chrome-v3',
+]
 
-const CHROME_LS = 'bazaar-editor-chrome'
-
-export const chromeStore = createExternalStore<ChromeMap>({})
-
-const idOfKey = (key: string) => key.split('@')[0] ?? key
-
-const chromeKeyOf = (id: string) => `${id}@${currentRegime()}`
+const chromeKeyOf = (id: string) =>
+  chromeKey(id, chromeScopeOf(currentRegime()))
 
 const effectivePatch = (map: ChromeMap, id: string): ChromePatch =>
   map[chromeKeyOf(id)] ?? {}
 
 export const chromeTouched = (map: ChromeMap, id: string) =>
-  Object.keys(map).some((key) => idOfKey(key) === id)
-
-const applyVar = (el: HTMLElement, name: string, value: string | null) => {
-  if (value) el.style.setProperty(name, value)
-  else el.style.removeProperty(name)
-}
-
-const applyChromeTo = (el: HTMLElement, patch: ChromePatch) => {
-  el.style.translate = patch.translate ?? ''
-  el.style.scale = patch.scale ?? ''
-  el.style.zIndex = patch.zIndex ?? ''
-  el.style.filter = patch.filter ?? ''
-  el.style.opacity = patch.opacity ?? ''
-  el.style.display = patch.display ?? ''
-  el.style.backgroundImage = patch.backgroundImage ?? ''
-  applyVar(el, '--veil', patch.veil ?? null)
-  const floor = el.closest<HTMLElement>('[data-floor]')
-  if (floor) applyVar(floor, '--wf', patch.wf ? `url("${patch.wf}")` : null)
-}
+  Object.keys(map).some((key) => chromeIdOf(key) === id)
 
 const applyAll = (next: ChromeMap, previous: ChromeMap) => {
   const ids = new Set(
-    [...Object.keys(previous), ...Object.keys(next)].map(idOfKey),
+    [...Object.keys(previous), ...Object.keys(next)].map(chromeIdOf),
   )
   for (const id of ids) {
-    for (const el of editEls(id)) applyChromeTo(el, effectivePatch(next, id))
+    for (const el of chromeEls(id)) applyChromeTo(el, effectivePatch(next, id))
   }
 }
 
 const setChrome = (next: ChromeMap) => {
   applyAll(next, chromeStore.get())
   chromeStore.set(next)
-  try {
-    localStorage.setItem(CHROME_LS, JSON.stringify(next))
-  } catch {
-    /* storage full or blocked: the live styles still stand */
-  }
 }
 
-/** regime boundaries swap which patch is live; the stage wiring calls this */
+/** scope boundaries swap which patch is live; the stage wiring calls this */
 export const reapplyChrome = () => {
   const map = chromeStore.get()
   applyAll(map, map)
@@ -87,6 +60,15 @@ export const reapplyChrome = () => {
 
 export const chromePatchOf = (id: string): ChromePatch =>
   effectivePatch(chromeStore.get(), id)
+
+/** the live translate: the patch first, then the baked computed value */
+export const chromeTranslateOf = (id: string): string => {
+  const patched = chromePatchOf(id).translate
+  if (patched) return patched
+  const el = chromeEls(id).find((entry) => entry.offsetParent !== null)
+  const computed = el ? getComputedStyle(el).translate : ''
+  return computed === 'none' ? '' : computed
+}
 
 /** live (gesture-internal) chrome write, no history */
 export const writeChrome = (id: string, patch: ChromePatch) => {
@@ -115,25 +97,14 @@ export const resetChrome = (id: string) => {
   record({ scope: 'chrome', before, after: chromeStore.get() })
 }
 
-/* sessions saved before regime scoping carry bare ids: treat them as B */
-const migrateKeys = (raw: ChromeMap): ChromeMap =>
-  Object.fromEntries(
-    Object.entries(raw).map(([key, patch]) => [
-      key.includes('@') ? key : `${key}@b`,
-      patch,
-    ]),
-  )
-
-export const restoreChromeFromStorage = () => {
-  try {
-    const raw = localStorage.getItem(CHROME_LS)
-    if (raw) setChrome(migrateKeys(JSON.parse(raw) as ChromeMap))
-  } catch {
-    /* corrupt payload: start clean */
-  }
+/* chrome persisted to localStorage until 2026-08-08; the doc owns it now */
+export const scrubStaleChromeStorage = () => {
+  for (const staleKey of STALE_CHROME_LS) localStorage.removeItem(staleKey)
 }
 
 export const exportChrome = () =>
   navigator.clipboard.writeText(JSON.stringify(chromeStore.get(), null, 2))
 
 registerChromeApplier((map) => setChrome(map as ChromeMap))
+registerChromeSource(() => chromeStore.get())
+chromeStore.subscribe(refreshSaveState)

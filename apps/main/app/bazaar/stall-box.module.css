@@ -51,25 +51,6 @@
   filter: brightness(1.12) saturate(1.12);
 }
 
-.glowWash {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  background: radial-gradient(
-    ellipse at 50% 45%,
-    color-mix(in srgb, var(--tint) 34%, transparent),
-    transparent 72%
-  );
-  mix-blend-mode: screen;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.stall:hover .glowWash,
-.stall:focus-within .glowWash {
-  opacity: 1;
-}
-
 .holoFlicker img {
   position: absolute;
   inset: 0;
@@ -86,10 +67,10 @@ div.holoFlicker {
    rotate(180deg) mirrors the look direction with one sprite */
 .scavEyes {
   position: absolute;
-  left: 49.21%;
-  top: 40.63%;
-  width: 2.43%;
-  height: 1.26%;
+  left: 47.55%;
+  top: 45.15%;
+  width: 3.08%;
+  height: 1.21%;
   z-index: 2;
   background: #030506;
   opacity: 0;
@@ -158,28 +139,28 @@ div.holoFlicker {
    alone keeps a notch (x655..715, down to y585) so the offered palm lies
    ON the counter while the legs stay behind */
 [data-stall="scavenger"] .sceneStack img[data-layer="char"] {
-  clip-path: polygon(0% 0%, 100% 0%, 100% 56.13%, 0% 56.13%);
+  clip-path: polygon(0% 0%, 100% 0%, 100% 60.04%, 0% 60.04%);
 }
 
-[data-stall="scavenger"] .sceneStack img[data-frame="char-h6.png"] {
+[data-stall="scavenger"] .sceneStack img[data-frame="char2-h6.png"] {
   clip-path: polygon(
     0% 0%,
     100% 0%,
-    100% 56.13%,
-    47.43% 56.27%,
-    47.29% 57.03%,
-    46.67% 57.12%,
-    46.38% 56.03%,
-    46.29% 57.18%,
-    45.73% 57.63%,
-    45.24% 57.17%,
-    45.24% 55.93%,
-    44.73% 57.52%,
-    44.23% 57.53%,
-    43.92% 56.54%,
-    44.28% 54.3%,
-    43.47% 55.82%,
-    43.16% 56.15%,
-    0% 56.13%
+    100% 60.04%,
+    45.3% 60.18%,
+    45.12% 60.91%,
+    44.34% 60.99%,
+    43.97% 59.95%,
+    43.86% 61.05%,
+    43.15% 61.48%,
+    42.53% 61.04%,
+    42.53% 59.85%,
+    41.88% 61.38%,
+    41.25% 61.39%,
+    40.86% 60.44%,
+    41.31% 58.28%,
+    40.29% 59.74%,
+    39.9% 60.06%,
+    0% 60.04%
   );
 }

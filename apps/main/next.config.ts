@@ -79,6 +79,16 @@ const config: NextConfig = {
         { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
       ],
     },
+    // bazaar art iterates by replacing filenames, so a day fresh + a week stale
+    {
+      source: '/images/bazaar/:path*',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=86400, stale-while-revalidate=604800',
+        },
+      ],
+    },
   ],
 }
 

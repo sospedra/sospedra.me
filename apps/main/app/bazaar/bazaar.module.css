@@ -7,7 +7,7 @@
    viewports letterbox with black bars. Container queries against the
    stage replace viewport media queries, so the editor can simulate any
    stage size in place. Regimes: M <700 · B 700-1689 · A 1690-2559 ·
-   W 2560+ (growth stops, walls extend across the flanks). */
+   W 2560+ (walls extend across the flanks); su growth stops at 0.8. */
 
 .letterbox {
   display: flex;
@@ -40,10 +40,11 @@
   --vstar: 1690; /* keep in sync with the regime-A container query */
   /* S soft crop ramp, 1200 -> 700: reclaimed width grows stalls */
   --shift: clamp(0px, (1200px - 100cqw) * 0.132, 66px);
-  /* su grows with the stage up to the 2560 cap; the height guard keeps
-     one floor + one sep (822 su) inside 95% of the stage height */
+  /* su grows with the stage and freezes at the 0.8px cap (~1502px
+     stage); the height guard keeps one floor + one sep (822 su) inside
+     95% of the stage height */
   --su: min(
-    calc(2560px * var(--su-cap) / var(--vstar)),
+    0.8px,
     calc((100cqw + var(--shift)) * var(--su-cap) / var(--vstar)),
     calc(95cqh / 822)
   );
@@ -110,13 +111,10 @@
   padding-right: var(--g);
 }
 
-/* per-floor WF variants */
-.floor[data-market-index="1"] {
+/* per-floor WF variants: the 2026-08-08 regime-B bake */
+.floor[data-market-index="1"],
+.floor[data-market-index="3"] {
   --wf: url("/images/bazaar/arch/wf-min-b2.png");
-}
-
-.floor[data-market-index="2"] {
-  --wf: url("/images/bazaar/arch/wf-wood-c.png");
 }
 
 /* the WF paints on two stage-wide layers so brt (filter) and veil
@@ -151,12 +149,18 @@
   opacity: var(--veil, 0);
 }
 
-/* session: floor 2's wood wall reads at bright 0.2 (veil = 1 - bright) */
-.floor[data-market-index="2"] .wf[data-wf-wall] {
-  --veil: 0.8;
+/* regime-B bake: per-floor wall brightness, walkway strips stay lit */
+.floor[data-market-index="0"] .wf[data-wf-wall] {
+  filter: brightness(0.9);
 }
 
-/* ambient rat: 5-frame strip (2,4,3,5,7) at 80ms/frame; art feet sit
+.floor[data-market-index="1"] .wf[data-wf-wall],
+.floor[data-market-index="2"] .wf[data-wf-wall],
+.floor[data-market-index="3"] .wf[data-wf-wall] {
+  filter: brightness(0.8);
+}
+
+/* ambient rat: 5-frame strip (2,4,3,5,7) at 48ms/frame; art feet sit
    23/224 of the cell above its bottom, hence the 40.3su lane bottom */
 .ratLane {
   position: absolute;
@@ -169,14 +173,25 @@
   pointer-events: none;
 }
 
+.ratRunner {
+  position: absolute;
+  inset: 0;
+  transform: translateX(100%);
+}
+
+/* data-run lands when the floor enters the viewport; first pass 1s later */
+.ratLane[data-run] .ratRunner {
+  animation: rat-cross 10s linear 1s infinite;
+}
+
 /* explicit sizes only: aspect-ratio + auto width collapse on some engines
    and preflight img{max-width:100%} squashes auto-width strips */
 .ratView {
   position: absolute;
+  left: 0;
   width: calc(var(--su) * 119.5);
   height: 100%;
   overflow: hidden;
-  animation: rat-cross 9s linear infinite;
 }
 
 .ratStrip {
@@ -185,7 +200,7 @@
   height: 100%;
   max-width: none;
   image-rendering: pixelated;
-  animation: rat-run 0.3s steps(5) infinite;
+  animation: rat-run 0.24s steps(5) infinite;
 }
 
 .ratView::after {
@@ -208,14 +223,15 @@
   }
 }
 
-/* the pass takes 60% of the cycle; parked offscreen-left the rest */
+/* the pass takes 30% of the 10s cycle; parked offscreen-left the rest.
+   The runner spans the lane, so translateX(100%) is one lane width. */
 @keyframes rat-cross {
   0% {
-    left: 100%;
+    transform: translateX(100%);
   }
-  60%,
+  30%,
   100% {
-    left: calc(var(--su) * -120);
+    transform: translateX(calc(var(--su) * -120));
   }
 }
 
@@ -262,8 +278,7 @@
 }
 
 /* regime A: the capped band exists, S hangs outside it. The band is
-   1400px at the 0.9 reference su (1555.556 su), so the whole composition
-   scales with su and freezes at the 2560 cap: regime W's flanks. */
+   su × 1555.556, so 1244px at the frozen 0.8 su. */
 @container bazaar (min-width: 1690px) {
   .floor,
   .floorR {
@@ -294,7 +309,7 @@
 
 /* wide flanks fall off into darkness: screen edge darkest, content side
    lighter. The overlay spans the stage; only its two edge strips paint. */
-@container bazaar (min-width: 2900px) {
+@container bazaar (min-width: 1900px) {
   .floor::after {
     content: "";
     position: absolute;
@@ -312,7 +327,8 @@
   }
 }
 
-/* the riveted h-beam band between floors, nearer than the floors */
+/* the riveted h-beam band between floors, nearer than the floors;
+   --baked-blur survives chrome brightness patches (chrome.ts composes it) */
 .sep {
   position: relative;
   z-index: 5;
@@ -322,10 +338,25 @@
   background-repeat: repeat-x;
   background-position: left bottom;
   image-rendering: pixelated;
+  --baked-blur: blur(1.5px);
   filter: brightness(0.7) blur(1.5px);
   box-shadow:
     0 10px 24px rgb(0 0 0 / 0.55),
     0 -10px 24px rgb(0 0 0 / 0.55);
+}
+
+/* regime-B bake: per-band skins */
+.sep[data-bazaar-sep="2"] {
+  z-index: 8;
+  background-image: url("/images/bazaar/arch/beam-h-catwalk.png");
+}
+
+.sep[data-bazaar-sep="3"] {
+  background-image: url("/images/bazaar/arch/beam-h-cable.png");
+}
+
+.sep[data-bazaar-sep="4"] {
+  filter: brightness(0.8) blur(1.5px);
 }
 
 .bottomPad {
@@ -349,18 +380,32 @@
   margin-bottom: calc(var(--su) * var(--lift, 0));
 }
 
-/* contact shadow, the one stall effect that stays */
+/* regime-B bake: per-stall eyeball nudges, desktop tree only */
+.floor [data-stall="scavenger"] {
+  translate: 0 -6px;
+}
+
+.floor [data-stall="travel"] {
+  translate: 0 4px;
+}
+
+.floor [data-stall="talks"] {
+  translate: 0 7px;
+}
+
+/* contact shadow hugging the art's own ground line; per-stall chrome
+   patches tune the --shadow-* vars, fallbacks mirror SHADOW_DEFAULTS */
 .stallWrap::after {
   content: "";
   position: absolute;
-  left: 3%;
-  right: 3%;
-  bottom: calc(var(--su) * -14);
-  height: calc(var(--su) * 28);
+  left: var(--shadow-inset, 2%);
+  right: var(--shadow-inset, 2%);
+  bottom: calc(var(--su) * var(--shadow-y, -5));
+  height: calc(var(--su) * var(--shadow-h, 18));
   background: radial-gradient(
     ellipse at 50% 50%,
-    rgb(0 0 0 / 0.5),
-    transparent 68%
+    rgb(0 0 0 / var(--shadow-op, 0.7)),
+    transparent var(--shadow-stop, 72%)
   );
   pointer-events: none;
 }
@@ -382,9 +427,23 @@
     calc(var(--sm-w) / 2)
   );
   --slot: calc(100cqw - var(--sm-w) + var(--shift-m) - 2 * var(--mg));
+  /* the story rows start past the visible stair; R floors start at 0 */
+  --row-left: calc(var(--sm-w) - var(--shift-m));
   position: relative;
   display: flex;
   height: var(--mfloor-h);
+}
+
+.mfloorR {
+  --row-left: 0px;
+}
+
+/* mobile mirrors regime B's per-floor skins; the fifth floor extends
+   the fourth */
+.mfloor[data-mfloor="1"],
+.mfloor[data-mfloor="3"],
+.mfloor[data-mfloor="4"] {
+  --wf: url("/images/bazaar/arch/wf-min-b2.png");
 }
 
 /* the mobile WF layer: same live brt/veil/skin contract as desktop .wf */
@@ -406,6 +465,18 @@
   inset: 0;
   background: #000;
   opacity: var(--veil, 0);
+}
+
+/* regime-B bake: mobile wall brightness mirror */
+.mfloor[data-mfloor="0"] .mwf {
+  filter: brightness(0.9);
+}
+
+.mfloor[data-mfloor="1"] .mwf,
+.mfloor[data-mfloor="2"] .mwf,
+.mfloor[data-mfloor="3"] .mwf,
+.mfloor[data-mfloor="4"] .mwf {
+  filter: brightness(0.8);
 }
 
 /* mobile z law: wf 0 · stalls 1 · sm 2 · deck 13 · signs 14 */
@@ -469,6 +540,22 @@
     aspect-ratio: var(--ar);
     margin-inline: auto;
   }
+
+  /* baked fixed height: identical px at every mobile width, no rescale.
+     The margin centers on the full viewport even when the stall
+     overflows — flex auto margins give up on negative space */
+  .stallWrap[data-mh] {
+    width: auto;
+    height: var(--mh);
+    margin-inline: calc(
+        50cqw -
+        var(--row-left, 0px) -
+        var(--mh) *
+        var(--ar) /
+        2
+      )
+      0;
+  }
 }
 
 .sepM {
@@ -478,18 +565,20 @@
   background-repeat: repeat-x;
   background-position: left bottom;
   image-rendering: pixelated;
+  --baked-blur: blur(1px);
   filter: brightness(0.7) blur(1px);
 }
 
-/* ---------- hitbox debug ---------- */
-
-[data-hitbox] .stallWrap {
-  outline: 2px dashed rgb(75 210 225 / 0.8);
-  outline-offset: -2px;
+/* regime-B sep skins mirrored by index */
+.sepM[data-edit-id="msep:2"] {
+  background-image: url("/images/bazaar/arch/beam-h-catwalk.png");
 }
 
-[data-hitbox] .stairs,
-[data-hitbox] .sm {
-  outline: 2px dashed rgb(224 160 64 / 0.8);
-  outline-offset: -2px;
+.sepM[data-edit-id="msep:3"] {
+  background-image: url("/images/bazaar/arch/beam-h-cable.png");
+}
+
+.sepM[data-edit-id="msep:4"],
+.sepM[data-edit-id="msep:5"] {
+  filter: brightness(0.8) blur(1px);
 }

@@ -10,6 +10,7 @@ export const ANOMALIES = {
   konami: 'Green-line protocol',
   rubik: 'Operator calibration',
   manual: 'Manual verification',
+  ghost: 'Phantom process',
   '404': 'Lost broadcast',
 } as const
 

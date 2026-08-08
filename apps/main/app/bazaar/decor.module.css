@@ -3,10 +3,23 @@
   pointer-events: none;
 }
 
-/* runtime flicker twin: blinks its frame over the base sprite */
+/* ground contact blob: the sprite itself squashed flat, blackened and
+   blurred, so the shadow follows the prop's own footprint */
+.shade {
+  filter: brightness(0) blur(3px);
+  opacity: 0.55;
+  transform: translateY(4%) scaleY(0.16);
+  transform-origin: bottom center;
+}
+
+/* runtime flicker pair: the twin frame swaps in while the base yields */
 .flicker {
   opacity: 0;
   animation: decor-flicker 2.7s steps(1, end) infinite;
+}
+
+.flickerBase {
+  animation: decor-flicker-base 2.7s steps(1, end) infinite;
 }
 
 @keyframes decor-flicker {
@@ -16,7 +29,7 @@
   }
   72%,
   77% {
-    opacity: 1;
+    opacity: 0.7;
   }
   78%,
   83% {
@@ -24,7 +37,7 @@
   }
   84%,
   86% {
-    opacity: 1;
+    opacity: 0.7;
   }
   87%,
   93% {
@@ -32,11 +45,43 @@
   }
   94%,
   96% {
-    opacity: 1;
+    opacity: 0.7;
   }
   97%,
   100% {
     opacity: 0;
+  }
+}
+
+/* exact inverse of decor-flicker: keep the windows in lockstep */
+@keyframes decor-flicker-base {
+  0%,
+  71% {
+    opacity: 1;
+  }
+  72%,
+  77% {
+    opacity: 0;
+  }
+  78%,
+  83% {
+    opacity: 1;
+  }
+  84%,
+  86% {
+    opacity: 0;
+  }
+  87%,
+  93% {
+    opacity: 1;
+  }
+  94%,
+  96% {
+    opacity: 0;
+  }
+  97%,
+  100% {
+    opacity: 1;
   }
 }
 
@@ -57,6 +102,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .flicker,
+  .flickerBase,
   .pulse {
     animation: none;
   }

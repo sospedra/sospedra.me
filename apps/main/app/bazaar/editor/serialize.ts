@@ -20,6 +20,34 @@ const floorsConfig = z
   .object({ desktop: z.array(desktopFloor), mobile: z.array(mobileFloor) })
   .strict()
 
+const chromePatch = z
+  .object({
+    translate: z.string(),
+    scale: z.string(),
+    zIndex: z.string(),
+    filter: z.string(),
+    opacity: z.string(),
+    veil: z.string(),
+    backgroundImage: z.string(),
+    display: z.string(),
+    wf: z.string(),
+    shadowOp: z.string(),
+    shadowStop: z.string(),
+    shadowH: z.string(),
+    shadowY: z.string(),
+    shadowInset: z.string(),
+  })
+  .partial()
+  .strict()
+
+const chromeScopedKey = z
+  .string()
+  .refine((key) => key.endsWith('@m') || key.endsWith('@d'), {
+    message: 'chrome keys end in @m or @d',
+  })
+
+const chromeMap = z.record(chromeScopedKey, chromePatch)
+
 const placementPatch = z
   .object({
     x: z.number(),
@@ -50,6 +78,7 @@ const decorNode = z
     bright: z.number().optional(),
     opacity: z.number().optional(),
     pulse: z.boolean().optional(),
+    shade: z.boolean().optional(),
     hide: z.array(regime).optional(),
     over: z.partialRecord(regime, placementPatch).optional(),
   })
@@ -60,6 +89,7 @@ export const decorDocSchema = z
     counter: z.number().int().nonnegative(),
     nodes: z.array(decorNode),
     floors: floorsConfig.optional(),
+    chrome: chromeMap.optional(),
   })
   .strict()
 
@@ -80,6 +110,7 @@ const NODE_KEYS = [
   'bright',
   'opacity',
   'pulse',
+  'shade',
   'hide',
   'over',
 ] satisfies (keyof DecorNode)[]
@@ -98,6 +129,7 @@ export const serializeDoc = (doc: DecorDoc): string => {
     {
       counter: doc.counter,
       ...(doc.floors ? { floors: doc.floors } : {}),
+      ...(doc.chrome ? { chrome: doc.chrome } : {}),
       nodes: doc.nodes.map(orderKeys),
     },
     null,

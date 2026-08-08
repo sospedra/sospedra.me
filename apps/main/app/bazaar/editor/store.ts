@@ -1,6 +1,8 @@
 'use client'
 
+import { uniq } from 'es-toolkit'
 import { createExternalStore } from 'services/external-store'
+import type { ChromeMap, ChromePatch } from '../chrome'
 import {
   type Corner,
   type DecorDoc,
@@ -69,6 +71,29 @@ export const saveStore = createExternalStore<{
 }>({ state: 'clean' })
 export const keysStore = createExternalStore<boolean>(false)
 
+/* the --su preview: an inline override on the scene, session-only like
+   the stage sim; AUTO (null) restores the module formula */
+export const suSimStore = createExternalStore<number | null>(null)
+
+suSimStore.subscribe(() => {
+  const scene = document.querySelector<HTMLElement>('[data-bazaar-scene]')
+  if (!scene) return
+  const value = suSimStore.get()
+  if (value === null) scene.style.removeProperty('--su')
+  else scene.style.setProperty('--su', `${value}px`)
+})
+
+/* keep in sync with bazaar.module.css --floor-h: floor height = su × 597 */
+const FLOOR_SU = 597
+
+/** effective px per su, measured off desktop floor 0; 0 while regime M hides it */
+export const measuredSu = (): number => {
+  const floor = document.querySelector<HTMLElement>(
+    '[data-market-index]:not([data-mfloor])',
+  )
+  return floor ? floor.offsetHeight / FLOOR_SU : 0
+}
+
 export const currentRegime = (): Regime => regimeAt(stageSizeStore.get().w)
 
 export const selectNode = (id: string) => {
@@ -97,6 +122,66 @@ const patchNodeIn = (
 export const round1 = (value: number) => Math.round(value * 10) / 10
 export const round2 = (value: number) => Math.round(value * 100) / 100
 
+/* ---------- mobile copy-on-write ---------- */
+
+const DESKTOP_REGIMES: readonly Regime[] = ['b', 'a', 'w']
+
+export const isMobileOnlyNode = (node: DecorNode) =>
+  DESKTOP_REGIMES.every((regime) => node.hide?.includes(regime))
+
+/* editing a shared node at M splits it: the original hides on mobile
+   and a mobile-only clone takes the edit, so nothing crosses the trees.
+   The map keeps mid-gesture writes on the clone after the split. */
+const mobileCloneIds = new Map<string, string>()
+
+const splitForMobile = (node: DecorNode): string => {
+  const before = decorStore.get()
+  const place = placementAt(node, 'm')
+  const cloneId = `n${before.counter + 1}`
+  const clone: DecorNode = {
+    ...node,
+    id: cloneId,
+    x: place.x,
+    y: place.y,
+    h: place.h,
+    w: place.w,
+    sx: place.sx,
+    sy: place.sy,
+    over: undefined,
+    hide: [...DESKTOP_REGIMES],
+  }
+  const { m: droppedFork, ...desktopForks } = node.over ?? {}
+  setDoc({
+    ...before,
+    counter: before.counter + 1,
+    nodes: before.nodes.flatMap((entry) => {
+      if (entry.id !== node.id) return [entry]
+      const original: DecorNode = {
+        ...entry,
+        hide: uniq([...(entry.hide ?? []), 'm' as Regime]),
+        over: Object.keys(desktopForks).length > 0 ? desktopForks : undefined,
+      }
+      return [original, clone]
+    }),
+  })
+  record({ scope: 'doc', before, after: decorStore.get() })
+  mobileCloneIds.set(node.id, cloneId)
+  const selection = selectionStore.get()
+  if (selection?.kind === 'node' && selection.id === node.id) {
+    selectNode(cloneId)
+  }
+  return cloneId
+}
+
+const materializedId = (id: string): string => {
+  if (currentRegime() !== 'm') return id
+  const cloneId = mobileCloneIds.get(id)
+  if (cloneId && getNode(cloneId)) return cloneId
+  const node = getNode(id)
+  if (!node || isMobileOnlyNode(node)) return id
+  return splitForMobile(node)
+}
+
 /* ---------- gestures: live writes, one command per gesture ---------- */
 
 export const beginGesture = () => decorStore.get()
@@ -106,16 +191,20 @@ export const endGesture = (before: DecorDoc) => {
   if (after !== before) record({ scope: 'doc', before, after })
 }
 
-/** single-shot node edit with history */
-export const editNode = (id: string, patch: Partial<DecorNode>) => {
+/* meta edits (regime chips, forks) act on the node as-is */
+const editNodeRaw = (id: string, patch: Partial<DecorNode>) => {
   const before = decorStore.get()
   setDoc(patchNodeIn(before, id, patch))
   record({ scope: 'doc', before, after: decorStore.get() })
 }
 
+/** single-shot node edit with history */
+export const editNode = (id: string, patch: Partial<DecorNode>) =>
+  editNodeRaw(materializedId(id), patch)
+
 /** live (gesture-internal) node write, no history */
 export const writeNode = (id: string, patch: Partial<DecorNode>) =>
-  setDoc(patchNodeIn(decorStore.get(), id, patch))
+  setDoc(patchNodeIn(decorStore.get(), materializedId(id), patch))
 
 const forkSeed = (node: DecorNode, regime: Regime): Partial<Placement> => {
   const place = placementAt(node, regime)
@@ -126,12 +215,9 @@ const forkSeed = (node: DecorNode, regime: Regime): Partial<Placement> => {
   return fork
 }
 
-/* placement writes land on the current regime's fork when one exists.
-   The mobile tree owns its placement outright: writes at M auto-fork,
-   and base writes freeze M first, so the two never cross. */
+/* placement writes land on the current regime's fork when one exists */
 export const placementTarget = (node: DecorNode): Regime | 'base' => {
   const regime = currentRegime()
-  if (regime === 'm') return 'm'
   return node.over?.[regime] ? regime : 'base'
 }
 
@@ -140,22 +226,25 @@ const placementPatchFor = (
   patch: Partial<Placement>,
 ): Partial<DecorNode> => {
   const target = placementTarget(node)
-  if (target !== 'base') {
-    const fork = { ...forkSeed(node, target), ...patch }
-    return { over: { ...node.over, [target]: fork } }
-  }
-  if (node.over?.m) return patch
-  return { ...patch, over: { ...node.over, m: forkSeed(node, 'm') } }
+  if (target === 'base') return patch
+  const fork = { ...forkSeed(node, target), ...patch }
+  return { over: { ...node.over, [target]: fork } }
 }
 
 export const writePlacement = (id: string, patch: Partial<Placement>) => {
-  const node = getNode(id)
-  if (node) writeNode(id, placementPatchFor(node, patch))
+  const target = materializedId(id)
+  const node = getNode(target)
+  if (node) {
+    setDoc(
+      patchNodeIn(decorStore.get(), target, placementPatchFor(node, patch)),
+    )
+  }
 }
 
 export const editPlacement = (id: string, patch: Partial<Placement>) => {
-  const node = getNode(id)
-  if (node) editNode(id, placementPatchFor(node, patch))
+  const target = materializedId(id)
+  const node = getNode(target)
+  if (node) editNodeRaw(target, placementPatchFor(node, patch))
 }
 
 export const resolvedPlacement = (node: DecorNode): Placement =>
@@ -167,14 +256,14 @@ export const forkRegime = (id: string) => {
   const node = getNode(id)
   if (!node) return
   const regime = currentRegime()
-  editNode(id, { over: { ...node.over, [regime]: forkSeed(node, regime) } })
+  editNodeRaw(id, { over: { ...node.over, [regime]: forkSeed(node, regime) } })
 }
 
 export const dropFork = (id: string) => {
   const node = getNode(id)
   if (!node?.over) return
   const { [currentRegime()]: dropped, ...rest } = node.over
-  editNode(id, { over: Object.keys(rest).length > 0 ? rest : undefined })
+  editNodeRaw(id, { over: Object.keys(rest).length > 0 ? rest : undefined })
 }
 
 export const toggleRegime = (id: string, regime: Regime) => {
@@ -184,7 +273,7 @@ export const toggleRegime = (id: string, regime: Regime) => {
   const next = hide.includes(regime)
     ? hide.filter((entry) => entry !== regime)
     : [...hide, regime]
-  editNode(id, { hide: next.length > 0 ? next : undefined })
+  editNodeRaw(id, { hide: next.length > 0 ? next : undefined })
 }
 
 /* ---------- node lifecycle ---------- */
@@ -246,16 +335,33 @@ export const spawnAt = async (
     z: SPAWN_Z[kind],
   }
   if (isSpotKind(kind)) node.w = SPOT_DEFAULT.w
+  if (currentRegime() === 'm') node.hide = [...DESKTOP_REGIMES]
   appendNode(node)
 }
 
 export const duplicateNode = (id: string) => {
   const node = getNode(id)
   if (!node) return
-  const doc = decorStore.get()
+  const copyId = nextId(decorStore.get())
+  if (currentRegime() === 'm') {
+    const place = placementAt(node, 'm')
+    appendNode({
+      ...node,
+      id: copyId,
+      x: round1(place.x + 16),
+      y: round1(place.y + 16),
+      h: place.h,
+      w: place.w,
+      sx: place.sx,
+      sy: place.sy,
+      over: undefined,
+      hide: [...DESKTOP_REGIMES],
+    })
+    return
+  }
   appendNode({
     ...node,
-    id: nextId(doc),
+    id: copyId,
     x: round1(node.x + 16),
     y: round1(node.y + 16),
   })
@@ -322,6 +428,11 @@ export const removeNode = (id: string) => {
   const before = decorStore.get()
   const node = before.nodes.find((entry) => entry.id === id)
   if (!node) return
+  if (currentRegime() === 'm' && !isMobileOnlyNode(node)) {
+    editNodeRaw(id, { hide: uniq([...(node.hide ?? []), 'm' as Regime]) })
+    selectionStore.set(null)
+    return
+  }
   setDoc({
     ...before,
     nodes: before.nodes
@@ -349,10 +460,11 @@ const wouldCycle = (nodeId: string, targetId: string) => {
 
 /** re-anchor keeping the on-screen position; corner resets on host moves */
 export const rehostNode = (
-  id: string,
+  inputId: string,
   host: DecorHost | `node:${string}`,
   corner: Corner = 'tl',
 ) => {
+  const id = materializedId(inputId)
   const node = getNode(id)
   if (!node) return
   if (host === `node:${id}`) return
@@ -369,7 +481,7 @@ export const rehostNode = (
     if (!anchorEl) return
     const anchorRect = anchorEl.getBoundingClientRect()
     const unit = unitOf(rootHostOfLive(anchorNode.id))
-    editNode(id, {
+    editNodeRaw(id, {
       host,
       corner: 'tl',
       x: round1((rect.left - anchorRect.left) / unit),
@@ -379,7 +491,7 @@ export const rehostNode = (
     return
   }
   const point = clientToCorner(host as DecorHost, corner, rect.left, rect.top)
-  editNode(id, {
+  editNodeRaw(id, {
     host,
     corner,
     x: round1(point.x),
@@ -402,7 +514,8 @@ const rootHostOfLive = (id: string): DecorHost => {
 }
 
 /** re-express the base coordinates from another corner, same position */
-export const setCorner = (id: string, corner: Corner) => {
+export const setCorner = (inputId: string, corner: Corner) => {
+  const id = materializedId(inputId)
   const node = getNode(id)
   if (!node || node.corner === corner || node.host.startsWith('node:')) return
   if (node.over) return
@@ -412,23 +525,51 @@ export const setCorner = (id: string, corner: Corner) => {
   const clientX = corner.includes('l') ? rect.left : rect.right
   const clientY = corner.startsWith('t') ? rect.top : rect.bottom
   const point = clientToCorner(node.host as DecorHost, corner, clientX, clientY)
-  editNode(id, { corner, x: round1(point.x), y: round1(point.y) })
+  editNodeRaw(id, { corner, x: round1(point.x), y: round1(point.y) })
 }
 
 /* ---------- persistence ---------- */
 
-let savedDoc = decorStore.get()
+/* the chrome store registers itself; a direct import would be a cycle */
+let chromeSource: () => ChromeMap = () => ({})
 
-decorStore.subscribe(() => {
+export const registerChromeSource = (source: () => ChromeMap) => {
+  chromeSource = source
+  savedChrome = source()
+}
+
+let savedDoc = decorStore.get()
+let savedChrome: ChromeMap = {}
+
+export const refreshSaveState = () => {
   const { state } = saveStore.get()
   if (state === 'saving') return
-  const dirty = decorStore.get() !== savedDoc
+  const dirty = decorStore.get() !== savedDoc || chromeSource() !== savedChrome
   if (dirty && state !== 'dirty') saveStore.set({ state: 'dirty' })
   if (!dirty && state === 'dirty') saveStore.set({ state: 'clean' })
-})
+}
+
+decorStore.subscribe(refreshSaveState)
+
+const compactPatch = (patch: ChromePatch): ChromePatch =>
+  Object.fromEntries(
+    Object.entries(patch).filter(([, value]) => value !== undefined),
+  )
+
+const compactChrome = (map: ChromeMap): ChromeMap | undefined => {
+  const entries = Object.entries(map)
+    .map(([key, patch]) => [key, compactPatch(patch)] as const)
+    .filter(([, patch]) => Object.keys(patch).length > 0)
+    .toSorted(([a], [b]) => a.localeCompare(b))
+  return entries.length > 0 ? Object.fromEntries(entries) : undefined
+}
 
 export const save = async () => {
-  const doc = decorStore.get()
+  const chrome = chromeSource()
+  const doc: DecorDoc = {
+    ...decorStore.get(),
+    chrome: compactChrome(chrome),
+  }
   saveStore.set({ state: 'saving' })
   try {
     const response = await fetch('/bazaar/editor/save', {
@@ -446,7 +587,9 @@ export const save = async () => {
       saveStore.set({ state: 'error', message: body.error ?? 'save failed' })
       return
     }
-    savedDoc = doc
+    setDoc(doc)
+    savedDoc = decorStore.get()
+    savedChrome = chrome
     saveStore.set({ state: 'saved' })
   } catch {
     saveStore.set({ state: 'error', message: 'network error' })
