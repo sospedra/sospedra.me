@@ -288,7 +288,7 @@ export const clearModeBackend: CredentialBackend = {
   prove(witness, accountId, serverNonce) {
     // Snapshot first, so a getter-backed witness is read exactly once, before
     // the statement is built from it.
-    const w = witness
+    const w = snapshot(witness)
     return { statement: prove(w, accountId, serverNonce), payload: w }
   },
   verify(proof, trustedCountryKeys) {
