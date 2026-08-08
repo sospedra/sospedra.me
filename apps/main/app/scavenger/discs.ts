@@ -53,6 +53,18 @@ export const DISCS: Disc[] = [
     look: 'burn',
   },
   {
+    id: 'melchor',
+    title: 'melchor',
+    oneLiner: 'Wishlists with secret gift reservations.',
+    note: 'no duplicate gifts',
+    url: 'https://melchor.app',
+    pressed: 2026,
+    stack: 'Next, Tailwind',
+    status: 'pressed',
+    hue: 355,
+    look: 'press',
+  },
+  {
     id: 'olympics',
     title: 'olympics',
     oneLiner: 'Tokyo 2020 results, frozen in amber.',
