@@ -8,10 +8,19 @@ import {
   $slider,
   $symbols,
 } from './elements.ts'
-import type { Generator } from './spg/generator.ts'
+import { loadSettings, saveSettings } from './settings.ts'
+import type { Generator, GeneratorOptions } from './spg/generator.ts'
 import { spg } from './spg/spg.ts'
 
 const OFFLINE_MESSAGE = 'wikipedia is unreachable, hit renew'
+
+const DEFAULT_SETTINGS: GeneratorOptions = {
+  case: false,
+  length: 24,
+  leet: false,
+  random: false,
+  symbols: false,
+}
 
 const STRENGTH_LABEL = {
   weak: 'Weak',
@@ -29,7 +38,7 @@ const strengthFor = (password: string): Strength => {
   return 'strong'
 }
 
-const readOptions = () => ({
+const readOptions = (): GeneratorOptions => ({
   case: $case.checked,
   length: Number($slider.value),
   leet: $leet.checked,
@@ -37,12 +46,25 @@ const readOptions = () => ({
   symbols: $symbols.checked,
 })
 
+const applySettings = (settings: GeneratorOptions): void => {
+  $case.checked = settings.case
+  $leet.checked = settings.leet
+  $random.checked = settings.random
+  $symbols.checked = settings.symbols
+  $slider.value = String(settings.length)
+}
+
 export function setupGenerator(): void {
   const state: { generator: Generator | null } = { generator: null }
 
+  applySettings(loadSettings() ?? DEFAULT_SETTINGS)
+
   const update = () => {
-    const password = state.generator ? state.generator(readOptions()) : null
+    const options = readOptions()
+    const password = state.generator ? state.generator(options) : null
     if (password === null) return
+
+    saveSettings(options)
 
     const strength = strengthFor(password)
     $hint.textContent = `${password.length} chars · ${STRENGTH_LABEL[strength]}`
