@@ -244,6 +244,31 @@ a:visited {
   outline-offset: 2px;
 }
 
+.panel-actions {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.reset-button {
+  padding: 0.25rem 0.5rem;
+  border: 0;
+  background: none;
+  color: var(--gray-600);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.reset-button:active {
+  color: var(--gray-800);
+  transform: scale(0.97);
+}
+
 .toast {
   position: absolute;
   left: 50%;

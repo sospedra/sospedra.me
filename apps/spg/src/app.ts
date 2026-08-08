@@ -5,6 +5,7 @@ import {
   $password,
   $random,
   $renew,
+  $reset,
   $slider,
   $symbols,
 } from './elements.ts'
@@ -90,6 +91,11 @@ export function setupGenerator(): void {
 
   $renew.addEventListener('click', () => {
     void renew()
+  })
+
+  $reset.addEventListener('click', () => {
+    applySettings(DEFAULT_SETTINGS)
+    update()
   })
 
   for (const control of [$case, $leet, $random, $symbols]) {
