@@ -21,6 +21,7 @@ import { match } from 'ts-pattern'
 import SpriteCity from './city-sprite'
 import css from './home.module.css'
 import SpriteMoon from './moon-sprite'
+import RainLayer from './rain-layer'
 import Title from './title'
 import Triangle from './triangle'
 import { useNav } from './use-nav'
@@ -340,6 +341,8 @@ function HomeStage() {
         <SpriteMoon />
         <SpriteCity />
       </animated.div>
+
+      <RainLayer />
 
       <div
         aria-hidden='true'

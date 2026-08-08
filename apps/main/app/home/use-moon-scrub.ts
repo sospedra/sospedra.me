@@ -6,6 +6,7 @@ import { DAY_MS } from 'services/time'
 import { SYNODIC_MONTH_MS } from './lunar-phase'
 
 const RETURN_MS = 800
+const TAP_SLOP_PX = 8
 
 const KEY_NUDGE_MS: Record<string, number> = {
   ArrowDown: -DAY_MS,
@@ -16,10 +17,11 @@ const KEY_NUDGE_MS: Record<string, number> = {
 
 type DragOrigin = {
   x: number
+  y: number
   scrub: number
 }
 
-export const useMoonScrub = (motionAllowed: boolean) => {
+export const useMoonScrub = (motionAllowed: boolean, onTap?: () => void) => {
   const [scrub, setScrub] = useState(0)
   const scrubRef = useRef(0)
   const dragRef = useRef<DragOrigin | null>(null)
@@ -53,7 +55,11 @@ export const useMoonScrub = (motionAllowed: boolean) => {
   const onPointerDown = (event: PointerEvent<HTMLElement>) => {
     cancelAnimationFrame(rafRef.current)
     event.currentTarget.setPointerCapture(event.pointerId)
-    dragRef.current = { x: event.clientX, scrub: scrubRef.current }
+    dragRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      scrub: scrubRef.current,
+    }
   }
 
   const onPointerMove = (event: PointerEvent<HTMLElement>) => {
@@ -69,7 +75,22 @@ export const useMoonScrub = (motionAllowed: boolean) => {
     settle()
   }
 
+  const onPointerUp = (event: PointerEvent<HTMLElement>) => {
+    const origin = dragRef.current
+    const tapped =
+      origin !== null &&
+      Math.hypot(event.clientX - origin.x, event.clientY - origin.y) <
+        TAP_SLOP_PX
+    if (tapped) onTap?.()
+    endDrag()
+  }
+
   const onKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      onTap?.()
+      return
+    }
     const nudge = KEY_NUDGE_MS[event.key]
     if (nudge !== undefined) {
       event.preventDefault()
@@ -90,6 +111,6 @@ export const useMoonScrub = (motionAllowed: boolean) => {
     onPointerCancel: endDrag,
     onPointerDown,
     onPointerMove,
-    onPointerUp: endDrag,
+    onPointerUp,
   }
 }

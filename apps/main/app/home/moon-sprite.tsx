@@ -8,6 +8,7 @@ import { useTheme } from 'services/theme'
 import { fetchVisitorLocation } from 'services/visitor-location'
 import { type MoonPhase, moonPhase, moonTilt } from './lunar-phase'
 import css from './moon-sprite.module.css'
+import { toggleRain } from './rain-store'
 import { useMoonScrub } from './use-moon-scrub'
 
 // A real near-quarter terminator is almost straight; the sub-linear exponent
@@ -33,7 +34,7 @@ const SpriteMoon: React.FunctionComponent = () => {
   const { fxMode } = useTheme()
   const prefersReducedMotion = useReducedMotion()
   const motionAllowed = fxMode === 'full' && !prefersReducedMotion
-  const scrubber = useMoonScrub(motionAllowed)
+  const scrubber = useMoonScrub(motionAllowed, toggleRain)
 
   // Clock and IP are client facts: the server renders nothing, mount fills in
   useEffect(() => {
@@ -68,7 +69,7 @@ const SpriteMoon: React.FunctionComponent = () => {
       <div
         role='slider'
         tabIndex={0}
-        aria-label='Moon phase, drag sideways or press arrow keys to time travel'
+        aria-label='Moon phase, drag sideways or press arrow keys to time travel, tap or press enter to toggle the rain'
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={illumination}

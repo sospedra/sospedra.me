@@ -9,6 +9,7 @@ import { useStoreSelector } from 'services/external-store'
 import Link from 'services/link'
 import Shell from 'services/shell'
 import { prefersQuietFx } from 'services/theme'
+import RainLayer from '../home/rain-layer'
 import { DownSign, UpSign } from './arrow-sign'
 import css from './bazaar.module.css'
 import { decorStore } from './decor-store'
@@ -130,6 +131,7 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
         </div>
       </Link>
       <HostDecor host='street' />
+      <RainLayer />
     </section>
   )
 }
