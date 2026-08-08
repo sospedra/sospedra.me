@@ -219,7 +219,8 @@
   transition:
     color var(--motion-micro) var(--ease-signal),
     border-color var(--motion-micro) var(--ease-signal),
-    transform var(--motion-micro) var(--ease-signal);
+    transform var(--motion-micro) var(--ease-signal),
+    filter var(--motion-micro) var(--ease-signal);
 }
 
 .navArrow:hover {
