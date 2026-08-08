@@ -2,7 +2,7 @@ import type { RelayState } from './platform/nostr-pool.ts'
 import { short } from './util.ts'
 
 export type UiHandles = {
-  setIdentity(peerIdHex: string, tier: string): void
+  setIdentity(peerIdHex: string): void
   setRoom(roomId: string): void
   appendChat(input: {
     from: string
@@ -16,8 +16,6 @@ export type UiHandles = {
   onSend(callback: (text: string) => void): void
   onNewRoom(callback: () => void): void
   onCopyLink(callback: () => void): void
-  onPasskey(callback: () => void): void
-  setPasskeyLabel(label: string): void
 }
 
 const LOG_CAP = 150
@@ -33,40 +31,59 @@ const el = <K extends keyof HTMLElementTagNameMap>(
   return node
 }
 
-const timeOf = (ts: number): string =>
-  new Date(ts).toLocaleTimeString(undefined, { hour12: false })
+const timeOf = (ts: number): string => {
+  const stamp = new Date(ts).toLocaleTimeString(undefined, {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+  return `[${stamp}]`
+}
+
+const titleBar = (text: string): { bar: HTMLElement; title: HTMLElement } => {
+  const title = el('div', 'title-bar-text', text)
+  const controls = el('div', 'title-bar-controls')
+  for (const label of ['Minimize', 'Maximize', 'Close']) {
+    const control = el('button')
+    control.setAttribute('aria-label', label)
+    control.disabled = true
+    controls.append(control)
+  }
+  const bar = el('div', 'title-bar')
+  bar.append(title, controls)
+  return { bar, title }
+}
+
+const group = (legend: string): HTMLFieldSetElement => {
+  const box = el('fieldset')
+  box.append(el('legend', '', legend))
+  return box
+}
 
 export const mountStandby = (root: HTMLElement): void => {
   root.replaceChildren()
-  const box = el('div', 'standby')
-  box.append(
+  const { bar } = titleBar('irc')
+  const body = el('div', 'window-body')
+  body.append(
     el('p', '', 'the mesh runs in another tab of this room.'),
     el('p', '', 'close that tab and this one takes over.'),
   )
+  const box = el('div', 'window standby-window')
+  box.append(bar, body)
   root.append(box)
 }
 
 export const mountUi = (root: HTMLElement): UiHandles => {
   root.replaceChildren()
 
-  const identityChip = el('span', 'chip')
-  const roomChip = el('span', 'chip')
-  const passkeyButton = el('button', '', 'create passkey')
+  const { bar, title } = titleBar('irc')
+
   const newRoomButton = el('button', '', 'new room')
   const copyButton = el('button', '', 'copy invite link')
-  const spacer = el('span', 'spacer')
-  const header = el('header')
-  header.append(
-    el('span', 'brand', 'aol'),
-    roomChip,
-    identityChip,
-    spacer,
-    passkeyButton,
-    newRoomButton,
-    copyButton,
-  )
+  const toolbar = el('div', 'toolbar')
+  toolbar.append(newRoomButton, copyButton)
 
-  const messages = el('div', 'messages')
+  const messages = el('div', 'messages sunken-panel')
   const input = el('input')
   input.maxLength = 2000
   input.placeholder = 'message the room'
@@ -77,21 +94,33 @@ export const mountUi = (root: HTMLElement): UiHandles => {
   const chat = el('div', 'chat')
   chat.append(messages, composer)
 
-  const peersList = el('ul')
-  const peersSection = el('section')
-  peersSection.append(el('h2', '', 'peers'), peersList)
-  const relaysList = el('ul')
-  const relaysSection = el('section')
-  relaysSection.append(el('h2', '', 'relays'), relaysList)
-  const logBox = el('div', 'eventlog')
-  const logSection = el('section')
-  logSection.append(el('h2', '', 'events'), logBox)
+  const peersList = el('ul', 'panel-list')
+  const peersSection = group('peers')
+  peersSection.append(peersList)
+  const relaysList = el('ul', 'panel-list')
+  const relaysSection = group('relays')
+  relaysSection.append(relaysList)
+  const logBox = el('div', 'eventlog sunken-panel')
+  const logSection = group('events')
+  logSection.append(logBox)
   const aside = el('aside')
   aside.append(peersSection, relaysSection, logSection)
 
-  const main = el('main')
-  main.append(chat, aside)
-  root.append(header, main)
+  const content = el('div', 'content')
+  content.append(chat, aside)
+
+  const windowBody = el('div', 'window-body app-body')
+  windowBody.append(toolbar, content)
+
+  const identityField = el('p', 'status-bar-field', 'you —')
+  const roomField = el('p', 'status-bar-field', 'room —')
+  const peersField = el('p', 'status-bar-field', '0 active · 0 passive')
+  const statusBar = el('div', 'status-bar')
+  statusBar.append(identityField, roomField, peersField)
+
+  const appWindow = el('div', 'window app-window')
+  appWindow.append(bar, windowBody, statusBar)
+  root.append(appWindow)
 
   const relayItems = new Map<string, HTMLLIElement>()
   let sendCallback: (text: string) => void = () => {}
@@ -105,19 +134,18 @@ export const mountUi = (root: HTMLElement): UiHandles => {
   })
 
   return {
-    setIdentity(peerIdHex, tier) {
-      identityChip.replaceChildren('you ', el('strong', '', short(peerIdHex)))
-      identityChip.append(` · ${tier}`)
-      identityChip.classList.toggle('prf', tier === 'PRF')
+    setIdentity(peerIdHex) {
+      identityField.textContent = `you ${short(peerIdHex)}`
     },
     setRoom(roomId) {
-      roomChip.replaceChildren('room ', el('strong', '', roomId))
+      title.textContent = `irc - #${roomId}`
+      roomField.textContent = `room #${roomId}`
     },
     appendChat(entry) {
       const row = el('div', entry.self ? 'message self' : 'message')
       row.append(
         el('span', 'meta', timeOf(entry.ts)),
-        el('span', 'who', entry.self ? 'you' : short(entry.from)),
+        el('span', 'who', `<${entry.self ? 'you' : short(entry.from)}>`),
         el('span', 'body', entry.text),
       )
       messages.append(row)
@@ -130,11 +158,7 @@ export const mountUi = (root: HTMLElement): UiHandles => {
         item.append(el('span', 'dot'), el('span', '', short(hex)))
         peersList.append(item)
       }
-      const summary = el('li')
-      summary.append(
-        el('span', '', `${active.length} active · ${passiveCount} passive`),
-      )
-      peersList.append(summary)
+      peersField.textContent = `${active.length} active · ${passiveCount} passive`
     },
     setRelay(url, state) {
       const existing = relayItems.get(url)
@@ -162,12 +186,6 @@ export const mountUi = (root: HTMLElement): UiHandles => {
     },
     onCopyLink(callback) {
       copyButton.addEventListener('click', callback)
-    },
-    onPasskey(callback) {
-      passkeyButton.addEventListener('click', callback)
-    },
-    setPasskeyLabel(label) {
-      passkeyButton.textContent = label
     },
   }
 }

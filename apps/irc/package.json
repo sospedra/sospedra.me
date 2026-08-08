@@ -1,5 +1,5 @@
 {
-  "name": "aol",
+  "name": "irc",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -16,6 +16,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "98.css": "0.1.21",
     "@noble/ciphers": "2.2.0",
     "@noble/curves": "2.2.0",
     "@noble/hashes": "2.2.0"

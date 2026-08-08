@@ -11,8 +11,8 @@ import {
 } from '../src/mesh/frame.ts'
 import { identityFromSeed } from '../src/mesh/keys.ts'
 
-const alice = identityFromSeed(randomBytes(32), 'PRF')
-const bob = identityFromSeed(randomBytes(32), 'PRF')
+const alice = identityFromSeed(randomBytes(32))
+const bob = identityFromSeed(randomBytes(32))
 
 test('encode and decode roundtrip preserves every field', () => {
   const frame = buildFrame({

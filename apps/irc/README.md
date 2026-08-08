@@ -1,4 +1,4 @@
-# aol
+# irc
 
 Browser-to-browser text mesh. PoC of the peer mesh spec v0.2.
 
@@ -7,7 +7,7 @@ No server sits in the message path. Nostr relays carry signed SDP for first cont
 ## Run
 
 ```
-pnpm --filter aol dev
+pnpm --filter irc dev
 ```
 
 Open the printed URL. The app creates a room and writes `#r=<roomId>&s=<topicSecret>` into the hash. Open the full link in a second browser or device. The peers meet on public relays and link direct. Type in either window.
@@ -17,14 +17,14 @@ The fragment never reaches a server. The topic is `SHA256(appId || roomId || top
 ## Test
 
 ```
-pnpm --filter aol test
+pnpm --filter irc test
 ```
 
 72 node tests cover the pure core: frame codec, router pipeline, sequence windows, rate limits, seal padding, offer verification, NIP-01 events.
 
 ## Deploy
 
-Vercel project settings: root directory `apps/aol`, framework Vite. Build is `vite build`, output `dist`. No environment variables. The app is a static bundle.
+Vercel project settings: root directory `apps/irc`, framework Vite. Build is `vite build`, output `dist`. No environment variables. The app is a static bundle.
 
 ## Spec coverage
 
@@ -32,8 +32,7 @@ Vercel project settings: root directory `apps/aol`, framework Vite. Build is `vi
 |---|---|
 | 4 constants | Full table in `src/mesh/constants.ts` |
 | 6.2 gossip loop | `src/mesh/router.ts`, receiver-side order: sig, ejected, seq, hop, rate |
-| 7.1 PRF identity | `create passkey` button. WebAuthn PRF, 32 byte seed |
-| 7.2 fallback | Ed25519 seed in IndexedDB, tier `STORED`, default |
+| 7.2 identity | Ed25519 seed in IndexedDB. 7.1 PRF passkeys dropped by decision |
 | 7.4 multi-tab | Web Locks election per room. Standby tabs park and take over on owner close |
 | 8 rendezvous | Signed offer envelopes on an ephemeral kind (21313), 5 relays, 8.4 checks |
 | 9 connection | STUN only, no TURN, vanilla ICE with a gathering timeout |

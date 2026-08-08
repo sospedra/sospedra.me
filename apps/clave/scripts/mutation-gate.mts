@@ -94,10 +94,26 @@ const MUTATIONS: Mutation[] = [
     tests: ESCROW,
   },
   {
+    name: 'relation:challenge-framed',
+    file: 'src/enrollment/relation.ts',
+    find: "  return dhash('CLAVE/chip-challenge/v1', utf8(accountId), serverNonce)\n",
+    replace:
+      "  return dhash('CLAVE/chip-challenge/v1', concatBytes(utf8(accountId), serverNonce))\n",
+    tests: PROTOCOL,
+  },
+  {
     name: 'relation:chip-presence',
     file: 'src/enrollment/relation.ts',
     find: "  return answered ? null : 'the chip did not answer this challenge'\n",
     replace: '  void answered\n  return null\n',
+    tests: PROTOCOL,
+  },
+  {
+    name: 'relation:seal-key-from-secret',
+    file: 'src/enrollment/relation.ts',
+    find: "  return kdf(secretScalarBytes(secret), utf8('CLAVE/seal/v1'), utf8(accountId))\n",
+    replace:
+      "  return kdf(scalarCommitment(secret), utf8('CLAVE/seal/v1'), utf8(accountId))\n",
     tests: PROTOCOL,
   },
   {
@@ -138,7 +154,7 @@ const MUTATIONS: Mutation[] = [
   {
     name: 'protocol:credential-account-binding',
     file: 'src/protocol.ts',
-    find: "  if (record.statement.publicInputs.accountId !== record.accountId) {\n    return { ok: false, reason: 'credential proof is for another account' }\n  }\n",
+    find: "  if (publicInputs.accountId !== record.accountId) {\n    return { ok: false, reason: 'credential proof is for another account' }\n  }\n",
     replace: '  ',
     tests: PROTOCOL,
   },
@@ -157,10 +173,25 @@ const MUTATIONS: Mutation[] = [
     tests: PROTOCOL,
   },
   {
-    name: 'relation:witness-snapshot',
+    name: 'relation:witness-snapshot-at-seal',
     file: 'src/enrollment/relation.ts',
-    find: '  const w = snapshot(witness)\n',
-    replace: '  const w = witness\n',
+    find: '    const w = snapshot(witness)\n',
+    replace: '    const w = witness\n',
+    tests: PROTOCOL,
+  },
+  {
+    name: 'relation:witness-snapshot-at-verify',
+    file: 'src/enrollment/relation.ts',
+    find: '  const checked = snapshot(witness)\n',
+    replace: '  const checked = witness\n',
+    tests: PROTOCOL,
+  },
+  {
+    name: 'beacon:round-validated',
+    file: 'src/beacon/beacon.ts',
+    find: '  if (!Number.isSafeInteger(round) || round < 0 || round > MAX_ROUND) {\n    throw new Error(`refused: round must be an integer in [0, ${MAX_ROUND}]`)\n  }\n',
+    replace:
+      '  if (false) {\n    throw new Error(`refused: round must be an integer in [0, ${MAX_ROUND}]`)\n  }\n',
     tests: PROTOCOL,
   },
   {

@@ -1,4 +1,4 @@
-const DB_NAME = 'aol'
+const DB_NAME = 'irc'
 const STORE = 'kv'
 
 const asPromise = <T>(request: IDBRequest<T>): Promise<T> =>

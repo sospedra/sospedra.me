@@ -264,6 +264,59 @@ service, not a chain. Deployable instances of all three exist today.}
 \label{fig:arch}
 \end{figure}
 
+Figure~\ref{fig:lifecycle} follows the identity itself, from the passport to a
+possible disclosure, and marks where each of the three properties holds. The
+identity exists as plaintext in one place only, the user's device. Everywhere
+else it is ciphertext or a public reference.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[font=\scriptsize, >=Latex]
+
+% actors
+\node[box, fill=black!5, text width=2.0cm, align=center] (user) at (0,0)
+  {\textbf{User}\\passport};
+\node[draw, dashed, rounded corners=3pt, fill=black!3, text width=2.1cm,
+      align=center, minimum height=1.4cm] (client) at (3.0,0)
+  {\textbf{Client}\\native app};
+\node[box, text width=2.1cm, align=center] (server) at (6.3,0)
+  {\textbf{Platform}\\ciphertext only};
+\node[box, text width=2.1cm, align=center] (network) at (9.7,0.9)
+  {\textbf{Escrow net}\\key in shares};
+\node[box, text width=2.1cm, align=center] (court) at (6.3,-2.1)
+  {\textbf{Authority}\\court};
+\node[box, text width=2.1cm, align=center] (public) at (9.7,-1.0)
+  {\textbf{Public}\\chain, beacon};
+
+\node[font=\tiny\itshape, text=red!70!black] at (3.0,1.05)
+  {plaintext lives here and nowhere else};
+
+\draw[->] (user) -- node[mlab] {1. chip} (client);
+\draw[->] (client) -- node[mlab, text width=1.7cm] {2. ciphertext} (server);
+\draw[->] (court) -- node[mlab, text width=1.6cm, pos=0.55] {3. order} (server);
+\draw[->] (server) -- node[mlab, text width=1.4cm] {4. request} (public.west);
+\draw[->] (public.north) -- node[mlabb] {5. watch} (network.south);
+\draw[->] (network) .. controls (8.6,0.2) and (8.0,0.2) ..
+  node[mlab, pos=0.6, text width=1.7cm] {6. sealed key} (server.north east);
+\draw[->] (network.east) .. controls (11.4,-0.4) and (11.4,-1.0) ..
+  node[mlabb, text width=1.5cm] {7. disclose} (public.east);
+
+\node[font=\tiny\bfseries, text=black!60, anchor=west, align=left] at (-1.0,-3.0)
+  {P1 sealed: plaintext never leaves the client. The platform stores ciphertext.};
+\node[font=\tiny\bfseries, text=black!60, anchor=west, align=left] at (-1.0,-3.4)
+  {P2 public: step 4 is the only path to a key, step 7 names the target on schedule.};
+\node[font=\tiny\bfseries, text=black!60, anchor=west, align=left] at (-1.0,-3.8)
+  {P3 checkable: steps 4 and 7 are public, and a reader recomputes the reference.};
+
+\end{tikzpicture}
+\caption{The lifecycle of one identity, and where the three properties hold.
+The user's device is the only holder of plaintext. The platform holds
+ciphertext. A key exists only after the platform posts a public request, step
+4, and the escrow network, not the platform, publishes the disclosure at step
+7. The authority is a third party that issues an order and holds no key.}
+\label{fig:lifecycle}
+\end{figure}
+
 \subsection{Enrollment}
 
 Enrollment runs entirely in a native application, because passport chips require
@@ -651,14 +704,14 @@ figures they are host specific.
 \toprule
 Operation, $n{=}130$, $k{=}27$, $o{=}26$ & Cost \\
 \midrule
-Prove, on the user's device            & 1754 ms \\
-Verify, on the platform                & 2335 ms \\
-Recover, given the derived key         & 2309 ms \\
+Prove, on the user's device            & $\approx$ 1800 ms \\
+Verify, on the platform                & $\approx$ 2400 ms \\
+Recover, given the derived key         & $\approx$ 2400 ms \\
 Decryptions used during recovery       & 27 of at most 105 \\
 Enrollment record size                 & $\approx$ 30{,}500 bytes \\
 \midrule
-Seal on device, whole enrollment       & 1716 ms \\
-Platform accept, both proofs           & 2330 ms \\
+Seal on device, whole enrollment       & $\approx$ 1700 ms \\
+Platform accept, both proofs           & $\approx$ 2400 ms \\
 \bottomrule
 \end{tabular}
 \caption{Measured on an Apple M5 Pro, Node v24.18.0. Recovery needed 27
@@ -731,6 +784,93 @@ shares and about 2.5 more decryptions at recovery.}
 \label{fig:soundness}
 \end{figure}
 
+\subsection{The evidence standard}
+\label{sec:evidence}
+
+The reference implementation carries 49 tests and a mutation gate over 22
+guards. The gate breaks each guard in turn, reruns the tests, and fails if the
+suite stays green. At submission every test passes and no mutation survives. A
+passing suite shows the checks accept honest input. A surviving mutation would
+show a check that no test defends, and there are none.
+
+Table~\ref{tab:claims} maps each property this paper asserts to the artifact
+that establishes it. Four kinds appear. A \emph{formula} is computed and
+reproduces on every host. A \emph{test} is a runnable assertion. A
+\emph{mutation} names a guard whose deletion reddens a named test. A
+\emph{gap} is a property the implementation does not establish, carried in
+Section~\ref{sec:limits} and never dressed as proven.
+
+\begin{table}[h]
+\centering
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{p{5.0cm}p{1.6cm}p{5.0cm}}
+\toprule
+Property & Evidence & Artifact \\
+\midrule
+Soundness $\lambda = 41.51$ bits at $n{=}130$ & formula &
+  Eq.~\ref{eq:soundness}, reproduced exactly \\
+Corruption floor $b = n-o-k+1$ & formula, test &
+  Eq.~\ref{eq:bmin}, ``Equation 2'' \\
+Low corruption passes and gains nothing & formula, test &
+  Fig.~\ref{fig:cheating}, ``Figure 5'' \\
+Opened share lies on the polynomial & mutation &
+  \texttt{escrow:feldman-check} \\
+Published bytes recompute from coins & mutation &
+  \texttt{escrow:ciphertext-\allowbreak recomputation} \\
+Recovery validates each candidate, fails closed & mutation &
+  \texttt{escrow:recovery-\allowbreak validates-\allowbreak candidates} \\
+Openings leak nothing, $o < k$ enforced & mutation &
+  \texttt{escrow:openings-below-threshold} \\
+Escrow proof binds to the credential commitment & mutation &
+  \texttt{escrow:c0-equals-hs} \\
+Sealed identity opens only from the secret, not its
+public commitment & mutation &
+  \texttt{relation:seal-key-from-secret} \\
+Sealed bytes are the state-signed identity & mutation &
+  \texttt{relation:seal-binding} \\
+Only a trusted country signature is accepted & mutation &
+  \texttt{relation:country-signature} \\
+Chip response is bound to one account & mutation &
+  \texttt{relation:chip-presence} \\
+Hash preimages are length-framed & mutation &
+  \texttt{relation:challenge-framed} \\
+One document enrolls once & mutation &
+  \texttt{protocol:nullifier-uniqueness} \\
+Credential proof is account-bound & mutation &
+  \texttt{protocol:credential-\allowbreak account-binding} \\
+No key without a confirmed on-chain request & mutation, test &
+  \texttt{protocol:request-must-be-confirmed} \\
+Keys derivable equal requests, one to one & test &
+  ``claim 2: one to one'' \\
+Reason is bound to its on-chain hash & mutation &
+  \texttt{protocol:reason-matches-commitment} \\
+Disclosure schedule is network policy & mutation &
+  \texttt{protocol:policy-owns-\allowbreak disclosure-round} \\
+A key opens exactly one account & test &
+  ``Proposition 3'' \\
+Platform stores no plaintext & test &
+  ``stores no plaintext'', ``no wrong key recovers'' \\
+Reference recomputes from public data & test &
+  ``claim 3: recomputes from public data'' \\
+Beacon refuses an out-of-range round & mutation &
+  \texttt{beacon:round-validated} \\
+\midrule
+Zero-knowledge of the credential proof & gap &
+  circuit absent, Sec.~\ref{sec:limits} \\
+Non-collusion of the escrow network & gap &
+  single process, Sec.~\ref{sec:limits} \\
+Client runs the published code & gap &
+  detectable not preventable, Sec.~\ref{sec:limits} \\
+Physical chip present, not a dump & gap &
+  passive authentication, Sec.~\ref{sec:limits} \\
+\bottomrule
+\end{tabular}
+\caption{Every asserted property against the artifact that establishes it. The
+four gaps are stated, never proven, and none is dressed as a result.}
+\label{tab:claims}
+\end{table}
+
 \subsection{Confidentiality before release}
 
 \begin{proposition}[The openings leak nothing]
@@ -797,7 +937,7 @@ a released key, and Table~\ref{tab:trust} states what secures each step.
   {BDH bilinear Diffie-Hellman \quad ECON economic finality \quad
    THR threshold non-collusion};
 \end{tikzpicture}
-\caption{The chain of custody. Each arrow carries the kind of assumption that
+\caption{The chain of custody. Each arrow carries the class of assumption that
 protects it. Only three of the seven are cryptographic in the strict sense, and
 the construction is only as strong as the weakest.}
 \label{fig:trustchain}
@@ -1059,7 +1199,7 @@ exposure.
 
 \paragraph{What the reference does not prove.} A string is checkable only against
 a registry the reader can query, and investigation records are frequently sealed.
-Two things partly compensate. The affected user acquires standing once their
+Two facts partly compensate. The affected user acquires standing once their
 account is suspended and can ask about their own case, which is the check by the
 party most motivated to make it. And where an authority publishes aggregate
 counts of orders issued, a platform's published total exceeding that figure is
@@ -1079,7 +1219,7 @@ first question a deployment should ask.
 
 The implementation covers enrollment, the escrow proof, key derivation,
 recovery, the unseal request and the timelocked disclosure. It does not cover
-three things. The credential circuit is evaluated in the clear, so no
+three parts. The credential circuit is evaluated in the clear, so no
 zero-knowledge property holds and the binding of Equations~\ref{eq:r1}
 to~\ref{eq:r6} is what the tests exercise. The settlement layer runs against a
 mock that refuses to write to a real chain, because a deployment has to name a
@@ -1104,8 +1244,23 @@ Equations~\ref{eq:r1} through~\ref{eq:r6} together requires verifying a national
 signature scheme and an authenticated encryption inside a circuit, which is
 feasible and not cheap.
 
-The client remains in the trusted base. Reproducible builds, transparency and
-audit make tampering detectable, never impossible.
+The client remains in the trusted base, because the application reads the
+plaintext to seal it. Three measures make tampering detectable rather than
+impossible. The app is open source. Android builds are reproducible, so anyone
+can rebuild and compare the store binary byte for byte. Every release hash goes
+to an append-only log, and the app refuses to run unless its own hash is in it,
+so a build targeted at one user has to be published to work. Store attestation
+proves the app to the platform's server, which stops a repackaged client from
+enrolling. The iOS guarantee is weaker, because the store re-signs binaries and
+byte comparison is impossible there, and a deployment must state that openly.
+
+Passive chip authentication proves a country signed the data, never that the
+physical chip is present. A passport data dump, from a breach or a hotel scan,
+enrolls an account bound to that identity. The consequence is scoped: it
+impersonates one person, so an unsealing names the wrong subject. It does not
+break another user's seal and does not let the platform read anyone. Active or
+Chip Authentication defeats the dump because a dump holds no private key. A
+relay of a live chip defeats even that, and only a liveness check answers it.
 
 Finally, CLAVE detects rather than prevents. A monitor that proves a platform
 lied has produced a document. Whether that document carries a consequence is a
@@ -1135,12 +1290,6 @@ something anyone can observe.
 
 The cryptography is the straightforward part. Deciding what not to hold is the
 rest of it.
-
-\section*{Acknowledgments}
-
-This design was refined against adversarial review that repeatedly contradicted
-its author. Several decisions in Section 6 exist because an earlier draft was
-wrong in a way that would have been expensive to discover later.
 
 \section*{Author contributions}
 

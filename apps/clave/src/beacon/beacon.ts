@@ -28,6 +28,17 @@ export type Beacon = {
   tryOpen(capsule: Capsule): Uint8Array | null
 }
 
+// A round is a whole number below 2^32, matching the u32be encoding the value
+// is derived under. A fractional or out-of-range round is a caller bug, not a
+// point in time, and it must be refused rather than silently mis-encoded.
+const MAX_ROUND = 0xffffffff
+
+function assertRound(round: number): void {
+  if (!Number.isSafeInteger(round) || round < 0 || round > MAX_ROUND) {
+    throw new Error(`refused: round must be an integer in [0, ${MAX_ROUND}]`)
+  }
+}
+
 export class MockBeacon implements Beacon {
   readonly kind = 'mock' as const
   private round = 0
@@ -43,6 +54,7 @@ export class MockBeacon implements Beacon {
 
   /** Advance to a future round, as time would. */
   advanceTo(round: number): void {
+    assertRound(round)
     if (round > this.round) this.round = round
   }
 
@@ -55,6 +67,7 @@ export class MockBeacon implements Beacon {
   }
 
   sealUntil(round: number, payload: Uint8Array): Capsule {
+    assertRound(round)
     const key = kdf(
       this.roundValue(round),
       utf8('CLAVE/timelock/v1'),
@@ -65,6 +78,8 @@ export class MockBeacon implements Beacon {
   }
 
   tryOpen(capsule: Capsule): Uint8Array | null {
+    if (!Number.isSafeInteger(capsule.round) || capsule.round < 0) return null
+    if (capsule.round > MAX_ROUND) return null
     if (this.round < capsule.round) return null
     const key = kdf(
       this.roundValue(capsule.round),

@@ -115,7 +115,7 @@ export class Room {
       setInterval(() => this.gossipView(), VIEW_GOSSIP_MS),
       setInterval(() => this.sweep(), SWEEP_MS),
     ]
-    this.log(`joined as ${short(this.selfHex)} (${this.config.identity.tier})`)
+    this.log(`joined as ${short(this.selfHex)}`)
   }
 
   leave(): void {

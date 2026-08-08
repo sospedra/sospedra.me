@@ -1,4 +1,4 @@
-export const APP_ID = 'aol/v0'
+export const APP_ID = 'irc/v0'
 
 export const ROOM_CAP = 1024
 export const ACTIVE_VIEW = 8

@@ -38,7 +38,7 @@ export class NostrPool {
   }
 
   subscribe(topic: string, onEvent: (event: NostrEvent) => void): void {
-    this.subscription = { id: `aol-${toHex(randomBytes(4))}`, topic, onEvent }
+    this.subscription = { id: `irc-${toHex(randomBytes(4))}`, topic, onEvent }
     for (const socket of this.openSockets()) this.sendReq(socket)
   }
 

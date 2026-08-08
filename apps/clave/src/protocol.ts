@@ -11,14 +11,15 @@ import { x25519 } from '@noble/curves/ed25519.js'
 import type { Beacon, Capsule } from './beacon/beacon.ts'
 import type { Chain, TxRef } from './chain/chain.ts'
 import { open, type Sealed, seal } from './core/aead.ts'
-import { bytesEqual, concatBytes, fromHex, toHex, utf8 } from './core/bytes.ts'
-import { kdf, sha256 } from './core/hash.ts'
+import { concatBytes, fromHex, toHex, utf8 } from './core/bytes.ts'
+import { dhash, kdf, sha256 } from './core/hash.ts'
 import { type AccountKey, derive, type MasterKey } from './core/ibe.ts'
 import { TransparencyLog } from './core/merkle.ts'
 import {
-  prove as proveRelation,
-  type Statement,
-  verify as verifyRelation,
+  type CredentialBackend,
+  type CredentialProof,
+  clearModeBackend,
+  unsealIdentity,
   type Witness,
 } from './enrollment/relation.ts'
 import {
@@ -32,7 +33,7 @@ import {
 
 export type EnrollmentRecord = {
   readonly accountId: string
-  readonly statement: Statement
+  readonly credential: CredentialProof
   readonly escrow: EscrowProof
 }
 
@@ -64,12 +65,15 @@ export type EnrollInput = {
 }
 
 // Runs on the user's device. The only thing that crosses the boundary is the
-// return value, and it carries no plaintext.
+// return value, and it carries no plaintext. The backend decides whether the
+// credential proof hides the witness. Clear mode does not, a zero-knowledge
+// backend would, and this function does not change between them.
 export function sealOnDevice(
   mpk: Uint8Array,
   input: EnrollInput,
+  backend: CredentialBackend = clearModeBackend,
 ): EnrollmentRecord {
-  const statement = proveRelation(
+  const credential = backend.prove(
     input.witness,
     input.accountId,
     input.serverNonce,
@@ -80,49 +84,46 @@ export function sealOnDevice(
     input.witness.secret,
     input.profile ?? REFERENCE_PROFILE,
   )
-  return { accountId: input.accountId, statement, escrow }
+  return { accountId: input.accountId, credential, escrow }
 }
 
 export type AcceptResult =
   | { readonly ok: true; readonly leafIndex: number }
   | { readonly ok: false; readonly reason: string }
 
-// Runs on the platform. Verifies both proofs and the join between them, then
-// records the enrollment. The witness argument exists only because the circuit
-// is in clear mode; a real deployment verifies a proof instead and never sees
-// it. See CIRCUIT_STATUS.
+// Runs on the platform. It never receives the witness. It verifies a credential
+// proof through the backend and touches only public inputs. In clear mode the
+// backend reads the witness inside itself; the platform code here does not, so
+// swapping in a zero-knowledge backend changes nothing above this line.
 export function acceptEnrollment(
   platform: PlatformState,
   mpk: Uint8Array,
   record: EnrollmentRecord,
-  witness: Witness,
+  backend: CredentialBackend = clearModeBackend,
 ): AcceptResult {
+  const publicInputs = record.credential.statement.publicInputs
+
   // The account the credential proof was built for must be the account being
   // enrolled. Without this a proof for one account is reusable under another,
   // and the chip challenge binding travels to the wrong place.
-  if (record.statement.publicInputs.accountId !== record.accountId) {
+  if (publicInputs.accountId !== record.accountId) {
     return { ok: false, reason: 'credential proof is for another account' }
   }
 
-  const relationFault = verifyRelation(
-    record.statement,
-    witness,
+  const relationFault = backend.verify(
+    record.credential,
     platform.trustedCountryKeys,
   )
   if (relationFault) return { ok: false, reason: relationFault }
 
-  const escrowFault = verifyEscrow(
-    mpk,
-    record.escrow,
-    record.statement.publicInputs.hS,
-  )
+  const escrowFault = verifyEscrow(mpk, record.escrow, publicInputs.hS)
   if (escrowFault) return { ok: false, reason: escrowFault }
 
   if (record.escrow.accountId !== record.accountId) {
     return { ok: false, reason: 'escrow proof is for another account' }
   }
 
-  const nullifier = toHex(record.statement.publicInputs.nullifier)
+  const nullifier = toHex(publicInputs.nullifier)
   if (platform.nullifiers.has(nullifier)) {
     return { ok: false, reason: 'this document has already enrolled' }
   }
@@ -134,7 +135,7 @@ export function acceptEnrollment(
       concatBytes(
         utf8('CLAVE/enrollment/v1'),
         utf8(record.accountId),
-        record.statement.publicInputs.hS,
+        publicInputs.hS,
       ),
     ),
   )
@@ -161,7 +162,7 @@ export type UnsealInput = {
 const EPHEMERAL = new Uint8Array(32).fill(7)
 
 function commitmentFor(accountId: string): string {
-  return toHex(sha256(concatBytes(utf8('CLAVE/request/v1'), utf8(accountId))))
+  return toHex(dhash('CLAVE/request/v1', utf8(accountId)))
 }
 
 // The platform posts a request. It cannot derive anything itself.
@@ -269,15 +270,18 @@ export function openDeliveredKey(
   return sk === null ? null : { id: accountId, sk }
 }
 
+// The full recovery path: the escrow key reconstructs the secret scalar, and
+// the scalar unseals the identity. Returns null if recovery fails or the seal
+// does not open, so a wrong key yields nothing rather than throwing.
 export function openSealedIdentity(
   record: EnrollmentRecord,
   key: AccountKey,
 ): Uint8Array | null {
   const result = recover(key, record.escrow)
   if (!result.ok) return null
-  // The recovered scalar is what the sealing key derives from. A caller with
-  // the record can now open it; this returns the scalar's commitment so a test
-  // can check the round trip without this module importing the sealing code.
-  const check = record.statement.publicInputs.hS
-  return bytesEqual(check, record.escrow.hS) ? check : null
+  return unsealIdentity(
+    result.secret,
+    record.accountId,
+    record.credential.statement.publicInputs.sealedIdentity,
+  )
 }

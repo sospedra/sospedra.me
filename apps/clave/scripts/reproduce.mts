@@ -144,9 +144,7 @@ const sealed = ms(() =>
     profile: REF,
   }),
 )
-const accepted = ms(() =>
-  acceptEnrollment(platform, master.mpk, sealed.value, witness),
-)
+const accepted = ms(() => acceptEnrollment(platform, master.mpk, sealed.value))
 if (!accepted.value.ok)
   throw new Error(`enrollment refused: ${accepted.value.reason}`)
 

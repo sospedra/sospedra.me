@@ -17,7 +17,7 @@ import {
   u32be,
   utf8,
 } from '../core/bytes.ts'
-import { sha256 } from '../core/hash.ts'
+import { dhash, sha256 } from '../core/hash.ts'
 import {
   type AccountKey,
   type Ciphertext,
@@ -105,8 +105,10 @@ function selectIndices(
   ciphertexts: readonly Ciphertext[],
   p: Profile,
 ): number[] {
-  const statement = concatBytes(
-    utf8('CLAVE/escrow-challenge/v1'),
+  // Framed: every field length-prefixed, so a variable-length accountId cannot
+  // shift the boundary with the fixed-length points beside it.
+  const base = dhash(
+    'CLAVE/escrow-challenge/v1',
     utf8(accountId),
     hS,
     ...commitments.a,
@@ -118,7 +120,7 @@ function selectIndices(
   const chosen: number[] = []
   const seen = new Set<number>()
   for (let counter = 0; chosen.length < p.o; counter++) {
-    const digest = sha256(concatBytes(statement, u32be(counter)))
+    const digest = sha256(concatBytes(base, u32be(counter)))
     const index = Number(bytesToBigInt(digest.subarray(0, 8)) % BigInt(p.n)) + 1
     if (seen.has(index)) continue
     seen.add(index)

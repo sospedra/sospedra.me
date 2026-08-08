@@ -1,12 +1,9 @@
+import '98.css'
 import './style.css'
 import { randomBytes, toHex } from './mesh/bytes.ts'
 import { DEFAULT_RELAYS } from './mesh/constants.ts'
 import type { Identity } from './mesh/keys.ts'
-import {
-  hasPasskeyCredential,
-  loadStoredIdentity,
-  passkeyIdentity,
-} from './platform/identity-store.ts'
+import { loadStoredIdentity } from './platform/identity-store.ts'
 import { Room, type RoomEvent } from './platform/room.ts'
 import { awaitTabOwnership, claimTabOwnership } from './platform/tab-owner.ts'
 import { mountStandby, mountUi, type UiHandles } from './ui.ts'
@@ -50,24 +47,21 @@ const boot = async (): Promise<void> => {
   if (!(root instanceof HTMLElement)) return
   const { roomId, topicSecret } = roomFromHash()
 
-  const owner = await claimTabOwnership(`aol:${roomId}`)
+  const owner = await claimTabOwnership(`irc:${roomId}`)
   if (!owner) {
     mountStandby(root)
-    await awaitTabOwnership(`aol:${roomId}`)
+    await awaitTabOwnership(`irc:${roomId}`)
     location.reload()
     return
   }
 
   const ui = mountUi(root)
   ui.setRoom(roomId)
-  ui.setPasskeyLabel(
-    (await hasPasskeyCredential()) ? 'unlock passkey' : 'create passkey',
-  )
 
   let room: Room | null = null
   const startRoom = (identity: Identity): void => {
     room?.leave()
-    ui.setIdentity(identity.peerIdHex, identity.tier)
+    ui.setIdentity(identity.peerIdHex)
     room = new Room({
       identity,
       roomId,
@@ -89,15 +83,6 @@ const boot = async (): Promise<void> => {
     void navigator.clipboard
       .writeText(location.href)
       .then(() => ui.log('invite link copied'))
-  })
-  ui.onPasskey(() => {
-    void passkeyIdentity()
-      .then((identity) => {
-        ui.setPasskeyLabel('unlock passkey')
-        ui.log('passkey identity active, rejoining')
-        startRoom(identity)
-      })
-      .catch((error: unknown) => ui.log(`passkey failed: ${String(error)}`))
   })
 
   window.addEventListener('pagehide', () => room?.leave())

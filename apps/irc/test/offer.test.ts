@@ -10,7 +10,7 @@ import {
 
 const NOW_SEC = 1_800_000_000
 
-const makeIdentity = () => identityFromSeed(randomBytes(32), 'PRF')
+const makeIdentity = () => identityFromSeed(randomBytes(32))
 
 const makeEnvelope = (identity = makeIdentity()) =>
   buildOfferEnvelope({

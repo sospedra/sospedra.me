@@ -25,6 +25,12 @@ export function fromHex(hex: string): Uint8Array | null {
   return out
 }
 
+// Length-frame each part so a concatenation of variable-length fields has an
+// unambiguous parse. Without this, ('ab','c') and ('a','bc') collide.
+export function frame(...parts: Uint8Array[]): Uint8Array {
+  return concatBytes(...parts.flatMap((p) => [u32be(p.length), p]))
+}
+
 export function toHex(b: Uint8Array): string {
   return Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('')
 }

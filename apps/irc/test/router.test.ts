@@ -6,9 +6,9 @@ import { buildFrame, encodeFrame, WILDCARD } from '../src/mesh/frame.ts'
 import { type Identity, identityFromSeed } from '../src/mesh/keys.ts'
 import { type DropRecord, Router } from '../src/mesh/router.ts'
 
-const alice = identityFromSeed(randomBytes(32), 'PRF')
-const bob = identityFromSeed(randomBytes(32), 'PRF')
-const carol = identityFromSeed(randomBytes(32), 'PRF')
+const alice = identityFromSeed(randomBytes(32))
+const bob = identityFromSeed(randomBytes(32))
+const carol = identityFromSeed(randomBytes(32))
 
 const LINK = 'link-peer'
 

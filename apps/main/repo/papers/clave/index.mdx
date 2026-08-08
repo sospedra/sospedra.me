@@ -16,7 +16,7 @@ Cryptography constrains what you can compute. It has nothing to say about whethe
 
 <Pull>A platform that holds your identity cannot prove it did not read it.</Pull>
 
-Forcing publication needs the decryption key to depend on something the platform cannot produce alone, and that only comes into being when the record goes public. Exactly three things qualify. A committee holding shares. Secure hardware whose maker vouches for it. Witness encryption, which would be perfect and does not exist.
+Forcing publication needs the decryption key to depend on something the platform cannot produce alone. That something must come into being only when the record goes public. Exactly three things qualify. A committee holding shares. Secure hardware whose maker vouches for it. Witness encryption, which would be perfect and does not exist.
 
 ## CLAVE
 
@@ -55,14 +55,26 @@ pass[b=78]                   3.185e-13
 That second pair of numbers is the part worth understanding. A cheat who corrupts one ciphertext gets away with it 80% of the time and **achieves nothing**, because 129 good ones remain. To actually break recovery you need 78 of them, and then your odds are three in ten trillion.
 
 <Aside label='Measured, not estimated'>
-- prove on device: 1754 ms
-- verify on the platform: 2335 ms
-- recover: 2309 ms, using 27 decryptions of a possible 105
+- prove on device: about 1.8 seconds on an M5 Pro
+- verify on the platform: about 2.4 seconds
+- recover: about 2.4 seconds, using 27 decryptions of a possible 105
 - enrollment record: about 30 KB
 - cost per registration: between €0.000016 and €0.00082
 </Aside>
 
 That last line is the commercial argument. Commercial identity checks run €0.50 to €3.00. This is four to five orders of magnitude cheaper, because the expensive part happens on a chip already in your pocket.
+
+## Every promise has a test that fails without it
+
+The repository holds 49 tests and a mutation gate. The gate deletes each check, one at a time, and reruns the suite. A green suite means the checks accept honest input. A surviving deletion would mean a check that no test defends. None survive, so every guard below is one a test would miss if it vanished.
+
+Three promises, three ways to watch them hold.
+
+1. **Sealed.** Two accounts of one person seal to different bytes, so storage never reveals a shared identity. Every wrong account key fails to recover the secret, and only the right one works.
+2. **No quiet opening.** Post three unseal requests across five accounts, and exactly three keys derive, never a fourth. A key is refused one confirmation short of the required depth and served at it.
+3. **Checkable reference.** An outsider recomputes the on-chain commitment from the account and the paper reason alone, and it matches the record. A different account or reason does not.
+
+The count invariant is the one to remember. **The number of keys that can ever exist equals the number of public requests.** That sentence is the whole product, and it is a test.
 
 ## The two checks you can run yourself
 
@@ -78,13 +90,15 @@ The escrow network could collude. Enough of its nodes together can derive keys w
 
 The circuit that proves your passport is real, without revealing it, does not exist yet. The reference implementation evaluates it in the open. That is the honest gap and it is the next thing to build.
 
-The app is still trusted. Reproducible builds, published hashes and network inspection make tampering detectable. Never impossible. Every end-to-end encrypted product in existence has this hole.
+The app is still trusted, because it reads your identity to seal it. The answer is detection, not prevention. The app is open source. Android builds are reproducible, so anyone rebuilds and compares the store binary. Every release hash lands in an append-only log the app checks before it runs. A build aimed at one user has to be published to work. iOS is weaker, because the store re-signs binaries and byte comparison is impossible. I will say so on the download page. Every end-to-end encrypted product has this hole.
+
+Passive passport authentication proves a country signed the data, never that the physical chip is present. A stolen data dump enrolls an account bound to that identity. The damage is scoped: it frames one person, so an unsealing names the wrong subject. It does not break anyone else's seal, and it does not let the platform read a soul. The chip answering a live challenge defeats the dump. A relay of a real chip defeats even that, and only a face check answers it.
 
 And CLAVE detects rather than prevents. A monitor that proves a platform lied has produced a document. Whether that document costs anyone anything is law, not cryptography.
 
 ## Where it stands
 
-A reference implementation runs the protocol end to end: enrollment, the escrow proof, key derivation, recovery, the on-chain request, the timelocked disclosure. 31 tests. The settlement layer runs against a mock that refuses to touch a real chain, so iterating costs nothing.
+A reference implementation runs the protocol end to end: enrollment, the escrow proof, key derivation, recovery, the on-chain request, the timelocked disclosure. 49 tests, and a mutation gate over 22 guards that fails if deleting any one of them leaves the suite green. The settlement layer runs against a mock that refuses to touch a real chain, so iterating costs nothing.
 
 The paper and the code live at [clave.sospedra.me](https://clave.sospedra.me).
 
