@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { useEffect } from 'react'
 import type { NodeGroup, TvEvent } from 'services/types'
-import { NOW_ANCHOR_ID, scrollToNow } from './scroll'
+import { jumpToNow, NOW_ANCHOR_ID } from './scroll'
 
 const WOMEN_KEYWORDS = ['f', 'femenino', 'femenina', 'reina']
 
@@ -87,7 +87,7 @@ export const Group = (props: NodeGroup) => {
   const isNext = props.anchor === 'next'
 
   useEffect(() => {
-    if (isNext) scrollToNow()
+    if (isNext) jumpToNow()
   }, [isNext])
 
   return (
