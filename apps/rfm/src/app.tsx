@@ -1,3 +1,4 @@
+import { useReducedMotion } from '@react-spring/web'
 import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
 import { About } from './about/about.tsx'
@@ -8,6 +9,7 @@ import { Submit } from './submit/submit.tsx'
 
 export const App = () => {
   const location = useLocation()
+  useReducedMotion()
 
   useEffect(() => {
     track('pview', { route: location.pathname })
