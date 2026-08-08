@@ -135,8 +135,8 @@ export const Issue = (props: {
 
         {createPortal(
           <div
-            className={`sticky bottom-0 left-0 right-0 flex justify-center w-full p-2 bg-white ${
-              didSubmit ? 'hidden' : ''
+            className={`sticky bottom-0 left-0 right-0 flex justify-center w-full p-2 bg-white transition-transform duration-200 ease-out starting:translate-y-full motion-reduce:transition-none ${
+              didSubmit ? 'translate-y-full' : ''
             }`}
           >
             <Button disabled={!isValidUrl} form='js-submit-issue'>
