@@ -30,7 +30,7 @@ export const Search = (props: { setQuery: (query: string) => void }) => {
             placeholder='Type a name, language, tag, etc.'
           />
           <input
-            className='px-4 py-2 ml-4 text-white bg-pink-600 rounded shadow-lg cursor-pointer hover:bg-pink-700'
+            className='px-4 py-2 ml-4 text-white transition-[background-color,scale] duration-150 ease-out bg-pink-600 rounded shadow-lg cursor-pointer hover:bg-pink-700 active:scale-[0.97]'
             type='submit'
             value='Search'
           />

@@ -15,7 +15,7 @@ export const Confirm = () => {
 
         <Link
           to='/'
-          className='px-4 py-2 mt-10 text-white bg-pink-600 rounded shadow-lg hover:bg-pink-700'
+          className='px-4 py-2 mt-10 text-white transition-[background-color,scale] duration-150 ease-out bg-pink-600 rounded shadow-lg hover:bg-pink-700 active:scale-[0.97]'
         >
           Take me back to the home
         </Link>

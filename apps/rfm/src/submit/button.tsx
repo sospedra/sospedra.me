@@ -8,7 +8,7 @@ export const Button = (props: {
 }) => {
   return props.href ? (
     <a
-      className='w-64 px-4 py-2 text-white bg-pink-600 rounded shadow-lg hover:bg-pink-700'
+      className='inline-block w-64 px-4 py-2 text-white transition-[background-color,scale] duration-150 ease-out bg-pink-600 rounded shadow-lg hover:bg-pink-700 active:scale-[0.97]'
       href={props.href}
       id='submit'
       onClick={props.onClick}
@@ -17,10 +17,10 @@ export const Button = (props: {
     </a>
   ) : (
     <div
-      className={`gradient shadow-lg ${
+      className={`gradient shadow-lg transition-[background-color,scale] duration-150 ease-out ${
         props.disabled
           ? 'bg-gray-500 cursor-not-allowed'
-          : 'bg-pink-600 cursor-pointer hover:bg-pink-700'
+          : 'bg-pink-600 cursor-pointer hover:bg-pink-700 active:scale-[0.97]'
       } ${props.loading ? 'bg-pink-700 cursor-wait loading' : ''}`}
     >
       <input
@@ -29,7 +29,7 @@ export const Button = (props: {
         type='submit'
         form={props.form}
         value={props.children}
-        className={`w-64 px-4 py-2 text-white ${
+        className={`w-64 px-4 py-2 text-white transition-[background-color] duration-150 ease-out ${
           props.disabled
             ? 'cursor-not-allowed bg-gray-500'
             : 'cursor-pointer bg-pink-600 hover:bg-pink-700'
