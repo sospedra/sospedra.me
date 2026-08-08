@@ -77,6 +77,18 @@ export const DISCS: Disc[] = [
     look: 'label',
   },
   {
+    id: 'cavnter',
+    title: 'cavnter',
+    oneLiner: 'Daily tally counter with a hard max.',
+    note: 'every tap counts',
+    url: 'https://cavnter.sospedra.me',
+    pressed: 2021,
+    stack: 'Expo, React Native',
+    status: 'pressed',
+    hue: 115,
+    look: 'rw',
+  },
+  {
     id: 'bonfire',
     title: 'bonfire',
     oneLiner: 'A quiet fire to sit around.',

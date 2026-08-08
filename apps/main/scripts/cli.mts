@@ -68,6 +68,22 @@ const sequence = ({ hint, steps, done }: SequenceOptions): Command => ({
 })
 
 const COMMANDS = {
+  'bazaar:diet': {
+    hint: 'Resize and quantize the bazaar art tree',
+    run: async () => {
+      const steps = [
+        ['python3', ['scripts/bazaar/diet.py']],
+        ['oxipng', ['-r', '-o', '4', '--strip', 'safe', 'public/images/bazaar']],
+      ] as const
+      for (const [command, args] of steps) {
+        const { status } = spawnSync(command, args, { stdio: 'inherit' })
+        if (status !== 0) {
+          throw Error(`${command} exited with ${status ?? 'a signal'}`)
+        }
+      }
+      return 'Bazaar art dieted'
+    },
+  },
   'boombox:songs': script({
     hint: 'Maintain the boombox song set',
     head: ['scripts/boombox/songs.ts'],

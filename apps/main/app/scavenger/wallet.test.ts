@@ -18,7 +18,7 @@ import {
 } from './wallet.ts'
 
 test('discs carry unique ids and hues', () => {
-  assert.equal(DISCS.length, 12)
+  assert.equal(DISCS.length, 13)
   assert.equal(new Set(DISCS.map((disc) => disc.id)).size, DISCS.length)
   assert.equal(new Set(DISCS.map((disc) => disc.hue)).size, DISCS.length)
   for (const disc of DISCS) {
@@ -40,7 +40,7 @@ test('every look appears on at least two discs', () => {
 })
 
 test('wallet geometry derives from the disc count', () => {
-  assert.equal(PAGE_COUNT, 6)
+  assert.equal(PAGE_COUNT, 7)
   assert.equal(MAX_SPREAD, 6)
   assert.equal(SPREAD_COUNT, 7)
   assert.equal(BOOT_SPREAD, 0)
@@ -59,7 +59,7 @@ test('every disc shows on exactly one spread', () => {
   )
   assert.deepEqual(spreadDiscs(0), [0])
   assert.deepEqual(spreadDiscs(1), [1, 2])
-  assert.deepEqual(spreadDiscs(MAX_SPREAD), [11])
+  assert.deepEqual(spreadDiscs(MAX_SPREAD), [11, 12])
 })
 
 test('clampSpread bounds the range', () => {
