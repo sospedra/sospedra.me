@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import Link, { LinkBack } from 'services/link'
+import { GoBack, LinkBack } from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
 import css from './camera.module.css'
@@ -268,9 +268,9 @@ export default function CameraView() {
   return (
     <Shell className={css.frame} shellClassName={css.shell}>
       <header className={css.rail}>
-        <Link url='/' className={css.homeLink}>
-          <LinkBack>Home</LinkBack>
-        </Link>
+        <GoBack className={css.homeLink}>
+          <LinkBack>Back</LinkBack>
+        </GoBack>
         <p className={css.telemetry}>
           <span>CAM-01</span>
           <span aria-hidden='true'>/</span>

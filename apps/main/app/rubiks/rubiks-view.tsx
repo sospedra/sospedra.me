@@ -4,7 +4,7 @@ import { partition } from 'es-toolkit'
 import type React from 'react'
 import { useReducer } from 'react'
 import { useGameInput } from 'services/hotkeys'
-import Link, { LinkBack } from 'services/link'
+import { GoBack, LinkBack } from 'services/link'
 import Row from 'services/row'
 import Shell from 'services/shell'
 import {
@@ -102,9 +102,9 @@ export default function RubiksView() {
       <div className={css.navRow}>
         <Row
           right={
-            <Link url='/'>
-              <LinkBack>Home</LinkBack>
-            </Link>
+            <GoBack>
+              <LinkBack>Back</LinkBack>
+            </GoBack>
           }
         />
       </div>

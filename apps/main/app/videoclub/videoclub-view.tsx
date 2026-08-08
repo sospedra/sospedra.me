@@ -4,7 +4,7 @@ import cn from 'clsx'
 import { clamp } from 'es-toolkit'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { sceneTrap, type Trap, useHotkeys } from 'services/hotkeys'
-import Link, { LinkBack } from 'services/link'
+import { GoBack, LinkBack } from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
 import { CrtScreen, formatChannel, volumeBars } from './crt-screen'
@@ -211,9 +211,9 @@ export default function VideoclubView() {
   return (
     <Shell className={css.frame}>
       <nav className={css.rail} aria-label='Videoclub navigation'>
-        <Link url='/' className={css.backLink}>
-          <LinkBack>Home</LinkBack>
-        </Link>
+        <GoBack className={css.backLink}>
+          <LinkBack>Back</LinkBack>
+        </GoBack>
         <h1>Broadcast archive</h1>
         <p>SECTOR 06 / TAPE DECK / {lit ? 'ON AIR' : 'STANDBY'}</p>
       </nav>

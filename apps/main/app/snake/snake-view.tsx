@@ -3,7 +3,7 @@
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { useGameInput } from 'services/hotkeys'
-import Link, { LinkBack } from 'services/link'
+import { GoBack, LinkBack } from 'services/link'
 import Row from 'services/row'
 import Shell from 'services/shell'
 import { match } from 'ts-pattern'
@@ -172,9 +172,9 @@ export default function SnakeView() {
         <Row
           right={
             <div className={css.navControls}>
-              <Link url='/'>
-                <LinkBack>Home</LinkBack>
-              </Link>
+              <GoBack>
+                <LinkBack>Back</LinkBack>
+              </GoBack>
               <button
                 type='button'
                 className={css.soundToggle}

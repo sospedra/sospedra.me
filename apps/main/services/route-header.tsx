@@ -1,12 +1,11 @@
 import cn from 'clsx'
 import type { Route } from 'next'
 import type React from 'react'
-import Link, { LinkBack } from 'services/link'
+import { GoBack, LinkBack } from 'services/link'
 import css from './route-header.module.css'
 
 type Props = {
-  backHref?: Route
-  backLabel?: string
+  backFallback?: Route
   children?: React.ReactNode
   className?: string
   description?: React.ReactNode
@@ -16,8 +15,7 @@ type Props = {
 }
 
 export default function RouteHeader({
-  backHref = '/',
-  backLabel = 'Home',
+  backFallback = '/',
   children,
   className,
   description,
@@ -28,9 +26,9 @@ export default function RouteHeader({
   return (
     <header className={cn(css.header, className)}>
       <div className={css.utilityRow}>
-        <Link url={backHref} className={css.backLink}>
-          <LinkBack>{backLabel}</LinkBack>
-        </Link>
+        <GoBack className={css.backLink} fallback={backFallback}>
+          <LinkBack>Back</LinkBack>
+        </GoBack>
         <p className={css.telemetry}>
           <span>SECTOR {sector}</span>
           <span aria-hidden='true'>/</span>

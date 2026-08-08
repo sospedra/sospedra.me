@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import Link, { LinkBack } from 'services/link'
+import { GoBack, LinkBack } from 'services/link'
 import Shell from 'services/shell'
 import css from './manual.module.css'
 import ManualCommissioning from './manual-commissioning'
@@ -18,9 +18,9 @@ export default function ManualPage() {
   return (
     <Shell className={css.frame}>
       <nav className={css.manualNav} aria-label='Manual controls'>
-        <Link url='/'>
-          <LinkBack>Home</LinkBack>
-        </Link>
+        <GoBack>
+          <LinkBack>Back</LinkBack>
+        </GoBack>
         <p>SECTOR 04.1 / RS-19911201-11 / READ PROTOCOL / [ ] FLIP SHEETS</p>
       </nav>
 

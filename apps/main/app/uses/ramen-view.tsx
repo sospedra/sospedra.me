@@ -1,7 +1,7 @@
 import cn from 'clsx'
 import ArrowNav from 'services/arrow-nav'
 import External, { X_PROFILE_URL } from 'services/external'
-import Link, { LinkBack } from 'services/link'
+import { GoBack, LinkBack } from 'services/link'
 import Shell from 'services/shell'
 import menu from './course-banner.module.css'
 import { DeadDish, DishRow } from './dish-row'
@@ -47,9 +47,9 @@ export default function RamenView(props: { level: number }) {
 
       <div className={cn(css.scene, fx.scene)}>
         <nav className={css.topNav} aria-label='Uses navigation'>
-          <Link url='/' className={cn(css.homePlaque, fx.homePlaque)}>
-            <LinkBack>Home</LinkBack>
-          </Link>
+          <GoBack className={cn(css.homePlaque, fx.homePlaque)}>
+            <LinkBack>Back</LinkBack>
+          </GoBack>
         </nav>
         <p className={css.sector}>SECTOR 07 / NOODLE BAR / OPEN LATE</p>
 

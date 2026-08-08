@@ -5,7 +5,7 @@ import {
   useRef,
 } from 'react'
 import { isKeyboardClick } from 'services/keyboard-click'
-import Link, { LinkBack } from 'services/link'
+import { GoBack, LinkBack } from 'services/link'
 import css from './cockpit.module.css'
 import cockpitCrown from './cockpit-crown.module.css'
 import controlDeck from './control-deck.module.css'
@@ -260,14 +260,10 @@ export const LifeLayout = ({
       onPointerUpCapture={handlePointerUp}
     >
       <header className={cockpitCrown.crown}>
-        <Link
-          url='/'
-          className={cockpitCrown.backKey}
-          aria-label='Back to home'
-        >
-          <LinkBack className={cockpitCrown.backKeyControl}>Home</LinkBack>
+        <GoBack className={cockpitCrown.backKey} aria-label='Go back'>
+          <LinkBack className={cockpitCrown.backKeyControl}>Back</LinkBack>
           <small>Eject</small>
-        </Link>
+        </GoBack>
 
         <div className={identityPlate.identityPlate}>
           <span>Conway field instrument</span>

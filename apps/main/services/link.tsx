@@ -79,6 +79,42 @@ export default function Link(props: LinkProps) {
   )
 }
 
+type GoBackProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+  fallback?: Route
+}
+
+export function GoBack(props: GoBackProps) {
+  const { children, onClick, fallback = '/', ...nativeProps } = props
+  const transition = useRouteTransition()
+
+  const navigateBack = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    const shouldUseNativeNavigation =
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    if (shouldUseNativeNavigation) return
+
+    onClick?.(event)
+    if (event.defaultPrevented) return
+
+    event.preventDefault()
+    // direct entries have no history to pop; the href promises the fallback
+    if (window.history.length <= 1) {
+      transition.navigate(fallback)
+      return
+    }
+    window.history.back()
+  }
+
+  return (
+    <a {...nativeProps} href={fallback} onClick={navigateBack}>
+      {children}
+    </a>
+  )
+}
+
 export const LinkBack: React.FC<{
   className?: string
   children: React.ReactNode
