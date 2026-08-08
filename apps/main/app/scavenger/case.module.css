@@ -187,11 +187,17 @@
   box-shadow:
     0 6px 10px rgb(0 0 0 / 50%),
     inset 0 1px 0 rgb(255 255 255 / 70%);
-  animation: pull-sway 1.6s 0.6s ease-in-out both;
+  /* backwards, not both: a held fill would block the :active press */
+  animation: pull-sway 1.6s 0.6s ease-in-out backwards;
+  transition: transform var(--motion-micro) var(--ease-signal);
 }
 
 .zipPull:hover {
   background: linear-gradient(180deg, #fff9b0, #ffef3d 45%, #c4b300);
+}
+
+.zipPull:active {
+  transform: translateZ(2px) rotate(7deg) scale(0.93);
 }
 
 .zipPull:focus-visible {

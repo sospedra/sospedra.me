@@ -218,12 +218,17 @@
   animation: hud-in 1s 1.6s ease both;
   transition:
     color var(--motion-micro) var(--ease-signal),
-    border-color var(--motion-micro) var(--ease-signal);
+    border-color var(--motion-micro) var(--ease-signal),
+    transform var(--motion-micro) var(--ease-signal);
 }
 
 .navArrow:hover {
   color: var(--color-text-strong);
   border-color: var(--color-signal-cyan);
+}
+
+.navArrow:active {
+  transform: translateY(-50%) scale(0.94);
 }
 
 .navArrow:focus-visible {
