@@ -69,6 +69,7 @@
 
           <div class="panel-actions">
             <button id="js-reset" class="reset-button" type="button">reset filters</button>
+            <button id="js-help" class="help-button" type="button">how it works</button>
           </div>
         </section>
 
@@ -86,6 +87,38 @@
         </div>
       </footer>
     </div>
+
+    <dialog id="js-dialog" class="dialog" aria-labelledby="js-dialog-title">
+      <div class="dialog-body">
+        <h2 id="js-dialog-title" class="dialog-title">How it works</h2>
+        <p>
+          Every renew fetches one random Wikipedia article. The password is a
+          real sentence fragment from it, so it reads like language instead of
+          line noise.
+        </p>
+        <p>
+          Length is what makes a password strong. Words make length cheap: a
+          28-character phrase is easy to remember and easy to type.
+        </p>
+        <p>
+          Everything is assembled in your browser. Wikipedia serves the article
+          text and never sees a password.
+        </p>
+        <dl class="dialog-legend">
+          <dt>case</dt>
+          <dd>uppercases random letters</dd>
+          <dt>leet</dt>
+          <dd>swaps letters for lookalike digits</dd>
+          <dt>random</dt>
+          <dd>pads words with random characters</dd>
+          <dt>symbols</dt>
+          <dd>swaps the dots for symbols like @ # $ %</dd>
+        </dl>
+        <form method="dialog">
+          <button class="dialog-close" type="submit">got it</button>
+        </form>
+      </div>
+    </dialog>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

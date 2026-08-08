@@ -269,6 +269,24 @@ a:visited {
   transform: scale(0.97);
 }
 
+.help-button {
+  padding: 0.25rem 0.5rem;
+  border: 0;
+  background: none;
+  color: var(--gray-600);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.help-button:active {
+  color: var(--gray-800);
+  transform: scale(0.97);
+}
+
 .toast {
   position: absolute;
   left: 50%;
@@ -306,4 +324,111 @@ a:visited {
   font-family: var(--font-mono);
   font-size: 0.875rem;
   text-align: center;
+}
+
+.dialog {
+  width: min(26rem, calc(100vw - 2rem));
+  padding: 0;
+  border: 1px solid var(--gray-600);
+  border-radius: var(--radius);
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 200ms var(--ease-out),
+    transform 200ms var(--ease-out),
+    overlay 200ms allow-discrete,
+    display 200ms allow-discrete;
+}
+
+.dialog:not([open]) {
+  opacity: 0;
+  transform: scale(0.97);
+}
+
+@starting-style {
+  .dialog[open] {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 40%);
+  backdrop-filter: blur(4px);
+  transition:
+    background 200ms ease,
+    backdrop-filter 200ms ease,
+    overlay 200ms allow-discrete,
+    display 200ms allow-discrete;
+}
+
+@starting-style {
+  .dialog[open]::backdrop {
+    background: rgb(0 0 0 / 0%);
+    backdrop-filter: blur(0);
+  }
+}
+
+.dialog-body {
+  padding: 1.5rem;
+}
+
+.dialog-title {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  font-weight: 900;
+}
+
+.dialog-body p {
+  margin: 0 0 0.75rem;
+  font-size: 0.875rem;
+}
+
+.dialog-legend {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+}
+
+.dialog-legend dt {
+  font-weight: 900;
+}
+
+.dialog-legend dd {
+  margin: 0 0 0.5rem;
+  color: var(--gray-600);
+}
+
+.dialog-legend dd:last-child {
+  margin-bottom: 0;
+}
+
+.dialog-body form {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dialog-close {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--gray-600);
+  border-radius: var(--radius);
+  background: var(--gray-300);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out);
+}
+
+.dialog-close:active {
+  background: var(--gray-400);
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog,
+  .dialog:not([open]) {
+    transform: none;
+  }
 }

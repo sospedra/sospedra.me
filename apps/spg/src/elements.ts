@@ -5,6 +5,8 @@ function element<T extends HTMLElement>(selector: string): T {
 }
 
 export const $case = element<HTMLInputElement>('#js-case')
+export const $dialog = element<HTMLDialogElement>('#js-dialog')
+export const $help = element<HTMLButtonElement>('#js-help')
 export const $hint = element<HTMLParagraphElement>('#js-hint')
 export const $leet = element<HTMLInputElement>('#js-leet')
 export const $password = element<HTMLInputElement>('#js-password')
