@@ -97,7 +97,10 @@ export const Group = (props: NodeGroup) => {
     >
       <p className='absolute z-10 inline-block px-2 mr-4 font-bold bg-white rounded-full shadow-sm -top-2 left-1 shadow-teal-400'>
         {(props.anchor === 'live' || isNext) && (
-          <span className='absolute right-0 w-3 h-3 bg-teal-400 rounded-full opacity-75 animate-ping' />
+          <span className='absolute right-0 flex items-center justify-center w-3 h-3'>
+            <span className='absolute inset-0 bg-teal-400 rounded-full opacity-75 animate-ping' />
+            <span className='relative w-2 h-2 bg-teal-500 rounded-full' />
+          </span>
         )}
         {props.time}
       </p>
