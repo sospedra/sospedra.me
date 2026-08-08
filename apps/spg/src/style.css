@@ -95,6 +95,14 @@ a:visited {
   white-space: nowrap;
   overflow: hidden;
   cursor: pointer;
+  transition:
+    filter 200ms ease,
+    opacity 200ms ease;
+}
+
+.password-input.is-loading {
+  filter: blur(2px);
+  opacity: 0.6;
 }
 
 .renew-button {

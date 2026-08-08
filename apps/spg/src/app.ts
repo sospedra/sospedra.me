@@ -40,12 +40,15 @@ export function setupGenerator(): void {
 
   const renew = async () => {
     $password.placeholder = 'loading . . .'
+    $password.classList.add('is-loading')
 
     try {
       state.generator = await spg()
       update()
     } catch {
       $password.placeholder = 'wikipedia is unreachable, hit renew'
+    } finally {
+      $password.classList.remove('is-loading')
     }
   }
 
