@@ -131,13 +131,15 @@
   transform-style: preserve-3d;
   transform: translateZ(var(--z, calc((var(--pages, 8) - var(--i)) * 1.6px)))
     rotateY(var(--ry, calc(-14deg - var(--i) * 8deg)));
-  transition: transform 0.78s cubic-bezier(0.32, 0.04, 0.14, 1);
+  transition: transform 0.6s cubic-bezier(0.32, 0.04, 0.14, 1);
   /* buried page planes still catch the 3d hit ray; only discs take clicks */
   pointer-events: none;
 }
 
-/* the cover clears first, then the sleeves rise into the fan */
+/* the cover clears first, then the sleeves rise into the fan;
+   the boot fan keeps the slower theatrical duration */
 .scene[data-opening="true"] .page {
+  transition-duration: 0.78s;
   transition-delay: calc(450ms + var(--i) * 50ms);
 }
 
