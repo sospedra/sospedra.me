@@ -18,6 +18,7 @@ import {
   setLetterKeysEnabled,
   useLetterKeysEnabled,
 } from 'services/letter-keys'
+import { navigateBackOrHome } from 'services/navigation-history'
 import {
   scrollActivePage,
   scrollMarkedScene,
@@ -119,7 +120,9 @@ export const Hotkeys: React.FC<{ children: React.ReactNode }> = (props) => {
       'b',
       (event) => {
         event.preventDefault()
-        if (pathname !== '/') router.back()
+        if (pathname !== '/') {
+          navigateBackOrHome(() => router.push('/'))
+        }
       },
     ],
     ...(['h', 'p', 'a'] as const).map(
