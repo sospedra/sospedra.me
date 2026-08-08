@@ -13,12 +13,20 @@ import { spg } from './spg/spg.ts'
 
 const OFFLINE_MESSAGE = 'wikipedia is unreachable, hit renew'
 
-const hintFor = (password: string): string => {
+const STRENGTH_LABEL = {
+  weak: 'Weak',
+  good: 'Good',
+  strong: 'Strong 💪',
+} as const
+
+type Strength = keyof typeof STRENGTH_LABEL
+
+const strengthFor = (password: string): Strength => {
   const surplus = password.length - 8
 
-  if (surplus < 18) return 'Weak'
-  if (surplus < 24) return 'Good'
-  return 'Strong 💪'
+  if (surplus < 18) return 'weak'
+  if (surplus < 24) return 'good'
+  return 'strong'
 }
 
 const readOptions = () => ({
@@ -36,7 +44,9 @@ export function setupGenerator(): void {
     const password = state.generator ? state.generator(readOptions()) : null
     if (password === null) return
 
-    $hint.textContent = hintFor(password)
+    const strength = strengthFor(password)
+    $hint.textContent = `${password.length} chars · ${STRENGTH_LABEL[strength]}`
+    $hint.dataset.strength = strength
     $password.value = password
   }
 
@@ -50,6 +60,7 @@ export function setupGenerator(): void {
     } catch {
       $password.placeholder = OFFLINE_MESSAGE
       $hint.textContent = OFFLINE_MESSAGE
+      delete $hint.dataset.strength
     } finally {
       $password.classList.remove('is-loading')
     }
