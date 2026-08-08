@@ -49,7 +49,7 @@ export const List = (props: { requestList?: Request[]; total?: number }) => {
   }
 
   return (
-    <section className='w-full py-4'>
+    <section className='w-full py-4 transition-[opacity,translate] duration-200 ease-out starting:opacity-0 starting:translate-y-1 motion-reduce:starting:translate-y-0'>
       {selectMessage(props.total)}
       <ul>
         {props.requestList.map(({ url, createdAt, body }) => (
