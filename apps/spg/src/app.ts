@@ -11,6 +11,8 @@ import {
 import type { Generator } from './spg/generator.ts'
 import { spg } from './spg/spg.ts'
 
+const OFFLINE_MESSAGE = 'wikipedia is unreachable, hit renew'
+
 const hintFor = (password: string): string => {
   const surplus = password.length - 8
 
@@ -46,7 +48,8 @@ export function setupGenerator(): void {
       state.generator = await spg()
       update()
     } catch {
-      $password.placeholder = 'wikipedia is unreachable, hit renew'
+      $password.placeholder = OFFLINE_MESSAGE
+      $hint.textContent = OFFLINE_MESSAGE
     } finally {
       $password.classList.remove('is-loading')
     }
