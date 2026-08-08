@@ -11,6 +11,7 @@
   --green-700: #2f855a;
   --radius: 0.25rem;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --font-mono: ui-monospace, sfmono-regular, Menlo, Monaco, Consolas, monospace;
 }
 
 *,
@@ -97,6 +98,7 @@ a:visited {
   border-radius: var(--radius) 0 0 var(--radius);
   background: transparent;
   font: inherit;
+  font-family: var(--font-mono);
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -276,7 +278,7 @@ a:visited {
 }
 
 .colophon {
-  font-family: ui-monospace, sfmono-regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 0.875rem;
   text-align: center;
 }
