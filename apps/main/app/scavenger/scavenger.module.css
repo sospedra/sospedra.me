@@ -354,14 +354,17 @@
   animation: hud-in 1s 1.6s ease both;
 }
 
+/* the rise animates translate, never transform: the consumers keep
+   their centering transforms through the entrance */
 @keyframes hud-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    translate: 0 8px;
   }
 
   to {
     opacity: 1;
+    translate: 0 0;
   }
 }
 
