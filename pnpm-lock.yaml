@@ -79,34 +79,6 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
-  apps/clave:
-    dependencies:
-      '@noble/ciphers':
-        specifier: 2.2.0
-        version: 2.2.0
-      '@noble/curves':
-        specifier: 2.2.0
-        version: 2.2.0
-      '@noble/hashes':
-        specifier: 2.2.0
-        version: 2.2.0
-    devDependencies:
-      '@biomejs/biome':
-        specifier: 'catalog:'
-        version: 2.5.4
-      '@repo/biome-config':
-        specifier: workspace:*
-        version: link:../../packages/biome-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.13.3
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
   apps/irc:
     dependencies:
       98.css:
