@@ -1,6 +1,6 @@
 # Bonfire shared sessions, design
 
-Date: 2026-08-10. Status: approved in brainstorm, pending spec review.
+Date: 2026-08-10. Status: implemented 2026-08-10.
 
 ## Goal
 
