@@ -94,6 +94,18 @@ export async function expectCanvasPainted(canvas: Locator): Promise<void> {
   expect(shot.byteLength).toBeGreaterThan((box.width * box.height) / 100)
 }
 
+// clicks at the scene corner until hydration lands one and the boot skips
+export async function skipGamesBoot(page: Page): Promise<void> {
+  const scene = page.locator('[data-phase]')
+  await expect
+    .poll(async () => {
+      const phase = await scene.getAttribute('data-phase')
+      if (phase !== 'ready') await page.mouse.click(10, 10)
+      return phase
+    })
+    .toBe('ready')
+}
+
 type Point = { x: number; y: number }
 
 export async function touchSwipe(
