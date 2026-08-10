@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { ConfettiBurst } from 'services/celebration'
 import DailyCountdownPanel from 'services/daily-countdown-panel'
 import { shareHandled, shareText } from 'services/share'
 import css from './completion-report.module.css'
@@ -21,8 +22,18 @@ import {
   personalBestFor,
 } from './stats'
 
+const CONFETTI_TONES_GEO = [
+  '#d9c59d',
+  '#dd9148',
+  '#70ddd1',
+  '#f3e6c8',
+  '#f0b76d',
+  '#2f857e',
+] as const
+
 export function Completion({
   announce,
+  celebrate,
   copy,
   locale,
   onNewPracticeGame,
@@ -30,6 +41,7 @@ export function Completion({
   stats,
 }: {
   announce: (message: string) => void
+  celebrate: boolean
   copy: GeoMessages
   locale: GeoLocale
   onNewPracticeGame: () => void
@@ -79,6 +91,11 @@ export function Completion({
       className={stageFrame.completion}
       aria-labelledby='geo-complete-title'
     >
+      {celebrate && (
+        <div className={css.confettiAnchor}>
+          <ConfettiBurst tones={CONFETTI_TONES_GEO} />
+        </div>
+      )}
       <div className={css.completionLead}>
         <p className={geoControls.eyebrow}>{copy.completeEyebrow}</p>
         <h2

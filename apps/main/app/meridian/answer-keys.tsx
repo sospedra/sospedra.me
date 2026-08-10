@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { queryTouchScreen } from 'services/screen'
 import css from './answer-keys.module.css'
 import type { GeoMessages } from './geo-messages'
@@ -32,12 +33,14 @@ const AnswerKey = ({
   children,
   disabled,
   label,
+  onDown,
   onPress,
   tone,
 }: {
   children: ReactNode
   disabled: boolean
   label?: string
+  onDown: () => void
   onPress: () => void
   tone?: 'dismiss' | 'erase' | 'space'
 }) => {
@@ -58,6 +61,8 @@ const AnswerKey = ({
       onPointerDown={(event) => {
         event.preventDefault()
         setPressed(true)
+        tapHaptic()
+        onDown()
       }}
       onPointerUp={release}
       onPointerCancel={release}
@@ -74,12 +79,14 @@ export const AnswerKeys = ({
   disabled,
   onDismiss,
   onErase,
+  onKeystroke,
   onWrite,
 }: {
   copy: GeoMessages
   disabled: boolean
   onDismiss: () => void
   onErase: () => void
+  onKeystroke: () => void
   onWrite: (character: string) => void
 }) => {
   const [top, home, bottom] = KEY_ROWS
@@ -88,6 +95,7 @@ export const AnswerKeys = ({
       <AnswerKey
         key={letter}
         disabled={disabled}
+        onDown={onKeystroke}
         onPress={() => onWrite(letter)}
       >
         {letter}
@@ -97,11 +105,14 @@ export const AnswerKeys = ({
   return (
     <div className={css.keyBank}>
       <div className={css.keyRow}>{letterKeys(top)}</div>
-      <div className={css.keyRow}>{letterKeys(home)}</div>
+      <div className={css.keyRow} data-inset='true'>
+        {letterKeys(home)}
+      </div>
       <div className={css.keyRow}>
         <AnswerKey
           disabled={disabled}
           label={copy.keysDismiss}
+          onDown={onKeystroke}
           onPress={onDismiss}
           tone='dismiss'
         >
@@ -111,6 +122,7 @@ export const AnswerKeys = ({
         <AnswerKey
           disabled={disabled}
           label={copy.keysSpace}
+          onDown={onKeystroke}
           onPress={() => onWrite(' ')}
           tone='space'
         >
@@ -119,6 +131,7 @@ export const AnswerKeys = ({
         <AnswerKey
           disabled={disabled}
           label={copy.keysErase}
+          onDown={onKeystroke}
           onPress={onErase}
           tone='erase'
         >

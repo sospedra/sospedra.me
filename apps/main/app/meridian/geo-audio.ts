@@ -1,8 +1,10 @@
+import { playFanfare } from 'services/audio/fanfare'
 import { audioContextClass, createMasterBus } from 'services/audio/kit'
 
 export type GeoSound =
   | 'correct'
   | 'incorrect'
+  | 'key'
   | 'pass'
   | 'perfect'
   | 'start'
@@ -25,6 +27,16 @@ type Note = {
 }
 
 const CUES: Record<GeoSound, readonly Note[]> = {
+  key: [
+    {
+      at: 0,
+      duration: 0.035,
+      frequency: 1400,
+      peak: 0.03,
+      shape: 'square',
+      to: 900,
+    },
+  ],
   start: [
     {
       at: 0,
@@ -243,6 +255,19 @@ export const createGeoAudio = () => {
       }
       void resumeGraph(graph).then((runningGraph) => {
         if (runningGraph && enabled) renderCue(runningGraph, cue)
+      })
+    },
+    fanfare() {
+      const graph = createGraph()
+      if (!graph) return
+      const render = (running: AudioGraph) =>
+        playFanfare(running.context, { destination: running.output })
+      if (graph.context.state === 'running') {
+        render(graph)
+        return
+      }
+      void resumeGraph(graph).then((runningGraph) => {
+        if (runningGraph && enabled) render(runningGraph)
       })
     },
     setEnabled(value: boolean) {

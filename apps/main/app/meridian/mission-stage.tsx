@@ -157,6 +157,7 @@ export function MissionStage({
   countdown,
   dispatch,
   locale,
+  onKeystroke,
   options,
   passQuestion,
   practiceTimed,
@@ -175,6 +176,7 @@ export function MissionStage({
   countdown: number
   dispatch: Dispatch<GeoGameAction>
   locale: GeoLocale
+  onKeystroke: () => void
   options: LocalizedOption[]
   passQuestion: () => void
   practiceTimed: boolean
@@ -302,6 +304,7 @@ export function MissionStage({
           lexicon={autocompleteOptions}
           locale={locale}
           onAnswer={submitTextAnswer}
+          onKeystroke={onKeystroke}
           options={question.options}
           placeholder={answerPlaceholder}
           state={state}

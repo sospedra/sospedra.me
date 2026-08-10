@@ -123,7 +123,7 @@ export function GeoSession({
     window.requestAnimationFrame(() => questionHeadingRef.current?.focus())
   }, [question?.type, state.phase])
 
-  const { announce, announcement, audio } = useMissionCues({
+  const { announce, announcement, audio, celebrating } = useMissionCues({
     copy,
     locale,
     options,
@@ -229,6 +229,7 @@ export function GeoSession({
     completed: (
       <Completion
         announce={announce}
+        celebrate={celebrating}
         copy={copy}
         locale={locale}
         onNewPracticeGame={onNewPracticeGame}
@@ -242,6 +243,7 @@ export function GeoSession({
         countdown={countdown}
         dispatch={dispatch}
         locale={locale}
+        onKeystroke={() => audio.play('key')}
         options={options}
         passQuestion={passQuestion}
         practiceTimed={practiceTimed}

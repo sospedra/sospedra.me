@@ -10,16 +10,22 @@
   display: none;
 }
 
+/* every key spans 2 of 20 tracks, so all three rows share one key width;
+   the 9-key home row starts at track 2 and centers like the iOS keyboard */
 .keyRow {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
   gap: 0.28rem;
+}
+
+.keyRow[data-inset="true"] > :first-child {
+  grid-column: 2 / span 2;
 }
 
 .key {
   min-width: 0;
-  height: 2.7rem;
-  flex: 1 1 0;
+  height: 2.75rem;
+  grid-column: span 2;
   padding: 0;
   border: 2px solid var(--geo-arcade-ink);
   background: var(--geo-paper-bright);
@@ -37,7 +43,6 @@
 }
 
 .key[data-tone] {
-  flex: 1.6 1 0;
   font-size: 1.1rem;
 }
 
@@ -49,10 +54,12 @@
   background: var(--geo-pink);
 }
 
+/* the pressed face lands the same frame as the touch; only the release eases */
 .key[data-pressed="true"] {
   background: var(--geo-amber);
   box-shadow: inset 0 3px 0 #b99a3c;
   transform: translateY(2px);
+  transition-duration: 0s;
 }
 
 .key:disabled {
@@ -65,7 +72,12 @@
 
 @media (max-width: 359px) {
   .key {
-    height: 2.45rem;
     font-size: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .key {
+    transition: none;
   }
 }

@@ -1,8 +1,10 @@
 import { sumBy } from 'es-toolkit'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { buzzHaptic, pulseHaptic, tapHaptic } from 'services/haptics'
 import {
   correctOptionFor,
   FEEDBACK_SOUNDS,
+  type FeedbackResult,
   feedbackHeadline,
   feedbackResult,
 } from './answer-feedback'
@@ -12,6 +14,14 @@ import { formatScore } from './geo-format'
 import type { GeoLocale, GeoMessages } from './geo-messages'
 import type { GeoSettings, LocalizedOption, Round } from './model'
 import { roundTimeLimitMs } from './model'
+
+const FEEDBACK_HAPTICS: Record<FeedbackResult, () => void> = {
+  correct: pulseHaptic,
+  expired: buzzHaptic,
+  incorrect: buzzHaptic,
+  passed: tapHaptic,
+  perfect: pulseHaptic,
+}
 
 export const useMissionCues = ({
   copy,
@@ -31,6 +41,7 @@ export const useMissionCues = ({
   state: GeoGameState
 }) => {
   const [announcement, setAnnouncement] = useState('')
+  const [celebrating, setCelebrating] = useState(false)
 
   const [audio] = useState(createGeoAudio)
 
@@ -47,6 +58,9 @@ export const useMissionCues = ({
   const playedTimeoutRoundsRef = useRef(
     new Set(state.phase === 'round-summary' ? [state.roundIndex] : []),
   )
+
+  /* a run restored on 'completed' must not celebrate again on mount */
+  const playedCompletionRef = useRef(state.phase === 'completed')
 
   const announce = useCallback((message: string) => {
     announcementNonceRef.current = !announcementNonceRef.current
@@ -74,7 +88,9 @@ export const useMissionCues = ({
         ? message
         : `${message}. ${copy.correctAnswer}: ${correctLabel}`,
     )
-    audio.play(FEEDBACK_SOUNDS[feedbackResult(answer)])
+    const result = feedbackResult(answer)
+    audio.play(FEEDBACK_SOUNDS[result])
+    FEEDBACK_HAPTICS[result]()
   }, [announce, audio, copy, locale, options, state.lastAnswer, state.phase])
 
   useEffect(() => {
@@ -111,6 +127,7 @@ export const useMissionCues = ({
     playedTimeoutRoundsRef.current.add(state.roundIndex)
     announce(copy.expired)
     audio.play('timeout')
+    buzzHaptic()
   }, [
     announce,
     audio,
@@ -123,9 +140,17 @@ export const useMissionCues = ({
   ])
 
   useEffect(() => {
+    if (state.phase !== 'completed' || playedCompletionRef.current) return
+    playedCompletionRef.current = true
+    audio.fanfare()
+    pulseHaptic()
+    setCelebrating(true)
+  }, [audio, state.phase])
+
+  useEffect(() => {
     if (state.phase !== 'visibility-paused') return
     announce(copy.visibilityPaused)
   }, [announce, copy.visibilityPaused, state.phase])
 
-  return { announce, announcement, audio }
+  return { announce, announcement, audio, celebrating }
 }

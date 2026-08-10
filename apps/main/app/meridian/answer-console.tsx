@@ -22,6 +22,7 @@ export function TextAnswerConsole({
   lexicon,
   locale,
   onAnswer,
+  onKeystroke,
   options,
   placeholder,
   state,
@@ -30,6 +31,7 @@ export function TextAnswerConsole({
   lexicon: LocalizedOption[]
   locale: GeoLocale
   onAnswer: (answer: { optionId: string | null; submittedText: string }) => void
+  onKeystroke: () => void
   options: LocalizedOption[]
   placeholder: string
   state: GeoGameState
@@ -246,6 +248,7 @@ export function TextAnswerConsole({
           disabled={!active}
           onDismiss={dismissKeys}
           onErase={eraseBackward}
+          onKeystroke={onKeystroke}
           onWrite={writeCharacter}
         />
       )}

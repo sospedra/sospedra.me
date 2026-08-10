@@ -1,3 +1,13 @@
+.confettiAnchor {
+  position: fixed;
+  z-index: 40;
+  top: 20dvh;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
 .completionLead {
   display: flex;
   min-width: 0;
