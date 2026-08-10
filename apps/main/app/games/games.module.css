@@ -151,6 +151,32 @@
   animation: icon-float 2.9s ease-in-out infinite alternate;
 }
 
+/* no-JS rescue: the intro is pure CSS, so a page that never hydrates must
+   still end on the menu. The 1ms holds land on the data-ready values, so a
+   live route crosses 6.2s with zero visual change. */
+.browserPanel,
+.iconStage {
+  animation: menu-rescue 1ms linear 6.2s forwards;
+}
+
+.columnViewport {
+  animation: column-rescue 1ms linear 6.2s forwards;
+}
+
+@keyframes menu-rescue {
+  to {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+}
+
+@keyframes column-rescue {
+  to {
+    opacity: 0;
+  }
+}
+
 .systemMark {
   position: absolute;
   z-index: 3;
@@ -296,6 +322,16 @@
 :global(.fx-quiet) .iconGraphic {
   animation: none;
   transition: none;
+}
+
+/* the reveal and float selectors outrank the plain quiet kills above;
+   mirror them under the quiet scope so quiet actually wins */
+:global(.fx-quiet) .scene[data-ready="true"] .iconStage,
+:global(.fx-quiet)
+  .scene[data-phase="ready"]
+  .gameLink[data-active="true"]
+  .iconGraphic {
+  animation: none;
 }
 
 :global(.fx-quiet) .cloud {

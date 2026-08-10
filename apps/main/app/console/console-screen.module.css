@@ -107,6 +107,20 @@
   text-transform: uppercase;
 }
 
+.coarseOnly {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .fineOnly {
+    display: none;
+  }
+
+  .coarseOnly {
+    display: inline;
+  }
+}
+
 .promptRow {
   position: relative;
   display: flex;

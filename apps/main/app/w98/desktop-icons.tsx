@@ -18,7 +18,7 @@ type IconId =
 // touch and keyboard activations (click detail 0) open in one go
 export const useDesktopShortcuts = () => {
   const [selected, setSelected] = useState<IconId | null>(null)
-  const pointerTypeRef = useRef('mouse')
+  const pointerTypeRef = useRef<string | null>(null)
 
   const press = (icon: IconId, open?: () => void) => ({
     onPointerDown: (event: React.PointerEvent<HTMLElement>) => {
@@ -26,8 +26,11 @@ export const useDesktopShortcuts = () => {
       setSelected(icon)
     },
     onClick: (event: React.MouseEvent<HTMLElement>) => {
-      const selectOnly =
-        pointerTypeRef.current === 'mouse' && event.detail === 1
+      // a click with no pointerdown on record falls back to the device class
+      const pointerType =
+        pointerTypeRef.current ??
+        (window.matchMedia('(pointer: coarse)').matches ? 'touch' : 'mouse')
+      const selectOnly = pointerType === 'mouse' && event.detail === 1
       if (selectOnly) {
         event.preventDefault()
         return

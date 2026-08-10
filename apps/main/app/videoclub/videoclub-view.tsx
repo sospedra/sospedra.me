@@ -111,7 +111,12 @@ export default function VideoclubView() {
       return
     }
     video.play().catch((error: unknown) => {
-      if (isNotAllowed(error)) dispatch({ type: 'toggle' })
+      if (!isNotAllowed(error)) return
+      // iOS refuses playback outside a gesture (always in Low Power Mode);
+      // land on pause and say so instead of a mute black tube
+      dispatch({ type: 'toggle' })
+      osdSerial.current += 1
+      setOsd({ text: 'TAP SCREEN TO PLAY', serial: osdSerial.current })
     })
   }, [state.status])
 
@@ -164,6 +169,9 @@ export default function VideoclubView() {
     if (state.status === 'inserting') return
     audio.click()
     flash(state.status === 'playing' ? 'PAUSE' : 'PLAY')
+    // resume inside the tap: the post-commit effect lands outside the
+    // user activation window on iOS and gets refused there
+    if (state.status === 'paused') videoRef.current?.play().catch(() => {})
     dispatch({ type: 'toggle' })
   }
 

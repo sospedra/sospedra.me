@@ -6,6 +6,7 @@ import { playKeyClick } from 'services/audio/key-click'
 import { useGameInput } from 'services/hotkeys'
 import Shell from 'services/shell'
 import { readLocal, writeLocal } from 'services/storage'
+import { prefersQuietFx } from 'services/theme'
 import { match, P } from 'ts-pattern'
 import { type Effect, type LinkEntry, runCommand } from './command-shell'
 import { runTreeCommand } from './console-commands'
@@ -25,6 +26,9 @@ import { useCommandLine } from './use-command-line'
 const ANIM_FRAME_MS = 140
 const HDD_VOLUME = 0.16
 const MUTE_KEY = 'serve-muted'
+/* iOS defers media loading (Low Power, cellular) and can leave play()
+   unsettled forever; past this, an unsettled play counts as blocked */
+const PLAY_SETTLE_MS = 1500
 
 const isInteractive = (target: EventTarget | null) =>
   target instanceof Element && Boolean(target.closest('a, button, input'))
@@ -213,7 +217,33 @@ export default function TerminalView(props: {
         })
         .exhaustive()
     }
+    // iOS only synthesizes window clicks from taps on clickable targets, so
+    // the modal modes act on pointerup and swallow the click twin if it comes
+    let tapActed = false
+    const onWindowPointerUp = (event: PointerEvent) => {
+      if (event.pointerType === 'mouse') return
+      tapActed = false
+      match(modeRef.current.kind)
+        .with('gated', () => {
+          tapActed = true
+          startBootRef.current()
+        })
+        .with('anim', () => {
+          tapActed = true
+          dispatch({ type: 'anim-stop' })
+        })
+        .with('hacker', () => {
+          tapActed = true
+          dispatch({ type: 'hacker-type' })
+        })
+        .with('shell', () => {})
+        .exhaustive()
+    }
     const onWindowClick = (event: MouseEvent) => {
+      if (tapActed) {
+        tapActed = false
+        return
+      }
       match(modeRef.current.kind)
         .with('gated', () => startBootRef.current())
         .with('anim', () => dispatch({ type: 'anim-stop' }))
@@ -226,9 +256,11 @@ export default function TerminalView(props: {
         .exhaustive()
     }
     window.addEventListener('keydown', onWindowKeyDown)
+    window.addEventListener('pointerup', onWindowPointerUp)
     window.addEventListener('click', onWindowClick)
     return () => {
       window.removeEventListener('keydown', onWindowKeyDown)
+      window.removeEventListener('pointerup', onWindowPointerUp)
       window.removeEventListener('click', onWindowClick)
     }
   }, [])
@@ -240,31 +272,39 @@ export default function TerminalView(props: {
   }, [])
 
   // autoplay needs a prior user gesture: try, and gate on a keypress when the
-  // browser blocks it. Reduced motion skips straight to the shell.
+  // browser blocks it. Quiet fx skips straight to the shell.
   useEffect(() => {
-    const reduced = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches
-    if (reduced) {
+    if (prefersQuietFx()) {
       setReady(true)
       executeRef.current(['ls'])
-      return
+      return () => clearTimeout(introTimer.current)
     }
     // a muted element autoplays freely, so muted visitors skip the gate
     if (audioRef.current) audioRef.current.muted = mutedRef.current
     const play = audioRef.current?.play()
     if (!play) {
       runSequenceRef.current()
-    } else {
-      play
-        .then(() => runSequenceRef.current())
-        .catch((error: DOMException) => {
-          // NotAllowedError = autoplay blocked; anything else = no/bad audio file
-          if (error?.name === 'NotAllowedError') dispatch({ type: 'gate' })
-          else runSequenceRef.current()
-        })
+      return () => clearTimeout(introTimer.current)
     }
-    return () => clearTimeout(introTimer.current)
+    let done = false
+    const finish = (outcome: 'run' | 'gate') => {
+      if (done) return
+      done = true
+      clearTimeout(watchdog)
+      if (outcome === 'gate') dispatch({ type: 'gate' })
+      else runSequenceRef.current()
+    }
+    const watchdog = setTimeout(() => finish('gate'), PLAY_SETTLE_MS)
+    play.then(
+      () => finish('run'),
+      // NotAllowedError = autoplay blocked; anything else = no/bad audio file
+      (error: DOMException) =>
+        finish(error?.name === 'NotAllowedError' ? 'gate' : 'run'),
+    )
+    return () => {
+      clearTimeout(watchdog)
+      clearTimeout(introTimer.current)
+    }
   }, [])
 
   const showScroll = mode.kind === 'shell'

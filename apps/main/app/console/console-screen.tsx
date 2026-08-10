@@ -46,7 +46,10 @@ export function ConsoleScreen(props: {
           <span aria-hidden='true' className={css.gateEye}>
             {EYE_ART}
           </span>
-          <span className={css.gatePrompt}>▸ PRESS ENTER TO BOOT</span>
+          <span className={css.gatePrompt}>
+            <span className={css.fineOnly}>▸ PRESS ENTER TO BOOT</span>
+            <span className={css.coarseOnly}>▸ TAP TO BOOT</span>
+          </span>
           <span className={css.gateHint}>sound on</span>
         </button>
       )}

@@ -200,12 +200,30 @@ const stages = (parts: TapeSwapParts): Stage[] => {
   ]
 }
 
+/* twice the stage total: a frozen document timeline (backgrounded WebKit)
+   must not leave the deck locked in 'inserting' with every spine disabled */
+const SWAP_BUDGET_MS =
+  2 *
+  Object.values(STAGE_TIMING).reduce(
+    (total, timing) => total + Number(timing.duration ?? 0),
+    0,
+  )
+
 export const runTapeSwap = (
   parts: TapeSwapParts,
   sounds: TapeSwapSounds,
   done: () => void,
 ): { cancel: () => void } => {
   let cancelled = false
+  let finished = false
+
+  const finish = () => {
+    if (cancelled || finished) return
+    finished = true
+    window.clearTimeout(watchdog)
+    done()
+  }
+  const watchdog = window.setTimeout(finish, SWAP_BUDGET_MS)
 
   const setPhase = (phase: TapeSwapPhase) => {
     parts.ghost.dataset.phase = phase
@@ -224,18 +242,19 @@ export const runTapeSwap = (
     parts.source.style.visibility = 'hidden'
 
     for (const stage of sequence) {
-      if (cancelled) return
+      if (cancelled || finished) return
       if (stage.phase === 'feed') sounds.insert()
       await play(stage)
     }
 
-    if (!cancelled) done()
+    finish()
   }
   void run()
 
   return {
     cancel: () => {
       cancelled = true
+      window.clearTimeout(watchdog)
       parts.source.style.visibility = ''
       delete parts.ghost.dataset.phase
       delete parts.slot.dataset.phase
