@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { routeViewport } from 'services/transition/altitude'
 import ScavengerView from './scavenger-view'
 
 export const metadata: Metadata = {
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
     "The scavenger's CD wallet. Thirteen side projects pressed to disc: flip the sleeves, pull one out, read the liner notes.",
   alternates: { canonical: '/scavenger' },
 }
+
+export const viewport = routeViewport('/scavenger')
 
 export default function ScavengerPage() {
   return <ScavengerView />

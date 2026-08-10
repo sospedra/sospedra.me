@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Courier_Prime } from 'next/font/google'
+import { routeViewport } from 'services/transition/altitude'
 import {
   loadRecentChallenges,
   loadSpanishDaily,
@@ -21,6 +22,8 @@ export const metadata: Metadata = {
     'A bilingual daily crossword with keyboard-first play in English and Spanish.',
   alternates: { canonical: '/crosswords' },
 }
+
+export const viewport = routeViewport('/crosswords')
 
 export default async function CrosswordsPage() {
   const [challenges, spanish] = await Promise.all([

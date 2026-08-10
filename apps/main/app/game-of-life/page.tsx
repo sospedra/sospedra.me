@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { routeViewport } from 'services/transition/altitude'
 import GameOfLifeView from './game-of-life-view'
 
 export const metadata: Metadata = {
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
     "Conway's Game of Life on an infinite midnight grid. Draw a seed, load a legendary pattern and watch simple rules turn into strange machinery.",
   alternates: { canonical: '/game-of-life' },
 }
+
+export const viewport = routeViewport('/game-of-life')
 
 export default function GameOfLifePage() {
   return <GameOfLifeView />

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { routeViewport } from 'services/transition/altitude'
 import SnakeView from './snake-view'
 
 export const metadata: Metadata = {
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
     'Snake, straight from the Nokia 3310. An 84×48 green LCD, one hungry snake and a top score that never leaves your browser.',
   alternates: { canonical: '/snake' },
 }
+
+export const viewport = routeViewport('/snake')
 
 export default function GSnakePage() {
   return <SnakeView />

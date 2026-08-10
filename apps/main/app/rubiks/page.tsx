@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { routeViewport } from 'services/transition/altitude'
 import RubiksView from './rubiks-view'
 
 export const metadata: Metadata = {
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
     "A Rubik's cube in CSS 3D. Scramble it, race the clock, unwind the mess move by move. The record stands at 27 seconds.",
   alternates: { canonical: '/rubiks' },
 }
+
+export const viewport = routeViewport('/rubiks')
 
 export default function RubiksPage() {
   return <RubiksView />

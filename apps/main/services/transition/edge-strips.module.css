@@ -1,0 +1,19 @@
+/* iOS 26 samples ~40px-tall fixed elements at each viewport edge for the
+   bar tints; hanging 36px outside leaves a 4px sliver over art that
+   already carries the color */
+.strip {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.top {
+  top: -36px;
+}
+
+.bottom {
+  bottom: -36px;
+}

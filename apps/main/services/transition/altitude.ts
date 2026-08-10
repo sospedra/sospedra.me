@@ -50,6 +50,49 @@ export const sceneFor = (href: string): Scene => {
   return match?.[1] ?? DEFAULT_SCENE
 }
 
+export type RouteBars = {
+  top?: string
+  bottom?: string
+  canvas: string
+}
+
+// iOS 26 samples ~40px fixed strips at each viewport edge for the bar
+// tints; `bottom` also feeds theme-color (Android toolbar), `canvas`
+// feeds the overscroll via html/body
+const ROUTE_BARS: Record<string, RouteBars> = {
+  '/': { top: '#300f3b', bottom: '#101324', canvas: '#101324' },
+  '/bazaar': { top: '#0e141b', bottom: '#000000', canvas: '#0e141b' },
+  '/boombox': { top: '#0e141b', bottom: '#1a1024', canvas: '#0e141b' },
+  '/camera': { top: '#0c141d', bottom: '#0c0711', canvas: '#070b10' },
+  '/cims': { top: '#020302', bottom: '#071008', canvas: '#071008' },
+  '/console': { top: '#050403', bottom: '#050403', canvas: '#050403' },
+  '/crosswords': { top: '#d4d7db', bottom: '#d4d7db', canvas: '#d4d7db' },
+  '/game-of-life': { top: '#151610', bottom: '#151610', canvas: '#151610' },
+  '/games': { top: '#020307', bottom: '#020307', canvas: '#020307' },
+  '/meridian': { top: '#080907', bottom: '#080907', canvas: '#080907' },
+  '/recycle-bin': { canvas: '#0e141b' },
+  '/rubiks': { top: '#121a23', bottom: '#070c11', canvas: '#070c11' },
+  '/scavenger': { top: '#180a38', bottom: '#0e141b', canvas: '#0e141b' },
+  '/snake': { top: '#131c24', bottom: '#070c11', canvas: '#070c11' },
+  '/travel': { top: '#080a14', bottom: '#080a14', canvas: '#080a14' },
+  '/uses': { top: '#0d0708', bottom: '#0d0708', canvas: '#0d0708' },
+  '/videoclub': { top: '#050608', bottom: '#050608', canvas: '#050608' },
+  '/w98': { top: '#008080', bottom: '#008080', canvas: '#008080' },
+}
+
+export const barsFor = (href: string): RouteBars => {
+  const match = Object.entries(ROUTE_BARS).find(([pattern]) =>
+    matchRoutePattern(href, pattern),
+  )
+  return match?.[1] ?? { canvas: sceneFor(href).chrome }
+}
+
+// Safari reads theme-color once at load, so each art-directed page
+// server-renders its own; Android tints its toolbar with it
+export const routeViewport = (href: string) => ({
+  themeColor: barsFor(href).bottom ?? barsFor(href).canvas,
+})
+
 export const getAltitude = (href: string): number => sceneFor(href).altitude
 
 let current: string | null = null
