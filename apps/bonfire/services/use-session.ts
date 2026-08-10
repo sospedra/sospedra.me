@@ -272,6 +272,16 @@ export const useSession = (): Session => {
       dispatch({ type: 'swept', nowMs: Date.now() })
   }, SWEEP_MS)
 
+  const flushedRef = useRef(false)
+  useEffect(() => {
+    if (flushedRef.current || runtime.openRelays === 0) return
+    const { phase, nick } = runtime
+    if (phase !== 'host' && phase !== 'seated') return
+    flushedRef.current = true
+    if (phase === 'host') void publishState()
+    publish({ type: 'presence', nick })
+  }, [runtime, publish, publishState])
+
   useEffect(() => {
     const sayBye = () => {
       const phase = runtimeRef.current.phase
