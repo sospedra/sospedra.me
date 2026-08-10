@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { prefersQuietFx } from 'services/theme'
+import { artSrc } from './art-version'
 import styles from './stall-box.module.css'
 import {
   type BazaarStallId,
@@ -266,7 +267,7 @@ export default function SceneStall(props: {
               if (el) imgRefs.current.set(`${index}:${file}`, el)
               else imgRefs.current.delete(`${index}:${file}`)
             }}
-            src={`/images/bazaar/${id}/${file}`}
+            src={artSrc(`/images/bazaar/${id}/${file}`)}
             alt=''
             draggable={false}
             loading={layer.role === 'plate' && eager ? 'eager' : 'lazy'}

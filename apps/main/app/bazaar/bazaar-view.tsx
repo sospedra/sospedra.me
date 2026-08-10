@@ -11,6 +11,7 @@ import Shell from 'services/shell'
 import { prefersQuietFx } from 'services/theme'
 import RainLayer from '../home/rain-layer'
 import { DownSign, UpSign } from './arrow-sign'
+import { artSrc } from './art-version'
 import css from './bazaar.module.css'
 import { chromeCss } from './chrome'
 import { decorStore } from './decor-store'
@@ -47,7 +48,7 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
   return (
     <section className={scene.floor} data-floor='' data-market-scene=''>
       <img
-        src={`${STREET}/bg-tower.png`}
+        src={artSrc(`${STREET}/bg-tower.png`)}
         alt=''
         className={street.sTower}
         aria-hidden
@@ -56,55 +57,59 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
       <div className={street.streetBg} data-edit-id='street:bg' />
       <div className={street.sBlock} data-edit-id='street:block'>
         <div className={street.sAlleySigns} aria-hidden>
-          <img src={`${STREET}/alley-signs-1.png`} alt='' />
-          <img src={`${STREET}/alley-signs-2.png`} alt='' data-alt='' />
+          <img src={artSrc(`${STREET}/alley-signs-1.png`)} alt='' />
+          <img src={artSrc(`${STREET}/alley-signs-2.png`)} alt='' data-alt='' />
         </div>
         <div className={street.alleyShade} aria-hidden />
         <img
-          src={`${STREET}/building-pad.png`}
+          src={artSrc(`${STREET}/building-pad.png`)}
           alt=''
           className={street.sPadL}
         />
         <img
-          src={`${STREET}/building-pad.png`}
+          src={artSrc(`${STREET}/building-pad.png`)}
           alt=''
           className={street.sPadR}
         />
         <img
-          src={`${STREET}/building-pad.png`}
+          src={artSrc(`${STREET}/building-pad.png`)}
           alt=''
           className={cn(street.sPadOut, street.sPadL2)}
           data-edit-id='street:padl2'
         />
         <img
-          src={`${STREET}/building-pad.png`}
+          src={artSrc(`${STREET}/building-pad.png`)}
           alt=''
           className={cn(street.sPadOut, street.sPadL3)}
           data-edit-id='street:padl3'
         />
         <img
-          src={`${STREET}/building-pad.png`}
+          src={artSrc(`${STREET}/building-pad.png`)}
           alt=''
           className={cn(street.sPadOut, street.sPadR2)}
           data-edit-id='street:padr2'
         />
         <img
-          src={`${STREET}/building-pad.png`}
+          src={artSrc(`${STREET}/building-pad.png`)}
           alt=''
           className={cn(street.sPadOut, street.sPadR3)}
           data-edit-id='street:padr3'
         />
-        <img src={`${STREET}/building-a.png`} alt='' className={street.sA} />
+        <img
+          src={artSrc(`${STREET}/building-a.png`)}
+          alt=''
+          className={street.sA}
+        />
         <div className={street.sCDWrap}>
           <img
-            src={`${STREET}/building-cd.png`}
+            src={artSrc(`${STREET}/building-cd.png`)}
             alt=''
             className={street.sCDImg}
           />
           <div className={scene.sNeon} aria-hidden>
-            <img src={`${STREET}/neon-off.png`} alt='' />
+            <img src={artSrc(`${STREET}/neon-off.png`)} alt='' />
             <div className={scene.sNeonOn}>
-              <img src={`${STREET}/neon.png`} alt='Bazaar' />
+              <img src={artSrc(`${STREET}/neon.png`)} alt='Bazaar' />
             </div>
           </div>
           <button
@@ -127,9 +132,17 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
               setTimeout(onDoor, DOOR_OPEN_MS)
             }}
           >
-            <img src={`${STREET}/door.png`} alt='' />
-            <img src={`${STREET}/door-open-1.png`} alt='' data-frame='1' />
-            <img src={`${STREET}/door-open-2.png`} alt='' data-frame='2' />
+            <img src={artSrc(`${STREET}/door.png`)} alt='' />
+            <img
+              src={artSrc(`${STREET}/door-open-1.png`)}
+              alt=''
+              data-frame='1'
+            />
+            <img
+              src={artSrc(`${STREET}/door-open-2.png`)}
+              alt=''
+              data-frame='2'
+            />
           </button>
         </div>
         <div className={street.alleyGlow} aria-hidden />
@@ -164,12 +177,12 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
         }}
         onClick={() => sfx.bus()}
       >
-        <img src={`${STREET}/bus.png`} alt='' />
-        <img src={`${STREET}/bus-on.png`} alt='' data-on='' />
+        <img src={artSrc(`${STREET}/bus.png`)} alt='' />
+        <img src={artSrc(`${STREET}/bus-on.png`)} alt='' data-on='' />
         <div className={scene.sBusPost} data-edit-id='street:bus-post'>
-          <img src={`${STREET}/bus-post.png`} alt='' />
+          <img src={artSrc(`${STREET}/bus-post.png`)} alt='' />
           <div className={scene.sBusPostOn}>
-            <img src={`${STREET}/bus-post-on.png`} alt='' />
+            <img src={artSrc(`${STREET}/bus-post-on.png`)} alt='' />
           </div>
         </div>
       </Link>
@@ -233,7 +246,7 @@ function RatLane({ index }: { index: number }) {
         <div className={css.ratView}>
           <img
             className={css.ratStrip}
-            src='/images/bazaar/ambient/rat-run.png'
+            src={artSrc('/images/bazaar/ambient/rat-run.png')}
             alt=''
           />
         </div>

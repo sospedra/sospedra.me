@@ -1,6 +1,7 @@
 import { join } from 'node:path'
 import createMDX from '@next/mdx'
 import type { NextConfig } from 'next'
+import { bazaarArtVersion } from './scripts/bazaar-art-version.mjs'
 import rewrites from './services/rewrites.json'
 
 const withMDX = createMDX({
@@ -25,6 +26,9 @@ const withMDX = createMDX({
 
 const config: NextConfig = {
   outputFileTracingRoot: join(__dirname, '../..'),
+  env: {
+    NEXT_PUBLIC_BAZAAR_ART_V: bazaarArtVersion(),
+  },
   cacheComponents: true,
   reactCompiler: true,
   typedRoutes: true,
@@ -79,14 +83,24 @@ const config: NextConfig = {
         { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
       ],
     },
-    // bazaar art iterates by replacing filenames, so a day fresh + a week stale
+    // fallback for unversioned stragglers (console file listing); art
+    // replaces bytes under stable filenames, so a month bounds staleness
     {
       source: '/images/bazaar/:path*',
       headers: [
         {
           key: 'Cache-Control',
-          value: 'public, max-age=86400, stale-while-revalidate=604800',
+          value:
+            'public, max-age=2592000, stale-while-revalidate=31536000, immutable',
         },
+      ],
+    },
+    // a ?v= content hash pins the exact bytes; the last match wins
+    {
+      source: '/images/bazaar/:path*',
+      has: [{ type: 'query', key: 'v' }],
+      headers: [
+        { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
       ],
     },
     // hover/touch prefetch must survive the navigation; a month bounds staleness

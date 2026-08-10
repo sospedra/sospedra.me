@@ -1,3 +1,4 @@
+import { artCssUrl, artSrc } from './art-version'
 import { type Regime, regimeAt } from './decor'
 
 /* Scene chrome: inline style patches on the baked scene elements (walls,
@@ -64,8 +65,11 @@ const ownsWf = (el: HTMLElement) => {
 
 /* a filter patch replaces the whole property; the var keeps a baked
    structural blur (seps, street pads, fg towers) under brightness tuning */
-const cssValueOf = (key: keyof ChromePatch, value: string) =>
-  key === 'filter' ? `${value} var(--baked-blur,)` : value
+const cssValueOf = (key: keyof ChromePatch, value: string) => {
+  if (key === 'filter') return `${value} var(--baked-blur,)`
+  if (key === 'backgroundImage') return artCssUrl(value)
+  return value
+}
 
 export const applyChromeTo = (el: HTMLElement, patch: ChromePatch) => {
   for (const [key, prop] of Object.entries(CSS_PROP)) {
@@ -80,7 +84,11 @@ export const applyChromeTo = (el: HTMLElement, patch: ChromePatch) => {
   if (!ownsWf(el)) return
   const floor = el.closest<HTMLElement>('[data-floor]')
   if (floor) {
-    applyImportant(floor, '--wf', patch.wf ? `url("${patch.wf}")` : null)
+    applyImportant(
+      floor,
+      '--wf',
+      patch.wf ? `url("${artSrc(patch.wf)}")` : null,
+    )
   }
 }
 
@@ -134,7 +142,9 @@ const ruleOf = (id: string, patch: ChromePatch): string => {
   }
   const floorSelector = floorSelectorOf(id)
   if (patch.wf && floorSelector) {
-    rules.push(`${floorSelector} { --wf: url("${patch.wf}") !important }`)
+    rules.push(
+      `${floorSelector} { --wf: url("${artSrc(patch.wf)}") !important }`,
+    )
   }
   return rules.join('\n')
 }

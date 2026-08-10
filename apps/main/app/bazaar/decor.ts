@@ -2,6 +2,7 @@
    decor.json as one node. The editor mutates the document at runtime and
    saves it back to disk through the dev-only save route. */
 
+import { artSrc } from './art-version'
 import type { ChromeMap } from './chrome'
 import rawDecor from './decor.json'
 import type { FloorsConfig } from './floors'
@@ -83,7 +84,7 @@ export type DecorDoc = {
 export const INITIAL_DECOR = rawDecor as DecorDoc
 
 export const spriteSrc = (kind: DecorKind, ref: string) =>
-  `${kind === 'arch' ? ARCH : DECO}/${ref}.png`
+  artSrc(`${kind === 'arch' ? ARCH : DECO}/${ref}.png`)
 
 export const isSpotKind = (kind: DecorKind) =>
   kind === 'glow' || kind === 'shadow'

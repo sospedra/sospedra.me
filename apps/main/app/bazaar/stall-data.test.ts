@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import test from 'node:test'
+import { artSrc } from './art-version'
 import { DESKTOP_FLOORS, MOBILE_FLOORS } from './floors'
 import { STALLS } from './stall-catalog'
 import { layerFiles, STALL_SCENES } from './stalls-manifest'
@@ -58,7 +59,8 @@ test('mobile floors place the launched stalls exactly once', () => {
 
 test('home warm lists ship and cover the floor 0 plates', () => {
   for (const url of STREET_WARM) {
-    assert.ok(existsSync(join(publicDir, url)), `missing ${url}`)
+    const file = url.split('?')[0] ?? url
+    assert.ok(existsSync(join(publicDir, file)), `missing ${url}`)
   }
   for (const url of SKYLINE_WARM) {
     assert.ok(STREET_WARM.includes(url), `${url} misses the commit tier`)
@@ -74,7 +76,7 @@ test('home warm lists ship and cover the floor 0 plates', () => {
     assert.ok(plate, `${id} has no plate layer`)
     const file = layerFiles(plate)[0]
     assert.ok(
-      STREET_WARM.includes(`/images/bazaar/${id}/${file}`),
+      STREET_WARM.includes(artSrc(`/images/bazaar/${id}/${file}`)),
       `floor 0 plate ${id}/${file} misses the warm list`,
     )
   }

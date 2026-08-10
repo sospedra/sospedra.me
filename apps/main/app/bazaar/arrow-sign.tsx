@@ -2,6 +2,7 @@
 
 import cn from 'clsx'
 import { prefersQuietFx } from 'services/theme'
+import { artSrc } from './art-version'
 import { DECO } from './decor'
 import scene from './scene.module.css'
 import { sfx } from './sounds'
@@ -50,9 +51,9 @@ function ArrowSign(props: { dir: 'up' | 'down' } & SignProps) {
         scrollOneFloor(event.currentTarget, dir)
       }}
     >
-      <img src={`${DECO}/${dir}-off.png`} alt='' draggable={false} />
+      <img src={artSrc(`${DECO}/${dir}-off.png`)} alt='' draggable={false} />
       <span className={scene.signOn} aria-hidden>
-        <img src={`${DECO}/${dir}-on.png`} alt='' draggable={false} />
+        <img src={artSrc(`${DECO}/${dir}-on.png`)} alt='' draggable={false} />
       </span>
       <span className={scene.signHot} />
     </button>
