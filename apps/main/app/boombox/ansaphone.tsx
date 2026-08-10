@@ -17,6 +17,7 @@ type AnsaphoneProps = {
   copied: boolean
   countdown: DailyCountdown
   daily: Song
+  fxOn: boolean
   guessDropdown: (resultsId: string) => React.ReactNode
   guessInput: (resultsId: string) => React.ReactNode
   limit: number
@@ -28,6 +29,7 @@ type AnsaphoneProps = {
   onShare: () => void
   onSkip: () => void
   onStop: () => void
+  onToggleFx: () => void
   togglePlay: () => void
 }
 
@@ -35,6 +37,7 @@ export function Ansaphone({
   copied,
   countdown,
   daily,
+  fxOn,
   guessDropdown,
   guessInput,
   limit,
@@ -46,6 +49,7 @@ export function Ansaphone({
   onShare,
   onSkip,
   onStop,
+  onToggleFx,
   togglePlay,
 }: AnsaphoneProps) {
   return (
@@ -84,10 +88,6 @@ export function Ansaphone({
               state={state}
             />
             <div className={css.tadStatusRow}>
-              <span className={css.tadSwitch} aria-hidden>
-                <i />
-              </span>
-              <em className={css.tadTag}>answer on</em>
               <span className={css.tadLed} data-lit='true' />
               <span
                 className={css.tadLed}
@@ -100,6 +100,19 @@ export function Ansaphone({
               <a className={css.tadOff} href='/' aria-label='Turn off, exit'>
                 off
               </a>
+              <em className={cn(css.tadTag, css.tadTagFx)}>
+                fx {fxOn ? 'on' : 'off'}
+              </em>
+              <button
+                type='button'
+                className={css.tadSwitch}
+                data-on={fxOn}
+                aria-pressed={fxOn}
+                aria-label='Deck sound effects'
+                onClick={onToggleFx}
+              >
+                <i />
+              </button>
               <span className={css.tadVol} aria-hidden />
               <span className={css.tadGrille} aria-hidden />
             </div>

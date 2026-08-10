@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import type { DailyCountdown } from 'services/daily-countdown'
+import { tapHaptic } from 'services/haptics'
 import css from './boombox-chassis.module.css'
 import { CassettePane } from './cassette-bay'
 import type { DeckSfx } from './deck-sfx'
 import type { BoomboxState, Song } from './engine'
 import fnRow from './function-row.module.css'
+import { FxToggle } from './fx-toggle'
 import { DbMeter, Lcd } from './lcd-rack'
 import lcd from './lcd-rack.module.css'
 import { DECK_KEY_ORDER, skipSecondsGain, Transport } from './lever-bank'
@@ -114,13 +116,21 @@ const EqBank = (props: {
 )
 
 const VolumeCell = (props: {
+  fxOn: boolean
   value: number
   onChange: (value: number) => void
+  onToggleFx: () => void
 }) => (
   <section className={lower.volumeCell}>
     <span className={lower.panelLabel}>volume</span>
-    <div className={lower.volumeTicks} aria-hidden />
+    <div className={lower.fxDock}>
+      <FxToggle on={props.fxOn} onToggle={props.onToggleFx} />
+      <span className={lower.fxCaption} aria-hidden>
+        fx
+      </span>
+    </div>
     <div className={lower.knobWrap}>
+      <div className={lower.volumeTicks} aria-hidden />
       <input
         type='range'
         className={lower.knobInput}
@@ -146,6 +156,7 @@ type ChassisProps = {
   daily: Song
   doorOpen: boolean
   eqGains: number[]
+  fxOn: boolean
   guessDropdown: (resultsId: string) => React.ReactNode
   guessInput: (resultsId: string) => React.ReactNode
   limit: number
@@ -161,6 +172,7 @@ type ChassisProps = {
   onShare: () => void
   onSkip: () => void
   onStop: () => void
+  onToggleFx: () => void
   onVolume: (value: number) => void
   togglePlay: () => void
 }
@@ -171,6 +183,7 @@ export function BoomboxChassis({
   daily,
   doorOpen,
   eqGains,
+  fxOn,
   guessDropdown,
   guessInput,
   limit,
@@ -186,6 +199,7 @@ export function BoomboxChassis({
   onShare,
   onSkip,
   onStop,
+  onToggleFx,
   onVolume,
   togglePlay,
 }: ChassisProps) {
@@ -260,7 +274,12 @@ export function BoomboxChassis({
               </div>
             </div>
 
-            <FunctionRow onPress={() => sfx().click()} />
+            <FunctionRow
+              onPress={() => {
+                sfx().click()
+                tapHaptic()
+              }}
+            />
 
             <CassettePane
               daily={daily}
@@ -301,7 +320,12 @@ export function BoomboxChassis({
             onSkip={onSkip}
             onShare={onShare}
           />
-          <VolumeCell value={volume} onChange={onVolume} />
+          <VolumeCell
+            fxOn={fxOn}
+            value={volume}
+            onChange={onVolume}
+            onToggleFx={onToggleFx}
+          />
         </section>
 
         <span className={css.screw} data-corner='tl' aria-hidden />

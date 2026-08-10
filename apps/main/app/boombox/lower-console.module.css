@@ -144,7 +144,10 @@
 
 .volumeCell {
   display: grid;
-  place-items: center;
+  grid-template-columns: auto auto;
+  justify-content: center;
+  align-items: center;
+  column-gap: 18px;
   padding: 16px 0 20px;
 }
 
@@ -152,6 +155,19 @@
   position: relative;
   width: 84px;
   height: 84px;
+}
+
+.fxDock {
+  display: grid;
+  justify-items: center;
+  row-gap: 4px;
+}
+
+.fxCaption {
+  color: #7d8684;
+  font: 7px / 1 var(--micro);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .knobInput {
@@ -210,9 +226,11 @@
   transition: transform 90ms linear;
 }
 
+/* lives inside the knob wrap so the ring follows the knob, not the cell */
 .volumeTicks {
   position: absolute;
-  inset: 16px 14px 14px;
+  inset: -13px;
+  pointer-events: none;
   border-radius: 50%;
   background: repeating-conic-gradient(
     from -130deg,

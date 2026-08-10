@@ -22,8 +22,8 @@ const scribble = (text: string) =>
 
 const coverBlurClass = (limit: number, stage: BoomboxState['stage']) => {
   if (stage !== 'play') return label.coverClear
-  if (limit >= 11) return label.coverSoft
-  if (limit >= 7) return label.coverMid
+  if (limit >= 8) return label.coverSoft
+  if (limit >= 4) return label.coverMid
   return label.coverHeavy
 }
 

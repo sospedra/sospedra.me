@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { ensureRunning } from 'services/audio/kit'
 
 type ClipAudioOptions = {
   /* seconds of the clip the player may hear; playback hard-stops there */
@@ -20,6 +21,8 @@ type ClipGraph = {
 }
 
 export type ClipAudio = ReturnType<typeof useClipAudio>
+
+const tenths = (time: number) => Math.round(time * 10) / 10
 
 const createElement = (src: string) => {
   const audio = new Audio()
@@ -98,6 +101,15 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
     }
   }, [src])
 
+  const stopAtLimit = useCallback(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    audio.pause()
+    audio.currentTime = 0
+    setSeconds(0)
+    optionsRef.current.onLimit?.()
+  }, [])
+
   /* timeupdate is too coarse to police the unlock boundary; poll each frame */
   useEffect(() => {
     if (!isPlaying) return
@@ -106,15 +118,11 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
     const tick = () => {
       const audio = audioRef.current
       if (!audio) return
-      const { limit, onLimit } = optionsRef.current
 
-      setSeconds(Math.floor(audio.currentTime))
+      setSeconds(tenths(audio.currentTime))
 
-      if (audio.currentTime >= limit) {
-        audio.pause()
-        audio.currentTime = 0
-        setSeconds(0)
-        onLimit?.()
+      if (audio.currentTime >= optionsRef.current.limit) {
+        stopAtLimit()
         return
       }
       frame = requestAnimationFrame(tick)
@@ -122,7 +130,29 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
 
     frame = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(frame)
-  }, [isPlaying])
+  }, [isPlaying, stopAtLimit])
+
+  /* rAF overshoots a frame, audible on the 0.1s cut; a timer lands the stop.
+     it re-arms itself so a mid-play rewind never cuts the clip early */
+  useEffect(() => {
+    if (!isPlaying) return
+
+    const limit = options.limit
+    let timer = 0
+    const arm = () => {
+      const audio = audioRef.current
+      if (!audio) return
+      const remaining = limit - audio.currentTime
+      if (remaining <= 0.02) {
+        stopAtLimit()
+        return
+      }
+      timer = window.setTimeout(arm, remaining * 1000)
+    }
+
+    arm()
+    return () => clearTimeout(timer)
+  }, [isPlaying, options.limit, stopAtLimit])
 
   /* the element source must be created inside a user gesture and only once;
      the newborn graph seeds EQ and volume from the latest settings */
@@ -147,7 +177,8 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
   }, [])
 
   const play = useCallback(() => {
-    ensureGraph()
+    const graph = ensureGraph()
+    if (graph) ensureRunning(graph.context)
     audioRef.current?.play().catch(() => setIsPlaying(false))
   }, [ensureGraph])
 
@@ -168,7 +199,7 @@ export const useClipAudio = (src: string, options: ClipAudioOptions) => {
     if (!audio) return
     const target = Math.max(0, to)
     audio.currentTime = target
-    setSeconds(Math.floor(target))
+    setSeconds(tenths(target))
   }, [])
 
   const setBand = useCallback((band: number, gainDb: number) => {

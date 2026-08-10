@@ -1,5 +1,6 @@
 'use client'
 
+import { playFanfare } from 'services/audio/fanfare'
 import { createSfxKit, type SfxBed } from 'services/audio/kit'
 
 /* synthesized tape-deck foley; no recorded samples yet */
@@ -37,6 +38,22 @@ export const createDeckSfx = () => {
         peak: 0.16,
       })
     },
+    reject: () => {
+      snap(760, 0.07, 0.1)
+      kit.tone({ from: 210, to: 60, duration: 0.26, peak: 0.2 })
+      kit.tone({
+        from: 150,
+        to: 88,
+        duration: 0.18,
+        peak: 0.09,
+        at: 0.09,
+        shape: 'square',
+      })
+    },
+    fanfare: () => {
+      const context = kit.ensure()
+      if (context) playFanfare(context, { volume: 0.9 })
+    },
     motorOn: () => {
       motor ??= kit.bed({
         filter: 'lowpass',
@@ -48,6 +65,10 @@ export const createDeckSfx = () => {
     motorOff: () => {
       motor?.stop()
       motor = null
+    },
+    dispose: () => {
+      motor = null
+      kit.dispose()
     },
   }
 }

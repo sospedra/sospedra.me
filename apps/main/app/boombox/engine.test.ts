@@ -127,7 +127,7 @@ test('unlockedSeconds follows the ladder and opens fully on reveal', () => {
   })
   let state = initialState(0)
 
-  const ladder = [1, 2, 4, 7, 11, 16]
+  const ladder = [0.1, 0.5, 2, 4, 8, 15]
   for (const expected of ladder) {
     assert.equal(unlockedSeconds(state), expected)
     state = reduce(state, { type: 'guess', candidate: wrong }, daily)
@@ -339,7 +339,7 @@ test('unlockedSeconds clamps past the ladder while still playing', () => {
     stage: 'play',
   }
 
-  assert.equal(unlockedSeconds(overflow), 16)
+  assert.equal(unlockedSeconds(overflow), 15)
 })
 
 test('shareCard maps every partial score to its own symbol', () => {

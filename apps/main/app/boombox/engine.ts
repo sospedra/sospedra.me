@@ -36,9 +36,9 @@ export type BoomboxState = {
 export type BoomboxEvent = { type: 'guess'; candidate: Song } | { type: 'skip' }
 
 export const MAX_GUESSES = 6
-export const FULL_UNLOCK = 16
-/* Heardle's unlock ladder: seconds audible after n failed attempts */
-export const UNLOCKS = [1, 2, 4, 7, 11, FULL_UNLOCK] as const
+export const FULL_UNLOCK = 15
+/* Songless's unlock ladder: seconds audible after n failed attempts */
+export const UNLOCKS = [0.1, 0.5, 2, 4, 8, FULL_UNLOCK] as const
 export const CLIP_SECONDS = 30
 /* first tape spun on launch day; the tape flips for everyone at the same
    instant: 02:00 on Spain's wall clock, whatever utc offset that is */

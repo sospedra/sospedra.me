@@ -2,10 +2,17 @@
 
 import { Caveat, Share_Tech_Mono, VT323 } from 'next/font/google'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { ConfettiBurst } from 'services/celebration'
 import { useDailyCountdown } from 'services/daily-countdown'
+import { buzzHaptic, pulseHaptic, tapHaptic } from 'services/haptics'
 import { useGameInput } from 'services/hotkeys'
 import { shareHandled, shareText } from 'services/share'
-import { readLocalJson, writeLocalJson } from 'services/storage'
+import {
+  readLocal,
+  readLocalJson,
+  writeLocal,
+  writeLocalJson,
+} from 'services/storage'
 import { useSystem } from 'services/system'
 import * as z from 'zod/mini'
 import { Ansaphone } from './ansaphone'
@@ -25,6 +32,7 @@ import {
   nextFlipAt,
   reduce,
   type Song,
+  type Stage,
   shareCard,
   songForDay,
   UNLOCKS,
@@ -57,7 +65,35 @@ const shareTechMono = Share_Tech_Mono({
 const FONT_VARIABLES = `${caveat.variable} ${vt323.variable} ${shareTechMono.variable}`
 
 const SONGS = songsJson as Song[]
+
+const OUTCOME_HAPTICS: Record<Exclude<Stage, 'play'>, () => void> = {
+  lost: buzzHaptic,
+  won: pulseHaptic,
+}
 const STORAGE_KEY = '@@boombox/state-v1'
+const FX_KEY = '@@boombox/fx-v1'
+
+const noop = () => undefined
+const MUTE_SFX: DeckSfx = {
+  click: noop,
+  clunk: noop,
+  dispose: noop,
+  fanfare: noop,
+  insert: noop,
+  motorOff: noop,
+  motorOn: noop,
+  reject: noop,
+  zip: noop,
+}
+
+const CONFETTI_TONES_808 = [
+  '#ff5424',
+  '#eab445',
+  '#cb2525',
+  '#f5f5f0',
+  '#e0a35c',
+  '#a63312',
+] as const
 const MAX_RESULTS = 5
 const DOOR_CLOSE_DELAY_MS = 1400
 const COPIED_RESET_MS = 2000
@@ -140,6 +176,8 @@ function BoomboxMachine({
   initialState: BoomboxState
 }) {
   const [state, setState] = useState(startState)
+  /* live wins only: a tape restored on 'won' must not re-burst on mount */
+  const [celebrated, setCelebrated] = useState(false)
   const [tapeExpired, setTapeExpired] = useState(false)
   const [query, setQuery] = useState('')
   const [cursor, setCursor] = useState(0)
@@ -148,6 +186,7 @@ function BoomboxMachine({
     Array(EQ_BANDS.length).fill(0),
   )
   const [volume, setVolume] = useState(0.65)
+  const [fxOn, setFxOn] = useState(() => readLocal(FX_KEY) !== 'off')
   const sfxRef = useRef<DeckSfx | null>(null)
   const copiedTimerRef = useRef(0)
   /* the site's dailies count to utc midnight; this tape flips at 02:00 on
@@ -161,14 +200,30 @@ function BoomboxMachine({
   const playing = state.stage === 'play'
   const tapeSpan = playing ? FULL_UNLOCK : CLIP_SECONDS
 
+  /* a new identity per toggle re-runs the motor effect, so disabling fx
+     mid-play also stops the hum through the cleanup */
   const sfx = useCallback(() => {
+    if (!fxOn) return MUTE_SFX
     sfxRef.current ??= createDeckSfx()
     return sfxRef.current
-  }, [])
+  }, [fxOn])
+
+  const onToggleFx = () => {
+    tapHaptic()
+    const next = !fxOn
+    setFxOn(next)
+    writeLocal(FX_KEY, next ? 'on' : 'off')
+    if (!next) return
+    sfxRef.current ??= createDeckSfx()
+    sfxRef.current.click()
+  }
 
   const sound = useClipAudio(clipUrl(daily.id), {
     limit,
-    onLimit: () => sfx().clunk(),
+    onLimit: () => {
+      sfx().clunk()
+      tapHaptic()
+    },
     eqGains,
     volume,
   })
@@ -180,6 +235,14 @@ function BoomboxMachine({
   }, [sound.isPlaying, sfx])
 
   useEffect(() => () => window.clearTimeout(copiedTimerRef.current), [])
+
+  useEffect(
+    () => () => {
+      sfxRef.current?.dispose()
+      sfxRef.current = null
+    },
+    [],
+  )
 
   useEffect(() => {
     const check = () => setTapeExpired(dayNumber(new Date()) !== state.day)
@@ -205,13 +268,24 @@ function BoomboxMachine({
     persistState(next)
     setState(next)
     if (next.stage !== 'play') sound.stop()
+    if (next.stage !== 'play' && next.stage !== state.stage) {
+      OUTCOME_HAPTICS[next.stage]()
+    }
+    if (next.stage === 'won' && state.stage === 'play') {
+      sfx().fanfare()
+      setCelebrated(true)
+    }
     const landed = next.guesses[state.guesses.length]
+    const missedGuess =
+      landed && landed.score !== 'hit' && landed.score !== 'skip'
+    if (missedGuess) sfx().reject()
     if (landed) notify(SCORE_LABEL[landed.score])
   }
 
   const onGuess = (candidate: Song | undefined) => {
     if (!candidate) return
     sfx().click()
+    tapHaptic()
     sound.stop()
     setQuery('')
     setCursor(0)
@@ -220,17 +294,20 @@ function BoomboxMachine({
 
   const onSkip = () => {
     sfx().zip()
+    tapHaptic()
     sound.stop()
     dispatch({ type: 'skip' })
   }
 
   const onRewind = () => {
     sfx().zip()
+    tapHaptic()
     sound.seek(previousWaypoint(sound.seconds))
   }
 
   const togglePlay = () => {
     sfx().click()
+    tapHaptic()
     if (sound.isPlaying) {
       sound.pause()
       return
@@ -240,16 +317,19 @@ function BoomboxMachine({
 
   const onStop = () => {
     sfx().clunk()
+    tapHaptic()
     sound.stop()
   }
 
   const onShare = async () => {
     sfx().click()
+    tapHaptic()
     const card = shareCard(state)
     const outcome = await shareText({ text: card })
     if (shareHandled(outcome)) return
     await navigator.clipboard.writeText(card).catch(() => undefined)
     setCopied(true)
+    pulseHaptic()
     notify('Result copied to the clipboard')
     window.clearTimeout(copiedTimerRef.current)
     copiedTimerRef.current = window.setTimeout(
@@ -346,12 +426,19 @@ function BoomboxMachine({
     <main className={`${css.room} ${FONT_VARIABLES}`}>
       <h1 className='sr-only'>Boombox, the daily mixtape guessing game</h1>
 
+      {celebrated && (
+        <div className={css.confettiAnchor}>
+          <ConfettiBurst tones={CONFETTI_TONES_808} />
+        </div>
+      )}
+
       <BoomboxChassis
         copied={copied}
         countdown={countdown}
         daily={daily}
         doorOpen={doorOpen}
         eqGains={eqGains}
+        fxOn={fxOn}
         guessDropdown={guessDropdown}
         guessInput={guessInput}
         limit={limit}
@@ -367,6 +454,7 @@ function BoomboxMachine({
         onShare={onShare}
         onSkip={onSkip}
         onStop={onStop}
+        onToggleFx={onToggleFx}
         onVolume={onVolume}
         togglePlay={togglePlay}
       />
@@ -375,6 +463,7 @@ function BoomboxMachine({
         copied={copied}
         countdown={countdown}
         daily={daily}
+        fxOn={fxOn}
         guessDropdown={guessDropdown}
         guessInput={guessInput}
         limit={limit}
@@ -386,6 +475,7 @@ function BoomboxMachine({
         onShare={onShare}
         onSkip={onSkip}
         onStop={onStop}
+        onToggleFx={onToggleFx}
         togglePlay={togglePlay}
       />
     </main>

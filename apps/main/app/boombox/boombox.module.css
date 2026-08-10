@@ -78,6 +78,16 @@
   font-size: 26px;
 }
 
+.confettiAnchor {
+  position: fixed;
+  z-index: 40;
+  top: 22dvh;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
 @media (max-width: 759px) {
   /* the narrow room scrolls itself; the soft keyboard overlays it and
      must never resize or move the machine */

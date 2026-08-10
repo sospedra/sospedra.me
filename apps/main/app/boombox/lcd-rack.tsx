@@ -110,9 +110,10 @@ export const Lcd = (props: {
     if (stage === 'lost') return 'side b next time · '
     return ''
   }
-  const yearHint = props.limit >= 4 || !playing ? props.daily.year : '····'
+  const attempts = props.state.guesses.length
+  const yearHint = attempts >= 2 || !playing ? props.daily.year : '····'
   const genreHint = () => {
-    if (playing && props.limit < 7) return '····'
+    if (playing && attempts < 3) return '····'
     return props.daily.genre || 'unknown'
   }
 
@@ -122,7 +123,7 @@ export const Lcd = (props: {
         <div className={css.lcdTop}>
           <span>boombox #{props.state.day + 1}</span>
           <span>
-            {String(props.seconds).padStart(3, '0')}/
+            {props.seconds.toFixed(1).padStart(4, '0')}/
             {playing ? `${props.limit}s` : `${CLIP_SECONDS}s`}
           </span>
         </div>
