@@ -1,6 +1,7 @@
 import type { FormEvent, KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import css from './answer-console.module.css'
+import { AnswerKeys, useAnswerKeys } from './answer-keys'
 import type { GeoGameState } from './game-state'
 import type { GeoLocale, GeoMessages } from './geo-messages'
 import shell from './geo-shell.module.css'
@@ -36,8 +37,10 @@ export function TextAnswerConsole({
   const [value, setValue] = useState('')
   const [focused, setFocused] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+  const [keysDismissed, setKeysDismissed] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
+  const keys = useAnswerKeys()
   const inputId = useId()
   const listboxId = useId()
   const active = state.phase === 'question'
@@ -62,6 +65,24 @@ export function TextAnswerConsole({
       inputRef.current?.focus({ preventScroll: true }),
     )
   }, [active])
+
+  const keysOpen = keys.enabled && !keysDismissed
+
+  const writeCharacter = (character: string) => {
+    setValue((current) => (current + character).slice(0, ANSWER_MAX_LENGTH))
+    setActiveIndex(0)
+    setDismissed(false)
+  }
+
+  const eraseBackward = () => {
+    setValue((current) => current.slice(0, -1))
+    setActiveIndex(0)
+  }
+
+  const dismissKeys = () => {
+    setKeysDismissed(true)
+    inputRef.current?.blur()
+  }
 
   const transmit = (answer: string) => {
     const submittedText = answer.trim()
@@ -111,6 +132,7 @@ export function TextAnswerConsole({
     <aside
       className={css.answerConsole}
       data-mode='text'
+      data-keys={keysOpen}
       aria-label={copy.answerInput}
     >
       <form className={css.chatForm} onSubmit={submitForm}>
@@ -136,6 +158,7 @@ export function TextAnswerConsole({
             autoCapitalize='words'
             autoComplete='off'
             enterKeyHint='send'
+            inputMode={keys.inputMode}
             spellCheck={false}
             placeholder={placeholder}
             role='combobox'
@@ -151,6 +174,7 @@ export function TextAnswerConsole({
             onFocus={() => {
               setFocused(true)
               setDismissed(false)
+              setKeysDismissed(false)
             }}
             onChange={(event) => {
               setValue(event.target.value)
@@ -213,6 +237,15 @@ export function TextAnswerConsole({
       <span className={css.streakReadout}>
         {copy.streak} <strong>×{state.currentStreak}</strong>
       </span>
+      {keysOpen && (
+        <AnswerKeys
+          copy={copy}
+          disabled={!active}
+          onDismiss={dismissKeys}
+          onErase={eraseBackward}
+          onWrite={writeCharacter}
+        />
+      )}
     </aside>
   )
 }

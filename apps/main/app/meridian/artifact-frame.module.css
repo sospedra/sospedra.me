@@ -279,9 +279,12 @@
 }
 
 @media (max-width: 800px) {
+  /* the soft keyboard shrinks the stage without touching vh, so the prompt
+     measures against this frame */
   .artifactFrame {
     min-height: 0;
     margin-block: 0.35rem 0;
+    container-type: size;
   }
 
   .artifactReadout {
@@ -292,20 +295,21 @@
 
   .capitalArtifact {
     width: min(90%, 28rem);
-    min-height: min(24vh, 12rem);
+    min-height: min(24vh, 12rem, 88cqh);
+    max-height: 100cqh;
     padding: 1rem 1.25rem;
   }
 
   .capitalPrompt,
   .capitalCode {
     margin-top: 0.6rem;
-    font-size: clamp(1.55rem, 7vw, 2.7rem);
+    font-size: min(clamp(1.55rem, 7vw, 2.7rem), 24cqh);
   }
 }
 
 @media (max-width: 800px) and (max-height: 540px) and (orientation: landscape) {
   .artifactFrame[data-type="shape"] .promptOrbit {
-    width: min(52%, 14rem, max(3.5rem, calc(100dvh - 16.25rem)));
+    width: min(52%, 14rem, 96cqh);
   }
 }
 

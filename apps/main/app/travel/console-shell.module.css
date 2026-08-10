@@ -222,3 +222,39 @@
     grid-template-rows: 5.25rem minmax(0, 1fr) 9.5rem;
   }
 }
+
+/* MOBILE BRIDGE: gestures own the globe, so the manual deck retires. The
+   panorama and manifest housings dissolve (display: contents) and their
+   instruments join this grid directly: strip header, full-width scope,
+   radio + heading on the left, region keys on the right, places strip. */
+@media (max-width: 899px) {
+  .console {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: 3.4rem minmax(0, 1fr) auto auto 7.6rem;
+    grid-template-areas:
+      "header header"
+      "scope scope"
+      "starboard port"
+      "starboard sector"
+      "locations locations";
+  }
+}
+
+@media (max-width: 899px) and (max-height: 620px) and (orientation: portrait) {
+  .console {
+    grid-template-rows: 3.2rem minmax(0, 1fr) auto auto 6.4rem;
+  }
+}
+
+@media (max-width: 899px) and (max-height: 620px) and (orientation: landscape) {
+  .console {
+    grid-template-columns: minmax(0, 1fr) clamp(12rem, 38vw, 14rem);
+    grid-template-rows: 3.2rem auto auto minmax(0, 1fr) 4rem;
+    grid-template-areas:
+      "header header"
+      "scope port"
+      "scope sector"
+      "scope locations"
+      "starboard starboard";
+  }
+}

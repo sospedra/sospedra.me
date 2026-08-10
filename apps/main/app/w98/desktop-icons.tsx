@@ -7,7 +7,10 @@ import css from './desktop-icons.module.css'
 
 type IconId =
   | 'msdos'
+  | 'documents'
   | 'recycle'
+  | 'audiocd'
+  | 'games'
   | 'cims'
   | 'mines'
   | 'paint'
@@ -96,11 +99,38 @@ export const DesktopIcons: React.FC<{
       guardNav={guardNav}
     />
     <DesktopLink
+      url='/papers'
+      label='My Documents'
+      ariaLabel='My Documents, open the papers'
+      icon={css.documentsIcon}
+      iconId='documents'
+      icons={icons}
+      guardNav={guardNav}
+    />
+    <DesktopLink
       url='/recycle-bin'
       label='Recycle Bin'
       ariaLabel='Open the recycle bin'
       icon={css.recycleIcon}
       iconId='recycle'
+      icons={icons}
+      guardNav={guardNav}
+    />
+    <DesktopLink
+      url='/scavenger'
+      label='Audio CD (D:)'
+      ariaLabel='Audio CD in drive D, open the disc wallet'
+      icon={css.audiocdIcon}
+      iconId='audiocd'
+      icons={icons}
+      guardNav={guardNav}
+    />
+    <DesktopLink
+      url='/games'
+      label='Games'
+      ariaLabel='Games, open the game archive'
+      icon={css.gamesIcon}
+      iconId='games'
       icons={icons}
       guardNav={guardNav}
     />

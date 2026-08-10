@@ -616,10 +616,10 @@
   filter: blur(1.5px);
 }
 
-/* 1.8x on desktop, capped at 38cqw of visual length on narrow stages
-   so the car keeps scene proportion (tan∘atan2 divides the lengths) */
+/* 1.8x on desktop; narrow stages cap the visual length at 80cqw so the
+   nearest-plane car stays street-scale (tan∘atan2 divides the lengths) */
 .sCarScale {
-  --car-scale: min(1.8, tan(atan2(38cqw, clamp(9rem, 30vh, 18rem))));
+  --car-scale: min(1.8, tan(atan2(80cqw, clamp(9rem, 30vh, 18rem))));
   transform: scale(var(--car-scale));
   transform-origin: bottom left;
   filter: brightness(0.45);

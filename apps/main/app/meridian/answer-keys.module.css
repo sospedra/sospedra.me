@@ -1,0 +1,71 @@
+.keyBank {
+  display: grid;
+  padding-bottom: var(--safe-area-bottom);
+  gap: 0.28rem;
+}
+
+/* a browser that ignores inputmode=none shows both keyboards; the OS one
+   wins because it also owns the viewport */
+[data-keyboard="true"] .keyBank {
+  display: none;
+}
+
+.keyRow {
+  display: flex;
+  justify-content: center;
+  gap: 0.28rem;
+}
+
+.key {
+  min-width: 0;
+  height: 2.7rem;
+  flex: 1 1 0;
+  padding: 0;
+  border: 2px solid var(--geo-arcade-ink);
+  background: var(--geo-paper-bright);
+  box-shadow:
+    inset 0 -4px 0 #d8c8a2,
+    2px 2px 0 var(--geo-arcade-ink);
+  color: var(--geo-arcade-ink);
+  font: 800 1rem / 1 var(--font-code);
+  touch-action: manipulation;
+  transition:
+    background 90ms var(--geo-ease),
+    box-shadow 90ms var(--geo-ease),
+    transform 90ms var(--geo-ease);
+  user-select: none;
+}
+
+.key[data-tone] {
+  flex: 1.6 1 0;
+  font-size: 1.1rem;
+}
+
+.key[data-tone="dismiss"] {
+  background: var(--geo-cyan);
+}
+
+.key[data-tone="erase"] {
+  background: var(--geo-pink);
+}
+
+.key[data-pressed="true"] {
+  background: var(--geo-amber);
+  box-shadow: inset 0 3px 0 #b99a3c;
+  transform: translateY(2px);
+}
+
+.key:disabled {
+  background: #81778c;
+  box-shadow:
+    inset 0 -4px 0 #6b6276,
+    2px 2px 0 var(--geo-arcade-ink);
+  color: #3a3244;
+}
+
+@media (max-width: 359px) {
+  .key {
+    height: 2.45rem;
+    font-size: 0.9rem;
+  }
+}

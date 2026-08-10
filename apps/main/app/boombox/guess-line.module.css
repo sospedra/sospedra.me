@@ -118,34 +118,20 @@
 }
 
 @media (max-width: 759px) {
-  .ansaphone[data-entry-open="true"] .noteInput {
-    height: 44px;
-    font-size: 20px;
-    line-height: 44px;
+  /* the machine keeps its layout while typing; the keyboard reveal leaves
+     room under the line so the results slip stays on screen */
+  .noteInput {
+    scroll-margin-block: 2rem 12.5rem;
   }
 
-  .ansaphone[data-entry-open="true"] .searchDropdown {
-    max-height: clamp(
-      44px,
-      calc(
-        var(--boombox-viewport-height, 100dvh) -
-        max(8px, var(--safe-area-top)) -
-        15.45rem -
-        var(--safe-area-bottom)
-      ),
-      12rem
-    );
+  .ansaphone .searchDropdown {
+    max-height: 11rem;
     overflow-y: auto;
     overscroll-behavior-y: contain;
-    transform: none;
   }
 
-  .ansaphone[data-entry-open="true"] .songRow {
+  .ansaphone .songRow {
     height: 44px;
     line-height: 44px;
-  }
-
-  .noteInput {
-    scroll-margin-block: 11rem 2rem;
   }
 }

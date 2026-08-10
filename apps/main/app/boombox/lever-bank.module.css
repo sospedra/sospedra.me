@@ -220,11 +220,6 @@
     --kh: 44px;
     --kgap: 2px;
   }
-
-  .ansaphone[data-entry-open="true"] .leverBank[data-size="tad"] {
-    margin-top: 0;
-    margin-bottom: 2px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -144,6 +144,12 @@
 .realplayerAppIcon,
 .msdosAppIcon,
 .cimsAppIcon,
+.cameraAppIcon,
+.videoclubAppIcon,
+.travelAppIcon,
+.manualAppIcon,
+.papersAppIcon,
+.folderAppIcon,
 .gameIcon {
   display: inline-block;
   width: 1rem;
@@ -161,6 +167,30 @@
 
 .cimsAppIcon {
   background-image: url("/images/w98/cims-16x16.png");
+}
+
+.cameraAppIcon {
+  background-image: url("/images/w98/camera-16x16.png");
+}
+
+.videoclubAppIcon {
+  background-image: url("/images/w98/videoclub-16x16.png");
+}
+
+.travelAppIcon {
+  background-image: url("/images/w98/travel-16x16.png");
+}
+
+.manualAppIcon {
+  background-image: url("/images/w98/manual-16x16.png");
+}
+
+.papersAppIcon {
+  background-image: url("/images/w98/papers-16x16.png");
+}
+
+.folderAppIcon {
+  background-image: url("/images/w98/folder-16x16.png");
 }
 
 .appIcon {

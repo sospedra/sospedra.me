@@ -81,6 +81,9 @@ export function useGlobeViewState({
   const compassRef = useRef<HTMLSpanElement>(null)
   const compassHeadingRef = useRef<HTMLSpanElement>(null)
   const compassLatitudeRef = useRef<HTMLSpanElement>(null)
+  const screenCompassRef = useRef<HTMLSpanElement>(null)
+  const screenCompassHeadingRef = useRef<HTMLSpanElement>(null)
+  const screenCompassLatitudeRef = useRef<HTMLSpanElement>(null)
   const compassReadoutRef = useRef({ heading: -1, latitude: Number.NaN })
   const dialControlCountRef = useRef(0)
   const dialIdleUntilRef = useRef(0)
@@ -160,6 +163,9 @@ export function useGlobeViewState({
     compassRef,
     compassHeadingRef,
     compassLatitudeRef,
+    screenCompassRef,
+    screenCompassHeadingRef,
+    screenCompassLatitudeRef,
     compassReadoutRef,
     dialControlCountRef,
     dialIdleUntilRef,

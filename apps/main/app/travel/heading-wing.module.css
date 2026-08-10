@@ -453,3 +453,34 @@
     display: none;
   }
 }
+
+/* MOBILE BRIDGE: each wing is one bare bay in the console grid. The section
+   headers and the bolt decorations belong to the tall desktop rails. */
+@media (max-width: 899px) {
+  .instrumentWing {
+    gap: 0;
+    padding: 0.3rem 0.35rem;
+  }
+
+  .instrumentWing > header,
+  .radioHint,
+  .portWing::after,
+  .starboardWing::after {
+    display: none;
+  }
+
+  .portWing,
+  .starboardWing {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* the radio bay sits left of the heading card and the region keys */
+  .starboardWing {
+    border-right: 1px solid #252823;
+  }
+
+  .portWing {
+    border-right: 0;
+  }
+}

@@ -416,3 +416,24 @@
     transition: none;
   }
 }
+
+/* Landscape strips: a short wide note hugs the header corner so it stays
+   clear of the region keys below. */
+@media (max-width: 899px) and (max-height: 620px) and (orientation: landscape) {
+  .headerStickyNote {
+    top: 0.16rem;
+    right: 0.35rem;
+    width: 9.5rem;
+    aspect-ratio: auto;
+    gap: 0.1rem;
+    padding: 0.34rem 0.45rem 0.3rem;
+  }
+
+  .headerStickyNote::before {
+    height: 1rem;
+  }
+
+  .headerStickyAction {
+    padding-top: 0.12rem;
+  }
+}

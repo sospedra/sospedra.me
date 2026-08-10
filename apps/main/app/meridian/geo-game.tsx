@@ -76,7 +76,7 @@ export default function GeoGame({
   }, [challenge, mode, officialChallenge, practiceRound, sessionNonce])
 
   useDocumentLang(locale)
-  useViewportHeightVar('--geo-viewport-height')
+  const softKeyboard = useViewportHeightVar('--geo-viewport-height')
 
   useEffect(() => {
     const storage = getBrowserStorage()
@@ -141,7 +141,7 @@ export default function GeoGame({
       <a className={shell.skipLink} href='#main-content'>
         {copy.skipToGame}
       </a>
-      <div id='vbody' className={shell.shell}>
+      <div id='vbody' className={shell.shell} data-keyboard={softKeyboard}>
         <main id='main-content' tabIndex={-1}>
           <GeoSession
             key={`${sessionNonce}:${activeChallenge.id}:${practiceTimed ? 'timed' : 'untimed'}`}

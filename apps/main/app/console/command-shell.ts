@@ -66,6 +66,7 @@ export const ROUTES = [
   ['papers', '/papers'],
   ['recycle-bin', '/recycle-bin'],
   ['rubiks', '/rubiks'],
+  ['scavenger', '/scavenger'],
   ['snake', '/snake'],
   ['travel', '/travel'],
   ['uses', '/uses'],

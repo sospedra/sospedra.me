@@ -321,8 +321,15 @@
     display: none;
   }
 
+  /* 32vh ignores the keyboard and buries the whole stage under suggestions */
   .autocompleteList {
-    max-height: min(13rem, 32vh);
+    max-height: min(13rem, calc(var(--geo-viewport-height, 100dvh) * 0.32));
+  }
+
+  .answerConsole[data-keys="true"] {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

@@ -115,3 +115,13 @@
     overflow: auto;
   }
 }
+
+/* the soft keyboard leaves the layout viewport alone on iOS, so the shell
+   takes the visual viewport instead of 100dvh and slides back under any pan */
+@media (max-width: 800px) {
+  .shell[data-keyboard="true"] {
+    height: var(--geo-viewport-height, 100dvh);
+    min-height: 0;
+    transform: translateY(var(--geo-viewport-offset, 0px));
+  }
+}

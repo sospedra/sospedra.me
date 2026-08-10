@@ -1,13 +1,15 @@
 @reference "../../services/style/global.css";
 
+/* W98 fills a column top to bottom, then starts the next one */
 .desktopIcons {
   position: absolute;
   z-index: 2;
   top: max(0.85rem, var(--safe-area-top));
   left: 0.65rem;
   display: grid;
-  width: 5.4rem;
-  gap: 1rem;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(5, auto);
+  gap: 1rem 0.35rem;
 }
 
 .desktopShortcut {
@@ -44,7 +46,10 @@
 }
 
 .msdosIcon,
+.documentsIcon,
 .recycleIcon,
+.audiocdIcon,
+.gamesIcon,
 .cimsIcon,
 .minesIcon,
 .paintIcon,
@@ -58,14 +63,17 @@
   filter: drop-shadow(1px 1px 0 rgb(0 0 0 / 65%));
 }
 
+/* one box height for every icon: the grid puts shortcuts side by side,
+   so a shorter box would drop its label out of line */
 .msdosIcon,
+.documentsIcon,
+.audiocdIcon,
+.gamesIcon,
 .cimsIcon,
 .minesIcon,
 .paintIcon,
 .winampIcon,
 .realplayerIcon {
-  width: 2rem;
-  height: 2rem;
   background-position: center;
   background-repeat: no-repeat;
   background-size: 2rem 2rem;
@@ -109,6 +117,18 @@
   box-shadow: inset 1px 1px 0 white;
 }
 
+.documentsIcon {
+  background-image: url("/images/w98/my-documents-32x32.png");
+}
+
+.audiocdIcon {
+  background-image: url("/images/w98/audio-cd-32x32.png");
+}
+
+.gamesIcon {
+  background-image: url("/images/w98/folder-32x32.png");
+}
+
 .cimsIcon {
   background-image: url("/images/w98/cims-32x32.png");
 }
@@ -134,7 +154,9 @@
     top: max(0.45rem, var(--safe-area-top));
     left: max(0.25rem, var(--safe-area-left));
     right: max(0.25rem, var(--safe-area-right));
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-flow: row;
+    grid-template-rows: none;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     width: auto;
     gap: 0.25rem;
   }

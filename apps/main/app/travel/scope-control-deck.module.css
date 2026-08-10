@@ -278,3 +278,10 @@
     font-size: var(--cockpit-type-label);
   }
 }
+
+/* Gestures own the mobile scope. The manual deck is a desktop instrument. */
+@media (max-width: 899px) {
+  .scopeControlDeck {
+    display: none;
+  }
+}

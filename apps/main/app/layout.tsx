@@ -103,6 +103,9 @@ export const viewport: Viewport = {
   colorScheme: 'dark',
   themeColor: '#37113f',
   viewportFit: 'cover',
+  /* Android resizes the layout viewport under the software keyboard; iOS
+     ignores this key and needs the visual-viewport vars (services/viewport) */
+  interactiveWidget: 'resizes-content',
 }
 
 export default function RootLayout(props: { children: React.ReactNode }) {

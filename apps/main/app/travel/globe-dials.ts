@@ -10,26 +10,55 @@ import type { GlobeViewState } from './globe-view-state'
 const ZOOM_STEP = 1.12
 const DIAL_IDLE_GRACE_MS = 220
 
+const paintHeading = (state: GlobeViewState, heading: number) => {
+  const padded = String(heading).padStart(3, '0')
+  state.compassHeadingRef.current?.replaceChildren(`${padded}°`)
+  state.screenCompassHeadingRef.current?.replaceChildren(`${padded}°`)
+  state.orbitControlRef.current?.setAttribute('aria-valuenow', String(heading))
+  state.orbitControlRef.current?.setAttribute(
+    'aria-valuetext',
+    `${padded} degrees heading`,
+  )
+}
+
+const latitudeAria = (latitude: number): string => {
+  if (latitude === 0) return '0 degrees, equator'
+  const pole = latitude > 0 ? 'north' : 'south'
+  return `${Math.abs(latitude)} degrees ${pole}`
+}
+
+const paintLatitude = (state: GlobeViewState, latitude: number) => {
+  const sign = latitude >= 0 ? '+' : '−'
+  const text = `${sign}${String(Math.abs(latitude)).padStart(2, '0')}°`
+  state.compassLatitudeRef.current?.replaceChildren(text)
+  state.screenCompassLatitudeRef.current?.replaceChildren(text)
+  state.pitchControlRef.current?.setAttribute('aria-valuenow', String(latitude))
+  state.pitchControlRef.current?.setAttribute(
+    'aria-valuetext',
+    latitudeAria(latitude),
+  )
+}
+
 export const createCompassPainter = (state: GlobeViewState) => {
   const {
-    compassHeadingRef,
-    compassLatitudeRef,
     compassReadoutRef,
     compassRef,
-    orbitControlRef,
     orbitKnobRef,
     orbitKnobStateRef,
-    pitchControlRef,
     pitchKnobRef,
+    screenCompassRef,
   } = state
 
   return (view: GlobeView) => {
-    const card = compassRef.current
-    if (!card) return
+    const cards = [compassRef.current, screenCompassRef.current].filter(
+      (card) => card !== null,
+    )
+    if (cards.length === 0) return
 
     const longitude = viewLongitude(view.phi)
     const latitude = clamp((view.theta * 180) / Math.PI, -90, 90)
-    card.style.transform = `rotate(${(-longitude).toFixed(2)}deg)`
+    const cardTurn = `rotate(${(-longitude).toFixed(2)}deg)`
+    for (const card of cards) card.style.transform = cardTurn
 
     const orbitKnob = orbitKnobStateRef.current
     const longitudeDelta = ((longitude - orbitKnob.raw + 540) % 360) - 180
@@ -48,33 +77,11 @@ export const createCompassPainter = (state: GlobeViewState) => {
     const roundedLatitude = Math.round(latitude)
     const previous = compassReadoutRef.current
     if (heading !== previous.heading) {
-      compassHeadingRef.current?.replaceChildren(
-        `${String(heading).padStart(3, '0')}°`,
-      )
-      orbitControlRef.current?.setAttribute('aria-valuenow', String(heading))
-      orbitControlRef.current?.setAttribute(
-        'aria-valuetext',
-        `${String(heading).padStart(3, '0')} degrees heading`,
-      )
+      paintHeading(state, heading)
       previous.heading = heading
     }
     if (roundedLatitude !== previous.latitude) {
-      const sign = roundedLatitude >= 0 ? '+' : '−'
-      compassLatitudeRef.current?.replaceChildren(
-        `${sign}${String(Math.abs(roundedLatitude)).padStart(2, '0')}°`,
-      )
-      pitchControlRef.current?.setAttribute(
-        'aria-valuenow',
-        String(roundedLatitude),
-      )
-      pitchControlRef.current?.setAttribute(
-        'aria-valuetext',
-        roundedLatitude === 0
-          ? '0 degrees, equator'
-          : `${Math.abs(roundedLatitude)} degrees ${
-              roundedLatitude > 0 ? 'north' : 'south'
-            }`,
-      )
+      paintLatitude(state, roundedLatitude)
       previous.latitude = roundedLatitude
     }
   }

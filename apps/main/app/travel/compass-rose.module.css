@@ -278,3 +278,89 @@
     width: 3.45rem;
   }
 }
+
+/* MOBILE HUD: the rose rides the CRT glass and the wing instrument stands
+   down. The chip lives inside the tube, so cutting power collapses it too. */
+.screenCompass {
+  position: absolute;
+  z-index: 3;
+  bottom: calc(var(--well-depth, 0.72rem) + 0.3rem);
+  left: calc(var(--well-depth, 0.72rem) + 0.3rem);
+  display: grid;
+  justify-items: center;
+  gap: 0.18rem;
+  padding: 0.28rem 0.34rem 0.26rem;
+  border: 1px solid rgb(162 205 185 / 22%);
+  border-radius: 0.26rem;
+  background: rgb(4 13 12 / 62%);
+  box-shadow:
+    inset 0 0 0.55rem rgb(0 0 0 / 45%),
+    0 0 0.6rem rgb(0 0 0 / 35%);
+  pointer-events: none;
+}
+
+.screenCompass .compassRose {
+  width: 2.45rem;
+  border: 2px solid #454942;
+  outline: 1px solid #1f211d;
+  box-shadow:
+    inset 1px 1px rgb(255 255 255 / 7%),
+    inset -2px -2px rgb(0 0 0 / 52%);
+}
+
+.screenCompass .compassRose::before {
+  inset: 0.14rem;
+}
+
+.screenCompass .compassCard {
+  inset: 0.26rem;
+}
+
+.screenCompass .compassNeedle {
+  width: 0.5rem;
+}
+
+.screenCompass .compassCardHub {
+  width: 0.4rem;
+}
+
+.screenCompass .compassLubber {
+  top: 0.05rem;
+  border-top-width: 0.4rem;
+  border-right-width: 0.16rem;
+  border-left-width: 0.16rem;
+}
+
+.screenCompass .north {
+  top: 0.06rem;
+  font-size: 0.4rem;
+}
+
+.screenCompass p {
+  display: flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 0.24rem;
+  margin: 0;
+}
+
+.screenCompass .bearingValue {
+  font-size: 0.62rem;
+  line-height: 1;
+}
+
+.screenCompass .compassMeta {
+  font-size: 0.44rem;
+}
+
+@media (min-width: 900px) {
+  .screenCompass {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .portWing .compassModule {
+    display: none;
+  }
+}

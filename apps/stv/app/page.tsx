@@ -3,7 +3,7 @@ import { fetchScores } from 'services/scores'
 import { fetchSourceHtml, parseSourceAgenda } from 'services/source'
 import { Agenda } from 'ui/agenda'
 
-export const revalidate = 600
+export const revalidate = 1800
 
 const MADRID_CLOCK = new Intl.DateTimeFormat('es-ES', {
   dateStyle: 'short',

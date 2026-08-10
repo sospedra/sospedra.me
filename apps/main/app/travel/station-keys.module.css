@@ -387,3 +387,23 @@
 .stations button b {
   font-size: var(--cockpit-type-value);
 }
+
+/* MOBILE BRIDGE: the four region keys stack two by two under the heading
+   card, in a lower profile than the desktop switch bank. */
+@media (max-width: 899px) {
+  .stations {
+    --station-travel: 4px;
+    gap: 0.26rem;
+    padding: 0.3rem 0.28rem 0.4rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stations button {
+    min-height: 2.3rem;
+  }
+
+  .stations button > .stationTop {
+    min-height: 1.9rem;
+    padding: 0.22rem 0.34rem;
+  }
+}

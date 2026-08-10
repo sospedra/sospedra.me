@@ -7,7 +7,6 @@ import { useGameInput } from 'services/hotkeys'
 import { shareHandled, shareText } from 'services/share'
 import { readLocalJson, writeLocalJson } from 'services/storage'
 import { useSystem } from 'services/system'
-import { useViewportHeightVar } from 'services/viewport'
 import * as z from 'zod/mini'
 import { Ansaphone } from './ansaphone'
 import { clipUrl } from './blob-assets'
@@ -119,7 +118,6 @@ export default function BoomboxView() {
   >({ status: 'loading' })
 
   useGameInput()
-  useViewportHeightVar('--boombox-viewport-height')
 
   useEffect(() => {
     setSession({ status: 'ready', state: loadState(dayNumber(new Date())) })
@@ -145,7 +143,6 @@ function BoomboxMachine({
   const [tapeExpired, setTapeExpired] = useState(false)
   const [query, setQuery] = useState('')
   const [cursor, setCursor] = useState(0)
-  const [mobileEntryOpen, setMobileEntryOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [eqGains, setEqGains] = useState<number[]>(() =>
     Array(EQ_BANDS.length).fill(0),
@@ -153,28 +150,10 @@ function BoomboxMachine({
   const [volume, setVolume] = useState(0.65)
   const sfxRef = useRef<DeckSfx | null>(null)
   const copiedTimerRef = useRef(0)
-  const mobilePointerInsideRef = useRef(false)
-  const mobilePointerResetRef = useRef(0)
   /* the site's dailies count to utc midnight; this tape flips at 02:00 on
      spain's wall clock, so the lcd counts to the engine's own flip instant */
   const countdown = useDailyCountdown(nextFlipAt)
   const doorOpen = useDoorGreeting()
-
-  useEffect(() => {
-    const resetMobilePointer = () => {
-      window.clearTimeout(mobilePointerResetRef.current)
-      mobilePointerResetRef.current = window.setTimeout(() => {
-        mobilePointerInsideRef.current = false
-      }, 0)
-    }
-    window.addEventListener('pointerup', resetMobilePointer, true)
-    window.addEventListener('pointercancel', resetMobilePointer, true)
-    return () => {
-      window.clearTimeout(mobilePointerResetRef.current)
-      window.removeEventListener('pointerup', resetMobilePointer, true)
-      window.removeEventListener('pointercancel', resetMobilePointer, true)
-    }
-  }, [])
   const { notify } = useSystem()
 
   const daily = songForDay(SONGS, state.day)
@@ -310,7 +289,7 @@ function BoomboxMachine({
 
   /* desk and ansaphone each mount one pen and one results slip; unique
      ids keep the combobox wiring valid while css shows a single surface */
-  const guessInput = (resultsId: string, desk: boolean) => (
+  const guessInput = (resultsId: string) => (
     <input
       className={pen.noteInput}
       type='text'
@@ -326,9 +305,6 @@ function BoomboxMachine({
       }
       autoComplete='off'
       spellCheck={false}
-      onFocus={() => {
-        if (!desk) setMobileEntryOpen(true)
-      }}
       onChange={(event) => {
         setQuery(event.target.value)
         setCursor(0)
@@ -402,10 +378,7 @@ function BoomboxMachine({
         guessDropdown={guessDropdown}
         guessInput={guessInput}
         limit={limit}
-        mobileEntryOpen={mobileEntryOpen}
-        mobilePointerInsideRef={mobilePointerInsideRef}
         playing={playing}
-        setMobileEntryOpen={setMobileEntryOpen}
         sound={sound}
         state={state}
         tapeSpan={tapeSpan}

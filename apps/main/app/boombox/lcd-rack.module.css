@@ -237,22 +237,6 @@
   height: 88px;
 }
 
-@media (max-width: 759px) {
-  .ansaphone[data-entry-open="true"] .lcdBezel {
-    height: 64px;
-  }
-
-  .ansaphone[data-entry-open="true"] .lcdHint,
-  .ansaphone[data-entry-open="true"] .lcdStatus,
-  .ansaphone[data-entry-open="true"] .lcdNextBar {
-    display: none;
-  }
-
-  .ansaphone[data-entry-open="true"] .lcdRuler {
-    margin-bottom: 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .powerLed,
   .meterLed::after {

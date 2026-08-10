@@ -382,3 +382,10 @@
     display: block;
   }
 }
+
+/* With the manual deck retired the machine is all tube. */
+@media (max-width: 899px) {
+  .scopeMachine {
+    grid-template-rows: minmax(0, 1fr);
+  }
+}

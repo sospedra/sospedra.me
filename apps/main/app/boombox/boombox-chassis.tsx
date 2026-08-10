@@ -147,7 +147,7 @@ type ChassisProps = {
   doorOpen: boolean
   eqGains: number[]
   guessDropdown: (resultsId: string) => React.ReactNode
-  guessInput: (resultsId: string, desk: boolean) => React.ReactNode
+  guessInput: (resultsId: string) => React.ReactNode
   limit: number
   playing: boolean
   sfx: () => DeckSfx
@@ -279,7 +279,7 @@ export function BoomboxChassis({
           <CaseTracklist
             guesses={state.guesses}
             stage={state.stage}
-            input={guessInput('boombox-results', true)}
+            input={guessInput('boombox-results')}
             dropdown={guessDropdown('boombox-results')}
           />
         </section>

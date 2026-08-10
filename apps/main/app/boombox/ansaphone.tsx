@@ -9,7 +9,6 @@ import pen from './guess-line.module.css'
 import { Lcd } from './lcd-rack'
 import lcd from './lcd-rack.module.css'
 import { skipSecondsGain, TAD_KEY_ORDER, Transport } from './lever-bank'
-import lever from './lever-bank.module.css'
 import { CaseTracklist } from './tracklist-card'
 import jcard from './tracklist-card.module.css'
 import type { ClipAudio } from './use-clip-audio'
@@ -19,12 +18,9 @@ type AnsaphoneProps = {
   countdown: DailyCountdown
   daily: Song
   guessDropdown: (resultsId: string) => React.ReactNode
-  guessInput: (resultsId: string, desk: boolean) => React.ReactNode
+  guessInput: (resultsId: string) => React.ReactNode
   limit: number
-  mobileEntryOpen: boolean
-  mobilePointerInsideRef: React.RefObject<boolean>
   playing: boolean
-  setMobileEntryOpen: (open: boolean) => void
   sound: ClipAudio
   state: BoomboxState
   tapeSpan: number
@@ -42,10 +38,7 @@ export function Ansaphone({
   guessDropdown,
   guessInput,
   limit,
-  mobileEntryOpen,
-  mobilePointerInsideRef,
   playing,
-  setMobileEntryOpen,
   sound,
   state,
   tapeSpan,
@@ -63,33 +56,8 @@ export function Ansaphone({
         label.ansaphone,
         pen.ansaphone,
         lcd.ansaphone,
-        lever.ansaphone,
         jcard.ansaphone,
       )}
-      data-entry-open={mobileEntryOpen}
-      onPointerDownCapture={(event) => {
-        if (mobileEntryOpen && event.pointerType !== 'mouse') {
-          mobilePointerInsideRef.current = true
-        }
-      }}
-      onClickCapture={(event) => {
-        if (!mobileEntryOpen) return
-        const target = event.target
-        if (!(target instanceof Element)) return
-        if (target.closest('[role="option"]')) return
-        if (target.closest('button')) setMobileEntryOpen(false)
-      }}
-      onBlurCapture={(event) => {
-        if (mobilePointerInsideRef.current) return
-        const nextTarget = event.relatedTarget
-        if (
-          nextTarget instanceof Node &&
-          event.currentTarget.contains(nextTarget)
-        ) {
-          return
-        }
-        setMobileEntryOpen(false)
-      }}
     >
       <section className={css.tadBody} aria-label='Answering machine'>
         <div className={cn(css.tadBay, mold.tadBay, label.tadBay)}>
@@ -157,7 +125,7 @@ export function Ansaphone({
       <CaseTracklist
         guesses={state.guesses}
         stage={state.stage}
-        input={guessInput('boombox-results-m', false)}
+        input={guessInput('boombox-results-m')}
         dropdown={guessDropdown('boombox-results-m')}
       />
     </div>

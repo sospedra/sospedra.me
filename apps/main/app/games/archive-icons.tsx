@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
-import type { GameId } from './catalogue'
+import type { ArchiveId } from './catalogue'
 import { LifeIcon, MinesIcon, RubiksIcon, SnakeIcon } from './classic-icons'
 import { BoomboxIcon, CrosswordsIcon, MeridianIcon } from './daily-icons'
+import { CameraIcon, CimsIcon } from './toy-icons'
 
-export const GAME_ICONS = {
+export const ARCHIVE_ICONS = {
   geo: MeridianIcon,
   crosswords: CrosswordsIcon,
   boombox: BoomboxIcon,
@@ -11,4 +12,6 @@ export const GAME_ICONS = {
   mines: MinesIcon,
   rubiks: RubiksIcon,
   life: LifeIcon,
-} satisfies Record<GameId, () => ReactNode>
+  cims: CimsIcon,
+  camera: CameraIcon,
+} satisfies Record<ArchiveId, () => ReactNode>

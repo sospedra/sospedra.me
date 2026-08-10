@@ -79,11 +79,10 @@
 }
 
 @media (max-width: 759px) {
-  /* The document shell is intentionally locked; make the narrow-room build
-     its own scroll surface so the software keyboard cannot pan an otherwise
-     unscrollable page. */
+  /* the narrow room scrolls itself; the soft keyboard overlays it and
+     must never resize or move the machine */
   .room {
-    height: var(--boombox-viewport-height, 100dvh);
+    height: 100dvh;
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior-y: contain;

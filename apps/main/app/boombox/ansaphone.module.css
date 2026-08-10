@@ -332,43 +332,6 @@
     display: flex;
     padding-bottom: max(0px, var(--safe-area-bottom));
   }
-
-  /* Focusing the guess line opens a compact, sticky transport. The keyboard
-     may halve the visual viewport, but play/stop/skip and the LCD remain in
-     view while the paper scrolls beneath them. */
-  .ansaphone[data-entry-open="true"] {
-    gap: 10px;
-  }
-
-  .ansaphone[data-entry-open="true"] .tadBody {
-    position: sticky;
-    z-index: 40;
-    top: max(8px, var(--safe-area-top));
-    gap: 0;
-    padding-top: 8px;
-    box-shadow:
-      inset 0 2px 0 rgb(255 255 255 / 65%),
-      inset 3px 0 0 rgb(255 255 255 / 33%),
-      inset -3px 0 6px rgb(0 0 0 / 19%),
-      0 12px 28px -10px rgb(0 0 0 / 92%);
-  }
-
-  .ansaphone[data-entry-open="true"] .tadBay,
-  .ansaphone[data-entry-open="true"] .tadBrand,
-  .ansaphone[data-entry-open="true"] .tadStatusRow,
-  .ansaphone[data-entry-open="true"] .tadLip {
-    display: none;
-  }
-
-  .ansaphone[data-entry-open="true"] .tadLower {
-    gap: 0;
-    padding-top: 0;
-  }
-
-  .ansaphone[data-entry-open="true"] .tadPanel {
-    gap: 4px;
-    padding: 8px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

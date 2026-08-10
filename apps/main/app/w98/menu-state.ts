@@ -1,7 +1,15 @@
 import { match } from 'ts-pattern'
 
 export type MinesMenu = 'game' | 'help'
-export type StartBranch = 'closed' | 'root' | 'programs' | 'games'
+
+export type StartBranch =
+  | 'closed'
+  | 'root'
+  | 'programs'
+  | 'programs/accessories'
+  | 'programs/entertainment'
+  | 'documents'
+  | 'games'
 
 export type ChromeState = {
   menu: MinesMenu | null
@@ -21,6 +29,38 @@ export const INITIAL_CHROME: ChromeState = {
   startMenu: 'closed',
   helpOpen: false,
 }
+
+export type MenuTriggerId =
+  | 'game'
+  | 'help'
+  | 'start'
+  | 'programs'
+  | 'accessories'
+  | 'entertainment'
+  | 'documents'
+  | 'games'
+
+const BRANCH_PARENT = {
+  closed: 'closed',
+  root: 'closed',
+  programs: 'root',
+  'programs/accessories': 'programs',
+  'programs/entertainment': 'programs',
+  documents: 'root',
+  games: 'root',
+} satisfies Record<StartBranch, StartBranch>
+
+const BRANCH_TRIGGER: Partial<Record<StartBranch, MenuTriggerId>> = {
+  programs: 'programs',
+  'programs/accessories': 'accessories',
+  'programs/entertainment': 'entertainment',
+  documents: 'documents',
+  games: 'games',
+}
+
+// the tree is two deep, so one parent hop covers every open ancestor
+export const branchOpen = (branch: StartBranch, path: StartBranch) =>
+  branch === path || BRANCH_PARENT[branch] === path
 
 export const reduceChrome = (
   state: ChromeState,
@@ -42,7 +82,15 @@ export const reduceChrome = (
     .with({ type: 'escape' }, () => INITIAL_CHROME)
     .exhaustive()
 
-export type MenuTriggerId = 'game' | 'help' | 'start' | 'programs' | 'games'
+const startFocusTarget = (
+  prev: StartBranch,
+  next: StartBranch,
+): MenuTriggerId | null => {
+  if (prev === next) return null
+  if (next === 'closed') return 'start'
+  if (next !== BRANCH_PARENT[prev]) return null
+  return BRANCH_TRIGGER[prev] ?? null
+}
 
 // closing a menu unmounts the focused item; hand focus back to its trigger
 export const chromeFocusTarget = (
@@ -52,9 +100,5 @@ export const chromeFocusTarget = (
   if (!prev.helpOpen && next.helpOpen) return null
   if (prev.helpOpen && !next.helpOpen) return 'help'
   if (prev.menu !== null && next.menu === null) return prev.menu
-  if (prev.startMenu === 'programs' && next.startMenu === 'root')
-    return 'programs'
-  if (prev.startMenu === 'games' && next.startMenu === 'root') return 'games'
-  if (prev.startMenu !== 'closed' && next.startMenu === 'closed') return 'start'
-  return null
+  return startFocusTarget(prev.startMenu, next.startMenu)
 }

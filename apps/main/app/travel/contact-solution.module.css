@@ -439,3 +439,11 @@
     display: none;
   }
 }
+
+/* MOBILE BRIDGE: the wing is a single bay now, so the card takes it whole. */
+@media (max-width: 899px) {
+  .portWing .contactSolution {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}

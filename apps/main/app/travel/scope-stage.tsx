@@ -1,12 +1,17 @@
 import cn from 'clsx'
 import type { ReactNode } from 'react'
+import compass from './compass-rose.module.css'
 import consoleShell from './console-shell.module.css'
-import type { Destination } from './destinations'
+import { type Destination, HOME } from './destinations'
 import lunar from './lunar-layer.module.css'
 import canvasCss from './scope-canvas.module.css'
 import css from './scope-stage.module.css'
 import screenWell from './screen-well.module.css'
-import { formatRange } from './travel-format'
+import {
+  formatRange,
+  formatViewHeading,
+  formatViewLatitude,
+} from './travel-format'
 import type { TravelGlobe, TravelMoonRefs } from './use-travel-globe'
 
 export default function ScopeStage(props: {
@@ -160,6 +165,33 @@ export default function ScopeStage(props: {
                     </text>
                   </g>
                 </svg>
+                <div className={compass.screenCompass} aria-hidden='true'>
+                  <span className={compass.compassRose}>
+                    <span
+                      ref={globe.screenCompassRef}
+                      className={compass.compassCard}
+                    >
+                      <span className={compass.north}>N</span>
+                      <span className={compass.compassNeedle} />
+                      <span className={compass.compassCardHub} />
+                    </span>
+                    <span className={compass.compassLubber} />
+                  </span>
+                  <p>
+                    <span
+                      ref={globe.screenCompassHeadingRef}
+                      className={compass.bearingValue}
+                    >
+                      {formatViewHeading(HOME.lon)}
+                    </span>
+                    <span className={compass.compassMeta}>
+                      <span ref={globe.screenCompassLatitudeRef}>
+                        {formatViewLatitude(HOME.lat)}
+                      </span>{' '}
+                      LAT
+                    </span>
+                  </p>
+                </div>
               </div>
               <div
                 className={canvasCss.scopeFallback}

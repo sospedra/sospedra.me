@@ -4,7 +4,7 @@ import GamesView from './games-view'
 export const metadata: Metadata = {
   title: 'Games',
   description:
-    'Seven browser games in a PS2-inspired archive: Meridian, Crosswords, Boombox, Snake, Minesweeper, Rubik’s and Game of Life.',
+    'Nine browser toys in a PS2-inspired archive: Meridian, Crosswords, Boombox, Snake, Minesweeper, Rubik’s, Game of Life, Cims and Camera.',
   alternates: { canonical: '/games' },
 }
 

@@ -1,6 +1,6 @@
 import type { Route } from 'next'
 
-export type GameId =
+export type ArchiveId =
   | 'geo'
   | 'crosswords'
   | 'boombox'
@@ -8,9 +8,15 @@ export type GameId =
   | 'mines'
   | 'rubiks'
   | 'life'
+  | 'cims'
+  | 'camera'
 
-export type GameEntry = {
-  id: GameId
+// a toy has no win state, so the w98 Games menu leaves it out
+export type ArchiveKind = 'game' | 'toy'
+
+export type ArchiveEntry = {
+  id: ArchiveId
+  kind: ArchiveKind
   code: string
   title: string
   href: Route
@@ -19,9 +25,10 @@ export type GameEntry = {
   controls: string
 }
 
-export const GAMES = [
+export const ARCHIVE = [
   {
     id: 'geo',
+    kind: 'game',
     code: 'M//24',
     title: 'Meridian',
     href: '/meridian',
@@ -32,6 +39,7 @@ export const GAMES = [
   },
   {
     id: 'crosswords',
+    kind: 'game',
     code: 'X//15',
     title: 'Crosswords',
     href: '/crosswords',
@@ -42,6 +50,7 @@ export const GAMES = [
   },
   {
     id: 'boombox',
+    kind: 'game',
     code: 'B//22',
     title: 'Boombox',
     href: '/boombox',
@@ -52,6 +61,7 @@ export const GAMES = [
   },
   {
     id: 'snake',
+    kind: 'game',
     code: 'N//33',
     title: 'Snake',
     href: '/snake',
@@ -62,6 +72,7 @@ export const GAMES = [
   },
   {
     id: 'mines',
+    kind: 'game',
     code: 'S//90',
     title: 'Minesweeper',
     href: '/w98?sw=mines',
@@ -72,6 +83,7 @@ export const GAMES = [
   },
   {
     id: 'rubiks',
+    kind: 'game',
     code: 'R//03',
     title: "Rubik's",
     href: '/rubiks',
@@ -82,6 +94,7 @@ export const GAMES = [
   },
   {
     id: 'life',
+    kind: 'game',
     code: 'C//70',
     title: 'Game of Life',
     href: '/game-of-life',
@@ -90,4 +103,31 @@ export const GAMES = [
       'Seed an infinite midnight grid and watch four small rules build strange machines.',
     controls: 'Draw · step · run',
   },
-] as const satisfies readonly GameEntry[]
+  {
+    id: 'cims',
+    kind: 'toy',
+    code: 'T//30',
+    title: 'Cims',
+    href: '/cims',
+    category: 'Console · terrain',
+    description:
+      'Twelve Catalan peaks at 30 m resolution. Fly the contours on a phosphor scope under a real sun and moon.',
+    controls: 'Dials · pointer · keyboard',
+  },
+  {
+    id: 'camera',
+    kind: 'toy',
+    code: 'P//48',
+    title: 'Camera',
+    href: '/camera',
+    category: 'Booth · instant film',
+    description:
+      'A midnight photo booth. Frame yourself in the viewfinder and crank out an instant print.',
+    controls: 'Shutter · pointer · touch',
+  },
+] as const satisfies readonly ArchiveEntry[]
+
+export const GAMES = ARCHIVE.filter(
+  (entry): entry is Extract<(typeof ARCHIVE)[number], { kind: 'game' }> =>
+    entry.kind === 'game',
+)

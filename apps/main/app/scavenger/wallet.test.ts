@@ -18,7 +18,7 @@ import {
 } from './wallet.ts'
 
 test('discs carry unique ids and hues', () => {
-  assert.equal(DISCS.length, 14)
+  assert.equal(DISCS.length, 16)
   assert.equal(new Set(DISCS.map((disc) => disc.id)).size, DISCS.length)
   assert.equal(new Set(DISCS.map((disc) => disc.hue)).size, DISCS.length)
   for (const disc of DISCS) {
@@ -40,9 +40,9 @@ test('every look appears on at least two discs', () => {
 })
 
 test('wallet geometry derives from the disc count', () => {
-  assert.equal(PAGE_COUNT, 7)
-  assert.equal(MAX_SPREAD, 7)
-  assert.equal(SPREAD_COUNT, 8)
+  assert.equal(PAGE_COUNT, 8)
+  assert.equal(MAX_SPREAD, 8)
+  assert.equal(SPREAD_COUNT, 9)
   assert.equal(BOOT_SPREAD, 0)
   assert.deepEqual(slotOf(0), { page: 0, side: 'a' })
   assert.deepEqual(slotOf(1), { page: 0, side: 'b' })
@@ -59,7 +59,7 @@ test('every disc shows on exactly one spread', () => {
   )
   assert.deepEqual(spreadDiscs(0), [0])
   assert.deepEqual(spreadDiscs(1), [1, 2])
-  assert.deepEqual(spreadDiscs(MAX_SPREAD), [13])
+  assert.deepEqual(spreadDiscs(MAX_SPREAD), [15])
 })
 
 test('clampSpread bounds the range', () => {
@@ -166,6 +166,6 @@ test('pageTransform fans resting pages and piles flipped ones', () => {
 })
 
 test('spreadLabel counts from one', () => {
-  assert.equal(spreadLabel(0), 'SPREAD 1 / 8')
-  assert.equal(spreadLabel(MAX_SPREAD), 'SPREAD 8 / 8')
+  assert.equal(spreadLabel(0), 'SPREAD 1 / 9')
+  assert.equal(spreadLabel(MAX_SPREAD), 'SPREAD 9 / 9')
 })

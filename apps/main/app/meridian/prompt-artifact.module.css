@@ -133,7 +133,7 @@
 
 @media (max-width: 800px) {
   .promptOrbit {
-    width: min(52%, 14rem);
+    width: min(52%, 14rem, 96cqh);
   }
 
   .flagStage {
@@ -141,7 +141,7 @@
   }
 
   .flagAsset {
-    max-height: 25vh;
+    max-height: min(25vh, 94cqh);
     box-shadow:
       0.45rem 0.55rem 0 #080907,
       0 1rem 2rem rgb(0 0 0 / 46%);
@@ -160,7 +160,7 @@
    shape and flag grow into it */
 @media (max-width: 559px) and (min-height: 621px) {
   .promptOrbit {
-    width: min(82%, 19rem);
+    width: min(82%, 19rem, 96cqh);
   }
 
   .flagStage {
@@ -168,6 +168,6 @@
   }
 
   .flagAsset {
-    max-height: 36vh;
+    max-height: min(36vh, 94cqh);
   }
 }

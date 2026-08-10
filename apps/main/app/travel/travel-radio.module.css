@@ -330,3 +330,11 @@
     opacity: 0.58;
   }
 }
+
+/* MOBILE: the power key reads first and takes the full row; the presets
+   rank under it. Wide short phones keep the single-row strip. */
+@media (max-width: 899px) and (orientation: portrait) {
+  .radioControls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

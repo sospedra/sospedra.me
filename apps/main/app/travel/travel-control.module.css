@@ -335,3 +335,11 @@
     grid-template-rows: minmax(0, 1fr) 8.5rem;
   }
 }
+
+/* MOBILE BRIDGE: the panorama frame dissolves and its instruments join the
+   console grid directly. */
+@media (max-width: 899px) {
+  .panorama {
+    display: contents;
+  }
+}

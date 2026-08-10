@@ -428,3 +428,30 @@
     content: none;
   }
 }
+
+/* MOBILE BRIDGE: the manifest sheds its wooden housing. The region keys move
+   into the control bank and the places strip docks at the console floor. */
+@media (max-width: 899px) {
+  .manifest {
+    display: contents;
+  }
+
+  .manifestHeader {
+    display: none;
+  }
+
+  .sectorTabs {
+    min-width: 0;
+    min-height: 0;
+    grid-area: sector;
+    grid-template-rows: minmax(0, 1fr);
+    padding: 0.3rem 0.35rem;
+    border-top: 1px solid #252823;
+    background:
+      var(--cockpit-grain), linear-gradient(155deg, #20231f, #0c0f0e 64%);
+  }
+
+  .stripViewport {
+    grid-area: locations;
+  }
+}

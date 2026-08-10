@@ -6,7 +6,7 @@
 .gameGrid {
   display: grid;
   min-height: 0;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(9, minmax(0, 1fr));
   align-items: center;
   padding: 0 clamp(0.25rem, 2vmin, 1.5rem);
 }
@@ -79,6 +79,18 @@
   --icon-size: clamp(5.1rem, 11vmin, 7.3rem);
   --icon-rest-y: 0.35rem;
   --reveal-delay: 1860ms;
+}
+
+.gameLink:nth-child(8) {
+  --icon-size: clamp(4.7rem, 10.2vmin, 6.7rem);
+  --icon-rest-y: -0.45rem;
+  --reveal-delay: 2140ms;
+}
+
+.gameLink:nth-child(9) {
+  --icon-size: clamp(5rem, 10.9vmin, 7.1rem);
+  --icon-rest-y: 0.2rem;
+  --reveal-delay: 2420ms;
 }
 
 .iconWrap {

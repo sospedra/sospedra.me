@@ -33,6 +33,7 @@ import { HelpWindow, MinesWindow } from './mines-window'
 import MusicView, { type WinampPanelId } from './music/music-view'
 import PaintWindow, { type PaintHandle } from './paint/paint-view'
 import RealPlayerWindow from './realplayer/realplayer-view'
+import { type MenuContext, useMenuTriggers } from './start-menu'
 import { createSweepAudio } from './sweep-audio'
 import { Taskbar } from './taskbar'
 import css from './w98.module.css'
@@ -58,11 +59,7 @@ export default function Windows98View() {
   const deskRef = useRef<HTMLDivElement>(null)
   const workAreaRef = useRef<HTMLDivElement>(null)
   const paintRef = useRef<PaintHandle | null>(null)
-  const gameTriggerRef = useRef<HTMLButtonElement>(null)
-  const helpTriggerRef = useRef<HTMLButtonElement>(null)
-  const startTriggerRef = useRef<HTMLButtonElement>(null)
-  const programsTriggerRef = useRef<HTMLButtonElement>(null)
-  const gamesTriggerRef = useRef<HTMLButtonElement>(null)
+  const triggers = useMenuTriggers()
   const prevChromeRef = useRef(chrome)
   const gameDrag = useWindowDrag(workAreaRef)
   const paintDrag = useWindowDrag(workAreaRef)
@@ -160,6 +157,14 @@ export default function Windows98View() {
     chromeDispatch({ type: 'menu', menu: null })
   }
 
+  const menu: MenuContext = {
+    chrome,
+    chromeDispatch,
+    triggers,
+    startLaunch,
+    guardNav,
+  }
+
   const sweep: Sweep = (index) =>
     dispatch({ type: 'reveal', index, seed: rollSeed() })
 
@@ -179,17 +184,10 @@ export default function Windows98View() {
   }, [fit, density, state.status, state.level])
 
   useEffect(() => {
-    const triggers = {
-      game: gameTriggerRef,
-      help: helpTriggerRef,
-      start: startTriggerRef,
-      programs: programsTriggerRef,
-      games: gamesTriggerRef,
-    }
     const target = chromeFocusTarget(prevChromeRef.current, chrome)
     prevChromeRef.current = chrome
-    if (target) triggers[target].current?.focus()
-  }, [chrome])
+    if (target) triggers.focus(target)
+  }, [chrome, triggers])
 
   useHotkeys([
     [
@@ -266,8 +264,8 @@ export default function Windows98View() {
                 toggleSound={toggleSound}
                 chrome={chrome}
                 chromeDispatch={chromeDispatch}
-                gameTriggerRef={gameTriggerRef}
-                helpTriggerRef={helpTriggerRef}
+                gameTriggerRef={triggers.register('game')}
+                helpTriggerRef={triggers.register('help')}
                 gameDrag={gameDrag}
                 minimizeMines={minimizeMines}
                 closeMines={closeMines}
@@ -337,14 +335,8 @@ export default function Windows98View() {
 
         <Taskbar
           desktop={desktop}
-          chrome={chrome}
-          chromeDispatch={chromeDispatch}
-          startTriggerRef={startTriggerRef}
-          programsTriggerRef={programsTriggerRef}
-          gamesTriggerRef={gamesTriggerRef}
-          startLaunch={startLaunch}
+          menu={menu}
           handleTaskButton={handleTaskButton}
-          guardNav={guardNav}
         />
 
         <p role='status' className='sr-only'>

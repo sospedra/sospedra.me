@@ -8,18 +8,18 @@ import Link from 'services/link'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
 import { useRouteTransition } from 'services/transition/context'
+import { ARCHIVE_ICONS } from './archive-icons'
 import panelCss from './browser-panel.module.css'
-import { GAMES } from './catalogue'
+import { ARCHIVE } from './catalogue'
 import barCss from './control-bar.module.css'
 import gridCss from './game-grid.module.css'
-import { GAME_ICONS } from './game-icons'
 import css from './games.module.css'
 import { createMenuSfx, type MenuSfx } from './menu-sfx'
 import { CloudField, ColumnField } from './scenery'
 
 const BOOT_DURATION_MS = 3450
 const MENU_LOAD_DURATION_MS = 2300
-const DESKTOP_COLUMNS = 7
+const DESKTOP_COLUMNS = 9
 const MOBILE_COLUMNS = 3
 type ScenePhase = 'boot' | 'loading' | 'ready'
 
@@ -33,12 +33,12 @@ const isPassthroughKey = (event: KeyboardEvent) =>
 type GridMove = (index: number, columns: number) => number
 
 const GRID_MOVES: Record<string, GridMove> = {
-  ArrowLeft: (index) => (index - 1 + GAMES.length) % GAMES.length,
-  ArrowRight: (index) => (index + 1) % GAMES.length,
+  ArrowLeft: (index) => (index - 1 + ARCHIVE.length) % ARCHIVE.length,
+  ArrowRight: (index) => (index + 1) % ARCHIVE.length,
   ArrowUp: (index, columns) => Math.max(0, index - columns),
-  ArrowDown: (index, columns) => Math.min(GAMES.length - 1, index + columns),
+  ArrowDown: (index, columns) => Math.min(ARCHIVE.length - 1, index + columns),
   Home: () => 0,
-  End: () => GAMES.length - 1,
+  End: () => ARCHIVE.length - 1,
 }
 
 const nextIndexFor = (key: string, index: number, columns: number) =>
@@ -107,7 +107,7 @@ export default function GamesView() {
   }
 
   const focusGame = (index: number) => {
-    const next = clamp(index, 0, GAMES.length - 1)
+    const next = clamp(index, 0, ARCHIVE.length - 1)
     selectGame(next)
     links.current[next]?.focus()
   }
@@ -162,7 +162,7 @@ export default function GamesView() {
     return () => window.removeEventListener('keydown', handleKeydown)
   }, [focusGame, playSfx, ready, selectedIndex, transition])
 
-  const selected = GAMES[selectedIndex]
+  const selected = ARCHIVE[selectedIndex]
 
   return (
     <Shell className={css.frame} shellClassName={css.shell}>
@@ -203,7 +203,7 @@ export default function GamesView() {
           <header className={panelCss.browserHeader}>
             <div className={panelCss.archiveLabel}>
               <h1 id='games-title'>Game Archive / 1</h1>
-              <p>{GAMES.length.toString().padStart(2, '0')} files online</p>
+              <p>{ARCHIVE.length.toString().padStart(2, '0')} files online</p>
             </div>
 
             <div className={panelCss.selectionLabel}>
@@ -222,22 +222,22 @@ export default function GamesView() {
           <nav
             ref={grid}
             className={gridCss.gameGrid}
-            aria-label='Available games'
+            aria-label='Available games and toys'
           >
-            {GAMES.map((game, index) => {
+            {ARCHIVE.map((entry, index) => {
               const active = selectedIndex === index
-              const Icon = GAME_ICONS[game.id]
+              const Icon = ARCHIVE_ICONS[entry.id]
               return (
                 <Link
-                  key={game.id}
+                  key={entry.id}
                   ref={(node) => {
                     links.current[index] = node
                   }}
-                  url={game.href}
+                  url={entry.href}
                   className={cn(gridCss.gameLink, css.gameLink)}
                   data-active={active ? 'true' : 'false'}
                   tabIndex={ready ? 0 : -1}
-                  aria-label={`${game.title}. ${game.description} Controls: ${game.controls}.`}
+                  aria-label={`${entry.title}. ${entry.description} Controls: ${entry.controls}.`}
                   onFocus={() => selectGame(index)}
                   onPointerEnter={() => selectGame(index)}
                   onPointerDown={() => selectGame(index)}
@@ -250,7 +250,7 @@ export default function GamesView() {
                     </span>
                   </span>
                   <span className={gridCss.gameName} aria-hidden='true'>
-                    {game.title}
+                    {entry.title}
                   </span>
                 </Link>
               )

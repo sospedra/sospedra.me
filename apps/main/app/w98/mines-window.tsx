@@ -109,8 +109,8 @@ export const MinesWindow: React.FC<{
   toggleSound: () => void
   chrome: ChromeState
   chromeDispatch: React.Dispatch<ChromeEvent>
-  gameTriggerRef: React.RefObject<HTMLButtonElement | null>
-  helpTriggerRef: React.RefObject<HTMLButtonElement | null>
+  gameTriggerRef: React.Ref<HTMLButtonElement>
+  helpTriggerRef: React.Ref<HTMLButtonElement>
   gameDrag: WindowDrag
   minimizeMines: () => void
   closeMines: () => void

@@ -360,3 +360,20 @@
     grid-template-columns: 5rem minmax(0, 1fr) 5.5rem;
   }
 }
+
+/* MOBILE OVERHEAD: the horizontal rocker turns the header into a strip. */
+@media (max-width: 899px) {
+  .overheadPanel {
+    grid-template-columns: minmax(7.9rem, auto) minmax(0, 1fr) 5.5rem;
+  }
+
+  .utilityRail {
+    padding: 0.2rem 0.28rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .overheadPanel {
+    grid-template-columns: minmax(7.4rem, auto) minmax(0, 1fr);
+  }
+}
