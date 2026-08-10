@@ -44,7 +44,7 @@ const TINT_STRENGTH = 0.65
 const towardWhite = (channel: number): number =>
   1 - TINT_STRENGTH + channel * TINT_STRENGTH
 
-const KEY_ROWS: readonly (readonly string[])[] = [
+export const KEY_ROWS: readonly (readonly string[])[] = [
   [
     'Backquote',
     'Digit1',
@@ -108,6 +108,45 @@ const KEY_ROWS: readonly (readonly string[])[] = [
   ],
   ['Space'],
 ]
+
+// Departure Mono advances 0.636em per glyph; 0.65 adds fit slack
+const GLYPH_ADVANCE_EM = 0.65
+
+export const glyphFit = (chars: number): string =>
+  `calc((100vw - 2 * var(--frame-pad)) / ${(Math.max(chars, 1) * GLYPH_ADVANCE_EM).toFixed(2)})`
+
+const SPECIAL_PRESS: Record<string, { key: string; which: number }> = {
+  Backquote: { key: '`', which: 192 },
+  Minus: { key: '-', which: 189 },
+  Equal: { key: '=', which: 187 },
+  Backspace: { key: 'Backspace', which: 8 },
+  Tab: { key: 'Tab', which: 9 },
+  BracketLeft: { key: '[', which: 219 },
+  BracketRight: { key: ']', which: 221 },
+  Backslash: { key: '\\', which: 220 },
+  CapsLock: { key: 'CapsLock', which: 20 },
+  Semicolon: { key: ';', which: 186 },
+  Quote: { key: "'", which: 222 },
+  Enter: { key: 'Enter', which: 13 },
+  ShiftLeft: { key: 'Shift', which: 16 },
+  ShiftRight: { key: 'Shift', which: 16 },
+  Comma: { key: ',', which: 188 },
+  Period: { key: '.', which: 190 },
+  Slash: { key: '/', which: 191 },
+  Space: { key: ' ', which: 32 },
+}
+
+export const pressFor = (code: string): KeyPress => {
+  const special = SPECIAL_PRESS[code]
+  if (special) return { code, ...special }
+  if (code.startsWith('Key')) {
+    return { code, key: code.slice(3).toLowerCase(), which: code.charCodeAt(3) }
+  }
+  if (code.startsWith('Digit')) {
+    return { code, key: code.slice(5), which: code.charCodeAt(5) }
+  }
+  return { code, key: code, which: 0 }
+}
 
 type KeyPosition = { row: number; col: number }
 

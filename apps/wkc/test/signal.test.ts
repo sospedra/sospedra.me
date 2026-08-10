@@ -2,9 +2,12 @@ import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import {
   captionFor,
+  glyphFit,
   hueFor,
   IDLE_WAVE,
+  KEY_ROWS,
   noteFor,
+  pressFor,
   rgbFor,
   waveFor,
 } from '../src/signal.ts'
@@ -125,6 +128,70 @@ test('noteFor keeps unmapped keys on the legacy pentatonic ramp', () => {
   assert.equal(numpad.kind, 'tone')
   assert.equal(numpad.kind === 'tone' ? numpad.frequency : 0, 440)
   assert.equal(numpad.name, 'A4')
+})
+
+test('pressFor synthesizes letter presses from the code', () => {
+  assert.deepEqual(pressFor('KeyQ'), { code: 'KeyQ', key: 'q', which: 81 })
+  assert.deepEqual(pressFor('KeyF'), { code: 'KeyF', key: 'f', which: 70 })
+})
+
+test('pressFor synthesizes digit presses from the code', () => {
+  assert.deepEqual(pressFor('Digit7'), { code: 'Digit7', key: '7', which: 55 })
+  assert.deepEqual(pressFor('Digit0'), { code: 'Digit0', key: '0', which: 48 })
+})
+
+test('pressFor maps punctuation onto legacy keyCodes', () => {
+  assert.deepEqual(pressFor('Semicolon'), {
+    code: 'Semicolon',
+    key: ';',
+    which: 186,
+  })
+  assert.deepEqual(pressFor('Backquote'), {
+    code: 'Backquote',
+    key: '`',
+    which: 192,
+  })
+  assert.deepEqual(pressFor('Quote'), { code: 'Quote', key: "'", which: 222 })
+})
+
+test('pressFor keeps named control keys as multi-char keys', () => {
+  assert.deepEqual(pressFor('Enter'), {
+    code: 'Enter',
+    key: 'Enter',
+    which: 13,
+  })
+  assert.deepEqual(pressFor('Backspace'), {
+    code: 'Backspace',
+    key: 'Backspace',
+    which: 8,
+  })
+  assert.deepEqual(pressFor('ShiftRight'), {
+    code: 'ShiftRight',
+    key: 'Shift',
+    which: 16,
+  })
+})
+
+test('pressFor gives the space bar a single-space key', () => {
+  assert.deepEqual(pressFor('Space'), { code: 'Space', key: ' ', which: 32 })
+})
+
+test('glyphFit sizes the glyph to the padded viewport', () => {
+  assert.equal(glyphFit(13), 'calc((100vw - 2 * var(--frame-pad)) / 8.45)')
+  assert.equal(glyphFit(4), 'calc((100vw - 2 * var(--frame-pad)) / 2.60)')
+})
+
+test('glyphFit clamps empty codes to one glyph', () => {
+  assert.equal(glyphFit(0), 'calc((100vw - 2 * var(--frame-pad)) / 0.65)')
+})
+
+test('every pad code yields a complete press', () => {
+  for (const code of KEY_ROWS.flat()) {
+    const press = pressFor(code)
+    assert.equal(press.code, code)
+    assert.ok(press.key.length >= 1, `${code} has an empty key`)
+    assert.ok(press.which > 0, `${code} has no legacy keyCode`)
+  }
 })
 
 test('noteFor turns named keys into noise hits', () => {
