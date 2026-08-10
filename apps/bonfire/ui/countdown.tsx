@@ -1,8 +1,9 @@
 'use client'
 
 import clsx from 'clsx'
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { PLANS, type PlanMode, type Segment } from 'services/plans'
+import { timelineAt } from 'services/session'
 import { toTime } from 'services/time'
 import { useInterval } from 'services/use-interval'
 import css from './countdown.module.css'
@@ -18,29 +19,33 @@ const phaseLabel = (plan: Segment[], index: number): string => {
   return `work ${workDone.length} of ${workTotal.length}`
 }
 
-export function Countdown(props: { mode: PlanMode; done: () => void }) {
+export function Countdown(props: {
+  mode: PlanMode
+  epoch: number
+  done: () => void
+}) {
   const pips = useRef<HTMLAudioElement>(null)
+  const doneFired = useRef(false)
   const plan = PLANS[props.mode]
-  const [status, setStatus] = useState({ index: 0, countdown: plan[0].time })
-  const ending = status.countdown <= PIPS_LEAD_MS
+  const [nowMs, setNowMs] = useState(() => Date.now())
 
-  useInterval(() => {
-    if (status.countdown > 0) {
-      if (status.countdown === PIPS_LEAD_MS) {
-        pips.current?.play().catch(() => undefined)
-      }
-      setStatus({ ...status, countdown: status.countdown - TICK_MS })
-      return
-    }
+  useInterval(() => setNowMs(Date.now()), TICK_MS)
 
-    const next = plan[status.index + 1]
-    if (next) {
-      setStatus({ index: status.index + 1, countdown: next.time })
-      return
-    }
+  const timeline = timelineAt(plan, nowMs - props.epoch)
+  const ending = timeline !== null && timeline.remaining <= PIPS_LEAD_MS
 
+  useEffect(() => {
+    if (ending) pips.current?.play().catch(() => undefined)
+  }, [ending])
+
+  useEffect(() => {
+    if (timeline !== null || doneFired.current) return
+    doneFired.current = true
     props.done()
-  }, TICK_MS)
+  })
+
+  if (timeline === null) return null
+  const status = { index: timeline.index, countdown: timeline.remaining }
 
   return (
     <div>
