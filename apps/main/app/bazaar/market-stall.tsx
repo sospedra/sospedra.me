@@ -3,6 +3,7 @@
 import { clamp } from 'es-toolkit'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'services/link'
+import { useRouteTransition } from 'services/transition/context'
 import css from './bazaar.module.css'
 import {
   DIALOG_NUDGE,
@@ -26,6 +27,7 @@ import type { BazaarStallId } from './stalls-manifest'
 
 const MOBILE_BREAKPOINT_PX = 700
 const HOVER_CLOSE_DELAY_MS = 140
+const TAP_CLICK_TWIN_MS = 800
 const DIALOG_SIZE = {
   mobile: { maxWidth: 192, viewportShare: 0.62 },
   desktop: { maxWidth: 240, viewportShare: 0.76 },
@@ -72,6 +74,8 @@ export default function Stall(props: { id: BazaarStallId; eager?: boolean }) {
   const dialogRef = useRef<HTMLDivElement>(null)
   const closeTimerRef = useRef<number | null>(null)
   const suppressFocusOpenRef = useRef(false)
+  const tapNavigatedAtRef = useRef(0)
+  const transition = useRouteTransition()
   const active = open || focused
 
   const updateDialogPosition = useCallback(() => {
@@ -126,7 +130,20 @@ export default function Stall(props: { id: BazaarStallId; eager?: boolean }) {
     }, HOVER_CLOSE_DELAY_MS)
   }
 
+  // iOS withholds the tap's click while the typewriter mutates the open
+  // bubble, so the second tap must navigate from pointerup itself
+  const navigateOnTap = (event: React.PointerEvent<HTMLAnchorElement>) => {
+    if (event.pointerType === 'mouse' || !open) return
+    tapNavigatedAtRef.current = performance.now()
+    sfx.click()
+    transition.navigate(spec.href)
+  }
+
   const guardTap = (event: React.MouseEvent) => {
+    if (performance.now() - tapNavigatedAtRef.current < TAP_CLICK_TWIN_MS) {
+      event.preventDefault()
+      return
+    }
     const coarse = window.matchMedia('(hover: none)').matches
     if (coarse && !open) {
       event.preventDefault()
@@ -192,6 +209,7 @@ export default function Stall(props: { id: BazaarStallId; eager?: boolean }) {
         aria-expanded={active}
         data-label={spec.label}
         onClick={guardTap}
+        onPointerUp={navigateOnTap}
         onMouseEnter={() => sfx.stall(id)}
         onKeyDown={handleLinkKeyDown}
         url={spec.href}
