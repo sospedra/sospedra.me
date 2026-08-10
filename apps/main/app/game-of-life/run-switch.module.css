@@ -346,3 +346,42 @@
     transition: none;
   }
 }
+
+/* Main-trigger identity: the run lever wears the deck's only orange. */
+
+.switch.runSwitch {
+  box-shadow: 0 0 0.6em rgb(240 138 29 / 40%);
+}
+
+.switch.runSwitch .switch-handle,
+.switch.runSwitch .switch-handle-bottom {
+  background-color: #f08a1d;
+  background-image: linear-gradient(
+    to right,
+    #8a3a06,
+    #f08a1d 22%,
+    #ffa63e 50%,
+    #f08a1d 78%,
+    #8a3a06
+  );
+}
+
+.switch.runSwitch .switch-handle-left,
+.switch.runSwitch .switch-handle-right {
+  border-bottom-color: #7c3608;
+}
+
+.switch.runSwitch .switch-handle-top {
+  border-top-color: #ffcf94;
+  background-color: #e07a12;
+  background-image: linear-gradient(to right, #c96407, #ff9e33);
+}
+
+.switch.runSwitch input:checked ~ .switch-handle-left,
+.switch.runSwitch input:checked ~ .switch-handle-right {
+  border-top-color: #7c3608;
+}
+
+.switch.runSwitch input:checked ~ .switch-handle-top {
+  border-bottom-color: #ffcf94;
+}

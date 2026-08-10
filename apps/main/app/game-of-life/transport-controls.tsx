@@ -37,6 +37,10 @@ export const TransportControls = ({
         data-running={running ? 'true' : 'false'}
         data-disabled={state.cells.size === 0 ? 'true' : 'false'}
       >
+        <span className={css.runLegend} aria-hidden='true'>
+          <strong>Start</strong>
+          <small>Main trigger</small>
+        </span>
         <span
           className={`${runSwitch.switch} ${runSwitch.runSwitch}`}
           data-disabled={state.cells.size === 0 ? 'true' : 'false'}

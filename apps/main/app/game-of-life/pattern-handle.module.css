@@ -254,3 +254,26 @@
     grid-row: 3;
   }
 }
+
+@media (max-width: 45rem) and (orientation: portrait) {
+  .patternHandleDeck {
+    display: grid;
+    min-height: 2.7rem;
+    grid-column: 2;
+    grid-row: 3;
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+    padding: 0.24rem 0.24rem 0.34rem;
+  }
+
+  .patternHandleLabel,
+  .patternHandleSelection {
+    display: none;
+  }
+
+  .patternHandleAction {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+  }
+}

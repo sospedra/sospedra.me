@@ -326,3 +326,24 @@
     overflow: visible;
   }
 }
+
+/* Portrait handset: one non-scrolling column, bay wrappers dissolve. */
+
+@media (max-width: 45rem) and (orientation: portrait) {
+  .cockpit {
+    height: 100dvh;
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+  }
+
+  .forwardBay {
+    display: contents;
+  }
+
+  .workbench {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-rows: minmax(0, 1fr) auto auto auto auto;
+    gap: 0.35rem;
+  }
+}

@@ -415,3 +415,14 @@
     transition: none;
   }
 }
+
+@media (max-width: 45rem) and (orientation: portrait) {
+  .throttleModule {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .speedKnobAssembly {
+    width: min(4.9rem, calc(100% - 0.1rem));
+  }
+}

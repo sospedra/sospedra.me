@@ -350,6 +350,39 @@
   }
 }
 
+@media (max-width: 45rem) and (orientation: portrait) {
+  .modeButton[data-control="reset"] {
+    width: 100%;
+    padding: 0 0.1rem 0.5rem;
+  }
+
+  .modeButton[data-control="reset"] .modeButtonTop {
+    inset: 0.3rem 0.16rem 0.6rem;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    justify-items: center;
+    gap: 0.24rem;
+    padding: 0.3rem 0.1rem;
+  }
+
+  .modeButton[data-control="reset"] .modeIcon,
+  .modeButton[data-control="reset"] .modeLabel small {
+    display: none;
+  }
+
+  .modeButton[data-control="reset"] .modeLabel {
+    display: grid;
+    justify-items: center;
+  }
+
+  .modeButton[data-control="reset"] .modeLabel strong {
+    writing-mode: vertical-rl;
+    font-size: 0.48rem;
+    letter-spacing: 0.14em;
+    transform: rotate(180deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .modeButton::after,
   .modeOutline,

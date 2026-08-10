@@ -242,3 +242,20 @@
     padding: 0.34rem;
   }
 }
+
+/* Portrait handset: the deck panel dissolves into workbench tiles. */
+
+@media (max-width: 45rem) and (orientation: portrait) {
+  .controlDeck {
+    display: contents;
+  }
+
+  .controlDeck::before,
+  .controlDeck::after {
+    display: none;
+  }
+
+  .controlModule {
+    min-height: 0;
+  }
+}

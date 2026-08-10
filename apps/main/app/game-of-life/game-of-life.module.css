@@ -54,6 +54,7 @@
   overflow: hidden;
   color: var(--life-ink);
   background: var(--life-void);
+  user-select: none;
 }
 
 .page button,
@@ -109,5 +110,11 @@
   .page {
     overflow-x: clip;
     overflow-y: auto;
+  }
+}
+
+@media (max-width: 45rem) and (orientation: portrait) {
+  .page {
+    overflow: clip;
   }
 }
