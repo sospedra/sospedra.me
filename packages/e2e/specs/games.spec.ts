@@ -117,4 +117,3 @@ test.describe('startup chime prefetch', () => {
       .toBe(true)
   })
 })
-
