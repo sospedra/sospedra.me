@@ -6,7 +6,10 @@ import {
   type SfxKit,
 } from 'services/audio/kit'
 
-type TravelAudioCue = { kind: 'button' } | { direction: -1 | 1; kind: 'rotary' }
+type TravelAudioCue =
+  | { kind: 'button' }
+  | { kind: 'power-off' }
+  | { direction: -1 | 1; kind: 'rotary' }
 
 type TravelAudioGraph = {
   context: AudioContext
@@ -107,6 +110,31 @@ export const createTravelAudio = () => {
       return
     }
 
+    if (cue.kind === 'power-off') {
+      currentGraph.kit.burst({
+        frequency: 880,
+        duration: 0.05,
+        peak: 0.1,
+        q: 0.9,
+      })
+      currentGraph.kit.tone({
+        from: 240,
+        to: 36,
+        duration: 0.42,
+        peak: 0.15,
+        attack: 0.004,
+      })
+      currentGraph.kit.tone({
+        from: 3400,
+        to: 900,
+        duration: 0.16,
+        peak: 0.05,
+        shape: 'triangle',
+        at: 0.05,
+      })
+      return
+    }
+
     currentGraph.kit.burst({
       frequency: 980 + Math.random() * 150,
       duration: 0.064,
@@ -133,7 +161,7 @@ export const createTravelAudio = () => {
     }
     if (!hasActiveUserGesture()) return
 
-    if (!pendingCue || cue.kind === 'button') pendingCue = cue
+    if (!pendingCue || cue.kind !== 'rotary') pendingCue = cue
     void resumeGraph(currentGraph).then((runningGraph) => {
       if (!runningGraph || !pendingCue) return
       const cueToRender = pendingCue
@@ -217,6 +245,9 @@ export const createTravelAudio = () => {
     },
     playButtonPress() {
       play({ kind: 'button' })
+    },
+    playPowerOff() {
+      play({ kind: 'power-off' })
     },
     playRotaryTick(direction: -1 | 1 = 1) {
       const now = performance.now()

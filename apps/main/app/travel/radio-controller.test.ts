@@ -288,6 +288,26 @@ test('quiesce silences without reporting', () => {
   assert.deepEqual(events, [{ type: 'start', stationIndex: 0, attempt: 1 }])
 })
 
+test('quiesce still silences after the ref detaches on unmount', () => {
+  const fake = createFakeAudio()
+  const clock = createManualClock()
+  let mounted = true
+  const controller = createRadioController({
+    audio: () => (mounted ? fake : null),
+    dispatch: () => {},
+    setTimer: clock.setTimer,
+    clearTimer: clock.clearTimer,
+  })
+  controller.start(station('flaix'), 0)
+  fake.fire('playing')
+  mounted = false
+  controller.quiesce()
+
+  assert.equal(fake.src, '')
+  assert.equal(fake.pauses >= 2, true)
+  assert.equal(fake.listenerCount(), 0)
+})
+
 test('a missing element reports the attempt as failed', () => {
   const events: RadioEvent[] = []
   const clock = createManualClock()

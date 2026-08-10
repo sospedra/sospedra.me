@@ -146,10 +146,11 @@
   }
 }
 
+/* the power key reads first and takes the full row; the presets rank under it */
 .radioControls {
   display: grid;
   min-width: 0;
-  grid-template-columns: 4rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.42rem;
 }
 

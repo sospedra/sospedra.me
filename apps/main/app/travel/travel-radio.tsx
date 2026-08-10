@@ -59,12 +59,14 @@ type TravelRadioProps = {
   destinationCode: string
   destinationName: string
   travelAudio: TravelAudio
+  silenced: boolean
 }
 
 export default function TravelRadio({
   destinationCode,
   destinationName,
   travelAudio,
+  silenced,
 }: TravelRadioProps) {
   const stations = getRadioStations(destinationCode)
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -86,6 +88,12 @@ export default function TravelRadio({
     },
     [controller, travelAudio],
   )
+
+  useEffect(() => {
+    if (!silenced) return
+    controller.quiesce()
+    travelAudio.stopReceiverStatic()
+  }, [controller, silenced, travelAudio])
 
   useEffect(() => {
     controller.quiesce()

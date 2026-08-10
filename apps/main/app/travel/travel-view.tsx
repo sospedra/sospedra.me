@@ -225,6 +225,10 @@ export default function TravelView() {
     event.preventDefault()
     if (poweredOff) return
     setPoweredOff(true)
+    if (fxMode !== 'quiet') {
+      travelAudio.arm()
+      travelAudio.playPowerOff()
+    }
     transition.navigateLater('/', POWER_OFF_EXIT_MS)
   }
 
@@ -336,6 +340,7 @@ export default function TravelView() {
               destinationCode={tracked.code}
               destinationName={tracked.name}
               travelAudio={travelAudio}
+              silenced={poweredOff}
             />
           </aside>
         </div>

@@ -50,6 +50,10 @@ export const createRadioController = ({
   let session = 0
   let detachListeners: (() => void) | null = null
   let timer: TimerHandle | null = null
+  /* React nulls the ref before unmount cleanup; keep the started element */
+  let attached: RadioAudioElement | null = null
+
+  const liveAudio = () => audio() ?? attached
 
   const clearRecoveryTimer = () => {
     if (timer === null) return
@@ -65,7 +69,7 @@ export const createRadioController = ({
   const silence = () => {
     detach()
     clearRecoveryTimer()
-    const element = audio()
+    const element = liveAudio()
     if (!element) return
     element.pause()
     element.removeAttribute('src')
@@ -125,6 +129,7 @@ export const createRadioController = ({
       fail(attempt)
       return
     }
+    attached = element
     element.pause()
     if (needsHlsSupport(station) && !canPlayHls(element)) {
       fail(attempt)
@@ -151,7 +156,7 @@ export const createRadioController = ({
     session += 1
     detach()
     clearRecoveryTimer()
-    audio()?.pause()
+    liveAudio()?.pause()
     dispatch({ type: 'hold' })
   }
 
