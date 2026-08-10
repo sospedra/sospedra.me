@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { preload } from 'react-dom'
@@ -115,6 +116,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       <body>
         <Providers>{props.children}</Providers>
         <Analytics />
+        <SpeedInsights />
         <script
           type='application/ld+json'
           // biome-ignore lint/security/noDangerouslySetInnerHtml: static person json-ld
