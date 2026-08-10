@@ -138,6 +138,19 @@ export default function GameOfLifeView() {
     setSoundEnabled(false)
   }, [])
 
+  // The document is the site scroller; a stray touch drag shifts the field.
+  useEffect(() => {
+    const root = document.documentElement.style
+    const previousOverflow = root.overflow
+    const previousOverscroll = root.overscrollBehavior
+    root.overflow = 'hidden'
+    root.overscrollBehavior = 'none'
+    return () => {
+      root.overflow = previousOverflow
+      root.overscrollBehavior = previousOverscroll
+    }
+  }, [])
+
   useEffect(() => {
     audio.setEnabled(soundEnabled)
     audio.setRunning(running, speed)
