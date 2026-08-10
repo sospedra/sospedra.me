@@ -159,18 +159,24 @@
 }
 
 @media (max-width: 640px) {
+  /* thumbs reach the keys above the glass, not under the keyboard */
   .keybar {
+    order: -1;
+    margin-top: 0;
+    margin-bottom: 0.55rem;
     padding: 0.48rem;
+    border-radius: 0.55rem 0.55rem 0.28rem 0.28rem;
   }
 
   .fkeys {
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .fkeys button {
     min-width: 0;
+    min-height: 44px;
   }
 }
 
