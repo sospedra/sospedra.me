@@ -96,14 +96,14 @@ const convergeWidget = async (
     widget.getCurrentSoundIndex(done),
   )
   const target = Math.max(0, snapshotTarget(snapshot, Date.now()))
-  if (trackIndex !== snapshot.trackIndex) {
-    widget.skip(snapshot.trackIndex)
-    widget.seekTo(target)
-  } else {
+  if (trackIndex === snapshot.trackIndex) {
     const position = await fromCallback<number>((done) =>
       widget.getPosition(done),
     )
     if (Math.abs(position - target) > DRIFT_TOLERANCE_MS) widget.seekTo(target)
+  } else {
+    widget.skip(snapshot.trackIndex)
+    widget.seekTo(target)
   }
   if (snapshot.playing) widget.play()
   else widget.pause()

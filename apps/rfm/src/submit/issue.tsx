@@ -104,9 +104,7 @@ export const Issue = (props: {
                 </label>
               ),
             )}
-            {!data ? (
-              <PlaceholderList />
-            ) : (
+            {data ? (
               <label className='flex flex-row items-baseline p-4 transition-colors duration-150 border-t cursor-pointer has-[:checked]:bg-pink-50'>
                 <input
                   name='issue'
@@ -129,6 +127,8 @@ export const Issue = (props: {
                   </p>
                 </div>
               </label>
+            ) : (
+              <PlaceholderList />
             )}
           </div>
         </div>
