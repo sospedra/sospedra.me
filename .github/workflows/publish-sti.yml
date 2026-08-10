@@ -2,7 +2,7 @@ name: publish-sti
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths: ["packages/sti/**"]
 
 permissions:

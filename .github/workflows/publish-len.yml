@@ -2,7 +2,7 @@ name: publish-len
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths: ["packages/len/**"]
 
 permissions:

@@ -2,7 +2,7 @@ name: publish-logatim
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths: ["packages/logatim/**"]
 
 permissions:

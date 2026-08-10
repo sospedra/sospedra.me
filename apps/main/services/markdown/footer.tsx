@@ -5,7 +5,7 @@ import neonCss from 'services/style/neon.module.css'
 import css from './footer.module.css'
 
 const REPO_URL = 'https://github.com/sospedra/sospedra.me'
-const REPO_BRANCH = 'master'
+const REPO_BRANCH = 'main'
 
 const createXSearch = (url: string) => {
   const href = `${SITE_URL}${url}`
