@@ -5,6 +5,7 @@ import { useSession } from 'services/use-session'
 import { AmbienceToggle } from 'ui/ambience'
 import { Background } from 'ui/background'
 import { Footer } from 'ui/footer'
+import { Peers } from 'ui/peers'
 import { Player } from 'ui/player'
 import { Settings } from 'ui/settings'
 import { Share } from 'ui/share'
@@ -43,6 +44,7 @@ export function Home(props: { playlistID: string }) {
             />
             <AmbienceToggle audioRef={ambience} />
             <Share session={session} />
+            <Peers session={session} />
           </div>
         </main>
 

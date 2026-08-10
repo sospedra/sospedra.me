@@ -1,6 +1,12 @@
 'use client'
 
-import { type RefObject, useEffect, useReducer, useRef } from 'react'
+import {
+  type RefObject,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+} from 'react'
 import { DRIFT_TOLERANCE_MS } from './mesh/constants.ts'
 import { type SessionSnapshot, snapshotTarget } from './session.ts'
 import type {
@@ -160,17 +166,21 @@ export const usePlayback = (props: {
     }
   }, [apiReady, iframe, ambience])
 
+  const readState = useCallback(async () => {
+    const widget = widgetRef.current
+    return widget ? readWidget(widget) : null
+  }, [])
+
+  const applySnapshot = useCallback(async (snapshot: SessionSnapshot) => {
+    const widget = widgetRef.current
+    if (widget) await convergeWidget(widget, snapshot)
+  }, [])
+
   return {
     ...state,
     play: () => widgetRef.current?.play(),
     pause: () => widgetRef.current?.pause(),
-    readState: async () => {
-      const widget = widgetRef.current
-      return widget ? readWidget(widget) : null
-    },
-    applySnapshot: async (snapshot: SessionSnapshot) => {
-      const widget = widgetRef.current
-      if (widget) await convergeWidget(widget, snapshot)
-    },
+    readState,
+    applySnapshot,
   }
 }

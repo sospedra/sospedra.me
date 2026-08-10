@@ -35,6 +35,13 @@ export function Player(props: {
     return () => bindPlayback(null)
   }, [hosting, bindPlayback, readState])
 
+  const seatedSnapshot = runtime.phase === 'seated' ? runtime.snapshot : null
+  const { applySnapshot } = playback
+  useEffect(() => {
+    if (seatedSnapshot === null) return
+    void applySnapshot(seatedSnapshot)
+  }, [seatedSnapshot, applySnapshot])
+
   return (
     <div>
       <Script
@@ -59,25 +66,26 @@ export function Player(props: {
         >
           {playback.songTitle || 'gathering wood…'}
         </p>
-        {playback.isPlaying ? (
-          <button
-            aria-label='pause'
-            className={CONTROL}
-            onClick={playback.pause}
-            type='button'
-          >
-            <PauseIcon />
-          </button>
-        ) : (
-          <button
-            aria-label='play'
-            className={CONTROL}
-            onClick={playback.play}
-            type='button'
-          >
-            <PlayIcon />
-          </button>
-        )}
+        {runtime.phase !== 'seated' &&
+          (playback.isPlaying ? (
+            <button
+              aria-label='pause'
+              className={CONTROL}
+              onClick={playback.pause}
+              type='button'
+            >
+              <PauseIcon />
+            </button>
+          ) : (
+            <button
+              aria-label='play'
+              className={CONTROL}
+              onClick={playback.play}
+              type='button'
+            >
+              <PlayIcon />
+            </button>
+          ))}
       </div>
       <div className='mt-2 flex flex-row items-center gap-2 font-mono text-[11px] text-ash'>
         <span>{playback.time}</span>
