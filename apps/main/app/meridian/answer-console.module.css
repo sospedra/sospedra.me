@@ -331,6 +331,14 @@
     min-height: 0;
     grid-template-columns: minmax(0, 1fr);
   }
+
+  /* the keys never focus the field, so the live face cannot ride :focus-within */
+  .answerConsole[data-keys="true"] .commandLine {
+    border-color: var(--geo-arcade-ink);
+    box-shadow:
+      4px 4px 0 var(--geo-pink),
+      7px 7px 0 var(--geo-arcade-ink);
+  }
 }
 
 @media (max-width: 800px) {

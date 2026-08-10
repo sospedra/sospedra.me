@@ -54,14 +54,22 @@ test.describe('meridian mobile', () => {
 
     const answer = page.getByPlaceholder(/Type a/i)
     await expect(answer).toBeVisible({ timeout: 15_000 })
+    // the countdown re-focuses the field, so wait the question out first
+    await expect(answer).toBeEnabled({ timeout: 15_000 })
     // the OS keyboard must never open: the stage cannot survive the band
     await expect(answer).toHaveAttribute('inputmode', 'none')
+
+    // WebKit never focuses a field that opens no keyboard, so suggestions
+    // must follow the typed value
+    await answer.evaluate((element) => element.blur())
+    await expect(answer).not.toBeFocused()
 
     const console_ = page.locator('aside[data-mode="text"]')
     for (const letter of ['S', 'P', 'A']) {
       await console_.getByRole('button', { name: letter, exact: true }).tap()
     }
     await expect(answer).toHaveValue('SPA')
+    await expect(page.getByRole('option', { name: /Spain/ })).toBeVisible()
 
     await console_.getByRole('button', { name: /Delete letter/ }).tap()
     await expect(answer).toHaveValue('SP')

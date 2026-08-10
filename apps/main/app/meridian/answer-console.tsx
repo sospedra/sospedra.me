@@ -56,7 +56,10 @@ export function TextAnswerConsole({
       }),
     [lexiconIndex, value],
   )
-  const expanded = active && focused && !dismissed && candidates.length > 0
+  /* the answer keys type without ever focusing the field, so suggestions
+     follow the value there and the caret only gates the OS keyboard path */
+  const listening = keys.enabled || focused
+  const expanded = active && listening && !dismissed && candidates.length > 0
   const meaningful = isMeaningfulGeoAnswerInput(value, locale)
 
   useEffect(() => {
@@ -225,7 +228,7 @@ export function TextAnswerConsole({
         )}
 
         {active &&
-          focused &&
+          listening &&
           meaningful &&
           candidates.length === 0 &&
           !dismissed && (
