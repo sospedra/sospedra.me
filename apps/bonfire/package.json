@@ -11,7 +11,7 @@
     "dev": "next dev --port 3010",
     "lint": "biome check .",
     "start": "next start",
-    "test": "node --test services/time.test.ts services/soundcloud.test.ts",
+    "test": "node --test services/time.test.ts services/soundcloud.test.ts services/mesh/bytes.test.ts services/mesh/seal.test.ts services/mesh/topics.test.ts services/mesh/nostr-event.test.ts",
     "typecheck": "tsc"
   },
   "dependencies": {
