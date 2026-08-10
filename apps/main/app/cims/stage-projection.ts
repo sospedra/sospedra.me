@@ -20,6 +20,22 @@ export type StageRefs = {
 
 export type StageMarker = { x: number; z: number; h: number }
 
+const markerDistanceSq = (
+  marker: StageMarker,
+  camX: number,
+  camZ: number,
+): number => {
+  const dx = marker.x - camX
+  const dz = marker.z - camZ
+  return dx * dx + dz * dz
+}
+
+const outOfRange = (
+  marker: StageMarker,
+  frame: { camX: number; camZ: number },
+  rangeSq: number,
+): boolean => markerDistanceSq(marker, frame.camX, frame.camZ) > rangeSq
+
 export type StageFrame = {
   ex: number
   camX: number
@@ -72,7 +88,7 @@ export const createStageProjector = (options: ProjectorOptions) => {
     el.style.top = `${((1 - scratch.y) / 2) * window.innerHeight}px`
   }
 
-  const updateLabels = (frame: StageFrame) => {
+  const placePeaks = (frame: StageFrame) => {
     for (let i = 0; i < refs.peaks.length; i++) {
       const peak = frame.activePeaks[i]
       if (!peak) {
@@ -87,27 +103,37 @@ export const createStageProjector = (options: ProjectorOptions) => {
         1.1,
       )
     }
+  }
+
+  const placeCities = (frame: StageFrame, rangeSq: number) => {
+    for (const [index, city] of cityData.entries()) {
+      if (outOfRange(city, frame, rangeSq)) {
+        hide(refs.cities[index])
+        continue
+      }
+      place(refs.cities[index], city.x, (city.h + 16) * frame.ex, city.z, 1.05)
+    }
+  }
+
+  const placeDestinations = (frame: StageFrame, rangeSq: number) => {
+    for (const [index, dest] of destData.entries()) {
+      if (
+        index === frame.currentDestIndex ||
+        outOfRange(dest, frame, rangeSq)
+      ) {
+        hide(refs.dests[index])
+        continue
+      }
+      place(refs.dests[index], dest.x, (dest.h + 20) * frame.ex, dest.z, 1.05)
+    }
+  }
+
+  const updateLabels = (frame: StageFrame) => {
+    placePeaks(frame)
     const cityRange = clamp(frame.camY * 26, 70000, 2000000)
     const rangeSq = cityRange * cityRange
-    const culled = (marker: StageMarker) => {
-      const dx = marker.x - frame.camX
-      const dz = marker.z - frame.camZ
-      return dx * dx + dz * dz > rangeSq
-    }
-    cityData.forEach((city, i) => {
-      if (culled(city)) {
-        hide(refs.cities[i])
-        return
-      }
-      place(refs.cities[i], city.x, (city.h + 16) * frame.ex, city.z, 1.05)
-    })
-    destData.forEach((dest, i) => {
-      if (i === frame.currentDestIndex || culled(dest)) {
-        hide(refs.dests[i])
-        return
-      }
-      place(refs.dests[i], dest.x, (dest.h + 20) * frame.ex, dest.z, 1.05)
-    })
+    placeCities(frame, rangeSq)
+    placeDestinations(frame, rangeSq)
     place(
       refs.sun,
       frame.sunWorld.x,
@@ -134,9 +160,8 @@ export const createStageProjector = (options: ProjectorOptions) => {
 
   const updateCompass = (shown: boolean) => {
     const root = refs.compass.current
-    if (root && root.dataset.show !== (shown ? '1' : '0')) {
-      root.dataset.show = shown ? '1' : '0'
-    }
+    const shownFlag = shown ? '1' : '0'
+    if (root && root.dataset.show !== shownFlag) root.dataset.show = shownFlag
     if (shown && refs.needle.current) {
       refs.needle.current.style.transform = `rotate(${-headingDegrees(camera)}deg)`
     }

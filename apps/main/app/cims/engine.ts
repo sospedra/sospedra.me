@@ -150,18 +150,23 @@ export const createCimsEngine = (options: CimsEngineOptions) => {
     if (t >= 1) tour.arrive()
   }
 
+  const advanceShowcase = (dt: number) => {
+    rig.showT += dt
+    const targets = showcaseTargets(rig.showT, rig.showH0, rig.showR0)
+    rig.headingT = targets.headingT
+    rig.rangeT = targets.rangeT
+    if (targets.done) rig.showT = -1
+  }
+
+  const autoOrbitStep = (dt: number) => {
+    if (rig.holdOn || rig.gesture || !store.get().autoOn) return
+    if (rig.showT >= 0) advanceShowcase(dt)
+    rig.autoT += dt
+    if (rig.autoT > AUTO_ADVANCE_SECONDS) tour.advance(1)
+  }
+
   const orbitStep = (dt: number, ms: number) => {
-    if (!rig.holdOn && !rig.gesture && store.get().autoOn) {
-      if (rig.showT >= 0) {
-        rig.showT += dt
-        const targets = showcaseTargets(rig.showT, rig.showH0, rig.showR0)
-        rig.headingT = targets.headingT
-        rig.rangeT = targets.rangeT
-        if (targets.done) rig.showT = -1
-      }
-      rig.autoT += dt
-      if (rig.autoT > AUTO_ADVANCE_SECONDS) tour.advance(1)
-    }
+    autoOrbitStep(dt)
     rig.idleT += dt
     const fastInput = rig.gesture || ms - rig.lastInputMs < 250
     const damp = dampFactor(dt, fastInput ? DAMP_FAST : DAMP_SLOW)

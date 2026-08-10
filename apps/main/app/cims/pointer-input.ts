@@ -28,6 +28,18 @@ const interactiveTarget = (target: EventTarget | null): boolean =>
   target.closest('button, input, a, select, textarea, [contenteditable]') !==
     null
 
+const gestureForButton = (
+  event: PointerEvent,
+  spaceHeld: boolean,
+): 'look' | 'pan' | 'orbit' | null => {
+  const primaryWithModifier =
+    event.button === 0 && (event.ctrlKey || event.metaKey)
+  if (event.button === 1 || primaryWithModifier) return 'look'
+  if (event.button === 2 || (event.button === 0 && spaceHeld)) return 'pan'
+  if (event.button === 0) return 'orbit'
+  return null
+}
+
 export const attachInput = (host: PointerHost): (() => void) => {
   const { canvas, rig, focusT } = host
   let lastX = 0
@@ -66,6 +78,30 @@ export const attachInput = (host: PointerHost): (() => void) => {
 
   const onContextMenu = (e: Event) => e.preventDefault()
 
+  const beginPinch = () => {
+    const [first, second] = [...pointers.values()]
+    pinchD0 = Math.max(
+      20,
+      Math.hypot(first[0] - second[0], first[1] - second[1]),
+    )
+    pinchR0 = rig.rangeT
+    pinchCX = (first[0] + second[0]) / 2
+    pinchCY = (first[1] + second[1]) / 2
+    rig.gesture = 'pinch'
+    rig.showT = -1
+  }
+
+  const applyPressGesture = (e: PointerEvent) => {
+    if (pointers.size === 2) {
+      beginPinch()
+      return
+    }
+    const gesture = gestureForButton(e, spaceHeld)
+    if (!gesture) return
+    rig.gesture = gesture
+    if (gesture === 'pan') spaceUsed = true
+  }
+
   const onPointerDown = (e: PointerEvent) => {
     lastX = e.clientX
     lastY = e.clientY
@@ -73,25 +109,7 @@ export const attachInput = (host: PointerHost): (() => void) => {
     downY = e.clientY
     downMs = performance.now()
     pointers.set(e.pointerId, [e.clientX, e.clientY])
-    if (pointers.size === 2) {
-      const it = [...pointers.values()]
-      pinchD0 = Math.max(
-        20,
-        Math.hypot(it[0][0] - it[1][0], it[0][1] - it[1][1]),
-      )
-      pinchR0 = rig.rangeT
-      pinchCX = (it[0][0] + it[1][0]) / 2
-      pinchCY = (it[0][1] + it[1][1]) / 2
-      rig.gesture = 'pinch'
-      rig.showT = -1
-    } else if (e.button === 1 || (e.button === 0 && (e.ctrlKey || e.metaKey))) {
-      rig.gesture = 'look'
-    } else if (e.button === 2 || (e.button === 0 && spaceHeld)) {
-      rig.gesture = 'pan'
-      spaceUsed = true
-    } else if (e.button === 0) {
-      rig.gesture = 'orbit'
-    }
+    applyPressGesture(e)
     if (rig.gesture) canvas.setPointerCapture(e.pointerId)
     e.preventDefault()
   }
@@ -114,6 +132,24 @@ export const attachInput = (host: PointerHost): (() => void) => {
     rig.lastInputMs = performance.now()
   }
 
+  const applyDragGesture = (dx: number, dy: number) => {
+    if (rig.gesture === 'orbit') {
+      rig.headingT -= dx * 0.005
+      rig.pitchT = clamp(rig.pitchT + dy * 0.004, PITCH_MIN, PITCH_MAX)
+      rig.lookYawT = 0
+      rig.lookTiltT = 0
+      return
+    }
+    if (rig.gesture === 'pan') {
+      panFocus(dx, dy)
+      rig.lookYawT = 0
+      rig.lookTiltT = 0
+      return
+    }
+    rig.lookYawT = clamp(rig.lookYawT - dx * DRAG_YAW, -2.6, 2.6)
+    rig.lookTiltT = clamp(rig.lookTiltT - dy * DRAG_TILT, -1, 1)
+  }
+
   const onPointerMove = (e: PointerEvent) => {
     if (!rig.gesture) return
     if (pointers.has(e.pointerId)) {
@@ -132,19 +168,7 @@ export const attachInput = (host: PointerHost): (() => void) => {
       rig.lookTiltT = clamp(rig.lookTiltT - dy * DRAG_TILT, -1, 1)
       return
     }
-    if (rig.gesture === 'orbit') {
-      rig.headingT -= dx * 0.005
-      rig.pitchT = clamp(rig.pitchT + dy * 0.004, PITCH_MIN, PITCH_MAX)
-      rig.lookYawT = 0
-      rig.lookTiltT = 0
-    } else if (rig.gesture === 'pan') {
-      panFocus(dx, dy)
-      rig.lookYawT = 0
-      rig.lookTiltT = 0
-    } else {
-      rig.lookYawT = clamp(rig.lookYawT - dx * DRAG_YAW, -2.6, 2.6)
-      rig.lookTiltT = clamp(rig.lookTiltT - dy * DRAG_TILT, -1, 1)
-    }
+    applyDragGesture(dx, dy)
     markInput()
   }
 
@@ -177,6 +201,24 @@ export const attachInput = (host: PointerHost): (() => void) => {
 
   const onDoubleClick = (e: MouseEvent) => host.focusAt(e.clientX, e.clientY)
 
+  // anchor on real terrain, cached per zoom burst
+  const refreshZoomAnchor = (e: WheelEvent, now: number) => {
+    if (now - rig.lastZoomMs <= 300) return
+    const ground = host.groundPointAt(e.clientX, e.clientY)
+    rig.zoomAnchorOk = ground !== null
+    if (!ground) return
+    rig.zoomAnchorX = ground.x
+    rig.zoomAnchorZ = ground.z
+  }
+
+  const pullFocusToAnchor = (factor: number) => {
+    if (!rig.zoomAnchorOk) return
+    const pull = 1 - factor
+    focusT.x += (rig.zoomAnchorX - focusT.x) * pull
+    focusT.z += (rig.zoomAnchorZ - focusT.z) * pull
+    host.clampFocus()
+  }
+
   const onWheel = (e: WheelEvent) => {
     if (host.airborne()) return
     e.preventDefault()
@@ -185,40 +227,61 @@ export const attachInput = (host: PointerHost): (() => void) => {
     const factor = Math.exp(delta * (e.ctrlKey ? 0.01 : 0.0016))
     rig.rangeT = clamp(rig.rangeT * factor, RANGE_MIN, RANGE_MAX)
     if (factor < 1) {
-      // anchor on real terrain, cached per zoom burst
-      if (now - rig.lastZoomMs > 300) {
-        const ground = host.groundPointAt(e.clientX, e.clientY)
-        rig.zoomAnchorOk = ground !== null
-        if (ground) {
-          rig.zoomAnchorX = ground.x
-          rig.zoomAnchorZ = ground.z
-        }
-      }
-      if (rig.zoomAnchorOk) {
-        const k = 1 - factor
-        focusT.x += (rig.zoomAnchorX - focusT.x) * k
-        focusT.z += (rig.zoomAnchorZ - focusT.z) * k
-        host.clampFocus()
-      }
+      refreshZoomAnchor(e, now)
+      pullFocusToAnchor(factor)
     }
     rig.lastZoomMs = now
     markInput()
   }
 
+  const orbitArrowKey = (code: string): boolean => {
+    if (code === 'ArrowRight') {
+      rig.headingT -= KEY_HEADING
+      return true
+    }
+    if (code === 'ArrowLeft') {
+      rig.headingT += KEY_HEADING
+      return true
+    }
+    if (code === 'ArrowUp') {
+      rig.pitchT = clamp(rig.pitchT + KEY_PITCH, PITCH_MIN, PITCH_MAX)
+      return true
+    }
+    if (code === 'ArrowDown') {
+      rig.pitchT = clamp(rig.pitchT - KEY_PITCH, PITCH_MIN, PITCH_MAX)
+      return true
+    }
+    return false
+  }
+
+  const orbitZoomKey = (key: string): boolean => {
+    if (key === '+' || key === '=') {
+      rig.rangeT = clamp(rig.rangeT / KEY_ZOOM, RANGE_MIN, RANGE_MAX)
+      return true
+    }
+    if (key === '-') {
+      rig.rangeT = clamp(rig.rangeT * KEY_ZOOM, RANGE_MIN, RANGE_MAX)
+      return true
+    }
+    return false
+  }
+
   const orbitKey = (e: KeyboardEvent): boolean => {
     if (host.airborne()) return false
-    if (e.code === 'ArrowRight') rig.headingT -= KEY_HEADING
-    else if (e.code === 'ArrowLeft') rig.headingT += KEY_HEADING
-    else if (e.code === 'ArrowUp') {
-      rig.pitchT = clamp(rig.pitchT + KEY_PITCH, PITCH_MIN, PITCH_MAX)
-    } else if (e.code === 'ArrowDown') {
-      rig.pitchT = clamp(rig.pitchT - KEY_PITCH, PITCH_MIN, PITCH_MAX)
-    } else if (e.key === '+' || e.key === '=') {
-      rig.rangeT = clamp(rig.rangeT / KEY_ZOOM, RANGE_MIN, RANGE_MAX)
-    } else if (e.key === '-') {
-      rig.rangeT = clamp(rig.rangeT * KEY_ZOOM, RANGE_MIN, RANGE_MAX)
-    } else return false
-    return true
+    return orbitArrowKey(e.code) || orbitZoomKey(e.key)
+  }
+
+  const pressSpace = (e: KeyboardEvent) => {
+    if (!spaceHeld) {
+      spaceHeld = true
+      spaceUsed = false
+    }
+    e.preventDefault()
+  }
+
+  const stepKeys: Record<string, () => void> = {
+    ArrowRight: host.next,
+    ArrowLeft: host.prev,
   }
 
   const onKeyDown = (e: KeyboardEvent) => {
@@ -228,15 +291,8 @@ export const attachInput = (host: PointerHost): (() => void) => {
       markInput()
       return
     }
-    if (e.code === 'Space') {
-      if (!spaceHeld) {
-        spaceHeld = true
-        spaceUsed = false
-      }
-      e.preventDefault()
-    }
-    if (e.code === 'ArrowRight') host.next()
-    if (e.code === 'ArrowLeft') host.prev()
+    if (e.code === 'Space') pressSpace(e)
+    stepKeys[e.code]?.()
   }
 
   const onKeyUp = (e: KeyboardEvent) => {

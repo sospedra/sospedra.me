@@ -10,6 +10,9 @@ import {
 } from './ramps.ts'
 import type { ContourLevel, Mountain } from './terrain-schema.ts'
 
+/* Per-vertex patch fills, measured hot paths like terrain-build; the cursor
+   loops stay imperative and over the complexity budget on purpose. */
+
 export const FADE_CELLS = 22
 export const PATCH_LINE_STRIDE = 3
 const SEGMENT_ENDS = [0, 2] as const
