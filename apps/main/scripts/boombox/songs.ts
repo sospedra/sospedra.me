@@ -257,6 +257,46 @@ const preview = async (folder: string, song: Song, assets: Assets) => {
   return `${stem}.mp3`
 }
 
+type IncomingSong = { row: TsvRow; song: Song; replaces: boolean }
+
+const resolveIncoming = async (
+  rows: TsvRow[],
+  folder: string,
+  options: { known: Map<string, Song>; replace: boolean },
+): Promise<IncomingSong[]> => {
+  const seen = new Set<string>()
+  const incoming: IncomingSong[] = []
+  for (const row of rows) {
+    const fresh = await resolveSong(row, folder)
+    const key = identity(fresh)
+    if (seen.has(key)) fail(`songs.tsv lists ${key} twice`)
+    seen.add(key)
+    const clash = options.known.get(key)
+    if (clash && !options.replace)
+      fail(`${fresh.artist} - ${fresh.title} already exists. Use --replace`)
+    /* the first 372 ids came from the old source and follow no rule, so a
+       replacement keeps the stored id to hold its blob path and rotation slot */
+    const song = clash ? { ...fresh, id: clash.id } : fresh
+    incoming.push({ row, song, replaces: Boolean(clash) })
+  }
+  return incoming
+}
+
+const previewSong = async (item: IncomingSong, folder: string) => {
+  const assets = await buildAssets(item.row, item.song, folder)
+  const previewPath = await preview(folder, item.song, assets)
+  console.log(
+    `${item.song.id}  ${assets.clip.length}B clip, ${assets.cover.length}B cover -> ${previewPath}`,
+  )
+}
+
+const publishSong = async (item: IncomingSong, folder: string) => {
+  const assets = await buildAssets(item.row, item.song, folder)
+  await upload(clipPath(item.song.id), assets.clip, 'audio/mpeg')
+  await upload(coverPath(item.song.id), assets.cover, 'image/jpeg')
+  console.log(`${item.song.id}  ${item.song.artist} - ${item.song.title}`)
+}
+
 const add = async (args: string[], flags: Set<string>) => {
   const dryRun = flags.has('--dry-run')
   if (!dryRun) requireToken()
@@ -264,37 +304,13 @@ const add = async (args: string[], flags: Set<string>) => {
   const rows = parseTsv(await readFile(join(folder, 'songs.tsv'), 'utf8'))
   const songs = await readSongs()
   const known = new Map(songs.map((song) => [identity(song), song]))
-  const seen = new Set<string>()
-  const incoming = []
-  for (const row of rows) {
-    const fresh = await resolveSong(row, folder)
-    const key = identity(fresh)
-    if (seen.has(key)) fail(`songs.tsv lists ${key} twice`)
-    seen.add(key)
-    const clash = known.get(key)
-    if (clash && !flags.has('--replace'))
-      fail(`${fresh.artist} - ${fresh.title} already exists. Use --replace`)
-    /* the first 372 ids came from the old source and follow no rule, so a
-       replacement keeps the stored id to hold its blob path and rotation slot */
-    const song = clash ? { ...fresh, id: clash.id } : fresh
-    incoming.push({ row, song, replaces: Boolean(clash) })
-  }
+  const incoming = await resolveIncoming(rows, folder, {
+    known,
+    replace: flags.has('--replace'),
+  })
+  const processSong = dryRun ? previewSong : publishSong
   for (const batch of chunk(incoming, UPLOAD_BATCH)) {
-    await Promise.all(
-      batch.map(async ({ row, song }) => {
-        const { clip, cover } = await buildAssets(row, song, folder)
-        if (dryRun) {
-          const previewPath = await preview(folder, song, { clip, cover })
-          console.log(
-            `${song.id}  ${clip.length}B clip, ${cover.length}B cover -> ${previewPath}`,
-          )
-          return
-        }
-        await upload(clipPath(song.id), clip, 'audio/mpeg')
-        await upload(coverPath(song.id), cover, 'image/jpeg')
-        console.log(`${song.id}  ${song.artist} - ${song.title}`)
-      }),
-    )
+    await Promise.all(batch.map((item) => processSong(item, folder)))
   }
   const [replaced, appended] = partition(incoming, (item) => item.replaces)
   if (dryRun) {

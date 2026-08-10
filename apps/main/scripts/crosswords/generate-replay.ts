@@ -40,33 +40,65 @@ type ArchivePuzzle = {
 const GRID_LINE = /^[A-Z#]+$/
 const CLUE_LINE = /^([AD])\d+\.\s*(.*?)\s*~\s*(.+)$/
 
+type XdLine =
+  | { kind: 'clue'; direction: string; clueText: string; answer: string }
+  | { kind: 'grid'; row: string }
+  | { kind: 'header'; key: string; value: string }
+  | { kind: 'blank' }
+
+const parseXdLine = (rawLine: string): XdLine => {
+  const line = rawLine.trim()
+  if (line === '') return { kind: 'blank' }
+  const clue = line.match(CLUE_LINE)
+  if (clue) {
+    const [, direction, clueText, answer] = clue
+    return { kind: 'clue', direction, clueText, answer }
+  }
+  if (GRID_LINE.test(line) && line.length >= 5) {
+    return { kind: 'grid', row: line }
+  }
+  const colon = line.indexOf(':')
+  if (colon <= 0) return { kind: 'blank' }
+  return {
+    kind: 'header',
+    key: line.slice(0, colon).trim(),
+    value: line.slice(colon + 1).trim(),
+  }
+}
+
+/* crossword-data keys clues by answer; a repeated answer would make
+   two entries silently share one clue, so reject the puzzle */
+const applyClue = (
+  clues: ArchivePuzzle['clues'],
+  clue: Extract<XdLine, { kind: 'clue' }>,
+): boolean => {
+  const side = clue.direction === 'A' ? clues.across : clues.down
+  const key = clue.answer.trim().toUpperCase()
+  if (key in side) return false
+  side[key] = clue.clueText
+  return true
+}
+
 const parseXd = (text: string): ArchivePuzzle | null => {
   const header: Record<string, string> = {}
   const gridRows: string[] = []
-  const across: Record<string, string> = {}
-  const down: Record<string, string> = {}
+  const clues: ArchivePuzzle['clues'] = { across: {}, down: {} }
 
   for (const rawLine of text.split('\n')) {
-    const line = rawLine.trim()
-    if (line === '') continue
-    const clue = line.match(CLUE_LINE)
-    if (clue) {
-      const [, direction, clueText, answer] = clue
-      const side = direction === 'A' ? across : down
-      const key = answer.trim().toUpperCase()
-      /* crossword-data keys clues by answer; a repeated answer would make
-         two entries silently share one clue, so reject the puzzle */
-      if (key in side) return null
-      side[key] = clueText
-      continue
+    const line = parseXdLine(rawLine)
+    switch (line.kind) {
+      case 'clue':
+        if (!applyClue(clues, line)) return null
+        break
+      case 'grid':
+        gridRows.push(line.row)
+        break
+      case 'header':
+        header[line.key] = line.value
+        break
+      case 'blank':
+        break
     }
-    if (GRID_LINE.test(line) && line.length >= 5) {
-      gridRows.push(line)
-      continue
-    }
-    const colon = line.indexOf(':')
-    if (colon > 0)
-      header[line.slice(0, colon).trim()] = line.slice(colon + 1).trim()
   }
 
   const width = gridRows[0]?.length ?? 0
@@ -76,13 +108,9 @@ const parseXd = (text: string): ArchivePuzzle | null => {
     gridRows.every((row) => row.length === width) &&
     header.Date !== undefined
   if (!complete) return null
-  if (!fullyClued(gridRows, { across, down })) return null
+  if (!fullyClued(gridRows, clues)) return null
 
-  return {
-    date: header.Date,
-    grid: gridRows,
-    clues: { across, down },
-  }
+  return { date: header.Date, grid: gridRows, clues }
 }
 
 // Every grid word needs its clue or the edition would render blanks.
