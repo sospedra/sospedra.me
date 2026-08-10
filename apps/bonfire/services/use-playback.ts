@@ -68,9 +68,8 @@ const reducePlayback = (
   }
 }
 
-const fromCallback = <T,>(
-  run: (done: (value: T) => void) => void,
-): Promise<T> => new Promise((resolve) => run(resolve))
+const fromCallback = <T>(run: (done: (value: T) => void) => void): Promise<T> =>
+  new Promise((resolve) => run(resolve))
 
 const readWidget = async (widget: SoundCloudWidget) => {
   const trackIndex = await fromCallback<number>((done) =>
