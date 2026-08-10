@@ -28,8 +28,13 @@ export type SoundCloudWidget = {
     listener: (payload?: SoundCloudProgress) => void,
   ) => void
   getCurrentSound: (callback: (sound: SoundCloudSound) => void) => void
+  getCurrentSoundIndex: (callback: (index: number) => void) => void
+  getPosition: (callback: (position: number) => void) => void
+  isPaused: (callback: (paused: boolean) => void) => void
   pause: () => void
   play: () => void
+  seekTo: (milliseconds: number) => void
+  skip: (soundIndex: number) => void
   unbind: (event: string) => void
 }
 
