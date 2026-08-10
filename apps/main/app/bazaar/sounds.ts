@@ -1,4 +1,8 @@
-import { audioContextClass, noiseSourceFor } from 'services/audio/kit'
+import {
+  audioContextClass,
+  ensureRunning,
+  noiseSourceFor,
+} from 'services/audio/kit'
 import { readLocal, writeLocal } from 'services/storage'
 import type { BazaarStallId } from './stalls-manifest'
 
@@ -44,7 +48,7 @@ function ensure(): AudioBus | null {
     master.connect(context.destination)
     bus = { context, master }
   }
-  if (bus.context.state === 'suspended') void bus.context.resume()
+  ensureRunning(bus.context)
   return bus
 }
 

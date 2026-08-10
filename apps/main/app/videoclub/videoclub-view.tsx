@@ -108,7 +108,13 @@ export default function VideoclubView() {
     if (tracking && state.burst === 'bars') audio.beep(BARS_MS / 1000)
   }, [state.status, state.burst, audio])
 
-  useEffect(() => () => audio.staticOff(), [audio])
+  useEffect(
+    () => () => {
+      audio.staticOff()
+      audio.dispose()
+    },
+    [audio],
+  )
 
   useEffect(() => {
     const video = videoRef.current

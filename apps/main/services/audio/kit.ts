@@ -43,6 +43,12 @@ export const audioContextClass = (): typeof AudioContext | null => {
   )
 }
 
+// iOS reports 'interrupted' after a call or screen lock; the TS state union omits it
+export const ensureRunning = (context: AudioContext) => {
+  if (context.state === 'running' || context.state === 'closed') return
+  void context.resume().catch(() => undefined)
+}
+
 export type MasterBusSpec = {
   gain: number
   threshold: number
@@ -114,7 +120,7 @@ export const createSfxKit = ({
       if (!AudioContextClass) return null
       audioContext = new AudioContextClass()
     }
-    if (audioContext.state === 'suspended') void audioContext.resume()
+    ensureRunning(audioContext)
     return audioContext
   }
 
@@ -214,5 +220,13 @@ export const createSfxKit = ({
     enabled = value
   }
 
-  return { bed, burst, ensure, setEnabled, sweep, tone }
+  const dispose = () => {
+    if (destination || !audioContext) return
+    if (audioContext.state !== 'closed') {
+      void audioContext.close().catch(() => undefined)
+    }
+    audioContext = null
+  }
+
+  return { bed, burst, dispose, ensure, setEnabled, sweep, tone }
 }

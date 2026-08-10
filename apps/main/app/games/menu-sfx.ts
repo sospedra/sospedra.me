@@ -16,6 +16,7 @@ export const createMenuSfx = () => {
   }) => kit.sweep({ ...spec, q: 2.2 })
 
   return {
+    dispose: kit.dispose,
     tick: () => {
       kit.tone({ from: 1244, to: 932, duration: 0.07, peak: 0.055 })
       kit.tone({ from: 2489, duration: 0.045, peak: 0.028 })

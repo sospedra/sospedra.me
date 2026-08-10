@@ -1,3 +1,5 @@
+import { ensureRunning } from 'services/audio/kit'
+
 export type CimsSfx = {
   resume: () => void
   click: () => void
@@ -22,7 +24,7 @@ export const createSfx = (): CimsSfx => {
 
   const resume = () => {
     if (!ctx && typeof AudioContext !== 'undefined') ctx = new AudioContext()
-    if (ctx && ctx.state === 'suspended') void ctx.resume()
+    if (ctx) ensureRunning(ctx)
   }
 
   const blip = (

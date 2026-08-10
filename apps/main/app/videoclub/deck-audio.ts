@@ -95,5 +95,9 @@ export const createDeckAudio = () => {
       hiss?.stop()
       hiss = null
     },
+    dispose: () => {
+      hiss = null
+      kit.dispose()
+    },
   }
 }

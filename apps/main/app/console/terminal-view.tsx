@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { playKeyClick } from 'services/audio/key-click'
+import { ensureRunning } from 'services/audio/kit'
 import { useGameInput } from 'services/hotkeys'
 import Shell from 'services/shell'
 import { readLocal, writeLocal } from 'services/storage'
@@ -138,7 +139,7 @@ export default function TerminalView(props: {
     if (mutedRef.current) return
     audioCtxRef.current ??= new AudioContext()
     const ctx = audioCtxRef.current
-    if (ctx.state === 'suspended') void ctx.resume().catch(() => {})
+    ensureRunning(ctx)
     playKeyClick(ctx)
   }
 
@@ -269,6 +270,17 @@ export default function TerminalView(props: {
     const storedMute = readLocal(MUTE_KEY) === '1'
     mutedRef.current = storedMute
     setMuted(storedMute)
+  }, [])
+
+  // React nulls the refs before this cleanup runs: capture the elements now
+  useEffect(() => {
+    const chime = audioRef.current
+    const hdd = hddRef.current
+    return () => {
+      chime?.pause()
+      hdd?.pause()
+      void audioCtxRef.current?.close().catch(() => {})
+    }
   }, [])
 
   // autoplay needs a prior user gesture: try, and gate on a keypress when the
