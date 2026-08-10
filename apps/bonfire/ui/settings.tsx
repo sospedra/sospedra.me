@@ -37,7 +37,7 @@ export function Settings() {
       {/* biome-ignore lint/a11y/useKeyWithClickEvents: native dialog closes on Escape via onClose */}
       <dialog
         aria-labelledby='settings-title'
-        className='dialog relative m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-night/85 p-0 text-firelight shadow-2xl shadow-black/60 backdrop-blur-2xl'
+        className='dialog relative m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-night/90 p-0 text-firelight shadow-2xl shadow-black/60'
         onClick={closeOnBackdrop}
         onClose={() => setOpen(false)}
         ref={dialogRef}
@@ -51,7 +51,7 @@ export function Settings() {
           <CloseIcon />
         </button>
 
-        <div className='max-h-[inherit] overflow-y-auto p-6 md:p-8'>
+        <div className='scrollbar-hidden max-h-[inherit] overflow-y-auto p-6 md:p-8'>
           <h2
             className='font-display text-4xl tracking-tight italic'
             id='settings-title'
