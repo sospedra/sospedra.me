@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { prefersQuietFx } from 'services/theme'
 import styles from './stall-box.module.css'
 import {
@@ -218,19 +218,23 @@ export default function SceneStall(props: {
   const rootRef = useRef<HTMLDivElement>(null)
   const imgRefs = useRef(new Map<string, HTMLImageElement>())
   const stepRef = useRef(REST_STEP)
-  const [breakpointTick, setBreakpointTick] = useState(0)
+  const [visible, setVisible] = useState(false)
 
-  /* the hidden breakpoint tree must not animate; re-check on crossing 700px */
-  useEffect(() => {
-    const query = window.matchMedia('(max-width: 700px)')
-    const bump = () => setBreakpointTick((t) => t + 1)
-    query.addEventListener('change', bump)
-    return () => query.removeEventListener('change', bump)
+  /* which tree shows is a container-query decision, invisible to media
+     listeners and racing layout reads: the box resizes from zero when its
+     tree turns on, so observe the box itself */
+  useLayoutEffect(() => {
+    const root = rootRef.current
+    if (!root) return
+    const sync = () => setVisible(root.offsetParent !== null)
+    sync()
+    const observer = new ResizeObserver(sync)
+    observer.observe(root)
+    return () => observer.disconnect()
   }, [])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: breakpointTick re-arms timers when the visible tree changes
   useLayoutEffect(() => {
-    if (!rootRef.current || rootRef.current.offsetParent === null) return
+    if (!visible || !rootRef.current) return
     const timers: Timers = { ids: [] }
     const ctx: LayerContext = {
       active,
@@ -249,11 +253,12 @@ export default function SceneStall(props: {
     return () => {
       for (const timer of timers.ids) window.clearTimeout(timer)
     }
-  }, [active, layers, breakpointTick])
+  }, [visible, active, layers])
 
   return (
     <div className={styles.sceneStack} aria-hidden ref={rootRef}>
       {layers.map((layer, index) => {
+        const rest = restFile(layer)
         const frames = layerFiles(layer).map((file) => (
           <img
             key={`${layer.id}:${file}`}
@@ -267,6 +272,7 @@ export default function SceneStall(props: {
             loading={layer.role === 'plate' && eager ? 'eager' : 'lazy'}
             data-layer={layer.role}
             data-frame={file}
+            data-rest={file === rest ? '' : undefined}
           />
         ))
         /* the hologram flickers as a GROUP: an animation on the imgs

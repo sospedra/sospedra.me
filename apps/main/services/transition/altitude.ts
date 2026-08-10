@@ -4,34 +4,42 @@ export type Scene = {
   altitude: number
   offset: string
   starsHidden: boolean
+  chrome: string
 }
 
 const DEFAULT_SCENE: Scene = {
   altitude: 0,
   offset: 'translate3d(0vw, -400vh, 0)',
   starsHidden: false,
+  chrome: '#37113f',
 }
 
+// chrome = the sky plane color at the scene's viewport bottom; it paints the
+// browser bars and the overscroll canvas outside the 100dvh layers
 const SCENES: Record<string, Scene> = {
   '/papers': {
     altitude: 1,
     offset: 'translate3d(0vw, -250vh, 0)',
     starsHidden: false,
+    chrome: '#2d0e39',
   },
   '/papers/:slug': {
     altitude: 2,
     offset: 'translate3d(0vw, 0vh, 0)',
     starsHidden: true,
+    chrome: '#141925',
   },
   '/about': {
     altitude: 0,
     offset: 'translate3d(-100vw, -400vh, 0)',
     starsHidden: true,
+    chrome: '#441049',
   },
   '/bazaar': {
     altitude: 1,
     offset: 'translate3d(-300vw, -250vh, 0)',
     starsHidden: false,
+    chrome: '#192e4b',
   },
 }
 

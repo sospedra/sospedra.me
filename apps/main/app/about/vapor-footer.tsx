@@ -92,7 +92,9 @@ export default function VaporFooter() {
           className={css.pixelGhost}
           data-lifted={seance !== 'unsummoned'}
           onClick={summon}
-          onMouseEnter={summon}
+          onPointerEnter={(event) => {
+            if (event.pointerType === 'mouse') summon()
+          }}
           ref={ghostRef}
           type='button'
         >

@@ -16,11 +16,17 @@
   filter: brightness(var(--dim, 1));
 }
 
+/* rest pose by default: an undriven stack must show one frame, not the pile */
 .sceneStack img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+  opacity: 0;
+}
+
+.sceneStack img[data-rest] {
+  opacity: 1;
 }
 
 /* papers: the hologram archivist flickers at runtime */

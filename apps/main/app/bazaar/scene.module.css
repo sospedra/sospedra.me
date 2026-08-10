@@ -332,25 +332,29 @@
   opacity: 0;
 }
 
-.sDoor:hover img:first-child {
-  animation: seqOut 0.28s steps(1, end) forwards;
-}
+/* hover swaps stay mouse-only: on iOS a tap-triggered swap counts as a
+   content change under the finger and Safari withholds the click */
+@media (hover: hover) {
+  .sDoor:hover img:first-child {
+    animation: seqOut 0.28s steps(1, end) forwards;
+  }
 
-.sDoor:hover img[data-frame="1"] {
-  animation: seqMid 0.56s steps(1, end) forwards;
-}
+  .sDoor:hover img[data-frame="1"] {
+    animation: seqMid 0.56s steps(1, end) forwards;
+  }
 
-.sDoor:hover img[data-frame="2"] {
-  animation: seqEnd 0.56s steps(1, end) forwards;
-}
+  .sDoor:hover img[data-frame="2"] {
+    animation: seqEnd 0.56s steps(1, end) forwards;
+  }
 
-/* leave: the door swings back through the half-open frame */
-.sDoorArmed:not(:hover) img:first-child {
-  animation: seqEnd 0.28s steps(1, end) forwards;
-}
+  /* leave: the door swings back through the half-open frame */
+  .sDoorArmed:not(:hover) img:first-child {
+    animation: seqEnd 0.28s steps(1, end) forwards;
+  }
 
-.sDoorArmed:not(:hover) img[data-frame="1"] {
-  animation: seqOut 0.28s steps(1, end) forwards;
+  .sDoorArmed:not(:hover) img[data-frame="1"] {
+    animation: seqOut 0.28s steps(1, end) forwards;
+  }
 }
 
 /* hover: the shelter bulb flickers irregularly, then stays lit */
@@ -358,8 +362,10 @@
   opacity: 0;
 }
 
-.sBus:hover img[data-on] {
-  animation: bulbFlicker 1.2s steps(1, end) forwards;
+@media (hover: hover) {
+  .sBus:hover img[data-on] {
+    animation: bulbFlicker 1.2s steps(1, end) forwards;
+  }
 }
 
 /* the animated frames are the only focus cue and die under reduced motion */
@@ -497,8 +503,10 @@
   );
 }
 
-.sign:hover .signOn {
-  animation: bulbFlicker 1.2s steps(1, end) forwards;
+@media (hover: hover) {
+  .sign:hover .signOn {
+    animation: bulbFlicker 1.2s steps(1, end) forwards;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -525,6 +533,12 @@
 
 .signM[data-dir="down"] {
   top: calc(var(--sm-split, 0.5) * 100% + var(--mfloor-h) * 0.05);
+}
+
+/* thumb target: the plate alone is ~30x27 with a third clipped off-stage,
+   so the hot zone grows past the plate on both flanks */
+.signM .signHot {
+  inset: 12% -30% -10%;
 }
 
 /* foreground parallax silhouettes, home-bridge style: one per side,

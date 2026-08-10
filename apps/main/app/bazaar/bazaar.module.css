@@ -541,16 +541,17 @@
     margin-inline: auto;
   }
 
-  /* baked fixed height: identical px at every mobile width, no rescale.
-     The margin centers on the full viewport even when the stall
-     overflows — flex auto margins give up on negative space */
+  /* baked fixed height, capped by the story budget: the owner px wins only
+     while it fits, so no stall bleeds through its deck. The margin centers
+     on the full viewport — flex auto margins give up on negative space */
   .stallWrap[data-mh] {
+    --mh-cap: min(var(--mh), calc(var(--mfloor-h) * 0.48));
     width: auto;
-    height: var(--mh);
+    height: var(--mh-cap);
     margin-inline: calc(
         50cqw -
         var(--row-left, 0px) -
-        var(--mh) *
+        var(--mh-cap) *
         var(--ar) /
         2
       )

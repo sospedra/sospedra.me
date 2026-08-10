@@ -510,7 +510,11 @@ function attachPointer(state: PointerState): () => void {
     state.lastMoveAt = now
   }
   window.addEventListener('pointermove', onMove)
-  return () => window.removeEventListener('pointermove', onMove)
+  window.addEventListener('pointerdown', onMove)
+  return () => {
+    window.removeEventListener('pointermove', onMove)
+    window.removeEventListener('pointerdown', onMove)
+  }
 }
 
 function ghostTarget(ctx: Ctx, now: number): Vector2 {

@@ -15,6 +15,7 @@ const crossesBoundary = (media: Element, related: EventTarget | null) =>
 
 const GlitchRoll: React.FC = () => {
   useEffect(() => {
+    if (window.matchMedia('(hover: none)').matches) return
     const roll = (event: PointerEvent) => {
       const media = mediaFrom(event.target)
       if (!media || !crossesBoundary(media, event.relatedTarget)) return

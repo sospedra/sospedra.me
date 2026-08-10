@@ -24,6 +24,14 @@ const getOffsetFromHref = (href: string): OffsetT => ({
   transform: sceneFor(href).offset,
 })
 
+const applyChrome = (href: string) => {
+  const { chrome } = sceneFor(href)
+  document.documentElement.style.backgroundColor = chrome
+  document
+    .querySelector('meta[name="theme-color"]')
+    ?.setAttribute('content', chrome)
+}
+
 const Animation: React.FunctionComponent<{
   start: (offset: OffsetT, immediate: boolean, onRest: () => void) => unknown
   animation: object
@@ -37,6 +45,7 @@ const Animation: React.FunctionComponent<{
   useEffect(() => {
     const id = ++movement.current
     setIsMoving(!isQuiet)
+    applyChrome(destination)
     start(getOffsetFromHref(destination), isQuiet, () => {
       if (id === movement.current) setIsMoving(false)
     })

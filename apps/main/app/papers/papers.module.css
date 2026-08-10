@@ -199,6 +199,23 @@ softened: a row-color wash instead of the full invert */
   transform: translateY(-0.25rem);
 }
 
+/* narrow screens: title owns the slack and wraps in place, meta holds the
+   first line, the leader goes */
+@media (max-width: 48rem) {
+  .rowLine {
+    flex-wrap: nowrap;
+  }
+
+  .rowTitle {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .leader {
+    display: none;
+  }
+}
+
 .rowExcerpt {
   display: -webkit-box;
   overflow: hidden;

@@ -98,9 +98,10 @@ export const metadata: Metadata = {
   },
 }
 
+// #37113f = the DEFAULT scene chrome; applyChrome retints it per route
 export const viewport: Viewport = {
   colorScheme: 'dark',
-  themeColor: '#800d79',
+  themeColor: '#37113f',
   viewportFit: 'cover',
 }
 

@@ -26,12 +26,31 @@ const STATUS_TEXT: Record<CopyPhase, string> = {
   failed: 'Copy to clipboard failed',
 }
 
+const writeClipboardLegacy = (text: string) => {
+  const scratch = document.createElement('textarea')
+  scratch.value = text
+  scratch.readOnly = true
+  scratch.style.position = 'fixed'
+  scratch.style.left = '-9999px'
+  document.body.append(scratch)
+  scratch.select()
+  scratch.setSelectionRange(0, scratch.value.length)
+  try {
+    return document.execCommand('copy')
+  } catch {
+    return false
+  } finally {
+    scratch.remove()
+  }
+}
+
+// navigator.clipboard needs a secure context; LAN device testing runs http
 const writeClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
     return true
   } catch {
-    return false
+    return writeClipboardLegacy(text)
   }
 }
 

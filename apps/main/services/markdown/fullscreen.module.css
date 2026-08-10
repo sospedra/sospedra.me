@@ -48,8 +48,12 @@
   }
 }
 
-/* the page scrolls on html, body overflow is already hidden site-wide */
+/* the scroll surface is #vbody, not html; lock both while the viewer is open */
 :global(html:has(dialog[data-fullscreen-viewer][open])) {
+  overflow: hidden;
+}
+
+:global(html:has(dialog[data-fullscreen-viewer][open]) #vbody) {
   overflow: hidden;
 }
 

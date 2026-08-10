@@ -39,6 +39,14 @@ const ensure = () => {
   return bus
 }
 
+// iOS starts the context suspended; schedule only once it actually runs
+const armed = async (play: () => void) => {
+  const active = ensure()
+  if (!active) return
+  if (active.context.state === 'suspended') await active.context.resume()
+  play()
+}
+
 const tone = (spec: ToneSpec) => {
   const active = ensure()
   if (!active) return
@@ -224,7 +232,7 @@ const Sampler: React.FC<{ label: string }> = (props) => (
         <button
           className={css.pad}
           key={sting.id}
-          onClick={sting.play}
+          onClick={() => void armed(sting.play)}
           type='button'
         >
           <span className={css.stall}>{sting.id}</span>

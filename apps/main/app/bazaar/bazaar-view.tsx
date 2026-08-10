@@ -117,7 +117,8 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
             data-label='door'
             data-edit-id='street:door'
             aria-label='enter the market'
-            onMouseEnter={() => {
+            onPointerEnter={(event) => {
+              if (event.pointerType !== 'mouse') return
               setDoorArmed(true)
               sfx.hover()
             }}
@@ -158,7 +159,9 @@ function StreetFloor({ onDoor }: { onDoor: () => void }) {
         data-label='bus'
         data-edit-id='street:bus'
         aria-label='bus stop: exit to the city'
-        onMouseEnter={() => sfx.hover()}
+        onPointerEnter={(event) => {
+          if (event.pointerType === 'mouse') sfx.hover()
+        }}
         onClick={() => sfx.bus()}
       >
         <img src={`${STREET}/bus.png`} alt='' />
