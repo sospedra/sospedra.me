@@ -5,6 +5,7 @@ import {
   useCallback,
   useRef,
 } from 'react'
+import { pulseHaptic } from 'services/haptics'
 import { type Copy, directionLabel } from './crossword-copy'
 import {
   type CrosswordDirection,
@@ -52,6 +53,7 @@ export const useCrosswordKeyboard = ({
   settings,
   settleBoard,
   sweepRunRef,
+  thudDeadKey,
   whiteIndices,
 }: {
   activeEntry: CrosswordEntry
@@ -74,6 +76,7 @@ export const useCrosswordKeyboard = ({
   settings: GameSettings
   settleBoard: (guesses: string[]) => void
   sweepRunRef: RefObject<number>
+  thudDeadKey: () => void
   whiteIndices: number[]
 }) => {
   const composingRef = useRef(false)
@@ -138,14 +141,17 @@ export const useCrosswordKeyboard = ({
         )
         return !wasSolved && isSolved
       })
-    clickKey()
+    const wrongLetter =
+      settings.autoCheck && letter !== puzzle.cells[index]?.solution
+    if (wrongLetter) thudDeadKey()
+    else clickKey()
     dispatch({
       type: 'WRITE',
       index,
       value: letter,
       nextIndex: destination.index,
       checked: settings.autoCheck,
-      incorrect: settings.autoCheck && letter !== puzzle.cells[index]?.solution,
+      incorrect: wrongLetter,
       now: Date.now(),
     })
     if (destination.direction !== currentDirection) {
@@ -158,6 +164,7 @@ export const useCrosswordKeyboard = ({
         run: sweepRunRef.current,
       })
       ringTypewriterBell()
+      pulseHaptic()
     }
     settleBoard(projectedGuesses)
   }

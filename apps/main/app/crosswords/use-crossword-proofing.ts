@@ -21,6 +21,7 @@ export const useCrosswordProofing = ({
   selectedCell,
   settleBoard,
   solutions,
+  thudDeadKey,
   whiteIndices,
 }: {
   activeEntry: CrosswordEntry
@@ -31,6 +32,7 @@ export const useCrosswordProofing = ({
   selectedCell: number
   settleBoard: (guesses: string[]) => void
   solutions: Record<number, string>
+  thudDeadKey: () => void
   whiteIndices: number[]
 }) => {
   const [toolScope, setToolScope] = useState<Scope>('answer')
@@ -77,6 +79,7 @@ export const useCrosswordProofing = ({
         latestStateRef.current.guesses[index] &&
         latestStateRef.current.guesses[index] !== solutions[index],
     ).length
+    if (count > 0) thudDeadKey()
     announce(count > 0 ? copy.errorsFound(count) : copy.noErrors)
   }
 

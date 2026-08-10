@@ -277,8 +277,8 @@
 
 @media (max-width: 52rem), (max-width: 64rem) and (max-height: 36rem) {
   .masthead {
-    grid-template-columns: 2.85rem 2.85rem minmax(0, 1fr) 2.85rem;
-    grid-template-areas: "home transport brand help";
+    grid-template-columns: 2.85rem 2.85rem minmax(0, 1fr) auto 2.85rem;
+    grid-template-areas: "home transport brand locale help";
     gap: 0.35rem;
     padding: 0.18rem 0.12rem 0.34rem;
   }
@@ -327,7 +327,15 @@
   }
 
   .localeSwitch {
-    display: none;
+    grid-area: locale;
+    gap: 0.25rem;
+    padding: 0;
+  }
+
+  .localeSwitch button {
+    min-width: 2.1rem;
+    min-height: 2.75rem;
+    font-size: 0.46rem;
   }
 }
 

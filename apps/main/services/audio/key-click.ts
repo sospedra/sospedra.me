@@ -54,6 +54,25 @@ export const playCarriageShift = (context: AudioContext, volume = 0.1) => {
   })
 }
 
+export const playDeadKey = (context: AudioContext, volume = 0.14) => {
+  const start = context.currentTime
+
+  playNoiseBurst(context, {
+    at: start,
+    duration: 0.03,
+    frequency: 460,
+    q: 1.4,
+    volume: volume * 0.8,
+  })
+  playNoiseBurst(context, {
+    at: start + 0.028,
+    duration: 0.07,
+    frequency: 150,
+    q: 0.9,
+    volume,
+  })
+}
+
 export const playTypewriterBell = (context: AudioContext, volume = 0.16) => {
   const start = context.currentTime
   const duration = 0.72

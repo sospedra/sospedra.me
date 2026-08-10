@@ -16,6 +16,8 @@ export type Scope = 'cell' | 'answer' | 'puzzle'
 export const MAX_SOUND_LEVEL: SoundLevel = 3
 export const SOUND_GAINS = {
   carriageShift: [0, 0.05, 0.08, 0.11],
+  deadKey: [0, 0.07, 0.11, 0.15],
+  fanfare: [0, 0.35, 0.6, 0.85],
   keyClick: [0, 0.055, 0.09, 0.12],
   typewriterBell: [0, 0.08, 0.12, 0.16],
 } as const

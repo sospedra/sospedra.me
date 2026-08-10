@@ -9,6 +9,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { pulseHaptic } from 'services/haptics'
 import { ClueColumns, MobileClueBar } from './crossword-clue-rail'
 import {
   COPY,
@@ -122,6 +123,24 @@ export function CrosswordSession({
     latestStateRef.current = state
   }, [state])
 
+  const {
+    clickKey,
+    ringFanfare,
+    ringTypewriterBell,
+    shiftCarriage,
+    thudDeadKey,
+  } = useCrosswordSound(settings.soundLevel)
+
+  /* a puzzle restored complete must not celebrate again on mount */
+  const celebratedRef = useRef(complete)
+  useEffect(() => {
+    if (complete && !celebratedRef.current) {
+      pulseHaptic()
+      ringFanfare()
+    }
+    celebratedRef.current = complete
+  }, [complete, ringFanfare])
+
   const closeDialog = () => {
     setDialog(null)
     window.requestAnimationFrame(() => openerRef.current?.focus())
@@ -135,7 +154,7 @@ export function CrosswordSession({
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null
-    inputRef.current?.blur()
+    bank.releaseProxy()
     openerRef.current = opener ?? activeElement
     setDialog(name)
   }
@@ -148,17 +167,21 @@ export function CrosswordSession({
         (index) => guesses[index] === solutions[index],
       )
       if (correct) {
-        inputRef.current?.blur()
+        bank.releaseProxy()
         dispatch({ type: 'COMPLETE', now: Date.now() })
         return
       }
+      thudDeadKey()
       announce(copy.notCorrect)
     },
-    [announce, copy.notCorrect, solutions, whiteIndices],
-  )
-
-  const { clickKey, ringTypewriterBell, shiftCarriage } = useCrosswordSound(
-    settings.soundLevel,
+    [
+      announce,
+      bank.releaseProxy,
+      copy.notCorrect,
+      solutions,
+      thudDeadKey,
+      whiteIndices,
+    ],
   )
 
   const {
@@ -206,6 +229,7 @@ export function CrosswordSession({
     selectedCell: state.selectedCell,
     settleBoard,
     solutions,
+    thudDeadKey,
     whiteIndices,
   })
 
@@ -266,6 +290,7 @@ export function CrosswordSession({
     settings,
     settleBoard,
     sweepRunRef,
+    thudDeadKey,
     whiteIndices,
   })
 
@@ -411,6 +436,7 @@ export function CrosswordSession({
         eraseBackward={eraseBackward}
         locale={locale}
         open={bank.open}
+        restoreFocus={bank.restoreFocus}
         writeLetter={writeLetter}
       />
 

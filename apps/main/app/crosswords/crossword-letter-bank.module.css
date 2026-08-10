@@ -2,21 +2,29 @@
 
 .letterBank {
   display: grid;
+  width: 100%;
+  max-width: 32rem;
   align-content: center;
   gap: 0.32rem;
+  margin-inline: auto;
   padding: 0.3rem 0.05rem calc(1.4rem + var(--safe-area-bottom));
 }
 
+/* letters span 2 of 20 tracks, so every row shares one letter width;
+   a 9-key home row starts at track 2 and centers like the iOS keyboard */
 .bankRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
   gap: 0.32rem;
-  justify-content: center;
+}
+
+.bankRow[data-inset="true"] > :first-child {
+  grid-column: 2 / span 2;
 }
 
 .bankKey {
-  flex: 1 1 0;
+  grid-column: span 2;
   min-width: 0;
-  max-width: 2.9rem;
   height: 2.95rem;
   padding: 0;
   border: 0;
@@ -35,10 +43,12 @@
   user-select: none;
 }
 
+/* the pressed face lands the same frame as the touch; only the release eases */
 .bankKey:active,
 .bankKey[data-pressed="true"] {
   box-shadow: var(--cw-key-pressed);
   transform: translateY(2px);
+  transition-duration: 0s;
 }
 
 :global(.fx-quiet) .bankKey {
@@ -52,6 +62,5 @@
 }
 
 .bankKeyWide {
-  flex: 1.5 1 0;
-  max-width: 4.5rem;
+  grid-column: span 3;
 }

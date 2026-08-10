@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react'
+import { playFanfare } from 'services/audio/fanfare'
 import {
   playCarriageShift,
+  playDeadKey,
   playKeyClick,
   playTypewriterBell,
 } from 'services/audio/key-click'
+import { ensureRunning } from 'services/audio/kit'
 import { SOUND_GAINS, type SoundLevel } from './crossword-settings'
 
 export const useCrosswordSound = (soundLevel: SoundLevel) => {
@@ -19,9 +22,7 @@ export const useCrosswordSound = (soundLevel: SoundLevel) => {
         audioContextRef.current = new AudioContext()
       }
       const context = audioContextRef.current
-      if (context.state === 'suspended') {
-        void context.resume().catch(() => {})
-      }
+      ensureRunning(context)
       return context
     } catch {
       // Audio is tactile polish; browser restrictions must never block play.
@@ -50,6 +51,20 @@ export const useCrosswordSound = (soundLevel: SoundLevel) => {
     }
   }
 
+  const thudDeadKey = () => {
+    const context = getAudioContext()
+    if (context) {
+      playDeadKey(context, SOUND_GAINS.deadKey[soundLevel])
+    }
+  }
+
+  const ringFanfare = () => {
+    const context = getAudioContext()
+    if (context) {
+      playFanfare(context, { volume: SOUND_GAINS.fanfare[soundLevel] })
+    }
+  }
+
   useEffect(
     () => () => {
       const context = audioContextRef.current
@@ -61,5 +76,11 @@ export const useCrosswordSound = (soundLevel: SoundLevel) => {
     [],
   )
 
-  return { clickKey, ringTypewriterBell, shiftCarriage }
+  return {
+    clickKey,
+    ringFanfare,
+    ringTypewriterBell,
+    shiftCarriage,
+    thudDeadKey,
+  }
 }
