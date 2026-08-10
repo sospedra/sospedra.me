@@ -398,16 +398,16 @@
 }
 
 /* touch GPUs shred near-coplanar tiles into dark triangle fragments while
-   the cube moves: widen the interior gap and bare the tiles during motion */
+   the cube moves: widen the interior gap and keep a constant hairline seam,
+   never a motion-gated style swap (it pops square black corners) */
 @media (pointer: coarse) {
   .page {
     --plastic-z: calc(var(--half) - 2.5px);
   }
 
-  .pit[data-motion] :is(.plastic, .sticker),
-  .pit[data-motion] .sticker::after {
-    border-radius: 0;
-    box-shadow: none;
+  .plastic,
+  .sticker {
+    inset: 0.5px;
   }
 
   .hint {
