@@ -319,7 +319,7 @@ input:focus:not(:focus-visible) {
 .key {
   flex: 1 1 0;
   min-width: 0;
-  height: clamp(2.25rem, 5.5svh, 3rem);
+  height: clamp(2.75rem, 5.5svh, 3rem);
   font: inherit;
   font-size: 0.8125rem;
   color: var(--dim);
