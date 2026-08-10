@@ -91,6 +91,7 @@ export const CaseTracklist = (props: PaperProps) => (
         <span className={css.armWall} data-side='top' />
         <span className={css.armWall} data-side='bottom' />
         <span className={css.armWall} data-side='rim' />
+        <span className={css.armWall} data-side='hinge' />
       </div>
     </div>
   </aside>
