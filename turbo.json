@@ -12,6 +12,9 @@
     "lint": {},
     "typecheck": {},
     "test": {},
+    "e2e": {
+      "cache": false
+    },
     "ci:geo:test": {},
     "ci:geo:validate:challenges": {
       "cache": false

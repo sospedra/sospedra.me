@@ -13,6 +13,7 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run lint typecheck test",
+    "e2e": "turbo run e2e",
     "prepare": "husky"
   },
   "devDependencies": {
