@@ -184,6 +184,7 @@ const probe = async (file: string) => {
 }
 
 const cutClip = async (source: string, start: number, target: string) => {
+  /* source tags and art name the answer; the served clip must stay mute */
   await run('ffmpeg', [
     '-v',
     'error',
@@ -194,6 +195,9 @@ const cutClip = async (source: string, start: number, target: string) => {
     String(CLIP_SECONDS),
     '-i',
     source,
+    '-map_metadata',
+    '-1',
+    '-vn',
     '-c:a',
     'libmp3lame',
     '-b:a',

@@ -21,7 +21,7 @@ day is not today.
 ## Assets
 
 ```text
-boombox/clips/<id>.mp3     44100 Hz, stereo, 128 kbps, 30 s
+boombox/clips/<id>.mp3     44100 Hz, stereo, 128 kbps, 30 s, no tags
 boombox/covers/<id>.jpg    600 x 600
 ```
 
@@ -29,6 +29,22 @@ Ids are opaque. The first 372 follow no rule; later ones use
 `md5("<artist>|<title>")`. Replacing a song keeps its id, which holds its blob
 path and rotation slot. The historical order came from a seeded shuffle, seed
 `19850701`, recorded in the script.
+
+## Anti-cheat
+
+The game hides the answer from casual spoilers, not from devtools.
+`songs.json` ships in the bundle, so a determined reader can compute the
+day's song. The line it holds:
+
+- Blob ids are opaque. The clip and cover URLs never name the song.
+- Served clips carry no ID3 tags and no embedded art. `add` strips source
+  metadata on cut, and only the 30 unlock seconds ever leave the store.
+- Playback hard-stops at the unlocked second. A per-frame poll enforces it.
+- Masked text is fake content. The sticker scribble and the LCD `····` put
+  no real title, artist, year, or genre in the DOM before their gates. The
+  tuner strip reads `signal encrypted` until the round ends.
+- The cover renders blurred until the round ends. Its alt text stays empty.
+- Saved state binds to its day. A state from another day drops on load.
 
 ## Changing the songs
 
