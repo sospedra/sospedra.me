@@ -2,7 +2,7 @@
 
 import { partition } from 'es-toolkit'
 import type React from 'react'
-import { useReducer } from 'react'
+import { useReducer, useState } from 'react'
 import { useGameInput } from 'services/hotkeys'
 import { GoBack, LinkBack } from 'services/link'
 import Row from 'services/row'
@@ -18,6 +18,7 @@ import {
   axisOf,
   compress,
   FACE_NORMAL,
+  type Face,
   type GameState,
   initialState,
   inLayer,
@@ -47,6 +48,8 @@ const TIMER_WORD: Record<TimerState['status'], string> = {
 const SCRAMBLE_LENGTH = 22
 const PB_LABEL = '27.21'
 
+const PAD_FACES: readonly Face[] = ['U', 'D', 'L', 'R', 'F', 'B']
+
 const ROTATION_AXIS = ['1, 0, 0', '0, 1, 0', '0, 0, 1'] as const
 
 const GRID = [-1, 0, 1]
@@ -70,10 +73,56 @@ const statusWord = (state: GameState, solved: boolean) => {
   return TIMER_WORD[state.timer.status]
 }
 
+const pivotStyle = (
+  turning: GameState['turning'],
+  spun: boolean,
+): React.CSSProperties | undefined => {
+  if (!turning) return undefined
+  return {
+    transform: turnTransform(turning.move, spun),
+    transition: spun
+      ? 'transform var(--turn-ms) cubic-bezier(0.2, 0.6, 0.2, 1)'
+      : undefined,
+  }
+}
+
+const TouchPad: React.FC<{
+  busy: boolean
+  primeArmed: boolean
+  onFace: (face: Face) => void
+  onTogglePrime: () => void
+}> = ({ busy, primeArmed, onFace, onTogglePrime }) => (
+  <fieldset className={css.touchpad} aria-label='Turn a layer'>
+    {PAD_FACES.map((face) => (
+      <button
+        key={face}
+        type='button'
+        className={`${css.key} ${css.padKey}`}
+        disabled={busy}
+        onClick={() => onFace(face)}
+      >
+        {face}
+      </button>
+    ))}
+    <button
+      type='button'
+      className={`${css.key} ${css.padKey} ${primeArmed ? css.padArmed : ''}`}
+      aria-pressed={primeArmed}
+      aria-label='Reverse: the next turn goes counterclockwise'
+      disabled={busy}
+      onClick={onTogglePrime}
+    >
+      rev
+    </button>
+  </fieldset>
+)
+
 export default function RubiksView() {
   const [state, dispatch] = useReducer(reduce, initialState)
   const spun = useTurnClock(state.turning, dispatch)
-  const { orbit, onOrbitKeyDown, ...pointerProps } = useOrbitAndTap(dispatch)
+  const { orbit, orbiting, onOrbitKeyDown, ...pointerProps } =
+    useOrbitAndTap(dispatch)
+  const [primeArmed, setPrimeArmed] = useState(false)
   useGameInput()
   useMoveKeys(dispatch)
 
@@ -96,6 +145,17 @@ export default function RubiksView() {
     })
 
   const turnMs = state.turning ? TURN_MS[state.turning.kind] : TURN_MS.play
+  const moving = state.turning !== null || orbiting
+
+  // one-shot latch, like a mobile keyboard shift: rev arms one reverse turn
+  const playPad = (face: Face) => {
+    setPrimeArmed(false)
+    dispatch({
+      type: 'PLAY',
+      move: { face, prime: primeArmed },
+      now: Date.now(),
+    })
+  }
 
   return (
     <Shell className={`relative w-full px-4 text-white ${css.page}`}>
@@ -141,6 +201,7 @@ export default function RubiksView() {
 
           <div
             className={css.pit}
+            data-motion={moving ? '' : undefined}
             role='application'
             // biome-ignore lint/a11y/noNoninteractiveTabindex: role=application stage, arrow-key orbit needs focus (same pattern as the meridian map)
             tabIndex={0}
@@ -159,15 +220,7 @@ export default function RubiksView() {
               >
                 <div
                   className={css.pivot}
-                  style={{
-                    transform: state.turning
-                      ? turnTransform(state.turning.move, spun)
-                      : undefined,
-                    transition:
-                      state.turning && spun
-                        ? 'transform var(--turn-ms) cubic-bezier(0.2, 0.6, 0.2, 1)'
-                        : undefined,
-                  }}
+                  style={pivotStyle(state.turning, spun)}
                 >
                   {turningCubies.map((position) => (
                     <Cubie
@@ -244,6 +297,13 @@ export default function RubiksView() {
             Reset
           </button>
         </div>
+
+        <TouchPad
+          busy={busy}
+          primeArmed={primeArmed}
+          onFace={playPad}
+          onTogglePrime={() => setPrimeArmed((armed) => !armed)}
+        />
 
         <p className={css.hint}>
           <span>turn</span>

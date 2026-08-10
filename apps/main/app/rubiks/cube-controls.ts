@@ -3,6 +3,7 @@ import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { isEditableTarget, letterKeysDisabled } from 'services/hotkeys'
 import type { Face, reduce, Turn } from './engine'
+import { type Orbit, type StickerHit, swipeMove } from './swipe.ts'
 
 export const TURN_MS: Record<Turn['kind'], number> = {
   play: 180,
@@ -78,38 +79,73 @@ export const useMoveKeys = (dispatch: Dispatch) => {
 type DragSession = {
   x: number
   y: number
-  face: Face | null
+  sticker: StickerHit | null
   prime: boolean
-  moved: boolean
+  touch: boolean
+  mode: 'pending' | 'orbit' | 'spent'
 }
 
-type Orbit = { rotateX: number; rotateY: number }
+const stickerHit = (target: Element): StickerHit | null => {
+  const tile = target.closest('[data-face]')
+  const face = tile?.getAttribute('data-face')
+  const pos = tile?.getAttribute('data-pos')?.split(',').map(Number)
+  if (!face || pos?.length !== 3) return null
+  return { face: face as Face, position: [pos[0], pos[1], pos[2]] }
+}
 
 export const useOrbitAndTap = (dispatch: Dispatch) => {
   const [orbit, setOrbit] = useState<Orbit>({ rotateX: -24, rotateY: -38 })
+  const [orbiting, setOrbiting] = useState(false)
   const session = useRef<DragSession | null>(null)
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.button !== 0 && event.button !== 2) return
-    const target = event.target as Element
-    const face = target.closest('[data-face]')?.getAttribute('data-face')
     session.current = {
       x: event.clientX,
       y: event.clientY,
-      face: (face as Face) ?? null,
+      sticker: stickerHit(event.target as Element),
       prime: event.button === 2 || event.shiftKey,
-      moved: false,
+      touch: event.pointerType === 'touch',
+      mode: 'pending',
     }
     event.currentTarget.setPointerCapture(event.pointerId)
   }
 
+  // the first threshold crossing decides the gesture once: a touch swipe
+  // that starts on a sticker turns a layer, everything else orbits
+  const startDrag = (
+    drag: DragSession,
+    deltaX: number,
+    deltaY: number,
+  ): DragSession['mode'] => {
+    if (!drag.touch || !drag.sticker) {
+      setOrbiting(true)
+      return 'orbit'
+    }
+    const move = swipeMove(orbit, drag.sticker, [deltaX, deltaY])
+    if (move) dispatch({ type: 'PLAY', move, now: Date.now() })
+    return 'spent'
+  }
+
+  // true when the gesture crossed the threshold and settled on orbiting
+  const resolvePending = (
+    drag: DragSession,
+    deltaX: number,
+    deltaY: number,
+  ) => {
+    if (Math.hypot(deltaX, deltaY) < 6) return false
+    drag.mode = startDrag(drag, deltaX, deltaY)
+    return drag.mode === 'orbit'
+  }
+
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const drag = session.current
-    if (!drag) return
+    if (!drag || drag.mode === 'spent') return
     const deltaX = event.clientX - drag.x
     const deltaY = event.clientY - drag.y
-    if (!drag.moved && Math.hypot(deltaX, deltaY) < 6) return
-    drag.moved = true
+    if (drag.mode === 'pending' && !resolvePending(drag, deltaX, deltaY)) {
+      return
+    }
     drag.x = event.clientX
     drag.y = event.clientY
     setOrbit((prev) => ({
@@ -118,15 +154,25 @@ export const useOrbitAndTap = (dispatch: Dispatch) => {
     }))
   }
 
-  const onPointerUp = () => {
+  const endDrag = () => {
     const drag = session.current
     session.current = null
-    if (!drag || drag.moved || !drag.face) return
+    setOrbiting(false)
+    return drag
+  }
+
+  const onPointerUp = () => {
+    const drag = endDrag()
+    if (drag?.mode !== 'pending' || !drag.sticker) return
     dispatch({
       type: 'PLAY',
-      move: { face: drag.face, prime: drag.prime },
+      move: { face: drag.sticker.face, prime: drag.prime },
       now: Date.now(),
     })
+  }
+
+  const onPointerCancel = () => {
+    endDrag()
   }
 
   // keyboard orbit: drag stays pointer sugar, arrows reach every angle
@@ -146,5 +192,13 @@ export const useOrbitAndTap = (dispatch: Dispatch) => {
     }))
   }
 
-  return { orbit, onPointerDown, onPointerMove, onPointerUp, onOrbitKeyDown }
+  return {
+    orbit,
+    orbiting,
+    onOrbitKeyDown,
+    onPointerDown,
+    onPointerMove,
+    onPointerUp,
+    onPointerCancel,
+  }
 }

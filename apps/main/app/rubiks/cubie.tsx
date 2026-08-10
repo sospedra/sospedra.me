@@ -42,15 +42,15 @@ export const Cubie: React.FC<{
         const normal = FACE_NORMAL[face]
         const axis = axisOf(normal)
         const outward = position[axis] === normal[axis]
-        // interior tiles inset 1px: exactly coplanar neighbor tiles trip
-        // the preserve-3d compositor on first paint (dark notches)
+        // interior tiles sit below the sticker plane (--plastic-z): exactly
+        // coplanar tiles trip the preserve-3d compositor, touch GPUs need more
         if (!outward) {
           return (
             <div
               key={face}
               className={css.plastic}
               style={{
-                transform: `${FACE_PLACE[face]} translateZ(calc(var(--half) - 1px))`,
+                transform: `${FACE_PLACE[face]} translateZ(var(--plastic-z))`,
               }}
             />
           )
@@ -61,6 +61,7 @@ export const Cubie: React.FC<{
             key={face}
             className={css.sticker}
             data-face={face}
+            data-pos={position.join()}
             style={
               {
                 transform: `${FACE_PLACE[face]} translateZ(var(--half))`,

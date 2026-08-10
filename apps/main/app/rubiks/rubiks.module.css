@@ -9,6 +9,7 @@
   --rk-plastic: #0a0f15;
   --cubie: clamp(2.4rem, min(15vw, 9.5dvh), 4.3rem);
   --half: calc(var(--cubie) / 2);
+  --plastic-z: calc(var(--half) - 1px);
   position: relative;
   display: flex;
   width: 100%;
@@ -365,9 +366,56 @@
   margin-left: 0.2rem;
 }
 
+.touchpad {
+  display: none;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.padKey {
+  min-width: 2.75rem;
+  padding: 0.55rem 0.4rem;
+}
+
+.padArmed {
+  border-color: rgb(255 79 216 / 40%);
+  border-bottom-color: rgb(255 79 216 / 70%);
+  background: rgb(255 79 216 / 16%);
+  color: var(--color-signal-pink-hot);
+}
+
 @media (max-width: 47.99rem) {
   .hint span {
     display: none;
+  }
+}
+
+/* touch GPUs shred near-coplanar tiles into dark triangle fragments while
+   the cube moves: widen the interior gap and bare the tiles during motion */
+@media (pointer: coarse) {
+  .page {
+    --plastic-z: calc(var(--half) - 2.5px);
+  }
+
+  .pit[data-motion] :is(.plastic, .sticker),
+  .pit[data-motion] .sticker::after {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .hint {
+    display: none;
+  }
+
+  .touchpad {
+    display: flex;
   }
 }
 
