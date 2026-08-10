@@ -1,5 +1,4 @@
 import { clamp } from 'es-toolkit'
-import { VBODY_ID } from 'services/vbody'
 
 const size = { width: 2560, height: 1440 }
 export const frameMax = 174
@@ -50,16 +49,16 @@ export const createDraw = (
 export const createScrollListener = (
   onFrame: (frame: number) => void,
 ): (() => void) => {
-  const vbody = document.getElementById(VBODY_ID)
-  if (!vbody) return () => {}
+  const surface = document.scrollingElement
+  if (!surface) return () => {}
 
   const onScroll = () => {
-    const maxScrollTop = vbody.scrollHeight - window.innerHeight
+    const maxScrollTop = surface.scrollHeight - window.innerHeight
     if (maxScrollTop <= 0) return
-    const scrollFraction = vbody.scrollTop / maxScrollTop
+    const scrollFraction = surface.scrollTop / maxScrollTop
     onFrame(clamp(Math.floor(scrollFraction * frameMax), 0, frameMax))
   }
 
-  vbody.addEventListener('scroll', onScroll)
-  return () => vbody.removeEventListener('scroll', onScroll)
+  window.addEventListener('scroll', onScroll, { passive: true })
+  return () => window.removeEventListener('scroll', onScroll)
 }

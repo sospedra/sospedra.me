@@ -44,7 +44,7 @@
 }
 
 .wrapper {
-  @apply absolute inset-0 overflow-hidden;
+  @apply fixed inset-0 overflow-hidden;
   contain: strict;
   height: 100dvh;
   pointer-events: none;
@@ -52,10 +52,13 @@
   z-index: 0;
 }
 
+/* In flow so routes overflow the document and the viewport scrolls (iOS
+   scroll-to-top). clip suppresses the ±100vh climb overflow without
+   creating a scroll container. */
 .provider {
-  @apply fixed inset-0 overflow-hidden;
-  height: 100dvh;
-  overscroll-behavior: contain;
+  @apply relative;
+  min-height: 100dvh;
+  overflow: clip;
   width: 100%;
   z-index: 1;
 }

@@ -28,8 +28,16 @@ const surfaceFrom = (node: Element | null, root: HTMLElement) =>
     ? findScrollableAncestor(node, root)
     : null
 
+// the document scroller reports overflow-y visible, so the ancestor walk
+// never returns it: probe its extent directly
+const rootScrollSurface = () => {
+  const root = document.scrollingElement
+  if (!(root instanceof HTMLElement)) return null
+  return root.scrollHeight - root.clientHeight > 1 ? root : null
+}
+
 const getActiveScrollSurface = () => {
-  // shell-less scenes scroll their own <main> instead of #vbody
+  // shell-less scenes scroll their own <main> instead of the document
   const root =
     document.getElementById(VBODY_ID) ??
     document.querySelector<HTMLElement>('main')
@@ -41,7 +49,8 @@ const getActiveScrollSurface = () => {
       document.elementFromPoint(window.innerWidth / 2, window.innerHeight / 2),
       root,
     ) ??
-    surfaceFrom(root, root)
+    surfaceFrom(root, root) ??
+    rootScrollSurface()
   )
 }
 
@@ -55,6 +64,12 @@ const nearestSceneIndex = (scenes: HTMLElement[], surfaceTop: number) => {
   return distances.indexOf(Math.min(...distances))
 }
 
+// the document scroller's rect top is -scrollY; the visual reference is 0
+const surfaceTopOf = (surface: HTMLElement) =>
+  surface === document.scrollingElement
+    ? 0
+    : surface.getBoundingClientRect().top
+
 // The Bazaar is a scene sequence, so j/k should select the next authored
 // stage rather than land between rows with a generic percentage scroll.
 const scrollSceneSequence = (
@@ -62,7 +77,7 @@ const scrollSceneSequence = (
   direction: -1 | 1,
   surface: HTMLElement,
 ) => {
-  const current = nearestSceneIndex(scenes, surface.getBoundingClientRect().top)
+  const current = nearestSceneIndex(scenes, surfaceTopOf(surface))
   const next = clamp(current + direction, 0, scenes.length - 1)
   if (next === current) return false
 

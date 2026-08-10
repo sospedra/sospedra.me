@@ -155,9 +155,13 @@
   }
 }
 
+/* The document is the scroller: iOS sends status-bar scroll-to-top only to
+   the root scroll view, so routes must overflow the viewport, not a div. */
 html {
   min-height: 100%;
+  overflow-x: clip;
   background: var(--color-bg-void);
+  overscroll-behavior: contain;
   scrollbar-color: auto;
   scrollbar-width: auto;
 }
@@ -166,7 +170,6 @@ body {
   min-width: 20rem;
   min-height: 100dvh;
   margin: 0;
-  overflow: hidden;
   background: var(--color-bg-void);
   color: var(--color-text);
   font-family: var(--font-body);

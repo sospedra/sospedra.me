@@ -23,13 +23,11 @@ const Shell = ({
         Skip to content ▼
       </a>
       <SystemSettings />
+      {/* grid 1fr: main stretches to a definite viewport height, so the
+          height: 100% chains in full-viewport routes keep resolving */}
       <div
         id={VBODY_ID}
-        style={{ overscrollBehavior: 'contain' }}
-        className={cn(
-          'w-full h-full overflow-x-hidden overflow-y-auto',
-          shellClassName,
-        )}
+        className={cn('w-full min-h-dvh grid grid-rows-[1fr]', shellClassName)}
       >
         {stage ? (
           <StageMain className={className}>{children}</StageMain>
