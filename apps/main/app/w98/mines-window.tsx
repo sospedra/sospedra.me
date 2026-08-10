@@ -1,6 +1,8 @@
 import { clamp } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useRef } from 'react'
+import { ConfettiBurst } from 'services/celebration'
+import { tapHaptic } from 'services/haptics'
 import { type MinesState, minesLeft } from './engine'
 import type { ChromeEvent, ChromeState } from './menu-state'
 import { type Flag, MinesBoard, type Sweep } from './mines-board'
@@ -21,6 +23,15 @@ const FACES = {
   won: '☻',
   lost: '☹',
 } satisfies Record<MinesState['status'], string>
+
+const CONFETTI_TONES_W98 = [
+  '#000080',
+  '#008080',
+  '#c0c0c0',
+  '#ffffff',
+  '#ff0000',
+  '#ffff00',
+] as const
 
 const STATUS_LABEL = {
   idle: 'Ready',
@@ -209,6 +220,11 @@ export const MinesWindow: React.FC<{
       </nav>
 
       <div className={css.field}>
+        {state.status === 'won' && (
+          <div className={css.confettiAnchor}>
+            <ConfettiBurst tones={CONFETTI_TONES_W98} />
+          </div>
+        )}
         <div className={css.hud}>
           <output className={css.lcd} aria-label='Mines left'>
             {lcd(minesLeft(state))}
@@ -245,14 +261,20 @@ export const MinesWindow: React.FC<{
             <button
               type='button'
               aria-pressed={inputMode === 'sweep'}
-              onClick={() => setInputMode('sweep')}
+              onClick={() => {
+                tapHaptic()
+                setInputMode('sweep')
+              }}
             >
               Sweep
             </button>
             <button
               type='button'
               aria-pressed={inputMode === 'flag'}
-              onClick={() => setInputMode('flag')}
+              onClick={() => {
+                tapHaptic()
+                setInputMode('flag')
+              }}
             >
               Flag
             </button>

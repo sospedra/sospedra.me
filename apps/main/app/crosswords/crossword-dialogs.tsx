@@ -1,6 +1,6 @@
 import cn from 'clsx'
-import { range } from 'es-toolkit'
-import { type CSSProperties, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import { ConfettiBurst } from 'services/celebration'
 import DailyCountdownPanel from 'services/daily-countdown-panel'
 import Modal from 'services/modal'
 import { shareHandled, shareText } from 'services/share'
@@ -15,57 +15,6 @@ import type {
 import css from './crossword-dialogs.module.css'
 import { type CrosswordState, formatTime, shareCard } from './crossword-engine'
 import cw from './crosswords.module.css'
-
-const CONFETTI_TONES = [
-  '#d7653c',
-  '#476f8f',
-  '#62a996',
-  '#e3b84a',
-  '#bd4e3b',
-  '#f3eedf',
-] as const
-
-/* Deterministic scatter: index-hashed values dodge Math.random so every
-   render (and any hydration) agrees on the same burst. */
-const CONFETTI_PIECES = range(26).map((index) => ({
-  id: `piece-${index + 1}`,
-  x: (((index * 7) % 13) / 12 - 0.5) * 34,
-  peak: -(3.4 + ((index * 53) % 40) / 10),
-  fall: 17 + ((index * 29) % 9),
-  spin: (index % 2 === 0 ? 1 : -1) * (420 + ((index * 47) % 360)),
-  delay: (index * 83) % 340,
-  duration: 1500 + ((index * 37) % 700),
-  width: 0.3 + ((index * 11) % 4) * 0.05,
-  height: 0.55 + ((index * 19) % 5) * 0.07,
-  tone: CONFETTI_TONES[index % CONFETTI_TONES.length],
-}))
-
-const ConfettiBurst = () => (
-  <div
-    className={cn(completionCss.confettiBurst, cw.confettiBurst)}
-    aria-hidden='true'
-  >
-    {CONFETTI_PIECES.map((piece) => (
-      <span
-        key={piece.id}
-        className={completionCss.confettiPiece}
-        style={
-          {
-            '--cw-cf-x': `${piece.x}rem`,
-            '--cw-cf-peak': `${piece.peak}rem`,
-            '--cw-cf-fall': `${piece.fall}rem`,
-            '--cw-cf-spin': `${piece.spin}deg`,
-            '--cw-cf-delay': `${piece.delay}ms`,
-            '--cw-cf-duration': `${piece.duration}ms`,
-            '--cw-cf-tone': piece.tone,
-            '--cw-cf-w': `${piece.width}rem`,
-            '--cw-cf-h': `${piece.height}rem`,
-          } as CSSProperties
-        }
-      />
-    ))}
-  </div>
-)
 
 const DialogHeader = ({
   close,
@@ -332,7 +281,11 @@ export const CrosswordCompletionDialog = ({
         cw.completionDialog,
       )}
     >
-      {open && <ConfettiBurst />}
+      {open && (
+        <ConfettiBurst
+          className={cn(completionCss.confettiBurst, cw.confettiBurst)}
+        />
+      )}
       <div
         className={cn(completionCss.completionMark, cw.completionMark)}
         aria-hidden='true'

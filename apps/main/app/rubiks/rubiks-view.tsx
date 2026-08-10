@@ -2,7 +2,9 @@
 
 import { partition } from 'es-toolkit'
 import type React from 'react'
-import { useReducer, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
+import { ConfettiBurst } from 'services/celebration'
+import { pulseHaptic, tapHaptic } from 'services/haptics'
 import { useGameInput } from 'services/hotkeys'
 import { GoBack, LinkBack } from 'services/link'
 import Row from 'services/row'
@@ -32,11 +34,21 @@ import {
 } from './engine'
 import css from './rubiks.module.css'
 import { formatMs, TimerReadout } from './timer-readout'
+import { useSolveFanfare } from './use-solve-fanfare'
 
 const STATUS: Record<Exclude<Phase, 'idle'>, string> = {
   scrambling: 'mixing',
   solving: 'auto',
 }
+
+const CONFETTI_TONES_CUBE = [
+  '#ffffff',
+  'var(--rk-yellow)',
+  'var(--rk-red)',
+  'var(--rk-orange)',
+  'var(--rk-blue)',
+  'var(--rk-green)',
+] as const
 
 const TIMER_WORD: Record<TimerState['status'], string> = {
   off: 'zen',
@@ -99,6 +111,7 @@ const TouchPad: React.FC<{
         type='button'
         className={`${css.key} ${css.padKey}`}
         disabled={busy}
+        onPointerDown={tapHaptic}
         onClick={() => onFace(face)}
       >
         {face}
@@ -110,6 +123,7 @@ const TouchPad: React.FC<{
       aria-pressed={primeArmed}
       aria-label='Reverse: the next turn goes counterclockwise'
       disabled={busy}
+      onPointerDown={tapHaptic}
       onClick={onTogglePrime}
     >
       rev
@@ -128,6 +142,13 @@ export default function RubiksView() {
 
   const solved = isSolved(state.stickers)
   const busy = state.phase !== 'idle'
+  const timerDone = state.timer.status === 'done'
+  const ringFanfare = useSolveFanfare()
+  useEffect(() => {
+    if (!timerDone) return
+    pulseHaptic()
+    ringFanfare()
+  }, [timerDone, ringFanfare])
   const pristine =
     solved && state.history.length === 0 && state.turning === null
   const status = statusWord(state, solved)
@@ -159,6 +180,11 @@ export default function RubiksView() {
 
   return (
     <Shell className={`relative w-full px-4 text-white ${css.page}`}>
+      {timerDone && (
+        <div className={css.confettiAnchor}>
+          <ConfettiBurst tones={CONFETTI_TONES_CUBE} />
+        </div>
+      )}
       <div className={css.navRow}>
         <Row
           right={

@@ -23,6 +23,16 @@
   padding-left: max(1rem, var(--safe-area-left));
 }
 
+.confettiAnchor {
+  position: absolute;
+  z-index: 30;
+  top: 26dvh;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
 /* the only room on the site lit by six colors: each sticker family
    leaks its own faint wash into a corner of the void */
 .page::before {
@@ -382,6 +392,13 @@
 .padKey {
   min-width: 2.75rem;
   padding: 0.55rem 0.4rem;
+}
+
+/* the fingertip hides a 1px sink; the fill and glow read past its edges */
+.padKey:active:not(:disabled) {
+  background: rgb(109 247 234 / 24%);
+  box-shadow: var(--shadow-neon);
+  transition-duration: 0s;
 }
 
 .padArmed {

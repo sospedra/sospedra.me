@@ -99,6 +99,8 @@ export default function Windows98View() {
     }
   }, [])
 
+  useEffect(() => () => audio.dispose(), [audio])
+
   const launchWinamp = () => {
     chromeDispatch({ type: 'menu', menu: null })
     desktopDispatch({ type: 'launch-winamp' })

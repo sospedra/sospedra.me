@@ -22,55 +22,7 @@
 }
 
 .confettiBurst {
-  position: absolute;
-  z-index: 5;
   top: 3.4rem;
-  left: 50%;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-
-.confettiPiece {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  width: var(--cw-cf-w);
-  height: var(--cw-cf-h);
-  border-radius: 0.09rem;
-  background: var(--cw-cf-tone);
-  opacity: 0;
-  animation: cw-confetti var(--cw-cf-duration) var(--cw-cf-delay) forwards;
-  will-change: transform, opacity;
-}
-
-@keyframes cw-confetti {
-  0% {
-    animation-timing-function: ease-out;
-    opacity: 0;
-    transform: translate3d(0, 0.4rem, 0) rotate3d(1, 0.7, 0.4, 0deg);
-  }
-
-  8% {
-    opacity: 1;
-  }
-
-  26% {
-    animation-timing-function: ease-in;
-    transform: translate3d(calc(var(--cw-cf-x) * 0.45), var(--cw-cf-peak), 0)
-      rotate3d(1, 0.7, 0.4, calc(var(--cw-cf-spin) * 0.35));
-  }
-
-  78% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate3d(var(--cw-cf-x), var(--cw-cf-fall), 0)
-      rotate3d(1, 0.7, 0.4, var(--cw-cf-spin));
-  }
 }
 
 .completionMark {
@@ -249,9 +201,5 @@
 @media (prefers-reduced-motion: reduce) {
   .completionDialog[open] .completionMark span {
     animation: none;
-  }
-
-  .confettiBurst {
-    display: none;
   }
 }

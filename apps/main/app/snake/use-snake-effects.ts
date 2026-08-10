@@ -1,10 +1,11 @@
 import type React from 'react'
 import { useEffect, useRef } from 'react'
+import { buzzHaptic, pulseHaptic, tapHaptic } from 'services/haptics'
 import { letterKeysDisabled } from 'services/hotkeys'
 import { readLocal, writeLocal } from 'services/storage'
 import { type GameEvent, type GameState, type Phase, stepMsFor } from './engine'
 import { KEY_SELECT, KEY_TURNS, spotForKey } from './hotspots'
-import { play, transitionSound } from './sound'
+import { play, type SoundName, transitionSound } from './sound'
 
 type Dispatch = React.Dispatch<GameEvent>
 type SetPressed = React.Dispatch<React.SetStateAction<ReadonlySet<string>>>
@@ -118,12 +119,23 @@ export const usePauseOnHide = (dispatch: Dispatch) => {
   }, [dispatch])
 }
 
+const TRANSITION_HAPTICS: Record<SoundName, () => void> = {
+  eat: tapHaptic,
+  key: tapHaptic,
+  over: buzzHaptic,
+  pause: tapHaptic,
+  record: pulseHaptic,
+  start: tapHaptic,
+}
+
 export const useTransitionSounds = (state: GameState) => {
   const prevRef = useRef(state)
 
   useEffect(() => {
     const sound = transitionSound(prevRef.current, state)
     prevRef.current = state
-    if (sound) play(sound)
+    if (!sound) return
+    play(sound)
+    TRANSITION_HAPTICS[sound]()
   }, [state])
 }

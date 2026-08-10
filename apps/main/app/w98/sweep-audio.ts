@@ -1,3 +1,4 @@
+import { playFanfare } from 'services/audio/fanfare'
 import { createSfxKit } from 'services/audio/kit'
 
 export type SweepAudio = ReturnType<typeof createSweepAudio>
@@ -6,6 +7,7 @@ export const createSweepAudio = () => {
   const kit = createSfxKit({ attack: 0.004 })
 
   return {
+    dispose: kit.dispose,
     setEnabled: kit.setEnabled,
     sweep() {
       kit.tone({
@@ -43,29 +45,8 @@ export const createSweepAudio = () => {
       kit.tone({ from: 170, to: 42, duration: 0.45, peak: 0.22, shape: 'sine' })
     },
     win() {
-      kit.tone({
-        from: 880,
-        to: 880,
-        duration: 0.12,
-        peak: 0.07,
-        shape: 'triangle',
-      })
-      kit.tone({
-        at: 0.1,
-        from: 1109,
-        to: 1109,
-        duration: 0.12,
-        peak: 0.07,
-        shape: 'triangle',
-      })
-      kit.tone({
-        at: 0.2,
-        from: 1319,
-        to: 1319,
-        duration: 0.2,
-        peak: 0.08,
-        shape: 'triangle',
-      })
+      const context = kit.ensure()
+      if (context) playFanfare(context, { volume: 0.85 })
     },
   }
 }

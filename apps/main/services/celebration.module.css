@@ -1,0 +1,62 @@
+@reference "./style/global.css";
+
+.confettiBurst {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.confettiPiece {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: var(--cf-w);
+  height: var(--cf-h);
+  border-radius: 0.09rem;
+  background: var(--cf-tone);
+  opacity: 0;
+  animation: celebration-confetti var(--cf-duration) var(--cf-delay) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes celebration-confetti {
+  0% {
+    animation-timing-function: ease-out;
+    opacity: 0;
+    transform: translate3d(0, 0.4rem, 0) rotate3d(1, 0.7, 0.4, 0deg);
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  26% {
+    animation-timing-function: ease-in;
+    transform: translate3d(calc(var(--cf-x) * 0.45), var(--cf-peak), 0)
+      rotate3d(1, 0.7, 0.4, calc(var(--cf-spin) * 0.35));
+  }
+
+  78% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--cf-x), var(--cf-fall), 0)
+      rotate3d(1, 0.7, 0.4, var(--cf-spin));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confettiBurst {
+    display: none;
+  }
+}
+
+:global(.fx-quiet) .confettiBurst {
+  display: none;
+}

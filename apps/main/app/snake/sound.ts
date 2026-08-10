@@ -1,5 +1,6 @@
 import { once } from 'es-toolkit'
-import { audioContextClass } from '../../services/audio/kit.ts'
+import { playFanfare } from '../../services/audio/fanfare.ts'
+import { audioContextClass, ensureRunning } from '../../services/audio/kit.ts'
 import { readLocal, writeLocal } from '../../services/storage.ts'
 import type { Phase } from './engine'
 
@@ -17,11 +18,11 @@ export const setMuted = (muted: boolean) => {
   writeLocal(SOUND_KEY, muted ? 'off' : 'on')
 }
 
-export type SoundName = 'key' | 'start' | 'eat' | 'pause' | 'over'
+export type SoundName = 'key' | 'start' | 'eat' | 'pause' | 'over' | 'record'
 
 type Note = [frequency: number, at: number, duration: number]
 
-const TUNES: Record<SoundName, Note[]> = {
+const TUNES: Record<Exclude<SoundName, 'record'>, Note[]> = {
   key: [[1245, 0, 0.03]],
   start: [
     [660, 0, 0.07],
@@ -47,7 +48,7 @@ const createContext = once((): AudioContext | null => {
 
 const ensureContext = () => {
   const context = createContext()
-  if (context?.state === 'suspended') void context.resume()
+  if (context) ensureRunning(context)
   return context
 }
 
@@ -55,6 +56,10 @@ export const play = (name: SoundName) => {
   if (isMuted()) return
   const audio = ensureContext()
   if (!audio) return
+  if (name === 'record') {
+    playFanfare(audio, { variant: 'curt', volume: 0.8 })
+    return
+  }
   const zero = audio.currentTime + 0.01
   for (const [frequency, at, duration] of TUNES[name]) {
     const oscillator = audio.createOscillator()
@@ -72,7 +77,7 @@ export const play = (name: SoundName) => {
   }
 }
 
-type Snapshot = { phase: Phase; score: number }
+type Snapshot = { phase: Phase; score: number; top: number }
 
 export const transitionSound = (
   prev: Snapshot,
@@ -81,7 +86,9 @@ export const transitionSound = (
   if (prev.phase === next.phase) {
     return next.score > prev.score ? 'eat' : null
   }
-  if (next.phase === 'over') return 'over'
+  if (next.phase === 'over') {
+    return next.top > prev.top ? 'record' : 'over'
+  }
   if (next.phase === 'paused' || prev.phase === 'paused') return 'pause'
   if (next.phase === 'running') return 'start'
   return 'key'
