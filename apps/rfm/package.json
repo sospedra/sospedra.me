@@ -11,7 +11,7 @@
     "dev": "vite",
     "lint": "biome check .",
     "preview": "vite preview",
-    "test": "tsx --test test/github.test.ts test/home.test.tsx",
+    "test": "tsx --test test/analytics.test.ts test/github-api.test.ts test/github.test.ts test/home.test.tsx",
     "typecheck": "tsc"
   },
   "license": "ISC",

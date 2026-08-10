@@ -62,6 +62,15 @@ type GithubRepo = {
   updated_at: string
 }
 
+const fetchGithub = async <T>(url: string): Promise<T> => {
+  const response = await fetch(url)
+  if (response.ok) return (await response.json()) as T
+  const failure = (await response.json().catch(() => null)) as {
+    message?: string
+  } | null
+  throw new Error(failure?.message ?? `GitHub responded ${response.status}`)
+}
+
 export const fetcherRequestList = async (query = '') => {
   const params = [
     'repo:sospedra/rfm',
@@ -71,8 +80,7 @@ export const fetcherRequestList = async (query = '') => {
     'in:title,body',
   ]
   const path = `${GITHUB_ROOT}/search/issues?q=${params.join('+')}&per_page=100`
-  const response = await fetch(path)
-  const payload = (await response.json()) as GithubSearchResponse
+  const payload = await fetchGithub<GithubSearchResponse>(path)
   const requestList = payload.items
     .map((item): Request | null => {
       try {
@@ -103,8 +111,9 @@ const safe = <K extends string, V>(key: K, value: V | null | undefined) =>
 export const fetcherSubmitRequest = async (repoUrl: string) => {
   const [, pathname = ''] = repoUrl.split('github.com/')
   const [owner = '', name = ''] = pathname.split('/')
-  const response = await fetch(`${GITHUB_ROOT}/repos/${owner}/${name}`)
-  const payload = (await response.json()) as GithubRepo
+  const payload = await fetchGithub<GithubRepo>(
+    `${GITHUB_ROOT}/repos/${owner}/${name}`,
+  )
   const { default: langmap } = await import('language-map')
   const language = payload.language ? langmap[payload.language] : undefined
   const repo: SubmitRequest = {
@@ -142,8 +151,7 @@ export const fetcherFindSupportIssues = async (fullName: string) => {
     'in:title,body',
   ]
   const path = `${GITHUB_ROOT}/search/issues?q=${params.join('+')}&per_page=10`
-  const response = await fetch(path)
-  const payload = (await response.json()) as GithubSearchResponse
+  const payload = await fetchGithub<GithubSearchResponse>(path)
   const requestList = payload.items.map((item) => ({
     id: item.id,
     body: item.body,
