@@ -1,7 +1,15 @@
 /* usage: songs.ts <add|check|remove|reshuffle>; docs in app/boombox/README.md */
 import { execFile } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import {
+  access,
+  mkdir,
+  mkdtemp,
+  readdir,
+  readFile,
+  rm,
+  writeFile,
+} from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, extname, join } from 'node:path'
 import { argv, env, exit } from 'node:process'
@@ -143,6 +151,39 @@ const upload = async (pathname: string, body: Buffer, contentType: string) => {
   })
 }
 
+const fileExists = async (path: string) => {
+  try {
+    await access(path)
+    return true
+  } catch {
+    return false
+  }
+}
+
+const emptyRow = (file: string): TsvRow => ({
+  album: '',
+  artist: '',
+  cover: '',
+  file,
+  genre: '',
+  start: '0',
+  title: '',
+  year: '',
+})
+
+const readRows = async (folder: string): Promise<TsvRow[]> => {
+  const tsvPath = join(folder, 'songs.tsv')
+  if (await fileExists(tsvPath))
+    return parseTsv(await readFile(tsvPath, 'utf8'))
+  const entries = await readdir(folder)
+  const files = entries.filter((name) => extname(name) === '.mp3').toSorted()
+  if (files.length === 0) fail(`${folder}: no songs.tsv and no mp3 files`)
+  console.log(
+    `no songs.tsv: ${files.length} mp3s in name order, ID3 tags as metadata, clips from 0:00`,
+  )
+  return files.map(emptyRow)
+}
+
 const parseTsv = (text: string): TsvRow[] => {
   const lines = text.split('\n').filter((line) => line.trim() !== '')
   const header = lines.shift()
@@ -232,6 +273,38 @@ const resolveSong = async (row: TsvRow, folder: string): Promise<Song> => {
   }
 }
 
+const extractCover = async (source: string, target: string) => {
+  await run('ffmpeg', [
+    '-v',
+    'error',
+    '-y',
+    '-i',
+    source,
+    '-an',
+    '-frames:v',
+    '1',
+    target,
+  ])
+}
+
+const resolveCover = async (
+  row: TsvRow,
+  folder: string,
+  scratch: string,
+): Promise<string> => {
+  const fallback = `${basename(row.file, extname(row.file))}.jpg`
+  const named = join(folder, row.cover || fallback)
+  if (await fileExists(named)) return named
+  if (row.cover) return fail(`${row.file}: cover ${row.cover} not found`)
+  const extracted = join(scratch, 'cover.jpg')
+  const embedded = await extractCover(join(folder, row.file), extracted).then(
+    () => true,
+    () => false,
+  )
+  if (!embedded) return fail(`${row.file}: no ${fallback} and no embedded art`)
+  return extracted
+}
+
 type Assets = { clip: Buffer; cover: Buffer }
 
 const buildAssets = async (
@@ -242,8 +315,7 @@ const buildAssets = async (
   const scratch = await mkdtemp(join(tmpdir(), 'boombox-'))
   const clipFile = join(scratch, `${song.id}.mp3`)
   await cutClip(join(folder, row.file), parseStart(row.start), clipFile)
-  const coverName = row.cover || `${basename(row.file, extname(row.file))}.jpg`
-  const cover = await sharp(join(folder, coverName))
+  const cover = await sharp(await resolveCover(row, folder, scratch))
     .resize(COVER_PX, COVER_PX, { fit: 'cover' })
     .jpeg({ quality: 82 })
     .toBuffer()
@@ -305,7 +377,7 @@ const add = async (args: string[], flags: Set<string>) => {
   const dryRun = flags.has('--dry-run')
   if (!dryRun) requireToken()
   const folder = args[0] ?? fail('Usage: songs.ts add <folder>')
-  const rows = parseTsv(await readFile(join(folder, 'songs.tsv'), 'utf8'))
+  const rows = await readRows(folder)
   const songs = await readSongs()
   const known = new Map(songs.map((song) => [identity(song), song]))
   const incoming = await resolveIncoming(rows, folder, {

@@ -60,8 +60,14 @@ day's song. The line it holds:
 `remove` and `reshuffle` print every played day that moves and refuse to write
 without `--yes`.
 
-`add` reads `<folder>/songs.tsv`: tab separated, header row, columns
-`file start artist title album year genre cover`. Blank metadata falls back to
-ID3 tags, blank cover to `<file basename>.jpg`. `start` is seconds or `mm:ss`
-and must leave 30 seconds of audio. Run `--dry-run` first: it writes previews
-and prints ids. `--replace` overwrites a song matched on artist and title.
+`add <folder>` wants only mp3 files. It takes them in name order, reads the
+metadata from the ID3 tags, and starts every clip at 0:00. The cover comes
+from `<file basename>.jpg`, or from the art embedded in the mp3 when that
+file is absent. A song with no artist, title, year, or cover fails by name.
+
+An optional `<folder>/songs.tsv` overrides the tags: tab separated, header
+row, columns `file start artist title album year genre cover`. Blank cells
+keep the fallbacks. When the TSV exists, only its rows are processed.
+`start` is seconds or `mm:ss` and must leave 30 seconds of audio. Run
+`--dry-run` first: it writes previews and prints ids. `--replace` overwrites
+a song matched on artist and title.
