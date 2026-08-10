@@ -31,6 +31,19 @@ export const test = base.extend<Fixtures>({
         pageErrors: [],
         failedSameOrigin: [],
       }
+      // the dev-overlay badge floats over small viewports and eats taps
+      await page.addInitScript(() => {
+        const hide = () => {
+          const style = document.createElement('style')
+          style.textContent = 'nextjs-portal { pointer-events: none !important; }'
+          document.head?.append(style)
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', hide)
+          return
+        }
+        hide()
+      })
       await page.route('**/*', (route) => {
         const host = hostnameOf(route.request().url())
         if (allowed.has(host)) return route.continue()
