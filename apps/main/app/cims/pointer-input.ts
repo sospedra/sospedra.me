@@ -1,4 +1,5 @@
 import { clamp } from 'es-toolkit'
+import { tapHaptic } from 'services/haptics'
 import type { Vector3 } from 'three'
 import { PITCH_MAX, PITCH_MIN, RANGE_MAX, RANGE_MIN } from './flight.ts'
 import type { CimsRig } from './rig.ts'
@@ -89,6 +90,7 @@ export const attachInput = (host: PointerHost): (() => void) => {
     pinchCY = (first[1] + second[1]) / 2
     rig.gesture = 'pinch'
     rig.showT = -1
+    tapHaptic()
   }
 
   const applyPressGesture = (e: PointerEvent) => {
@@ -188,6 +190,7 @@ export const attachInput = (host: PointerHost): (() => void) => {
       const isDoubleTap =
         now - tapMs < 350 && Math.hypot(e.clientX - tapX, e.clientY - tapY) < 44
       if (isDoubleTap) {
+        tapHaptic()
         host.focusAt(e.clientX, e.clientY)
         tapMs = 0
       } else {

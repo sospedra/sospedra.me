@@ -1,5 +1,6 @@
 import '98.css'
 import './style.css'
+import { pulseHaptic } from './haptics.ts'
 import { isHexOfBytes, randomBytes, toHex } from './mesh/bytes.ts'
 import { DEFAULT_RELAYS } from './mesh/constants.ts'
 import { isValidNick, NICK_MAX } from './mesh/messages.ts'
@@ -271,9 +272,10 @@ const boot = async (): Promise<void> => {
     const secret = rooms.get(activeId)?.secret
     if (secret === undefined) return
     const link = `${location.origin}${location.pathname}#r=${activeId}&s=${secret}`
-    void navigator.clipboard
-      .writeText(link)
-      .then(() => ui.log('invite link copied'))
+    void navigator.clipboard.writeText(link).then(() => {
+      pulseHaptic()
+      ui.log('invite link copied')
+    })
   })
   ui.onSelectRoom(setActive)
   ui.onCloseRoom(closeRoom)

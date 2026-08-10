@@ -1,6 +1,7 @@
 'use client'
 
 import { type FormEvent, useEffect, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import type { Session } from 'services/use-session'
 import { storedNick, storeNick } from 'ui/share'
 
@@ -13,6 +14,7 @@ export function Join(props: { session: Session }) {
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    tapHaptic()
     const name = nick.trim() || 'wanderer'
     storeNick(name)
     props.session.seat(name)

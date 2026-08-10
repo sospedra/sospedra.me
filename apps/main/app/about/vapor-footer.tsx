@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { useRef, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { useSystem } from 'services/system'
 import PixelGhost from './pixel-ghost'
 import type { Origin } from './seance'
@@ -91,7 +92,10 @@ export default function VaporFooter() {
           aria-label='Wake the ghost'
           className={css.pixelGhost}
           data-lifted={seance !== 'unsummoned'}
-          onClick={summon}
+          onClick={() => {
+            tapHaptic()
+            summon()
+          }}
           onPointerEnter={(event) => {
             if (event.pointerType === 'mouse') summon()
           }}

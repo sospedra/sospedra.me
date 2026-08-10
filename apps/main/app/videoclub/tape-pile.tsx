@@ -1,5 +1,6 @@
 import cn from 'clsx'
 import type { CSSProperties, Ref, RefObject } from 'react'
+import { tapHaptic } from 'services/haptics'
 import css from './tape-pile.module.css'
 import { TAPES, type Tape } from './tapes'
 import type { TvState } from './tv-machine'
@@ -75,6 +76,7 @@ export function TapePile({
                 disabled={state.status === 'inserting'}
                 onClick={() => {
                   spineFocusRef.current = index
+                  tapHaptic()
                   insertTape(index)
                 }}
                 aria-label={`Insert ${item.title}, ${item.venue}`}

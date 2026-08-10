@@ -1,5 +1,6 @@
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { cssVars } from 'services/css-vars'
+import { tapHaptic } from 'services/haptics'
 import { formatTime } from './format'
 import css from './music.module.css'
 import playerCss from './player.module.css'
@@ -79,6 +80,7 @@ export default function Player({
     update: GaugeUpdate,
   ) => {
     event.currentTarget.setPointerCapture(event.pointerId)
+    tapHaptic()
     update(event)
     event.preventDefault()
   }

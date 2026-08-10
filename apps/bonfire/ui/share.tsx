@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { pulseHaptic } from 'services/haptics'
 import { sessionHash } from 'services/session'
 import type { Session } from 'services/use-session'
 
@@ -37,6 +38,7 @@ export function Share(props: { session: Session }) {
 
   const copy = async () => {
     await navigator.clipboard.writeText(link)
+    pulseHaptic()
     setCopied(true)
   }
 

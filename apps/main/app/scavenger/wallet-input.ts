@@ -1,6 +1,7 @@
 import { useRouter } from 'next/navigation'
 import type React from 'react'
 import { useCallback, useEffect, useRef } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { navigateBackOrHome } from 'services/navigation-history'
 import { prefersQuietFx } from 'services/theme'
 import {
@@ -188,6 +189,7 @@ export function useWalletActions(
       if (clampSpread(state.spread + direction) === state.spread) return
       flipLockUntil.current = now + FLIP_COOLDOWN_MS
       walletSfx.flip()
+      tapHaptic()
       dispatch({ type: 'FLIP', direction })
     },
     [state, dispatch],
@@ -196,6 +198,7 @@ export function useWalletActions(
   const putBack = useCallback(() => {
     if (state.phase !== 'out') return
     walletSfx.settle()
+    tapHaptic()
     discButtons.current.get(state.disc)?.focus()
     dispatch({ type: 'PUT_BACK' })
   }, [state, dispatch])
@@ -210,6 +213,7 @@ export function useWalletActions(
       if (state.phase !== 'browse') return
       if (!spreadDiscs(state.spread).includes(disc)) return
       walletSfx.pull()
+      tapHaptic()
       dispatch({ type: 'PULL', disc })
     },
     [state, putBack, dispatch],
@@ -219,6 +223,7 @@ export function useWalletActions(
     if (dragFlipJustEnded()) return
     if (state.phase !== 'browse') return
     walletSfx.zip()
+    tapHaptic()
     dispatch({ type: 'CLOSE' })
   }, [state, dispatch])
 

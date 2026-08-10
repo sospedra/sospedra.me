@@ -1,5 +1,6 @@
 import cn from 'clsx'
 import type { Ref } from 'react'
+import { tapHaptic } from 'services/haptics'
 import css from './deck-controls.module.css'
 import type { TvState } from './tv-machine'
 
@@ -19,7 +20,10 @@ function DeckKey(props: {
         ref={props.ref}
         type='button'
         className={css.key}
-        onClick={props.onPress}
+        onClick={() => {
+          tapHaptic()
+          props.onPress()
+        }}
         aria-label={props.hint}
       >
         <span aria-hidden='true'>{props.glyph}</span>
@@ -77,7 +81,10 @@ export function DeckControls({
         <button
           type='button'
           className={cn(css.key, css.powerKey)}
-          onClick={power}
+          onClick={() => {
+            tapHaptic()
+            power()
+          }}
           aria-pressed={powered}
           aria-label='Power'
         >

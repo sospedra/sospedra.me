@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { setLetterKeysEnabled, useLetterKeysEnabled } from 'services/hotkeys'
 import Modal from 'services/modal'
 import { useTheme } from 'services/theme'
@@ -40,9 +41,10 @@ const SystemSettings = () => {
             type='checkbox'
             checked={fxMode === 'quiet'}
             disabled={osReducedMotion}
-            onChange={(event) =>
+            onChange={(event) => {
+              tapHaptic()
               setFxMode(event.target.checked ? 'quiet' : 'full')
-            }
+            }}
           />
           <span>
             Quiet effects
@@ -57,7 +59,10 @@ const SystemSettings = () => {
           <input
             type='checkbox'
             checked={!letterKeysEnabled}
-            onChange={(event) => setLetterKeysEnabled(!event.target.checked)}
+            onChange={(event) => {
+              tapHaptic()
+              setLetterKeysEnabled(!event.target.checked)
+            }}
           />
           <span>
             Disable single-key shortcuts

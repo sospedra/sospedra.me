@@ -1,4 +1,5 @@
 import type { NodeDay } from 'services/types'
+import { tapHaptic } from './haptics'
 import { scrollToNow } from './scroll'
 
 export const Day = (props: NodeDay) => {
@@ -10,7 +11,10 @@ export const Day = (props: NodeDay) => {
       </p>
       <button
         className='px-2 mx-2 font-bold text-teal-600 transition-transform duration-150 ease-out-quint active:scale-97 motion-reduce:active:scale-100 motion-reduce:active:opacity-75'
-        onClick={scrollToNow}
+        onClick={() => {
+          tapHaptic()
+          scrollToNow()
+        }}
         type='button'
       >
         Ahora

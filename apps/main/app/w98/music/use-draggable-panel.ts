@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react'
 import { cssVars } from 'services/css-vars'
+import { tapHaptic } from 'services/haptics'
 import {
   clampDragOffset,
   clampPanelOffset,
@@ -152,6 +153,7 @@ export const useDraggablePanel = (
     if (!capturePointer(panel, event.pointerId)) return
     event.preventDefault()
     dragRef.current = drag
+    tapHaptic()
     setDragging(true)
   }
 
@@ -174,6 +176,7 @@ export const useDraggablePanel = (
     const drag = dragRef.current
     if (!drag || drag.pointerId !== event.pointerId) return
     dragRef.current = null
+    tapHaptic()
     setDragging(false)
     releasePointer(event.currentTarget, event.pointerId)
   }

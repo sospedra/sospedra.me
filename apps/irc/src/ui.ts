@@ -1,5 +1,6 @@
 import { initDesktop } from './desktop.ts'
 import { el, logoImg, titleBar } from './dom.ts'
+import { tapHaptic } from './haptics.ts'
 import { buildHelpWindow } from './help.ts'
 import { NICK_MAX } from './mesh/messages.ts'
 import type { RelayState } from './platform/nostr-pool.ts'
@@ -401,6 +402,7 @@ export const mountUi = (root: HTMLElement): UiHandles => {
     )
     item.addEventListener('pointerdown', (event) => {
       event.preventDefault()
+      tapHaptic()
       completeSuggestion(suggestion)
     })
     return item
@@ -472,6 +474,7 @@ export const mountUi = (root: HTMLElement): UiHandles => {
     event.preventDefault()
     const text = input.value.trim()
     if (text.length === 0) return
+    tapHaptic()
     sendCallback(text)
     input.value = ''
   })
@@ -484,7 +487,9 @@ export const mountUi = (root: HTMLElement): UiHandles => {
   nickInput.addEventListener('change', () => nickCallback(nickInput.value))
 
   leaveRoomButton.addEventListener('click', () => {
-    if (activeId !== null) closeCallback(activeId)
+    if (activeId === null) return
+    tapHaptic()
+    closeCallback(activeId)
   })
 
   initDesktop({

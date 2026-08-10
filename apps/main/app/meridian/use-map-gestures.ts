@@ -1,6 +1,7 @@
 import { clamp } from 'es-toolkit'
 import type { KeyboardEvent, PointerEvent } from 'react'
 import { useRef, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import {
   MAP_HEIGHT,
   MAP_WIDTH,
@@ -181,6 +182,7 @@ export const useMapGestures = ({
         clientX: event.clientX,
         clientY: event.clientY,
       })
+      tapHaptic()
     }
     releasePointer(event)
   }
@@ -201,6 +203,7 @@ export const useMapGestures = ({
 
   const submitSelection = () => {
     if (!selectedCoordinate || selectionLocked) return
+    tapHaptic()
     onSubmit(selectedCoordinate)
   }
 

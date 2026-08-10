@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { scrollMarkedScene, useHotkeys } from 'services/hotkeys'
 import Link from 'services/link'
 import css from './manual.module.css'
@@ -138,7 +139,10 @@ export default function ManualKeys() {
           <li key={number}>
             <button
               type='button'
-              onClick={() => openSection(index)}
+              onClick={() => {
+                tapHaptic()
+                openSection(index)
+              }}
               aria-label={`Open manual page ${number}, ${label}`}
             >
               <b>{number}</b>

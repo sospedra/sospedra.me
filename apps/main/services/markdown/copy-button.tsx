@@ -2,6 +2,7 @@
 
 import { debounce } from 'es-toolkit'
 import { useEffect, useRef, useState } from 'react'
+import { buzzHaptic, pulseHaptic } from 'services/haptics'
 import css from './code.module.css'
 
 const resetDelay = 1800
@@ -63,6 +64,8 @@ const CopyButton = ({ source }: { source: string }) => {
   const copy = async () => {
     const written = await writeClipboard(source)
     setPhase(written ? 'copied' : 'failed')
+    if (written) pulseHaptic()
+    else buzzHaptic()
     resetRef.current()
   }
 

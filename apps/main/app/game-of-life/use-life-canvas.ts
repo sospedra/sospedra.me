@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { tapHaptic } from 'services/haptics'
 import {
   type Camera,
   cameraForBounds,
@@ -237,7 +238,7 @@ export const useLifeCanvas = ({
   const pointerDown = (event: PointerEvent<HTMLCanvasElement>) => {
     if (event.button !== 0 && event.button !== 1 && event.button !== 2) return
     const canvas = event.currentTarget
-    canvas.focus()
+    canvas.focus({ preventScroll: true })
     canvas.setPointerCapture(event.pointerId)
 
     const move =
@@ -266,6 +267,7 @@ export const useLifeCanvas = ({
     }
     pointerRef.current = session
     setCursor(cell)
+    tapHaptic()
     paintDragCells(session, [cell])
     setAnnouncement(alive ? 'Drawing live cells.' : 'Erasing live cells.')
   }
@@ -303,6 +305,7 @@ export const useLifeCanvas = ({
     const line = rasterLine(session.last, cell)
     session.last = cell
     setCursor(cell)
+    tapHaptic()
     paintDragCells(session, line)
   }
 

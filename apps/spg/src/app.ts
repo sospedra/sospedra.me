@@ -9,6 +9,7 @@ import {
   $slider,
   $symbols,
 } from './elements.ts'
+import { tapHaptic } from './haptics.ts'
 import { loadSettings, saveSettings } from './settings.ts'
 import type { Generator, GeneratorOptions } from './spg/generator.ts'
 import { spg } from './spg/spg.ts'
@@ -90,16 +91,21 @@ export function setupGenerator(): void {
   }
 
   $renew.addEventListener('click', () => {
+    tapHaptic()
     void renew()
   })
 
   $reset.addEventListener('click', () => {
+    tapHaptic()
     applySettings(DEFAULT_SETTINGS)
     update()
   })
 
   for (const control of [$case, $leet, $random, $symbols]) {
-    control.addEventListener('change', update)
+    control.addEventListener('change', () => {
+      tapHaptic()
+      update()
+    })
   }
 
   $slider.addEventListener('input', update)

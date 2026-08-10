@@ -5,6 +5,7 @@ import type React from 'react'
 import { useMemo, useReducer, useSyncExternalStore } from 'react'
 import { cssVars } from 'services/css-vars'
 import External from 'services/external'
+import { tapHaptic } from 'services/haptics'
 import { sceneTrap, type Trap, useHotkeys } from 'services/hotkeys'
 import Link from 'services/link'
 import Shell from 'services/shell'
@@ -237,6 +238,7 @@ export default function ScavengerView() {
   const toggleSound = () => {
     const next = !sound
     soundPreference.setEnabled(next)
+    tapHaptic()
     if (next) walletSfx.flip()
   }
 

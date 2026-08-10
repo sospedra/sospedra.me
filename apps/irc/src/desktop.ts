@@ -1,3 +1,5 @@
+import { tapHaptic } from './haptics.ts'
+
 export const TASKBAR_HEIGHT = 34
 
 const TITLE_GRAB_MIN = 60
@@ -217,7 +219,10 @@ export const initDesktop = (parts: DesktopParts): void => {
   }
 
   parts.minimizeButton.addEventListener('click', () => hide('minimized'))
-  parts.maximizeButton.addEventListener('click', toggleMaximize)
+  parts.maximizeButton.addEventListener('click', () => {
+    tapHaptic()
+    toggleMaximize()
+  })
   parts.closeButton.addEventListener('click', () => hide('closed'))
   taskButton.addEventListener('click', () => {
     if (mode.kind === 'hidden') {

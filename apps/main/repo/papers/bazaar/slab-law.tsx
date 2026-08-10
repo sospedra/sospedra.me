@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import { useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import css from './slab-law.module.css'
 
 const RISE = 81
@@ -42,7 +43,10 @@ const SlabLaw: React.FC<{ label: string }> = (props) => {
         <span className={css.label}>{props.label}</span>
         <button
           className={css.snap}
-          onClick={() => setDeg(Number(LAW_DEG.toFixed(1)))}
+          onClick={() => {
+            tapHaptic()
+            setDeg(Number(LAW_DEG.toFixed(1)))
+          }}
           type='button'
         >
           snap to law

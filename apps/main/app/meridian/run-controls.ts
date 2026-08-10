@@ -1,6 +1,7 @@
 import type { Dispatch, RefObject } from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import type { ExternalStore } from 'services/external-store'
+import { tapHaptic } from 'services/haptics'
 import type { GeoGameAction, GeoGameState } from './game-state'
 import { currentQuestion } from './game-state'
 import type { GeoAudio } from './geo-audio'
@@ -137,6 +138,7 @@ export const useRunControls = ({
       dispatch({ type: 'START', startedAt: new Date().toISOString() })
     }
     audio.play('start')
+    tapHaptic()
   }, [audio])
 
   const toggleSound = useCallback(() => {

@@ -1,4 +1,5 @@
 import type React from 'react'
+import { tapHaptic } from 'services/haptics'
 import Link from 'services/link'
 import css from './channel-browser.module.css'
 import { type RealStation, STATIONS_VERIFIED_AT } from './stations.ts'
@@ -35,7 +36,10 @@ const ChannelRow: React.FC<{
         data-selected={selected}
         aria-pressed={selected}
         aria-label={`Tune to ${station.name}. ${station.tagline}.`}
-        onClick={() => tuner.tune(station)}
+        onClick={() => {
+          tapHaptic()
+          tuner.tune(station)
+        }}
       >
         <StationBadgeMark station={station} />
         <span className={css.channelText}>

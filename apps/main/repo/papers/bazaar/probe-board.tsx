@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import { useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import css from './probe-board.module.css'
 
 type Probe = {
@@ -31,7 +32,10 @@ const ProbeBoard: React.FC<{ label: string; probes: Probe[] }> = (props) => {
             aria-pressed={index === active}
             className={css.tab}
             key={entry.name}
-            onClick={() => setActive(index)}
+            onClick={() => {
+              tapHaptic()
+              setActive(index)
+            }}
             type='button'
           >
             <span className={css.tabIndex}>p{index + 1}</span>

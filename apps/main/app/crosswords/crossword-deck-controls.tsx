@@ -1,5 +1,6 @@
 import cn from 'clsx'
 import type { CSSProperties, ReactNode } from 'react'
+import { tapHaptic } from 'services/haptics'
 import css from './crossword-parameter-bank.module.css'
 import switches from './crossword-switch-bank.module.css'
 import tools from './crossword-toolbar.module.css'
@@ -113,7 +114,10 @@ export const DeckSwitch = ({
     data-active={active}
     aria-label={`${label}: ${active ? onLabel : offLabel}`}
     aria-pressed={active}
-    onClick={onClick}
+    onClick={() => {
+      tapHaptic()
+      onClick()
+    }}
   >
     <span className={switches.switchLegend}>{label}</span>
     <span
@@ -153,7 +157,10 @@ export const ToolbarButton = ({
     aria-haspopup={hasPopup ? 'dialog' : undefined}
     aria-pressed={active}
     disabled={disabled}
-    onClick={(event) => onClick(event.currentTarget)}
+    onClick={(event) => {
+      tapHaptic()
+      onClick(event.currentTarget)
+    }}
   >
     {children}
   </button>

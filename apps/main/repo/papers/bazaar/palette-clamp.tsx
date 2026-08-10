@@ -3,6 +3,7 @@
 import { minBy } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import css from './palette-clamp.module.css'
 
 const HEX_COLOR_PATTERN = /^#[0-9a-f]{6}$/i
@@ -249,7 +250,10 @@ const PaletteClamp: React.FC<{
           <button
             aria-pressed={mode === 'sampled'}
             className={css.mode}
-            onClick={() => pickMode('sampled')}
+            onClick={() => {
+              tapHaptic()
+              pickMode('sampled')
+            }}
             type='button'
           >
             sampled {before.length}
@@ -257,7 +261,10 @@ const PaletteClamp: React.FC<{
           <button
             aria-pressed={mode === 'clamped'}
             className={css.mode}
-            onClick={() => pickMode('clamped')}
+            onClick={() => {
+              tapHaptic()
+              pickMode('clamped')
+            }}
             type='button'
           >
             clamped {after.length}

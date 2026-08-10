@@ -1,6 +1,7 @@
 import type { Route } from 'next'
 import type React from 'react'
 import { useRef, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import Link from 'services/link'
 import type { AppId } from './desktop.ts'
 import css from './desktop-icons.module.css'
@@ -38,6 +39,7 @@ export const useDesktopShortcuts = () => {
         event.preventDefault()
         return
       }
+      tapHaptic()
       open?.()
     },
   })

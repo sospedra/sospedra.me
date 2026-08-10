@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { useGameInput } from 'services/hotkeys'
 import { GoBack, LinkBack } from 'services/link'
 import Row from 'services/row'
@@ -60,6 +61,7 @@ export default function SnakeView() {
     const next = !soundOff
     setMuted(next)
     setSoundOff(next)
+    tapHaptic()
     if (!next) play('key')
   }
 
@@ -79,10 +81,14 @@ export default function SnakeView() {
     match(spot)
       .with({ kind: 'dir' }, ({ dir }) => () => {
         play('key')
+        tapHaptic()
         steer(dir)
       })
       .with({ kind: 'select' }, () => select)
-      .with({ kind: 'key' }, () => () => play('key'))
+      .with({ kind: 'key' }, () => () => {
+        play('key')
+        tapHaptic()
+      })
       .exhaustive()
 
   const routeTouchPress = (event: React.PointerEvent<HTMLDivElement>) => {

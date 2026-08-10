@@ -1,4 +1,5 @@
 import type React from 'react'
+import { tapHaptic } from 'services/haptics'
 import {
   AIRBRUSH_SIZES,
   BRUSH_CELLS,
@@ -272,7 +273,11 @@ export const PaletteBar: React.FC<{
           className={css.swatch}
           style={{ background: color }}
           aria-label={`Color ${colorName(color)}`}
-          onClick={(event) => (event.altKey ? setBg(color) : setFg(color))}
+          onClick={(event) => {
+            tapHaptic()
+            if (event.altKey) setBg(color)
+            else setFg(color)
+          }}
           onContextMenu={(event) => {
             event.preventDefault()
             setBg(color)

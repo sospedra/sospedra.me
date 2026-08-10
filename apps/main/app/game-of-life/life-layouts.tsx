@@ -4,6 +4,7 @@ import {
   useEffect,
   useRef,
 } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { isKeyboardClick } from 'services/keyboard-click'
 import { GoBack, LinkBack } from 'services/link'
 import css from './cockpit.module.css'
@@ -203,6 +204,7 @@ export const LifeLayout = ({
 
     const kind = (declared?.dataset.lifeSfx ?? 'key') as LifeMechanicalSound
     playMechanicalSound(kind)
+    tapHaptic()
   }
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLElement>) => {

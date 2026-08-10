@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useStoreSelector } from 'services/external-store'
+import { tapHaptic } from 'services/haptics'
 import type { CimsStore } from './cims-store.ts'
 import { padDigits } from './easing.ts'
 import type { CimsEngine } from './engine.ts'
@@ -45,6 +46,7 @@ export const TourPanel = ({ store, names, engine, quiet }: TourPanelProps) => {
   const withClick = (action: (() => void) | undefined) => () => {
     if (!engine || !action) return
     engine.playClick()
+    tapHaptic()
     action()
   }
 

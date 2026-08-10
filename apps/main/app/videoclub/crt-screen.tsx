@@ -1,4 +1,5 @@
 import type { Ref } from 'react'
+import { tapHaptic } from 'services/haptics'
 import css from './crt-screen.module.css'
 import type { Tape } from './tapes'
 import { OSD_STATUS, type TvEvent, type TvState } from './tv-machine'
@@ -92,7 +93,10 @@ export function CrtScreen({
       <button
         type='button'
         className={css.screenAction}
-        onClick={toggle}
+        onClick={() => {
+          tapHaptic()
+          toggle()
+        }}
         aria-label={screenHint}
       />
     </div>

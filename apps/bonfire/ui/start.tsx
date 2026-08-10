@@ -1,3 +1,4 @@
+import { tapHaptic } from 'services/haptics'
 import type { PlanMode } from 'services/plans'
 
 const BUTTON =
@@ -12,7 +13,10 @@ export function Start(props: { onSelect: (mode: PlanMode) => void }) {
       <div className='flex w-full flex-col gap-3 sm:flex-row'>
         <button
           className={`${BUTTON} border-ember/60 bg-ember/10 text-firelight hover:border-ember hover:bg-ember/15`}
-          onClick={() => props.onSelect('long')}
+          onClick={() => {
+            tapHaptic()
+            props.onSelect('long')
+          }}
           type='button'
         >
           <span className='font-semibold'>Start long session</span>
@@ -20,7 +24,10 @@ export function Start(props: { onSelect: (mode: PlanMode) => void }) {
         </button>
         <button
           className={`${BUTTON} border-white/15 text-ash hover:border-white/35 hover:text-firelight`}
-          onClick={() => props.onSelect('short')}
+          onClick={() => {
+            tapHaptic()
+            props.onSelect('short')
+          }}
           type='button'
         >
           <span className='font-semibold'>Start short session</span>

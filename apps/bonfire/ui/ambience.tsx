@@ -1,6 +1,7 @@
 'use client'
 
 import { type RefObject, useEffect, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 
 const AMBIENCE_VOLUME = 0.5
 
@@ -28,6 +29,7 @@ export function AmbienceToggle(props: {
   const toggle = () => {
     const audio = props.audioRef.current
     if (!audio) return
+    tapHaptic()
     if (playing) {
       audio.pause()
       return

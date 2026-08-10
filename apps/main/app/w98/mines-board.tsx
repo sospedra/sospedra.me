@@ -1,4 +1,5 @@
 import type React from 'react'
+import { tapHaptic } from 'services/haptics'
 import type { Cell, MinesState } from './engine'
 import type { Fit, InputMode } from './mines-session'
 import css from './minesweeper.module.css'
@@ -50,7 +51,10 @@ const CellButton: React.FC<{
       data-variant={view.variant}
       data-adjacent={cell.revealed && !cell.mine ? cell.adjacent : undefined}
       aria-label={`Cell ${position}, ${view.label}. ${inputMode === 'flag' ? 'Flag' : 'Sweep'} mode selected.`}
-      onClick={() => act(index)}
+      onClick={() => {
+        if (inputMode === 'flag') tapHaptic()
+        act(index)
+      }}
       onContextMenu={(event) => {
         event.preventDefault()
         flag(index)

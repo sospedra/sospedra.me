@@ -1,4 +1,5 @@
 import { $password, $toast } from './elements.ts'
+import { pulseHaptic } from './haptics.ts'
 
 const TOAST_VISIBLE_MS = 3000
 
@@ -18,8 +19,12 @@ export function setupClipboard(): void {
     if ($password.value === '') return
 
     $password.select()
-    navigator.clipboard
-      .writeText($password.value)
-      .then(showToast, () => undefined)
+    navigator.clipboard.writeText($password.value).then(
+      () => {
+        pulseHaptic()
+        showToast()
+      },
+      () => undefined,
+    )
   })
 }

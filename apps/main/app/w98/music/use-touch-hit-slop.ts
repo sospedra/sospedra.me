@@ -6,6 +6,7 @@ import {
   useCallback,
   useRef,
 } from 'react'
+import { tapHaptic } from 'services/haptics'
 
 const MIN_TOUCH_TARGET = 44
 const TAP_MOVE_TOLERANCE = 10
@@ -155,6 +156,7 @@ export const useTouchHitSlop = (selector: string) => {
     releasePointer(event.currentTarget, event.pointerId)
     event.preventDefault()
     event.stopPropagation()
+    tapHaptic()
     session.target.click()
   }, [])
 

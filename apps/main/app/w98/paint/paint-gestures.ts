@@ -1,4 +1,5 @@
 import type React from 'react'
+import { tapHaptic } from 'services/haptics'
 import { match, P } from 'ts-pattern'
 import { floodFill } from './fill.ts'
 import {
@@ -128,7 +129,10 @@ export const createPointerGestures = ({
       const changed = mutateWhen((target) =>
         floodFill(target, at, inkColor(state, button)),
       )
-      if (changed) dispatch({ type: 'commit' })
+      if (changed) {
+        tapHaptic()
+        dispatch({ type: 'commit' })
+      }
       return
     }
     if (state.tool === 'pick') {
@@ -331,6 +335,7 @@ export const createPointerGestures = ({
     onPointerUp: (event) => {
       if (pointerIdRef.current !== event.pointerId) return
       pointerIdRef.current = null
+      tapHaptic()
       send({ type: 'up', at: bitmapPoint(event) })
     },
     onPointerCancel: (event) => {

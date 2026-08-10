@@ -1,5 +1,6 @@
 import type React from 'react'
 import { useState } from 'react'
+import { pulseHaptic, tapHaptic } from 'services/haptics'
 import { useInterval } from './interval'
 import css from './tap.module.css'
 
@@ -45,9 +46,11 @@ const Tap: React.FC<{
       aria-label={`${count} taps left to launch the override. Escape dismisses.`}
       onClick={() => {
         if (count > 1) {
+          tapHaptic()
           setCount(count - 1)
           return
         }
+        pulseHaptic()
         void launch()
       }}
     >

@@ -1,3 +1,4 @@
+import { tapHaptic } from './haptics.ts'
 import { KEY_ROWS, type KeyPress, pressFor } from './signal.ts'
 
 const WORD_LABELS: Record<string, string> = {
@@ -84,7 +85,9 @@ export const mountKeyboard = (
 
   $host.addEventListener('pointerdown', (event) => {
     const code = codeAt(event.target)
-    if (code) onPress(pressFor(code))
+    if (!code) return
+    tapHaptic()
+    onPress(pressFor(code))
   })
 
   $host.addEventListener('click', (event) => {

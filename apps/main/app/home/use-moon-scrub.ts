@@ -2,6 +2,7 @@
 
 import type { KeyboardEvent, PointerEvent } from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { DAY_MS } from 'services/time'
 import { SYNODIC_MONTH_MS } from './lunar-phase'
 
@@ -77,6 +78,7 @@ export const useMoonScrub = (motionAllowed: boolean, onTap?: () => void) => {
 
   const onPointerUp = (event: PointerEvent<HTMLElement>) => {
     const origin = dragRef.current
+    if (origin) tapHaptic()
     const tapped =
       origin !== null &&
       Math.hypot(event.clientX - origin.x, event.clientY - origin.y) <

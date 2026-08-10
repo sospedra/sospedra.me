@@ -3,6 +3,7 @@
 import { clamp, throttle } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import Fullscreen from 'services/markdown/fullscreen'
 import { prefersQuietFx } from 'services/theme'
 import css from './carousel.module.css'
@@ -177,7 +178,10 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
             aria-disabled={index === 0}
             aria-label='Previous shot'
             className={css.button}
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              tapHaptic()
+              navigate(-1)
+            }}
             type='button'
           >
             ↑
@@ -186,7 +190,10 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
             aria-disabled={index === props.items.length - 1}
             aria-label='Next shot'
             className={css.button}
-            onClick={() => navigate(1)}
+            onClick={() => {
+              tapHaptic()
+              navigate(1)
+            }}
             type='button'
           >
             ↓

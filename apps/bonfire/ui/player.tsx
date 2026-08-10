@@ -3,6 +3,7 @@
 import clsx from 'clsx'
 import Script from 'next/script'
 import { type RefObject, useEffect, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { playlistEmbedUrl, SOUNDCLOUD_WIDGET_SCRIPT } from 'services/soundcloud'
 import { usePlayback } from 'services/use-playback'
 import type { Session } from 'services/use-session'
@@ -71,7 +72,10 @@ export function Player(props: {
             <button
               aria-label='pause'
               className={CONTROL}
-              onClick={playback.pause}
+              onClick={() => {
+                tapHaptic()
+                playback.pause()
+              }}
               type='button'
             >
               <PauseIcon />
@@ -80,7 +84,10 @@ export function Player(props: {
             <button
               aria-label='play'
               className={CONTROL}
-              onClick={playback.play}
+              onClick={() => {
+                tapHaptic()
+                playback.play()
+              }}
               type='button'
             >
               <PlayIcon />

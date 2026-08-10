@@ -2,6 +2,7 @@
 
 import clsx from 'clsx'
 import { Fragment, useEffect, useRef, useState } from 'react'
+import { buzzHaptic } from 'services/haptics'
 import { PLANS, type PlanMode, type Segment } from 'services/plans'
 import { timelineAt } from 'services/session'
 import { toTime } from 'services/time'
@@ -35,7 +36,9 @@ export function Countdown(props: {
   const ending = timeline !== null && timeline.remaining <= PIPS_LEAD_MS
 
   useEffect(() => {
-    if (ending) pips.current?.play().catch(() => undefined)
+    if (!ending) return
+    pips.current?.play().catch(() => undefined)
+    buzzHaptic()
   }, [ending])
 
   useEffect(() => {

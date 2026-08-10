@@ -1,3 +1,4 @@
+import { pulseHaptic, tapHaptic } from './haptics.ts'
 import { mountKeyboard } from './keyboard.ts'
 import {
   captionFor,
@@ -61,6 +62,7 @@ const renderSoundSwitch = (): void => {
 renderSoundSwitch()
 
 $sound.addEventListener('click', (event) => {
+  tapHaptic()
   soundOn = !soundOn
   persistSoundSetting(soundOn)
   renderSoundSwitch()
@@ -83,6 +85,7 @@ const copyOnClick = ($input: HTMLInputElement) => {
     $input.select()
     try {
       await navigator.clipboard.writeText($input.value)
+      pulseHaptic()
       showToast()
     } catch {
       // clipboard denied: the selection stays, manual copy still works

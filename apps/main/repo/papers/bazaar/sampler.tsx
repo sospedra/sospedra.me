@@ -2,6 +2,7 @@
 
 import type React from 'react'
 import { audioContextClass, noiseSourceFor } from 'services/audio/kit'
+import { tapHaptic } from 'services/haptics'
 import css from './sampler.module.css'
 
 type ToneSpec = {
@@ -232,7 +233,10 @@ const Sampler: React.FC<{ label: string }> = (props) => (
         <button
           className={css.pad}
           key={sting.id}
-          onClick={() => void armed(sting.play)}
+          onClick={() => {
+            tapHaptic()
+            void armed(sting.play)
+          }}
           type='button'
         >
           <span className={css.stall}>{sting.id}</span>

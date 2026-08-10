@@ -1,6 +1,7 @@
 import { clamp } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import { isEditableTarget, letterKeysDisabled } from 'services/hotkeys'
 import type { Face, reduce, Turn } from './engine'
 import { type Orbit, type StickerHit, swipeMove } from './swipe.ts'
@@ -123,7 +124,10 @@ export const useOrbitAndTap = (dispatch: Dispatch) => {
       return 'orbit'
     }
     const move = swipeMove(orbit, drag.sticker, [deltaX, deltaY])
-    if (move) dispatch({ type: 'PLAY', move, now: Date.now() })
+    if (move) {
+      tapHaptic()
+      dispatch({ type: 'PLAY', move, now: Date.now() })
+    }
     return 'spent'
   }
 
@@ -164,6 +168,7 @@ export const useOrbitAndTap = (dispatch: Dispatch) => {
   const onPointerUp = () => {
     const drag = endDrag()
     if (drag?.mode !== 'pending' || !drag.sticker) return
+    tapHaptic()
     dispatch({
       type: 'PLAY',
       move: { face: drag.sticker.face, prime: drag.prime },

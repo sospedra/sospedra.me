@@ -3,6 +3,7 @@
 import { clamp } from 'es-toolkit'
 import type React from 'react'
 import { useRef, useState } from 'react'
+import { tapHaptic } from 'services/haptics'
 import css from './clip-lab.module.css'
 
 type Point = [number, number]
@@ -60,6 +61,7 @@ const ClipLab: React.FC<{
   }
 
   const endDrag = () => {
+    if (dragIndex.current !== null) tapHaptic()
     dragIndex.current = null
   }
 
@@ -81,7 +83,10 @@ const ClipLab: React.FC<{
         <span className={css.label}>{props.label}</span>
         <button
           className={css.reset}
-          onClick={() => setPoints(props.points)}
+          onClick={() => {
+            tapHaptic()
+            setPoints(props.points)
+          }}
           type='button'
         >
           reset

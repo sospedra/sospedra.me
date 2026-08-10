@@ -1,6 +1,7 @@
 import { clamp } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { buzzHaptic, pulseHaptic, tapHaptic } from 'services/haptics'
 import { readLocal, writeLocal } from 'services/storage'
 import type { Level, MinesState, MinesStatus } from './engine'
 import type { SweepAudio } from './sweep-audio'
@@ -79,12 +80,21 @@ export const useSweepCues = (state: MinesState, audio: SweepAudio) => {
     const revealed = state.cells.filter((cell) => cell.revealed).length
     const grew = revealed > revealedRef.current
     revealedRef.current = revealed
-    if (grew && state.status === 'playing') audio.sweep()
+    if (grew && state.status === 'playing') {
+      audio.sweep()
+      tapHaptic()
+    }
   }, [state, audio])
 
   useEffect(() => {
-    if (state.status === 'lost') audio.boom()
-    if (state.status === 'won') audio.win()
+    if (state.status === 'lost') {
+      audio.boom()
+      buzzHaptic()
+    }
+    if (state.status === 'won') {
+      audio.win()
+      pulseHaptic()
+    }
   }, [state.status, audio])
 }
 

@@ -1,3 +1,4 @@
+import { tapHaptic } from 'services/haptics'
 import { ActionKey } from './action-key'
 import controlDeck from './control-deck.module.css'
 import type { LifeState } from './engine'
@@ -55,7 +56,10 @@ export const TransportControls = ({
                 aria-checked={running}
                 aria-label={running ? 'Stop simulation' : 'Start simulation'}
                 disabled={state.cells.size === 0}
-                onChange={toggleRunning}
+                onChange={() => {
+                  tapHaptic()
+                  toggleRunning()
+                }}
               />
               <label
                 htmlFor='life-run-switch'

@@ -1,4 +1,5 @@
 import type React from 'react'
+import { tapHaptic } from 'services/haptics'
 import type { Point } from './geometry.ts'
 import type { Nub, PaintEvent, PaintState, Size } from './state.ts'
 
@@ -70,6 +71,7 @@ export const createNubBindings = ({
     onPointerUp: (event) => {
       if (pointerIdRef.current !== event.pointerId) return
       pointerIdRef.current = null
+      tapHaptic()
       send({ type: 'up', at: stagePoint(event) })
     },
     onPointerCancel: (event) => {

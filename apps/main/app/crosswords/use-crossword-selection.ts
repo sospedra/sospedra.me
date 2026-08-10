@@ -5,6 +5,7 @@ import {
   useEffect,
   useRef,
 } from 'react'
+import { tapHaptic } from 'services/haptics'
 import type { CrosswordEntry } from './crossword-data'
 import type { CrosswordAction, CrosswordState } from './crossword-engine'
 import { firstOpenCell } from './crossword-entries'
@@ -137,6 +138,7 @@ export const useCrosswordSelection = ({
     const next =
       (current + delta + orderedEntries.length) % orderedEntries.length
     shiftCarriage()
+    tapHaptic()
     chooseEntry(orderedEntries[next], keepNativeKeyboard)
   }
 

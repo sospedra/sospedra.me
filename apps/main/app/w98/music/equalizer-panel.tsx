@@ -1,5 +1,6 @@
 import { type PointerEvent as ReactPointerEvent, useRef } from 'react'
 import { cssVars } from 'services/css-vars'
+import { tapHaptic } from 'services/haptics'
 import { EQ_FREQUENCIES, formatFrequency } from './equalizer'
 import equalizerCss from './equalizer-panel.module.css'
 import css from './music.module.css'
@@ -61,6 +62,7 @@ export default function EqualizerPanel({
       Math.max(0, (event.clientX - rect.left) / rect.width),
     )
     const index = Math.floor(ratio * EQ_FREQUENCIES.length)
+    tapHaptic()
     try {
       event.currentTarget.setPointerCapture(event.pointerId)
     } catch {
