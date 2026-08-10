@@ -18,6 +18,7 @@ type PlaybackState = {
 }
 
 type PlaybackEvent =
+  | { type: 'cue'; sound: SoundCloudSound }
   | { type: 'play'; sound: SoundCloudSound }
   | { type: 'pause' }
   | { type: 'progress'; position: number }
@@ -41,6 +42,7 @@ const reducePlayback = (
   event: PlaybackEvent,
 ): PlaybackState => {
   switch (event.type) {
+    case 'cue':
     case 'play': {
       const duration = event.sound.duration ?? 0
       return {
@@ -48,7 +50,7 @@ const reducePlayback = (
         songTitle: songTitle(event.sound),
         duration: toTime(duration),
         progressEnd: duration,
-        isPlaying: true,
+        isPlaying: event.type === 'play' || state.isPlaying,
       }
     }
     case 'pause': {
@@ -96,6 +98,7 @@ export const usePlayback = (props: {
     }
 
     widget.bind(events.READY, () => {
+      widget.getCurrentSound((sound) => dispatch({ type: 'cue', sound }))
       widget.bind(events.PLAY, onPlay)
       widget.bind(events.PAUSE, () => dispatch({ type: 'pause' }))
       widget.bind(events.PLAY_PROGRESS, onProgress)

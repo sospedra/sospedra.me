@@ -1,111 +1,156 @@
 'use client'
 
-import { useState } from 'react'
+import { type MouseEvent, useEffect, useRef, useState } from 'react'
 import { ExternalLink } from 'ui/external-link'
+import { CloseIcon, SlidersIcon } from 'ui/icons'
 import { PlaylistForm } from 'ui/playlist-form'
+
+const HEADING = 'mt-8 mb-2 font-display text-xl'
+const SECTION = 'space-y-2 text-sm leading-relaxed text-ash'
 
 export function Settings() {
   const [open, setOpen] = useState(false)
-  const toggle = () => setOpen((visible) => !visible)
+  const dialogRef = useRef<HTMLDialogElement>(null)
+
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) return
+    if (open && !dialog.open) dialog.showModal()
+    if (!open && dialog.open) dialog.close()
+  }, [open])
+
+  const closeOnBackdrop = (event: MouseEvent<HTMLDialogElement>) => {
+    if (event.target === dialogRef.current) setOpen(false)
+  }
 
   return (
-    <div>
+    <>
       <button
         aria-label='settings'
-        className='absolute top-0 right-0 p-4'
-        onClick={toggle}
+        className='rise-in fixed top-3 right-3 z-10 grid size-11 place-items-center rounded-full text-ash transition duration-150 ease-out-strong hover:bg-white/5 hover:text-firelight active:scale-95'
+        onClick={() => setOpen(true)}
         type='button'
       >
-        ⚙️
+        <SlidersIcon />
       </button>
 
-      {open && (
-        <aside className='fixed inset-0 z-10 flex items-center justify-center p-4 bg-black/70 lg:p-16'>
-          <button
-            aria-label='close settings'
-            className='absolute inset-0'
-            onClick={toggle}
-            type='button'
-          />
-          <div className='relative w-full max-w-lg max-h-full p-2 overflow-y-auto bg-black border-2 border-white rounded md:p-6'>
-            <button
-              aria-label='close settings'
-              className='absolute top-0 right-0 pt-3 pr-4'
-              onClick={toggle}
-              type='button'
-            >
-              𝗫
-            </button>
-            <h1 className='text-6xl font-bold'>Bonfire</h1>
-            <h2 className='pb-6 text-2xl'>The working room</h2>
-            <h3 className='py-4 text-xl font-bold'>How it works?</h3>
-            <p className='py-1'>
-              Bonfire merges music, ambience sounds and a extreme{' '}
+      {/* biome-ignore lint/a11y/useKeyWithClickEvents: native dialog closes on Escape via onClose */}
+      <dialog
+        aria-labelledby='settings-title'
+        className='dialog relative m-auto max-h-[85dvh] w-[calc(100%-2rem)] max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-night/85 p-0 text-firelight shadow-2xl shadow-black/60 backdrop-blur-2xl'
+        onClick={closeOnBackdrop}
+        onClose={() => setOpen(false)}
+        ref={dialogRef}
+      >
+        <button
+          aria-label='close settings'
+          className='absolute top-3 right-3 z-10 grid size-10 place-items-center rounded-full text-ash transition duration-150 ease-out-strong hover:bg-white/5 hover:text-firelight active:scale-95'
+          onClick={() => setOpen(false)}
+          type='button'
+        >
+          <CloseIcon />
+        </button>
+
+        <div className='max-h-[inherit] overflow-y-auto p-6 md:p-8'>
+          <h2
+            className='font-display text-4xl tracking-tight italic'
+            id='settings-title'
+          >
+            Bonfire
+          </h2>
+          <p className='mt-1 text-[11px] tracking-[0.3em] text-ash uppercase'>
+            the working room
+          </p>
+
+          <h3 className={HEADING}>How it works</h3>
+          <div className={SECTION}>
+            <p>
+              Bonfire merges music, ambience sounds and an extreme{' '}
               <ExternalLink
-                className='font-bold'
+                className='text-ember'
                 href='https://en.wikipedia.org/wiki/Pomodoro_Technique'
               >
                 Pomodoro technique
               </ExternalLink>{' '}
               to help you boost your performance.
             </p>
-            <p className='py-1'>
+            <p>
               Here you cannot stop, skip or pause stages. Instead, you have to{' '}
-              <b>commit to a fixed workload</b>.
+              <b className='text-firelight'>commit to a fixed workload</b>.
             </p>
-            <p className='py-1'>
+            <p>
               Light your bonfire and{' '}
-              <b>screen share on a videocall or stream</b>! The more the
-              merrier.
+              <b className='text-firelight'>
+                screen share on a videocall or stream
+              </b>
+              ! The more the merrier.
             </p>
-            <h3 className='py-4 text-xl font-bold'>Settings</h3>
-            <PlaylistForm />
-            <h3 className='pb-4 text-xl font-bold'>Credits</h3>
-            <ul>
-              <li>
-                Video by{' '}
-                <ExternalLink href='https://www.youtube.com/watch?v=LYF2VzCN0os'>
-                  Nocturnal Network
-                </ExternalLink>
-              </li>
-              <li>
-                Bonfire audio by{' '}
-                <ExternalLink href='https://freesound.org/people/CaganCelik/sounds/433783/'>
-                  Cagan Celik
-                </ExternalLink>
-              </li>
-              <li>
-                Pips audio by{' '}
-                <ExternalLink href='https://freesound.org/people/Felfa/sounds/188826/'>
-                  Felfa
-                </ExternalLink>
-              </li>
-              <li>
-                Default playlist info at{' '}
-                <ExternalLink href='https://soundcloud.com/sospedra/sets/bonfire'>
-                  SoundCloud
-                </ExternalLink>
-              </li>
-            </ul>
-            <h3 className='py-4 text-xl font-bold'>Privacy</h3>
-            <p className='py-1'>
-              No tracking of any kind. No cookies. No spy. No fingerprints.
-            </p>
-            <p className='py-1'>
+          </div>
+
+          <h3 className={HEADING}>Playlist</h3>
+          <PlaylistForm />
+
+          <h3 className={HEADING}>Credits</h3>
+          <ul className='space-y-1 text-sm text-ash'>
+            <li>
+              Video by{' '}
+              <ExternalLink
+                className='text-ember'
+                href='https://www.youtube.com/watch?v=LYF2VzCN0os'
+              >
+                Nocturnal Network
+              </ExternalLink>
+            </li>
+            <li>
+              Bonfire audio by{' '}
+              <ExternalLink
+                className='text-ember'
+                href='https://freesound.org/people/CaganCelik/sounds/433783/'
+              >
+                Cagan Celik
+              </ExternalLink>
+            </li>
+            <li>
+              Pips audio by{' '}
+              <ExternalLink
+                className='text-ember'
+                href='https://freesound.org/people/Felfa/sounds/188826/'
+              >
+                Felfa
+              </ExternalLink>
+            </li>
+            <li>
+              Default playlist info at{' '}
+              <ExternalLink
+                className='text-ember'
+                href='https://soundcloud.com/sospedra/sets/bonfire'
+              >
+                SoundCloud
+              </ExternalLink>
+            </li>
+          </ul>
+
+          <h3 className={HEADING}>Privacy</h3>
+          <div className={SECTION}>
+            <p>No tracking of any kind. No cookies. No spy. No fingerprints.</p>
+            <p>
               Anything you stream through this website you do under your own
               responsibility. Bear in mind if you stream some music through
               different platforms, that you might incur a copyright felony.
             </p>
-            <p className='py-1'>
+            <p>
               Free open-source project. Source code available on{' '}
-              <ExternalLink href='https://github.com/sospedra/bonfire'>
+              <ExternalLink
+                className='text-ember'
+                href='https://github.com/sospedra/bonfire'
+              >
                 GitHub
               </ExternalLink>
               .
             </p>
           </div>
-        </aside>
-      )}
-    </div>
+        </div>
+      </dialog>
+    </>
   )
 }

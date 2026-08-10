@@ -2,7 +2,7 @@
 
 import clsx from 'clsx'
 import { Fragment, useRef, useState } from 'react'
-import { PLANS, type PlanMode } from 'services/plans'
+import { PLANS, type PlanMode, type Segment } from 'services/plans'
 import { toTime } from 'services/time'
 import { useInterval } from 'services/use-interval'
 import css from './countdown.module.css'
@@ -10,10 +10,19 @@ import css from './countdown.module.css'
 const TICK_MS = 1000
 const PIPS_LEAD_MS = 5000
 
+const phaseLabel = (plan: Segment[], index: number): string => {
+  const segment = plan[index]
+  if (segment.type === 'rest') return 'rest'
+  const workDone = plan.slice(0, index + 1).filter((s) => s.type === 'work')
+  const workTotal = plan.filter((s) => s.type === 'work')
+  return `work ${workDone.length} of ${workTotal.length}`
+}
+
 export function Countdown(props: { mode: PlanMode; done: () => void }) {
   const pips = useRef<HTMLAudioElement>(null)
   const plan = PLANS[props.mode]
   const [status, setStatus] = useState({ index: 0, countdown: plan[0].time })
+  const ending = status.countdown <= PIPS_LEAD_MS
 
   useInterval(() => {
     if (status.countdown > 0) {
@@ -39,29 +48,55 @@ export function Countdown(props: { mode: PlanMode; done: () => void }) {
         <source src='/pips.aac' type='audio/aac' />
       </audio>
 
-      <p className='font-mono text-center text-8xl'>
-        {toTime(status.countdown)}
+      <p
+        className={clsx(
+          'text-center text-[11px] tracking-[0.3em] uppercase',
+          plan[status.index].type === 'work' ? 'text-ember' : 'text-ash',
+        )}
+      >
+        {phaseLabel(plan, status.index)}
       </p>
-      <div className='flex flex-row items-center justify-between w-full mt-4'>
+      <p
+        className={clsx(
+          'text-center font-display text-8xl font-light tracking-tight',
+          css.digits,
+          ending && css.digitsEnding,
+        )}
+      >
+        {toTime(status.countdown)
+          .split('')
+          .map((char, slot) => (
+            <span
+              className={
+                char === ':' ? undefined : 'inline-block w-[1ch] text-center'
+              }
+              // biome-ignore lint/suspicious/noArrayIndexKey: slots are positional by design
+              key={slot}
+            >
+              {char}
+            </span>
+          ))}
+      </p>
+      <div className='mt-4 flex w-full flex-row items-center justify-between'>
         {plan.map((segment, position) => (
           <Fragment key={segment.id}>
             <div
               className={clsx(
-                'inline-block w-2 h-2 border-2 border-solid',
+                'inline-block h-2 w-2 border-2 border-solid',
                 css.bullet,
                 segment.type === 'work'
                   ? 'rotate-45 skew-x-6 skew-y-6'
                   : 'rounded-full',
                 position <= status.index
-                  ? 'bg-white border-white'
-                  : 'border-gray-500',
+                  ? 'border-ember bg-ember'
+                  : 'border-white/25',
                 position === status.index && css.bulletActive,
               )}
             />
             {position !== plan.length - 1 && (
               <div
                 className={clsx(
-                  'relative inline-block w-full mx-1 bg-gray-500 rounded',
+                  'relative mx-1 inline-block w-full rounded bg-white/15',
                   css.dash,
                   position < status.index && css.dashDone,
                 )}

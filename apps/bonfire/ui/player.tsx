@@ -5,7 +5,11 @@ import Script from 'next/script'
 import { type RefObject, useState } from 'react'
 import { playlistEmbedUrl, SOUNDCLOUD_WIDGET_SCRIPT } from 'services/soundcloud'
 import { usePlayback } from 'services/use-playback'
+import { PauseIcon, PlayIcon } from 'ui/icons'
 import css from './player.module.css'
+
+const CONTROL =
+  'grid size-10 shrink-0 place-items-center rounded-full border border-white/15 text-firelight transition duration-150 ease-out-strong hover:border-ember hover:text-ember active:scale-95'
 
 export function Player(props: {
   ambience: RefObject<HTMLAudioElement | null>
@@ -34,22 +38,39 @@ export function Player(props: {
         />
       </div>
 
-      <div className='flex flex-row items-center justify-between'>
-        <p className='text-ellipsis'>{playback.songTitle}</p>
+      <div className='flex flex-row items-center gap-3'>
+        <p
+          className={clsx(
+            'min-w-0 flex-1 truncate text-sm',
+            playback.songTitle ? 'text-firelight' : 'text-ash italic',
+          )}
+        >
+          {playback.songTitle || 'gathering wood…'}
+        </p>
         {playback.isPlaying ? (
-          <button aria-label='pause' onClick={playback.pause} type='button'>
-            ⏸
+          <button
+            aria-label='pause'
+            className={CONTROL}
+            onClick={playback.pause}
+            type='button'
+          >
+            <PauseIcon />
           </button>
         ) : (
-          <button aria-label='play' onClick={playback.play} type='button'>
-            ▶️
+          <button
+            aria-label='play'
+            className={CONTROL}
+            onClick={playback.play}
+            type='button'
+          >
+            <PlayIcon />
           </button>
         )}
       </div>
-      <div className='flex flex-row items-center justify-between font-mono text-xs'>
+      <div className='mt-2 flex flex-row items-center gap-2 font-mono text-[11px] text-ash'>
         <span>{playback.time}</span>
         <progress
-          className={clsx('flex flex-1 h-1 mx-2', css.progress)}
+          className={clsx('h-1.5 flex-1', css.progress)}
           max={playback.progressEnd}
           value={playback.progress}
         />

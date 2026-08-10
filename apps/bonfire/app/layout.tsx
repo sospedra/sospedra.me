@@ -1,7 +1,15 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
+import { Fraunces } from 'next/font/google'
 import Script from 'next/script'
 import type { ReactNode } from 'react'
 import './globals.css'
+
+const fraunces = Fraunces({
+  axes: ['opsz'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-fraunces',
+})
 
 const TITLE = 'Bonfire | The working room'
 const DESCRIPTION =
@@ -31,10 +39,14 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport: Viewport = {
+  themeColor: '#0d0805',
+}
+
 export default function RootLayout(props: { children: ReactNode }) {
   return (
-    <html lang='en'>
-      <body>
+    <html className={fraunces.variable} lang='en'>
+      <body className='antialiased'>
         {props.children}
         <Script
           data-goatcounter='https://sospedra.goatcounter.com/count'

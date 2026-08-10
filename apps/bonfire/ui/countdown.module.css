@@ -1,9 +1,24 @@
+.digits {
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 40px rgb(255 158 69 / 15%);
+  transition:
+    color 900ms ease,
+    text-shadow 900ms ease;
+}
+
+.digitsEnding {
+  color: var(--color-ember);
+  text-shadow:
+    0 0 18px rgb(255 158 69 / 45%),
+    0 0 64px rgb(255 158 69 / 25%);
+}
+
 .bullet {
   min-width: 0.5rem;
 }
 
 .bulletActive {
-  box-shadow: 0 0 0 rgb(255 255 255 / 40%);
+  box-shadow: 0 0 0 rgb(255 158 69 / 50%);
   animation: pulse 2s infinite;
 }
 
@@ -18,10 +33,11 @@
   width: 100%;
   height: 100%;
   border-radius: 0.25rem;
-  background-color: white;
+  background: linear-gradient(90deg, #d97a2b, var(--color-ember));
+  box-shadow: 0 0 12px rgb(255 158 69 / 35%);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 700ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 700ms var(--ease-in-out-strong);
 }
 
 .dashDone::before {
@@ -30,14 +46,25 @@
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgb(255 255 255 / 40%);
+    box-shadow: 0 0 0 0 rgb(255 158 69 / 50%);
   }
 
   70% {
-    box-shadow: 0 0 0 10px rgb(255 255 255 / 0%);
+    box-shadow: 0 0 0 10px rgb(255 158 69 / 0%);
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgb(255 255 255 / 0%);
+    box-shadow: 0 0 0 0 rgb(255 158 69 / 0%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bulletActive {
+    animation: none;
+    box-shadow: 0 0 10px rgb(255 158 69 / 50%);
+  }
+
+  .dash::before {
+    transition: none;
   }
 }

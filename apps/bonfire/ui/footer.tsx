@@ -4,7 +4,7 @@ import css from './footer.module.css'
 
 export function Footer() {
   return (
-    <footer className='flex text-xs italic text-center'>
+    <footer className='flex text-center text-xs text-ash italic'>
       <p>
         hand-crafted with{' '}
         <span aria-label='purple heart' className='mr-1' role='img'>
