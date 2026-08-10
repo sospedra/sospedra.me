@@ -49,35 +49,43 @@ export const expectedStreaks = (answers: readonly AnswerResult[]) => {
   return { currentStreak, bestStreak }
 }
 
+type ChoiceQuestion = Exclude<Question, { type: 'map' }>
+type ChoiceAnswer = Extract<AnswerResult, { kind: 'choice' }>
+
+const submittedChoiceMatches = (
+  answer: ChoiceAnswer,
+  question: ChoiceQuestion,
+) => {
+  const hasSubmission =
+    answer.selectedOptionId !== null || Boolean(answer.submittedText)
+  if (!hasSubmission) return false
+  const selectionKnown =
+    answer.selectedOptionId === null ||
+    question.options.some((option) => option.id === answer.selectedOptionId)
+  if (!selectionKnown) return false
+  return (
+    answer.correct === (answer.selectedOptionId === question.correctOptionId)
+  )
+}
+
 const choiceAnswerMatches = (
   answer: AnswerResult,
-  question: Exclude<Question, { type: 'map' }>,
+  question: ChoiceQuestion,
 ) => {
   if (answer.kind !== 'choice') return false
-  const correct = answer.selectedOptionId === question.correctOptionId
+  if (answer.correctOptionId !== question.correctOptionId) return false
   if (answer.skipped) {
-    if (
-      answer.selectedOptionId !== null ||
-      answer.correct ||
-      answer.expired ||
-      answer.score !== 0
-    ) {
-      return false
-    }
-  } else if (answer.expired) {
-    if (answer.selectedOptionId !== null || answer.correct) return false
-  } else if (
-    (answer.selectedOptionId === null && !answer.submittedText) ||
-    (answer.selectedOptionId !== null &&
-      !question.options.some(
-        (option) => option.id === answer.selectedOptionId,
-      )) ||
-    answer.correct !== correct
-  ) {
-    return false
+    return (
+      answer.selectedOptionId === null &&
+      !answer.correct &&
+      !answer.expired &&
+      answer.score === 0
+    )
   }
-
-  return answer.correctOptionId === question.correctOptionId
+  if (answer.expired) {
+    return answer.selectedOptionId === null && !answer.correct
+  }
+  return submittedChoiceMatches(answer, question)
 }
 
 const pinAnswerMatches = (
@@ -169,31 +177,33 @@ const scoreMatches = (answer: AnswerResult, rules?: GeoChallengeRules) => {
   )
 }
 
-export const answerMatchesQuestion = (
+const answerIdentityMatches = (
   answer: AnswerResult,
   question: Question,
   round: Round,
-  rules?: GeoChallengeRules,
-) => {
+) =>
+  answer.questionId === question.id &&
+  answer.roundId === round.id &&
+  answer.roundType === round.type &&
+  answer.difficulty === question.difficulty &&
+  answer.questionLimitMs === round.questionLimitMs
+
+const answerTimingMatches = (answer: AnswerResult, round: Round) => {
+  const roundLimitMs = roundTimeLimitMs(round)
+  if (answer.elapsedMs > roundLimitMs) return false
   if (
-    answer.questionId !== question.id ||
-    answer.roundId !== round.id ||
-    answer.roundType !== round.type ||
-    answer.difficulty !== question.difficulty ||
-    answer.questionLimitMs !== round.questionLimitMs ||
-    answer.elapsedMs > roundTimeLimitMs(round) ||
-    (answer.roundElapsedMs !== undefined &&
-      (answer.roundElapsedMs > roundTimeLimitMs(round) ||
-        answer.roundElapsedMs < answer.elapsedMs)) ||
+    answer.roundElapsedMs !== undefined &&
+    (answer.roundElapsedMs > roundLimitMs ||
+      answer.roundElapsedMs < answer.elapsedMs)
+  ) {
+    return false
+  }
+  if (
     !nearlyEqual(
       Math.min(answer.elapsedMs, round.questionLimitMs) + answer.remainingMs,
       round.questionLimitMs,
       0.001,
-    ) ||
-    (answer.expired && (answer.correct || answer.score !== 0)) ||
-    (answer.skipped &&
-      (answer.correct || answer.expired || answer.score !== 0)) ||
-    !scoreMatches(answer, rules)
+    )
   ) {
     return false
   }
@@ -203,7 +213,30 @@ export const answerMatchesQuestion = (
   ) {
     return false
   }
+  return true
+}
 
+const answerFlagsMatch = (answer: AnswerResult) => {
+  if (answer.expired && (answer.correct || answer.score !== 0)) return false
+  if (
+    answer.skipped &&
+    (answer.correct || answer.expired || answer.score !== 0)
+  ) {
+    return false
+  }
+  return true
+}
+
+export const answerMatchesQuestion = (
+  answer: AnswerResult,
+  question: Question,
+  round: Round,
+  rules?: GeoChallengeRules,
+) => {
+  if (!answerIdentityMatches(answer, question, round)) return false
+  if (!answerTimingMatches(answer, round)) return false
+  if (!answerFlagsMatch(answer)) return false
+  if (!scoreMatches(answer, rules)) return false
   if (question.type !== 'map') return choiceAnswerMatches(answer, question)
   return pinAnswerMatches(answer, question, rules)
 }

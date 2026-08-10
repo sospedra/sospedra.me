@@ -143,6 +143,15 @@ const CUES: Record<GeoSound, readonly Note[]> = {
   ],
 }
 
+const MASTER_BUS_SETTINGS = {
+  gain: MASTER_GAIN,
+  threshold: -12,
+  knee: 5,
+  ratio: 8,
+  attack: 0.002,
+  release: 0.1,
+}
+
 export type GeoAudio = ReturnType<typeof createGeoAudio>
 
 export const createGeoAudio = () => {
@@ -151,6 +160,14 @@ export const createGeoAudio = () => {
   let unlockPromise: Promise<AudioGraph | null> | null = null
   let enabled = true
 
+  const ensureMasterBus = (
+    AudioContextClass: NonNullable<ReturnType<typeof audioContextClass>>,
+  ) => {
+    if (context && context.state !== 'closed') return
+    context = new AudioContextClass()
+    output = createMasterBus(context, MASTER_BUS_SETTINGS)
+  }
+
   const createGraph = (): AudioGraph | null => {
     if (!enabled || typeof window === 'undefined') return null
 
@@ -158,18 +175,8 @@ export const createGeoAudio = () => {
     if (!AudioContextClass) return null
 
     try {
-      if (!context || context.state === 'closed') {
-        context = new AudioContextClass()
-        output = createMasterBus(context, {
-          gain: MASTER_GAIN,
-          threshold: -12,
-          knee: 5,
-          ratio: 8,
-          attack: 0.002,
-          release: 0.1,
-        })
-      }
-      return output ? { context, output } : null
+      ensureMasterBus(AudioContextClass)
+      return context && output ? { context, output } : null
     } catch {
       return null
     }

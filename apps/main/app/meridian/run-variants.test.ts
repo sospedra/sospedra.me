@@ -54,6 +54,13 @@ const countrySetKey = (
     .sort()
     .join('|')
 
+const rampDifficulty = (index: number): Difficulty => {
+  if (index < 8) return 1
+  if (index < 12) return 2
+  if (index < 20) return 3
+  return 4
+}
+
 const expandedChallenge = (countryCount = 80): DailyGeoChallenge => ({
   ...structuredClone(challenge),
   id: 'expanded-country-pool',
@@ -64,14 +71,12 @@ const expandedChallenge = (countryCount = 80): DailyGeoChallenge => ({
         round.questions[index % round.questions.length],
       ) as Question
       const countryCode = `X${String(index).padStart(3, '0')}`
-      const difficulty: Difficulty =
-        index < 8 ? 1 : index < 12 ? 2 : index < 20 ? 3 : 4
 
       return {
         ...template,
         id: `${round.id}-${countryCode}`,
         countryCode,
-        difficulty,
+        difficulty: rampDifficulty(index),
       }
     }),
   })),

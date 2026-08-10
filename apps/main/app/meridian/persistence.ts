@@ -72,6 +72,19 @@ export const saveGeoStats = (
   stats: PersistedGeoStats,
 ) => writeJson(storage, GEO_STATS_STORAGE_KEY, stats)
 
+const ROUND_COMPLETE_PHASES = new Set<GeoGameState['phase']>([
+  'round-summary',
+  'between-rounds-paused',
+  'completed',
+])
+
+const feedbackIsPending = (state: GeoGameState): boolean => {
+  if (state.phase === 'feedback') return true
+  const paused =
+    state.phase === 'visibility-paused' || state.phase === 'countdown'
+  return paused && state.visibilityReturnPhase === 'feedback'
+}
+
 export const serializeGeoRun = (
   state: GeoGameState,
 ): PersistedGeoRun | null => {
@@ -80,15 +93,8 @@ export const serializeGeoRun = (
   const reachedRoundDeadline = Boolean(
     round && state.roundElapsedMs >= roundTimeLimitMs(round),
   )
-  const roundCompleteByPhase =
-    state.phase === 'round-summary' ||
-    state.phase === 'between-rounds-paused' ||
-    state.phase === 'completed'
-  const roundComplete = roundCompleteByPhase || reachedRoundDeadline
-  const feedbackPending =
-    state.phase === 'feedback' ||
-    ((state.phase === 'visibility-paused' || state.phase === 'countdown') &&
-      state.visibilityReturnPhase === 'feedback')
+  const roundComplete =
+    ROUND_COMPLETE_PHASES.has(state.phase) || reachedRoundDeadline
   const answeredInRound = round
     ? state.answers.filter((answer) => answer.roundId === round.id).length
     : 0
@@ -111,7 +117,7 @@ export const serializeGeoRun = (
     questionElapsedMs: state.questionElapsedMs,
     roundElapsedMs: state.roundElapsedMs,
     roundComplete,
-    feedbackPending: !roundComplete && feedbackPending,
+    feedbackPending: !roundComplete && feedbackIsPending(state),
   }
 }
 

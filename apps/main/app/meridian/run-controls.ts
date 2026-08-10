@@ -7,6 +7,92 @@ import type { GeoAudio } from './geo-audio'
 import type { GeoMessages } from './geo-messages'
 import type { GeoSettings } from './model'
 
+type RunKeyControls = {
+  dispatch: Dispatch<GeoGameAction>
+  openOverlay: (
+    overlay: 'settings' | 'help',
+    opener: HTMLButtonElement | null,
+  ) => void
+  openerRef: RefObject<HTMLElement | null>
+  passQuestion: () => void
+  start: () => void
+  stateRef: RefObject<GeoGameState>
+  toggleSound: () => void
+}
+
+const targetClosest = (event: KeyboardEvent, selector: string): boolean => {
+  const element = event.target instanceof Element ? event.target : null
+  return Boolean(element?.closest(selector))
+}
+
+const shouldIgnoreKey = (event: KeyboardEvent): boolean =>
+  event.defaultPrevented ||
+  event.isComposing ||
+  event.altKey ||
+  event.ctrlKey ||
+  event.metaKey ||
+  targetClosest(
+    event,
+    'input, textarea, select, [contenteditable], [role="textbox"]',
+  )
+
+const handleOverlayKey = (
+  event: KeyboardEvent,
+  controls: RunKeyControls,
+): void => {
+  if (event.key !== 'Escape') return
+  event.preventDefault()
+  controls.dispatch({ type: 'CLOSE_OVERLAY' })
+  window.requestAnimationFrame(() => controls.openerRef.current?.focus())
+}
+
+const handlePhaseKey = (
+  event: KeyboardEvent,
+  controls: RunKeyControls,
+): void => {
+  const current = controls.stateRef.current
+  if (current.phase === 'idle' && event.key === 'Enter') {
+    if (targetClosest(event, 'button, a, input, select')) return
+    event.preventDefault()
+    controls.start()
+    return
+  }
+  if (current.phase === 'visibility-paused' && event.key === 'Enter') {
+    event.preventDefault()
+    controls.dispatch({ type: 'RESUME_FROM_VISIBILITY' })
+    return
+  }
+  if (current.phase !== 'question') return
+  if (event.key.toLowerCase() === 'p') {
+    event.preventDefault()
+    controls.passQuestion()
+  }
+}
+
+const handleRunKey = (event: KeyboardEvent, controls: RunKeyControls): void => {
+  if (shouldIgnoreKey(event)) return
+  if (event.key.toLowerCase() === 'm') {
+    event.preventDefault()
+    controls.toggleSound()
+    return
+  }
+  if (controls.stateRef.current.overlay) {
+    handleOverlayKey(event, controls)
+    return
+  }
+  const helpAllowed =
+    stateAllowsHelp(controls.stateRef.current) && event.key === '?'
+  if (helpAllowed) {
+    event.preventDefault()
+    controls.openOverlay('help', null)
+    return
+  }
+  handlePhaseKey(event, controls)
+}
+
+const stateAllowsHelp = (state: GeoGameState): boolean =>
+  state.phase !== 'question' && state.phase !== 'countdown'
+
 export const useRunControls = ({
   announce,
   audio,
@@ -71,68 +157,17 @@ export const useRunControls = ({
   )
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.defaultPrevented ||
-        event.isComposing ||
-        event.altKey ||
-        event.ctrlKey ||
-        event.metaKey
-      ) {
-        return
-      }
-      const element = event.target instanceof Element ? event.target : null
-      const editable = element?.closest(
-        'input, textarea, select, [contenteditable], [role="textbox"]',
-      )
-      if (editable) return
-
-      if (event.key.toLowerCase() === 'm') {
-        event.preventDefault()
-        toggleSound()
-        return
-      }
-
-      if (stateRef.current.overlay) {
-        if (event.key === 'Escape') {
-          event.preventDefault()
-          dispatch({ type: 'CLOSE_OVERLAY' })
-          window.requestAnimationFrame(() => openerRef.current?.focus())
-        }
-        return
-      }
-
-      if (
-        event.key === '?' &&
-        stateRef.current.phase !== 'question' &&
-        stateRef.current.phase !== 'countdown'
-      ) {
-        event.preventDefault()
-        openOverlay('help', null)
-        return
-      }
-
-      const current = stateRef.current
-      if (current.phase === 'idle' && event.key === 'Enter') {
-        if (element?.closest('button, a, input, select')) return
-        event.preventDefault()
-        start()
-        return
-      }
-      if (current.phase === 'visibility-paused' && event.key === 'Enter') {
-        event.preventDefault()
-        dispatch({ type: 'RESUME_FROM_VISIBILITY' })
-        return
-      }
-      if (current.phase !== 'question') return
-
-      if (event.key.toLowerCase() === 'p') {
-        event.preventDefault()
-        passQuestion()
-        return
-      }
+    const controls: RunKeyControls = {
+      dispatch,
+      openOverlay,
+      openerRef,
+      passQuestion,
+      start,
+      stateRef,
+      toggleSound,
     }
-
+    const handleKeyDown = (event: KeyboardEvent) =>
+      handleRunKey(event, controls)
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [openOverlay, passQuestion, start, toggleSound])

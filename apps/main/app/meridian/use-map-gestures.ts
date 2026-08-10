@@ -112,11 +112,22 @@ export const useMapGestures = ({
     }
   }
 
-  const handlePointerDown = (event: PointerEvent<SVGSVGElement>) => {
-    if (disabled || (event.pointerType === 'mouse' && event.button !== 0)) {
-      return
+  const beginPinch = (event: PointerEvent<SVGSVGElement>) => {
+    dragPointerRef.current = null
+    const midpoint = pointerMidpoint(pointersRef.current)
+    if (!midpoint) return
+    pinchRef.current = {
+      distance: Math.max(1, pointerDistance(pointersRef.current)),
+      viewport,
+      worldPoint: clientPointToWorldPoint(
+        svgRectRef.current ?? event.currentTarget.getBoundingClientRect(),
+        midpoint,
+        viewport,
+      ),
     }
+  }
 
+  const capturePointer = (event: PointerEvent<SVGSVGElement>) => {
     event.preventDefault()
     event.currentTarget.focus({ preventScroll: true })
     event.currentTarget.setPointerCapture(event.pointerId)
@@ -125,26 +136,18 @@ export const useMapGestures = ({
       clientX: event.clientX,
       clientY: event.clientY,
     })
+  }
 
-    if (pointersRef.current.size === 1) {
-      dragPointerRef.current = feedback ? null : event.pointerId
-      return
-    }
+  const beginDrag = (event: PointerEvent<SVGSVGElement>) => {
+    dragPointerRef.current = feedback ? null : event.pointerId
+  }
 
-    if (pointersRef.current.size === 2) {
-      dragPointerRef.current = null
-      const midpoint = pointerMidpoint(pointersRef.current)
-      if (!midpoint) return
-      pinchRef.current = {
-        distance: Math.max(1, pointerDistance(pointersRef.current)),
-        viewport,
-        worldPoint: clientPointToWorldPoint(
-          svgRectRef.current ?? event.currentTarget.getBoundingClientRect(),
-          midpoint,
-          viewport,
-        ),
-      }
-    }
+  const handlePointerDown = (event: PointerEvent<SVGSVGElement>) => {
+    if (disabled) return
+    if (event.pointerType === 'mouse' && event.button !== 0) return
+    capturePointer(event)
+    if (pointersRef.current.size === 1) beginDrag(event)
+    if (pointersRef.current.size === 2) beginPinch(event)
   }
 
   const handlePointerMove = (event: PointerEvent<SVGSVGElement>) => {
@@ -201,12 +204,10 @@ export const useMapGestures = ({
     onSubmit(selectedCoordinate)
   }
 
-  const handleKeyDown = (event: KeyboardEvent<SVGSVGElement>) => {
-    if (disabled || event.altKey || event.ctrlKey || event.metaKey) return
+  const handleMarkerKey = (event: KeyboardEvent<SVGSVGElement>): boolean => {
     const step =
       (event.shiftKey ? KEYBOARD_LARGE_STEP_DEGREES : KEYBOARD_STEP_DEGREES) /
       viewport.zoom
-
     const markerActions: Record<string, () => void> = {
       ArrowUp: () => moveMarker(step, 0),
       ArrowDown: () => moveMarker(-step, 0),
@@ -214,6 +215,16 @@ export const useMapGestures = ({
       ArrowRight: () => moveMarker(0, step),
       Enter: submitSelection,
     }
+    const action = markerActions[event.key]
+    if (!action) return false
+    if (!selectionLocked) {
+      event.preventDefault()
+      action()
+    }
+    return true
+  }
+
+  const handleViewportKey = (event: KeyboardEvent<SVGSVGElement>): void => {
     const viewportActions: Record<string, () => void> = {
       '+': () => zoomTo(viewport.zoom * ZOOM_STEP),
       '=': () => zoomTo(viewport.zoom * ZOOM_STEP),
@@ -221,19 +232,16 @@ export const useMapGestures = ({
       _: () => zoomTo(viewport.zoom / ZOOM_STEP),
       Home: () => setViewport(INITIAL_VIEWPORT),
     }
-
-    const markerAction = markerActions[event.key]
-    if (markerAction) {
-      if (selectionLocked) return
-      event.preventDefault()
-      markerAction()
-      return
-    }
-
-    const viewportAction = viewportActions[event.key]
-    if (!viewportAction) return
+    const action = viewportActions[event.key]
+    if (!action) return
     event.preventDefault()
-    viewportAction()
+    action()
+  }
+
+  const handleKeyDown = (event: KeyboardEvent<SVGSVGElement>) => {
+    if (disabled || event.altKey || event.ctrlKey || event.metaKey) return
+    if (handleMarkerKey(event)) return
+    handleViewportKey(event)
   }
 
   return {

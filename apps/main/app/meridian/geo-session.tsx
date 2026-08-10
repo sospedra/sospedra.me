@@ -19,6 +19,28 @@ import type { GeoGameMode, PracticeRound } from './run-mode'
 import { useRunStorage } from './run-storage'
 import { useCountdown, usePhaseTimers, useRoundClock } from './run-timers'
 
+const TIMED_PHASES = new Set<GeoGameState['phase']>([
+  'question',
+  'feedback',
+  'countdown',
+])
+
+// Wrong answers keep the shared round clock ticking through feedback: the
+// correction-reading time IS the error penalty. Correct feedback is free.
+const roundClockShouldRun = (state: GeoGameState): boolean =>
+  state.phase === 'question' ||
+  (state.phase === 'feedback' && state.lastAnswer?.correct === false)
+
+const feedbackAttrFor = (state: GeoGameState) =>
+  state.phase === 'feedback' && state.lastAnswer
+    ? FEEDBACK_ATTRS[feedbackResult(state.lastAnswer)]
+    : undefined
+
+const roundAttrFor = (state: GeoGameState, round: Round | null) => {
+  if (state.phase === 'idle' || state.phase === 'completed') return 'idle'
+  return round?.type ?? 'idle'
+}
+
 export function GeoSession({
   copy,
   displayRounds,
@@ -76,11 +98,7 @@ export function GeoSession({
     [question],
   )
 
-  // Wrong answers keep the shared round clock ticking through feedback: the
-  // correction-reading time IS the error penalty. Correct feedback is free.
-  const roundClockRunning =
-    state.phase === 'question' ||
-    (state.phase === 'feedback' && state.lastAnswer?.correct === false)
+  const roundClockRunning = roundClockShouldRun(state)
 
   useGameInput()
 
@@ -176,18 +194,9 @@ export function GeoSession({
     })
   }
 
-  const timedState =
-    state.phase === 'question' ||
-    state.phase === 'feedback' ||
-    state.phase === 'countdown'
-  const feedbackAttr =
-    state.phase === 'feedback' && state.lastAnswer
-      ? FEEDBACK_ATTRS[feedbackResult(state.lastAnswer)]
-      : undefined
-  const roundAttr =
-    state.phase === 'idle' || state.phase === 'completed'
-      ? 'idle'
-      : (round?.type ?? 'idle')
+  const timedState = TIMED_PHASES.has(state.phase)
+  const feedbackAttr = feedbackAttrFor(state)
+  const roundAttr = roundAttrFor(state, round)
 
   const stage =
     state.phase === 'idle' || state.phase === 'completed'

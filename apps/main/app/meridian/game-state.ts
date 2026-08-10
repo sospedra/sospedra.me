@@ -217,6 +217,68 @@ export const firstUnansweredPosition = (
   return null
 }
 
+const hasRoundClockMetadata = (persisted: PersistedGeoRun): boolean =>
+  persisted.roundElapsedMs !== undefined ||
+  persisted.roundComplete !== undefined ||
+  persisted.feedbackPending !== undefined
+
+const restoredPhase = (
+  completed: boolean,
+  roundComplete: boolean,
+): GeoGameState['phase'] => {
+  if (completed) return 'completed'
+  if (roundComplete) return 'round-summary'
+  return 'visibility-paused'
+}
+
+const restoredCompletedAt = (
+  persisted: PersistedGeoRun,
+  completed: boolean,
+): string | null =>
+  persisted.completedAt ??
+  (completed ? (persisted.answers.at(-1)?.answeredAt ?? null) : null)
+
+type RestoredRunFacts = {
+  position: { roundIndex: number; questionIndex: number } | null
+  completed: boolean
+  roundLimitMs: number
+  roundComplete: boolean
+  feedbackPending: boolean
+  lastRoundAnswer: AnswerResult | null
+}
+
+const restoredRunFacts = (
+  challenge: DailyGeoChallenge,
+  persisted: PersistedGeoRun,
+): RestoredRunFacts => {
+  const timedRecord = hasRoundClockMetadata(persisted)
+  const legacyPosition = firstUnansweredPosition(challenge, persisted.answers)
+  const position = timedRecord
+    ? {
+        roundIndex: persisted.roundIndex,
+        questionIndex: persisted.questionIndex,
+      }
+    : legacyPosition
+  const completed =
+    persisted.status === 'completed' || (!timedRecord && !legacyPosition)
+  const round = position
+    ? challenge.rounds[position.roundIndex]
+    : challenge.rounds[persisted.roundIndex]
+  const roundComplete = !completed && (persisted.roundComplete ?? false)
+  return {
+    position,
+    completed,
+    roundLimitMs: round ? roundTimeLimitMs(round) : 0,
+    roundComplete,
+    feedbackPending:
+      !completed && !roundComplete && (persisted.feedbackPending ?? false),
+    lastRoundAnswer:
+      [...persisted.answers]
+        .reverse()
+        .find((answer) => answer.roundId === round?.id) ?? null,
+  }
+}
+
 export const restoreGeoGameState = (
   challenge: DailyGeoChallenge,
   persisted: PersistedGeoRun,
@@ -226,62 +288,27 @@ export const restoreGeoGameState = (
     runKind: options.runKind,
     timed: options.timed,
   })
-  const hasRoundClockMetadata =
-    persisted.roundElapsedMs !== undefined ||
-    persisted.roundComplete !== undefined ||
-    persisted.feedbackPending !== undefined
-  const legacyPosition = firstUnansweredPosition(challenge, persisted.answers)
-  const position = hasRoundClockMetadata
-    ? {
-        roundIndex: persisted.roundIndex,
-        questionIndex: persisted.questionIndex,
-      }
-    : legacyPosition
-  const completed =
-    persisted.status === 'completed' ||
-    (!hasRoundClockMetadata && !legacyPosition)
-  const round = position
-    ? challenge.rounds[position.roundIndex]
-    : challenge.rounds[persisted.roundIndex]
-  const restoredRoundElapsed =
-    normalizeElapsed(
-      persisted.roundElapsedMs ?? 0,
-      round ? roundTimeLimitMs(round) : 0,
-    ) ?? 0
-  const restoredQuestionElapsed =
-    normalizeElapsed(
-      persisted.questionElapsedMs ?? 0,
-      round ? roundTimeLimitMs(round) : 0,
-    ) ?? 0
-  const roundComplete = !completed && (persisted.roundComplete ?? false)
-  const feedbackPending =
-    !completed && !roundComplete && (persisted.feedbackPending ?? false)
-  const restoredRoundId = round?.id
-  const lastRoundAnswer =
-    [...persisted.answers]
-      .reverse()
-      .find((answer) => answer.roundId === restoredRoundId) ?? null
-
+  const facts = restoredRunFacts(challenge, persisted)
   return {
     ...initial,
-    phase: completed
-      ? 'completed'
-      : roundComplete
-        ? 'round-summary'
-        : 'visibility-paused',
-    visibilityReturnPhase: feedbackPending ? 'feedback' : 'question',
-    roundIndex: position?.roundIndex ?? persisted.roundIndex,
-    questionIndex: position?.questionIndex ?? persisted.questionIndex,
+    phase: restoredPhase(facts.completed, facts.roundComplete),
+    visibilityReturnPhase: facts.feedbackPending ? 'feedback' : 'question',
+    roundIndex: facts.position?.roundIndex ?? persisted.roundIndex,
+    questionIndex: facts.position?.questionIndex ?? persisted.questionIndex,
     answers: [...persisted.answers],
     score: persisted.score,
     currentStreak: persisted.currentStreak,
     bestStreak: persisted.bestStreak,
-    roundElapsedMs: restoredRoundElapsed,
-    questionElapsedMs: restoredQuestionElapsed,
+    roundElapsedMs:
+      normalizeElapsed(persisted.roundElapsedMs ?? 0, facts.roundLimitMs) ?? 0,
+    questionElapsedMs:
+      normalizeElapsed(persisted.questionElapsedMs ?? 0, facts.roundLimitMs) ??
+      0,
     startedAt: persisted.startedAt,
-    completedAt:
-      persisted.completedAt ??
-      (completed ? (persisted.answers.at(-1)?.answeredAt ?? null) : null),
-    lastAnswer: roundComplete || feedbackPending ? lastRoundAnswer : null,
+    completedAt: restoredCompletedAt(persisted, facts.completed),
+    lastAnswer:
+      facts.roundComplete || facts.feedbackPending
+        ? facts.lastRoundAnswer
+        : null,
   }
 }

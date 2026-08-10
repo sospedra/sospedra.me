@@ -113,6 +113,45 @@ export const getGeoMapLabels = (copy: GeoMessages): GeoMapLabels => ({
   },
 })
 
+const optionsForRoundType = (
+  rounds: GeoGameState['challenge']['rounds'],
+  type: Question['type'],
+) =>
+  rounds
+    .filter((round) => round.type === type)
+    .flatMap((round) =>
+      round.questions.flatMap((candidate) =>
+        candidate.type === 'map' ? [] : candidate.options,
+      ),
+    )
+
+const autocompleteOptionsFor = (
+  question: Question | null,
+  cityOptions: GeoGameState['challenge']['cityOptions'],
+  rounds: GeoGameState['challenge']['rounds'],
+) => {
+  if (!question || question.type === 'map') return []
+  const roundOptions = optionsForRoundType(rounds, question.type)
+  if (question.type === 'capital') {
+    return mergeCapitalAutocompleteOptions(cityOptions, roundOptions)
+  }
+
+  const optionsById = new Map(
+    OFFICIAL_COUNTRY_OPTIONS.map((option) => [option.id, option]),
+  )
+  for (const option of roundOptions) optionsById.set(option.id, option)
+  return [...optionsById.values()]
+}
+
+const mapFeedbackFor = (lastAnswer: GeoGameState['lastAnswer']) => {
+  const mapAnswer = lastAnswer?.kind === 'map-pin' ? lastAnswer : null
+  if (mapAnswer?.distanceKm == null) return undefined
+  return {
+    answerCoordinate: mapAnswer.answerCoordinate,
+    distanceKm: mapAnswer.distanceKm,
+  }
+}
+
 export function MissionStage({
   copy,
   countdown,
@@ -153,43 +192,22 @@ export function MissionStage({
     submittedText: string
   }) => void
 }) {
-  const autocompleteOptions = useMemo(() => {
-    if (!question || question.type === 'map') return []
-    const roundOptions = state.challenge.rounds
-      .filter((item) => item.type === question.type)
-      .flatMap((item) =>
-        item.questions.flatMap((candidate) =>
-          candidate.type === 'map' ? [] : candidate.options,
-        ),
-      )
-    if (question.type === 'capital') {
-      return mergeCapitalAutocompleteOptions(
+  const autocompleteOptions = useMemo(
+    () =>
+      autocompleteOptionsFor(
+        question,
         state.challenge.cityOptions,
-        roundOptions,
-      )
-    }
-
-    const optionsById = new Map(
-      OFFICIAL_COUNTRY_OPTIONS.map((option) => [option.id, option]),
-    )
-    for (const option of roundOptions) optionsById.set(option.id, option)
-    return [...optionsById.values()]
-  }, [question, state.challenge.cityOptions, state.challenge.rounds])
+        state.challenge.rounds,
+      ),
+    [question, state.challenge.cityOptions, state.challenge.rounds],
+  )
 
   const answerPlaceholder =
     question?.type === 'capital' ? copy.typeCapital : copy.typeCountry
 
   const mapLabels = getGeoMapLabels(copy)
 
-  const mapAnswer =
-    state.lastAnswer?.kind === 'map-pin' ? state.lastAnswer : null
-  const mapFeedback =
-    mapAnswer?.distanceKm != null
-      ? {
-          answerCoordinate: mapAnswer.answerCoordinate,
-          distanceKm: mapAnswer.distanceKm,
-        }
-      : undefined
+  const mapFeedback = mapFeedbackFor(state.lastAnswer)
 
   return (
     <div className={css.missionGrid} data-direct-map={question?.type === 'map'}>

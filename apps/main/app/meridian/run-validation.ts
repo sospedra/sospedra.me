@@ -16,6 +16,19 @@ import { persistedGeoRunSchema } from './run-schema'
 // Caps a recycled timed run's answer log against hostile saves. No honest run reaches it.
 const MAX_TIMED_RUN_ANSWERS = 4096
 
+type GeoRound = DailyGeoChallenge['rounds'][number]
+type GeoQuestion = GeoRound['questions'][number]
+type ChallengeQuestionEntry = ReturnType<typeof challengeQuestions>[number]
+
+type RunRecordFormat = 'legacy' | 'timed'
+
+type RunScope = {
+  challenge: DailyGeoChallenge
+  format: RunRecordFormat
+  questionCount: number
+  entryByQuestionId: Map<string, ChallengeQuestionEntry>
+}
+
 type NormalizedRunPosition = {
   status: PersistedGeoRun['status']
   roundIndex: number
@@ -25,6 +38,156 @@ type NormalizedRunPosition = {
   questionElapsedMs: number
   roundElapsedMs: number
   completedAt: string | undefined
+}
+
+type ValidatedPosition = NormalizedRunPosition & {
+  currentRoundAnswerCount: number
+}
+
+type AnswerLog = {
+  answeredCountByRound: Map<number, number>
+  lastRoundElapsedByRound: Map<number, number>
+  lastRoundIndex: number
+}
+
+const runRecordFormat = (candidate: PersistedGeoRun): RunRecordFormat => {
+  const legacy =
+    candidate.roundElapsedMs === undefined &&
+    candidate.roundComplete === undefined &&
+    candidate.feedbackPending === undefined &&
+    candidate.answers.every(
+      (answer) =>
+        answer.roundElapsedMs === undefined &&
+        answer.attemptIndex === undefined,
+    )
+  return legacy ? 'legacy' : 'timed'
+}
+
+const questionForFormat = (
+  round: GeoRound,
+  attemptIndex: number,
+  format: RunRecordFormat,
+): GeoQuestion | undefined =>
+  format === 'legacy'
+    ? round.questions[attemptIndex]
+    : (roundQuestionForAttempt(round, attemptIndex) ?? undefined)
+
+const parseCandidate = (
+  value: unknown,
+  challenge: DailyGeoChallenge,
+): PersistedGeoRun | null => {
+  const parsed = persistedGeoRunSchema.safeParse(value)
+  if (!parsed.success) return null
+  const candidate = parsed.data
+  const matchesChallenge =
+    candidate.challengeId === challenge.id &&
+    candidate.rulesVersion === challenge.rulesVersion
+  return matchesChallenge ? candidate : null
+}
+
+const exceedsPositionBudget = (
+  candidate: PersistedGeoRun,
+  positionRound: GeoRound,
+): boolean => {
+  const limitMs = roundTimeLimitMs(positionRound)
+  return (
+    (candidate.questionElapsedMs !== undefined &&
+      candidate.questionElapsedMs > limitMs) ||
+    (candidate.roundElapsedMs !== undefined &&
+      candidate.roundElapsedMs > limitMs)
+  )
+}
+
+const resolvePositionQuestion = (
+  candidate: PersistedGeoRun,
+  scope: RunScope,
+): GeoQuestion | null => {
+  const positionRound = scope.challenge.rounds[candidate.roundIndex]
+  if (!positionRound) return null
+  const positionQuestion = questionForFormat(
+    positionRound,
+    candidate.questionIndex,
+    scope.format,
+  )
+  if (!positionQuestion) return null
+  const maxAnswers =
+    scope.format === 'legacy' ? scope.questionCount : MAX_TIMED_RUN_ANSWERS
+  if (candidate.answers.length > maxAnswers) return null
+  if (exceedsPositionBudget(candidate, positionRound)) return null
+  return positionQuestion
+}
+
+const matchesExpectedAttempt = (
+  answer: AnswerResult,
+  expected: {
+    question: GeoQuestion | undefined
+    attemptIndex: number
+    round: GeoRound
+  },
+  scope: RunScope,
+): boolean => {
+  if (expected.question?.id !== answer.questionId) return false
+  if (
+    answer.attemptIndex !== undefined &&
+    answer.attemptIndex !== expected.attemptIndex
+  ) {
+    return false
+  }
+  return answerMatchesQuestion(
+    answer,
+    expected.question,
+    expected.round,
+    scope.challenge.rules,
+  )
+}
+
+const recordAnswer = (
+  answer: AnswerResult,
+  log: AnswerLog,
+  scope: RunScope,
+): boolean => {
+  const entry = scope.entryByQuestionId.get(answer.questionId)
+  if (!entry || entry.roundIndex < log.lastRoundIndex) return false
+  const attemptIndex = log.answeredCountByRound.get(entry.roundIndex) ?? 0
+  const question = questionForFormat(entry.round, attemptIndex, scope.format)
+  if (
+    !matchesExpectedAttempt(
+      answer,
+      { question, attemptIndex, round: entry.round },
+      scope,
+    )
+  ) {
+    return false
+  }
+  const previousRoundElapsed =
+    log.lastRoundElapsedByRound.get(entry.roundIndex) ?? 0
+  if (
+    answer.roundElapsedMs !== undefined &&
+    answer.roundElapsedMs < previousRoundElapsed
+  ) {
+    return false
+  }
+  if (answer.roundElapsedMs !== undefined) {
+    log.lastRoundElapsedByRound.set(entry.roundIndex, answer.roundElapsedMs)
+  }
+  log.answeredCountByRound.set(entry.roundIndex, attemptIndex + 1)
+  log.lastRoundIndex = entry.roundIndex
+  return true
+}
+
+const validateAnswerLog = (
+  answers: readonly AnswerResult[],
+  scope: RunScope,
+): AnswerLog | null => {
+  const log: AnswerLog = {
+    answeredCountByRound: new Map(),
+    lastRoundElapsedByRound: new Map(),
+    lastRoundIndex: -1,
+  }
+  for (const answer of answers) {
+    if (!recordAnswer(answer, log, scope)) return null
+  }
+  return log
 }
 
 const normalizeCurrentRun = (
@@ -94,122 +257,88 @@ const normalizeLegacyRun = ({
   }
 }
 
-export const validatePersistedGeoRun = (
-  value: unknown,
-  challenge: DailyGeoChallenge,
-): PersistedGeoRun | null => {
-  const parsed = persistedGeoRunSchema.safeParse(value)
-  if (!parsed.success) return null
+type RoundPositionFacts = {
+  roundLimitMs: number
+  answeredCount: number
+  currentQuestionAnswered: boolean
+}
 
-  const candidate = parsed.data
-  if (
-    candidate.challengeId !== challenge.id ||
-    candidate.rulesVersion !== challenge.rulesVersion
-  ) {
-    return null
-  }
+const withinTimeBudget = (
+  normalized: NormalizedRunPosition,
+  roundLimitMs: number,
+  lastRecordedRoundElapsed: number,
+): boolean =>
+  normalized.roundElapsedMs <= roundLimitMs &&
+  normalized.questionElapsedMs <= roundLimitMs &&
+  normalized.roundElapsedMs >= lastRecordedRoundElapsed
 
-  const questions = challengeQuestions(challenge)
-  const answers = candidate.answers
-  const legacyTimerRecord =
-    candidate.roundElapsedMs === undefined &&
-    candidate.roundComplete === undefined &&
-    candidate.feedbackPending === undefined &&
-    answers.every(
-      (answer) =>
-        answer.roundElapsedMs === undefined &&
-        answer.attemptIndex === undefined,
-    )
-  const positionRound = challenge.rounds[candidate.roundIndex]
-  const positionQuestion = positionRound
-    ? legacyTimerRecord
-      ? positionRound.questions[candidate.questionIndex]
-      : roundQuestionForAttempt(positionRound, candidate.questionIndex)
-    : null
-  if (
-    !positionRound ||
-    !positionQuestion ||
-    answers.length >
-      (legacyTimerRecord ? questions.length : MAX_TIMED_RUN_ANSWERS) ||
-    (candidate.questionElapsedMs !== undefined &&
-      candidate.questionElapsedMs > roundTimeLimitMs(positionRound)) ||
-    (candidate.roundElapsedMs !== undefined &&
-      candidate.roundElapsedMs > roundTimeLimitMs(positionRound))
-  ) {
-    return null
-  }
+const validActiveRound = (
+  normalized: NormalizedRunPosition,
+  position: RoundPositionFacts,
+): boolean => {
+  if (normalized.roundComplete) return true
+  if (normalized.roundElapsedMs === position.roundLimitMs) return false
+  return normalized.feedbackPending
+    ? position.currentQuestionAnswered
+    : normalized.questionIndex === position.answeredCount
+}
 
-  const entryByQuestionId = new Map(
-    questions.map((entry) => [entry.question.id, entry]),
+const validCompletedRound = (
+  normalized: NormalizedRunPosition,
+  position: RoundPositionFacts,
+): boolean => {
+  if (!normalized.roundComplete) return true
+  if (normalized.roundElapsedMs !== position.roundLimitMs) return false
+  return (
+    normalized.questionIndex === position.answeredCount ||
+    position.currentQuestionAnswered
   )
-  const answeredCountByRound = new Map<number, number>()
-  const lastRoundElapsedByRound = new Map<number, number>()
-  let previousRoundIndex = -1
+}
 
-  for (const answer of answers) {
-    const entry = entryByQuestionId.get(answer.questionId)
-    const expectedAttemptIndex = entry
-      ? (answeredCountByRound.get(entry.roundIndex) ?? 0)
-      : -1
-    const expectedQuestion = entry
-      ? legacyTimerRecord
-        ? entry.round.questions[expectedAttemptIndex]
-        : roundQuestionForAttempt(entry.round, expectedAttemptIndex)
-      : null
-    if (
-      !entry ||
-      !expectedQuestion ||
-      entry.roundIndex < previousRoundIndex ||
-      expectedQuestion.id !== answer.questionId ||
-      (answer.attemptIndex !== undefined &&
-        answer.attemptIndex !== expectedAttemptIndex) ||
-      !answerMatchesQuestion(
-        answer,
-        expectedQuestion,
-        entry.round,
-        challenge.rules,
-      )
-    ) {
-      return null
-    }
+const validCompletedRun = (
+  normalized: NormalizedRunPosition,
+  challenge: DailyGeoChallenge,
+): boolean => {
+  if (normalized.status !== 'completed') return true
+  return (
+    normalized.roundIndex === challenge.rounds.length - 1 &&
+    normalized.roundComplete &&
+    isIsoDateTime(normalized.completedAt)
+  )
+}
 
-    const previousRoundElapsed =
-      lastRoundElapsedByRound.get(entry.roundIndex) ?? 0
-    if (
-      answer.roundElapsedMs !== undefined &&
-      answer.roundElapsedMs < previousRoundElapsed
-    ) {
-      return null
-    }
-    if (answer.roundElapsedMs !== undefined) {
-      lastRoundElapsedByRound.set(entry.roundIndex, answer.roundElapsedMs)
-    }
-    answeredCountByRound.set(entry.roundIndex, expectedAttemptIndex + 1)
-    previousRoundIndex = entry.roundIndex
-  }
-
+const normalizeRun = (
+  candidate: PersistedGeoRun,
+  scope: RunScope,
+  dependencies: { log: AnswerLog; positionQuestion: GeoQuestion },
+): ValidatedPosition | null => {
+  const { answers } = candidate
+  const firstUnanswered = firstUnansweredPosition(scope.challenge, answers)
   const answeredIds = new Set(answers.map((answer) => answer.questionId))
-  const firstUnanswered = firstUnansweredPosition(challenge, answers)
-  const normalized = legacyTimerRecord
-    ? normalizeLegacyRun({
-        answers,
-        candidate,
-        challenge,
-        firstUnanswered,
-        oldPositionWasAnswered: answeredIds.has(positionQuestion.id),
-      })
-    : normalizeCurrentRun(candidate)
+  const normalized =
+    scope.format === 'legacy'
+      ? normalizeLegacyRun({
+          answers,
+          candidate,
+          challenge: scope.challenge,
+          firstUnanswered,
+          oldPositionWasAnswered: answeredIds.has(
+            dependencies.positionQuestion.id,
+          ),
+        })
+      : normalizeCurrentRun(candidate)
 
-  const normalizedRound = challenge.rounds[normalized.roundIndex]
-  const normalizedQuestion = normalizedRound
-    ? legacyTimerRecord
-      ? normalizedRound.questions[normalized.questionIndex]
-      : roundQuestionForAttempt(normalizedRound, normalized.questionIndex)
-    : null
-  if (!normalizedRound || !normalizedQuestion) return null
+  const normalizedRound = scope.challenge.rounds[normalized.roundIndex]
+  if (!normalizedRound) return null
+  const normalizedQuestion = questionForFormat(
+    normalizedRound,
+    normalized.questionIndex,
+    scope.format,
+  )
+  if (!normalizedQuestion) return null
 
   const currentRoundAnswerCount =
-    answeredCountByRound.get(normalized.roundIndex) ?? 0
+    dependencies.log.answeredCountByRound.get(normalized.roundIndex) ?? 0
   const lastCurrentRoundAnswer = [...answers]
     .reverse()
     .find((answer) => answer.roundId === normalizedRound.id)
@@ -219,55 +348,76 @@ export const validatePersistedGeoRun = (
     lastCurrentRoundAnswer?.questionId === normalizedQuestion.id &&
     (lastCurrentRoundAnswer.attemptIndex === undefined ||
       lastCurrentRoundAnswer.attemptIndex === normalized.questionIndex)
+  const position: RoundPositionFacts = {
+    roundLimitMs: roundTimeLimitMs(normalizedRound),
+    answeredCount: currentRoundAnswerCount,
+    currentQuestionAnswered,
+  }
   const lastRecordedRoundElapsed =
-    lastRoundElapsedByRound.get(normalized.roundIndex) ?? 0
-  const normalizedRoundLimitMs = roundTimeLimitMs(normalizedRound)
-  const activePositionIsValid = normalized.feedbackPending
-    ? currentQuestionAnswered
-    : normalized.questionIndex === currentRoundAnswerCount
-  const completedPositionIsValid =
-    normalized.questionIndex === currentRoundAnswerCount ||
-    currentQuestionAnswered
-  if (
-    previousRoundIndex > normalized.roundIndex ||
-    normalized.roundElapsedMs > normalizedRoundLimitMs ||
-    normalized.questionElapsedMs > normalizedRoundLimitMs ||
-    normalized.roundElapsedMs < lastRecordedRoundElapsed ||
-    (!normalized.roundComplete &&
-      normalized.roundElapsedMs === normalizedRoundLimitMs) ||
-    (!normalized.roundComplete && !activePositionIsValid) ||
-    (normalized.status === 'completed' &&
-      (normalized.roundIndex !== challenge.rounds.length - 1 ||
-        !normalized.roundComplete ||
-        !isIsoDateTime(normalized.completedAt))) ||
-    (normalized.roundComplete &&
-      (!completedPositionIsValid ||
-        normalized.roundElapsedMs !== normalizedRoundLimitMs))
-  ) {
-    return null
-  }
+    dependencies.log.lastRoundElapsedByRound.get(normalized.roundIndex) ?? 0
+  const positionValid =
+    dependencies.log.lastRoundIndex <= normalized.roundIndex &&
+    withinTimeBudget(
+      normalized,
+      position.roundLimitMs,
+      lastRecordedRoundElapsed,
+    ) &&
+    validActiveRound(normalized, position) &&
+    validCompletedRound(normalized, position) &&
+    validCompletedRun(normalized, scope.challenge)
+  if (!positionValid) return null
+  return { ...normalized, currentRoundAnswerCount }
+}
 
-  const streaks = expectedStreaks(answers)
-  if (!streaks) return null
-  const answerScore = sumBy(answers, (answer) => answer.score)
+const currentStreakMatches = (
+  candidate: PersistedGeoRun,
+  position: ValidatedPosition,
+  expectedCurrentStreak: number,
+): boolean => {
   const deadlineEndedWithUnanswered =
-    normalized.roundComplete &&
-    normalized.questionIndex === currentRoundAnswerCount
+    position.roundComplete &&
+    position.questionIndex === position.currentRoundAnswerCount
+  if (deadlineEndedWithUnanswered) return candidate.currentStreak === 0
+  if (candidate.currentStreak === expectedCurrentStreak) return true
   const mayHaveResetBetweenRounds =
-    currentRoundAnswerCount === 0 && normalized.roundIndex > 0
-  const currentStreakIsValid = deadlineEndedWithUnanswered
-    ? candidate.currentStreak === 0
-    : candidate.currentStreak === streaks.currentStreak ||
-      (mayHaveResetBetweenRounds && candidate.currentStreak === 0)
-  if (
-    candidate.score !== answerScore ||
-    !currentStreakIsValid ||
-    candidate.bestStreak !== streaks.bestStreak ||
-    (normalized.status === 'completed' &&
-      !isIsoDateTime(normalized.completedAt))
-  ) {
-    return null
+    position.currentRoundAnswerCount === 0 && position.roundIndex > 0
+  return mayHaveResetBetweenRounds && candidate.currentStreak === 0
+}
+
+const scoreAndStreaksMatch = (
+  candidate: PersistedGeoRun,
+  position: ValidatedPosition,
+): boolean => {
+  const streaks = expectedStreaks(candidate.answers)
+  if (!streaks) return false
+  const answerScore = sumBy(candidate.answers, (answer) => answer.score)
+  if (candidate.score !== answerScore) return false
+  if (candidate.bestStreak !== streaks.bestStreak) return false
+  return currentStreakMatches(candidate, position, streaks.currentStreak)
+}
+
+export const validatePersistedGeoRun = (
+  value: unknown,
+  challenge: DailyGeoChallenge,
+): PersistedGeoRun | null => {
+  const candidate = parseCandidate(value, challenge)
+  if (!candidate) return null
+  const questions = challengeQuestions(challenge)
+  const scope: RunScope = {
+    challenge,
+    format: runRecordFormat(candidate),
+    questionCount: questions.length,
+    entryByQuestionId: new Map(
+      questions.map((entry) => [entry.question.id, entry]),
+    ),
   }
+  const positionQuestion = resolvePositionQuestion(candidate, scope)
+  if (!positionQuestion) return null
+  const log = validateAnswerLog(candidate.answers, scope)
+  if (!log) return null
+  const normalized = normalizeRun(candidate, scope, { log, positionQuestion })
+  if (!normalized) return null
+  if (!scoreAndStreaksMatch(candidate, normalized)) return null
 
   return {
     schemaVersion: 1,
@@ -276,7 +426,7 @@ export const validatePersistedGeoRun = (
     status: normalized.status,
     roundIndex: normalized.roundIndex,
     questionIndex: normalized.questionIndex,
-    answers,
+    answers: candidate.answers,
     score: candidate.score,
     currentStreak: candidate.currentStreak,
     bestStreak: candidate.bestStreak,
