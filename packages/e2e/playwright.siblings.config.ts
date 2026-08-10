@@ -35,7 +35,7 @@ export default defineConfig({
       timeout: 180_000,
     },
     {
-      command: 'pnpm --dir ../../apps/spg dev -- --port 5174',
+      command: 'pnpm --dir ../../apps/spg exec vite --port 5174',
       url: 'http://localhost:5174',
       reuseExistingServer: !process.env.CI,
       timeout: 180_000,
