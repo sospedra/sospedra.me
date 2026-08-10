@@ -1,6 +1,7 @@
 'use client'
 
 import { useStoreSelector } from 'services/external-store'
+import { GoBack } from 'services/link'
 import styles from './cims.module.css'
 import type { CimsStore } from './cims-store.ts'
 import type { ElementRef } from './stage-projection.ts'
@@ -55,6 +56,9 @@ export const TelemetryHud = (props: TelemetryHudProps) => {
       <div>
         <b>seq</b>
         <span>{seq}</span>
+      </div>
+      <div>
+        <GoBack className={styles.back}>Back</GoBack>
       </div>
     </div>
   )

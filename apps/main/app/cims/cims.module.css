@@ -72,6 +72,26 @@
   text-shadow: 0 0 6px rgb(168 232 176 / 45%);
 }
 
+.back {
+  position: relative;
+  pointer-events: auto;
+  color: var(--color-signal-yellow);
+  text-decoration: none;
+  text-shadow: 0 0 6px rgb(255 234 0 / 45%);
+  transition: text-shadow 150ms ease;
+}
+
+/* widen the tap target without inflating the row */
+.back::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
+}
+
+.back:hover {
+  text-shadow: 0 0 8px rgb(255 234 0 / 80%);
+}
+
 .telemetry {
   composes: hud;
   top: 22px;
