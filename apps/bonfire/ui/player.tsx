@@ -2,9 +2,10 @@
 
 import clsx from 'clsx'
 import Script from 'next/script'
-import { type RefObject, useState } from 'react'
+import { type RefObject, useEffect, useState } from 'react'
 import { playlistEmbedUrl, SOUNDCLOUD_WIDGET_SCRIPT } from 'services/soundcloud'
 import { usePlayback } from 'services/use-playback'
+import type { Session } from 'services/use-session'
 import { PauseIcon, PlayIcon } from 'ui/icons'
 import css from './player.module.css'
 
@@ -14,14 +15,25 @@ const CONTROL =
 export function Player(props: {
   ambience: RefObject<HTMLAudioElement | null>
   playlistID: string
+  session: Session
 }) {
+  const { runtime, publishNow, bindPlayback } = props.session
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null)
   const [apiReady, setApiReady] = useState(false)
+  const hosting = runtime.phase === 'host'
   const playback = usePlayback({
     ambience: props.ambience,
     apiReady,
     iframe,
+    onTransport: hosting ? publishNow : undefined,
   })
+
+  const { readState } = playback
+  useEffect(() => {
+    if (!hosting) return
+    bindPlayback(readState)
+    return () => bindPlayback(null)
+  }, [hosting, bindPlayback, readState])
 
   return (
     <div>
