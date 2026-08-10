@@ -60,6 +60,10 @@
   gap: 0.45rem;
 }
 
+.folderArrow {
+  margin-left: auto;
+}
+
 .shutdownItem {
   composes: menuItem from "./chrome.module.css";
   background: #f0c400;

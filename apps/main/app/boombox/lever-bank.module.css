@@ -1,5 +1,13 @@
-/* ── transport: latching lever keys. legends silkscreen on the fascia;
-   blank caps ride a machined slot and slide under its mouth ── */
+/* ── transport: latching lever keys. legends silkscreen on the cap face;
+   caps ride a machined slot and slide under its mouth ── */
+
+/* a filter on the cap rasterizes it, then the tilt resamples the raster and
+   the 7px legend turns to mush. every shade change goes through this scrim */
+@property --lever-scrim {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgb(0 0 0 / 0%);
+}
 
 .leverBank {
   --kw: 76px;
@@ -8,7 +16,9 @@
   --kgap: 9px;
   --mouth: 11px;
   --void: 12px;
-  --lever-ink: #2b2d2f;
+  --word: 7px;
+  --glyph: 10px;
+  --persp: 320px;
 }
 
 .leverBank[data-size="deck"] {
@@ -22,45 +32,11 @@
   --kgap: 8px;
   --mouth: 9px;
   --void: 9px;
-  --lever-ink: #d9d5c9;
+  --word: 6.5px;
+  --glyph: 8px;
+  --persp: 240px;
   width: fit-content;
   margin: 2px auto 6px;
-}
-
-.leverLegend {
-  display: flex;
-  gap: var(--kgap);
-  padding: 0 10px;
-  margin-bottom: 6px;
-}
-
-.legendCell {
-  width: var(--kw);
-  display: grid;
-  justify-items: center;
-  color: var(--lever-ink);
-}
-
-.legendCell b {
-  font: 700 6.5px var(--micro);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.legendCell i {
-  margin-top: 2px;
-  font: 8px / 1 var(--micro);
-  font-style: normal;
-  letter-spacing: -0.08em;
-}
-
-.legendCell i[data-dot] {
-  width: 7px;
-  height: 7px;
-  margin-top: 3px;
-  border-radius: 50%;
-  background: #c23325;
 }
 
 .leverSlot {
@@ -101,9 +77,13 @@
   transform-origin: 50% 0;
   transition:
     transform 160ms ease-out,
-    filter 160ms ease-out,
+    --lever-scrim 160ms ease-out,
     box-shadow 160ms ease-out;
   background-image:
+    linear-gradient(
+      var(--lever-scrim, rgb(0 0 0 / 0%)),
+      var(--lever-scrim, rgb(0 0 0 / 0%))
+    ),
     linear-gradient(180deg, rgb(0 0 0 / 60%), rgb(0 0 0 / 0%) 26%),
     linear-gradient(
       90deg,
@@ -128,6 +108,38 @@
     -5px 0 6px -4px rgb(0 0 0 / 70%);
 }
 
+.capLegend {
+  position: absolute;
+  inset: 0 2px var(--lip) 2px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1px;
+  color: var(--legend-ink, #2b2d2f);
+  text-shadow: 0 0.5px 0 rgb(255 255 255 / 22%);
+}
+
+.capLegend b {
+  font: 700 var(--word) / 1 var(--micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.capLegend i {
+  font: var(--glyph) / 1 var(--micro);
+  font-style: normal;
+  letter-spacing: -0.08em;
+}
+
+.capLegend i[data-dot] {
+  width: calc(var(--glyph) - 2px);
+  height: calc(var(--glyph) - 2px);
+  border-radius: 50%;
+  background: #c23325;
+  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 30%);
+}
+
 .leverCap::after {
   content: "";
   position: absolute;
@@ -146,16 +158,16 @@
 }
 
 .leverKey:hover:enabled .leverCap {
-  filter: brightness(1.04);
+  --lever-scrim: rgb(255 255 255 / 7%);
 }
 
 .leverKey:disabled .leverCap {
-  filter: saturate(0.55) brightness(0.9);
+  --lever-scrim: rgb(118 116 108 / 42%);
 }
 
 .leverKey[data-on="true"] .leverCap {
-  transform: perspective(700px) rotateX(-9deg);
-  filter: brightness(0.88);
+  transform: perspective(var(--persp)) rotateX(-18deg);
+  --lever-scrim: rgb(0 0 0 / 14%);
   box-shadow:
     0 5px 5px -3px rgb(0 0 0 / 55%),
     0 10px 9px -6px rgb(0 0 0 / 32%),
@@ -169,8 +181,8 @@
 
 .leverKey:active:enabled .leverCap {
   transition-duration: 50ms;
-  transform: perspective(700px) rotateX(-12deg);
-  filter: brightness(0.84);
+  transform: perspective(var(--persp)) rotateX(-24deg);
+  --lever-scrim: rgb(0 0 0 / 18%);
   box-shadow:
     0 3px 4px -2px rgb(0 0 0 / 55%),
     0 7px 7px -5px rgb(0 0 0 / 32%),
@@ -189,6 +201,7 @@
   --cap-front: #d55341;
   --lip-hi: #79251a;
   --lip-lo: #571b12;
+  --legend-ink: #40120e;
 }
 
 .leverKey:nth-child(2) .leverCap {
@@ -196,6 +209,7 @@
   --cap-front: #e37d3e;
   --lip-hi: #824017;
   --lip-lo: #5e2f11;
+  --legend-ink: #47280d;
 }
 
 .leverKey:nth-child(3) .leverCap {
@@ -203,6 +217,7 @@
   --cap-front: #efb448;
   --lip-hi: #89641e;
   --lip-lo: #644816;
+  --legend-ink: #48320f;
 }
 
 .leverKey:nth-child(4) .leverCap {
@@ -210,6 +225,7 @@
   --cap-front: #f1ebde;
   --lip-hi: #8b877e;
   --lip-lo: #64625c;
+  --legend-ink: #3a3932;
 }
 
 @media (max-width: 759px) {
@@ -219,6 +235,8 @@
     --kw: clamp(44px, calc((100vw - 100px) / 5), 56px);
     --kh: 44px;
     --kgap: 2px;
+    --word: 6px;
+    --glyph: 8px;
   }
 }
 

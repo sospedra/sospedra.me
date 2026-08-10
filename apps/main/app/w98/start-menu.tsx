@@ -242,7 +242,7 @@ function MenuFolder({
       <button
         ref={ctx.triggers.register(folder.trigger)}
         type='button'
-        className={cn(w98.menuItem, css.menuItem)}
+        className={cn(css.programItem, css.menuItem)}
         aria-haspopup='true'
         aria-expanded={open}
         // W98 opens submenus on hover and never collapses one by clicking
@@ -254,7 +254,10 @@ function MenuFolder({
         }}
       >
         <span className={w98.folderAppIcon} aria-hidden='true' />
-        {folder.label} <span aria-hidden='true'>▸</span>
+        {folder.label}
+        <span className={css.folderArrow} aria-hidden='true'>
+          ▸
+        </span>
       </button>
       {open && (
         <div className={SUBMENU_CLASS[folder.placement]}>

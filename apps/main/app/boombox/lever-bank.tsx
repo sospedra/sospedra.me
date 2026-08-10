@@ -39,18 +39,10 @@ type LeverSpec = {
   onPress: () => void
 }
 
-/* latching lever keys: legends silkscreened on the fascia, blank caps
+/* latching lever keys: legends silkscreened on the cap face, caps
    slide under the slot mouth. latched keys stay down; both decks share it */
 const LeverBank = (props: { size: 'deck' | 'tad'; keys: LeverSpec[] }) => (
   <div className={css.leverBank} data-size={props.size}>
-    <div className={css.leverLegend} aria-hidden>
-      {props.keys.map((key) => (
-        <span key={key.ariaLabel} className={css.legendCell}>
-          <b>{key.word}</b>
-          {key.red ? <i data-dot='true' /> : <i>{key.glyph}</i>}
-        </span>
-      ))}
-    </div>
     <div className={css.leverSlot}>
       {props.keys.map((key) => (
         <button
@@ -63,7 +55,12 @@ const LeverBank = (props: { size: 'deck' | 'tad'; keys: LeverSpec[] }) => (
           onClick={key.onPress}
           disabled={key.disabled}
         >
-          <span className={css.leverCap} aria-hidden />
+          <span className={css.leverCap} aria-hidden>
+            <span className={css.capLegend}>
+              {key.red ? <i data-dot='true' /> : <i>{key.glyph}</i>}
+              <b>{key.word}</b>
+            </span>
+          </span>
         </button>
       ))}
     </div>
