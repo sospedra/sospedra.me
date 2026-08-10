@@ -21,6 +21,10 @@ test.describe('papers', () => {
 
     const undecoded = await page.locator('img').evaluateAll((images) =>
       images
+        .filter(
+          (image): image is HTMLImageElement =>
+            image instanceof HTMLImageElement,
+        )
         .filter((image) => {
           const rect = image.getBoundingClientRect()
           const inView = rect.bottom > 0 && rect.top < window.innerHeight

@@ -11,9 +11,7 @@ test.describe('rotate mid-game', () => {
 
     const grid = page.getByRole('grid')
     await grid.locator('button').first().tap()
-    await expect(
-      grid.locator('button[aria-current="true"]'),
-    ).toHaveCount(1)
+    await expect(grid.locator('button[aria-current="true"]')).toHaveCount(1)
 
     const viewport = page.viewportSize()
     if (!viewport) throw new Error('no viewport')

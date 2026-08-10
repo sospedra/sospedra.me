@@ -29,9 +29,13 @@ test.describe('meridian', () => {
       .poll(async () =>
         (
           await page
-            .locator('[aria-live="polite"], [aria-live="assertive"], [role="status"]')
+            .locator(
+              '[aria-live="polite"], [aria-live="assertive"], [role="status"]',
+            )
             .allTextContents()
-        ).join(' ').trim(),
+        )
+          .join(' ')
+          .trim(),
       )
       .not.toBe('')
 

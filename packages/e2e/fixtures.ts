@@ -35,7 +35,8 @@ export const test = base.extend<Fixtures>({
       await page.addInitScript(() => {
         const hide = () => {
           const style = document.createElement('style')
-          style.textContent = 'nextjs-portal { pointer-events: none !important; }'
+          style.textContent =
+            'nextjs-portal { pointer-events: none !important; }'
           document.head?.append(style)
         }
         if (document.readyState === 'loading') {

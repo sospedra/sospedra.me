@@ -15,8 +15,7 @@ test.describe('console', () => {
 
     await expect
       .poll(
-        async () =>
-          ((await page.locator('body').textContent()) ?? '').length,
+        async () => ((await page.locator('body').textContent()) ?? '').length,
       )
       .toBeGreaterThan(before + 40)
 

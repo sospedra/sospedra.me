@@ -61,9 +61,7 @@ test.describe('scavenger mobile', () => {
     await page.goto('/scavenger')
     await waitForBrowse(page)
 
-    await expect(
-      page.getByRole('button', { name: 'next spread' }),
-    ).toBeHidden()
+    await expect(page.getByRole('button', { name: 'next spread' })).toBeHidden()
 
     const before = await activeDiscs(page)
     await touchSwipe(page, { x: 195, y: 480 }, { x: 195, y: 220 })

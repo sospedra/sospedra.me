@@ -36,9 +36,7 @@ test.describe('travel', () => {
 
     expectClean(health)
 
-    await page
-      .getByRole('link', { name: /Turn off the traveler/ })
-      .click()
+    await page.getByRole('link', { name: /Turn off the traveler/ }).click()
     await page.waitForURL('**/')
   })
 })
