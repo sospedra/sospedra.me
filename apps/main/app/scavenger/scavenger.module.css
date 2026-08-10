@@ -5,6 +5,9 @@
   place-items: center;
   overflow: hidden;
   overscroll-behavior: none;
+  /* the scene never scrolls; without this a vertical swipe becomes a
+     pan attempt and pointercancel eats the flip gesture */
+  touch-action: none;
   user-select: none;
   background: radial-gradient(
     120% 90% at 50% 18%,
@@ -426,4 +429,70 @@
 .scene[data-closing="true"] .counter,
 .scene[data-closing="true"] .hud {
   visibility: hidden;
+}
+
+/* touch verbs for the hud hints */
+.coarseHint {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .fineHint {
+    display: none;
+  }
+
+  .coarseHint {
+    display: inline;
+  }
+}
+
+/* portrait phones read the wallet as a vertical book: the case folds
+   top over bottom and the pages hinge on the horizontal spine. The JS
+   twin of this query is PORTRAIT_BOOK_QUERY in wallet-input. */
+@media (max-width: 700px) and (orientation: portrait) {
+  .wallet {
+    width: min(80vw, 42vh);
+    aspect-ratio: 1 / 1.9;
+    transform: perspective(1500px) rotateX(8deg) translateY(2vh);
+    animation-name: drop-in-m;
+  }
+
+  .scene[data-closing="true"] .wallet {
+    animation-name: close-out-m;
+  }
+
+  .page {
+    left: 4.5%;
+    top: 50%;
+    width: 91%;
+    height: 45.5%;
+    transform-origin: center top;
+    transform: translateZ(var(--z, calc((var(--pages, 8) - var(--i)) * 1.6px)))
+      rotateX(calc(-1 * var(--ry, calc(-14deg - var(--i) * 8deg))));
+  }
+
+  .faceB {
+    transform: rotateX(180deg) translateZ(0.4px);
+  }
+
+  /* swipe owns the flip on touch; the arrow chrome goes away */
+  .navArrow {
+    display: none;
+  }
+}
+
+@keyframes drop-in-m {
+  from {
+    transform: perspective(1500px) rotateX(40deg) translateY(12vh) scale(0.9);
+  }
+
+  to {
+    transform: perspective(1500px) rotateX(8deg) translateY(2vh) scale(1);
+  }
+}
+
+@keyframes close-out-m {
+  to {
+    transform: perspective(1500px) rotateX(40deg) translateY(12vh) scale(0.9);
+  }
 }

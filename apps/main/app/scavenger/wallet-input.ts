@@ -21,9 +21,19 @@ const BOOT_OPEN_MS = 500
 const BOOT_DONE_MS = 2000
 const FLIP_COOLDOWN_MS = 320
 const WHEEL_THRESHOLD = 6
-const SWIPE_THRESHOLD = 28
+const SWIPE_THRESHOLD = 36
 const DRAG_THRESHOLD = 48
 const DRAG_CLICK_GRACE_MS = 250
+const TAP_SLOP_PX = 16
+
+/* mirrors the scavenger portrait media query: under it the book folds
+   top over bottom and pages hinge on X */
+export const PORTRAIT_BOOK_QUERY =
+  '(max-width: 700px) and (orientation: portrait)'
+
+const portraitBook = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia(PORTRAIT_BOOK_QUERY).matches
 
 let lastDragFlipAt = 0
 
@@ -40,19 +50,22 @@ export function useBootSequence(
   dispatch: React.Dispatch<WalletEvent>,
 ): void {
   useEffect(() => {
-    if (prefersQuietFx()) {
-      dispatch({ type: 'BOOTED' })
-      return
-    }
-    const open = window.setTimeout(
-      () => dispatch({ type: 'OPEN' }),
-      BOOT_OPEN_MS,
-    )
-    const settle = window.setTimeout(
-      () => dispatch({ type: 'BOOTED' }),
-      BOOT_DONE_MS,
-    )
+    let open: number | undefined
+    let settle: number | undefined
+    // deferred: the fx-quiet class lands in a parent effect, after this one
+    const decide = window.setTimeout(() => {
+      if (prefersQuietFx()) {
+        dispatch({ type: 'BOOTED' })
+        return
+      }
+      open = window.setTimeout(() => dispatch({ type: 'OPEN' }), BOOT_OPEN_MS)
+      settle = window.setTimeout(
+        () => dispatch({ type: 'BOOTED' }),
+        BOOT_DONE_MS,
+      )
+    }, 0)
     return () => {
+      window.clearTimeout(decide)
       window.clearTimeout(open)
       window.clearTimeout(settle)
     }
@@ -230,17 +243,20 @@ export function useWalletActions(
   }
 }
 
+/* the portrait book hinges on X: an upward swipe lifts the page, so it
+   advances; the desktop mapping keeps its drag-the-content feel */
 const dragDirection = (dx: number, dy: number): 1 | -1 | null => {
   if (Math.abs(dx) >= Math.abs(dy)) {
     if (Math.abs(dx) < DRAG_THRESHOLD) return null
     return dx > 0 ? -1 : 1
   }
   if (Math.abs(dy) < SWIPE_THRESHOLD) return null
+  if (portraitBook()) return dy < 0 ? 1 : -1
   return dy < 0 ? -1 : 1
 }
 
 export function useDragGestures(flip: (direction: 1 | -1) => void): void {
-  const dragStart = useRef<{ x: number; y: number } | null>(null)
+  const dragStart = useRef<{ x: number; y: number; id: number } | null>(null)
 
   useEffect(() => {
     const onWheel = (event: WheelEvent) => {
@@ -248,12 +264,21 @@ export function useDragGestures(flip: (direction: 1 | -1) => void): void {
       flip(event.deltaY > 0 ? -1 : 1)
     }
     const onPointerDown = (event: PointerEvent) => {
-      dragStart.current = { x: event.clientX, y: event.clientY }
+      dragStart.current = {
+        x: event.clientX,
+        y: event.clientY,
+        id: event.pointerId,
+      }
+    }
+    // iOS fires pointercancel freely (edge swipes, multi-touch); a stale
+    // start point turns the next tap into a phantom flip
+    const onPointerCancel = () => {
+      dragStart.current = null
     }
     const onPointerUp = (event: PointerEvent) => {
       const start = dragStart.current
       dragStart.current = null
-      if (!start) return
+      if (!start || start.id !== event.pointerId) return
       const direction = dragDirection(
         event.clientX - start.x,
         event.clientY - start.y,
@@ -264,10 +289,14 @@ export function useDragGestures(flip: (direction: 1 | -1) => void): void {
     }
     window.addEventListener('wheel', onWheel, { passive: true })
     window.addEventListener('pointerdown', onPointerDown, { passive: true })
+    window.addEventListener('pointercancel', onPointerCancel, {
+      passive: true,
+    })
     window.addEventListener('pointerup', onPointerUp, { passive: true })
     return () => {
       window.removeEventListener('wheel', onWheel)
       window.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('pointercancel', onPointerCancel)
       window.removeEventListener('pointerup', onPointerUp)
     }
   }, [flip])
@@ -289,9 +318,12 @@ const discAtPoint = (
     return rect ? pointInRectEllipse(event.clientX, event.clientY, rect) : false
   })
 
+/* a disc button on a buried page is inert: it hit-tests but never fires,
+   so the fallback must claim it instead of bailing */
 const interactiveTarget = (event: MouseEvent): boolean => {
   const target = event.target as Element | null
-  return Boolean(target?.closest(`button, a, #${CARD_ID}`))
+  const interactive = target?.closest(`button, a, #${CARD_ID}`)
+  return Boolean(interactive && !interactive.closest('[inert]'))
 }
 
 const pointInRect = (x: number, y: number, rect: DOMRect): boolean =>
@@ -331,16 +363,52 @@ const fallbackAction = (
 }
 
 // chromium's input hit test misroutes clicks inside the preserve-3d stack,
-// so bare-scene clicks resolve the disc from projected button geometry
+// so bare-scene clicks resolve the disc from projected button geometry.
+// The primary listener is pointerup: iOS never synthesizes a window click
+// from a tap on a bare div, and the click twin is swallowed when handled.
 export function usePointerFallback(
   state: WalletState,
   actions: WalletActions,
 ): void {
   useEffect(() => {
+    let acted = false
+    let start: { x: number; y: number; id: number } | null = null
+    const onPointerDown = (event: PointerEvent) => {
+      start = { x: event.clientX, y: event.clientY, id: event.pointerId }
+    }
+    const onPointerCancel = () => {
+      start = null
+    }
+    const onPointerUp = (event: PointerEvent) => {
+      acted = false
+      const from = start
+      start = null
+      if (!from || from.id !== event.pointerId) return
+      const travel = Math.hypot(event.clientX - from.x, event.clientY - from.y)
+      if (travel > TAP_SLOP_PX) return
+      const action = fallbackAction(event, state, actions)
+      if (!action) return
+      acted = true
+      action()
+    }
     const onClick = (event: MouseEvent) => {
+      if (acted) {
+        acted = false
+        return
+      }
       fallbackAction(event, state, actions)?.()
     }
+    window.addEventListener('pointerdown', onPointerDown, { passive: true })
+    window.addEventListener('pointercancel', onPointerCancel, {
+      passive: true,
+    })
+    window.addEventListener('pointerup', onPointerUp, { passive: true })
     window.addEventListener('click', onClick)
-    return () => window.removeEventListener('click', onClick)
+    return () => {
+      window.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('pointercancel', onPointerCancel)
+      window.removeEventListener('pointerup', onPointerUp)
+      window.removeEventListener('click', onClick)
+    }
   }, [state, actions])
 }

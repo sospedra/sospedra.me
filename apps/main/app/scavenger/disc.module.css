@@ -324,6 +324,14 @@
   filter: drop-shadow(0 22px 34px rgb(0 0 0 / 55%));
 }
 
+/* the near-square portrait page measures a hit wider than the phone
+   can hold at 1.8x; cap the flight size instead */
+@media (max-width: 700px) and (orientation: portrait) {
+  .floater {
+    width: min(var(--size, 300px), 44vw);
+  }
+}
+
 /* the flight mirrors fly-back: a slow start picks up where the
    decelerating eject hands over, no velocity pop at the seam */
 .floater[data-motion="out"] {

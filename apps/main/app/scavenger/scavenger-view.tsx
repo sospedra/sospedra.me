@@ -322,13 +322,18 @@ export default function ScavengerView() {
             home
           </Link>
           <span className={css.hint}>
-            <b>scroll</b> flip pages
+            <b className={css.fineHint}>scroll</b>
+            <b className={css.coarseHint}>swipe</b> flip pages
           </span>
           <span className={css.hint}>
-            <b>click</b> pull a disc
+            <b className={css.fineHint}>click</b>
+            <b className={css.coarseHint}>tap</b> pull a disc
           </span>
-          <span className={css.hint}>
+          <span className={cn(css.hint, css.fineHint)}>
             <b>esc</b> put it back
+          </span>
+          <span className={cn(css.hint, css.coarseHint)}>
+            <b>tap away</b> put it back
           </span>
           <button
             type='button'
