@@ -138,6 +138,22 @@
     var(--reveal-delay) both;
 }
 
+/* a tile must not be clickable before its reveal draws it: the arm
+   lands when game-materialize ends (620ms past the shared delay) */
+.gameLink {
+  pointer-events: none;
+}
+
+.scene[data-ready="true"] .gameLink {
+  animation: link-arm 1ms linear calc(var(--reveal-delay) + 620ms) forwards;
+}
+
+@keyframes link-arm {
+  to {
+    pointer-events: auto;
+  }
+}
+
 .iconGraphic {
   display: block;
   width: 100%;
@@ -155,7 +171,8 @@
    still end on the menu. The 1ms holds land on the data-ready values, so a
    live route crosses 6.2s with zero visual change. */
 .browserPanel,
-.iconStage {
+.iconStage,
+.gameLink {
   animation: menu-rescue 1ms linear 6.2s forwards;
 }
 
@@ -308,6 +325,11 @@
     transition: none;
   }
 
+  .scene[data-ready="true"] .gameLink {
+    animation: none;
+    pointer-events: auto;
+  }
+
   .bootMark {
     display: none;
   }
@@ -327,11 +349,17 @@
 /* the reveal and float selectors outrank the plain quiet kills above;
    mirror them under the quiet scope so quiet actually wins */
 :global(.fx-quiet) .scene[data-ready="true"] .iconStage,
+:global(.fx-quiet) .scene[data-ready="true"] .gameLink,
 :global(.fx-quiet)
   .scene[data-phase="ready"]
   .gameLink[data-active="true"]
   .iconGraphic {
   animation: none;
+}
+
+:global(.fx-quiet) .gameLink {
+  animation: none;
+  pointer-events: auto;
 }
 
 :global(.fx-quiet) .cloud {

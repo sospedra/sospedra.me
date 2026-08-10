@@ -2,7 +2,9 @@
 
 import cn from 'clsx'
 import { clamp } from 'es-toolkit'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import ReactDOM from 'react-dom'
+import { tapHaptic } from 'services/haptics'
 import { isEditableTarget, useGameInput } from 'services/hotkeys'
 import Link from 'services/link'
 import Shell from 'services/shell'
@@ -19,6 +21,7 @@ import { CloudField, ColumnField } from './scenery'
 
 const BOOT_DURATION_MS = 3450
 const MENU_LOAD_DURATION_MS = 2300
+const CHIME_RETRY_WINDOW_MS = 8000
 const DESKTOP_COLUMNS = 9
 const MOBILE_COLUMNS = 3
 type ScenePhase = 'boot' | 'loading' | 'ready'
@@ -45,6 +48,10 @@ const nextIndexFor = (key: string, index: number, columns: number) =>
   GRID_MOVES[key]?.(index, columns) ?? null
 
 export default function GamesView() {
+  ReactDOM.preload('/sounds/startup.webm', {
+    as: 'audio',
+    fetchPriority: 'high',
+  })
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [phase, setPhase] = useState<ScenePhase>('boot')
   const links = useRef<Array<HTMLAnchorElement | null>>([])
@@ -54,6 +61,8 @@ export default function GamesView() {
   useGameInput()
 
   const sfx = useRef<MenuSfx | null>(null)
+  const startup = useRef<HTMLAudioElement>(null)
+  const chimeBlockedAt = useRef<number | null>(null)
   const lastTicked = useRef(0)
   const revealPlayed = useRef(false)
 
@@ -63,9 +72,46 @@ export default function GamesView() {
     sfx.current[name]()
   }
 
+  useEffect(
+    () => () => {
+      sfx.current?.dispose()
+      sfx.current = null
+    },
+    [],
+  )
+
+  useEffect(() => {
+    if (fxMode === 'quiet') return
+    const chime = startup.current
+    // autoplay without a same-page gesture rejects: the first boot
+    // gesture replays it via playBlockedChime
+    chime?.play().catch(() => {
+      chimeBlockedAt.current = performance.now()
+    })
+    return () => chime?.pause()
+  }, [fxMode])
+
+  // iOS grants audio only inside a tap's call stack, so pointerdown,
+  // click, and keydown all route here until one attempt sticks
+  const playBlockedChime = useCallback(() => {
+    const blockedAt = chimeBlockedAt.current
+    if (blockedAt === null) return
+    if (performance.now() - blockedAt > CHIME_RETRY_WINDOW_MS) return
+    void startup.current
+      ?.play()
+      .then(() => {
+        chimeBlockedAt.current = null
+      })
+      .catch(() => {})
+  }, [])
+
   const ready = phase === 'ready'
   const menuVisible = phase !== 'boot'
-  const finishBoot = () => setPhase('ready')
+  const finishBoot = () => {
+    playBlockedChime()
+    if (phase !== 'ready') tapHaptic()
+    setPhase('ready')
+  }
 
   useEffect(() => {
     if (
@@ -130,10 +176,13 @@ export default function GamesView() {
         const onInteractive =
           event.target instanceof Element &&
           event.target.closest('a, button, input, [role="button"]')
-        if (!ready || onInteractive) return
+        if (!ready || onInteractive || event.repeat) return
         if (grid.current?.contains(document.activeElement)) return
+        const link = links.current[selectedIndex]
+        // unarmed tiles ignore Enter like they ignore clicks (see link-arm)
+        if (!link || getComputedStyle(link).pointerEvents === 'none') return
         event.preventDefault()
-        links.current[selectedIndex]?.click()
+        link.click()
         return
       }
 
@@ -147,6 +196,7 @@ export default function GamesView() {
     }
 
     const handleKeydown = (event: KeyboardEvent) => {
+      playBlockedChime()
       if (isPassthroughKey(event)) return
 
       if (event.key === 'Escape') {
@@ -160,7 +210,7 @@ export default function GamesView() {
 
     window.addEventListener('keydown', handleKeydown)
     return () => window.removeEventListener('keydown', handleKeydown)
-  }, [focusGame, playSfx, ready, selectedIndex, transition])
+  }, [focusGame, playBlockedChime, playSfx, ready, selectedIndex, transition])
 
   const selected = ARCHIVE[selectedIndex]
 
@@ -171,7 +221,11 @@ export default function GamesView() {
         data-phase={phase}
         data-ready={menuVisible ? 'true' : 'false'}
         onPointerDownCapture={finishBoot}
+        onClickCapture={playBlockedChime}
       >
+        {/* biome-ignore lint/a11y/useMediaCaption: the startup chime carries no speech */}
+        <audio ref={startup} src='/sounds/startup.webm' preload='auto' />
+
         <CloudField />
 
         <ColumnField />
@@ -241,7 +295,10 @@ export default function GamesView() {
                   onFocus={() => selectGame(index)}
                   onPointerEnter={() => selectGame(index)}
                   onPointerDown={() => selectGame(index)}
-                  onClick={() => playSfx('confirm')}
+                  onClick={() => {
+                    playSfx('confirm')
+                    tapHaptic()
+                  }}
                 >
                   <span className={cn(gridCss.iconStage, css.iconStage)}>
                     <span className={cn(gridCss.iconWrap, css.iconWrap)}>
@@ -269,7 +326,10 @@ export default function GamesView() {
                 url='/bazaar'
                 className={barCss.controlLink}
                 aria-label='Back to the bazaar'
-                onClick={() => playSfx('cancel')}
+                onClick={() => {
+                  playSfx('cancel')
+                  tapHaptic()
+                }}
               >
                 <span className={barCss.circleKey} aria-hidden='true'>
                   ○
