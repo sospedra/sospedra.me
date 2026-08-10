@@ -89,6 +89,16 @@ const config: NextConfig = {
         },
       ],
     },
+    // hover/touch prefetch must survive the navigation; a month bounds staleness
+    {
+      source: '/talks/sfx/:path*',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=2592000, stale-while-revalidate=31536000',
+        },
+      ],
+    },
   ],
 }
 

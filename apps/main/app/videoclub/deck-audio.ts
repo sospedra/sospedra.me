@@ -1,22 +1,10 @@
+import { type DeckSampleName, deckSampleUrl } from 'services/audio/deck-samples'
 import { createSfxKit, type SfxBed } from 'services/audio/kit'
 
-const SAMPLE_URLS = {
-  button: '/talks/sfx/button',
-  insert: '/talks/sfx/vhs-insert',
-} as const
-
-type SampleName = keyof typeof SAMPLE_URLS
-
 /* seconds skipped from each recording's head to sync with the visuals */
-const SAMPLE_TRIM: Record<SampleName, number> = {
+const SAMPLE_TRIM: Record<DeckSampleName, number> = {
   button: 0.5,
-  insert: 1,
-}
-
-const sampleExtension = (): string => {
-  if (typeof document === 'undefined') return 'm4a'
-  const probe = document.createElement('audio')
-  return probe.canPlayType('audio/ogg; codecs=opus') ? 'opus' : 'm4a'
+  insert: 0,
 }
 
 export type DeckAudio = ReturnType<typeof createDeckAudio>
@@ -24,19 +12,19 @@ export type DeckAudio = ReturnType<typeof createDeckAudio>
 export const createDeckAudio = () => {
   const kit = createSfxKit({ attack: 0.004 })
   let hiss: SfxBed | null = null
-  const fetched: Partial<Record<SampleName, Promise<ArrayBuffer>>> = {}
-  const decoded: Partial<Record<SampleName, AudioBuffer>> = {}
+  const fetched: Partial<Record<DeckSampleName, Promise<ArrayBuffer>>> = {}
+  const decoded: Partial<Record<DeckSampleName, AudioBuffer>> = {}
 
-  const fetchSample = (name: SampleName): Promise<ArrayBuffer> => {
-    fetched[name] ??= fetch(`${SAMPLE_URLS[name]}.${sampleExtension()}`).then(
-      (response) => response.arrayBuffer(),
+  const fetchSample = (name: DeckSampleName): Promise<ArrayBuffer> => {
+    fetched[name] ??= fetch(deckSampleUrl(name)).then((response) =>
+      response.arrayBuffer(),
     )
     return fetched[name]
   }
 
   const decodeSample = async (
     context: AudioContext,
-    name: SampleName,
+    name: DeckSampleName,
   ): Promise<AudioBuffer> => {
     if (decoded[name]) return decoded[name]
     // decodeAudioData detaches its input; hand it a copy
@@ -46,7 +34,7 @@ export const createDeckAudio = () => {
     return buffer
   }
 
-  const playSample = async (name: SampleName, rate = 1) => {
+  const playSample = async (name: DeckSampleName, rate = 1) => {
     const context = kit.ensure()
     if (!context) return
     const buffer = await decodeSample(context, name)
@@ -57,13 +45,21 @@ export const createDeckAudio = () => {
     source.start(0, SAMPLE_TRIM[name])
   }
 
-  const sample = (name: SampleName, rate = 1) => {
+  const sample = (name: DeckSampleName, rate = 1) => {
     playSample(name, rate).catch(() => undefined)
   }
 
   return {
+    // iOS denies AudioContext resume outside a gesture: the insert sample
+    // fires from an animation callback, so the gesture must arm the context
+    arm: () => {
+      const context = kit.ensure()
+      if (!context) return
+      decodeSample(context, 'insert').catch(() => undefined)
+    },
     preload: () => {
-      for (const name of Object.keys(SAMPLE_URLS) as SampleName[]) {
+      // insert first: it is the longest sample and the first interaction plays it
+      for (const name of ['insert', 'button'] as const) {
         fetchSample(name).catch(() => undefined)
       }
     },

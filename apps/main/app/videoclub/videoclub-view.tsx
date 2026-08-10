@@ -3,6 +3,8 @@
 import cn from 'clsx'
 import { clamp } from 'es-toolkit'
 import { useEffect, useReducer, useRef, useState } from 'react'
+import { preload } from 'react-dom'
+import { DECK_SAMPLE_URLS } from 'services/audio/deck-samples'
 import { sceneTrap, type Trap, useHotkeys } from 'services/hotkeys'
 import { GoBack, LinkBack } from 'services/link'
 import Shell from 'services/shell'
@@ -33,6 +35,11 @@ const isNotAllowed = (error: unknown) =>
   error instanceof DOMException && error.name === 'NotAllowedError'
 
 export default function VideoclubView() {
+  // head preload beats the hydration-time fetch; old Safari fetches m4a itself
+  preload(`${DECK_SAMPLE_URLS.insert}.webm`, {
+    as: 'fetch',
+    crossOrigin: 'anonymous',
+  })
   const [state, dispatch] = useReducer(reducer, {
     status: 'off',
     tape: 0,
@@ -193,6 +200,7 @@ export default function VideoclubView() {
 
   const insertTape = (index: number) => {
     if (index === state.tape || state.status === 'inserting') return
+    audio.arm()
     setCounterSeconds(0)
     flash(formatChannel(index))
     dispatch({ type: 'insert', tape: index })

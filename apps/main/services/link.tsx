@@ -6,6 +6,10 @@ import type React from 'react'
 import Icon from 'services/icon/icon'
 import { navigateBackOrHome } from 'services/navigation-history'
 import { useRouteTransition } from 'services/transition/context'
+import {
+  useWarmRouteAudioOnTouch,
+  warmRouteAudio,
+} from 'services/transition/route-audio'
 import { usePrefetch } from 'services/transition/use-prefetch'
 import css from './link.module.css'
 
@@ -32,6 +36,7 @@ export default function Link(props: LinkProps) {
   } = props
   const transition = useRouteTransition()
   const prefetch = usePrefetch(url)
+  useWarmRouteAudioOnTouch(url)
 
   const navigateOnClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     const shouldUseNativeNavigation =
@@ -64,14 +69,17 @@ export default function Link(props: LinkProps) {
       onFocus={(event) => {
         onFocus?.(event)
         if (prefetchOnFocus) prefetch()
+        if (prefetchOnFocus) warmRouteAudio(url)
       }}
       onMouseEnter={(event) => {
         onMouseEnter?.(event)
         prefetch()
+        warmRouteAudio(url)
       }}
       onTouchStart={(event) => {
         onTouchStart?.(event)
         prefetch()
+        warmRouteAudio(url)
       }}
       onClick={navigateOnClick}
     >
