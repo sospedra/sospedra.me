@@ -4,12 +4,16 @@ import type {
   GeneratedCityCorpus,
   GeneratedCityRecord,
 } from '../../app/meridian/corpus-model.ts'
-import type { CountryRecord } from '../../app/meridian/model.ts'
+import type { CountryRecord, RoundType } from '../../app/meridian/model.ts'
 import {
   normalizeGeoAnswer,
   rankGeoAutocompleteCandidates,
 } from '../../app/meridian/text-answer.ts'
-import { check, isLocalizedText } from './lib-validate-core.ts'
+import {
+  check,
+  isCoordinateWithin,
+  isLocalizedText,
+} from './lib-validate-core.ts'
 import type {
   AssetManifest,
   Challenge,
@@ -20,20 +24,10 @@ import type {
   SourceLock,
 } from './lib-validate-types.ts'
 
-export const validateCorpusDocuments = ({
-  challenge,
-  corpus,
-  cityCorpus,
-  manifest,
-  approval,
-  sourceLock,
-  corpusSourceLock,
-  cityOverrides,
-  countryByCode,
-  eligibleCountriesByRound,
-  expectedRoundTypes,
-  difficulties,
-}: {
+type CityOption = NonNullable<Challenge['cityOptions']>[number]
+type Locale = 'en' | 'es'
+
+type CorpusValidationContext = {
   challenge: Challenge
   corpus: CountryCorpus
   cityCorpus: GeneratedCityCorpus
@@ -43,20 +37,44 @@ export const validateCorpusDocuments = ({
   corpusSourceLock: CorpusSourceLock
   cityOverrides: CityOverrides
   countryByCode: Map<string, CountryRecord>
-  eligibleCountriesByRound: Map<
-    (typeof expectedRoundTypes)[number],
-    Map<string, CountryRecord>
-  >
-  expectedRoundTypes: readonly ('shape' | 'flag' | 'capital' | 'map')[]
+  eligibleCountriesByRound: Map<RoundType, Map<string, CountryRecord>>
+  expectedRoundTypes: readonly RoundType[]
   difficulties: readonly number[]
-}): {
+}
+
+type CorpusDerivations = {
   cityByGeonamesId: Map<number, GeneratedCityRecord>
   eligibleMapCities: GeneratedCityRecord[]
   eligibleMapCityIds: Set<number>
-} => {
+}
+
+export const validateCorpusDocuments = (
+  context: CorpusValidationContext,
+): CorpusDerivations => {
   const cityByGeonamesId = new Map(
-    cityCorpus.cities.map((city) => [city.geonamesId, city]),
+    context.cityCorpus.cities.map((city) => [city.geonamesId, city]),
   )
+  validateCityAutocomplete(context)
+  const eligibleMapCountries =
+    context.eligibleCountriesByRound.get('map') ??
+    new Map<string, CountryRecord>()
+  const eligibleMapCities = context.cityCorpus.cities.filter((city) =>
+    eligibleMapCountries.has(city.countryCode),
+  )
+  const eligibleMapCityIds = new Set(
+    eligibleMapCities.map((city) => city.geonamesId),
+  )
+  validateDocumentRevisions(context)
+  validateCorpusUniqueness(context, cityByGeonamesId)
+  validateCityRecords(context)
+  validateCapitalRetention(eligibleMapCountries, eligibleMapCities)
+  validateCountryRecords(context)
+  validateEditorialHolds(context)
+  return { cityByGeonamesId, eligibleMapCities, eligibleMapCityIds }
+}
+
+const validateCityAutocomplete = (context: CorpusValidationContext): void => {
+  const { challenge, cityCorpus } = context
   const expectedCityOptions = buildCityAutocompleteOptions(cityCorpus.cities)
   const cityOptions = Array.isArray(challenge.cityOptions)
     ? challenge.cityOptions
@@ -83,46 +101,65 @@ export const validateCorpusDocuments = ({
     )
   }
   for (const locale of ['en', 'es'] as const) {
-    const optionsByLabel = groupBy(cityOptions, (option) =>
-      normalizeGeoAnswer(option.label[locale], locale),
-    )
-
-    for (const [normalizedLabel, labelOptions] of Object.entries(
-      optionsByLabel,
-    )) {
-      const optionIds = labelOptions.map((option) => option.id)
-      const matches = rankGeoAutocompleteCandidates(
-        normalizedLabel,
-        cityOptions,
-        locale,
-        {
-          minimumCharacters: 1,
-          maxResults: cityOptions.length,
-        },
-      )
-      const exactMatches = matches.filter(
-        (candidate) => candidate.normalizedLabel === normalizedLabel,
-      )
-      check(
-        optionIds.length === 1
-          ? exactMatches.length === 1 &&
-              exactMatches[0]?.optionId === optionIds[0]
-          : exactMatches.length === 0,
-        optionIds.length === 1
-          ? `Unique ${locale} city label "${normalizedLabel}" is not resolvable`
-          : `Ambiguous ${locale} city label "${normalizedLabel}" must not autocomplete`,
-      )
-    }
+    validateLabelAmbiguity(cityOptions, locale)
   }
-  const eligibleMapCountries =
-    eligibleCountriesByRound.get('map') ?? new Map<string, CountryRecord>()
-  const eligibleMapCities = cityCorpus.cities.filter((city) =>
-    eligibleMapCountries.has(city.countryCode),
-  )
-  const eligibleMapCityIds = new Set(
-    eligibleMapCities.map((city) => city.geonamesId),
-  )
+}
 
+const validateLabelAmbiguity = (
+  cityOptions: readonly CityOption[],
+  locale: Locale,
+): void => {
+  const optionsByLabel = groupBy(cityOptions, (option) =>
+    normalizeGeoAnswer(option.label[locale], locale),
+  )
+  for (const [normalizedCityLabel, labelOptions] of Object.entries(
+    optionsByLabel,
+  )) {
+    validateLabelResolution({
+      normalizedCityLabel,
+      labelOptions,
+      cityOptions,
+      locale,
+    })
+  }
+}
+
+const validateLabelResolution = ({
+  normalizedCityLabel,
+  labelOptions,
+  cityOptions,
+  locale,
+}: {
+  normalizedCityLabel: string
+  labelOptions: readonly CityOption[]
+  cityOptions: readonly CityOption[]
+  locale: Locale
+}): void => {
+  const optionIds = labelOptions.map((option) => option.id)
+  const matches = rankGeoAutocompleteCandidates(
+    normalizedCityLabel,
+    cityOptions,
+    locale,
+    { minimumCharacters: 1, maxResults: cityOptions.length },
+  )
+  const exactMatches = matches.filter(
+    (candidate) => candidate.normalizedLabel === normalizedCityLabel,
+  )
+  if (optionIds.length === 1) {
+    check(
+      exactMatches.length === 1 && exactMatches[0]?.optionId === optionIds[0],
+      `Unique ${locale} city label "${normalizedCityLabel}" is not resolvable`,
+    )
+    return
+  }
+  check(
+    exactMatches.length === 0,
+    `Ambiguous ${locale} city label "${normalizedCityLabel}" must not autocomplete`,
+  )
+}
+
+const validateDocumentRevisions = (context: CorpusValidationContext): void => {
+  const { challenge, corpus, cityCorpus, manifest, approval } = context
   check(challenge.schemaVersion === 1, 'Challenge schemaVersion must be 1')
   check(
     /^\d{4}-\d{2}-\d{2}$/u.test(challenge.publicationDate),
@@ -148,11 +185,11 @@ export const validateCorpusDocuments = ({
     challenge.sourceRevision === corpus.sourceRevision &&
       challenge.sourceRevision === approval.sourceRevision &&
       challenge.sourceRevision === manifest.sourceRevision &&
-      challenge.sourceRevision === sourceLock.sourceRevision,
+      challenge.sourceRevision === context.sourceLock.sourceRevision,
     'Country source revisions must match across challenge, corpus, assets, approval, and lock',
   )
   check(
-    cityCorpus.sourceRevision === corpusSourceLock.sourceRevision,
+    cityCorpus.sourceRevision === context.corpusSourceLock.sourceRevision,
     'City corpus source revision must match its source lock',
   )
   check(
@@ -164,22 +201,31 @@ export const validateCorpusDocuments = ({
     'City corpus policy revision is not approved',
   )
   check(cityCorpus.schemaVersion === 1, 'City corpus schemaVersion must be 1')
+}
+
+const validateCorpusUniqueness = (
+  context: CorpusValidationContext,
+  cityByGeonamesId: Map<number, GeneratedCityRecord>,
+): void => {
   check(
-    new Set(corpus.countries.map(({ code }) => code)).size ===
-      corpus.countries.length,
+    new Set(context.corpus.countries.map(({ code }) => code)).size ===
+      context.corpus.countries.length,
     'Country corpus contains duplicate ISO alpha-2 codes',
   )
   check(
-    cityByGeonamesId.size === cityCorpus.cities.length,
+    cityByGeonamesId.size === context.cityCorpus.cities.length,
     'City corpus contains duplicate GeoNames IDs',
   )
-  for (const city of cityCorpus.cities) {
+}
+
+const validateCityRecords = (context: CorpusValidationContext): void => {
+  for (const city of context.cityCorpus.cities) {
     check(
-      city.sourceRevision === cityCorpus.sourceRevision,
+      city.sourceRevision === context.cityCorpus.sourceRevision,
       `City ${city.geonamesId} uses a stale source revision`,
     )
     check(
-      countryByCode.has(city.countryCode),
+      context.countryByCode.has(city.countryCode),
       `City ${city.geonamesId} references unknown country ${city.countryCode}`,
     )
     check(
@@ -187,19 +233,21 @@ export const validateCorpusDocuments = ({
       `City ${city.geonamesId} lacks EN/ES names`,
     )
     check(
-      Number.isFinite(city.latitude) &&
-        city.latitude >= -90 &&
-        city.latitude <= 90 &&
-        Number.isFinite(city.longitude) &&
-        city.longitude >= -180 &&
-        city.longitude <= 180,
+      isCoordinateWithin(city.latitude, 90) &&
+        isCoordinateWithin(city.longitude, 180),
       `City ${city.geonamesId} has invalid coordinates`,
     )
     check(
-      difficulties.includes(city.difficulty as (typeof difficulties)[number]),
+      context.difficulties.includes(city.difficulty),
       `City ${city.geonamesId} has invalid difficulty`,
     )
   }
+}
+
+const validateCapitalRetention = (
+  eligibleMapCountries: Map<string, CountryRecord>,
+  eligibleMapCities: readonly GeneratedCityRecord[],
+): void => {
   for (const country of eligibleMapCountries.values()) {
     check(
       eligibleMapCities.some(
@@ -208,43 +256,54 @@ export const validateCorpusDocuments = ({
       `${country.code} has no retained capital city`,
     )
   }
-  for (const country of corpus.countries) {
+}
+
+const validateCountryRecords = (context: CorpusValidationContext): void => {
+  for (const country of context.corpus.countries) {
     check(isLocalizedText(country.names), `${country.code} lacks EN/ES names`)
     check(
       isLocalizedText(country.capital.names),
       `${country.code} capital lacks EN/ES names`,
     )
     check(
-      Number.isFinite(country.capital.latitude) &&
-        country.capital.latitude >= -90 &&
-        country.capital.latitude <= 90 &&
-        Number.isFinite(country.capital.longitude) &&
-        country.capital.longitude >= -180 &&
-        country.capital.longitude <= 180,
+      isCoordinateWithin(country.capital.latitude, 90) &&
+        isCoordinateWithin(country.capital.longitude, 180),
       `${country.code} has invalid capital coordinates`,
     )
-    for (const roundType of expectedRoundTypes) {
+    for (const roundType of context.expectedRoundTypes) {
+      const roundDifficulty = country.difficulty[roundType]
       check(
         country.eligibility[roundType] ===
-          difficulties.includes(
-            country.difficulty[roundType] as (typeof difficulties)[number],
-          ),
+          (roundDifficulty !== undefined &&
+            context.difficulties.includes(roundDifficulty)),
         `${country.code} ${roundType} eligibility and difficulty disagree`,
       )
     }
-    if (country.status === 'active' && country.eligibility.shape) {
-      check(
-        country.assets.shapeUrl === manifest.shapes[country.code]?.url,
-        `${country.code} shape asset differs between corpus and manifest`,
-      )
-    }
-    if (country.status === 'active' && country.eligibility.flag) {
-      check(
-        country.assets.flagUrl === manifest.flags[country.code]?.url,
-        `${country.code} flag asset differs between corpus and manifest`,
-      )
-    }
+    validateCountryAssets(country, context.manifest)
   }
+}
+
+const validateCountryAssets = (
+  country: CountryRecord,
+  manifest: AssetManifest,
+): void => {
+  if (country.status !== 'active') return
+  if (country.eligibility.shape) {
+    check(
+      country.assets.shapeUrl === manifest.shapes[country.code]?.url,
+      `${country.code} shape asset differs between corpus and manifest`,
+    )
+  }
+  if (country.eligibility.flag) {
+    check(
+      country.assets.flagUrl === manifest.flags[country.code]?.url,
+      `${country.code} flag asset differs between corpus and manifest`,
+    )
+  }
+}
+
+const validateEditorialHolds = (context: CorpusValidationContext): void => {
+  const { cityOverrides, countryByCode } = context
   check(
     cityOverrides.reviewQueue.length === 5 &&
       new Set(cityOverrides.reviewQueue.map(({ countryCode }) => countryCode))
@@ -268,6 +327,4 @@ export const validateCorpusDocuments = ({
       )
     }
   }
-
-  return { cityByGeonamesId, eligibleMapCities, eligibleMapCityIds }
 }

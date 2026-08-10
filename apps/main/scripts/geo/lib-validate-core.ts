@@ -24,3 +24,11 @@ export const isLocalizedText = (value: LocalizedText | undefined): boolean =>
   value.en.trim().length > 0 &&
   typeof value.es === 'string' &&
   value.es.trim().length > 0
+
+export const isCoordinateWithin = (
+  value: number | undefined,
+  bound: number,
+): boolean =>
+  typeof value === 'number' &&
+  Number.isFinite(value) &&
+  Math.abs(value) <= bound

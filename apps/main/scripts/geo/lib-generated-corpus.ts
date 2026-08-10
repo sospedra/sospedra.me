@@ -24,14 +24,76 @@ import type {
 } from './lib-corpus-types.ts'
 import { streamArchiveLines } from './lib-source-verification.ts'
 
+const WIKIDATA_ID = /^Q\d+$/u
+
+type Locale = 'en' | 'es'
+
+type NamesOverride = Extract<CityOverrideAction, { action: 'names' }>
+
+type AlternateNameEvent =
+  | { kind: 'skip' }
+  | { kind: 'wikidata'; geonamesId: number; wikidataId: string }
+  | {
+      kind: 'name'
+      geonamesId: number
+      language: Locale
+      name: AlternateName
+    }
+
 const pickDisplayName = (names: AlternateName[], fallback: string) => {
   const eligible = [...names].sort(
-    (a, b) =>
-      Number(b.preferred) - Number(a.preferred) ||
-      Number(b.short) - Number(a.short) ||
-      a.id - b.id,
+    (left, right) =>
+      Number(right.preferred) - Number(left.preferred) ||
+      Number(right.short) - Number(left.short) ||
+      left.id - right.id,
   )
   return eligible[0]?.name || fallback
+}
+
+const parseAlternateNameLine = (
+  line: string,
+  selectedIds: ReadonlySet<number>,
+): AlternateNameEvent => {
+  const fields = line.split('\t')
+  const geonamesId = Number(fields[1])
+  if (!selectedIds.has(geonamesId)) return { kind: 'skip' }
+  const language = fields[2]
+  if (language === 'wkdt') {
+    const wikidataId = normalizedCurrentName(fields[3] ?? '')
+    assert(
+      WIKIDATA_ID.test(wikidataId),
+      `GeoNames city ${geonamesId} has invalid Wikidata id ${wikidataId}`,
+    )
+    return { kind: 'wikidata', geonamesId, wikidataId }
+  }
+  if (language !== 'en' && language !== 'es') return { kind: 'skip' }
+  const name = normalizedCurrentName(fields[3] ?? '')
+  const colloquial = fields[6] === '1'
+  const historic = fields[7] === '1'
+  const ended = Boolean(fields[9])
+  if (!name || colloquial || historic || ended) return { kind: 'skip' }
+  return {
+    kind: 'name',
+    geonamesId,
+    language,
+    name: {
+      id: Number(fields[0]) || Number.MAX_SAFE_INTEGER,
+      name,
+      preferred: fields[4] === '1',
+      short: fields[5] === '1',
+    },
+  }
+}
+
+const applyAlternateNameEvent = (
+  alternateNames: Map<number, AlternateNames>,
+  event: AlternateNameEvent,
+): void => {
+  if (event.kind === 'skip') return
+  const names = alternateNames.get(event.geonamesId) ?? { en: [], es: [] }
+  if (event.kind === 'wikidata') names.wikidataId = event.wikidataId
+  if (event.kind === 'name') names[event.language].push(event.name)
+  alternateNames.set(event.geonamesId, names)
 }
 
 export const collectAlternateNames = async ({
@@ -41,40 +103,14 @@ export const collectAlternateNames = async ({
   sourceLock: CorpusSourceLock
   selectedById: Map<number, CityCandidate>
 }): Promise<Map<number, AlternateNames>> => {
-  const selectedIdSet = new Set(selectedById.keys())
+  const selectedIds = new Set(selectedById.keys())
   const alternateNames = new Map<number, AlternateNames>()
-  await streamArchiveLines(sourceLock.geonames.files.alternateNames, (line) => {
-    const fields = line.split('\t')
-    const geonamesId = Number(fields[1])
-    if (!selectedIdSet.has(geonamesId)) return
-    const language = fields[2]
-    if (language === 'wkdt') {
-      const wikidataId = normalizedCurrentName(fields[3] ?? '')
-      assert(
-        /^Q\d+$/u.test(wikidataId),
-        `GeoNames city ${geonamesId} has invalid Wikidata id ${wikidataId}`,
-      )
-      const names = alternateNames.get(geonamesId) ?? { en: [], es: [] }
-      names.wikidataId = wikidataId
-      alternateNames.set(geonamesId, names)
-      return
-    }
-    if (language !== 'en' && language !== 'es') return
-    const name = normalizedCurrentName(fields[3] ?? '')
-    const colloquial = fields[6] === '1'
-    const historic = fields[7] === '1'
-    const ended = Boolean(fields[9])
-    if (!name || colloquial || historic || ended) return
-
-    const names = alternateNames.get(geonamesId) ?? { en: [], es: [] }
-    names[language].push({
-      id: Number(fields[0]) || Number.MAX_SAFE_INTEGER,
-      name,
-      preferred: fields[4] === '1',
-      short: fields[5] === '1',
-    })
-    alternateNames.set(geonamesId, names)
-  })
+  await streamArchiveLines(sourceLock.geonames.files.alternateNames, (line) =>
+    applyAlternateNameEvent(
+      alternateNames,
+      parseAlternateNameLine(line, selectedIds),
+    ),
+  )
   return alternateNames
 }
 
@@ -90,7 +126,9 @@ export const rankCitiesByPopulation = ({
     const bucket = buckets.get(countryCode)
     assert(bucket, `City bucket is missing ${countryCode}`)
     bucket.rankBasis.sort(
-      (a, b) => b.population - a.population || a.geonamesId - b.geonamesId,
+      (left, right) =>
+        right.population - left.population ||
+        left.geonamesId - right.geonamesId,
     )
     rankByCountry.set(
       countryCode,
@@ -105,83 +143,86 @@ export const rankCitiesByPopulation = ({
   return rankByCountry
 }
 
-export const buildCityRecords = ({
-  selectedById,
-  alternateNames,
-  rankByCountry,
-  overridesById,
-  policy,
-  sourceLock,
-}: {
-  selectedById: Map<number, CityCandidate>
+const findNamesOverride = (
+  overrides: readonly CityOverrideAction[] | undefined,
+): NamesOverride | undefined =>
+  overrides?.find(
+    (override): override is NamesOverride => override.action === 'names',
+  )
+
+type CityRecordInputs = {
   alternateNames: Map<number, AlternateNames>
   rankByCountry: Map<string, Map<number, number>>
   overridesById: Partial<Record<number, CityOverrideAction[]>>
   policy: CoveragePolicy
   sourceLock: CorpusSourceLock
-}): GeneratedCityRecord[] => {
-  const cities: GeneratedCityRecord[] = [...selectedById.values()]
-    .map((candidate) => {
-      const alternate = alternateNames.get(candidate.geonamesId) ?? {
-        en: [],
-        es: [],
-      }
-      const enName = pickDisplayName(alternate.en, candidate.name)
-      const esName = pickDisplayName(alternate.es, candidate.name)
-      const names: LocalizedText = { en: enName, es: esName }
-      const namesOverride = overridesById[candidate.geonamesId]?.find(
-        (override) => override.action === 'names',
-      )
-      if (namesOverride?.action === 'names') {
-        Object.assign(names, namesOverride.names)
-      }
-
-      const populationRank =
-        rankByCountry.get(candidate.countryCode)?.get(candidate.geonamesId) ??
-        fail(`Population rank is missing for ${candidate.geonamesId}`)
-      const acceptedNames = {
-        en: uniqueNames(enName, [
-          candidate.name,
-          candidate.asciiName,
-          ...alternate.en.map((name) => name.name),
-          ...(namesOverride?.action === 'names'
-            ? (namesOverride.acceptedNames?.en ?? [])
-            : []),
-        ]),
-        es: uniqueNames(esName, [
-          candidate.name,
-          candidate.asciiName,
-          ...alternate.es.map((name) => name.name),
-          ...(namesOverride?.action === 'names'
-            ? (namesOverride.acceptedNames?.es ?? [])
-            : []),
-        ]),
-      }
-
-      return {
-        geonamesId: candidate.geonamesId,
-        ...(alternate.wikidataId ? { wikidataId: alternate.wikidataId } : {}),
-        countryCode: candidate.countryCode,
-        names,
-        acceptedNames,
-        latitude: candidate.latitude,
-        longitude: candidate.longitude,
-        population: candidate.population,
-        populationRank,
-        featureCode: candidate.featureCode,
-        isCapital: candidate.isCapital,
-        difficulty: cityDifficulty(populationRank, candidate.isCapital, policy),
-        sourceRevision: sourceLock.sourceRevision,
-      }
-    })
-    .sort(
-      (a, b) =>
-        compareText(a.countryCode, b.countryCode) ||
-        a.populationRank - b.populationRank ||
-        a.geonamesId - b.geonamesId,
-    )
-  return cities
 }
+
+const toCityRecord = (
+  candidate: CityCandidate,
+  inputs: CityRecordInputs,
+): GeneratedCityRecord => {
+  const alternate = inputs.alternateNames.get(candidate.geonamesId) ?? {
+    en: [],
+    es: [],
+  }
+  const namesOverride = findNamesOverride(
+    inputs.overridesById[candidate.geonamesId],
+  )
+  const pickedNames: LocalizedText = {
+    en: pickDisplayName(alternate.en, candidate.name),
+    es: pickDisplayName(alternate.es, candidate.name),
+  }
+  const names = namesOverride
+    ? { ...pickedNames, ...namesOverride.names }
+    : pickedNames
+  const acceptedNamesFor = (locale: Locale): string[] =>
+    uniqueNames(pickedNames[locale], [
+      candidate.name,
+      candidate.asciiName,
+      ...alternate[locale].map((alternateName) => alternateName.name),
+      ...(namesOverride?.acceptedNames?.[locale] ?? []),
+    ])
+  const populationRank =
+    inputs.rankByCountry
+      .get(candidate.countryCode)
+      ?.get(candidate.geonamesId) ??
+    fail(`Population rank is missing for ${candidate.geonamesId}`)
+  return {
+    geonamesId: candidate.geonamesId,
+    ...(alternate.wikidataId ? { wikidataId: alternate.wikidataId } : {}),
+    countryCode: candidate.countryCode,
+    names,
+    acceptedNames: { en: acceptedNamesFor('en'), es: acceptedNamesFor('es') },
+    latitude: candidate.latitude,
+    longitude: candidate.longitude,
+    population: candidate.population,
+    populationRank,
+    featureCode: candidate.featureCode,
+    isCapital: candidate.isCapital,
+    difficulty: cityDifficulty(
+      populationRank,
+      candidate.isCapital,
+      inputs.policy,
+    ),
+    sourceRevision: inputs.sourceLock.sourceRevision,
+  }
+}
+
+export const buildCityRecords = ({
+  selectedById,
+  ...inputs
+}: CityRecordInputs & {
+  selectedById: Map<number, CityCandidate>
+}): GeneratedCityRecord[] =>
+  [...selectedById.values()]
+    .map((candidate) => toCityRecord(candidate, inputs))
+    .sort(
+      (left, right) =>
+        compareText(left.countryCode, right.countryCode) ||
+        left.populationRank - right.populationRank ||
+        left.geonamesId - right.geonamesId,
+    )
 
 export const buildCountryCorpusRecords = ({
   countryCodes,
@@ -210,9 +251,10 @@ export const buildCountryCorpusRecords = ({
     const names = namesByCode.get(code)
     const coverage = coverageByCountry.get(code)
     const cityIds = (selectedIdsByCountry.get(code) ?? []).sort(
-      (a, b) =>
-        (cityById.get(a)?.populationRank ?? Number.MAX_SAFE_INTEGER) -
-          (cityById.get(b)?.populationRank ?? Number.MAX_SAFE_INTEGER) || a - b,
+      (left, right) =>
+        (cityById.get(left)?.populationRank ?? Number.MAX_SAFE_INTEGER) -
+          (cityById.get(right)?.populationRank ?? Number.MAX_SAFE_INTEGER) ||
+        left - right,
     )
     assert(info, `GeoNames countryInfo is missing ${code}`)
     assert(names, `Country names are missing ${code}`)

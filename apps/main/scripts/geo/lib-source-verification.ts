@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { createReadStream, readFileSync } from 'node:fs'
 import { createInterface } from 'node:readline'
+import { isNotNil } from 'es-toolkit'
 import { assert, pathFromRoot, readJson } from './lib-corpus-primitives.ts'
 import type {
   ArchiveFile,
@@ -83,33 +84,41 @@ export const parseCountryInfo = (path: string) => {
   return countries
 }
 
+const ISO_ALPHA2 = /^[A-Z]{2}$/u
+
+const isValidPopulationValue = (value: unknown): boolean =>
+  value === null ||
+  (typeof value === 'number' && Number.isInteger(value) && value >= 0)
+
+const parseWorldBankRow = (
+  row: WorldBankRow,
+  policy: CoveragePolicy,
+): WorldBankPopulation | null => {
+  const code = row.country?.id
+  if (!code || !ISO_ALPHA2.test(code)) return null
+  if (row.indicator?.id !== policy.countryPopulation.indicator) return null
+  const year = Number(row.date)
+  assert(Number.isInteger(year), `World Bank ${code} has an invalid year`)
+  assert(
+    isValidPopulationValue(row.value),
+    `World Bank ${code} has an invalid population`,
+  )
+  return {
+    code,
+    iso3: row.countryiso3code ?? '',
+    year,
+    value: row.value ?? null,
+  }
+}
+
 export const parseWorldBank = (path: string, policy: CoveragePolicy) => {
   const document = readJson<[unknown, WorldBankRow[]]>(path)
   assert(
     Array.isArray(document) && Array.isArray(document[1]),
     'World Bank snapshot must use its two-element API response format',
   )
-
-  const populations = new Map<string, WorldBankPopulation>()
-  for (const row of document[1]) {
-    const code = row.country?.id
-    if (!code || !/^[A-Z]{2}$/u.test(code)) continue
-    if (row.indicator?.id !== policy.countryPopulation.indicator) continue
-    const year = Number(row.date)
-    assert(Number.isInteger(year), `World Bank ${code} has an invalid year`)
-    assert(
-      row.value === null ||
-        (typeof row.value === 'number' &&
-          Number.isInteger(row.value) &&
-          row.value >= 0),
-      `World Bank ${code} has an invalid population`,
-    )
-    populations.set(code, {
-      code,
-      iso3: row.countryiso3code ?? '',
-      year,
-      value: row.value ?? null,
-    })
-  }
-  return populations
+  const populations = document[1]
+    .map((row) => parseWorldBankRow(row, policy))
+    .filter(isNotNil)
+  return new Map(populations.map((population) => [population.code, population]))
 }
