@@ -125,14 +125,19 @@ export const createDisplacementRenderer = (
   let frame = 0
   let start = 0
   let pendingImage: HTMLImageElement | null = null
+  let activeDone: (() => void) | null = null
   let aspectFrom = 1
   let aspectTo = 1
 
+  // flush the in-flight completion: a swallowed onDone leaves the caller's
+  // overlay canvas at opacity 1, frozen over the content
   canvas.addEventListener(
     'webglcontextlost',
     () => {
       lost = true
       cancelAnimationFrame(frame)
+      activeDone?.()
+      activeDone = null
     },
     { once: true },
   )
@@ -162,6 +167,7 @@ export const createDisplacementRenderer = (
       aspectFrom = upload(0, pendingImage)
       pendingImage = null
     }
+    activeDone = null
     onDone()
   }
 
@@ -176,6 +182,7 @@ export const createDisplacementRenderer = (
       return
     }
     cancelAnimationFrame(frame)
+    activeDone = onDone
     pendingImage = image
     aspectTo = upload(1, image)
     start = performance.now()

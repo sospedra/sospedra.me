@@ -22,12 +22,18 @@ const SLIDE_HEIGHT = 805
 const SCROLL_THROTTLE_MS = 100
 const FX_MAX_DPR = 2
 
+// a drawable bitmap: melt textures upload synchronously, so a slide that is
+// still lazy-loading falls back to a plain scroll instead of a blocked await
+const isReady = (
+  image: HTMLImageElement | undefined,
+): image is HTMLImageElement =>
+  image?.complete === true && image.naturalWidth > 0
+
 const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
   const track = useRef<HTMLDivElement>(null)
   const fx = useRef<HTMLCanvasElement>(null)
   const renderer = useRef<DisplacementRenderer | null>(null)
   const rendererFailed = useRef(false)
-  const pendingIndex = useRef<number | null>(null)
   const [index, setIndex] = useState(0)
 
   const handleScroll = useMemo(
@@ -73,49 +79,43 @@ const Carousel: React.FC<{ label: string; items: Slide[] }> = (props) => {
     if (canvas.height !== height) canvas.height = height
   }
 
-  const melt = async (
+  const melt = (
     fromImage: HTMLImageElement,
     toImage: HTMLImageElement,
     target: number,
   ) => {
-    pendingIndex.current = target
-    try {
-      await Promise.all([fromImage.decode(), toImage.decode()])
-    } catch {
-      pendingIndex.current = null
-      goTo(target)
-      return
-    }
-    if (pendingIndex.current !== target) return
     const node = track.current
     const canvas = fx.current
     const fxRenderer = canvas ? ensureRenderer(fromImage) : null
     if (!node || !canvas || fxRenderer === null || fxRenderer.lost) {
-      pendingIndex.current = null
+      if (canvas) canvas.style.opacity = ''
       goTo(target)
       return
     }
     sizeFx(node, canvas)
     fxRenderer.transitionTo(toImage, () => {
       canvas.style.opacity = ''
-      if (pendingIndex.current === target) pendingIndex.current = null
     })
     canvas.style.opacity = '1'
     node.scrollTo({ left: target * node.clientWidth, behavior: 'auto' })
   }
 
   const navigate = (step: number) => {
-    const from = pendingIndex.current ?? index
+    const node = track.current
+    if (!node || node.clientWidth === 0) return
+    // mid-flight taps chain: the next slide in travel direction is "current"
+    const slot = node.scrollLeft / node.clientWidth
+    const from = step > 0 ? Math.ceil(slot) : Math.floor(slot)
     const target = clamp(from + step, 0, props.items.length - 1)
     if (target === from) return
-    const slides = track.current?.querySelectorAll('img')
-    const fromImage = slides?.[from]
-    const toImage = slides?.[target]
-    if (prefersQuietFx() || !fromImage || !toImage) {
+    const slides = node.querySelectorAll('img')
+    const fromImage = slides[from]
+    const toImage = slides[target]
+    if (prefersQuietFx() || !isReady(fromImage) || !isReady(toImage)) {
       goTo(target)
       return
     }
-    void melt(fromImage, toImage, target)
+    melt(fromImage, toImage, target)
   }
 
   // fullscreen nav: the melt canvas is hidden behind the dialog, so jump plain

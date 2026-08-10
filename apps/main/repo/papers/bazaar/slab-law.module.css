@@ -85,9 +85,45 @@
   white-space: nowrap;
 }
 
+/* iOS drags a range only from its thumb: give it a 44px row, a big thumb,
+   and keep pans that start here on the slider instead of the page scroll */
 .slider input {
   flex: 1;
-  accent-color: var(--color-signal-cyan, #6df7ea);
+  height: 2.75rem;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  touch-action: none;
+}
+
+.slider input::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgb(109 247 234 / 28%);
+}
+
+.slider input::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0;
+  border-radius: 50%;
+  margin-top: calc(2px - 0.875rem);
+  background: var(--color-signal-cyan, #6df7ea);
+}
+
+.slider input::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgb(109 247 234 / 28%);
+}
+
+.slider input::-moz-range-thumb {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-signal-cyan, #6df7ea);
 }
 
 .slider input:focus-visible {

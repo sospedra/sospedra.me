@@ -92,10 +92,18 @@ const CHROMA_DIM = 0.35
 const isChromaPixel = (r: number, g: number, b: number) =>
   g > 96 && g > r + 48 && g > b + 48
 
+// load event, not decode(): iOS Safari decode() promises can stall or reject
+// on healthy images, and a stalled await leaves the canvas blank forever
+const loadImage = (src: string) =>
+  new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error(`image load failed: ${src}`))
+    image.src = src
+  })
+
 const loadImageData = async (src: string) => {
-  const image = new Image()
-  image.src = src
-  await image.decode()
+  const image = await loadImage(src)
   const longest = Math.max(image.naturalWidth, image.naturalHeight)
   const scale = Math.min(1, MAX_CANVAS_EDGE / longest)
   const width = Math.round(image.naturalWidth * scale)
