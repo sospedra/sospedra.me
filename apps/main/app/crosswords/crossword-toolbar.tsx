@@ -18,6 +18,7 @@ import {
   type SoundLevel,
 } from './crossword-settings'
 import switches from './crossword-switch-bank.module.css'
+import { ProofingTools } from './crossword-tool-tray'
 import css from './crossword-toolbar.module.css'
 import cw from './crosswords.module.css'
 
@@ -43,6 +44,77 @@ const Timer = ({
     elapsedMs +
     (running && runStartedAt !== null ? Math.max(0, now - runStartedAt) : 0)
   return <>{formatTime(displayed)}</>
+}
+
+const TRANSPORT_GLYPHS = {
+  again: (
+    <svg viewBox='0 0 16 16' aria-hidden='true'>
+      <path d='M13.2 8a5.2 5.2 0 1 1-1.5-3.7M13.2 2.6v3h-3' />
+    </svg>
+  ),
+  pause: (
+    <svg viewBox='0 0 16 16' aria-hidden='true'>
+      <path d='M5.6 3.8v8.4M10.4 3.8v8.4' />
+    </svg>
+  ),
+  play: (
+    <svg viewBox='0 0 16 16' aria-hidden='true'>
+      <path d='M6 3.9v8.2l6.5-4.1L6 3.9Z' />
+    </svg>
+  ),
+} as const
+
+export type TransportHandlers = {
+  onPauseFrom: (button: HTMLButtonElement) => void
+  onRestart: () => void
+  onResumeFrom: (button: HTMLButtonElement) => void
+}
+
+export const transportFace = (state: CrosswordState, copy: Copy) =>
+  ({
+    'not-started': { label: copy.pause, glyph: TRANSPORT_GLYPHS.pause },
+    playing: { label: copy.pause, glyph: TRANSPORT_GLYPHS.pause },
+    paused: { label: copy.resume, glyph: TRANSPORT_GLYPHS.play },
+    complete: { label: copy.playAgain, glyph: TRANSPORT_GLYPHS.again },
+  })[state.status]
+
+export const transportAct = (
+  state: CrosswordState,
+  handlers: TransportHandlers,
+) => {
+  return (button: HTMLButtonElement) => {
+    if (state.status === 'complete') return handlers.onRestart()
+    if (state.status === 'paused') return handlers.onResumeFrom(button)
+    handlers.onPauseFrom(button)
+  }
+}
+
+const TransportTool = ({
+  copy,
+  onPauseFrom,
+  onRestart,
+  onResumeFrom,
+  state,
+}: TransportHandlers & {
+  copy: Copy
+  state: CrosswordState
+}) => {
+  const face = transportFace(state, copy)
+  const act = transportAct(state, { onPauseFrom, onRestart, onResumeFrom })
+
+  return (
+    <ToolbarButton
+      label={face.label}
+      className={css.transportTool}
+      disabled={state.status === 'not-started'}
+      onClick={act}
+    >
+      <span className={css.toolGlyph} aria-hidden='true'>
+        {face.glyph}
+      </span>
+      <span>{face.label}</span>
+    </ToolbarButton>
+  )
 }
 
 export const CrosswordToolbarHints = ({ copy }: { copy: Copy }) => (
@@ -72,7 +144,6 @@ export const CrosswordToolbar = ({
   onTogglePencil,
   onToggleTimer,
   onUndo,
-  placement,
   revealArmed,
   setSettings,
   settings,
@@ -91,7 +162,6 @@ export const CrosswordToolbar = ({
   onTogglePencil: () => void
   onToggleTimer: () => void
   onUndo: () => void
-  placement: 'desktop' | 'mobile'
   revealArmed: boolean
   setSettings: (
     value: GameSettings | ((current: GameSettings) => GameSettings),
@@ -119,15 +189,7 @@ export const CrosswordToolbar = ({
   ] as const
 
   return (
-    <fieldset
-      className={cn(
-        css.toolbar,
-        placement === 'desktop'
-          ? css.desktopToolbar
-          : cn(css.mobileToolbar, knobs.mobileToolbar, switches.mobileToolbar),
-      )}
-      data-placement={placement}
-    >
+    <fieldset className={cn(css.toolbar, css.desktopToolbar)}>
       <legend className={cw.srOnly}>{copy.tools}</legend>
       <button
         type='button'
@@ -244,44 +306,15 @@ export const CrosswordToolbar = ({
       </div>
 
       <div className={css.actionBank}>
-        <ToolbarButton
-          label={complete ? copy.playAgain : paused ? copy.resume : copy.pause}
-          className={css.transportTool}
-          disabled={state.status === 'not-started'}
-          onClick={(button) => {
-            if (complete) {
-              onRestart()
-              return
-            }
-            if (paused) {
-              onResumeFrom(button)
-            } else {
-              onPauseFrom(button)
-            }
-          }}
-        >
-          <span className={css.toolGlyph} aria-hidden='true'>
-            {complete ? (
-              <svg viewBox='0 0 16 16' aria-hidden='true'>
-                <path d='M13.2 8a5.2 5.2 0 1 1-1.5-3.7M13.2 2.6v3h-3' />
-              </svg>
-            ) : paused ? (
-              <svg viewBox='0 0 16 16' aria-hidden='true'>
-                <path d='M6 3.9v8.2l6.5-4.1L6 3.9Z' />
-              </svg>
-            ) : (
-              <svg viewBox='0 0 16 16' aria-hidden='true'>
-                <path d='M5.6 3.8v8.4M10.4 3.8v8.4' />
-              </svg>
-            )}
-          </span>
-          <span>
-            {complete ? copy.playAgain : paused ? copy.resume : copy.pause}
-          </span>
-        </ToolbarButton>
+        <TransportTool
+          copy={copy}
+          onPauseFrom={onPauseFrom}
+          onRestart={onRestart}
+          onResumeFrom={onResumeFrom}
+          state={state}
+        />
         <ToolbarButton
           label={copy.undo}
-          className={css.compactTool}
           disabled={complete || state.undoStack.length === 0}
           onClick={onUndo}
         >
@@ -290,69 +323,23 @@ export const CrosswordToolbar = ({
         </ToolbarButton>
         <ToolbarButton
           label={copy.redo}
-          className={css.compactTool}
           disabled={complete || state.redoStack.length === 0}
           onClick={onRedo}
         >
           <span aria-hidden='true'>↷</span>
           <span>{copy.redo}</span>
         </ToolbarButton>
-        <ToolbarButton
-          label={copy.pencilLabel}
-          descriptionId='crossword-pencil-hint'
-          className={css.pencilTool}
-          active={state.pencilMode}
-          disabled={boardLocked}
-          onClick={onTogglePencil}
-        >
-          <span className={css.toolGlyph} aria-hidden='true'>
-            <svg viewBox='0 0 16 16' aria-hidden='true'>
-              <path d='m3 13 1.2-4L11 2.2 13.8 5 7 11.8 3 13Z' />
-              <path d='m9.8 3.4 2.8 2.8M3 13l3.9-1.2' />
-            </svg>
-          </span>
-          <span>{copy.pencil}</span>
-        </ToolbarButton>
-        <ToolbarButton
-          label={`${copy.checkLabel}: ${scopeLabel}`}
-          descriptionId='crossword-check-hint'
-          className={css.checkTool}
-          disabled={boardLocked}
-          onClick={onCheck}
-        >
-          <span className={css.toolGlyph} aria-hidden='true'>
-            <svg viewBox='0 0 16 16' aria-hidden='true'>
-              <circle cx='7' cy='7' r='4.5' />
-              <path d='m4.8 7 1.5 1.5 3-3.2M10.5 10.5 14 14' />
-            </svg>
-          </span>
-          <span>{copy.check}</span>
-        </ToolbarButton>
-        <ToolbarButton
-          label={`${copy.revealLabel}: ${scopeLabel}`}
-          descriptionId='crossword-reveal-hint'
-          className={cn(css.revealTool, css.guardTool)}
-          active={revealArmed}
-          disabled={boardLocked}
-          onClick={onRequestReveal}
-        >
-          <span className={css.toolGlyph} aria-hidden='true'>
-            <svg viewBox='0 0 16 16' aria-hidden='true'>
-              <path d='M1.5 8s2.4-4 6.5-4 6.5 4 6.5 4-2.4 4-6.5 4S1.5 8 1.5 8Z' />
-              <circle cx='8' cy='8' r='1.8' />
-            </svg>
-          </span>
-          <span>{revealArmed ? copy.confirmReveal : copy.reveal}</span>
-        </ToolbarButton>
-        <ToolbarButton
-          label={copy.help}
-          hasPopup
-          className={css.compactTool}
-          onClick={onOpenHelp}
-        >
-          <span aria-hidden='true'>?</span>
-          <span>{copy.help}</span>
-        </ToolbarButton>
+        <ProofingTools
+          boardLocked={boardLocked}
+          copy={copy}
+          pencilMode={state.pencilMode}
+          revealArmed={revealArmed}
+          scopeLabel={scopeLabel}
+          onCheck={onCheck}
+          onOpenHelp={onOpenHelp}
+          onRequestReveal={onRequestReveal}
+          onTogglePencil={onTogglePencil}
+        />
       </div>
 
       <span className={css.speakerGrille} aria-hidden='true' />

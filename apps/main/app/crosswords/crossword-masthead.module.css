@@ -73,6 +73,46 @@
   transform: translateY(2px);
 }
 
+/* Transport and help keys ride the header on mobile; desktop keeps them
+   in the toolbar. */
+.headerKey {
+  display: none;
+  width: 2.85rem;
+  min-height: 2.75rem;
+  place-items: center;
+  border: 0;
+  border-radius: 0.4rem;
+  padding: 0.34rem;
+  color: var(--cw-ink);
+  background: linear-gradient(135deg, var(--cw-key-light), var(--cw-key) 68%);
+  box-shadow: var(--cw-key-shadow);
+  font: 700 0.9rem / 1 var(--font-code);
+  transform: translateY(-1px);
+  transition:
+    box-shadow var(--cw-fast) var(--cw-ease),
+    transform var(--cw-fast) var(--cw-ease);
+}
+
+.headerKey:active:not(:disabled) {
+  box-shadow: var(--cw-key-pressed);
+  transform: translateY(2px);
+}
+
+.headerKey svg {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.transportKey {
+  color: #fff;
+  background: linear-gradient(180deg, #f0855a, var(--cw-orange) 62%, #cd5a31);
+}
+
 .brandBlock {
   display: grid;
   align-content: center;
@@ -237,8 +277,8 @@
 
 @media (max-width: 52rem), (max-width: 64rem) and (max-height: 36rem) {
   .masthead {
-    grid-template-columns: 3.45rem minmax(0, 1fr) 6.05rem;
-    grid-template-areas: "home brand locale";
+    grid-template-columns: 2.85rem 2.85rem minmax(0, 1fr) 2.85rem;
+    grid-template-areas: "home transport brand help";
     gap: 0.35rem;
     padding: 0.18rem 0.12rem 0.34rem;
   }
@@ -252,9 +292,22 @@
     min-height: 2.75rem;
   }
 
+  .headerKey {
+    display: grid;
+  }
+
+  .transportKey {
+    grid-area: transport;
+  }
+
+  .helpKey {
+    grid-area: help;
+  }
+
   .brandBlock {
     grid-area: brand;
     padding: 0;
+    text-align: center;
   }
 
   .brandBlock p {
@@ -266,6 +319,7 @@
   }
 
   .publicationLine {
+    justify-content: center;
     font-size: 0.39rem;
   }
   .filingProgress {
@@ -273,15 +327,7 @@
   }
 
   .localeSwitch {
-    grid-area: locale;
-    gap: 0.28rem;
-    padding: 0 0.08rem 0.15rem 0;
-  }
-
-  .localeSwitch button {
-    min-width: 0;
-    min-height: 44px;
-    padding-inline: 0.32rem;
+    display: none;
   }
 }
 
@@ -298,10 +344,6 @@
   }
 }
 
-.game[data-short-viewport="true"] .masthead {
-  display: none;
-}
-
 @media (forced-colors: active) {
   .masthead {
     color: CanvasText;
@@ -311,6 +353,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .homeLink,
+  .headerKey,
   .localeSwitch button {
     transition: none;
   }

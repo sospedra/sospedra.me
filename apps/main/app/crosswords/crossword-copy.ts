@@ -55,6 +55,10 @@ export const COPY = {
     more: 'More',
     across: 'Across',
     down: 'Down',
+    acrossShort: 'A',
+    downShort: 'D',
+    previousClue: 'Previous clue',
+    nextClue: 'Next clue',
     gridInstructions:
       'Use letter keys to answer, arrows to move, Enter to change direction, and Escape to leave the grid.',
     row: 'Row',
@@ -159,6 +163,9 @@ export const COPY = {
     gridLabel: (date: string, size: string) =>
       `English crossword, ${date}, ${size}`,
     inputLabel: 'Crossword letter input',
+    bankDismiss: 'Hide the letter keys',
+    bankErase: 'Delete letter',
+    toolsKey: 'Tools',
     begin: 'Start',
     startHint: 'The clock starts when you do.',
     startedAnnouncement: 'Clock running.',
@@ -216,6 +223,10 @@ export const COPY = {
     more: 'Más',
     across: 'Horizontales',
     down: 'Verticales',
+    acrossShort: 'H',
+    downShort: 'V',
+    previousClue: 'Pista anterior',
+    nextClue: 'Pista siguiente',
     gridInstructions:
       'Usa letras para responder, flechas para moverte, Intro para cambiar de dirección y Escape para salir de la cuadrícula.',
     row: 'Fila',
@@ -321,6 +332,9 @@ export const COPY = {
     gridLabel: (date: string, size: string) =>
       `Crucigrama en español, ${date}, ${size}`,
     inputLabel: 'Entrada de letras del crucigrama',
+    bankDismiss: 'Ocultar las teclas',
+    bankErase: 'Borrar letra',
+    toolsKey: 'Ayudas',
     begin: 'Empezar',
     startHint: 'El cronómetro empieza contigo.',
     startedAnnouncement: 'Cronómetro en marcha.',

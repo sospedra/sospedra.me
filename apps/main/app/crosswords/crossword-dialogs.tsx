@@ -1,12 +1,17 @@
 import cn from 'clsx'
 import { range } from 'es-toolkit'
-import type { CSSProperties } from 'react'
+import { type CSSProperties, useEffect, useRef } from 'react'
 import DailyCountdownPanel from 'services/daily-countdown-panel'
 import Modal from 'services/modal'
 import { shareHandled, shareText } from 'services/share'
+import { ClueList } from './crossword-clue-rail'
 import completionCss from './crossword-completion.module.css'
 import type { Copy } from './crossword-copy'
-import type { CrosswordPuzzle } from './crossword-data'
+import type {
+  CrosswordEntry,
+  CrosswordLocale,
+  CrosswordPuzzle,
+} from './crossword-data'
 import css from './crossword-dialogs.module.css'
 import { type CrosswordState, formatTime, shareCard } from './crossword-engine'
 import cw from './crosswords.module.css'
@@ -194,6 +199,94 @@ export const CrosswordHelpDialog = ({
     </div>
   </Modal>
 )
+
+export const CrosswordClueSheet = ({
+  acrossEntries,
+  activeEntry,
+  assistFor,
+  close,
+  copy,
+  downEntries,
+  guesses,
+  hydrated,
+  locale,
+  open,
+  pick,
+  solvedEntryIds,
+}: {
+  acrossEntries: CrosswordEntry[]
+  activeEntry: CrosswordEntry
+  assistFor: (entry: CrosswordEntry) => string | null
+  close: () => void
+  copy: Copy
+  downEntries: CrosswordEntry[]
+  guesses: string[]
+  hydrated: boolean
+  locale: CrosswordLocale
+  open: boolean
+  pick: (entry: CrosswordEntry) => void
+  solvedEntryIds: ReadonlySet<string>
+}) => {
+  const bodyRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const frame = window.requestAnimationFrame(() => {
+      bodyRef.current
+        ?.querySelector('[data-active="true"]')
+        ?.scrollIntoView({ block: 'center' })
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [open])
+
+  return (
+    <Modal
+      open={open}
+      close={close}
+      labelId='clue-sheet-title'
+      className={cn(css.dialog, css.clueSheet)}
+    >
+      <DialogHeader
+        id='clue-sheet-title'
+        title={copy.clueList}
+        close={close}
+        closeLabel={copy.close}
+      />
+      <div ref={bodyRef} className={css.clueSheetBody}>
+        <ClueList
+          heading={copy.across}
+          labelId={`sheet-${locale}-across-clues`}
+          entries={acrossEntries}
+          activeId={activeEntry.id}
+          select={pick}
+          solvedEntryIds={solvedEntryIds}
+          solvedLabel={copy.solved}
+          filedLabel={copy.filed}
+          strikeSolved
+          assistFor={assistFor}
+          progressLabel={copy.clueProgress}
+          guesses={guesses}
+          progressReady={hydrated}
+        />
+        <ClueList
+          heading={copy.down}
+          labelId={`sheet-${locale}-down-clues`}
+          entries={downEntries}
+          activeId={activeEntry.id}
+          select={pick}
+          solvedEntryIds={solvedEntryIds}
+          solvedLabel={copy.solved}
+          filedLabel={copy.filed}
+          strikeSolved
+          assistFor={assistFor}
+          progressLabel={copy.clueProgress}
+          guesses={guesses}
+          progressReady={hydrated}
+        />
+      </div>
+    </Modal>
+  )
+}
 
 export const CrosswordCompletionDialog = ({
   announce,

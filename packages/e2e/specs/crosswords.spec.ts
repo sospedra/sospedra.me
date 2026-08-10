@@ -60,7 +60,7 @@ test.describe('crosswords desktop', () => {
 test.describe('crosswords mobile', () => {
   test.skip(({ isMobile }) => !isMobile, 'mobile-only flow')
 
-  test('letter bank writes and the clue sheet opens', async ({
+  test('letter bank writes, the clue bar steps, and the sheet opens', async ({
     page,
     health,
   }) => {
@@ -77,6 +77,11 @@ test.describe('crosswords mobile', () => {
     await page.getByRole('button', { name: 'A', exact: true }).tap()
     await expect(first).toContainText('A')
 
+    const activeClue = page.locator('#crossword-active-clue-text')
+    const before = await activeClue.textContent()
+    await page.getByRole('button', { name: 'Next clue' }).tap()
+    await expect(activeClue).not.toHaveText(before ?? '')
+
     await page
       .getByRole('button', { name: 'Clues' })
       .filter({ visible: true })
@@ -91,20 +96,16 @@ test.describe('crosswords mobile', () => {
     await expect(page.locator('#clue-sheet-title')).toBeHidden()
 
     await page
-      .getByRole('button', { name: 'Crossword tools' })
+      .getByRole('button', { name: 'Pause' })
       .filter({ visible: true })
       .first()
       .tap()
     await page
-      .getByRole('button', { name: /^Check answers/ })
+      .getByRole('button', { name: 'Resume' })
       .filter({ visible: true })
       .first()
       .tap()
-    await expect(
-      grid
-        .locator('button[data-checked="true"], button[data-incorrect="true"]')
-        .first(),
-    ).toBeVisible()
+    await expect(proxy).toBeFocused()
 
     expectClean(health)
   })

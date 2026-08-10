@@ -1,0 +1,57 @@
+@reference "../../services/style/global.css";
+
+.letterBank {
+  display: grid;
+  align-content: center;
+  gap: 0.32rem;
+  padding: 0.3rem 0.05rem calc(1.4rem + var(--safe-area-bottom));
+}
+
+.bankRow {
+  display: flex;
+  gap: 0.32rem;
+  justify-content: center;
+}
+
+.bankKey {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 2.9rem;
+  height: 2.95rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, var(--cw-key-light), var(--cw-key) 68%);
+  box-shadow: var(--cw-key-shadow);
+  color: var(--cw-ink);
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+  touch-action: manipulation;
+  transform: translateY(-1px);
+  transition:
+    box-shadow var(--cw-fast) var(--cw-ease),
+    transform var(--cw-fast) var(--cw-ease);
+  user-select: none;
+}
+
+.bankKey:active,
+.bankKey[data-pressed="true"] {
+  box-shadow: var(--cw-key-pressed);
+  transform: translateY(2px);
+}
+
+:global(.fx-quiet) .bankKey {
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bankKey {
+    transition: none;
+  }
+}
+
+.bankKeyWide {
+  flex: 1.5 1 0;
+  max-width: 4.5rem;
+}

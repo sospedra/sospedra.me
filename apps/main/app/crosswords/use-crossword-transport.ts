@@ -7,7 +7,7 @@ import {
   createCrosswordState,
   crosswordReducer,
 } from './crossword-engine'
-import { MOBILE_LAYOUT_MEDIA } from './use-crossword-selection'
+import { MOBILE_LAYOUT_MEDIA } from './crossword-viewport'
 
 export const useCrosswordTransport = ({
   announce,

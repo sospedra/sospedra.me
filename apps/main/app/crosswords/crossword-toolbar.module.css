@@ -1,7 +1,6 @@
 @reference "../../services/style/global.css";
 
-.desktopToolbar,
-.mobileToolbar {
+.desktopToolbar {
   position: relative;
   z-index: 1;
 }
@@ -262,9 +261,6 @@
   box-shadow: var(--cw-well-shadow);
   opacity: 0.82;
 }
-.mobileToolbar {
-  display: none;
-}
 
 @media (max-width: 78rem) and (min-width: 52.01rem) {
   .desktopToolbar {
@@ -316,103 +312,6 @@
 @media (max-width: 52rem), (max-width: 64rem) and (max-height: 36rem) {
   .desktopToolbar {
     display: none;
-  }
-
-  .mobileToolbar {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    min-width: 0;
-    min-height: 0;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
-    grid-template-rows: minmax(0, 1fr) 3.45rem;
-    grid-template-areas:
-      "parameters switches"
-      "actions actions";
-    gap: 0.34rem 0.28rem;
-    overflow: hidden;
-    padding: 0.36rem max(0.42rem, var(--safe-area-right))
-      max(0.55rem, var(--safe-area-bottom)) max(0.42rem, var(--safe-area-left));
-    border: 1px solid rgb(255 255 255 / 45%);
-    border-bottom: 0;
-    border-radius: 0.48rem 0.48rem 0 0;
-    background: #c5c9ce;
-    box-shadow: inset 1px 1px 0 rgb(255 255 255 / 70%);
-  }
-
-  .mobileToolbar .timerTool,
-  .mobileToolbar .speakerGrille {
-    display: none;
-  }
-
-  .mobileToolbar .actionBank {
-    justify-content: start;
-    grid-template-columns: repeat(7, minmax(44px, 1fr));
-    gap: 0.16rem;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    padding-left: 0.24rem;
-    scroll-padding-left: 0.24rem;
-    scrollbar-width: none;
-  }
-
-  .mobileToolbar .actionBank::-webkit-scrollbar {
-    display: none;
-  }
-
-  .mobileToolbar .toolButton {
-    min-width: 44px;
-    min-height: 44px;
-    gap: 0.08rem;
-    padding: 0.18rem;
-  }
-
-  .mobileToolbar .toolButton > span:first-child,
-  .mobileToolbar .toolButton > .toolGlyph {
-    width: 1.12rem;
-    height: 1.12rem;
-    font-size: 0.58rem;
-  }
-
-  .mobileToolbar .toolButton > span:last-child {
-    display: block;
-    max-width: 100%;
-    overflow: hidden;
-    font-size: 0.44rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-@media (max-width: 21.5rem) {
-  .mobileToolbar {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: 3.55rem 3rem 7rem;
-    grid-template-areas:
-      "parameters"
-      "switches"
-      "actions";
-  }
-
-  .mobileToolbar .actionBank {
-    grid-template-columns: repeat(4, minmax(44px, 1fr));
-    grid-template-rows: repeat(2, 3.5rem);
-    overflow: visible;
-  }
-}
-
-.game[data-short-viewport="true"] .mobileToolbar {
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
-  grid-template-areas: "actions";
-  padding: 0.18rem max(0.42rem, var(--safe-area-right))
-    max(0.18rem, var(--safe-area-bottom)) max(0.42rem, var(--safe-area-left));
-}
-
-@media (forced-colors: active) {
-  .mobileToolbar {
-    color: CanvasText;
-    background: Canvas;
   }
 }
 

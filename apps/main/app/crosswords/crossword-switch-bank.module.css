@@ -141,45 +141,6 @@
   }
 }
 
-@media (max-width: 52rem), (max-width: 64rem) and (max-height: 36rem) {
-  .mobileToolbar .switchBank {
-    grid-template-columns: repeat(4, minmax(44px, 1fr));
-    gap: 0.08rem;
-    padding: 0.16rem 0.2rem;
-  }
-
-  .mobileToolbar .deckSwitch {
-    min-width: 44px;
-    min-height: 44px;
-    gap: 0.08rem;
-    padding: 0.12rem 0.06rem;
-  }
-
-  .mobileToolbar .switchLegend,
-  .mobileToolbar .switchValue {
-    max-width: 100%;
-    font-size: 0.42rem;
-  }
-
-  .mobileToolbar .switchTrack {
-    width: 0.74rem;
-    height: 1.35rem;
-  }
-
-  .mobileToolbar .switchTrack > span {
-    top: calc(100% - 0.68rem);
-    width: 0.54rem;
-    height: 0.6rem;
-  }
-
-  .mobileToolbar .deckSwitch[data-active="true"] .switchTrack > span {
-    top: 0.05rem;
-  }
-}
-.game[data-short-viewport="true"] .mobileToolbar .switchBank {
-  display: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .deckSwitch,
   .switchTrack > span {

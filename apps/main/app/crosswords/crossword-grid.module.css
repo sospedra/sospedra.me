@@ -262,33 +262,30 @@
     border-radius: 0.48rem;
   }
 
+  /* The region is the size container: the pan takes its cqmin, so the whole
+     grid always fits the free space and never pans or scrolls. */
   .gridRegion {
     height: 100%;
+    container-type: size;
     padding: var(--cw-glass-pad);
   }
 
   .gridPan {
-    overflow: auto;
-    overscroll-behavior: contain;
+    width: 100cqmin;
+    height: 100cqmin;
     border-radius: 0.32rem;
-    scrollbar-color: var(--cw-blue-deep) transparent;
-    scrollbar-width: thin;
-    touch-action: pan-x pan-y;
+    touch-action: manipulation;
   }
 
-  .gridSurface {
-    width: var(--cw-touch-grid);
-    height: var(--cw-touch-grid);
+  /* Square corners: the rounded clip shaved the word highlight in the
+     corner cells. */
+  .grid {
+    border-radius: 0;
   }
 
   .pauseCurtain {
     inset: 0;
   }
-}
-
-.game[data-short-viewport="true"] .gridPan {
-  width: 100%;
-  height: 100%;
 }
 
 @media (forced-colors: active) {

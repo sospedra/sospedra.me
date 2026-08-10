@@ -424,3 +424,24 @@
     animation: none;
   }
 }
+
+.clueSheet {
+  height: min(82dvh, 46rem);
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* an unconditional display beats the UA's closed-dialog display: none and
+   the closed sheet keeps eating letter-bank taps */
+.clueSheet[open] {
+  display: flex;
+}
+
+.clueSheetBody {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.55rem;
+  padding: 0.6rem 0.6rem calc(0.6rem + var(--safe-area-bottom));
+}

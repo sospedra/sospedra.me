@@ -5,7 +5,7 @@ import type { Copy } from './crossword-copy'
 import type { CrosswordEntry, CrosswordLocale } from './crossword-data'
 import cw from './crosswords.module.css'
 
-const ClueList = ({
+export const ClueList = ({
   activeId,
   entries,
   heading,
@@ -178,64 +178,69 @@ export const ClueColumns = ({
   </aside>
 )
 
-export const MobileClueRail = ({
-  acrossEntries,
+export const MobileClueBar = ({
   activeEntry,
   assistFor,
-  chooseEntry,
-  chooseMobileDirection,
+  barRef,
   copy,
-  downEntries,
   guesses,
-  hydrated,
-  locale,
-  mobileListRef,
-  solvedEntryIds,
-}: RailProps & {
-  chooseMobileDirection: (direction: CrosswordEntry['direction']) => void
-  mobileListRef: RefObject<HTMLDivElement | null>
+  moveToClue,
+  openClueSheet,
+}: {
+  activeEntry: CrosswordEntry
+  assistFor: (entry: CrosswordEntry) => string | null
+  barRef: RefObject<HTMLButtonElement | null>
+  copy: Copy
+  guesses: string[]
+  moveToClue: (delta: -1 | 1, keepNativeKeyboard?: boolean) => void
+  openClueSheet: (button: HTMLButtonElement) => void
 }) => {
-  const mobileClueDirection = activeEntry.direction
+  const badge = `${activeEntry.number}${
+    activeEntry.direction === 'across' ? copy.acrossShort : copy.downShort
+  }`
+  const assist = assistFor(activeEntry)
+  const mask = activeEntry.cells
+    .map((cellIndex) => guesses[cellIndex] || '·')
+    .join('')
 
   return (
-    <aside className={css.mobileClues} aria-label={copy.clueList}>
-      <fieldset className={cn(css.clueTabs, cw.clueTabs)}>
-        <legend className={cw.srOnly}>{copy.clueList}</legend>
-        <button
-          type='button'
-          aria-pressed={mobileClueDirection === 'across'}
-          onClick={() => chooseMobileDirection('across')}
+    <div className={css.clueBar}>
+      <button
+        type='button'
+        className={cn(css.clueStep, cw.headerKey)}
+        aria-label={copy.previousClue}
+        onClick={() => moveToClue(-1, true)}
+      >
+        <span aria-hidden='true'>‹</span>
+      </button>
+      <button
+        ref={barRef}
+        type='button'
+        className={cn(css.clueCurrent, cw.headerKey)}
+        aria-haspopup='dialog'
+        aria-describedby='crossword-active-clue-text'
+        onClick={(event) => openClueSheet(event.currentTarget)}
+      >
+        <span className={css.clueBarBadge} aria-hidden='true'>
+          {badge}
+        </span>
+        <span
+          className={cn(css.clueBarText, !activeEntry.clue && css.clueBarMask)}
+          aria-hidden='true'
         >
-          {copy.across}
-        </button>
-        <button
-          type='button'
-          aria-pressed={mobileClueDirection === 'down'}
-          onClick={() => chooseMobileDirection('down')}
-        >
-          {copy.down}
-        </button>
-      </fieldset>
-      <div className={css.mobileClueList}>
-        <ClueList
-          heading={mobileClueDirection === 'across' ? copy.across : copy.down}
-          labelId={`mobile-inline-${locale}-${mobileClueDirection}-clues`}
-          entries={
-            mobileClueDirection === 'across' ? acrossEntries : downEntries
-          }
-          activeId={activeEntry.id}
-          listRef={mobileListRef}
-          select={(entry) => chooseEntry(entry, true)}
-          solvedEntryIds={solvedEntryIds}
-          solvedLabel={copy.solved}
-          filedLabel={copy.filed}
-          strikeSolved
-          assistFor={assistFor}
-          progressLabel={copy.clueProgress}
-          guesses={guesses}
-          progressReady={hydrated}
-        />
-      </div>
-    </aside>
+          {activeEntry.clue ?? mask}
+          {assist && <span className={css.clueBarMeta}> — {assist}</span>}
+        </span>
+        <span className={cw.srOnly}>{copy.clueList}</span>
+      </button>
+      <button
+        type='button'
+        className={cn(css.clueStep, cw.headerKey)}
+        aria-label={copy.nextClue}
+        onClick={() => moveToClue(1, true)}
+      >
+        <span aria-hidden='true'>›</span>
+      </button>
+    </div>
   )
 }

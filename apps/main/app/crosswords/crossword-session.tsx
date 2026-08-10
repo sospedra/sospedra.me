@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from 'react'
-import { ClueColumns, MobileClueRail } from './crossword-clue-rail'
+import { ClueColumns, MobileClueBar } from './crossword-clue-rail'
 import {
   COPY,
   clueAssist,
@@ -22,6 +22,7 @@ import type {
   CrosswordPuzzle,
 } from './crossword-data'
 import {
+  CrosswordClueSheet,
   CrosswordCompletionDialog,
   CrosswordHelpDialog,
 } from './crossword-dialogs'
@@ -35,6 +36,7 @@ import {
 import { gameScopeClasses } from './crossword-game-scope'
 import { CrosswordGrid } from './crossword-grid'
 import { CrosswordInputProxy } from './crossword-input-proxy'
+import { CrosswordLetterBank, useLetterBank } from './crossword-letter-bank'
 import { CrosswordMasthead } from './crossword-masthead'
 import type { GameSettings } from './crossword-settings'
 import { CrosswordToolbar, CrosswordToolbarHints } from './crossword-toolbar'
@@ -46,7 +48,7 @@ import { useCrosswordSelection } from './use-crossword-selection'
 import { useCrosswordSound } from './use-crossword-sound'
 import { useCrosswordTransport } from './use-crossword-transport'
 
-type DialogName = 'help' | null
+type DialogName = 'clues' | 'help' | null
 
 /* covers the 640ms solved-word sweep plus its per-cell stagger in crosswords.module.css */
 const WORD_SWEEP_MS = 900
@@ -83,6 +85,7 @@ export function CrosswordSession({
     run: number
   } | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const bank = useLetterBank(inputRef)
   const openerRef = useRef<HTMLElement | null>(null)
   const focusGridRef = useRef(false)
   const latestStateRef = useRef(state)
@@ -163,23 +166,18 @@ export function CrosswordSession({
     bringCellIntoView,
     cellRefs,
     chooseEntry,
-    chooseMobileDirection,
+    clueBarRef,
     downListRef,
     focusActiveClue,
     focusCellAt,
-    mobileListRef,
     moveToClue,
-    shortViewport,
   } = useCrosswordSelection({
-    acrossEntries,
     activeEntry,
     dispatch,
-    downEntries,
     focusGridRef,
     inputRef,
     latestStateRef,
     orderedEntries,
-    puzzle,
     selectedCell: state.selectedCell,
     shiftCarriage,
   })
@@ -292,6 +290,11 @@ export function CrosswordSession({
     dispatch({ type: 'TOGGLE_PENCIL' })
   }
 
+  const pickClue = (entry: CrosswordEntry) => {
+    setDialog(null)
+    chooseEntry(entry, true)
+  }
+
   const toolbarProps = {
     copy,
     onCheck: () => check(toolScope),
@@ -333,7 +336,7 @@ export function CrosswordSession({
       lang={locale}
       data-large-text={settings.largeText}
       data-high-contrast={settings.highContrast}
-      data-short-viewport={shortViewport || undefined}
+      data-letter-bank={bank.open || undefined}
       style={{ '--cw-grid-cols': puzzle.width } as CSSProperties}
     >
       <CrosswordToolbarHints copy={copy} />
@@ -349,9 +352,14 @@ export function CrosswordSession({
         hasSpanish={hasSpanish}
         hydrated={hydrated}
         locale={locale}
+        onOpenHelp={(button) => openDialog('help', button)}
+        onPauseFrom={pauseFrom}
+        onRestart={restartPuzzle}
+        onResumeFrom={resumeFrom}
         publicationDate={publicationDate}
         puzzle={puzzle}
         solvedEntryIds={solvedEntryIds}
+        state={state}
       />
 
       <div className={css.workspace}>
@@ -384,21 +392,36 @@ export function CrosswordSession({
         />
       </div>
 
-      <CrosswordToolbar placement='desktop' {...toolbarProps} />
+      <CrosswordToolbar {...toolbarProps} />
 
-      <MobileClueRail
-        {...railProps}
-        chooseMobileDirection={chooseMobileDirection}
-        mobileListRef={mobileListRef}
+      <MobileClueBar
+        activeEntry={activeEntry}
+        assistFor={assistFor}
+        barRef={clueBarRef}
+        copy={copy}
+        guesses={state.guesses}
+        moveToClue={moveToClue}
+        openClueSheet={(button) => openDialog('clues', button)}
       />
 
-      <CrosswordToolbar placement='mobile' {...toolbarProps} />
+      <CrosswordLetterBank
+        bankRef={bank.bankRef}
+        copy={copy}
+        dismiss={bank.dismiss}
+        eraseBackward={eraseBackward}
+        locale={locale}
+        open={bank.open}
+        writeLetter={writeLetter}
+      />
 
       <CrosswordInputProxy
         composingRef={composingRef}
         copy={copy}
         eraseBackward={eraseBackward}
+        inputMode={bank.proxyInputMode}
         inputRef={inputRef}
+        onBlur={bank.settleFocus}
+        onFocus={bank.openBank}
         onKeyDown={handleKeyDown}
         writeLetter={writeLetter}
       />
@@ -407,6 +430,13 @@ export function CrosswordSession({
         close={closeDialog}
         copy={copy}
         open={dialog === 'help'}
+      />
+
+      <CrosswordClueSheet
+        {...railProps}
+        close={closeDialog}
+        open={dialog === 'clues'}
+        pick={pickClue}
       />
 
       <CrosswordCompletionDialog

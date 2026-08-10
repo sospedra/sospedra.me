@@ -268,29 +268,21 @@
 
   .game {
     --cw-mobile-top: max(0.32rem, var(--safe-area-top));
-    --cw-mobile-tools: calc(7.85rem + var(--safe-area-bottom));
-    --cw-mobile-board: min(
-      calc(100vw - 0.7rem),
-      calc(
-        var(--crossword-viewport-height, 100dvh) -
-        var(--cw-mobile-tools) -
-        13.9rem -
-        var(--cw-mobile-top)
-      )
-    );
     --cw-glass-pad: 0.45rem;
     --cw-pan-pad: 0.28rem;
-    --cw-pan-side: max(12rem, calc(var(--cw-mobile-board) - 1.86rem));
-    --cw-touch-grid: clamp(28rem, 128vw, 31rem);
-    --cw-cell: calc(var(--cw-touch-grid) / var(--cw-grid-cols, 15));
+
+    /* The grid region is a size container; the board square is its cqmin,
+       so the grid always rescales to the free space and never scrolls. */
+    --cw-cell: calc(
+      (100cqmin - 2 * var(--cw-pan-pad) - 0.125rem) /
+      var(--cw-grid-cols, 15)
+    );
     --cw-letter-ratio: 0.72;
 
     width: 100%;
     height: min(100dvh, var(--crossword-viewport-height, 100dvh));
-    min-height: 34rem;
-    grid-template-rows:
-      4.05rem var(--cw-mobile-board) minmax(8.7rem, 1fr)
-      var(--cw-mobile-tools);
+    min-height: 0;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     gap: 0.38rem;
     padding: var(--cw-mobile-top) max(0.34rem, var(--safe-area-right)) 0
       max(0.34rem, var(--safe-area-left));
@@ -309,66 +301,6 @@
     min-height: 0;
     overflow: hidden;
   }
-}
-
-@media (max-width: 64rem) and (max-height: 36rem) {
-  .shell {
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-
-  .page {
-    height: auto;
-    min-height: 34rem;
-    overflow: visible;
-  }
-
-  .game {
-    --cw-pan-side: 16.5rem;
-
-    height: auto;
-    min-height: 34rem;
-    grid-template-rows: 4.05rem 18rem 9rem 7.85rem;
-    overflow: visible;
-  }
-}
-
-@media (max-width: 21.5rem) {
-  .shell {
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-
-  .page {
-    height: auto;
-    min-height: 100%;
-    overflow: visible;
-  }
-
-  .game {
-    --cw-mobile-tools: calc(15.3rem + var(--safe-area-bottom));
-    --cw-mobile-board: calc(100vw - 0.7rem);
-
-    height: auto;
-    min-height: 43rem;
-    grid-template-rows:
-      4.05rem var(--cw-mobile-board) 9rem
-      var(--cw-mobile-tools);
-    overflow: visible;
-  }
-}
-
-/* The software keyboard can leave less than half a phone screen available.
-   Keep the solving surface, active clue and actions inside that visual
-   viewport; the full masthead and control bank return when it expands. */
-.game[data-short-viewport="true"] {
-  height: min(100dvh, var(--crossword-viewport-height, 100dvh));
-  min-height: 0;
-  grid-template-rows:
-    minmax(0, 1fr) 3rem
-    calc(3.35rem + var(--safe-area-bottom));
-  gap: 0.25rem;
-  overflow: hidden;
 }
 
 @media (min-width: 52.01rem) and (min-height: 36.01rem) and (max-height: 42rem),
@@ -409,7 +341,7 @@
 :global(.fx-quiet) .slideThumb,
 :global(.fx-quiet) .cell,
 :global(.fx-quiet) .clueButton,
-:global(.fx-quiet) .clueTabs button,
+:global(.fx-quiet) .headerKey,
 :global(.fx-quiet) .switch::after {
   transition: none;
 }

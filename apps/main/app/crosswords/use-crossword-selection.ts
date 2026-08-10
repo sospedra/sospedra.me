@@ -4,76 +4,35 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from 'react'
-import type {
-  CrosswordDirection,
-  CrosswordEntry,
-  CrosswordPuzzle,
-} from './crossword-data'
+import type { CrosswordEntry } from './crossword-data'
 import type { CrosswordAction, CrosswordState } from './crossword-engine'
-import { entryFor, firstOpenCell } from './crossword-entries'
-
-export const MOBILE_LAYOUT_MEDIA =
-  '(max-width: 52rem), (max-width: 64rem) and (max-height: 36rem)'
-const SHORT_VIEWPORT_HEIGHT_PX = 480
+import { firstOpenCell } from './crossword-entries'
+import { MOBILE_LAYOUT_MEDIA } from './crossword-viewport'
 
 export const useCrosswordSelection = ({
-  acrossEntries,
   activeEntry,
   dispatch,
-  downEntries,
   focusGridRef,
   inputRef,
   latestStateRef,
   orderedEntries,
-  puzzle,
   selectedCell,
   shiftCarriage,
 }: {
-  acrossEntries: CrosswordEntry[]
   activeEntry: CrosswordEntry
   dispatch: ActionDispatch<[action: CrosswordAction]>
-  downEntries: CrosswordEntry[]
   focusGridRef: RefObject<boolean>
   inputRef: RefObject<HTMLInputElement | null>
   latestStateRef: RefObject<CrosswordState>
   orderedEntries: CrosswordEntry[]
-  puzzle: CrosswordPuzzle
   selectedCell: number
   shiftCarriage: () => void
 }) => {
-  const [shortViewport, setShortViewport] = useState(false)
   const cellRefs = useRef<Array<HTMLButtonElement | null>>([])
   const acrossListRef = useRef<HTMLDivElement>(null)
   const downListRef = useRef<HTMLDivElement>(null)
-  const mobileListRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const mobileLayout = window.matchMedia(MOBILE_LAYOUT_MEDIA)
-    const viewport = window.visualViewport
-    let frame = 0
-    const update = () => {
-      window.cancelAnimationFrame(frame)
-      frame = window.requestAnimationFrame(() => {
-        const height = viewport?.height ?? window.innerHeight
-        setShortViewport(
-          mobileLayout.matches && height <= SHORT_VIEWPORT_HEIGHT_PX,
-        )
-      })
-    }
-
-    update()
-    mobileLayout.addEventListener('change', update)
-    viewport?.addEventListener('resize', update)
-    window.addEventListener('resize', update)
-    return () => {
-      window.cancelAnimationFrame(frame)
-      mobileLayout.removeEventListener('change', update)
-      viewport?.removeEventListener('resize', update)
-      window.removeEventListener('resize', update)
-    }
-  }, [])
+  const clueBarRef = useRef<HTMLButtonElement>(null)
 
   const bringCellIntoView = useCallback((index: number) => {
     cellRefs.current[index]?.scrollIntoView({
@@ -89,14 +48,6 @@ export const useCrosswordSelection = ({
     },
     [bringCellIntoView],
   )
-
-  useEffect(() => {
-    if (!shortViewport) return
-    const frame = window.requestAnimationFrame(() => {
-      bringCellIntoView(latestStateRef.current.selectedCell)
-    })
-    return () => window.cancelAnimationFrame(frame)
-  }, [bringCellIntoView, latestStateRef, shortViewport])
 
   useEffect(() => {
     bringCellIntoView(selectedCell)
@@ -139,44 +90,18 @@ export const useCrosswordSelection = ({
         : downListRef.current
     const frame = window.requestAnimationFrame(() => {
       centerClueInList(list, activeEntry.id)
-      centerClueInList(mobileListRef.current, activeEntry.id)
     })
     return () => window.cancelAnimationFrame(frame)
   }, [activeEntry, centerClueInList])
 
-  useEffect(() => {
-    const mobileLayout = window.matchMedia(MOBILE_LAYOUT_MEDIA)
-    const viewport = window.visualViewport
-    let frame = 0
-    const recenterMobileClue = () => {
-      window.cancelAnimationFrame(frame)
-      frame = window.requestAnimationFrame(() => {
-        if (mobileLayout.matches) {
-          bringCellIntoView(latestStateRef.current.selectedCell)
-          centerClueInList(mobileListRef.current, activeEntry.id, 'auto')
-        }
-      })
-    }
-
-    recenterMobileClue()
-    mobileLayout.addEventListener('change', recenterMobileClue)
-    viewport?.addEventListener('resize', recenterMobileClue)
-    viewport?.addEventListener('scroll', recenterMobileClue)
-    window.addEventListener('resize', recenterMobileClue)
-    return () => {
-      window.cancelAnimationFrame(frame)
-      mobileLayout.removeEventListener('change', recenterMobileClue)
-      viewport?.removeEventListener('resize', recenterMobileClue)
-      viewport?.removeEventListener('scroll', recenterMobileClue)
-      window.removeEventListener('resize', recenterMobileClue)
-    }
-  }, [activeEntry.id, bringCellIntoView, centerClueInList, latestStateRef])
-
   const focusActiveClue = () => {
     const mobile = window.matchMedia(MOBILE_LAYOUT_MEDIA).matches
-    const list = mobile
-      ? mobileListRef.current
-      : activeEntry.direction === 'across'
+    if (mobile) {
+      clueBarRef.current?.focus()
+      return
+    }
+    const list =
+      activeEntry.direction === 'across'
         ? acrossListRef.current
         : downListRef.current
     const clue = list?.querySelector<HTMLButtonElement>(
@@ -204,19 +129,6 @@ export const useCrosswordSelection = ({
     })
   }
 
-  const chooseMobileDirection = (direction: CrosswordDirection) => {
-    const current = latestStateRef.current
-    const entries = direction === 'across' ? acrossEntries : downEntries
-    const entry =
-      entryFor(puzzle, current.selectedCell, direction) ??
-      entries.find((candidate) =>
-        candidate.cells.some((index) => !current.guesses[index]),
-      ) ??
-      entries[0]
-    if (!entry) return
-    chooseEntry(entry, true)
-  }
-
   const moveToClue = (delta: -1 | 1, keepNativeKeyboard = false) => {
     const found = orderedEntries.findIndex(
       (entry) => entry.id === activeEntry.id,
@@ -233,12 +145,10 @@ export const useCrosswordSelection = ({
     bringCellIntoView,
     cellRefs,
     chooseEntry,
-    chooseMobileDirection,
+    clueBarRef,
     downListRef,
     focusActiveClue,
     focusCellAt,
-    mobileListRef,
     moveToClue,
-    shortViewport,
   }
 }
