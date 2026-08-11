@@ -167,11 +167,9 @@
 }
 
 .shelf {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-end;
-  gap: clamp(24px, 6vw, 80px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(18px, 3vw, 34px);
   padding-top: 16px;
 }
 
@@ -179,6 +177,20 @@
   display: grid;
   justify-items: center;
   gap: 2px;
+  padding: 18px 16px 16px;
+  border-radius: 26px;
+  background: rgb(255 245 238 / 28%);
+  box-shadow:
+    inset 2px 3px 6px rgb(255 255 255 / 45%),
+    inset -3px -4px 8px rgb(140 70 60 / 12%);
+}
+
+.cover {
+  display: grid;
+  place-items: end center;
+  width: 100%;
+  height: 190px;
+  margin-bottom: 8px;
 }
 
 .critter {
@@ -912,4 +924,42 @@
     transparent 8px 13px
   );
   border-radius: 4px;
+}
+
+.spec {
+  width: 100%;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 2px dashed rgb(92 58 51 / 28%);
+}
+
+.specRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 0;
+  font-size: 0.72rem;
+}
+
+.specRow dt {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9a6a5e;
+}
+
+.specRow dd {
+  font-weight: 700;
+  color: var(--clay-brown);
+  text-align: right;
+}
+
+@media (max-width: 860px) {
+  .shelf {
+    grid-template-columns: 1fr;
+  }
+
+  .cover {
+    height: 170px;
+  }
 }

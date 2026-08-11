@@ -475,6 +475,7 @@
 }
 
 .cell {
+  position: relative;
   display: grid;
   place-items: center;
   padding: 18px 10px;
@@ -646,15 +647,15 @@
 
 .zineStickA {
   width: 92px;
-  right: 6%;
-  top: 26%;
+  right: 4%;
+  top: 40%;
   rotate: 12deg;
 }
 
 .zineStickB {
   width: 76px;
-  left: 4%;
-  bottom: 20%;
+  left: -4%;
+  bottom: 6%;
   rotate: -14deg;
 }
 
@@ -666,8 +667,8 @@
 }
 
 .zineStickD {
-  left: 32%;
-  top: -30px;
+  right: 5%;
+  top: -34px;
   rotate: -9deg;
 }
 
@@ -689,5 +690,124 @@
 
   .zineStickA {
     width: 70px;
+  }
+}
+
+.press {
+  position: relative;
+  z-index: 3;
+  width: min(1180px, calc(100% - 36px));
+  margin: calc(58px + var(--safe-area-top)) auto 10px;
+  border-block: 2px solid rgb(255 253 246 / 55%);
+}
+
+.pressLine {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 2px;
+  font-family: var(--font-code, monospace);
+  font-size: 0.6rem;
+  letter-spacing: 0.24em;
+  color: rgb(255 253 246 / 75%);
+}
+
+.pressNo {
+  color: var(--punch);
+}
+
+.pressName {
+  border-top: 1px solid rgb(255 253 246 / 35%);
+  overflow: clip;
+  contain: inline-size;
+}
+
+.pressTrack {
+  display: flex;
+  width: max-content;
+  animation: press-roll 46s linear infinite;
+}
+
+.pressTrack span {
+  padding: 6px 0 8px;
+  white-space: nowrap;
+  font-family: var(--font-sticker-bubble);
+  font-size: clamp(1.5rem, 3.6vw, 2.9rem);
+  line-height: 1;
+  color: var(--paper);
+  letter-spacing: 0.02em;
+}
+
+@keyframes press-roll {
+  to {
+    translate: -50% 0;
+  }
+}
+
+.mark {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.mark::before,
+.mark::after {
+  content: "";
+  position: absolute;
+  background: rgb(255 253 246 / 85%);
+}
+
+.mark::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+}
+
+.mark::after {
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+}
+
+.markTl {
+  top: 12px;
+  left: 14px;
+}
+
+.markTr {
+  top: 12px;
+  right: 14px;
+}
+
+.markBl {
+  bottom: 12px;
+  left: 14px;
+}
+
+.markBr {
+  bottom: 12px;
+  right: 14px;
+}
+
+.cellBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-code, monospace);
+  font-size: 0.52rem;
+  letter-spacing: 0.14em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pressTrack {
+    animation: none;
   }
 }

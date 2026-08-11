@@ -195,7 +195,8 @@
 
 .archive {
   padding: 60px 20px calc(80px + var(--safe-area-bottom));
-  background: #0a080c;
+  background: var(--mk-deep, #0a080c);
+  transition: background-color 420ms ease;
 }
 
 .archiveHead {
@@ -205,7 +206,7 @@
   font-size: 0.64rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: #8d8896;
+  color: var(--mk-section);
 }
 
 .archiveGrid {
@@ -305,7 +306,7 @@
 .tech {
   width: min(560px, 100%);
   margin: 44px auto 0;
-  border-top: 1px solid #2c2933;
+  border-top: 1px solid var(--mk-section);
 }
 
 .techRow {
@@ -313,14 +314,14 @@
   justify-content: space-between;
   gap: 20px;
   padding: 9px 2px;
-  border-bottom: 1px solid #2c2933;
+  border-bottom: 1px solid rgb(255 255 255 / 14%);
   font-family: var(--font-mk-utility);
   font-size: 0.68rem;
   letter-spacing: 0.14em;
 }
 
 .techRow dt {
-  color: #8d8896;
+  color: var(--mk-section);
 }
 
 .techRow dd {
@@ -332,4 +333,19 @@
   .archiveGrid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.issue {
+  display: grid;
+}
+
+.issueStamp {
+  width: min(560px, 100%);
+  margin: 20px auto 0;
+  font-family: var(--font-mk-utility);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  line-height: 1.7;
+  color: var(--mk-section);
+  opacity: 0.85;
 }

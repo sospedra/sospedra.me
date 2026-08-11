@@ -15,38 +15,85 @@ const SLOGANS = [
 
 const AUDIT_ITEMS = ['default fonts', 'polite gradients', 'tasteful whitespace']
 
+const ALL = 'ALL'
+
 const SCHEDULE = [
   {
     day: 'AUG 20',
     time: '10:00',
     act: 'OPENING: EVERYTHING IS A BUTTON',
     room: 'main hall',
+    track: 'TALK',
   },
   {
     day: 'AUG 20',
     time: '16:00',
     act: 'WORKSHOP: DRAW A SHADOW BY HAND',
     room: 'room 3px',
+    track: 'WORKSHOP',
   },
+  { day: 'AUG 20', time: '22:00', act: '', room: 'room 3px', track: 'PARTY' },
   {
     day: 'AUG 21',
     time: '11:00',
     act: 'PANEL: IS A BORDER ENOUGH? (YES!)',
     room: 'the pink cell',
+    track: 'TALK',
+  },
+  {
+    day: 'AUG 21',
+    time: '15:00',
+    act: '',
+    room: 'main hall',
+    track: 'WORKSHOP',
   },
   {
     day: 'AUG 21',
     time: '19:00',
     act: 'KEYNOTE: GRADIENTS, AN APOLOGY',
     room: 'main hall',
+    track: 'TALK',
+  },
+  {
+    day: 'AUG 22',
+    time: '12:00',
+    act: '',
+    room: 'the pink cell',
+    track: 'TALK',
   },
   {
     day: 'AUG 22',
     time: '23:59',
     act: 'CLOSING RAVE: 8PX OFFSETS ONLY',
     room: 'everywhere',
+    track: 'PARTY',
   },
 ]
+
+const AXES = [
+  {
+    key: 'day' as const,
+    label: 'DAY',
+    options: [ALL, 'AUG 20', 'AUG 21', 'AUG 22'],
+  },
+  {
+    key: 'room' as const,
+    label: 'ROOM',
+    options: [ALL, 'main hall', 'room 3px', 'the pink cell', 'everywhere'],
+  },
+  {
+    key: 'track' as const,
+    label: 'TRACK',
+    options: [ALL, 'TALK', 'WORKSHOP', 'PARTY'],
+  },
+]
+
+type Axes = { day: string; room: string; track: string }
+
+const matches = (row: (typeof SCHEDULE)[number], axes: Axes) =>
+  (axes.day === ALL || row.day === axes.day) &&
+  (axes.room === ALL || row.room === axes.room) &&
+  (axes.track === ALL || row.track === axes.track)
 
 const TIERS = [
   {
@@ -115,6 +162,7 @@ const NeubrutalismView = ({ fontVars }: NeubrutalismViewProps) => {
   const [checked, setChecked] = useState<boolean[]>([false, false, false])
   const [sloganIndex, setSloganIndex] = useState(0)
   const [stamp, setStamp] = useState(0)
+  const [axes, setAxes] = useState<Axes>({ day: ALL, room: ALL, track: ALL })
 
   const shout = () => {
     setSloganIndex((index) => (index + 1) % SLOGANS.length)
@@ -283,6 +331,26 @@ const NeubrutalismView = ({ fontVars }: NeubrutalismViewProps) => {
 
         <section className={css.programme}>
           <h2 className={css.programmeTitle}>THE! PROGRAMME!</h2>
+          <div className={css.axes}>
+            {AXES.map((axis) => (
+              <div key={axis.key} className={css.axis}>
+                <span className={css.axisLabel}>{axis.label}</span>
+                {axis.options.map((option) => (
+                  <button
+                    key={option}
+                    type='button'
+                    className={css.axisChip}
+                    data-on={axes[axis.key] === option ? 'true' : undefined}
+                    onClick={() =>
+                      setAxes((prev) => ({ ...prev, [axis.key]: option }))
+                    }
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
           <table className={css.schedule}>
             <thead>
               <tr>
@@ -293,16 +361,24 @@ const NeubrutalismView = ({ fontVars }: NeubrutalismViewProps) => {
               </tr>
             </thead>
             <tbody>
-              {SCHEDULE.map((row) => (
-                <tr key={`${row.day}-${row.time}`}>
+              {SCHEDULE.filter((row) => matches(row, axes)).map((row) => (
+                <tr
+                  key={`${row.day}-${row.time}`}
+                  data-tba={row.act ? undefined : 'true'}
+                >
                   <td>{row.day}</td>
                   <td>{row.time}</td>
-                  <td className={css.scheduleAct}>{row.act}</td>
+                  <td className={css.scheduleAct}>
+                    {row.act || 'TO BE ANNOUNCED'}
+                  </td>
                   <td>{row.room}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          <p className={css.rolling}>
+            three acts still unannounced. the programme publishes as it fills.
+          </p>
         </section>
 
         <section className={css.programme}>

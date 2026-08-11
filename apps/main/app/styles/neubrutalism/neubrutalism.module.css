@@ -636,3 +636,67 @@
     display: none;
   }
 }
+
+.axes {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.axis {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.axisLabel {
+  width: 68px;
+  font-family: var(--font-nb-shout);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+
+.axisChip {
+  padding: 5px 12px;
+  border: 3px solid var(--nb-ink);
+  background: var(--nb-cream);
+  color: var(--nb-ink);
+  font-weight: 700;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--nb-ink);
+  transition:
+    translate 90ms linear,
+    box-shadow 90ms linear;
+}
+
+.axisChip:hover {
+  translate: -1px -1px;
+  box-shadow: 5px 5px 0 var(--nb-ink);
+}
+
+.axisChip[data-on="true"] {
+  background: var(--nb-accent);
+  translate: 3px 3px;
+  box-shadow: 0 0 0 var(--nb-ink);
+}
+
+.schedule tbody tr[data-tba="true"] {
+  background: repeating-linear-gradient(
+    45deg,
+    var(--nb-cream) 0 10px,
+    #e9e4d6 10px 20px
+  );
+}
+
+.schedule tbody tr[data-tba="true"] .scheduleAct {
+  opacity: 0.6;
+}
+
+.rolling {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}

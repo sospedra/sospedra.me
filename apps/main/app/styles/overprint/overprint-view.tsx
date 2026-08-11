@@ -21,6 +21,10 @@ const GAZETTE =
 
 const FrontPage = () => (
   <div className={css.npSheet}>
+    <span className={css.npSpine} aria-hidden='true'>
+      THE DUPLICATE · A TWO-INK WEEKLY
+    </span>
+    <span className={css.npRules} aria-hidden='true' />
     <p className={css.npFolio}>
       <span>VOL. II · Nº 44</span>
       <span>TUESDAY, AUGUST 11, 2026</span>
@@ -195,6 +199,11 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
           <span className={css.stamp}>APPROVED</span>
         </header>
         <figure className={css.specimen}>
+          <aside className={css.lGutter}>
+            <span className={css.gutterKey}>l-gutter</span>
+            plate held at 60 per cent. the teal ran long on the second pass and
+            nobody logged it.
+          </aside>
           <img
             src='/styles/beetles-teal.webp'
             alt='Wenceslaus Hollar etching: a moth, three butterflies and two beetles, printed in teal ink'

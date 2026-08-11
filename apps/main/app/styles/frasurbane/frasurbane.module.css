@@ -3,6 +3,14 @@
 }
 
 .root {
+  --measure: 780px;
+  --fr-display: calc(var(--measure) * 0.152);
+  --fr-title: calc(var(--measure) * 0.062);
+  --fr-body: calc(var(--measure) * 0.0225);
+  --fr-meta: calc(var(--measure) * 0.0155);
+  --crawl: 0.8s;
+  --walk: 0.4s;
+  --run: 0.2s;
   --fr-corner: "\2767";
   --fr-paper: #f5f0e8;
   --fr-ink: #2c1e14;
@@ -92,7 +100,7 @@
 
 .eraSwitch span {
   opacity: 0.35;
-  transition: opacity 200ms ease;
+  transition: opacity var(--walk) ease;
 }
 
 .eraSwitch span[data-active="true"] {
@@ -173,7 +181,7 @@
   position: relative;
   font-family: var(--font-fr-display);
   font-weight: 400;
-  font-size: clamp(4.2rem, 13vw, 9.5rem);
+  font-size: var(--fr-display);
   line-height: 0.95;
 }
 
@@ -192,7 +200,7 @@
 
 .subtitle {
   font-family: var(--font-fr-display);
-  font-size: clamp(1.1rem, 2.6vw, 1.6rem);
+  font-size: var(--fr-title);
   font-variant: small-caps;
   letter-spacing: 0.14em;
 }
@@ -222,7 +230,7 @@
   z-index: 0;
   width: 128%;
   translate: -50% -50%;
-  animation: behind-in 520ms ease backwards;
+  animation: behind-in var(--crawl) ease backwards;
 }
 
 @keyframes behind-in {
@@ -323,7 +331,7 @@
   position: relative;
   width: min(780px, calc(100% - 48px));
   margin: 40px auto 0;
-  font-size: 1.08rem;
+  font-size: var(--fr-body);
   line-height: 1.66;
   columns: 2;
   column-gap: 44px;
@@ -390,7 +398,7 @@
 
 .darkTitle {
   font-family: var(--font-fr-display);
-  font-size: clamp(2.1rem, 5.6vw, 3.8rem);
+  font-size: calc(var(--fr-display) * 0.42);
   font-weight: 400;
 }
 
@@ -861,5 +869,49 @@
 @media (max-width: 1280px) {
   .sidenote {
     display: none;
+  }
+}
+
+.sectionOpen::first-letter {
+  float: left;
+  padding: 0.06em 0.09em 0 0;
+  font-family: var(--font-fr-display);
+  font-size: 2.9em;
+  line-height: 0.74;
+  color: var(--fr-accent);
+}
+
+.citation {
+  column-span: all;
+  margin-top: 24px;
+  padding: 12px 14px;
+  border: 1px solid var(--fr-line);
+  font-size: calc(var(--fr-meta) * 1.15);
+  line-height: 1.6;
+}
+
+.citationKey {
+  display: block;
+  margin-bottom: 5px;
+  font-family: var(--font-fr-caps);
+  font-size: var(--fr-meta);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--fr-accent);
+}
+
+.citationBody {
+  font-style: normal;
+}
+
+@media (max-width: 1000px) {
+  .root {
+    --measure: 86vw;
+  }
+}
+
+@media (max-width: 559px) {
+  .root {
+    --measure: 128vw;
   }
 }

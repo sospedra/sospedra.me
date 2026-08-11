@@ -1,5 +1,6 @@
 'use client'
 
+import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'services/link'
 import Shell from 'services/shell'
@@ -128,161 +129,172 @@ const MishkoView = ({ fontVars }: MishkoViewProps) => {
     anchor.click()
   }
 
+  const ramp = PALETTES[palette]
+  const issueSkin = {
+    '--mk-section': ramp.stops[3],
+    '--mk-deep': ramp.dark ? ramp.stops.at(-1) : ramp.stops[0],
+    '--mk-paper': ramp.dark ? ramp.stops[0] : ramp.stops.at(-1),
+  } as React.CSSProperties
+
   return (
     <Shell className={`${css.page} ${fontVars}`}>
-      <div
-        className={css.stage}
-        data-dark={PALETTES[palette].dark ? 'true' : undefined}
-      >
-        <canvas
-          ref={canvasRef}
-          className={css.canvas}
-          aria-label={`Melted typography poster reading “${phrase}”`}
-        />
-        <span
-          ref={probeRef}
-          className={`${css.probe} ${css.probeHeavy}`}
-          aria-hidden='true'
-        >
-          Aa
-        </span>
-        <span
-          ref={gothicProbeRef}
-          className={`${css.probe} ${css.probeGothic}`}
-          aria-hidden='true'
-        >
-          Aa
-        </span>
+      <div className={css.issue} style={issueSkin} data-ramp={palette}>
+        <div className={css.stage} data-dark={ramp.dark ? 'true' : undefined}>
+          <canvas
+            ref={canvasRef}
+            className={css.canvas}
+            aria-label={`Melted typography poster reading “${phrase}”`}
+          />
+          <span
+            ref={probeRef}
+            className={`${css.probe} ${css.probeHeavy}`}
+            aria-hidden='true'
+          >
+            Aa
+          </span>
+          <span
+            ref={gothicProbeRef}
+            className={`${css.probe} ${css.probeGothic}`}
+            aria-hidden='true'
+          >
+            Aa
+          </span>
 
-        <header className={css.caption}>
-          <p>SOSPEDRA PRESS</p>
-          <p>TYPOGRAPHY POSTER Nº{`${edition}`.padStart(3, '0')}</p>
-          <p>
-            {stamp} — “{phrase}”
+          <header className={css.caption}>
+            <p>SOSPEDRA PRESS</p>
+            <p>TYPOGRAPHY POSTER Nº{`${edition}`.padStart(3, '0')}</p>
+            <p>
+              {stamp} — “{phrase}”
+            </p>
+          </header>
+
+          <div className={css.backTag}>
+            <Link url='/styles'>◀ styles</Link>
+          </div>
+
+          <p className={css.hint}>rub the poster — heat melts the ink</p>
+
+          <div className={css.deck}>
+            <div className={css.row}>
+              {PRESETS.map((preset) => (
+                <button
+                  key={preset.phrase}
+                  type='button'
+                  className={css.chip}
+                  data-active={preset.phrase === phrase ? 'true' : undefined}
+                  data-gothic={preset.gothic ? 'true' : undefined}
+                  onClick={() => print(preset.phrase, preset.gothic)}
+                >
+                  {preset.phrase}
+                </button>
+              ))}
+            </div>
+            <form className={css.row} onSubmit={submitDraft}>
+              <input
+                className={css.input}
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                placeholder='your own words…'
+                maxLength={26}
+                aria-label='Custom poster phrase'
+              />
+              <button type='submit' className={css.chip}>
+                PRINT IT
+              </button>
+            </form>
+            <div className={css.row}>
+              {(Object.keys(PALETTES) as MeltPalette[]).map((key) => (
+                <button
+                  key={key}
+                  type='button'
+                  className={`${css.chip} ${css.swatchChip}`}
+                  data-active={key === palette ? 'true' : undefined}
+                  onClick={() => setPalette(key)}
+                >
+                  <span
+                    className={css.swatch}
+                    style={{
+                      background: `linear-gradient(90deg, ${PALETTES[key].stops.join(',')})`,
+                    }}
+                    aria-hidden='true'
+                  />
+                  {key}
+                </button>
+              ))}
+              <button
+                type='button'
+                className={`${css.chip} ${css.saveChip}`}
+                onClick={download}
+              >
+                ↓ SAVE PNG
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <section className={css.archive}>
+          <header className={css.archiveHead}>
+            from the archive — tap one to reprint it
+          </header>
+          <div className={css.archiveGrid}>
+            {ARCHIVE.map((entry) => (
+              <button
+                key={entry.n}
+                type='button'
+                className={css.mini}
+                style={{ background: PALETTES[entry.palette].stops.at(-1) }}
+                data-dark={PALETTES[entry.palette].dark ? 'true' : undefined}
+                onClick={() => reprint(entry)}
+              >
+                <span className={css.miniStack} aria-hidden='true'>
+                  <span
+                    className={css.miniDrip}
+                    style={{
+                      backgroundImage: `linear-gradient(180deg, ${PALETTES[entry.palette].stops.slice(0, 5).join(',')})`,
+                    }}
+                  >
+                    {entry.phrase}
+                  </span>
+                  <span
+                    className={css.miniWord}
+                    style={{
+                      backgroundImage: `linear-gradient(180deg, ${PALETTES[entry.palette].stops.slice(0, 5).join(',')})`,
+                    }}
+                  >
+                    {entry.phrase}
+                  </span>
+                </span>
+                <span className={css.miniCap}>
+                  TYPOGRAPHY POSTER Nº{entry.n} · {entry.date} · “{entry.phrase}
+                  ”
+                </span>
+              </button>
+            ))}
+          </div>
+          <dl className={css.tech}>
+            <div className={css.techRow}>
+              <dt>EDITION</dt>
+              <dd>unlimited, none identical</dd>
+            </div>
+            <div className={css.techRow}>
+              <dt>INK</dt>
+              <dd>one gradient-map LUT, three ramps</dd>
+            </div>
+            <div className={css.techRow}>
+              <dt>PRESS</dt>
+              <dd>webgl 1.0, a single fragment shader</dd>
+            </div>
+            <div className={css.techRow}>
+              <dt>PAPER</dt>
+              <dd>none — rub the poster and it melts again</dd>
+            </div>
+          </dl>
+          <p className={css.issueStamp}>
+            this issue is set in the {palette} ramp. the ramp paints the poster
+            and the publication both.
           </p>
-        </header>
-
-        <div className={css.backTag}>
-          <Link url='/styles'>◀ styles</Link>
-        </div>
-
-        <p className={css.hint}>rub the poster — heat melts the ink</p>
-
-        <div className={css.deck}>
-          <div className={css.row}>
-            {PRESETS.map((preset) => (
-              <button
-                key={preset.phrase}
-                type='button'
-                className={css.chip}
-                data-active={preset.phrase === phrase ? 'true' : undefined}
-                data-gothic={preset.gothic ? 'true' : undefined}
-                onClick={() => print(preset.phrase, preset.gothic)}
-              >
-                {preset.phrase}
-              </button>
-            ))}
-          </div>
-          <form className={css.row} onSubmit={submitDraft}>
-            <input
-              className={css.input}
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder='your own words…'
-              maxLength={26}
-              aria-label='Custom poster phrase'
-            />
-            <button type='submit' className={css.chip}>
-              PRINT IT
-            </button>
-          </form>
-          <div className={css.row}>
-            {(Object.keys(PALETTES) as MeltPalette[]).map((key) => (
-              <button
-                key={key}
-                type='button'
-                className={`${css.chip} ${css.swatchChip}`}
-                data-active={key === palette ? 'true' : undefined}
-                onClick={() => setPalette(key)}
-              >
-                <span
-                  className={css.swatch}
-                  style={{
-                    background: `linear-gradient(90deg, ${PALETTES[key].stops.join(',')})`,
-                  }}
-                  aria-hidden='true'
-                />
-                {key}
-              </button>
-            ))}
-            <button
-              type='button'
-              className={`${css.chip} ${css.saveChip}`}
-              onClick={download}
-            >
-              ↓ SAVE PNG
-            </button>
-          </div>
-        </div>
+        </section>
       </div>
-
-      <section className={css.archive}>
-        <header className={css.archiveHead}>
-          from the archive — tap one to reprint it
-        </header>
-        <div className={css.archiveGrid}>
-          {ARCHIVE.map((entry) => (
-            <button
-              key={entry.n}
-              type='button'
-              className={css.mini}
-              style={{ background: PALETTES[entry.palette].stops.at(-1) }}
-              data-dark={PALETTES[entry.palette].dark ? 'true' : undefined}
-              onClick={() => reprint(entry)}
-            >
-              <span className={css.miniStack} aria-hidden='true'>
-                <span
-                  className={css.miniDrip}
-                  style={{
-                    backgroundImage: `linear-gradient(180deg, ${PALETTES[entry.palette].stops.slice(0, 5).join(',')})`,
-                  }}
-                >
-                  {entry.phrase}
-                </span>
-                <span
-                  className={css.miniWord}
-                  style={{
-                    backgroundImage: `linear-gradient(180deg, ${PALETTES[entry.palette].stops.slice(0, 5).join(',')})`,
-                  }}
-                >
-                  {entry.phrase}
-                </span>
-              </span>
-              <span className={css.miniCap}>
-                TYPOGRAPHY POSTER Nº{entry.n} · {entry.date} · “{entry.phrase}”
-              </span>
-            </button>
-          ))}
-        </div>
-        <dl className={css.tech}>
-          <div className={css.techRow}>
-            <dt>EDITION</dt>
-            <dd>unlimited, none identical</dd>
-          </div>
-          <div className={css.techRow}>
-            <dt>INK</dt>
-            <dd>one gradient-map LUT, three ramps</dd>
-          </div>
-          <div className={css.techRow}>
-            <dt>PRESS</dt>
-            <dd>webgl 1.0, a single fragment shader</dd>
-          </div>
-          <div className={css.techRow}>
-            <dt>PAPER</dt>
-            <dd>none — rub the poster and it melts again</dd>
-          </div>
-        </dl>
-      </section>
     </Shell>
   )
 }

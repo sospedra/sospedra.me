@@ -44,6 +44,8 @@ const BOARD: Record<string, Spot> = {
   ok: { kind: 'ok', x: 28, y: 60, r: 15, s: 0.85 },
 }
 
+const SHEET_BADGE = ['SINGLE', 'SHEET', 'PACK']
+
 const SPAWN_CAP = 22
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min)
@@ -145,10 +147,34 @@ const StickersView = ({ fontVars }: StickersViewProps) => {
         <Link url='/styles'>◀ styles</Link>
       </div>
 
+      <header className={css.press}>
+        <p className={css.pressLine}>
+          <span>FREE · TAKE ONE</span>
+          <span className={css.pressNo}>No. 44</span>
+          <span>PRINTED ON A WALL</span>
+        </p>
+        <div className={css.pressName} aria-hidden='true'>
+          <div className={css.pressTrack}>
+            <span>
+              STICKERS ✶ PEGATINAS ✶ AUFKLEBER ✶ ステッカー ✶ НАКЛЕЙКИ ✶
+              AUTOCOLLANTS ✶ ADESIVI ✶ 스티커 ✶&nbsp;
+            </span>
+            <span>
+              STICKERS ✶ PEGATINAS ✶ AUFKLEBER ✶ ステッカー ✶ НАКЛЕЙКИ ✶
+              AUTOCOLLANTS ✶ ADESIVI ✶ 스티커 ✶&nbsp;
+            </span>
+          </div>
+        </div>
+      </header>
+
       <section
         className={css.board}
         aria-label='Sticker board. Every sticker can be dragged.'
       >
+        <span className={`${css.mark} ${css.markTl}`} aria-hidden='true' />
+        <span className={`${css.mark} ${css.markTr}`} aria-hidden='true' />
+        <span className={`${css.mark} ${css.markBl}`} aria-hidden='true' />
+        <span className={`${css.mark} ${css.markBr}`} aria-hidden='true' />
         {Object.entries(stickers).map(([id, spot]) => (
           <div
             key={id}
@@ -260,7 +286,7 @@ const StickersView = ({ fontVars }: StickersViewProps) => {
           <p className={css.sheetNote}>tap one to slap a copy on the board ↑</p>
         </header>
         <div className={css.sheetGrid}>
-          {SLAP_POOL.slice(0, 6).map((kind) => (
+          {SLAP_POOL.slice(0, 6).map((kind, index) => (
             <button
               key={kind}
               type='button'
@@ -268,6 +294,7 @@ const StickersView = ({ fontVars }: StickersViewProps) => {
               onClick={() => slap(kind)}
               aria-label={`Peel a ${STICKER_LABEL[kind]} onto the board`}
             >
+              <span className={css.cellBadge}>{SHEET_BADGE[index % 3]}</span>
               <span className={css.cellFace}>{STICKER_FACE[kind]}</span>
             </button>
           ))}

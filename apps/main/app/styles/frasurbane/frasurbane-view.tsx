@@ -310,7 +310,7 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
             to carry a catastrophe through a crowded room without turning the
             guests to stone.
           </p>
-          <p>
+          <p className={css.sectionOpen}>
             Canova carves the second after the sword. The hero is already
             composing himself for marble: weight settled on one hip, the
             terrible head held out like a lamp at a dinner party. The violence
@@ -321,7 +321,7 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
           <blockquote className={css.pull}>
             sophistication is just a monster, held correctly
           </blockquote>
-          <p>
+          <p className={css.sectionOpen}>
             The reader of 1994 hangs this print above a leather armchair,
             between the espresso machine and the jazz shelf. The reader of 2024
             scans it, crushes the blacks, letters it in fraktur and posts it at
@@ -334,8 +334,15 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
             taste.
           </p>
           <p className={css.jump}>
-            continued on plate II — the weather section →
+            continued on plate II, the weather section →
           </p>
+          <aside className={css.citation}>
+            <span className={css.citationKey}>cite this plate</span>
+            <p className={css.citationBody}>
+              Sospedra, Rubén. “Perseus and the Head of Medusa.”{' '}
+              <em>A Frasurbane Reader</em>, vol. IV, August MMXXVI, plate I.
+            </p>
+          </aside>
         </article>
 
         <section className={css.motifs}>

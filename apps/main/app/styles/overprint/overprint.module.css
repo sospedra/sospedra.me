@@ -280,7 +280,7 @@
 
 .specimen {
   display: grid;
-  grid-template-columns: 1.6fr 1fr;
+  grid-template-columns: [gutter-start] 0.5fr [text-start gutter-end] 1.6fr 1fr [text-end];
   gap: clamp(18px, 3vw, 36px);
   align-items: end;
 }
@@ -548,6 +548,7 @@
 }
 
 .npCols {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
@@ -637,6 +638,66 @@
   }
 
   .beetles {
+    display: none;
+  }
+}
+
+.npSheet {
+  position: relative;
+}
+
+.npSpine {
+  position: absolute;
+  top: 120px;
+  left: -34px;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.34em;
+}
+
+.npRules {
+  position: absolute;
+  inset: 232px 0 34px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 calc(33.333% - 1px),
+    currentColor calc(33.333% - 1px) 33.333%
+  );
+  opacity: 0.55;
+}
+
+.lGutter {
+  grid-row: 1;
+  align-self: start;
+  padding-top: 6px;
+  border-top: 1px solid currentColor;
+  font-size: 0.66rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.gutterKey {
+  display: block;
+  margin-bottom: 5px;
+  font-family: var(--font-op-mono);
+  font-style: normal;
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--op-red);
+}
+
+@media (max-width: 1240px) {
+  .npSpine {
+    display: none;
+  }
+}
+
+@media (max-width: 820px) {
+  .npRules {
     display: none;
   }
 }

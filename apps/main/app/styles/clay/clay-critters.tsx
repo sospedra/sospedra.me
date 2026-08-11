@@ -58,6 +58,14 @@ const Mushroom = () => (
   </div>
 )
 
+const SPEC_KEYS = [
+  'edition',
+  'material',
+  'height',
+  'pressed',
+  'status',
+] as const
+
 const CRITTERS = [
   {
     id: 'gato',
@@ -66,14 +74,28 @@ const CRITTERS = [
     price: '¥590 · CL-001',
     label: 'Gato, the black clay cat. Poke to squish.',
     art: <Cat />,
+    spec: {
+      edition: 'open',
+      material: 'matte plasticine',
+      height: '92 mm',
+      pressed: 'MMXXVI',
+      status: 'in stock',
+    },
   },
   {
     id: 'noodle',
     name: 'NOODLE',
     role: 'morale',
-    price: '¥390 · CL-002 · sold out',
+    price: '¥390 · CL-002',
     label: 'Noodle, the mint clay worm. Poke to squish.',
     art: <Worm />,
+    spec: {
+      edition: 'first, of one',
+      material: 'mint plasticine',
+      height: '61 mm',
+      pressed: 'MMXXVI',
+      status: 'sold out',
+    },
   },
   {
     id: 'shroom',
@@ -82,6 +104,13 @@ const CRITTERS = [
     price: '¥490 · CL-003',
     label: 'Shroom, the lilac clay mushroom. Poke to squish.',
     art: <Mushroom />,
+    spec: {
+      edition: 'open',
+      material: 'lilac over cream',
+      height: '148 mm',
+      pressed: 'MMXXVI',
+      status: 'in stock',
+    },
   },
 ]
 
@@ -147,25 +176,35 @@ const ClayCritters = () => {
     <div ref={stage} className={css.shelf}>
       <ClayRough />
       {CRITTERS.map((critter) => (
-        <div key={critter.id} className={css.critterSlot}>
-          <button
-            type='button'
-            aria-label={critter.label}
-            className={css.critter}
-            onClick={() => poke(critter.id)}
-          >
-            <span
-              key={pokes[critter.id] ?? 0}
-              className={pokes[critter.id] ? css.squish : undefined}
+        <article key={critter.id} className={css.critterSlot}>
+          <div className={css.cover}>
+            <button
+              type='button'
+              aria-label={critter.label}
+              className={css.critter}
+              onClick={() => poke(critter.id)}
             >
-              <span className={css.rough}>{critter.art}</span>
-            </span>
-            <span className={css.plinthShadow} aria-hidden='true' />
-          </button>
+              <span
+                key={pokes[critter.id] ?? 0}
+                className={pokes[critter.id] ? css.squish : undefined}
+              >
+                <span className={css.rough}>{critter.art}</span>
+              </span>
+              <span className={css.plinthShadow} aria-hidden='true' />
+            </button>
+          </div>
           <span className={css.critterName}>{critter.name}</span>
           <span className={css.critterRole}>dept. of {critter.role}</span>
           <span className={css.critterPrice}>{critter.price}</span>
-        </div>
+          <dl className={css.spec}>
+            {SPEC_KEYS.map((key) => (
+              <div key={key} className={css.specRow}>
+                <dt>{key}</dt>
+                <dd>{critter.spec[key]}</dd>
+              </div>
+            ))}
+          </dl>
+        </article>
       ))}
     </div>
   )
