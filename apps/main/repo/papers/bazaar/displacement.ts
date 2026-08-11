@@ -1,40 +1,8 @@
 // Port of the "nav displacement map" pen: https://codepen.io/AlainBarrios/pen/NQWzzz
+import FRAGMENT_SHADER from './displacement.frag'
+import VERTEX_SHADER from './displacement.vert'
+
 const DURATION_MS = 800
-
-const VERTEX_SHADER = `
-attribute vec2 aPosition;
-
-uniform vec2 uScaleFrom;
-uniform vec2 uScaleTo;
-
-varying vec2 vUvFrom;
-varying vec2 vUvTo;
-
-void main() {
-  vec2 uv = aPosition * 0.5 + 0.5;
-  vUvFrom = (uv - 0.5) * uScaleFrom + 0.5;
-  vUvTo = (uv - 0.5) * uScaleTo + 0.5;
-  gl_Position = vec4(aPosition, 0.0, 1.0);
-}
-`
-
-const FRAGMENT_SHADER = `
-precision mediump float;
-
-varying vec2 vUvFrom;
-varying vec2 vUvTo;
-
-uniform float uProgress;
-uniform sampler2D uFrom;
-uniform sampler2D uTo;
-
-void main() {
-  float lift = (1.0 - uProgress) * (texture2D(uTo, vUvTo).r * 0.3) * 2.0;
-  vec4 from = texture2D(uFrom, vec2(vUvFrom.x, vUvFrom.y + lift)) * (1.0 - uProgress);
-  vec4 to = texture2D(uTo, vec2(vUvTo.x, vUvTo.y - lift)) * uProgress;
-  gl_FragColor = from + to;
-}
-`
 
 const easeOutCubic = (t: number) => {
   const shifted = t - 1

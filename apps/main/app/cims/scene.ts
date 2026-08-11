@@ -26,14 +26,11 @@ import {
   smoothGrid,
 } from './decode.ts'
 import { FOG_COLOR } from './palette.ts'
-import {
-  RIVER_FRAGMENT,
-  RIVER_VERTEX,
-  riverUniforms,
-  TERRAIN_FRAGMENT,
-  TERRAIN_VERTEX,
-  terrainUniforms,
-} from './shaders.ts'
+import RIVER_FRAGMENT from './river.frag'
+import RIVER_VERTEX from './river.vert'
+import { riverUniforms, terrainUniforms } from './shaders.ts'
+import TERRAIN_FRAGMENT from './terrain.frag'
+import TERRAIN_VERTEX from './terrain.vert'
 import {
   buildBaseField,
   buildBasePoints,

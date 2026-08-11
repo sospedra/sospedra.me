@@ -12,7 +12,9 @@ import {
   type WebGLRenderer,
   WebGLRenderTarget,
 } from 'three'
-import { EDGE_FRAGMENT, EDGE_VERTEX, edgeUniforms } from './shaders.ts'
+import EDGE_FRAGMENT from './edge.frag'
+import EDGE_VERTEX from './edge.vert'
+import { edgeUniforms } from './shaders.ts'
 
 export type EdgePass = {
   resize: () => void

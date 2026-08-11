@@ -36,6 +36,14 @@ const config: NextConfig = {
   logging: {
     browserToTerminal: true,
   },
+  turbopack: {
+    // type:'raw' rules lose their default export in production builds;
+    // raw-loader emits a real `export default "<source>"` module
+    rules: {
+      '*.vert': { loaders: ['raw-loader'], as: '*.js' },
+      '*.frag': { loaders: ['raw-loader'], as: '*.js' },
+    },
+  },
   experimental: {
     webVitalsAttribution: ['CLS', 'LCP', 'INP'],
   },
