@@ -1,259 +1,83 @@
 'use client'
 
-import { useRef, useState } from 'react'
 import Link from 'services/link'
 import Shell from 'services/shell'
+import { useSheetStack } from '../use-sheet-stack'
 import css from './clay.module.css'
-import ClayCritters from './clay-critters'
-import ClayPad from './clay-pad'
+import {
+  CatalogPage,
+  CoverPage,
+  SpecimenPage,
+  WorkshopPage,
+} from './clay-pages'
 
-const Star = () => (
-  <svg viewBox='0 0 96 96' className={css.prizeArt} aria-hidden='true'>
-    <path
-      d='M48 8l11 26 28 3-21 19 6 28-24-15-24 15 6-28L9 37l28-3z'
-      fill='#f5d789'
-      stroke='#c4a45a'
-      strokeWidth='6'
-      strokeLinejoin='round'
-    />
-  </svg>
-)
-
-const PRIZES = [
-  { id: 'star', label: 'a butter star', art: <Star /> },
-  {
-    id: 'heart',
-    label: 'a salmon heart',
-    art: <span className={css.prizeHeart} />,
-  },
-  {
-    id: 'ghost',
-    label: 'a cream ghost',
-    art: <span className={css.prizeGhost} />,
-  },
-  { id: 'ball', label: 'a blue ball', art: <span className={css.prizeBall} /> },
-]
-
-type BoxPhase = 'idle' | 'shaking' | 'open'
-
-const BlindBox = () => {
-  const [phase, setPhase] = useState<BoxPhase>('idle')
-  const [prize, setPrize] = useState(0)
-  const rolls = useRef(0)
-
-  const open = () => {
-    if (phase === 'shaking') return
-    setPhase('shaking')
-    rolls.current += 1
-    window.setTimeout(() => {
-      setPrize(Math.floor(Math.random() * PRIZES.length))
-      setPhase('open')
-    }, 750)
-  }
-
-  return (
-    <div className={css.boxScene}>
-      {phase === 'open' && (
-        <div
-          key={rolls.current}
-          className={css.prize}
-          role='img'
-          aria-label={PRIZES[prize].label}
-        >
-          {PRIZES[prize].art}
-        </div>
-      )}
-      <button
-        type='button'
-        className={css.box}
-        data-phase={phase}
-        onClick={open}
-        aria-label='Blind box. Press to shake one open.'
-      >
-        <span className={css.boxLid} />
-        <span className={css.boxMark}>?</span>
-      </button>
-      <p className={css.boxNote}>
-        {phase === 'open'
-          ? `you pulled ${PRIZES[prize].label}`
-          : 'press the box. no refunds, no duplicates, no promises.'}
-      </p>
-      <ul className={css.odds}>
-        <li className={css.oddsRow}>
-          <span>butter star</span>
-          <span>1/4</span>
-        </li>
-        <li className={css.oddsRow}>
-          <span>salmon heart</span>
-          <span>1/4</span>
-        </li>
-        <li className={css.oddsRow}>
-          <span>cream ghost</span>
-          <span>1/4</span>
-        </li>
-        <li className={css.oddsRow}>
-          <span>blue ball</span>
-          <span>1/4</span>
-        </li>
-        <li className={`${css.oddsRow} ${css.oddsSecret}`}>
-          <span>secret ???</span>
-          <span>1/144 — never witnessed</span>
-        </li>
-      </ul>
-    </div>
-  )
-}
-
-type ZoneHeadProps = { index: string; title: string; note: string }
-
-const ZoneHead = ({ index, title, note }: ZoneHeadProps) => (
-  <header className={css.zoneHead}>
-    <span className={css.zoneIndex}>{index}</span>
-    <h2 className={css.zoneTitle}>{title}</h2>
-    <span className={css.zoneNote}>{note}</span>
-  </header>
-)
+const PLATES = [
+  { id: 'cover', label: 'Cover', tone: 'salmon' },
+  { id: 'specimen', label: 'The specimen', tone: 'studio' },
+  { id: 'catalog', label: 'The catalog', tone: 'lilac' },
+  { id: 'workshop', label: 'The workshop', tone: 'butter' },
+] as const
 
 type ClayViewProps = { fontVars: string }
 
-const ClayView = ({ fontVars }: ClayViewProps) => (
-  <Shell className={`${css.page} ${fontVars}`}>
-    <div className={css.backTag}>
-      <Link url='/styles'>◀ styles</Link>
-    </div>
+const ClayView = ({ fontVars }: ClayViewProps) => {
+  const { refs, active, turnTo } = useSheetStack()
 
-    <header className={css.folio}>
-      <span>THE PLASTICINE REVIEW</span>
-      <span className={css.folioRight}>ISSUE Nº 01 · AUG 2026</span>
-    </header>
+  const bodies = [
+    <CoverPage key='cover' />,
+    <SpecimenPage key='specimen' active={active === 1} />,
+    <CatalogPage key='catalog' />,
+    <WorkshopPage key='workshop' />,
+  ]
 
-    <section className={css.cover}>
-      <p className={css.eyebrow}>plasticine social club</p>
-      <h1 className={css.title}>CLAY</h1>
-      <p className={css.subtitle}>
-        everything in this issue is thumb-pressed. the eyes follow you. poke
-        responsibly.
-      </p>
-    </section>
+  return (
+    <Shell className={`${css.page} ${fontVars}`}>
+      <div className={css.backTag}>
+        <Link url='/styles'>◀ styles</Link>
+      </div>
 
-    <div className={css.issue}>
-      <figure className={css.plate}>
-        <img
-          src='/styles/clay-hero.jpg'
-          alt='Three plasticine mascots on a salmon studio floor: a mint cat, a lilac ghost blob and a butter creature hugging a star'
-          className={css.plateImg}
-        />
-        <figcaption className={css.plateCap}>
-          <span>
-            <span className={css.seriesChip}>SERIES 01 · BLIND BOX</span>
-            fig. 01 — the residents, fresh from the mould. do not bake.
-          </span>
-          <span className={css.capPage}>p. 01</span>
-        </figcaption>
-      </figure>
+      <nav className={css.rail} aria-label='Issue plates'>
+        {PLATES.map((plate, index) => (
+          <button
+            key={plate.id}
+            type='button'
+            className={css.railDot}
+            data-on={active === index ? 'true' : undefined}
+            aria-label={`Turn to plate ${index + 1}: ${plate.label}`}
+            onClick={() => turnTo(index)}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </nav>
 
-      <aside className={css.sideRail}>
-        <p className={css.railHead}>on the cover</p>
-        <p className={css.railBody}>
-          three residents, unbaked, photographed the morning they were pressed.
-          the mint one already had opinions. we let it keep them.
-        </p>
-      </aside>
-
-      <section className={`${css.zone} ${css.zoneWide}`}>
-        <ZoneHead
-          index='01'
-          title='the petting zoo'
-          note='press a resident. they forgive fast.'
-        />
-        <ClayCritters />
-      </section>
-
-      <figure className={`${css.plate} ${css.plateRight}`}>
-        <img
-          src='/styles/clay-crew.jpg'
-          alt='Five clay shape characters in a lineup: pentagon, square, pebble, ball and diamond, with tiny clay props floating above'
-          loading='lazy'
-          className={css.plateImg}
-        />
-        <figcaption className={css.plateCap}>
-          <span>fig. 02 — season one cast. five shapes, zero lore.</span>
-          <span className={css.capPage}>p. 02</span>
-        </figcaption>
-      </figure>
-
-      <section className={css.zone}>
-        <ZoneHead
-          index='02'
-          title='the vending corner'
-          note='one box, four possible souls.'
-        />
-        <div className={css.split}>
-          <BlindBox />
-          <figure className={`${css.plate} ${css.plateTight}`}>
-            <img
-              src='/styles/clay-icons.jpg'
-              alt='A grid of nine clay icons on cream tiles over lavender: star, heart, bolt, flower, arrow, padlock, sun, ghost and check mark'
-              loading='lazy'
-              className={css.plateImg}
-            />
-            <figcaption className={css.plateCap}>
+      <div className={css.issue}>
+        {PLATES.map((plate, index) => (
+          <section
+            key={plate.id}
+            ref={(node) => {
+              refs.current[index] = node
+            }}
+            data-sheet={index}
+            data-tone={plate.tone}
+            className={css.sheet}
+            aria-label={`Plate ${index + 1} — ${plate.label}`}
+          >
+            <div className={css.sheetInner}>{bodies[index]}</div>
+            <span className={`${css.dent} ${css.dentTl}`} aria-hidden='true' />
+            <span className={`${css.dent} ${css.dentTr}`} aria-hidden='true' />
+            <span className={`${css.dent} ${css.dentBl}`} aria-hidden='true' />
+            <p className={css.sheetFolio}>
+              <span>THE PLASTICINE REVIEW</span>
               <span>
-                fig. 03 — the icon tray. accessory pack, sold separately.
+                {index + 1} / {PLATES.length}
               </span>
-              <span className={css.capPage}>p. 03</span>
-            </figcaption>
-          </figure>
-        </div>
-      </section>
-
-      <section className={css.zone}>
-        <ZoneHead
-          index='03'
-          title='roll your own'
-          note='every stroke is a fresh rope. smash it when done.'
-        />
-        <ClayPad />
-      </section>
-
-      <aside className={css.ad}>
-        <span className={css.adLabel}>advertisement</span>
-        <div className={css.chipRow}>
-          <button type='button' className={css.chip}>
-            press me
-          </button>
-          <button type='button' className={`${css.chip} ${css.chipMint}`}>
-            no, me
-          </button>
-          <button type='button' className={`${css.chip} ${css.chipLilac}`}>
-            gently
-          </button>
-        </div>
-        <p className={css.adCopy}>
-          squish buttons™ — the only buttons that apologize when pressed.
-        </p>
-      </aside>
-
-      <aside className={css.coupon}>
-        <span className={css.couponLabel}>mail-order form</span>
-        <p className={css.couponRow}>
-          [ ] gato · [ ] noodle · [ ] shroom · [x] surprise me
-        </p>
-        <p className={css.couponFine}>
-          allow 6 to 8 weeks. clay may arrive pre-squished. no refunds back into
-          the original ball.
-        </p>
-        <span className={css.couponBars} aria-hidden='true' />
-      </aside>
-
-      <footer className={css.colophon}>
-        <p className={css.colophonText}>
-          printed in soft focus · fingerprints are a feature, not a defect ·
-          sospedra press
-        </p>
-      </footer>
-    </div>
-  </Shell>
-)
+            </p>
+          </section>
+        ))}
+      </div>
+    </Shell>
+  )
+}
 
 export default ClayView

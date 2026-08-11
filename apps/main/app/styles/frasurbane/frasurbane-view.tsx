@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
 import Link from 'services/link'
 import Shell from 'services/shell'
+import { useSheetStack } from '../use-sheet-stack'
 import css from './frasurbane.module.css'
 import {
   BackPage,
@@ -50,37 +50,10 @@ const SHEETS = [
   },
 ] as const
 
-const useSheetStack = () => {
-  const refs = useRef<(HTMLElement | null)[]>([])
-  const [active, setActive] = useState(0)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue
-          entry.target.setAttribute('data-active', 'true')
-          setActive(Number((entry.target as HTMLElement).dataset.sheet))
-        }
-      },
-      { threshold: 0.45 },
-    )
-    for (const sheet of refs.current) {
-      if (sheet) observer.observe(sheet)
-    }
-    return () => observer.disconnect()
-  }, [])
-
-  return { refs, active }
-}
-
 type FrasurbaneViewProps = { fontVars: string }
 
 const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
-  const { refs, active } = useSheetStack()
-
-  const turnTo = (index: number) =>
-    refs.current[index]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const { refs, active, turnTo } = useSheetStack()
 
   return (
     <Shell className={`${css.page} ${fontVars}`}>

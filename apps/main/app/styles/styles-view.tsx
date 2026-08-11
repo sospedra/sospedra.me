@@ -1,51 +1,68 @@
 'use client'
 
 import type { Route } from 'next'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import Link from 'services/link'
 import Shell from 'services/shell'
 import css from './styles.module.css'
 
-const StickersPreview = () => (
-  <span className={css.pvSticker}>
-    <span className={css.pvStickerPlate}>STICKERS</span>
+const StickersCover = () => (
+  <span className={css.art}>
+    <span className={css.stickerMast}>STICKERS</span>
+    <span className={css.stickerStrip}>FREE · TAKE ONE</span>
   </span>
 )
 
-const OverprintPreview = () => (
-  <span className={css.pvPress}>
-    <span className={`${css.pvPlate} ${css.pvPlateBlue}`}>OVERPRINT</span>
-    <span className={`${css.pvPlate} ${css.pvPlatePink}`}>OVERPRINT</span>
-  </span>
-)
-
-const FrasurbanePreview = () => (
-  <span className={css.pvSerif}>
-    <em>Frasurbane</em>
-    <span className={css.pvSpark}>✦</span>
-  </span>
-)
-
-const ClayPreview = () => (
-  <span className={css.pvClay}>
-    <span className={css.pvBlob}>
-      <span className={css.pvEye} />
-      <span className={css.pvEye} />
+const OverprintCover = () => (
+  <span className={css.art}>
+    <span className={css.press}>
+      <span className={`${css.plate} ${css.plateBlue}`}>OVERPRINT</span>
+      <span className={`${css.plate} ${css.platePink}`}>OVERPRINT</span>
     </span>
-    <span className={css.pvClayWord}>Clay</span>
+    <span className={css.regMark} aria-hidden='true' />
   </span>
 )
 
-const MishkoPreview = () => (
-  <span className={css.pvMelt}>
-    <span className={css.pvMeltWord}>MELT</span>
-    <span className={css.pvMeltDrip} aria-hidden='true'>
-      MELT
+const FrasurbaneCover = () => (
+  <span className={css.art}>
+    <span className={css.frasRule} />
+    <span className={css.frasMast}>Frasurbane</span>
+    <span className={css.frasTag}>
+      <span className={css.frasSpark}>✦</span>
+      <em>free</em>
+      <span className={css.frasSpark}>✦</span>
+    </span>
+    <span className={css.frasRule} />
+  </span>
+)
+
+const ClayCover = () => (
+  <span className={css.art}>
+    <span className={css.clayMast}>CLAY</span>
+    <span className={css.clayPrice}>0€</span>
+  </span>
+)
+
+const MishkoCover = () => (
+  <span className={css.art}>
+    <span className={css.melt}>
+      <span className={css.meltMast}>MISHKO</span>
+      <span className={`${css.meltMast} ${css.meltGhost}`} aria-hidden='true'>
+        MISHKO
+      </span>
     </span>
   </span>
 )
 
-const NeubrutalismPreview = () => <span className={css.pvNeo}>NEO!</span>
+const NeoCover = () => (
+  <span className={css.art}>
+    <span className={css.neoMast}>
+      NEU
+      <br />
+      BRUTAL
+    </span>
+  </span>
+)
 
 type Card = {
   id: string
@@ -53,7 +70,7 @@ type Card = {
   href: Route
   name: string
   blurb: string
-  preview: ReactNode
+  art: ReactNode
 }
 
 const CARDS: Card[] = [
@@ -63,7 +80,7 @@ const CARDS: Card[] = [
     href: '/styles/stickers',
     name: 'stickers',
     blurb: 'die-cut chaos on kraft — drag, peel, slap',
-    preview: <StickersPreview />,
+    art: <StickersCover />,
   },
   {
     id: 'overprint',
@@ -71,7 +88,7 @@ const CARDS: Card[] = [
     href: '/styles/overprint',
     name: 'overprint',
     blurb: 'two riso inks lose their registration',
-    preview: <OverprintPreview />,
+    art: <OverprintCover />,
   },
   {
     id: 'frasurbane',
@@ -79,7 +96,7 @@ const CARDS: Card[] = [
     href: '/styles/frasurbane',
     name: 'frasurbane',
     blurb: 'one spread, 1994 warmth vs 2024 doom',
-    preview: <FrasurbanePreview />,
+    art: <FrasurbaneCover />,
   },
   {
     id: 'clay',
@@ -87,7 +104,7 @@ const CARDS: Card[] = [
     href: '/styles/clay',
     name: 'clay',
     blurb: 'plasticine critters with googly eyes',
-    preview: <ClayPreview />,
+    art: <ClayCover />,
   },
   {
     id: 'mishko',
@@ -95,7 +112,7 @@ const CARDS: Card[] = [
     href: '/styles/mishko',
     name: 'mishko effect',
     blurb: 'thermal type melting under your pointer',
-    preview: <MishkoPreview />,
+    art: <MishkoCover />,
   },
   {
     id: 'neubrutalism',
@@ -103,9 +120,41 @@ const CARDS: Card[] = [
     href: '/styles/neubrutalism',
     name: 'neubrutalism',
     blurb: 'hard shadows, candy panels, toy controls',
-    preview: <NeubrutalismPreview />,
+    art: <NeoCover />,
   },
 ]
+
+const SHELVES = [
+  { id: 'upper', cards: CARDS.slice(0, 3) },
+  { id: 'lower', cards: CARDS.slice(3) },
+]
+
+const Cover = ({ card }: { card: Card }) => (
+  <span
+    className={css.slot}
+    style={{ '--i': Number(card.index) - 1 } as CSSProperties}
+  >
+    <Link url={card.href} className={css.cover} data-style={card.id}>
+      <span className={css.spine}>
+        <span>{card.name}</span>
+        <span className={css.spineNo}>Nº {card.index}</span>
+      </span>
+      <span className={css.face}>
+        <span className={css.chipRow}>
+          <span className={css.chip}>Nº {card.index}</span>
+          <span className={css.micro}>AUG 2026</span>
+        </span>
+        {card.art}
+        <span className={css.coverLine}>{card.blurb}</span>
+        <span className={css.tray}>
+          <span className={css.barcode} aria-hidden='true' />
+          <span className={css.micro}>0.00</span>
+        </span>
+      </span>
+    </Link>
+    <span className={css.slotRail} aria-hidden='true' />
+  </span>
+)
 
 type StylesViewProps = { fontVars: string }
 
@@ -114,7 +163,10 @@ const StylesView = ({ fontVars }: StylesViewProps) => (
     <div className={css.folio}>
       <span>SOSPEDRA PRESS</span>
       <span className={css.folioIssue}>ISSUE Nº 01 · PRICE: NOTHING</span>
-      <span className={css.folioRight}>AUG 2026</span>
+      <span className={css.folioRight}>
+        <span className={css.openSign}>OPEN</span>
+        <span>AUG 2026</span>
+      </span>
     </div>
     <header className={css.head}>
       <p className={css.eyebrow}>six aesthetics, stolen for an afternoon</p>
@@ -124,29 +176,18 @@ const StylesView = ({ fontVars }: StylesViewProps) => (
       </p>
     </header>
 
-    <nav className={css.grid} aria-label='Style demos'>
-      {CARDS.map((card) => (
-        <Link
-          key={card.id}
-          url={card.href}
-          className={css.card}
-          data-style={card.id}
-        >
-          <span className={css.cardIndex}>{card.index}</span>
-          <span className={css.cardPreview}>{card.preview}</span>
-          <span className={css.cardMeta}>
-            <span className={css.cardName}>{card.name}</span>
-            <span className={css.cardBlurb}>{card.blurb}</span>
-          </span>
-          <span className={css.cardArrow} aria-hidden='true'>
-            →
-          </span>
-        </Link>
+    <nav className={css.rack} aria-label='Style demos'>
+      {SHELVES.map((shelf) => (
+        <div key={shelf.id} className={css.shelf}>
+          {shelf.cards.map((card) => (
+            <Cover key={card.id} card={card} />
+          ))}
+        </div>
       ))}
     </nav>
 
     <section className={css.contents} aria-hidden='true'>
-      <p className={css.contentsHead}>in this issue</p>
+      <p className={css.contentsHead}>in this issue · stock list</p>
       {CARDS.map((card) => (
         <p key={card.id} className={css.contentsRow}>
           <span className={css.contentsIndex}>{card.index}</span>

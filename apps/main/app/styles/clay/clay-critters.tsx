@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import css from './clay.module.css'
 
-const Eyes = ({ wide = false }: { wide?: boolean }) => (
+export const Eyes = ({ wide = false }: { wide?: boolean }) => (
   <span className={wide ? `${css.eyes} ${css.eyesWide}` : css.eyes}>
     <span className={css.eye}>
       <span data-pupil='true' className={css.pupil} />
@@ -136,7 +136,9 @@ const ClayRough = () => (
   </svg>
 )
 
-const useGooglyEyes = (stage: React.RefObject<HTMLDivElement | null>) => {
+export const useGooglyEyes = (
+  stage: React.RefObject<HTMLDivElement | null>,
+) => {
   useEffect(() => {
     const el = stage.current
     if (!el) return
@@ -177,7 +179,7 @@ const ClayCritters = () => {
       <ClayRough />
       {CRITTERS.map((critter) => (
         <article key={critter.id} className={css.critterSlot}>
-          <div className={css.cover}>
+          <div className={css.critterStage}>
             <button
               type='button'
               aria-label={critter.label}

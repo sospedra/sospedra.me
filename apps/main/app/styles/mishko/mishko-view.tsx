@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'services/link'
 import Shell from 'services/shell'
 import { prefersQuietFx } from 'services/theme'
+import { useSheetStack } from '../use-sheet-stack'
 import {
   createMeltEngine,
   type MeltEngine,
@@ -12,6 +13,14 @@ import {
   PALETTES,
 } from './melt-gl'
 import css from './mishko.module.css'
+import {
+  type ArchiveEntry,
+  ArchivePlate,
+  ColophonPlate,
+  MeltEdge,
+  PlateHead,
+  RecipePlate,
+} from './mishko-pages'
 
 const PRESETS = [
   { phrase: 'KEEP GOING', gothic: false },
@@ -21,33 +30,6 @@ const PRESETS = [
 ]
 
 const SLUG_RE = /[^a-z0-9]+/g
-
-const ARCHIVE = [
-  {
-    n: '058',
-    date: '15|05|2021',
-    phrase: 'BE THE REASON',
-    palette: 'violet' as const,
-  },
-  {
-    n: '161',
-    date: '02|08|2021',
-    phrase: 'CHANGE HAPPENS',
-    palette: 'oil' as const,
-  },
-  {
-    n: '182',
-    date: '16|09|2021',
-    phrase: 'GOOD VIBES',
-    palette: 'inferno' as const,
-  },
-  {
-    n: '384',
-    date: '27|01|2022',
-    phrase: 'DON’T QUIT',
-    palette: 'inferno' as const,
-  },
-]
 
 const pad2 = (value: number) => `${value}`.padStart(2, '0')
 
@@ -64,6 +46,7 @@ const MishkoView = ({ fontVars }: MishkoViewProps) => {
   const [draft, setDraft] = useState('')
   const [edition, setEdition] = useState(1)
   const [stamp, setStamp] = useState('··|··|····')
+  const { refs, active, turnTo } = useSheetStack()
 
   useEffect(() => {
     const now = new Date()
@@ -106,10 +89,10 @@ const MishkoView = ({ fontVars }: MishkoViewProps) => {
     setEdition((n) => n + 1)
   }
 
-  const reprint = (entry: (typeof ARCHIVE)[number]) => {
+  const reprint = (entry: ArchiveEntry) => {
     setPalette(entry.palette)
     print(entry.phrase, false)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    turnTo(0)
   }
 
   const submitDraft = (event: React.FormEvent) => {
@@ -136,172 +119,166 @@ const MishkoView = ({ fontVars }: MishkoViewProps) => {
     '--mk-paper': ramp.dark ? ramp.stops[0] : ramp.stops.at(-1),
   } as React.CSSProperties
 
+  const lab = (
+    <div className={css.stage} data-dark={ramp.dark ? 'true' : undefined}>
+      <canvas
+        ref={canvasRef}
+        className={css.canvas}
+        aria-label={`Melted typography poster reading “${phrase}”`}
+      />
+      <span
+        ref={probeRef}
+        className={`${css.probe} ${css.probeHeavy}`}
+        aria-hidden='true'
+      >
+        Aa
+      </span>
+      <span
+        ref={gothicProbeRef}
+        className={`${css.probe} ${css.probeGothic}`}
+        aria-hidden='true'
+      >
+        Aa
+      </span>
+
+      <header className={css.caption}>
+        <p>LIVE PRESS — PLATE 1</p>
+        <p>TYPOGRAPHY POSTER Nº{`${edition}`.padStart(3, '0')}</p>
+        <p>
+          {stamp} — “{phrase}”
+        </p>
+      </header>
+
+      <p className={css.hint}>rub the poster — heat melts the ink</p>
+
+      <div className={css.deck}>
+        <div className={css.row}>
+          {PRESETS.map((preset) => (
+            <button
+              key={preset.phrase}
+              type='button'
+              className={css.chip}
+              data-active={preset.phrase === phrase ? 'true' : undefined}
+              data-gothic={preset.gothic ? 'true' : undefined}
+              onClick={() => print(preset.phrase, preset.gothic)}
+            >
+              {preset.phrase}
+            </button>
+          ))}
+        </div>
+        <form className={css.row} onSubmit={submitDraft}>
+          <input
+            className={css.input}
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder='your own words…'
+            maxLength={26}
+            aria-label='Custom poster phrase'
+          />
+          <button type='submit' className={css.chip}>
+            PRINT IT
+          </button>
+        </form>
+        <div className={css.row}>
+          {(Object.keys(PALETTES) as MeltPalette[]).map((key) => (
+            <button
+              key={key}
+              type='button'
+              className={`${css.chip} ${css.swatchChip}`}
+              data-active={key === palette ? 'true' : undefined}
+              onClick={() => setPalette(key)}
+            >
+              <span
+                className={css.swatch}
+                style={{
+                  background: `linear-gradient(90deg, ${PALETTES[key].stops.join(',')})`,
+                }}
+                aria-hidden='true'
+              />
+              {key}
+            </button>
+          ))}
+          <button
+            type='button'
+            className={`${css.chip} ${css.saveChip}`}
+            onClick={download}
+          >
+            ↓ SAVE PNG
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
+  const sheets = [
+    { id: 'lab', tone: 'stage', label: 'the lab', body: lab },
+    {
+      id: 'archive',
+      tone: 'deep',
+      label: 'the archive',
+      body: <ArchivePlate onReprint={reprint} />,
+    },
+    {
+      id: 'recipe',
+      tone: 'paper',
+      label: 'the recipe',
+      body: <RecipePlate stops={ramp.stops} />,
+    },
+    {
+      id: 'colophon',
+      tone: 'ink',
+      label: 'the colophon',
+      body: (
+        <ColophonPlate
+          palette={palette}
+          phrase={phrase}
+          edition={edition}
+          stamp={stamp}
+        />
+      ),
+    },
+  ]
+
   return (
     <Shell className={`${css.page} ${fontVars}`}>
       <div className={css.issue} style={issueSkin} data-ramp={palette}>
-        <div className={css.stage} data-dark={ramp.dark ? 'true' : undefined}>
-          <canvas
-            ref={canvasRef}
-            className={css.canvas}
-            aria-label={`Melted typography poster reading “${phrase}”`}
-          />
-          <span
-            ref={probeRef}
-            className={`${css.probe} ${css.probeHeavy}`}
-            aria-hidden='true'
-          >
-            Aa
-          </span>
-          <span
-            ref={gothicProbeRef}
-            className={`${css.probe} ${css.probeGothic}`}
-            aria-hidden='true'
-          >
-            Aa
-          </span>
-
-          <header className={css.caption}>
-            <p>SOSPEDRA PRESS</p>
-            <p>TYPOGRAPHY POSTER Nº{`${edition}`.padStart(3, '0')}</p>
-            <p>
-              {stamp} — “{phrase}”
-            </p>
-          </header>
-
-          <div className={css.backTag}>
-            <Link url='/styles'>◀ styles</Link>
-          </div>
-
-          <p className={css.hint}>rub the poster — heat melts the ink</p>
-
-          <div className={css.deck}>
-            <div className={css.row}>
-              {PRESETS.map((preset) => (
-                <button
-                  key={preset.phrase}
-                  type='button'
-                  className={css.chip}
-                  data-active={preset.phrase === phrase ? 'true' : undefined}
-                  data-gothic={preset.gothic ? 'true' : undefined}
-                  onClick={() => print(preset.phrase, preset.gothic)}
-                >
-                  {preset.phrase}
-                </button>
-              ))}
-            </div>
-            <form className={css.row} onSubmit={submitDraft}>
-              <input
-                className={css.input}
-                value={draft}
-                onChange={(event) => setDraft(event.target.value)}
-                placeholder='your own words…'
-                maxLength={26}
-                aria-label='Custom poster phrase'
-              />
-              <button type='submit' className={css.chip}>
-                PRINT IT
-              </button>
-            </form>
-            <div className={css.row}>
-              {(Object.keys(PALETTES) as MeltPalette[]).map((key) => (
-                <button
-                  key={key}
-                  type='button'
-                  className={`${css.chip} ${css.swatchChip}`}
-                  data-active={key === palette ? 'true' : undefined}
-                  onClick={() => setPalette(key)}
-                >
-                  <span
-                    className={css.swatch}
-                    style={{
-                      background: `linear-gradient(90deg, ${PALETTES[key].stops.join(',')})`,
-                    }}
-                    aria-hidden='true'
-                  />
-                  {key}
-                </button>
-              ))}
-              <button
-                type='button'
-                className={`${css.chip} ${css.saveChip}`}
-                onClick={download}
-              >
-                ↓ SAVE PNG
-              </button>
-            </div>
-          </div>
+        <div className={css.backTag}>
+          <Link url='/styles'>◀ styles</Link>
         </div>
 
-        <section className={css.archive}>
-          <header className={css.archiveHead}>
-            from the archive — tap one to reprint it
-          </header>
-          <div className={css.archiveGrid}>
-            {ARCHIVE.map((entry) => (
-              <button
-                key={entry.n}
-                type='button'
-                className={css.mini}
-                style={{ background: PALETTES[entry.palette].stops.at(-1) }}
-                data-dark={PALETTES[entry.palette].dark ? 'true' : undefined}
-                onClick={() => reprint(entry)}
-              >
-                <span className={css.miniStack} aria-hidden='true'>
-                  <span
-                    className={css.miniDrip}
-                    style={{
-                      backgroundImage: `linear-gradient(180deg, ${PALETTES[entry.palette].stops.slice(0, 5).join(',')})`,
-                    }}
-                  >
-                    {entry.phrase}
-                  </span>
-                  <span
-                    className={css.miniWord}
-                    style={{
-                      backgroundImage: `linear-gradient(180deg, ${PALETTES[entry.palette].stops.slice(0, 5).join(',')})`,
-                    }}
-                  >
-                    {entry.phrase}
-                  </span>
-                </span>
-                <span className={css.miniCap}>
-                  TYPOGRAPHY POSTER Nº{entry.n} · {entry.date} · “{entry.phrase}
-                  ”
-                </span>
-              </button>
-            ))}
-          </div>
-          <div className={css.techWrap}>
-            <p className={css.techNote}>
-              every poster in this archive was pressed by the same shader. the
-              ramp is the only thing that changes, and it changes everything.
-            </p>
-            <div className={css.techCol}>
-              <dl className={css.tech}>
-                <div className={css.techRow}>
-                  <dt>EDITION</dt>
-                  <dd>unlimited, none identical</dd>
-                </div>
-                <div className={css.techRow}>
-                  <dt>INK</dt>
-                  <dd>one gradient-map LUT, three ramps</dd>
-                </div>
-                <div className={css.techRow}>
-                  <dt>PRESS</dt>
-                  <dd>webgl 1.0, a single fragment shader</dd>
-                </div>
-                <div className={css.techRow}>
-                  <dt>PAPER</dt>
-                  <dd>none — rub the poster and it melts again</dd>
-                </div>
-              </dl>
-              <p className={css.issueStamp}>
-                this issue is set in the {palette} ramp. the ramp paints the
-                poster and the publication both.
-              </p>
+        <nav className={css.rail} aria-label='Issue plates'>
+          {sheets.map((sheet, index) => (
+            <button
+              key={sheet.id}
+              type='button'
+              className={css.railDot}
+              data-on={active === index ? 'true' : undefined}
+              aria-label={`Turn to plate ${index + 1}: ${sheet.label}`}
+              onClick={() => turnTo(index)}
+            >
+              {index + 1}
+            </button>
+          ))}
+        </nav>
+
+        {sheets.map((sheet, index) => (
+          <section
+            key={sheet.id}
+            ref={(node) => {
+              refs.current[index] = node
+            }}
+            data-sheet={index}
+            data-tone={sheet.tone}
+            className={css.sheet}
+            aria-label={`Plate ${index + 1} — ${sheet.label}`}
+          >
+            <MeltEdge />
+            <div className={css.sheetInner}>
+              {sheet.body}
+              <PlateHead folio={`${index + 1} / 4`} />
             </div>
-          </div>
-        </section>
+          </section>
+        ))}
       </div>
     </Shell>
   )

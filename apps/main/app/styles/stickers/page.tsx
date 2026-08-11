@@ -22,7 +22,7 @@ const marker = Caveat({
 export const metadata: Metadata = {
   title: 'Stickers',
   description:
-    'A die-cut sticker bomb on kraft board. Drag every sticker, peel fresh ones off the sheet, slap random ones on.',
+    'THE ADHESIVE TIMES, No. 44: a kraft street zine in four plates. Die-cut cover, a draggable sticker board, an op-ed, and a back-page fresh sheet.',
   alternates: { canonical: '/styles/stickers' },
 }
 

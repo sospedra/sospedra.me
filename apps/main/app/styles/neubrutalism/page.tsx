@@ -22,7 +22,7 @@ const grotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: 'Neubrutalism',
   description:
-    'A loud festival bento in neubrutalism: hard offset shadows, thick borders, flat candy colors, and toy controls that physically depress.',
+    'A four-plate festival programme in neubrutalism: a LOUD! cover, a bento of working toys, a filterable schedule, and tickets, turned like slabs.',
   alternates: { canonical: '/styles/neubrutalism' },
 }
 

@@ -22,7 +22,7 @@ const soft = Nunito({
 export const metadata: Metadata = {
   title: 'Clay',
   description:
-    'A plasticine playroom: poke the clay critters, follow their googly eyes, open the blind box, and roll fresh clay ropes on the pad.',
+    'The Plasticine Review, a four-plate toy catalog: a WebGL clay specimen with googly eyes, a blind-box catalog, and a clay-rope workshop.',
   alternates: { canonical: '/styles/clay' },
 }
 
