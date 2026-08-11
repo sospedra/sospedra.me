@@ -45,7 +45,7 @@ const blackletter = UnifrakturMaguntia({
 export const metadata: Metadata = {
   title: 'Frasurbane',
   description:
-    'One editorial spread, two decades: the warm 1994 urbane original and its 2024 gothic remix, flipped by a single toggle.',
+    'A five-plate gothic editorial issue: cover, feature, an index of props, the gorgon’s weather, and a back cover, turned like sheets.',
   alternates: { canonical: '/styles/frasurbane' },
 }
 
