@@ -50,21 +50,21 @@
 
 .press {
   position: relative;
-  height: max(92svh, 620px);
+  padding: calc(58px + var(--safe-area-top)) 0 26px;
   overflow: clip;
   cursor: crosshair;
   isolation: isolate;
 }
 
 .plates {
-  position: relative;
-  height: 100%;
+  display: grid;
 }
 
 .plate {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  grid-area: 1 / 1;
   mix-blend-mode: multiply;
+  color: var(--plate-ink, var(--op-ink));
 }
 
 .platePink {
@@ -115,52 +115,16 @@
   }
 }
 
-.eagle {
-  position: absolute;
-  top: 4%;
-  right: -6%;
-  width: min(62%, 780px);
-  height: auto;
-}
-
 .beetles {
   position: absolute;
-  bottom: 2%;
+  bottom: -4%;
   left: -3%;
-  width: min(52%, 640px);
+  width: min(34%, 430px);
   height: auto;
 }
 
-.headlineBox {
-  position: absolute;
-  top: 24%;
-  left: 5%;
-  right: 5%;
-}
-
-.eyebrow {
-  margin-bottom: 8px;
-  color: var(--plate-ink, var(--op-ink));
-  font-size: clamp(0.62rem, 1.3vw, 0.85rem);
-  font-weight: 700;
-  letter-spacing: 0.22em;
-}
-
-.headline {
-  font-family: var(--font-op-poster);
-  font-size: clamp(3.6rem, 16.5vw, 15rem);
-  line-height: 0.92;
-  letter-spacing: 0.005em;
-  color: var(--plate-ink, #101010);
-}
-
-.plateCaption {
-  position: absolute;
-  color: var(--plate-ink, var(--op-ink));
-  bottom: 7%;
-  left: 5%;
-  font-size: clamp(0.7rem, 1.4vw, 0.95rem);
-  letter-spacing: 0.14em;
+.platePink .beetles {
+  visibility: hidden;
 }
 
 .cross {
@@ -279,8 +243,6 @@
 }
 
 .sheet {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 640px;
   width: min(940px, calc(100% - 40px));
   margin: 56px auto;
   padding: clamp(20px, 4vw, 44px);
@@ -342,8 +304,6 @@
 }
 
 .morgue {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
   width: min(1180px, calc(100% - 40px));
   margin: 70px auto;
 }
@@ -409,8 +369,6 @@
 }
 
 .gazette {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
   width: min(1040px, calc(100% - 40px));
   margin: 70px auto;
   border-block: 4px double var(--op-ink);
@@ -475,8 +433,6 @@
 }
 
 .colophon {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 480px;
   display: grid;
   justify-items: center;
   gap: 16px;
@@ -537,5 +493,150 @@
   .plates[data-jolted="true"] .platePink,
   .plates[data-jolted="true"] .plateBlue {
     animation: none;
+  }
+}
+
+.npSheet {
+  width: min(1120px, calc(100% - 44px));
+  margin: 0 auto;
+}
+
+.npFolio {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-block: 1px solid currentColor;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.npName {
+  margin-top: 10px;
+  font-family: var(--font-op-poster);
+  font-size: clamp(3.4rem, 10.5vw, 8.6rem);
+  line-height: 0.95;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+.npMotto {
+  padding-bottom: 8px;
+  border-bottom: 3px solid currentColor;
+  text-align: center;
+  font-size: 0.68rem;
+  font-style: italic;
+  letter-spacing: 0.26em;
+}
+
+.npHead {
+  margin-top: 16px;
+  font-family: var(--font-op-poster);
+  font-size: clamp(1.7rem, 4.6vw, 3.4rem);
+  line-height: 1.02;
+  text-align: center;
+}
+
+.npDeck {
+  max-width: 64ch;
+  margin: 10px auto 0;
+  text-align: center;
+  font-size: 0.8rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.npCols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid currentColor;
+}
+
+.npCol {
+  padding: 0 16px;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  text-align: justify;
+}
+
+.npCol + .npCol {
+  border-left: 1px solid currentColor;
+}
+
+.npCol p + p {
+  margin-top: 0.8em;
+}
+
+.npDrop {
+  float: left;
+  padding-right: 7px;
+  font-family: var(--font-op-poster);
+  font-size: 2.9rem;
+  line-height: 0.8;
+}
+
+.npArt {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: 86% 12%;
+  margin-bottom: 8px;
+}
+
+.plateBlue .npArt {
+  visibility: hidden;
+}
+
+.npCut {
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.66rem;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  text-align: left;
+}
+
+.npQuote {
+  margin-bottom: 12px;
+  font-family: var(--font-op-poster);
+  font-size: 1.45rem;
+  line-height: 1.15;
+  text-align: left;
+}
+
+.npBrief {
+  margin-top: 14px;
+  padding: 8px 10px;
+  border: 1px solid currentColor;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: left;
+}
+
+@media (max-width: 820px) {
+  .npCols {
+    grid-template-columns: 1fr;
+  }
+
+  .npCol + .npCol {
+    border-left: 0;
+    border-top: 1px solid currentColor;
+    margin-top: 14px;
+    padding-top: 14px;
+  }
+
+  .npFolio span:nth-child(3) {
+    display: none;
+  }
+
+  .beetles {
+    display: none;
   }
 }

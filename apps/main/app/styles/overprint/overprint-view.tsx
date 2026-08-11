@@ -19,6 +19,64 @@ const GAZETTE =
   'The foreman declared the mistake, seen up close, considerably better than the original. ' +
   'A thousand sheets were printed and a thousand sheets were sold. '
 
+const FrontPage = () => (
+  <div className={css.npSheet}>
+    <p className={css.npFolio}>
+      <span>VOL. II · Nº 44</span>
+      <span>TUESDAY, AUGUST 11, 2026</span>
+      <span>PRICE: TWO INKS</span>
+    </p>
+    <p className={css.npName}>THE DUPLICATE</p>
+    <p className={css.npMotto}>all the news that fits, twice</p>
+    <h1 className={css.npHead}>
+      REGISTRATION LOST AT DAWN; PRESSROOM CELEBRATES
+    </h1>
+    <p className={css.npDeck}>
+      every line on this page is printed once in pink and once in blue — the
+      eagle escaped the second pass — the foreman calls the drift “a feature,
+      finally”
+    </p>
+    <div className={css.npCols}>
+      <div className={css.npCol}>
+        <p>
+          <span className={css.npDrop}>T</span>he morning run started in perfect
+          register, which the staff agreed was suspicious. By the fourth sheet
+          the pink plate had slipped a half-point south, and by the fortieth the
+          blue had wandered east in sympathy.
+        </p>
+        <p>
+          Nobody reached for the stop lever. Witnesses describe the crew leaning
+          closer with every pass, the fringes growing warmer, the paper filling
+          with weather.
+        </p>
+      </div>
+      <div className={css.npCol}>
+        <img src='/styles/eagle-pink.webp' alt='' className={css.npArt} />
+        <p className={css.npCut}>
+          the eagle, mid-escape, in fugitive pink. plate 181, reformed.
+        </p>
+        <p>
+          Management has scheduled an inquiry for whenever the ink runs out. The
+          inquiry is expected to be printed twice and read once.
+        </p>
+      </div>
+      <div className={css.npCol}>
+        <blockquote className={css.npQuote}>
+          “if it lines up, it is not art.”
+        </blockquote>
+        <p>
+          Subscribers are reminded that a clean copy, should one exist, would be
+          a misprint of the misprint and must be returned to the press for
+          correction.
+        </p>
+        <div className={css.npBrief}>
+          IN OTHER NEWS: the beetles remain very still — page 2
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
 type OverprintViewProps = { fontVars: string }
 
 const OverprintView = ({ fontVars }: OverprintViewProps) => {
@@ -55,13 +113,12 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
         >
           {pinkOn && (
             <div className={`${css.plate} ${css.platePink}`}>
-              <img src='/styles/eagle-pink.webp' alt='' className={css.eagle} />
-              <div className={css.headlineBox}>
-                <p className={css.eyebrow}>
-                  OVERPRINT EFFECT · SHEET Nº1 · RUN OF 1000
-                </p>
-                <h1 className={css.headline}>OVERPRINT</h1>
-              </div>
+              <FrontPage />
+              <img
+                src='/styles/beetles-blue.webp'
+                alt=''
+                className={css.beetles}
+              />
               <span
                 className={`${css.cross} ${css.crossTl}`}
                 aria-hidden='true'
@@ -78,20 +135,12 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
           )}
           {blueOn && (
             <div className={`${css.plate} ${css.plateBlue}`} aria-hidden='true'>
+              <FrontPage />
               <img
                 src='/styles/beetles-blue.webp'
                 alt=''
                 className={css.beetles}
               />
-              <div className={css.headlineBox}>
-                <p className={css.eyebrow}>
-                  OVERPRINT EFFECT · SHEET Nº1 · RUN OF 1000
-                </p>
-                <h1 className={css.headline}>OVERPRINT</h1>
-              </div>
-              <p className={css.plateCaption}>
-                two inks, no registration — browser risography
-              </p>
               <span className={`${css.cross} ${css.crossTl}`}>✛</span>
               <span className={`${css.cross} ${css.crossBr}`}>✛</span>
             </div>
@@ -189,9 +238,9 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
 
       <section className={css.gazette}>
         <header className={css.masthead}>
-          <span className={css.mastheadName}>THE DUPLICATE</span>
+          <span className={css.mastheadName}>SUNDAY SUPPLEMENT</span>
           <span className={css.mastheadSub}>
-            a two-ink press — ships when it ships
+            society pages — everything prints wrong eventually
           </span>
         </header>
         <div className={css.gazetteBody}>

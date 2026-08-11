@@ -21,6 +21,33 @@ const PRESETS = [
 
 const SLUG_RE = /[^a-z0-9]+/g
 
+const ARCHIVE = [
+  {
+    n: '058',
+    date: '15|05|2021',
+    phrase: 'BE THE REASON',
+    palette: 'violet' as const,
+  },
+  {
+    n: '161',
+    date: '02|08|2021',
+    phrase: 'CHANGE HAPPENS',
+    palette: 'oil' as const,
+  },
+  {
+    n: '182',
+    date: '16|09|2021',
+    phrase: 'GOOD VIBES',
+    palette: 'inferno' as const,
+  },
+  {
+    n: '384',
+    date: '27|01|2022',
+    phrase: 'DON’T QUIT',
+    palette: 'inferno' as const,
+  },
+]
+
 const pad2 = (value: number) => `${value}`.padStart(2, '0')
 
 type MishkoViewProps = { fontVars: string }
@@ -76,6 +103,12 @@ const MishkoView = ({ fontVars }: MishkoViewProps) => {
     setPhrase(nextPhrase)
     setGothic(nextGothic)
     setEdition((n) => n + 1)
+  }
+
+  const reprint = (entry: (typeof ARCHIVE)[number]) => {
+    setPalette(entry.palette)
+    print(entry.phrase, false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const submitDraft = (event: React.FormEvent) => {
@@ -192,6 +225,64 @@ const MishkoView = ({ fontVars }: MishkoViewProps) => {
           </div>
         </div>
       </div>
+
+      <section className={css.archive}>
+        <header className={css.archiveHead}>
+          from the archive — tap one to reprint it
+        </header>
+        <div className={css.archiveGrid}>
+          {ARCHIVE.map((entry) => (
+            <button
+              key={entry.n}
+              type='button'
+              className={css.mini}
+              style={{ background: PALETTES[entry.palette].stops.at(-1) }}
+              data-dark={PALETTES[entry.palette].dark ? 'true' : undefined}
+              onClick={() => reprint(entry)}
+            >
+              <span className={css.miniStack} aria-hidden='true'>
+                <span
+                  className={css.miniDrip}
+                  style={{
+                    backgroundImage: `linear-gradient(180deg, ${PALETTES[entry.palette].stops.slice(0, 5).join(',')})`,
+                  }}
+                >
+                  {entry.phrase}
+                </span>
+                <span
+                  className={css.miniWord}
+                  style={{
+                    backgroundImage: `linear-gradient(180deg, ${PALETTES[entry.palette].stops.slice(0, 5).join(',')})`,
+                  }}
+                >
+                  {entry.phrase}
+                </span>
+              </span>
+              <span className={css.miniCap}>
+                TYPOGRAPHY POSTER Nº{entry.n} · {entry.date} · “{entry.phrase}”
+              </span>
+            </button>
+          ))}
+        </div>
+        <dl className={css.tech}>
+          <div className={css.techRow}>
+            <dt>EDITION</dt>
+            <dd>unlimited, none identical</dd>
+          </div>
+          <div className={css.techRow}>
+            <dt>INK</dt>
+            <dd>one gradient-map LUT, three ramps</dd>
+          </div>
+          <div className={css.techRow}>
+            <dt>PRESS</dt>
+            <dd>webgl 1.0, a single fragment shader</dd>
+          </div>
+          <div className={css.techRow}>
+            <dt>PAPER</dt>
+            <dd>none — rub the poster and it melts again</dd>
+          </div>
+        </dl>
+      </section>
     </Shell>
   )
 }

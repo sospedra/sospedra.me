@@ -63,6 +63,7 @@ const CRITTERS = [
     id: 'gato',
     name: 'GATO',
     role: 'security',
+    price: '¥590 · CL-001',
     label: 'Gato, the black clay cat. Poke to squish.',
     art: <Cat />,
   },
@@ -70,6 +71,7 @@ const CRITTERS = [
     id: 'noodle',
     name: 'NOODLE',
     role: 'morale',
+    price: '¥390 · CL-002 · sold out',
     label: 'Noodle, the mint clay worm. Poke to squish.',
     art: <Worm />,
   },
@@ -77,6 +79,7 @@ const CRITTERS = [
     id: 'shroom',
     name: 'SHROOM',
     role: 'shade',
+    price: '¥490 · CL-003',
     label: 'Shroom, the lilac clay mushroom. Poke to squish.',
     art: <Mushroom />,
   },
@@ -161,6 +164,7 @@ const ClayCritters = () => {
           </button>
           <span className={css.critterName}>{critter.name}</span>
           <span className={css.critterRole}>dept. of {critter.role}</span>
+          <span className={css.critterPrice}>{critter.price}</span>
         </div>
       ))}
     </div>

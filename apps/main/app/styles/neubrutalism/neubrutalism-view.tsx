@@ -15,6 +15,68 @@ const SLOGANS = [
 
 const AUDIT_ITEMS = ['default fonts', 'polite gradients', 'tasteful whitespace']
 
+const SCHEDULE = [
+  {
+    day: 'AUG 20',
+    time: '10:00',
+    act: 'OPENING: EVERYTHING IS A BUTTON',
+    room: 'main hall',
+  },
+  {
+    day: 'AUG 20',
+    time: '16:00',
+    act: 'WORKSHOP: DRAW A SHADOW BY HAND',
+    room: 'room 3px',
+  },
+  {
+    day: 'AUG 21',
+    time: '11:00',
+    act: 'PANEL: IS A BORDER ENOUGH? (YES!)',
+    room: 'the pink cell',
+  },
+  {
+    day: 'AUG 21',
+    time: '19:00',
+    act: 'KEYNOTE: GRADIENTS, AN APOLOGY',
+    room: 'main hall',
+  },
+  {
+    day: 'AUG 22',
+    time: '23:59',
+    act: 'CLOSING RAVE: 8PX OFFSETS ONLY',
+    room: 'everywhere',
+  },
+]
+
+const TIERS = [
+  {
+    id: 'free',
+    name: 'FREE',
+    price: '€0',
+    perks: ['all the borders', 'both exclamation marks', 'one (1) shadow'],
+  },
+  {
+    id: 'loud',
+    name: 'LOUD',
+    price: '€25',
+    perks: [
+      'everything in free',
+      'shadows follow you home',
+      'front row at the rave',
+    ],
+  },
+  {
+    id: 'deluxe',
+    name: 'DELUXE',
+    price: '€∞',
+    perks: [
+      'you become the shadow',
+      'your name in the ticker',
+      'hype meter stuck at 10',
+    ],
+  },
+]
+
 const TICKER =
   'NEW! NORMAL! ✶ ODD! ORDINARY! ✶ REJECT! HETERONORMATIVITY! ✶ AUDIT! YOUR! CURRENT! DECISIONS! ✶ '
 
@@ -81,6 +143,11 @@ const NeubrutalismView = ({ fontVars }: NeubrutalismViewProps) => {
             <span className={css.tickerText}>{TICKER}</span>
           </div>
         </div>
+
+        <p className={css.venueBar}>
+          SOSPEDRA CAMPUS · TOWER A · 2F INNOVATION STUDIO — AUG 20 TUE → 22 THU
+          — DRESS CODE: OUTLINED
+        </p>
 
         <section className={css.hero}>
           <div className={`${css.cell} ${css.heroLeft}`}>
@@ -212,6 +279,57 @@ const NeubrutalismView = ({ fontVars }: NeubrutalismViewProps) => {
               non-transferable. extremely transferable.
             </span>
           </div>
+        </section>
+
+        <section className={css.programme}>
+          <h2 className={css.programmeTitle}>THE! PROGRAMME!</h2>
+          <table className={css.schedule}>
+            <thead>
+              <tr>
+                <th>DAY</th>
+                <th>TIME</th>
+                <th>ACT</th>
+                <th>ROOM</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SCHEDULE.map((row) => (
+                <tr key={`${row.day}-${row.time}`}>
+                  <td>{row.day}</td>
+                  <td>{row.time}</td>
+                  <td className={css.scheduleAct}>{row.act}</td>
+                  <td>{row.room}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        <section className={css.programme}>
+          <h2 className={css.programmeTitle}>TICKETS!</h2>
+          <div className={css.tierRow}>
+            {TIERS.map((tier) => (
+              <div key={tier.id} className={css.tier} data-tier={tier.id}>
+                <span className={css.tierName}>{tier.name}</span>
+                <span className={css.tierPrice}>{tier.price}</span>
+                <ul className={css.tierPerks}>
+                  {tier.perks.map((perk) => (
+                    <li key={perk}>+ {perk}</li>
+                  ))}
+                </ul>
+                <button
+                  type='button'
+                  className={css.btn3d}
+                  onClick={() => setGoing((n) => n + 1)}
+                >
+                  GET IT
+                </button>
+              </div>
+            ))}
+          </div>
+          <p className={css.tierNote}>
+            every purchase adds one to the RSVP counter. capitalism!
+          </p>
         </section>
 
         <footer className={css.footer}>

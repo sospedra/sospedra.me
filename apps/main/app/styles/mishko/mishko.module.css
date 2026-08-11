@@ -6,7 +6,7 @@
 .stage {
   --mk-ui: #17141a;
   position: relative;
-  height: 100dvh;
+  height: 100svh;
   overflow: clip;
   background: #0a080c;
 }
@@ -190,5 +190,146 @@
 
   .caption {
     font-size: 0.55rem;
+  }
+}
+
+.archive {
+  padding: 60px 20px calc(80px + var(--safe-area-bottom));
+  background: #0a080c;
+}
+
+.archiveHead {
+  margin-bottom: 26px;
+  text-align: center;
+  font-family: var(--font-mk-utility);
+  font-size: 0.64rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #8d8896;
+}
+
+.archiveGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  width: min(1080px, 100%);
+  margin: 0 auto;
+}
+
+.mini {
+  position: relative;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  aspect-ratio: 3 / 4;
+  padding: 14px;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  overflow: clip;
+  transition:
+    translate 180ms var(--ease-signal),
+    box-shadow 180ms var(--ease-signal);
+  box-shadow: 0 10px 24px rgb(0 0 0 / 45%);
+}
+
+.mini:hover {
+  translate: 0 -5px;
+  box-shadow: 0 18px 34px rgb(0 0 0 / 55%);
+}
+
+.mini::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.miniStack {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.miniWord,
+.miniDrip {
+  grid-area: 1 / 1;
+  max-width: 100%;
+  font-family: var(--font-mk-heavy);
+  font-size: clamp(1.1rem, 2.4vw, 1.7rem);
+  line-height: 1;
+  text-align: center;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.miniDrip {
+  filter: blur(4px);
+  opacity: 0.6;
+  translate: 0 9px;
+  scale: 1 1.5;
+  transform-origin: top;
+  transition:
+    translate 260ms ease,
+    scale 260ms ease,
+    filter 260ms ease;
+}
+
+.mini:hover .miniDrip {
+  translate: 0 16px;
+  scale: 1 1.9;
+  filter: blur(6px);
+}
+
+.miniCap {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  right: 12px;
+  text-align: left;
+  font-family: var(--font-mk-utility);
+  font-size: 0.5rem;
+  letter-spacing: 0.14em;
+  color: #17141a;
+  opacity: 0.75;
+}
+
+.mini[data-dark="true"] .miniCap {
+  color: #efece2;
+}
+
+.tech {
+  width: min(560px, 100%);
+  margin: 44px auto 0;
+  border-top: 1px solid #2c2933;
+}
+
+.techRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 9px 2px;
+  border-bottom: 1px solid #2c2933;
+  font-family: var(--font-mk-utility);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+}
+
+.techRow dt {
+  color: #8d8896;
+}
+
+.techRow dd {
+  color: #d9d5cc;
+  text-align: right;
+}
+
+@media (max-width: 760px) {
+  .archiveGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

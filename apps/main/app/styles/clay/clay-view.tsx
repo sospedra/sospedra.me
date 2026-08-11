@@ -78,6 +78,28 @@ const BlindBox = () => {
           ? `you pulled ${PRIZES[prize].label}`
           : 'press the box. no refunds, no duplicates, no promises.'}
       </p>
+      <ul className={css.odds}>
+        <li className={css.oddsRow}>
+          <span>butter star</span>
+          <span>1/4</span>
+        </li>
+        <li className={css.oddsRow}>
+          <span>salmon heart</span>
+          <span>1/4</span>
+        </li>
+        <li className={css.oddsRow}>
+          <span>cream ghost</span>
+          <span>1/4</span>
+        </li>
+        <li className={css.oddsRow}>
+          <span>blue ball</span>
+          <span>1/4</span>
+        </li>
+        <li className={`${css.oddsRow} ${css.oddsSecret}`}>
+          <span>secret ???</span>
+          <span>1/144 — never witnessed</span>
+        </li>
+      </ul>
     </div>
   )
 }
@@ -121,7 +143,10 @@ const ClayView = ({ fontVars }: ClayViewProps) => (
         className={css.plateImg}
       />
       <figcaption className={css.plateCap}>
-        <span>fig. 01 — the residents, fresh from the mould. do not bake.</span>
+        <span>
+          <span className={css.seriesChip}>SERIES 01 · BLIND BOX</span>
+          fig. 01 — the residents, fresh from the mould. do not bake.
+        </span>
         <span className={css.capPage}>p. 01</span>
       </figcaption>
     </figure>
@@ -164,7 +189,9 @@ const ClayView = ({ fontVars }: ClayViewProps) => (
             className={css.plateImg}
           />
           <figcaption className={css.plateCap}>
-            <span>fig. 03 — the icon tray, straight from the oven.</span>
+            <span>
+              fig. 03 — the icon tray. accessory pack, sold separately.
+            </span>
             <span className={css.capPage}>p. 03</span>
           </figcaption>
         </figure>
@@ -196,6 +223,18 @@ const ClayView = ({ fontVars }: ClayViewProps) => (
       <p className={css.adCopy}>
         squish buttons™ — the only buttons that apologize when pressed.
       </p>
+    </aside>
+
+    <aside className={css.coupon}>
+      <span className={css.couponLabel}>mail-order form</span>
+      <p className={css.couponRow}>
+        [ ] gato · [ ] noodle · [ ] shroom · [x] surprise me
+      </p>
+      <p className={css.couponFine}>
+        allow 6 to 8 weeks. clay may arrive pre-squished. no refunds back into
+        the original ball.
+      </p>
+      <span className={css.couponBars} aria-hidden='true' />
     </aside>
 
     <footer className={css.colophon}>

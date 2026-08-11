@@ -564,3 +564,130 @@
     animation: none;
   }
 }
+
+.zine {
+  position: relative;
+  z-index: 2;
+  width: min(860px, calc(100% - 48px));
+  margin: 56px auto 8px;
+}
+
+.zinePoster {
+  position: relative;
+  padding: clamp(26px, 5vw, 54px) clamp(22px, 5vw, 60px) clamp(28px, 5vw, 56px);
+  background: #f4f1ea;
+  color: #17130e;
+  rotate: -0.8deg;
+  box-shadow: 0 18px 34px rgb(30 15 0 / 35%);
+}
+
+.zineKicker {
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: #6b6357;
+}
+
+.zineHeadline {
+  margin-top: 14px;
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.6rem, 7.6vw, 5.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+}
+
+.zineByline {
+  margin-top: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #17130e;
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.zineCols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+  margin-top: 18px;
+  font-family: "helvetica neue", helvetica, arial, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.zineTape {
+  position: absolute;
+  width: 130px;
+  height: 34px;
+  background: rgb(228 205 158 / 65%);
+  box-shadow: 0 2px 5px rgb(30 15 0 / 25%);
+}
+
+.zineTapeA {
+  top: -14px;
+  left: 8%;
+  rotate: -5deg;
+}
+
+.zineTapeB {
+  top: -12px;
+  right: 10%;
+  rotate: 4deg;
+}
+
+.zineSticker {
+  position: absolute;
+  filter: drop-shadow(0 5px 6px rgb(30 15 0 / 35%));
+}
+
+.zineStickA {
+  width: 92px;
+  right: 6%;
+  top: 26%;
+  rotate: 12deg;
+}
+
+.zineStickB {
+  width: 76px;
+  left: 4%;
+  bottom: 20%;
+  rotate: -14deg;
+}
+
+.zineStickC {
+  width: 84px;
+  right: 14%;
+  bottom: -26px;
+  rotate: 8deg;
+}
+
+.zineStickD {
+  left: 32%;
+  top: -30px;
+  rotate: -9deg;
+}
+
+.zineNote {
+  position: absolute;
+  right: -8px;
+  top: -44px;
+  font-family: var(--font-sticker-marker);
+  font-size: 1.25rem;
+  color: rgb(255 250 235 / 92%);
+  text-shadow: 0 2px 4px rgb(30 15 0 / 40%);
+  rotate: 3deg;
+}
+
+@media (max-width: 640px) {
+  .zineCols {
+    grid-template-columns: 1fr;
+  }
+
+  .zineStickA {
+    width: 70px;
+  }
+}

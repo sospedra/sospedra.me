@@ -3,6 +3,7 @@
 }
 
 .root {
+  --fr-corner: "\2767";
   --fr-paper: #f5f0e8;
   --fr-ink: #2c1e14;
   --fr-line: #8c8178;
@@ -23,6 +24,7 @@
 }
 
 .root[data-era="2024"] {
+  --fr-corner: "\2726";
   --fr-paper: #eceae3;
   --fr-ink: #121014;
   --fr-line: #121014;
@@ -318,6 +320,7 @@
 }
 
 .body {
+  position: relative;
   width: min(780px, calc(100% - 48px));
   margin: 40px auto 0;
   font-size: 1.08rem;
@@ -784,5 +787,79 @@
 @media (prefers-reduced-motion: reduce) {
   .mastSpark {
     animation: none;
+  }
+}
+
+.pageFrame::before,
+.pageFrame::after {
+  content: var(--fr-corner);
+  position: absolute;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--fr-ink);
+}
+
+.pageFrame::before {
+  top: 8px;
+  left: 10px;
+}
+
+.pageFrame::after {
+  right: 10px;
+  bottom: 8px;
+}
+
+.sidenote {
+  position: absolute;
+  width: 156px;
+  padding-top: 7px;
+  border-top: 1px solid var(--fr-line);
+  font-size: 0.76rem;
+  font-style: italic;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+.sidenote[data-slot="a"] {
+  top: 26px;
+  left: -198px;
+}
+
+.sidenote[data-slot="b"] {
+  top: 60px;
+  right: -198px;
+}
+
+.jump {
+  margin-top: 20px;
+  text-align: right;
+  font-family: var(--font-fr-caps);
+  font-size: 0.58rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 11px;
+  margin-top: 30px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--fr-dark-text);
+  opacity: 0.85;
+}
+
+.dotFill {
+  background: var(--fr-dark-text);
+}
+
+@media (max-width: 1280px) {
+  .sidenote {
+    display: none;
   }
 }

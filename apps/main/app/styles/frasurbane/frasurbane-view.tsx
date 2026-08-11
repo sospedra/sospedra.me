@@ -294,6 +294,14 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
         </div>
 
         <article className={css.body}>
+          <aside className={css.sidenote} data-slot='a'>
+            the sandals were a loan from Hermes; the mirror, from Athena. taste
+            is mostly borrowed equipment.
+          </aside>
+          <aside className={css.sidenote} data-slot='b'>
+            see also: the espresso machine, the jazz shelf, the framed print of
+            this exact page.
+          </aside>
           <p className={css.lede}>
             <span className={css.dropCap}>P</span>erseus came back over the sea
             with a thing in a satchel that could not be looked at. That is the
@@ -324,6 +332,9 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
             ✝ «frasurbane» — coined in the orbit of the Consumer Aesthetics
             Research Institute: Frasier + urbane, the upscale grammar of 1990s
             taste.
+          </p>
+          <p className={css.jump}>
+            continued on plate II — the weather section →
           </p>
         </article>
 
@@ -394,6 +405,15 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
             El Greco paints the sky the head would make: green thunder over a
             town that looked up one second too long.
           </p>
+          <div className={css.dots} aria-hidden='true'>
+            <span className={`${css.dot} ${css.dotFill}`} />
+            <span className={`${css.dot} ${css.dotFill}`} />
+            <span className={css.dot} />
+            <span className={css.dot} />
+            <span className={css.dot} />
+            <span className={css.dot} />
+            <span className={css.dot} />
+          </div>
         </section>
 
         <footer className={css.colophon}>

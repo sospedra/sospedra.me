@@ -187,6 +187,73 @@ const StickersView = ({ fontVars }: StickersViewProps) => {
         </div>
       </div>
 
+      <section className={css.zine}>
+        <article className={css.zinePoster}>
+          <p className={css.zineKicker}>
+            OPINION · PAGE 3 · THE ADHESIVE TIMES
+          </p>
+          <h2 className={css.zineHeadline}>
+            IT STICKS,
+            <br />
+            THEREFORE
+            <br />
+            IT IS.
+          </h2>
+          <p className={css.zineByline}>
+            words: the club — photos: none survived
+          </p>
+          <div className={css.zineCols}>
+            <p>
+              A sticker is a publishing platform the size of a plum. No paywall,
+              no algorithm, no schedule: surface, glue, and nerve. You do not
+              scroll a lamppost. The lamppost scrolls you, one commute at a
+              time, until the message wins by attrition.
+            </p>
+            <p>
+              Editors reject. Curators decline. Feeds bury. The laminate
+              accepts. Slap one crooked over this very column and the page
+              objectively improves — that is the entire editorial policy, and
+              the letters section, and the archive.
+            </p>
+          </div>
+          <span
+            className={`${css.zineTape} ${css.zineTapeA}`}
+            aria-hidden='true'
+          />
+          <span
+            className={`${css.zineTape} ${css.zineTapeB}`}
+            aria-hidden='true'
+          />
+          <span
+            className={`${css.zineSticker} ${css.zineStickA}`}
+            aria-hidden='true'
+          >
+            {STICKER_FACE.smiley}
+          </span>
+          <span
+            className={`${css.zineSticker} ${css.zineStickB}`}
+            aria-hidden='true'
+          >
+            {STICKER_FACE.bolt}
+          </span>
+          <span
+            className={`${css.zineSticker} ${css.zineStickC}`}
+            aria-hidden='true'
+          >
+            {STICKER_FACE.cherry}
+          </span>
+          <span
+            className={`${css.zineSticker} ${css.zineStickD}`}
+            aria-hidden='true'
+          >
+            {STICKER_FACE.ok}
+          </span>
+        </article>
+        <span className={css.zineNote} aria-hidden='true'>
+          real ones peel the corner first ↗
+        </span>
+      </section>
+
       <section className={css.sheet}>
         <header className={css.sheetHead}>
           <h1 className={css.sheetTitle}>fresh sheet</h1>
