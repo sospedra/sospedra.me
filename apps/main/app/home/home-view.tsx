@@ -30,6 +30,12 @@ import { useNav } from './use-nav'
 const BAZAAR_SIGNATURE_DURATION = 3100
 const BAZAAR_EXPRESS_DURATION = 2500
 const BAZAAR_OFFSET = -250
+// the pan distance is vw-anchored, so narrow viewports travel fewer pixels:
+// shrink the duration with the width to keep the ride's perceived speed
+const DRIVE_REFERENCE_WIDTH = 1440
+const DRIVE_MIN_SCALE = 0.55
+// the blackout hits full black at 86% of the ride (home.module.css)
+const ROUTE_SWAP_FRACTION = 0.86
 const BAZAAR_SESSION_KEY = 'midnight-io:bazaar-ride'
 const HOME_INTRO_DURATION = 1200
 const CAR_ARRIVAL_DURATION = 820
@@ -156,6 +162,12 @@ const prefersNativeNavigation = (event: ReactMouseEvent<HTMLAnchorElement>) =>
   event.shiftKey ||
   event.altKey
 
+function scaledDriveDuration(base: number) {
+  const widthScale = window.innerWidth / DRIVE_REFERENCE_WIDTH
+  const scale = Math.min(1, Math.max(DRIVE_MIN_SCALE, widthScale))
+  return Math.round(base * scale)
+}
+
 function claimFirstRide() {
   try {
     const isFirstRide =
@@ -273,11 +285,14 @@ function HomeStage() {
       return
     }
 
-    const duration = isFirstRide
-      ? BAZAAR_SIGNATURE_DURATION
-      : BAZAAR_EXPRESS_DURATION
+    const duration = scaledDriveDuration(
+      isFirstRide ? BAZAAR_SIGNATURE_DURATION : BAZAAR_EXPRESS_DURATION,
+    )
     dispatch({ type: 'depart', duration })
-    transition.navigateLater('/bazaar', Math.max(duration - 360, 0))
+    transition.navigateLater(
+      '/bazaar',
+      Math.round(duration * ROUTE_SWAP_FRACTION),
+    )
   }
 
   const leaveHome = () => dispatch({ type: 'leave-home' })

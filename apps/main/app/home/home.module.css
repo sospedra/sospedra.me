@@ -216,7 +216,7 @@
   animation: blackout-fade var(--drive-ms, 2500ms) linear both;
 }
 
-/* full black by 86%: the route swap fires at drive-ms minus 360ms */
+/* full black by 86%: the route swap fires at 86% of drive-ms */
 @keyframes blackout-fade {
   0%,
   78% {
