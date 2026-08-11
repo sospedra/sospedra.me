@@ -3,15 +3,19 @@ import type { CSSProperties, Ref, RefObject } from 'react'
 import { tapHaptic } from 'services/haptics'
 import css from './tape-pile.module.css'
 import { TAPES, type Tape } from './tapes'
+import { TapesHint } from './tapes-hint'
 import type { TvState } from './tv-machine'
 
 const DRIFT = ['-0.4rem', '0.7rem', '-0.15rem', '0.9rem', '0.25rem']
 const TIP = ['-0.5deg', '0.4deg', '-0.2deg', '0.6deg', '-0.35deg']
+// marker pens matching the washi note palette, one per tape name
+const INKS = ['#0f6159', '#8a6c14', '#a02368', '#503098', '#9c4a1d']
 
 export const pileStyle = (index: number): CSSProperties =>
   ({
     '--drift': DRIFT[index % DRIFT.length],
     '--tip': TIP[index % TIP.length],
+    '--ink': INKS[index % INKS.length],
   }) as CSSProperties
 
 function SpineBar(props: { index: number; tape: Tape }) {
@@ -33,7 +37,6 @@ function SpineBar(props: { index: number; tape: Tape }) {
 }
 
 type TapePileProps = {
-  lit: boolean
   spineFocusRef: RefObject<number | null>
   stackRefs: RefObject<(HTMLButtonElement | null)[]>
   state: TvState
@@ -41,17 +44,14 @@ type TapePileProps = {
 }
 
 export function TapePile({
-  lit,
   spineFocusRef,
   stackRefs,
   state,
   insertTape,
 }: TapePileProps) {
   return (
-    <section className={css.stack} aria-label='Tape pile'>
-      <span className={css.onAir} data-live={lit} aria-hidden='true'>
-        ON AIR
-      </span>
+    <section id='tape-pile' className={css.stack} aria-label='Tape pile'>
+      <TapesHint variant='shelf' />
       <ul className={css.pile}>
         {TAPES.map((item, index) => {
           const pile = pileStyle(index)

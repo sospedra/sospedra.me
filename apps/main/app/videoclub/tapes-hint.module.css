@@ -1,0 +1,230 @@
+/* Ransom-note paper scraps, one per letter, pointing at the tape pile.
+   Two placements: shelf sits above the pile beside the tv, pinned rides
+   the viewport bottom while the stacked pile hides below the fold.
+   Papers borrow the tv materials, inks borrow the scene lights. */
+
+.hint {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3em;
+  font-size: clamp(1.6rem, 4.2vw, 2rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.shelf {
+  align-self: center;
+  margin: 0 0 var(--space-2);
+  rotate: -2.5deg;
+}
+
+.pinned {
+  display: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: scale 160ms ease-out;
+}
+
+.pinned:active {
+  scale: 0.96;
+}
+
+@media (max-width: 64rem) {
+  .shelf {
+    display: none;
+  }
+
+  .pinned {
+    position: sticky;
+    z-index: 2;
+    bottom: calc(var(--safe-area-bottom) + var(--space-3));
+    display: flex;
+    margin: var(--space-5) 0 0;
+    rotate: -2deg;
+  }
+}
+
+.letter,
+.arrow {
+  position: relative;
+  display: inline-block;
+  padding: 0.24em 0.3em;
+}
+
+/* a washi pair across opposite corners holds each scrap to the wall */
+.tape {
+  position: absolute;
+  z-index: 1;
+  width: var(--tape-w, 0.5em);
+  height: 0.2em;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgb(255 255 255 / 14%) 0 0.08em,
+      transparent 0.08em 0.2em
+    ),
+    var(--washi, rgb(240 98 183 / 45%));
+  box-shadow: 0 0.03em 0.07em rgb(0 0 0 / 26%);
+  pointer-events: none;
+}
+
+.tape[data-corner="tl"] {
+  top: -0.09em;
+  left: -0.16em;
+  transform: rotate(var(--tape-tilt, -43deg));
+}
+
+.tape[data-corner="br"] {
+  right: -0.16em;
+  bottom: -0.09em;
+  transform: rotate(calc(var(--tape-tilt, -43deg) + 9deg));
+}
+
+.letter:nth-child(1) {
+  --washi: rgb(109 247 234 / 40%);
+  --tape-tilt: -36deg;
+  --tape-w: 0.46em;
+}
+
+.letter:nth-child(2) {
+  --washi: rgb(255 220 120 / 44%);
+  --tape-tilt: -52deg;
+  --tape-w: 0.56em;
+}
+
+.letter:nth-child(3) {
+  --washi: rgb(240 98 183 / 46%);
+  --tape-tilt: -41deg;
+  --tape-w: 0.44em;
+}
+
+.letter:nth-child(4) {
+  --washi: rgb(138 92 255 / 40%);
+  --tape-tilt: -48deg;
+  --tape-w: 0.58em;
+}
+
+.letter:nth-child(5) {
+  --washi: rgb(255 160 100 / 44%);
+  --tape-tilt: -39deg;
+  --tape-w: 0.5em;
+}
+
+.arrow {
+  --washi: rgb(109 247 234 / 40%);
+  --tape-tilt: -46deg;
+  --tape-w: 0.48em;
+}
+
+.letter::before,
+.arrow::before {
+  content: "";
+  position: absolute;
+  inset: -0.1em -0.06em;
+  z-index: -1;
+  filter: drop-shadow(0 0.09em 0.16em rgb(0 0 0 / 55%));
+}
+
+.letter:nth-child(1) {
+  font-family: var(--font-signage);
+  color: var(--tv-sticker-stripe);
+  rotate: -3deg;
+}
+
+.letter:nth-child(1)::before {
+  background: var(--tv-metal);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 84%);
+}
+
+.letter:nth-child(2) {
+  font-family: var(--font-body);
+  font-style: italic;
+  color: var(--tv-shell-deep);
+  text-shadow: 0.05em 0.05em 0 rgb(240 98 183 / 60%);
+  rotate: 2deg;
+  translate: 0 -0.05em;
+}
+
+.letter:nth-child(2)::before {
+  background: var(--tv-sticker);
+}
+
+.letter:nth-child(3) {
+  font-family: var(--font-display);
+  color: var(--tv-osd);
+  rotate: -2deg;
+}
+
+.letter:nth-child(3)::before {
+  background: var(--tv-led-off);
+  clip-path: polygon(10% 0, 100% 0, 94% 100%, 0 100%);
+}
+
+.letter:nth-child(4) {
+  font-family: var(--font-code);
+  color: var(--tv-shell-deep);
+  rotate: 1.5deg;
+  translate: 0 0.06em;
+}
+
+.letter:nth-child(4)::before {
+  background-color: #d6cfb8;
+  background-image: radial-gradient(
+    rgb(0 148 158 / 55%) 0.085em,
+    transparent 0.085em
+  );
+  background-size: 0.3em 0.3em;
+  clip-path: polygon(5% 0, 100% 4%, 95% 100%, 0 96%);
+}
+
+.letter:nth-child(5) {
+  font-family: var(--font-display);
+  color: var(--tv-led-on);
+  text-shadow: 0 0 0.4em rgb(120 255 241 / 55%);
+  rotate: -1.5deg;
+}
+
+.letter:nth-child(5)::before {
+  background: var(--tv-panel);
+  clip-path: polygon(0 10%, 100% 0, 100% 90%, 5% 100%);
+}
+
+.arrow {
+  font-family: var(--font-body);
+  color: var(--tv-sticker-stripe);
+  rotate: 2deg;
+  translate: 0 0.04em;
+  animation: bob 2.4s ease-in-out infinite;
+}
+
+.arrow::before {
+  background: var(--tv-sticker);
+  clip-path: polygon(0 4%, 96% 0, 100% 96%, 6% 100%);
+}
+
+/* the letters carry rotate, so the bob rides translate and never transform;
+   one soft nudge per cycle beats a metronome loop */
+@keyframes bob {
+  0%,
+  60%,
+  100% {
+    translate: 0 0.04em;
+  }
+  78% {
+    translate: 0 0.3em;
+  }
+}
+
+:global(.fx-quiet) .arrow {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow {
+    animation: none;
+  }
+}

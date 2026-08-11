@@ -15,8 +15,10 @@ import { createDeckAudio } from './deck-audio'
 import { DeckControls, SEEK_STEP, VOLUME_STEP } from './deck-controls'
 import { TapeDeck } from './tape-deck'
 import { TapeGhost, TapePile } from './tape-pile'
+import pile from './tape-pile.module.css'
 import { runTapeSwap } from './tape-swap'
 import { TAPES } from './tapes'
+import { TapesHint } from './tapes-hint'
 import {
   BARS_MS,
   COOL_MS,
@@ -240,38 +242,59 @@ export default function VideoclubView() {
         <p>SECTOR 06 / TAPE DECK / {lit ? 'ON AIR' : 'STANDBY'}</p>
       </nav>
 
-      <section className={css.den} aria-label='Television set'>
-        <div className={cn(css.tv, crt.tv)} data-power={lit ? 'on' : 'off'}>
-          <CrtScreen
-            counterSeconds={counterSeconds}
-            osd={osd}
-            screenHint={screenHint}
-            state={state}
-            tape={tape}
-            videoRef={videoRef}
-            volume={volume}
-            dispatch={dispatch}
-            setCounterSeconds={setCounterSeconds}
-            toggle={toggle}
-          />
+      <span
+        className={cn(pile.onAir, pile.onAirRoom)}
+        data-live={lit}
+        aria-hidden='true'
+      >
+        ON AIR
+      </span>
 
-          <div className={css.fascia}>
-            <TapeDeck activeTape={activeTape} slotRef={slotRef} state={state} />
-            <DeckControls
-              lit={lit}
-              playKeyRef={playKeyRef}
-              powered={powered}
+      <section className={css.den} aria-label='Television set'>
+        <div className={css.tvZone}>
+          <div className={cn(css.tv, crt.tv)} data-power={lit ? 'on' : 'off'}>
+            <span
+              className={cn(pile.onAir, pile.onAirSet)}
+              data-live={lit}
+              aria-hidden='true'
+            >
+              ON AIR
+            </span>
+            <CrtScreen
+              counterSeconds={counterSeconds}
+              osd={osd}
+              screenHint={screenHint}
               state={state}
-              nudgeVolume={nudgeVolume}
-              power={power}
-              seek={seek}
+              tape={tape}
+              videoRef={videoRef}
+              volume={volume}
+              dispatch={dispatch}
+              setCounterSeconds={setCounterSeconds}
               toggle={toggle}
             />
+
+            <div className={css.fascia}>
+              <TapeDeck
+                activeTape={activeTape}
+                slotRef={slotRef}
+                state={state}
+              />
+              <DeckControls
+                lit={lit}
+                playKeyRef={playKeyRef}
+                powered={powered}
+                state={state}
+                nudgeVolume={nudgeVolume}
+                power={power}
+                seek={seek}
+                toggle={toggle}
+              />
+            </div>
           </div>
+          <TapesHint variant='pinned' />
         </div>
 
         <TapePile
-          lit={lit}
           spineFocusRef={spineFocusRef}
           stackRefs={stackRefs}
           state={state}

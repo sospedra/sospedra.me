@@ -58,6 +58,13 @@
   animation: talks-rec 1.6s steps(2, jump-none) infinite;
 }
 
+/* clear the fixed ON AIR plaque in the corner */
+@media (min-width: 64rem) {
+  .rail::after {
+    margin-right: clamp(11rem, 18vw, 14.5rem);
+  }
+}
+
 @keyframes talks-rec {
   0% {
     opacity: 1;
@@ -103,6 +110,12 @@
 
 .caption {
   grid-area: caption;
+}
+
+/* desktop: dissolve so the tv keeps its grid cell; stacked: become the
+   cell and give the sticky tapes sign its slide range down to the pile */
+.tvZone {
+  display: contents;
 }
 
 /* ── Chassis ─────────────────────────────────────────────── */
@@ -241,6 +254,15 @@
       "caption" auto
       / minmax(0, 1fr);
     align-content: start;
+  }
+
+  .tvZone {
+    grid-area: tv;
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-direction: column;
+    align-items: center;
   }
 }
 

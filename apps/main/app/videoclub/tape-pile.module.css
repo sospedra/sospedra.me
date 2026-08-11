@@ -1,5 +1,6 @@
 .stack {
   grid-area: stack;
+  scroll-margin-top: var(--space-4);
 }
 
 /* ── Tape pile ───────────────────────────────────────────── */
@@ -19,16 +20,14 @@
 
 /* Black enamel housing with separate neon tubes, lit only while broadcasting. */
 .onAir {
-  position: relative;
   isolation: isolate;
   display: grid;
   box-sizing: border-box;
   inline-size: clamp(10.5rem, 17vw, 13.5rem);
   aspect-ratio: 3 / 1;
   place-items: center;
-  align-self: center;
-  margin-bottom: auto;
   padding: 0.72rem 1rem 0.65rem;
+  pointer-events: none;
   border: 0.16rem solid #11100f;
   border-radius: 0.78rem;
   background:
@@ -114,17 +113,6 @@
 /* grid, so each spine stretches to the row width as it did in the flex stack */
 .pile li {
   display: grid;
-}
-
-/* the table the pile rests on */
-.stack::after {
-  content: "";
-  position: absolute;
-  inset: auto -1.5rem 0;
-  height: 0.45rem;
-  background: linear-gradient(180deg, #2a2f3a, #0a0c10);
-  border-radius: 2px;
-  box-shadow: 0 6px 12px rgb(0 0 0 / 55%);
 }
 
 /* one VHS lying flat, spine out */
@@ -223,6 +211,7 @@
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  color: var(--ink, inherit);
 }
 
 .vhsTitle small {
@@ -269,6 +258,34 @@
     left: 0;
     width: min(23rem, 100%);
     contain: none;
+  }
+}
+
+/* the room mount: fixed at the screen's top right, desktop only */
+.onAirRoom {
+  display: none;
+}
+
+/* the set mount: resting on the tv's top edge, stacked layout only */
+.onAirSet {
+  position: absolute;
+  right: 0.75rem;
+  bottom: calc(100% - 0.35rem);
+  z-index: 1;
+  inline-size: clamp(8rem, 30vw, 10.5rem);
+}
+
+@media (min-width: 64rem) {
+  .onAirRoom {
+    position: fixed;
+    z-index: 45;
+    top: calc(var(--safe-area-top, 0px) + 0.75rem);
+    right: max(0.9rem, var(--safe-area-right, 0px));
+    display: grid;
+  }
+
+  .onAirSet {
+    display: none;
   }
 }
 
