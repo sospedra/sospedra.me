@@ -5,10 +5,10 @@ import { installSiteHistoryTracker } from 'services/navigation-history'
 import { recordPathname } from './altitude'
 import Background from './background'
 import { TransitionCTX } from './context'
-import EdgeStrips from './edge-strips'
 import Offshore from './offshore'
 import { useStateReducer } from './reducer'
 import { UNMOUNT_DELAY_MS } from './stage'
+import ToolbarStrip from './toolbar-strip'
 import css from './transition.module.css'
 import { installFirstTouchPrefetch } from './use-prefetch'
 
@@ -76,7 +76,8 @@ export const Provider: React.FunctionComponent<{
     <TransitionCTX.Provider value={transition}>
       <div className={css.provider}>{children}</div>
       <Background />
-      <EdgeStrips />
+      <div aria-hidden='true' className={css.overscrollShield} />
+      <ToolbarStrip />
       <Offshore />
     </TransitionCTX.Provider>
   )

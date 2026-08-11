@@ -52,6 +52,18 @@
   z-index: 0;
 }
 
+/* Rubber-banding lifts the route content and exposes the sky plane's
+   purple; this band keeps the reveal on the route's own color. It rides
+   the sky layer (z 0), never the route's stacking context: route content
+   sits at z 1, so no route decor can end up buried under it. */
+.overscrollShield {
+  @apply fixed inset-x-0 bottom-0;
+  z-index: 0;
+  height: 40vh;
+  background: var(--route-overscroll, var(--color-bg-void));
+  pointer-events: none;
+}
+
 /* In flow so routes overflow the document and the viewport scrolls (iOS
    scroll-to-top). clip suppresses the ±100vh climb overflow without
    creating a scroll container. */

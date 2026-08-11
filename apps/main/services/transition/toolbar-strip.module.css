@@ -1,0 +1,12 @@
+/* iOS 26 samples a ~40px fixed box at the bottom viewport edge for the
+   toolbar tint. The box hangs fully outside, so it adds no page pixel: a
+   sliver inside the viewport reads as a line wherever the bar color and
+   the art disagree. The 1px offset nudge re-samples a settled route. */
+.strip {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  pointer-events: none;
+  z-index: 2;
+}

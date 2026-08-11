@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useTheme } from 'services/theme'
-import { barsFor, sceneFor, tintFor } from './altitude'
+import { chromeFor, sceneFor } from './altitude'
 import { useRouteTransition } from './context'
 import { destinationUrl } from './reducer'
 import Stars from './stars'
@@ -25,17 +25,15 @@ const getOffsetFromHref = (href: string): OffsetT => ({
 })
 
 const applyChrome = (href: string) => {
-  const { bottom, canvas } = barsFor(href)
-  const tint = tintFor(href)
-  // html/body feed the iOS status-zone sample: always the TOP color;
-  // the canvas colors the bottom overscroll shield instead
-  document.documentElement.style.backgroundColor = tint
-  document.body.style.backgroundColor = tint
-  document.documentElement.style.setProperty('--route-bottom', canvas)
+  const { statusTint, toolbarTint, overscroll } = chromeFor(href)
+  // html/body feed the iOS status-zone sample; the shield reads the var
+  document.documentElement.style.backgroundColor = statusTint
+  document.body.style.backgroundColor = statusTint
+  document.documentElement.style.setProperty('--route-overscroll', overscroll)
   // load-time only on iOS; Android Chrome follows runtime writes
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', bottom ?? canvas)
+    ?.setAttribute('content', toolbarTint ?? overscroll)
 }
 
 const Animation: React.FunctionComponent<{

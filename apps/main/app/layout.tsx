@@ -121,10 +121,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       lang='en'
       data-scroll-behavior='smooth'
       className={fontVariables}
-      // the parse-time tint script writes html/body style before hydration
       suppressHydrationWarning
     >
-      <body>
+      {/* the tint script writes html and body style before hydration */}
+      <body suppressHydrationWarning>
         <script
           // biome-ignore lint/security/noDangerouslySetInnerHtml: static route tint map
           dangerouslySetInnerHTML={{ __html: loadTintScript() }}
