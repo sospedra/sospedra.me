@@ -61,6 +61,8 @@ export type RouteBars = {
 // feeds the overscroll via html/body
 const ROUTE_BARS: Record<string, RouteBars> = {
   '/': { top: '#300f3b', bottom: '#101324', canvas: '#101324' },
+  // top = the sky at the viewport top edge; chrome colors are bottom-edge
+  '/about': { top: '#3e0f47', canvas: '#441049' },
   '/bazaar': { top: '#0e141b', bottom: '#000000', canvas: '#0e141b' },
   '/boombox': { top: '#0e141b', bottom: '#1a1024', canvas: '#0e141b' },
   '/camera': { top: '#0c141d', bottom: '#0c0711', canvas: '#070b10' },
@@ -70,12 +72,17 @@ const ROUTE_BARS: Record<string, RouteBars> = {
   '/game-of-life': { top: '#151610', bottom: '#151610', canvas: '#151610' },
   '/games': { top: '#020307', bottom: '#020307', canvas: '#020307' },
   '/meridian': { top: '#080907', bottom: '#080907', canvas: '#080907' },
+  // no bottom strips: the scrolled paper shows through the bar glass
+  '/papers': { top: '#241333', canvas: '#2d0e39' },
+  '/papers/:slug': { top: '#10161f', canvas: '#141925' },
   '/recycle-bin': { canvas: '#0e141b' },
   '/rubiks': { top: '#121a23', bottom: '#070c11', canvas: '#070c11' },
   '/scavenger': { top: '#180a38', bottom: '#0e141b', canvas: '#0e141b' },
   '/snake': { top: '#131c24', bottom: '#070c11', canvas: '#070c11' },
-  '/travel': { top: '#080a14', bottom: '#080a14', canvas: '#080a14' },
-  '/uses': { top: '#0d0708', bottom: '#0d0708', canvas: '#0d0708' },
+  // document-scrolling routes get no bottom strip: it would flat-paint
+  // over the content bleeding through the bottom glass
+  '/travel': { top: '#080a14', canvas: '#080a14' },
+  '/uses': { top: '#0d0708', canvas: '#0d0708' },
   '/videoclub': { top: '#050608', bottom: '#050608', canvas: '#050608' },
   '/w98': { top: '#008080', bottom: '#008080', canvas: '#008080' },
 }
@@ -92,6 +99,30 @@ export const barsFor = (href: string): RouteBars => {
 export const routeViewport = (href: string) => ({
   themeColor: barsFor(href).bottom ?? barsFor(href).canvas,
 })
+
+// iOS 26 derives the load-time status-bar tint from the html and body
+// backgrounds, not from the painted pixels; both must carry the route color
+// from the first parsed byte or the bar sticks to the void
+const loadTintMap = (): Record<string, string> => {
+  const fromScenes = Object.entries(SCENES).map(
+    ([pattern, scene]) => [pattern, scene.chrome] as const,
+  )
+  const fromBars = Object.entries(ROUTE_BARS).map(
+    ([pattern, bars]) => [pattern, bars.top ?? bars.canvas] as const,
+  )
+  return Object.fromEntries([...fromScenes, ...fromBars])
+}
+
+export const loadTintScript = () =>
+  `(function(){var m=${JSON.stringify(loadTintMap())};` +
+  `var p=location.pathname.replace(/\\/+$/,"")||"/";var c=m[p];` +
+  `if(!c){var s=p.split("/");for(var k in m){var t=k.split("/");` +
+  `if(t.length!==s.length)continue;var ok=1;` +
+  `for(var i=0;i<t.length;i++){if(t[i].charAt(0)!==":"&&t[i]!==s[i]){ok=0;break}}` +
+  `if(ok){c=m[k];break}}}` +
+  `c=c||"${DEFAULT_SCENE.chrome}";` +
+  `document.documentElement.style.backgroundColor=c;` +
+  `document.body.style.backgroundColor=c;})()`
 
 export const getAltitude = (href: string): number => sceneFor(href).altitude
 

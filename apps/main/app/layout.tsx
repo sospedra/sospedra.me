@@ -4,6 +4,7 @@ import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { preload } from 'react-dom'
 import { SITE_URL } from 'services/site'
+import { loadTintScript } from 'services/transition/altitude'
 import Providers from './providers'
 import 'services/style/global.css'
 
@@ -118,6 +119,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang='en' data-scroll-behavior='smooth' className={fontVariables}>
       <body>
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: static route tint map
+          dangerouslySetInnerHTML={{ __html: loadTintScript() }}
+        />
         <Providers>{props.children}</Providers>
         <Analytics />
         <SpeedInsights />
