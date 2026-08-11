@@ -1,5 +1,5 @@
 {
-  "counter": 98,
+  "counter": 100,
   "chrome": {
     "band:3@d": {
       "translate": "0px 0px"
@@ -19,7 +19,7 @@
       "shadowY": "-8.7"
     },
     "games@m": {
-      "translate": "7px -32px"
+      "translate": "17px -25px"
     },
     "manual@d": {
       "translate": "0px 1px",
@@ -28,7 +28,8 @@
       "shadowY": "-9"
     },
     "manual@m": {
-      "translate": "-14px -5px"
+      "translate": "-14px 1px",
+      "scale": "0.94 0.94"
     },
     "map@d": {
       "filter": "brightness(0.9)",
@@ -36,6 +37,9 @@
     },
     "map@m": {
       "translate": "17px -18px"
+    },
+    "msep:2@m": {
+      "translate": "0px 0px"
     },
     "msep:3@m": {
       "translate": "2px -6px"
@@ -48,7 +52,7 @@
       "shadowY": "35.1"
     },
     "papers@m": {
-      "translate": "28px -6px"
+      "translate": "35px -4px"
     },
     "rat:0@d": {
       "translate": "25px -23px",
@@ -65,7 +69,7 @@
       "shadowInset": "0%"
     },
     "scavenger@m": {
-      "translate": "19px -16px"
+      "translate": "26px -17px"
     },
     "sep:0@d": {
       "filter": "brightness(0.4)"
@@ -132,7 +136,7 @@
       "shadowY": "3.9"
     },
     "travel@m": {
-      "translate": "2px -11px"
+      "translate": "16px -9px"
     },
     "uses@d": {
       "translate": "0px 3px",
@@ -153,7 +157,8 @@
       "shadowInset": "1%"
     },
     "w98@m": {
-      "translate": "-18px -11px"
+      "translate": "-18px -11px",
+      "scale": "0.97 0.97"
     },
     "wall:1@d": {
       "filter": "brightness(0.6)",
@@ -340,13 +345,21 @@
       "z": -1,
       "bright": 0.6,
       "shade": true,
-      "over": {
-        "m": {
-          "x": 264.9,
-          "y": 356,
-          "h": 112
-        }
-      }
+      "hide": ["m"]
+    },
+    {
+      "id": "n99",
+      "kind": "deco",
+      "ref": "gear-pallet",
+      "host": "stall:manual",
+      "corner": "tl",
+      "x": 264.9,
+      "y": 356.2,
+      "h": 112,
+      "z": -1,
+      "bright": 0.6,
+      "shade": true,
+      "hide": ["b", "a", "w"]
     },
     {
       "id": "n12",
@@ -1159,6 +1172,7 @@
       "h": 48,
       "z": 2,
       "bright": 0.75,
+      "hide": ["m"],
       "over": {
         "m": {
           "x": 60.5,
@@ -1180,6 +1194,7 @@
       "z": 4,
       "opacity": 0.5,
       "pulse": true,
+      "hide": ["m"],
       "over": {
         "m": {
           "x": -32.2,
@@ -1218,7 +1233,8 @@
       "x": 130.1,
       "y": -134.8,
       "h": 62,
-      "z": 2
+      "z": 2,
+      "hide": ["m"]
     },
     {
       "id": "n82",
@@ -1254,7 +1270,8 @@
       "z": 4,
       "bright": 0.85,
       "opacity": 0.77,
-      "pulse": true
+      "pulse": true,
+      "hide": ["m"]
     },
     {
       "id": "n84",
@@ -1289,7 +1306,8 @@
       "z": 4,
       "bright": 0.85,
       "opacity": 0.77,
-      "pulse": true
+      "pulse": true,
+      "hide": ["m"]
     },
     {
       "id": "n86",
