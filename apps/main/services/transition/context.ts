@@ -4,6 +4,7 @@ import { DEFAULT_STATE, type Offshore, type State } from './reducer'
 
 export type TransitionT = State & {
   navigate: (url: Route) => void
+  navigateBack: () => void
   navigateLater: (url: Route, delay: number) => void
   unmount: () => void
   reset: () => void
@@ -13,6 +14,7 @@ export type TransitionT = State & {
 export const TransitionCTX = React.createContext<TransitionT>({
   ...DEFAULT_STATE,
   navigate: () => {},
+  navigateBack: () => {},
   navigateLater: () => {},
   unmount: () => {},
   reset: () => {},

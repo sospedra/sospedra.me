@@ -1,21 +1,25 @@
 import type { Route } from 'next'
 import { useReducer } from 'react'
 import { match } from 'ts-pattern'
+import { canGoBackWithinSite } from '../navigation-history.ts'
+import { getOriginPathname } from './altitude.ts'
 import type { TransitionT } from './context'
 
 export type Offshore = { kind: 'cloud'; duration?: number }
 
+export type NavKind = 'push' | 'pop'
+
 export type NavPhase =
   | { phase: 'idle' }
-  | { phase: 'departing'; url: Route; origin: string }
-  | { phase: 'unmounting'; url: Route; origin: string }
+  | { phase: 'departing'; url: Route; origin: string; nav: NavKind }
+  | { phase: 'unmounting'; url: Route; origin: string; nav: NavKind }
 
 export type State = NavPhase & { offshore: Offshore | undefined }
 
 export const DEFAULT_STATE: State = { phase: 'idle', offshore: undefined }
 
 export type Action =
-  | { type: 'NAVIGATE'; payload: { url: Route; origin: string } }
+  | { type: 'NAVIGATE'; payload: { url: Route; origin: string; nav: NavKind } }
   | { type: 'UNMOUNT' }
   | { type: 'RESET' }
   | { type: 'OFFSHORE'; payload: { offshore: Offshore | undefined } }
@@ -31,6 +35,7 @@ export const reducer = (state: State, action: Action): State =>
       phase: state.phase === 'unmounting' ? 'unmounting' : 'departing',
       url: payload.url,
       origin: payload.origin,
+      nav: payload.nav,
       offshore: state.offshore,
     }))
     .with({ type: 'UNMOUNT' }, () => {
@@ -39,6 +44,7 @@ export const reducer = (state: State, action: Action): State =>
         phase: 'unmounting',
         url: state.url,
         origin: state.origin,
+        nav: state.nav,
         offshore: state.offshore,
       }
     })
@@ -66,7 +72,24 @@ export const useStateReducer = (): TransitionT => {
     }
     dispatch({
       type: 'NAVIGATE',
-      payload: { url, origin: window.location.pathname },
+      payload: { url, origin: window.location.pathname, nav: 'push' },
+    })
+  }
+  const navigateBack = () => {
+    if (!canGoBackWithinSite()) {
+      navigate('/')
+      return
+    }
+    const origin = window.location.pathname
+    const destination = getOriginPathname(origin)
+    // an unknown or same-route predecessor pops without the climb
+    if (destination === null || destination === origin) {
+      window.history.back()
+      return
+    }
+    dispatch({
+      type: 'NAVIGATE',
+      payload: { url: destination as Route, origin, nav: 'pop' },
     })
   }
   const navigateLater = (url: Route, delay: number) => {
@@ -84,6 +107,7 @@ export const useStateReducer = (): TransitionT => {
     unmount,
     reset,
     navigate,
+    navigateBack,
     navigateLater,
     setOffshore,
   }

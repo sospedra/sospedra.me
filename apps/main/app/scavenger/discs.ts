@@ -89,6 +89,18 @@ export const DISCS: Disc[] = [
     look: 'tape',
   },
   {
+    id: 'styles',
+    title: 'style lab',
+    oneLiner: 'Six aesthetics stolen for an afternoon.',
+    note: 'six accents',
+    url: 'https://sospedra.me/styles',
+    pressed: 2026,
+    stack: 'CSS, SVG filters, WebGL',
+    status: 'test-pressing',
+    hue: 320,
+    look: 'label',
+  },
+  {
     id: 'stv',
     title: 'sportv',
     oneLiner: 'What sport is on TV in Spain.',

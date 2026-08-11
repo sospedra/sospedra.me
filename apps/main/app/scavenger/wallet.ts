@@ -134,6 +134,29 @@ export function closedPageTransform(page: number): PagePose {
   return { ry: 0.4 + page * 0.2, z: (PAGE_COUNT - page) * 1.2 }
 }
 
+const FLIP_DRAG_X_PX = 48
+const FLIP_DRAG_Y_PX = 36
+/* above thumb-tap slop: a sloppy tap must never turn a page */
+const PORTRAIT_FLIP_Y_PX = 56
+
+/* the portrait book hinges on X: only a decisive vertical swipe flips,
+   and an upward swipe lifts the page, so it advances */
+export function portraitDragFlip(dx: number, dy: number): 1 | -1 | null {
+  if (Math.abs(dy) < PORTRAIT_FLIP_Y_PX) return null
+  if (Math.abs(dx) > Math.abs(dy)) return null
+  return dy < 0 ? 1 : -1
+}
+
+/* the desktop wallet keeps its drag-the-content feel on both axes */
+export function landscapeDragFlip(dx: number, dy: number): 1 | -1 | null {
+  if (Math.abs(dx) >= Math.abs(dy)) {
+    if (Math.abs(dx) < FLIP_DRAG_X_PX) return null
+    return dx > 0 ? -1 : 1
+  }
+  if (Math.abs(dy) < FLIP_DRAG_Y_PX) return null
+  return dy < 0 ? -1 : 1
+}
+
 export const spreadLabel = (spread: number): string =>
   `SPREAD ${spread + 1} / ${SPREAD_COUNT}`
 

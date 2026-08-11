@@ -8,7 +8,8 @@
       "!**/*.svg",
       "!public/vendor",
       "!docs",
-      "!repo/crosswords/sources.lock.json"
+      "!repo/crosswords/sources.lock.json",
+      "!repo/papers/total-eclipse/data"
     ]
   },
   "css": {

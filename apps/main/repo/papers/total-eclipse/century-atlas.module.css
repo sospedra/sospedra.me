@@ -1,0 +1,55 @@
+.readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgb(109 247 234 / 14%);
+}
+
+.date.date {
+  margin: 0;
+  color: var(--color-text-strong, #fff);
+  font-family: var(--font-code, monospace);
+  font-size: 1.125rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.kind.kind {
+  margin: 0.2rem 0 0;
+  font-family: var(--font-code, monospace);
+  font-size: 0.75rem;
+}
+
+.reached.reached {
+  margin: 0.15rem 0 0;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+}
+
+.stepper {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.watch.watch {
+  margin: 0 0 0.7rem;
+  max-width: 62ch;
+  color: var(--color-text, rgb(255 255 255 / 88%));
+  font-size: 0.8125rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.mapSkeleton {
+  aspect-ratio: 660 / 348;
+  border: 1px solid rgb(109 247 234 / 14%);
+  border-radius: 0.25rem;
+  background: #070b12;
+}

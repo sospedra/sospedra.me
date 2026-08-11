@@ -22,6 +22,7 @@ const metadataSchema = z.object({
   minutes: z.number(),
   categories: z.array(z.string()),
   createdAt: isoDate,
+  description: z.nullish(nonEmpty),
   excerpt: nonEmpty,
   og: nonEmpty,
   title: nonEmpty,
@@ -35,8 +36,13 @@ export const paperFromMetadata = (slug: string, value: unknown): Paper => {
     const [issue] = result.error.issues
     throw new PaperMetadataError(slug, String(issue?.path[0] ?? 'metadata'))
   }
-  const { images, ...fields } = result.data
-  return { ...fields, slug, images: images ?? {} }
+  const { images, description, ...fields } = result.data
+  return {
+    ...fields,
+    slug,
+    images: images ?? {},
+    description: description ?? undefined,
+  }
 }
 
 export const byNewestFirst = (left: Paper, right: Paper): number =>

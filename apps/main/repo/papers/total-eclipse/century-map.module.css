@@ -1,0 +1,95 @@
+.stage {
+  position: relative;
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: manipulation;
+}
+
+.sphere {
+  fill: #070b12;
+  stroke: rgb(109 247 234 / 16%);
+  stroke-width: 1;
+}
+
+.graticule {
+  fill: none;
+  stroke: rgb(109 247 234 / 7%);
+  stroke-width: 0.5;
+}
+
+.land {
+  fill: #1b242f;
+  stroke: rgb(109 247 234 / 14%);
+  stroke-width: 0.5;
+}
+
+.tracks {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.track {
+  stroke-opacity: 0.55;
+  stroke-width: 1.3;
+  transition: stroke-opacity 0.12s;
+}
+
+.track[data-dim="true"] {
+  stroke-opacity: 0.13;
+  stroke-width: 1.1;
+}
+
+.track[data-active="true"] {
+  stroke-opacity: 1;
+  stroke-width: 2.4;
+}
+
+.hit {
+  stroke: transparent;
+  stroke-width: 9;
+  cursor: pointer;
+}
+
+.tip {
+  position: absolute;
+  z-index: 4;
+  display: grid;
+  gap: 0.15rem;
+  max-width: 11rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid rgb(109 247 234 / 32%);
+  border-radius: 0.25rem;
+  background: #05070c;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+
+.tip[data-shown="true"] {
+  opacity: 1;
+}
+
+.tip b {
+  color: var(--color-text-strong, #fff);
+  font-family: var(--font-code, monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.tip span {
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .tip {
+    transition: none;
+  }
+}

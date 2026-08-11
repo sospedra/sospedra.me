@@ -4,7 +4,6 @@ import cn from 'clsx'
 import type { Route } from 'next'
 import type React from 'react'
 import Icon from 'services/icon/icon'
-import { navigateBackOrHome } from 'services/navigation-history'
 import { useRouteTransition } from 'services/transition/context'
 import {
   useWarmRouteAudioOnTouch,
@@ -19,6 +18,21 @@ type LinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   prefetchOnFocus?: boolean
   ref?: React.Ref<HTMLAnchorElement>
 }
+
+type AnchorDownload = React.AnchorHTMLAttributes<HTMLAnchorElement>['download']
+
+const usesNativeNavigation = (
+  event: React.MouseEvent<HTMLAnchorElement>,
+  target: string | undefined,
+  download: AnchorDownload,
+) =>
+  event.button !== 0 ||
+  event.metaKey ||
+  event.ctrlKey ||
+  event.shiftKey ||
+  event.altKey ||
+  target === '_blank' ||
+  (download !== undefined && download !== false)
 
 export default function Link(props: LinkProps) {
   const {
@@ -39,16 +53,7 @@ export default function Link(props: LinkProps) {
   useWarmRouteAudioOnTouch(url)
 
   const navigateOnClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    const shouldUseNativeNavigation =
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey ||
-      target === '_blank' ||
-      (download !== undefined && download !== false)
-
-    if (shouldUseNativeNavigation) return
+    if (usesNativeNavigation(event, target, download)) return
 
     onClick?.(event)
     if (event.defaultPrevented) return
@@ -95,21 +100,13 @@ export function GoBack(props: GoBackProps) {
   const transition = useRouteTransition()
 
   const navigateBack = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    const shouldUseNativeNavigation =
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey ||
-      target === '_blank' ||
-      (download !== undefined && download !== false)
-    if (shouldUseNativeNavigation) return
+    if (usesNativeNavigation(event, target, download)) return
 
     onClick?.(event)
     if (event.defaultPrevented) return
 
     event.preventDefault()
-    navigateBackOrHome(() => transition.navigate('/'))
+    transition.navigateBack()
   }
 
   return (

@@ -1,0 +1,92 @@
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 19rem;
+  gap: 1rem;
+  align-items: start;
+}
+
+.mapSkeleton {
+  aspect-ratio: 660 / 560;
+  border: 1px solid rgb(109 247 234 / 14%);
+  border-radius: 0.25rem;
+  background: #070b12;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.scrub {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.play {
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1px solid rgb(109 247 234 / 32%);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-text, rgb(255 255 255 / 88%));
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.play:focus-visible {
+  outline: 2px solid var(--color-signal-cyan, #6df7ea);
+  outline-offset: 2px;
+}
+
+.play {
+  transition: transform var(--motion-micro, 160ms) var(--ease-signal, ease-out);
+}
+
+.play:active {
+  transform: scale(0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play:active {
+    transform: none;
+  }
+}
+
+.range {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--color-signal-yellow, #ffea00);
+}
+
+.nowLine.nowLine {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 52rem) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 44 px minimum for the scrub thumb, per the papers mobile pass. */
+@media (pointer: coarse) {
+  .range {
+    height: 2.75rem;
+  }
+
+  .play {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}

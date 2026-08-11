@@ -19,12 +19,14 @@ const departing: State = {
   phase: 'departing',
   url: ABOUT,
   origin: HOME,
+  nav: 'push',
   offshore: undefined,
 }
 const unmounting: State = {
   phase: 'unmounting',
   url: ABOUT,
   origin: HOME,
+  nav: 'push',
   offshore: undefined,
 }
 
@@ -35,20 +37,35 @@ test('default state is idle without offshore', () => {
 test('navigate from idle starts a departure', () => {
   const next = reducer(idle, {
     type: 'NAVIGATE',
-    payload: { url: ABOUT, origin: HOME },
+    payload: { url: ABOUT, origin: HOME, nav: 'push' },
   })
   assert.deepEqual(next, departing)
+})
+
+test('navigate pop from idle starts a pop departure', () => {
+  const next = reducer(idle, {
+    type: 'NAVIGATE',
+    payload: { url: HOME as Route, origin: ABOUT, nav: 'pop' },
+  })
+  assert.deepEqual(next, {
+    phase: 'departing',
+    url: HOME,
+    origin: ABOUT,
+    nav: 'pop',
+    offshore: undefined,
+  })
 })
 
 test('navigate while departing retargets the departure', () => {
   const next = reducer(departing, {
     type: 'NAVIGATE',
-    payload: { url: PAPERS, origin: HOME },
+    payload: { url: PAPERS, origin: HOME, nav: 'push' },
   })
   assert.deepEqual(next, {
     phase: 'departing',
     url: PAPERS,
     origin: HOME,
+    nav: 'push',
     offshore: undefined,
   })
 })
@@ -56,12 +73,39 @@ test('navigate while departing retargets the departure', () => {
 test('navigate while unmounting retargets the push', () => {
   const next = reducer(unmounting, {
     type: 'NAVIGATE',
-    payload: { url: PAPERS, origin: HOME },
+    payload: { url: PAPERS, origin: HOME, nav: 'push' },
   })
   assert.deepEqual(next, {
     phase: 'unmounting',
     url: PAPERS,
     origin: HOME,
+    nav: 'push',
+    offshore: undefined,
+  })
+})
+
+test('a push retargets a mid-flight pop', () => {
+  const popping: State = { ...unmounting, nav: 'pop' }
+  const next = reducer(popping, {
+    type: 'NAVIGATE',
+    payload: { url: PAPERS, origin: HOME, nav: 'push' },
+  })
+  assert.deepEqual(next, {
+    phase: 'unmounting',
+    url: PAPERS,
+    origin: HOME,
+    nav: 'push',
+    offshore: undefined,
+  })
+})
+
+test('unmount preserves the pop nav', () => {
+  const poppingDeparture: State = { ...departing, nav: 'pop' }
+  assert.deepEqual(reducer(poppingDeparture, { type: 'UNMOUNT' }), {
+    phase: 'unmounting',
+    url: ABOUT,
+    origin: HOME,
+    nav: 'pop',
     offshore: undefined,
   })
 })
@@ -93,12 +137,14 @@ test('offshore sets and clears in every phase', () => {
     phase: 'departing',
     url: ABOUT,
     origin: HOME,
+    nav: 'push',
     offshore: CLOUD,
   })
   assert.deepEqual(reducer(unmounting, set), {
     phase: 'unmounting',
     url: ABOUT,
     origin: HOME,
+    nav: 'push',
     offshore: CLOUD,
   })
 
@@ -111,12 +157,13 @@ test('offshore survives navigate, unmount and reset', () => {
   const cloudyIdle: State = { phase: 'idle', offshore: CLOUD }
   const cloudyDeparting = reducer(cloudyIdle, {
     type: 'NAVIGATE',
-    payload: { url: ABOUT, origin: HOME },
+    payload: { url: ABOUT, origin: HOME, nav: 'push' },
   })
   assert.deepEqual(cloudyDeparting, {
     phase: 'departing',
     url: ABOUT,
     origin: HOME,
+    nav: 'push',
     offshore: CLOUD,
   })
 
@@ -125,6 +172,7 @@ test('offshore survives navigate, unmount and reset', () => {
     phase: 'unmounting',
     url: ABOUT,
     origin: HOME,
+    nav: 'push',
     offshore: CLOUD,
   })
 

@@ -2,6 +2,13 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import sharp from 'sharp'
+import {
+  DEFAULT_LOCALE,
+  localesOf,
+  type PaperLocale,
+  paperCardPath,
+  type ReaderLocale,
+} from '../services/markdown/paper.locales.ts'
 import { absolute, readJson } from './io.mts'
 import {
   type Metadata,
@@ -17,6 +24,11 @@ const TITLE_SIZE = 64
 const TITLE_CENTER_BASELINE = 285
 const TITLE_LINE_PITCH = 83
 const WRAP_BUDGET = 26
+
+// VCR OSD Mono carries no Cyrillic, so fontconfig swaps faces mid-line
+const TITLE_FONT: Partial<Record<PaperLocale, string>> = { ru: 'Helvetica' }
+// a proportional face fits more characters on the same 1020 px of headline
+const WRAP_BUDGETS: Partial<Record<PaperLocale, number>> = { ru: 30 }
 
 const APEX_X = 599.5
 const APEX_Y = 469
@@ -56,12 +68,12 @@ const MONTHS = [
 const escapeXml = (text: string) =>
   text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 
-const wrapTitle = (title: string) => {
+const wrapTitle = (title: string, budget = WRAP_BUDGET) => {
   const lines: string[] = []
   let line = ''
   for (const word of title.split(' ')) {
     const joined = line === '' ? word : `${line} ${word}`
-    if (joined.length > WRAP_BUDGET && line !== '') {
+    if (joined.length > budget && line !== '') {
       lines.push(line)
       line = word
       continue
@@ -98,13 +110,14 @@ const horizonGlow = () =>
   `<line x1="0" y1="${APEX_Y}" x2="${WIDTH}" y2="${APEX_Y}" stroke="${GRID_VERTICAL}" stroke-width="9" stroke-opacity="0.3" filter="url(#horizon-blur)"/>
   <line x1="0" y1="${APEX_Y}" x2="${WIDTH}" y2="${APEX_Y}" stroke="${GRID_VERTICAL}" stroke-width="1.5" stroke-opacity="0.45"/>`
 
-const titleText = (lines: string[]) => {
+const titleText = (lines: string[], font?: string) => {
   const first =
     TITLE_CENTER_BASELINE - (TITLE_LINE_PITCH / 2) * (lines.length - 1)
+  const family = font ? ` font-family="${font}"` : ''
   return lines
     .map(
       (line, index) =>
-        `<text x="${MARGIN}" y="${first + TITLE_LINE_PITCH * index}" font-size="${TITLE_SIZE}" fill="#ffffff">${escapeXml(line)}</text>`,
+        `<text x="${MARGIN}" y="${first + TITLE_LINE_PITCH * index}" font-size="${TITLE_SIZE}" fill="#ffffff"${family}>${escapeXml(line)}</text>`,
     )
     .join('')
 }
@@ -114,11 +127,19 @@ const underline = (lines: string[]) => {
   return `<rect x="${MARGIN}" y="${top}" width="220" height="6" fill="url(#stripe)"/>`
 }
 
+export type CardSpec = Pick<Metadata, 'title' | 'createdAt'> & {
+  /** Overrides the headline face only, so the card chrome never changes. */
+  titleFont?: string
+  wrapBudget?: number
+}
+
 export const buildCard = ({
   title,
   createdAt,
-}: Pick<Metadata, 'title' | 'createdAt'>) => {
-  const lines = wrapTitle(title)
+  titleFont,
+  wrapBudget,
+}: CardSpec) => {
+  const lines = wrapTitle(title, wrapBudget)
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" font-family="VCR OSD Mono">
   <defs>
     <radialGradient id="glow" gradientUnits="userSpaceOnUse" cx="1050" cy="80" r="700" gradientTransform="scale(1 0.5)">
@@ -141,7 +162,7 @@ export const buildCard = ({
   ${horizonGlow()}
   <text x="${MARGIN}" y="120" font-size="30" fill="#6df7ea">sospedra.me</text>
   <text x="${MARGIN}" y="160" font-size="22" fill="#a8aaae">${paperLabel(createdAt)}</text>
-  ${titleText(lines)}
+  ${titleText(lines, titleFont)}
   ${underline(lines)}
 </svg>`
 }
@@ -173,21 +194,53 @@ const logo = async () => {
   return logoOverlay
 }
 
+const renderCard = async (
+  slug: string,
+  locale: ReaderLocale,
+  spec: CardSpec,
+) => {
+  const output = absolute(join('public', paperCardPath(slug, locale)))
+  await mkdir(dirname(output), { recursive: true })
+  await sharp(Buffer.from(buildCard(spec)))
+    .composite([{ input: await logo(), left: LOGO_LEFT, top: LOGO_TOP }])
+    .png({ palette: true, compressionLevel: 9 })
+    .toFile(output)
+}
+
+const translatedSpecs = async (slug: string, createdAt: string) => {
+  const locales = localesOf(slug)
+  if (locales.length === 0) return []
+  const module = await import(
+    absolute(join('repo/papers', slug, 'i18n.ts'))
+  ).catch(() => null)
+  const translations = module?.default
+  if (!translations) return []
+  return locales
+    .filter((locale) => translations[locale])
+    .map((locale) => ({
+      locale,
+      spec: {
+        title: translations[locale].title,
+        createdAt,
+        titleFont: TITLE_FONT[locale],
+        wrapBudget: WRAP_BUDGETS[locale],
+      } satisfies CardSpec,
+    }))
+}
+
 export default async function og(metafile: string) {
   const { title, createdAt } = await readJson<Partial<Metadata>>(metafile, {})
   if (!title || !createdAt) return
 
   await configureFonts()
   const slug = slugFromPaperFile(metafile)
-  const output = absolute(join('public/papers', `${slug}.png`))
-  await mkdir(dirname(output), { recursive: true })
-  await sharp(Buffer.from(buildCard({ title, createdAt })))
-    .composite([{ input: await logo(), left: LOGO_LEFT, top: LOGO_TOP }])
-    .png({ palette: true, compressionLevel: 9 })
-    .toFile(output)
+  await renderCard(slug, DEFAULT_LOCALE, { title, createdAt })
+  for (const { locale, spec } of await translatedSpecs(slug, createdAt)) {
+    await renderCard(slug, locale, spec)
+  }
 
   return updatePaperMetadata(slug, (current) => ({
     ...current,
-    og: `/papers/${slug}.png`,
+    og: paperCardPath(slug, DEFAULT_LOCALE),
   }))
 }

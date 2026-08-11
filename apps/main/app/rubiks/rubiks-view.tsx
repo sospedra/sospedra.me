@@ -3,12 +3,15 @@
 import { partition } from 'es-toolkit'
 import type React from 'react'
 import { useEffect, useReducer, useState } from 'react'
+import { useKeyClick } from 'services/audio/use-key-click'
 import { ConfettiBurst } from 'services/celebration'
 import { pulseHaptic, tapHaptic } from 'services/haptics'
 import { useGameInput } from 'services/hotkeys'
 import { GoBack, LinkBack } from 'services/link'
 import Row from 'services/row'
 import Shell from 'services/shell'
+import { useTheme } from 'services/theme'
+import { useResetOnHide } from 'services/use-reset-on-hide'
 import {
   TURN_MS,
   useMoveKeys,
@@ -137,8 +140,22 @@ export default function RubiksView() {
   const { orbit, orbiting, onOrbitKeyDown, ...pointerProps } =
     useOrbitAndTap(dispatch)
   const [primeArmed, setPrimeArmed] = useState(false)
+  const { fxMode } = useTheme()
+  const playClick = useKeyClick()
   useGameInput()
   useMoveKeys(dispatch)
+  useResetOnHide(() => {
+    dispatch({ type: 'RESET' })
+    setPrimeArmed(false)
+  })
+
+  const keyClick = () => {
+    if (fxMode !== 'quiet') playClick()
+  }
+  const withClick = (action: () => void) => () => {
+    keyClick()
+    action()
+  }
 
   const solved = isSolved(state.stickers)
   const busy = state.phase !== 'idle'
@@ -170,6 +187,7 @@ export default function RubiksView() {
 
   // one-shot latch, like a mobile keyboard shift: rev arms one reverse turn
   const playPad = (face: Face) => {
+    keyClick()
     setPrimeArmed(false)
     dispatch({
       type: 'PLAY',
@@ -286,7 +304,7 @@ export default function RubiksView() {
             type='button'
             className={css.key}
             disabled={busy}
-            onClick={scramble}
+            onClick={withClick(scramble)}
           >
             Scramble
           </button>
@@ -294,7 +312,7 @@ export default function RubiksView() {
             type='button'
             className={css.key}
             disabled={busy || state.history.length === 0}
-            onClick={() => dispatch({ type: 'UNDO' })}
+            onClick={withClick(() => dispatch({ type: 'UNDO' }))}
           >
             Undo
           </button>
@@ -302,7 +320,7 @@ export default function RubiksView() {
             type='button'
             className={css.key}
             disabled={busy || state.redo.length === 0}
-            onClick={() => dispatch({ type: 'REDO' })}
+            onClick={withClick(() => dispatch({ type: 'REDO' }))}
           >
             Redo
           </button>
@@ -310,7 +328,7 @@ export default function RubiksView() {
             type='button'
             className={`${css.key} ${css.keySolve}`}
             disabled={busy || compress(state.history).length === 0}
-            onClick={() => dispatch({ type: 'SOLVE' })}
+            onClick={withClick(() => dispatch({ type: 'SOLVE' }))}
           >
             Solve
           </button>
@@ -318,7 +336,7 @@ export default function RubiksView() {
             type='button'
             className={css.key}
             disabled={pristine}
-            onClick={() => dispatch({ type: 'RESET' })}
+            onClick={withClick(() => dispatch({ type: 'RESET' }))}
           >
             Reset
           </button>
@@ -328,7 +346,7 @@ export default function RubiksView() {
           busy={busy}
           primeArmed={primeArmed}
           onFace={playPad}
-          onTogglePrime={() => setPrimeArmed((armed) => !armed)}
+          onTogglePrime={withClick(() => setPrimeArmed((armed) => !armed))}
         />
 
         <p className={css.hint}>

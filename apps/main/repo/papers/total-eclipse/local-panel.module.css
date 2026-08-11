@@ -1,0 +1,78 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.place.place {
+  margin: 0;
+  color: var(--color-text-strong, #fff);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.coords.coords {
+  margin: 0.15rem 0 0;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+
+.readoutLabel.readoutLabel {
+  margin: 0 0 0.1rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code, monospace);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Dim until the switch flips: 99.84 percent is not a colour worth having. */
+.readout.readout {
+  margin: 0;
+  color: var(--color-text-strong, #fff);
+  font-family: var(--font-code, monospace);
+  font-size: 2.375rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.readoutTotal {
+  color: var(--color-signal-yellow, #ffea00);
+}
+
+.verdict.verdict {
+  margin: 0.45rem 0 0;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.verdictTotal {
+  color: var(--color-text-strong, #fff);
+}
+
+.drive.drive {
+  margin: 0;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgb(109 247 234 / 22%);
+  border-radius: 0.25rem;
+  background: rgb(109 247 234 / 6%);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.driveKey {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--color-signal-cyan, #6df7ea);
+  font-family: var(--font-code, monospace);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}

@@ -31,6 +31,7 @@ export type GameEvent =
   | { type: 'SELECT'; roll: number }
   | { type: 'TICK'; roll: number }
   | { type: 'HIDE' }
+  | { type: 'RESET' }
   | { type: 'TOP'; top: number }
   | { type: 'LEVEL'; level: number }
 
@@ -183,6 +184,7 @@ export const reduce = (state: GameState, event: GameEvent): GameState =>
     .with({ type: 'HIDE' }, () =>
       state.phase === 'running' ? { ...state, phase: 'paused' } : state,
     )
+    .with({ type: 'RESET' }, () => initialState)
     .with({ type: 'TOP' }, ({ top }) => ({
       ...state,
       top: Math.max(state.top, top),

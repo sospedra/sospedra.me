@@ -4,6 +4,7 @@ import { useCallback, useEffect, useReducer, useState } from 'react'
 import { useGameInput } from 'services/hotkeys'
 import Shell from 'services/shell'
 import { readLocal, writeLocal } from 'services/storage'
+import { useResetOnHide } from 'services/use-reset-on-hide'
 import {
   boundsOf,
   type Cell,
@@ -48,6 +49,15 @@ export default function GameOfLifeView() {
     `${DEFAULT_PRESET.title} loaded. ${DEFAULT_PRESET.cells.size} live cells.`,
   )
   const [audio] = useState(createLifeAudio)
+  useResetOnHide(() => {
+    dispatch({
+      type: 'load',
+      cells: DEFAULT_PRESET.cells,
+      presetId: DEFAULT_PRESET.id,
+    })
+    setRunning(false)
+    setPatternBayOpen(false)
+  })
   useGameInput()
 
   const playMechanicalSound = useCallback(

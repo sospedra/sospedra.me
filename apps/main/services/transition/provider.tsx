@@ -62,15 +62,20 @@ export const Provider: React.FunctionComponent<{
     return () => window.removeEventListener('popstate', cancel)
   }, [transition.reset])
 
-  const pushUrl = transition.phase === 'unmounting' ? transition.url : null
-  const pushOrigin =
+  const commitUrl = transition.phase === 'unmounting' ? transition.url : null
+  const commitOrigin =
     transition.phase === 'unmounting' ? transition.origin : null
+  const commitNav = transition.phase === 'unmounting' ? transition.nav : null
   useEffect(() => {
-    if (pushUrl === null) return
-    // a pop landed after the departure started: drop the stale push
-    if (pushOrigin !== window.location.pathname) return
-    router.push(pushUrl)
-  }, [pushUrl, pushOrigin, router.push])
+    if (commitUrl === null) return
+    // a pop landed after the departure started: drop the stale commit
+    if (commitOrigin !== window.location.pathname) return
+    if (commitNav === 'pop') {
+      window.history.back()
+      return
+    }
+    router.push(commitUrl)
+  }, [commitUrl, commitOrigin, commitNav, router.push])
 
   return (
     <TransitionCTX.Provider value={transition}>

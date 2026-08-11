@@ -18,12 +18,12 @@ import {
   setLetterKeysEnabled,
   useLetterKeysEnabled,
 } from 'services/letter-keys'
-import { navigateBackOrHome } from 'services/navigation-history'
 import {
   scrollActivePage,
   scrollMarkedScene,
   scrollToPageEdge,
 } from 'services/scroll-nav'
+import { useRouteTransition } from 'services/transition/context'
 import {
   ACTIVATION_COMBOS,
   capturedEvents,
@@ -88,6 +88,7 @@ export const useGameInput = () => {
 export const Hotkeys: React.FC<{ children: React.ReactNode }> = (props) => {
   const router = useRouter()
   const pathname = usePathname()
+  const transition = useRouteTransition()
 
   useEffect(() => {
     const isGameInputClaimed = () => gameInputClaims > 0
@@ -120,9 +121,7 @@ export const Hotkeys: React.FC<{ children: React.ReactNode }> = (props) => {
       'b',
       (event) => {
         event.preventDefault()
-        if (pathname !== '/') {
-          navigateBackOrHome(() => router.push('/'))
-        }
+        if (pathname !== '/') transition.navigateBack()
       },
     ],
     ...(['h', 'p', 'a'] as const).map(

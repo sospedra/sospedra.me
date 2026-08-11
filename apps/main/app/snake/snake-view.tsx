@@ -7,6 +7,7 @@ import { useGameInput } from 'services/hotkeys'
 import { GoBack, LinkBack } from 'services/link'
 import Row from 'services/row'
 import Shell from 'services/shell'
+import { useResetOnHide } from 'services/use-reset-on-hide'
 import { match } from 'ts-pattern'
 import consoleDeck from './console-deck.module.css'
 import {
@@ -52,6 +53,7 @@ export default function SnakeView() {
   const [pressed, setPressed] = useState<ReadonlySet<string>>(new Set())
   const [soundOff, setSoundOff] = useState(false)
   useGameInput()
+  useResetOnHide(() => dispatch({ type: 'RESET' }))
 
   useEffect(() => {
     setSoundOff(isMuted())

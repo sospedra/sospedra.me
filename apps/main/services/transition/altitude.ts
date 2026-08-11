@@ -1,4 +1,4 @@
-import { matchRoutePattern } from './route-pattern'
+import { matchRoutePattern } from './route-pattern.ts'
 
 export type Scene = {
   altitude: number
@@ -14,6 +14,15 @@ const DEFAULT_SCENE: Scene = {
   chrome: '#37113f',
 }
 
+// a pattern only matches an href of the same segment count, so every
+// translated paper needs its own key or it falls back to the default sky
+const PAPER_SCENE: Scene = {
+  altitude: 2,
+  offset: 'translate3d(0vw, 0vh, 0)',
+  starsHidden: true,
+  chrome: '#141925',
+}
+
 // chrome = the sky plane color at the scene's viewport bottom; it paints the
 // browser bars and the overscroll canvas outside the 100dvh layers
 const SCENES: Record<string, Scene> = {
@@ -23,12 +32,8 @@ const SCENES: Record<string, Scene> = {
     starsHidden: false,
     chrome: '#2d0e39',
   },
-  '/papers/:slug': {
-    altitude: 2,
-    offset: 'translate3d(0vw, 0vh, 0)',
-    starsHidden: true,
-    chrome: '#141925',
-  },
+  '/papers/:slug': PAPER_SCENE,
+  '/papers/:slug/:lang': PAPER_SCENE,
   '/about': {
     altitude: 0,
     offset: 'translate3d(-100vw, -400vh, 0)',
@@ -64,6 +69,8 @@ export type RouteChrome = {
   toolbarTint?: string
   overscroll?: string
 }
+
+const PAPER_CHROME: RouteChrome = { statusTint: '#10161f' }
 
 const ROUTE_CHROME: Record<string, RouteChrome> = {
   '/': { statusTint: '#300f3b', toolbarTint: '#101324', overscroll: '#101324' },
@@ -111,7 +118,8 @@ const ROUTE_CHROME: Record<string, RouteChrome> = {
     overscroll: '#080907',
   },
   '/papers': { statusTint: '#241333' },
-  '/papers/:slug': { statusTint: '#10161f' },
+  '/papers/:slug': PAPER_CHROME,
+  '/papers/:slug/:lang': PAPER_CHROME,
   '/recycle-bin': { statusTint: '#0e141b', overscroll: '#0e141b' },
   '/rubiks': {
     statusTint: '#121a23',

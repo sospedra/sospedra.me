@@ -1,0 +1,166 @@
+/* One screen of big type: the reader glances at this in a field, at dusk.
+   Each phase remounts keyed, so the entrance replays on every transition. */
+.stage {
+  display: grid;
+  justify-items: start;
+  gap: 0.6rem;
+  padding: 1.4rem 1.2rem 1.5rem;
+  border: 1px solid rgb(109 247 234 / 20%);
+  border-radius: 0.3rem;
+  background: #070b12;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 200ms var(--ease-signal, ease-out),
+    transform 200ms var(--ease-signal, ease-out);
+
+  @starting-style {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage {
+    transition: opacity 200ms ease;
+
+    @starting-style {
+      transform: none;
+    }
+  }
+}
+
+.stage[data-off="true"] {
+  border-color: rgb(255 234 0 / 55%);
+  background: #02040a;
+}
+
+.kicker {
+  margin: 0;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.countdown.countdown {
+  margin: 0;
+  color: var(--color-signal-yellow, #ffea00);
+  font-family: var(--font-code, monospace);
+  font-size: clamp(2.2rem, 7vw, 3.4rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.phaseName.phaseName {
+  margin: 0;
+  color: var(--color-text-strong, #fff);
+  font-size: clamp(1.6rem, 5vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.instruction.instruction {
+  margin: 0;
+  max-width: 58ch;
+  color: var(--color-text, rgb(255 255 255 / 88%));
+  font-size: 1.0625rem;
+  line-height: 1.5;
+}
+
+.nextLine.nextLine {
+  margin: 0.3rem 0 0;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-size: 0.875rem;
+}
+
+.countdownSmall {
+  color: var(--color-signal-yellow, #ffea00);
+  font-family: var(--font-code, monospace);
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.glasses {
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.25rem;
+  font-family: var(--font-code, monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.glasses[data-state="on"] {
+  background: rgb(255 234 0 / 14%);
+  border: 1px solid rgb(255 234 0 / 55%);
+  color: var(--color-signal-yellow, #ffea00);
+}
+
+.glasses[data-state="off"] {
+  background: var(--color-signal-yellow, #ffea00);
+  border: 1px solid var(--color-signal-yellow, #ffea00);
+  color: #0a0d14;
+}
+
+.strip.strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The reading sheet numbers every ol item; the strip is chips, not a list. */
+.stripItem::before,
+.stripItem::marker {
+  content: none;
+}
+
+.stripItem {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid rgb(109 247 234 / 20%);
+  border-radius: 0.25rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code, monospace);
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stripItem[data-off="true"] {
+  border-color: rgb(255 234 0 / 45%);
+}
+
+.stripItem[data-active="true"] {
+  background: rgb(109 247 234 / 14%);
+  color: var(--color-text-strong, #fff);
+}
+
+.stripItem[data-active="true"][data-off="true"] {
+  background: rgb(255 234 0 / 18%);
+}
+
+.simRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.simRange {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--color-signal-cyan, #6df7ea);
+}
+
+@media (pointer: coarse) {
+  .simRange {
+    height: 2.75rem;
+  }
+}

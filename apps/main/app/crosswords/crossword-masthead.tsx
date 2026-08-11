@@ -1,5 +1,5 @@
 import cn from 'clsx'
-import Link from 'services/link'
+import { GoBack } from 'services/link'
 import type { Copy } from './crossword-copy'
 import type { CrosswordLocale, CrosswordPuzzle } from './crossword-data'
 import type { CrosswordState } from './crossword-engine'
@@ -49,14 +49,13 @@ export const CrosswordMasthead = ({
   return (
     <header className={css.masthead}>
       <div className={css.headerUtility}>
-        <Link
-          url='/'
+        <GoBack
           className={cn(css.homeLink, cw.homeLink)}
           aria-label={copy.home}
         >
           <span aria-hidden='true'>↩</span>
           <span>{copy.home}</span>
-        </Link>
+        </GoBack>
       </div>
       <button
         type='button'

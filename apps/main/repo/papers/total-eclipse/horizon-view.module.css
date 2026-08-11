@@ -1,0 +1,7 @@
+.horizon {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  border: 1px solid rgb(109 247 234 / 16%);
+  border-radius: 0.25rem;
+}

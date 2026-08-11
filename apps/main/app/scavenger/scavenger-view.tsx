@@ -304,14 +304,14 @@ export default function ScavengerView() {
             <p className={css.cardLine}>{record.oneLiner}</p>
             <p
               className={css.cardLiner}
-            >{`pressed ${record.pressed} · ${record.stack}`}</p>
+            >{`${record.pressed} · ${record.stack}`}</p>
             {record.status === 'pressed' ? (
               <External href={record.url} className={css.cardLink}>
-                play it
+                play CD
               </External>
             ) : (
               <External href={record.url} className={css.cardStamp}>
-                test pressing <span aria-hidden='true'>↗</span>
+                link to project <span aria-hidden='true'>↗</span>
               </External>
             )}
           </aside>

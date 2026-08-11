@@ -7,6 +7,8 @@ import { prefersQuietFx } from 'services/theme'
 import {
   clampSpread,
   type FloatFrom,
+  landscapeDragFlip,
+  portraitDragFlip,
   spreadDiscs,
   type WalletEvent,
   type WalletState,
@@ -22,10 +24,10 @@ const BOOT_OPEN_MS = 500
 const BOOT_DONE_MS = 2000
 const FLIP_COOLDOWN_MS = 320
 const WHEEL_THRESHOLD = 6
-const SWIPE_THRESHOLD = 36
-const DRAG_THRESHOLD = 48
-const DRAG_CLICK_GRACE_MS = 250
-const TAP_SLOP_PX = 16
+/* covers the 0.6s page transition: a drag's trailing click must never
+   pull a location-resolved disc from the mid-flip spread */
+const DRAG_CLICK_GRACE_MS = 620
+const TAP_SLOP_PX = 24
 
 /* mirrors the scavenger portrait media query: under it the book folds
    top over bottom and pages hinge on X */
@@ -248,17 +250,8 @@ export function useWalletActions(
   }
 }
 
-/* the portrait book hinges on X: an upward swipe lifts the page, so it
-   advances; the desktop mapping keeps its drag-the-content feel */
-const dragDirection = (dx: number, dy: number): 1 | -1 | null => {
-  if (Math.abs(dx) >= Math.abs(dy)) {
-    if (Math.abs(dx) < DRAG_THRESHOLD) return null
-    return dx > 0 ? -1 : 1
-  }
-  if (Math.abs(dy) < SWIPE_THRESHOLD) return null
-  if (portraitBook()) return dy < 0 ? 1 : -1
-  return dy < 0 ? -1 : 1
-}
+const dragDirection = (dx: number, dy: number): 1 | -1 | null =>
+  portraitBook() ? portraitDragFlip(dx, dy) : landscapeDragFlip(dx, dy)
 
 export function useDragGestures(flip: (direction: 1 | -1) => void): void {
   const dragStart = useRef<{ x: number; y: number; id: number } | null>(null)

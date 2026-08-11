@@ -188,3 +188,8 @@ test('pause, hide, top score and game-over guards', () => {
   assert.equal(reduce(over, { type: 'TICK', roll: 0.5 }), over)
   assert.equal(reduce(over, { type: 'SELECT', roll: 0.5 }).phase, 'menu')
 })
+
+test('reset abandons the session and returns to the menu', () => {
+  const running: GameState = { ...initialState, phase: 'running', top: 42 }
+  assert.deepEqual(reduce(running, { type: 'RESET' }), initialState)
+})

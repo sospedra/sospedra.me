@@ -6,9 +6,11 @@ import {
   clampSpread,
   closedPageTransform,
   INITIAL_STATE,
+  landscapeDragFlip,
   MAX_SPREAD,
   PAGE_COUNT,
   pageTransform,
+  portraitDragFlip,
   reduce,
   SPREAD_COUNT,
   slotOf,
@@ -18,7 +20,7 @@ import {
 } from './wallet.ts'
 
 test('discs carry unique ids and hues', () => {
-  assert.equal(DISCS.length, 16)
+  assert.equal(DISCS.length, 17)
   assert.equal(new Set(DISCS.map((disc) => disc.id)).size, DISCS.length)
   assert.equal(new Set(DISCS.map((disc) => disc.hue)).size, DISCS.length)
   for (const disc of DISCS) {
@@ -40,7 +42,7 @@ test('every look appears on at least two discs', () => {
 })
 
 test('wallet geometry derives from the disc count', () => {
-  assert.equal(PAGE_COUNT, 8)
+  assert.equal(PAGE_COUNT, 9)
   assert.equal(MAX_SPREAD, 8)
   assert.equal(SPREAD_COUNT, 9)
   assert.equal(BOOT_SPREAD, 0)
@@ -59,7 +61,7 @@ test('every disc shows on exactly one spread', () => {
   )
   assert.deepEqual(spreadDiscs(0), [0])
   assert.deepEqual(spreadDiscs(1), [1, 2])
-  assert.deepEqual(spreadDiscs(MAX_SPREAD), [15])
+  assert.deepEqual(spreadDiscs(MAX_SPREAD), [15, 16])
 })
 
 test('clampSpread bounds the range', () => {
@@ -149,7 +151,7 @@ test('the zip closes the wallet from browse only', () => {
 test('closedPageTransform lies flat and dips away from the viewer', () => {
   for (let page = 0; page < PAGE_COUNT; page += 1) {
     const pose = closedPageTransform(page)
-    assert.ok(pose.ry > 0 && pose.ry < 2, `page ${page} lies nearly flat`)
+    assert.ok(pose.ry > 0 && pose.ry < 3, `page ${page} lies nearly flat`)
     if (page === 0) continue
     const previous = closedPageTransform(page - 1)
     assert.ok(pose.ry > previous.ry, `page ${page} dips deeper`)
@@ -168,4 +170,24 @@ test('pageTransform fans resting pages and piles flipped ones', () => {
 test('spreadLabel counts from one', () => {
   assert.equal(spreadLabel(0), 'SPREAD 1 / 9')
   assert.equal(spreadLabel(MAX_SPREAD), 'SPREAD 9 / 9')
+})
+
+test('portrait drag flips only on a decisive vertical swipe', () => {
+  assert.equal(portraitDragFlip(0, -80), 1, 'up advances')
+  assert.equal(portraitDragFlip(0, 80), -1, 'down goes back')
+  assert.equal(portraitDragFlip(4, -56), 1, 'threshold edge flips')
+  assert.equal(portraitDragFlip(0, -55), null, 'under threshold holds')
+  assert.equal(portraitDragFlip(0, 40), null, 'a sloppy tap never flips')
+  assert.equal(portraitDragFlip(-160, 0), null, 'horizontal never flips')
+  assert.equal(portraitDragFlip(160, 12), null, 'horizontal never flips')
+  assert.equal(portraitDragFlip(-90, -80), null, 'diagonal leans horizontal')
+})
+
+test('landscape drag keeps both axes', () => {
+  assert.equal(landscapeDragFlip(-80, 0), 1, 'drag left advances')
+  assert.equal(landscapeDragFlip(80, 0), -1, 'drag right goes back')
+  assert.equal(landscapeDragFlip(-40, 0), null, 'under x threshold holds')
+  assert.equal(landscapeDragFlip(0, -36), -1, 'drag up goes back')
+  assert.equal(landscapeDragFlip(0, 36), 1, 'drag down advances')
+  assert.equal(landscapeDragFlip(0, 30), null, 'under y threshold holds')
 })

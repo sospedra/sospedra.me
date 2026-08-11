@@ -1,0 +1,38 @@
+.timeline {
+  display: block;
+  cursor: ew-resize;
+  width: 100%;
+  height: auto;
+  margin-top: 0.5rem;
+  touch-action: pan-y;
+}
+
+.axis line {
+  stroke: rgb(109 247 234 / 10%);
+  stroke-width: 0.6;
+}
+
+.axis text {
+  fill: rgb(255 255 255 / 52%);
+  font-family: var(--font-code, monospace);
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  text-anchor: middle;
+}
+
+.selection {
+  fill: var(--color-signal-cyan, #6df7ea);
+  fill-opacity: 0.12;
+  stroke: rgb(109 247 234 / 45%);
+  stroke-width: 1;
+}
+
+.dot {
+  fill-opacity: 0.85;
+  cursor: pointer;
+}
+
+.dot[data-active="true"] {
+  fill: #fff;
+  fill-opacity: 1;
+}

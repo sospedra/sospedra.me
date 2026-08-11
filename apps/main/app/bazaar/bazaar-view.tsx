@@ -202,9 +202,9 @@ const useForegroundParallax = (
   sceneRef: React.RefObject<HTMLDivElement | null>,
 ) => {
   useEffect(() => {
-    const scene = sceneRef.current
-    if (!scene) return
-    const layers = scene.querySelectorAll<HTMLElement>('[data-bazaar-fg]')
+    const sceneRoot = sceneRef.current
+    if (!sceneRoot) return
+    const layers = sceneRoot.querySelectorAll<HTMLElement>('[data-bazaar-fg]')
     if (layers.length === 0) return
     const onScroll = () => {
       const top = window.scrollY

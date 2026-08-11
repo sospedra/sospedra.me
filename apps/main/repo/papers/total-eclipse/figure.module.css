@@ -1,0 +1,243 @@
+/* Shared chrome for the eclipse figures. Doubled class: .markdown > * + * in
+   paper-shell.module.css ties on specificity and chunk order is not guaranteed. */
+.figure.figure {
+  margin: 2.75rem 0 3rem;
+}
+
+/* Axis labels stop being readable at the 42rem measure, so data figures break
+   the column out to 58rem where the viewport allows it. */
+.bleed.bleed {
+  width: min(100vw - 2rem, 58rem);
+  margin-inline: calc(50% - min(50vw - 1rem, 29rem));
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(109 247 234 / 22%);
+  border-radius: 0.375rem;
+  background: #0a0d14;
+}
+
+/* The reading sheet gives every prose <p> a 2rem margin and a 19px body size.
+   Figures opt out at a specificity the sheet cannot tie. */
+.card.card :is(p, ul, ol, li) {
+  margin: 0;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgb(190 205 255 / 3%) 0 1px,
+    transparent 1px 3px
+  );
+  pointer-events: none;
+}
+
+.card + .card {
+  margin-top: 0.75rem;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 1rem 0.55rem;
+  border-bottom: 1px solid rgb(109 247 234 / 18%);
+  background: rgb(109 247 234 / 5%);
+}
+
+.label {
+  color: var(--color-signal-cyan, #6df7ea);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.count {
+  margin-left: auto;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+}
+
+.body {
+  position: relative;
+  padding: 0.85rem 1rem 1rem;
+}
+
+.brief.brief {
+  margin: 0 0 0.85rem;
+  max-width: 62ch;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.brief strong {
+  color: var(--color-text-strong, #fff);
+  font-weight: 600;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgb(109 247 234 / 32%);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--color-text, rgb(255 255 255 / 88%));
+  cursor: pointer;
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition:
+    transform var(--motion-micro, 160ms) var(--ease-signal, ease-out),
+    background var(--motion-micro, 160ms) var(--ease-signal, ease-out),
+    opacity var(--motion-micro, 160ms) var(--ease-signal, ease-out);
+}
+
+.chip:active {
+  transform: scale(0.97);
+}
+
+.chip[aria-pressed="false"] {
+  opacity: 0.42;
+}
+
+.chip[aria-pressed="true"] {
+  background: rgb(109 247 234 / 12%);
+}
+
+.chip:focus-visible,
+.picker:focus-visible,
+.nav:focus-visible {
+  outline: 2px solid var(--color-signal-cyan, #6df7ea);
+  outline-offset: 2px;
+}
+
+.dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+
+.pickerLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.picker {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgb(109 247 234 / 32%);
+  border-radius: 0.25rem;
+  background: #0e141b;
+  color: var(--color-text-strong, #fff);
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+
+.nav {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid rgb(109 247 234 / 32%);
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--color-text, rgb(255 255 255 / 88%));
+  cursor: pointer;
+  font-family: var(--font-code, monospace);
+  font-size: 0.75rem;
+  line-height: 1;
+  transition: transform var(--motion-micro, 160ms) var(--ease-signal, ease-out);
+}
+
+.nav:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip,
+  .nav {
+    transition: opacity var(--motion-micro, 160ms) ease;
+  }
+
+  .chip:active,
+  .nav:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.22rem 0;
+  border-bottom: 1px dashed rgb(109 247 234 / 16%);
+  font-size: 0.8125rem;
+}
+
+.statKey {
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+}
+
+.statValue {
+  color: var(--color-text-strong, #fff);
+  font-family: var(--font-code, monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.note.note {
+  margin: 0.7rem 0 0;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-size: 0.6875rem;
+  line-height: 1.5;
+}
+
+.skeleton {
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted, rgb(255 255 255 / 64%));
+  font-family: var(--font-code, monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 48rem), (pointer: coarse) {
+  .chip,
+  .nav {
+    padding: 0.5rem 0.75rem;
+  }
+}

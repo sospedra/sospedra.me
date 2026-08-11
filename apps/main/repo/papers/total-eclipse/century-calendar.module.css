@@ -1,0 +1,119 @@
+.view {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: manipulation;
+}
+
+.grid line,
+.grid circle,
+.grid {
+  fill: none;
+  stroke: rgb(109 247 234 / 9%);
+  stroke-width: 0.6;
+}
+
+.rowRule {
+  stroke: rgb(109 247 234 / 14%);
+  stroke-dasharray: 1 4;
+  stroke-width: 0.7;
+}
+
+.rowRuleStrong {
+  stroke: rgb(109 247 234 / 26%);
+  stroke-width: 1;
+}
+
+.axis text,
+.rowName,
+.spiralMonth,
+.spiralYear,
+.gutterTitle {
+  fill: rgb(255 255 255 / 52%);
+  font-family: var(--font-code, monospace);
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.axis text {
+  text-anchor: middle;
+}
+
+.rowName,
+.rowNameOwn,
+.gutterTitle {
+  text-anchor: end;
+}
+
+.rowNameOwn {
+  fill: var(--color-signal-yellow, #ffea00);
+  font-family: var(--font-code, monospace);
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  text-anchor: end;
+}
+
+.gutterTitle {
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+}
+
+.spiralMonth {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-anchor: middle;
+}
+
+.spiralYear {
+  text-anchor: start;
+}
+
+/* Series 126 is this paper's series, so it gets the only white arm. */
+.paperRow {
+  fill: #fff;
+  fill-opacity: 0.05;
+  rx: 3;
+}
+
+.arm {
+  fill: none;
+  stroke: rgb(255 255 255 / 26%);
+  stroke-width: 0.8;
+}
+
+.armOwn {
+  fill: none;
+  stroke: #fff;
+  stroke-opacity: 0.55;
+  stroke-width: 1.6;
+}
+
+.mark {
+  fill-opacity: 0.9;
+  cursor: pointer;
+}
+
+.mark[data-active="true"] {
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.cell {
+  fill-opacity: 0.9;
+  cursor: pointer;
+}
+
+.cell[data-active="true"] {
+  stroke: #fff;
+  stroke-width: 1.6;
+}
+
+.hubSea {
+  fill: #0c1420;
+  stroke: rgb(109 247 234 / 22%);
+  stroke-width: 1;
+}
+
+.hubLand {
+  fill: #26354a;
+}

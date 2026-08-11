@@ -1,0 +1,214 @@
+.stage {
+  position: relative;
+}
+
+.map {
+  display: block;
+  width: 100%;
+  aspect-ratio: 660 / 560;
+  border: 1px solid rgb(109 247 234 / 14%);
+  border-radius: 0.25rem;
+  background: #070b12;
+  cursor: grab;
+  touch-action: none;
+}
+
+.map:active {
+  cursor: grabbing;
+}
+
+.map:focus-visible {
+  outline: 2px solid var(--color-signal-cyan, #6df7ea);
+  outline-offset: 2px;
+}
+
+.sea {
+  fill: #070b12;
+}
+
+.graticule {
+  fill: none;
+  stroke: rgb(109 247 234 / 7%);
+  stroke-width: 0.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.land {
+  fill: #1d2836;
+  stroke: rgb(109 247 234 / 22%);
+  stroke-width: 0.6;
+  vector-effect: non-scaling-stroke;
+}
+
+.land,
+.isoline,
+.band,
+.centerLine {
+  pointer-events: none;
+}
+
+.isoline {
+  fill: none;
+  stroke: rgb(255 255 255 / 38%);
+  stroke-dasharray: 2 4;
+  stroke-width: 0.7;
+  vector-effect: non-scaling-stroke;
+}
+
+.isolineLabel {
+  fill: rgb(255 255 255 / 60%);
+  font-family: var(--font-code, monospace);
+  font-size: 10px;
+  paint-order: stroke;
+  stroke: #070b12;
+  stroke-width: 3px;
+  text-anchor: end;
+}
+
+/* The band keeps the only yellow: inside it, the switch flips. */
+.band {
+  fill: var(--color-signal-yellow, #ffea00);
+  fill-opacity: 0.14;
+  stroke: var(--color-signal-yellow, #ffea00);
+  stroke-opacity: 0.9;
+  stroke-width: 1.2;
+  vector-effect: non-scaling-stroke;
+}
+
+.centerLine {
+  fill: none;
+  stroke: var(--color-signal-yellow, #ffea00);
+  stroke-dasharray: 6 5;
+  stroke-opacity: 0.75;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.tick {
+  fill: var(--color-signal-yellow, #ffea00);
+  stroke: #070b12;
+  stroke-width: 1;
+}
+
+.tickLabel {
+  fill: rgb(255 234 0 / 78%);
+  font-family: var(--font-code, monospace);
+  font-size: 9px;
+  paint-order: stroke;
+  stroke: #070b12;
+  stroke-width: 2.5px;
+}
+
+.site {
+  cursor: pointer;
+}
+
+.siteTotal {
+  fill: var(--color-signal-yellow, #ffea00);
+  stroke: #070b12;
+  stroke-width: 1;
+}
+
+.sitePartial {
+  fill: #7f8ba0;
+  stroke: #070b12;
+  stroke-width: 1;
+}
+
+.siteLabel {
+  fill: rgb(255 255 255 / 70%);
+  font-family: var(--font-code, monospace);
+  font-size: 9.5px;
+  paint-order: stroke;
+  stroke: #070b12;
+  stroke-width: 2.5px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .site:hover .siteLabel {
+    fill: #fff;
+  }
+}
+
+.drive circle {
+  fill: none;
+  stroke: var(--color-signal-cyan, #6df7ea);
+  stroke-width: 1.4;
+}
+
+.marker circle {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
+.marker,
+.drive {
+  pointer-events: none;
+}
+
+.markerCore {
+  fill: #fff;
+}
+
+.zoomRail {
+  position: absolute;
+  z-index: 3;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.zoomButton {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgb(109 247 234 / 32%);
+  border-radius: 0.25rem;
+  background: rgb(7 11 18 / 85%);
+  color: var(--color-text, rgb(255 255 255 / 88%));
+  cursor: pointer;
+  font-family: var(--font-code, monospace);
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.zoomButton {
+  transition: transform var(--motion-micro, 160ms) var(--ease-signal, ease-out);
+}
+
+.zoomButton:active {
+  transform: scale(0.94);
+}
+
+.zoomButton:focus-visible {
+  outline: 2px solid var(--color-signal-cyan, #6df7ea);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoomButton:active {
+    transform: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .zoomButton {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}
+
+/* SVG text scales with the viewBox: a 358px phone render shrinks 9px labels
+   to ~5px, so the base size climbs where the frame is narrow. */
+@media (max-width: 34rem) {
+  .siteLabel,
+  .tickLabel {
+    font-size: 17px;
+  }
+
+  .isolineLabel {
+    font-size: 18px;
+  }
+}
