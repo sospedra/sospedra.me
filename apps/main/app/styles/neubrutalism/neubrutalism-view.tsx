@@ -192,221 +192,223 @@ const NeubrutalismView = ({ fontVars }: NeubrutalismViewProps) => {
           </div>
         </div>
 
-        <p className={css.venueBar}>
-          SOSPEDRA CAMPUS · TOWER A · 2F INNOVATION STUDIO — AUG 20 TUE → 22 THU
-          — DRESS CODE: OUTLINED
-        </p>
-
-        <section className={css.hero}>
-          <div className={`${css.cell} ${css.heroLeft}`}>
-            <h1 className={css.heroTitle}>
-              REJECT!
-              <br />
-              DEFAULT!
-              <br />
-              DESIGN!
-            </h1>
-          </div>
-          <div className={`${css.cell} ${css.heroRight}`}>
-            <span className={css.loud} data-stamp={stamp}>
-              LOUD!
-            </span>
-            <p className={css.heroSub}>
-              every border is 3px. every shadow is a solid block. nothing blurs,
-              nothing fades, nothing apologizes.
-            </p>
-          </div>
-        </section>
-
-        <section className={css.bento} aria-label='Working toy controls'>
-          <div className={`${css.cell} ${css.rsvp}`}>
-            <h2 className={css.cellTitle}>RSVP</h2>
-            <button
-              type='button'
-              className={css.btn3d}
-              onClick={() => setGoing((n) => n + 1)}
-            >
-              COUNT ME IN
-            </button>
-            <p className={css.count}>
-              <strong>{going}</strong> going
-            </p>
-          </div>
-
-          <div className={`${css.cell} ${css.mode}`}>
-            <h2 className={css.cellTitle}>MODE</h2>
-            <button
-              type='button'
-              role='switch'
-              aria-checked={oddinary}
-              className={css.switch}
-              onClick={() => setOddinary((v) => !v)}
-            >
-              <span className={css.knob} />
-            </button>
-            <p className={css.modeLabel}>
-              {oddinary ? 'ODDINARY' : 'ORDINARY'}
-            </p>
-          </div>
-
-          <div className={`${css.cell} ${css.hype}`}>
-            <h2 className={css.cellTitle}>HYPE METER</h2>
-            <div className={css.hypeRow}>
-              <button
-                type='button'
-                className={`${css.btn3d} ${css.step}`}
-                aria-label='Less hype'
-                onClick={() => setHype((n) => Math.max(0, n - 1))}
-              >
-                −
-              </button>
-              <span className={css.hypeValue}>{hype}</span>
-              <button
-                type='button'
-                className={`${css.btn3d} ${css.step}`}
-                aria-label='More hype'
-                onClick={() => setHype((n) => Math.min(10, n + 1))}
-              >
-                +
-              </button>
-            </div>
-            <div
-              className={css.meter}
-              role='img'
-              aria-label={`Hype ${hype} of 10`}
-            >
-              <div
-                className={css.meterFill}
-                style={{ width: `${hype * 10}%` }}
-              />
-            </div>
-          </div>
-
-          <div className={`${css.cell} ${css.dates}`}>
-            <Scallop />
-            <span className={css.dateChip}>AUG 20—22</span>
-          </div>
-
-          <div className={`${css.cell} ${css.audit}`}>
-            <h2 className={css.cellTitle}>AUDIT! YOUR! DECISIONS!</h2>
-            <ul className={css.auditList}>
-              {AUDIT_ITEMS.map((item, i) => (
-                <li key={item}>
-                  <label className={css.check}>
-                    <input
-                      type='checkbox'
-                      className={css.checkInput}
-                      checked={checked[i]}
-                      onChange={() => toggleCheck(i)}
-                    />
-                    <span className={css.checkBox} aria-hidden='true'>
-                      {checked[i] ? '✗' : ''}
-                    </span>
-                    <span className={checked[i] ? css.checkDone : undefined}>
-                      {item}
-                    </span>
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className={`${css.cell} ${css.shout}`}>
-            <p key={stamp} className={css.slogan}>
-              {SLOGANS[sloganIndex]}
-            </p>
-            <button type='button' className={css.btn3d} onClick={shout}>
-              MAKE IT LOUDER
-            </button>
-          </div>
-
-          <div className={`${css.cell} ${css.ticket}`}>
-            <span className={css.ticketAdmit}>ADMIT ∞</span>
-            <span className={css.ticketBars} aria-hidden='true' />
-            <span className={css.ticketNote}>
-              non-transferable. extremely transferable.
-            </span>
-          </div>
-        </section>
-
-        <section className={css.programme}>
-          <h2 className={css.programmeTitle}>THE! PROGRAMME!</h2>
-          <div className={css.axes}>
-            {AXES.map((axis) => (
-              <div key={axis.key} className={css.axis}>
-                <span className={css.axisLabel}>{axis.label}</span>
-                {axis.options.map((option) => (
-                  <button
-                    key={option}
-                    type='button'
-                    className={css.axisChip}
-                    data-on={axes[axis.key] === option ? 'true' : undefined}
-                    onClick={() =>
-                      setAxes((prev) => ({ ...prev, [axis.key]: option }))
-                    }
-                  >
-                    {option}
-                  </button>
-                ))}
-              </div>
-            ))}
-          </div>
-          <table className={css.schedule}>
-            <thead>
-              <tr>
-                <th>DAY</th>
-                <th>TIME</th>
-                <th>ACT</th>
-                <th>ROOM</th>
-              </tr>
-            </thead>
-            <tbody>
-              {SCHEDULE.filter((row) => matches(row, axes)).map((row) => (
-                <tr
-                  key={`${row.day}-${row.time}`}
-                  data-tba={row.act ? undefined : 'true'}
-                >
-                  <td>{row.day}</td>
-                  <td>{row.time}</td>
-                  <td className={css.scheduleAct}>
-                    {row.act || 'TO BE ANNOUNCED'}
-                  </td>
-                  <td>{row.room}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className={css.rolling}>
-            three acts still unannounced. the programme publishes as it fills.
+        <div className={css.broadsheet}>
+          <p className={css.venueBar}>
+            SOSPEDRA CAMPUS · TOWER A · 2F INNOVATION STUDIO — AUG 20 TUE → 22
+            THU — DRESS CODE: OUTLINED
           </p>
-        </section>
 
-        <section className={css.programme}>
-          <h2 className={css.programmeTitle}>TICKETS!</h2>
-          <div className={css.tierRow}>
-            {TIERS.map((tier) => (
-              <div key={tier.id} className={css.tier} data-tier={tier.id}>
-                <span className={css.tierName}>{tier.name}</span>
-                <span className={css.tierPrice}>{tier.price}</span>
-                <ul className={css.tierPerks}>
-                  {tier.perks.map((perk) => (
-                    <li key={perk}>+ {perk}</li>
-                  ))}
-                </ul>
+          <section className={css.hero}>
+            <div className={`${css.cell} ${css.heroLeft}`}>
+              <h1 className={css.heroTitle}>
+                REJECT!
+                <br />
+                DEFAULT!
+                <br />
+                DESIGN!
+              </h1>
+            </div>
+            <div className={`${css.cell} ${css.heroRight}`}>
+              <span className={css.loud} data-stamp={stamp}>
+                LOUD!
+              </span>
+              <p className={css.heroSub}>
+                every border is 3px. every shadow is a solid block. nothing
+                blurs, nothing fades, nothing apologizes.
+              </p>
+            </div>
+          </section>
+
+          <section className={css.bento} aria-label='Working toy controls'>
+            <div className={`${css.cell} ${css.rsvp}`}>
+              <h2 className={css.cellTitle}>RSVP</h2>
+              <button
+                type='button'
+                className={css.btn3d}
+                onClick={() => setGoing((n) => n + 1)}
+              >
+                COUNT ME IN
+              </button>
+              <p className={css.count}>
+                <strong>{going}</strong> going
+              </p>
+            </div>
+
+            <div className={`${css.cell} ${css.mode}`}>
+              <h2 className={css.cellTitle}>MODE</h2>
+              <button
+                type='button'
+                role='switch'
+                aria-checked={oddinary}
+                className={css.switch}
+                onClick={() => setOddinary((v) => !v)}
+              >
+                <span className={css.knob} />
+              </button>
+              <p className={css.modeLabel}>
+                {oddinary ? 'ODDINARY' : 'ORDINARY'}
+              </p>
+            </div>
+
+            <div className={`${css.cell} ${css.hype}`}>
+              <h2 className={css.cellTitle}>HYPE METER</h2>
+              <div className={css.hypeRow}>
                 <button
                   type='button'
-                  className={css.btn3d}
-                  onClick={() => setGoing((n) => n + 1)}
+                  className={`${css.btn3d} ${css.step}`}
+                  aria-label='Less hype'
+                  onClick={() => setHype((n) => Math.max(0, n - 1))}
                 >
-                  GET IT
+                  −
+                </button>
+                <span className={css.hypeValue}>{hype}</span>
+                <button
+                  type='button'
+                  className={`${css.btn3d} ${css.step}`}
+                  aria-label='More hype'
+                  onClick={() => setHype((n) => Math.min(10, n + 1))}
+                >
+                  +
                 </button>
               </div>
-            ))}
-          </div>
-          <p className={css.tierNote}>
-            every purchase adds one to the RSVP counter. capitalism!
-          </p>
-        </section>
+              <div
+                className={css.meter}
+                role='img'
+                aria-label={`Hype ${hype} of 10`}
+              >
+                <div
+                  className={css.meterFill}
+                  style={{ width: `${hype * 10}%` }}
+                />
+              </div>
+            </div>
+
+            <div className={`${css.cell} ${css.dates}`}>
+              <Scallop />
+              <span className={css.dateChip}>AUG 20—22</span>
+            </div>
+
+            <div className={`${css.cell} ${css.audit}`}>
+              <h2 className={css.cellTitle}>AUDIT! YOUR! DECISIONS!</h2>
+              <ul className={css.auditList}>
+                {AUDIT_ITEMS.map((item, i) => (
+                  <li key={item}>
+                    <label className={css.check}>
+                      <input
+                        type='checkbox'
+                        className={css.checkInput}
+                        checked={checked[i]}
+                        onChange={() => toggleCheck(i)}
+                      />
+                      <span className={css.checkBox} aria-hidden='true'>
+                        {checked[i] ? '✗' : ''}
+                      </span>
+                      <span className={checked[i] ? css.checkDone : undefined}>
+                        {item}
+                      </span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className={`${css.cell} ${css.shout}`}>
+              <p key={stamp} className={css.slogan}>
+                {SLOGANS[sloganIndex]}
+              </p>
+              <button type='button' className={css.btn3d} onClick={shout}>
+                MAKE IT LOUDER
+              </button>
+            </div>
+
+            <div className={`${css.cell} ${css.ticket}`}>
+              <span className={css.ticketAdmit}>ADMIT ∞</span>
+              <span className={css.ticketBars} aria-hidden='true' />
+              <span className={css.ticketNote}>
+                non-transferable. extremely transferable.
+              </span>
+            </div>
+          </section>
+
+          <section className={css.programme}>
+            <h2 className={css.programmeTitle}>THE! PROGRAMME!</h2>
+            <div className={css.axes}>
+              {AXES.map((axis) => (
+                <div key={axis.key} className={css.axis}>
+                  <span className={css.axisLabel}>{axis.label}</span>
+                  {axis.options.map((option) => (
+                    <button
+                      key={option}
+                      type='button'
+                      className={css.axisChip}
+                      data-on={axes[axis.key] === option ? 'true' : undefined}
+                      onClick={() =>
+                        setAxes((prev) => ({ ...prev, [axis.key]: option }))
+                      }
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+            <table className={css.schedule}>
+              <thead>
+                <tr>
+                  <th>DAY</th>
+                  <th>TIME</th>
+                  <th>ACT</th>
+                  <th>ROOM</th>
+                </tr>
+              </thead>
+              <tbody>
+                {SCHEDULE.filter((row) => matches(row, axes)).map((row) => (
+                  <tr
+                    key={`${row.day}-${row.time}`}
+                    data-tba={row.act ? undefined : 'true'}
+                  >
+                    <td>{row.day}</td>
+                    <td>{row.time}</td>
+                    <td className={css.scheduleAct}>
+                      {row.act || 'TO BE ANNOUNCED'}
+                    </td>
+                    <td>{row.room}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className={css.rolling}>
+              three acts still unannounced. the programme publishes as it fills.
+            </p>
+          </section>
+
+          <section className={`${css.programme} ${css.programmeNarrow}`}>
+            <h2 className={css.programmeTitle}>TICKETS!</h2>
+            <div className={css.tierRow}>
+              {TIERS.map((tier) => (
+                <div key={tier.id} className={css.tier} data-tier={tier.id}>
+                  <span className={css.tierName}>{tier.name}</span>
+                  <span className={css.tierPrice}>{tier.price}</span>
+                  <ul className={css.tierPerks}>
+                    {tier.perks.map((perk) => (
+                      <li key={perk}>+ {perk}</li>
+                    ))}
+                  </ul>
+                  <button
+                    type='button'
+                    className={css.btn3d}
+                    onClick={() => setGoing((n) => n + 1)}
+                  >
+                    GET IT
+                  </button>
+                </div>
+              ))}
+            </div>
+            <p className={css.tierNote}>
+              every purchase adds one to the RSVP counter. capitalism!
+            </p>
+          </section>
+        </div>
 
         <footer className={css.footer}>
           <p>

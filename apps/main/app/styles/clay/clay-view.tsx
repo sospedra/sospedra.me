@@ -136,113 +136,123 @@ const ClayView = ({ fontVars }: ClayViewProps) => (
       </p>
     </section>
 
-    <figure className={css.plate}>
-      <img
-        src='/styles/clay-hero.jpg'
-        alt='Three plasticine mascots on a salmon studio floor: a mint cat, a lilac ghost blob and a butter creature hugging a star'
-        className={css.plateImg}
-      />
-      <figcaption className={css.plateCap}>
-        <span>
-          <span className={css.seriesChip}>SERIES 01 · BLIND BOX</span>
-          fig. 01 — the residents, fresh from the mould. do not bake.
-        </span>
-        <span className={css.capPage}>p. 01</span>
-      </figcaption>
-    </figure>
+    <div className={css.issue}>
+      <figure className={css.plate}>
+        <img
+          src='/styles/clay-hero.jpg'
+          alt='Three plasticine mascots on a salmon studio floor: a mint cat, a lilac ghost blob and a butter creature hugging a star'
+          className={css.plateImg}
+        />
+        <figcaption className={css.plateCap}>
+          <span>
+            <span className={css.seriesChip}>SERIES 01 · BLIND BOX</span>
+            fig. 01 — the residents, fresh from the mould. do not bake.
+          </span>
+          <span className={css.capPage}>p. 01</span>
+        </figcaption>
+      </figure>
 
-    <section className={css.zone}>
-      <ZoneHead
-        index='01'
-        title='the petting zoo'
-        note='press a resident. they forgive fast.'
-      />
-      <ClayCritters />
-    </section>
+      <aside className={css.sideRail}>
+        <p className={css.railHead}>on the cover</p>
+        <p className={css.railBody}>
+          three residents, unbaked, photographed the morning they were pressed.
+          the mint one already had opinions. we let it keep them.
+        </p>
+      </aside>
 
-    <figure className={css.plate}>
-      <img
-        src='/styles/clay-crew.jpg'
-        alt='Five clay shape characters in a lineup: pentagon, square, pebble, ball and diamond, with tiny clay props floating above'
-        loading='lazy'
-        className={css.plateImg}
-      />
-      <figcaption className={css.plateCap}>
-        <span>fig. 02 — season one cast. five shapes, zero lore.</span>
-        <span className={css.capPage}>p. 02</span>
-      </figcaption>
-    </figure>
+      <section className={`${css.zone} ${css.zoneWide}`}>
+        <ZoneHead
+          index='01'
+          title='the petting zoo'
+          note='press a resident. they forgive fast.'
+        />
+        <ClayCritters />
+      </section>
 
-    <section className={css.zone}>
-      <ZoneHead
-        index='02'
-        title='the vending corner'
-        note='one box, four possible souls.'
-      />
-      <div className={css.split}>
-        <BlindBox />
-        <figure className={`${css.plate} ${css.plateTight}`}>
-          <img
-            src='/styles/clay-icons.jpg'
-            alt='A grid of nine clay icons on cream tiles over lavender: star, heart, bolt, flower, arrow, padlock, sun, ghost and check mark'
-            loading='lazy'
-            className={css.plateImg}
-          />
-          <figcaption className={css.plateCap}>
-            <span>
-              fig. 03 — the icon tray. accessory pack, sold separately.
-            </span>
-            <span className={css.capPage}>p. 03</span>
-          </figcaption>
-        </figure>
-      </div>
-    </section>
+      <figure className={`${css.plate} ${css.plateRight}`}>
+        <img
+          src='/styles/clay-crew.jpg'
+          alt='Five clay shape characters in a lineup: pentagon, square, pebble, ball and diamond, with tiny clay props floating above'
+          loading='lazy'
+          className={css.plateImg}
+        />
+        <figcaption className={css.plateCap}>
+          <span>fig. 02 — season one cast. five shapes, zero lore.</span>
+          <span className={css.capPage}>p. 02</span>
+        </figcaption>
+      </figure>
 
-    <section className={css.zone}>
-      <ZoneHead
-        index='03'
-        title='roll your own'
-        note='every stroke is a fresh rope. smash it when done.'
-      />
-      <ClayPad />
-    </section>
+      <section className={css.zone}>
+        <ZoneHead
+          index='02'
+          title='the vending corner'
+          note='one box, four possible souls.'
+        />
+        <div className={css.split}>
+          <BlindBox />
+          <figure className={`${css.plate} ${css.plateTight}`}>
+            <img
+              src='/styles/clay-icons.jpg'
+              alt='A grid of nine clay icons on cream tiles over lavender: star, heart, bolt, flower, arrow, padlock, sun, ghost and check mark'
+              loading='lazy'
+              className={css.plateImg}
+            />
+            <figcaption className={css.plateCap}>
+              <span>
+                fig. 03 — the icon tray. accessory pack, sold separately.
+              </span>
+              <span className={css.capPage}>p. 03</span>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
 
-    <aside className={css.ad}>
-      <span className={css.adLabel}>advertisement</span>
-      <div className={css.chipRow}>
-        <button type='button' className={css.chip}>
-          press me
-        </button>
-        <button type='button' className={`${css.chip} ${css.chipMint}`}>
-          no, me
-        </button>
-        <button type='button' className={`${css.chip} ${css.chipLilac}`}>
-          gently
-        </button>
-      </div>
-      <p className={css.adCopy}>
-        squish buttons™ — the only buttons that apologize when pressed.
-      </p>
-    </aside>
+      <section className={css.zone}>
+        <ZoneHead
+          index='03'
+          title='roll your own'
+          note='every stroke is a fresh rope. smash it when done.'
+        />
+        <ClayPad />
+      </section>
 
-    <aside className={css.coupon}>
-      <span className={css.couponLabel}>mail-order form</span>
-      <p className={css.couponRow}>
-        [ ] gato · [ ] noodle · [ ] shroom · [x] surprise me
-      </p>
-      <p className={css.couponFine}>
-        allow 6 to 8 weeks. clay may arrive pre-squished. no refunds back into
-        the original ball.
-      </p>
-      <span className={css.couponBars} aria-hidden='true' />
-    </aside>
+      <aside className={css.ad}>
+        <span className={css.adLabel}>advertisement</span>
+        <div className={css.chipRow}>
+          <button type='button' className={css.chip}>
+            press me
+          </button>
+          <button type='button' className={`${css.chip} ${css.chipMint}`}>
+            no, me
+          </button>
+          <button type='button' className={`${css.chip} ${css.chipLilac}`}>
+            gently
+          </button>
+        </div>
+        <p className={css.adCopy}>
+          squish buttons™ — the only buttons that apologize when pressed.
+        </p>
+      </aside>
 
-    <footer className={css.colophon}>
-      <p className={css.colophonText}>
-        printed in soft focus · fingerprints are a feature, not a defect ·
-        sospedra press
-      </p>
-    </footer>
+      <aside className={css.coupon}>
+        <span className={css.couponLabel}>mail-order form</span>
+        <p className={css.couponRow}>
+          [ ] gato · [ ] noodle · [ ] shroom · [x] surprise me
+        </p>
+        <p className={css.couponFine}>
+          allow 6 to 8 weeks. clay may arrive pre-squished. no refunds back into
+          the original ball.
+        </p>
+        <span className={css.couponBars} aria-hidden='true' />
+      </aside>
+
+      <footer className={css.colophon}>
+        <p className={css.colophonText}>
+          printed in soft focus · fingerprints are a feature, not a defect ·
+          sospedra press
+        </p>
+      </footer>
+    </div>
   </Shell>
 )
 

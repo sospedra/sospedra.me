@@ -193,91 +193,113 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
         </button>
       </div>
 
-      <section className={css.sheet}>
-        <header className={css.sheetHead}>
-          <h2 className={css.sheetTitle}>PLATE I — ARCHIVE INSECTS</h2>
-          <span className={css.stamp}>APPROVED</span>
-        </header>
-        <figure className={css.specimen}>
-          <aside className={css.lGutter}>
-            <span className={css.gutterKey}>l-gutter</span>
-            plate held at 60 per cent. the teal ran long on the second pass and
-            nobody logged it.
-          </aside>
-          <img
-            src='/styles/beetles-teal.webp'
-            alt='Wenceslaus Hollar etching: a moth, three butterflies and two beetles, printed in teal ink'
-            loading='lazy'
-            className={css.specimenPlate}
-          />
-          <figcaption className={css.legend}>
-            {LEGEND.map((line) => (
-              <span key={line} className={css.legendRow}>
-                {line}
-              </span>
-            ))}
-          </figcaption>
-        </figure>
-      </section>
+      <div className={css.pressRun}>
+        <section className={css.sheet}>
+          <header className={css.sheetHead}>
+            <h2 className={css.sheetTitle}>PLATE I — ARCHIVE INSECTS</h2>
+            <span className={css.stamp}>APPROVED</span>
+          </header>
+          <figure className={css.specimen}>
+            <aside className={css.lGutter}>
+              <span className={css.gutterKey}>l-gutter</span>
+              plate held at 60 per cent. the teal ran long on the second pass
+              and nobody logged it.
+            </aside>
+            <img
+              src='/styles/beetles-teal.webp'
+              alt='Wenceslaus Hollar etching: a moth, three butterflies and two beetles, printed in teal ink'
+              loading='lazy'
+              className={css.specimenPlate}
+            />
+            <figcaption className={css.legend}>
+              {LEGEND.map((line) => (
+                <span key={line} className={css.legendRow}>
+                  {line}
+                </span>
+              ))}
+            </figcaption>
+          </figure>
+        </section>
 
-      <section className={css.morgue}>
-        <h2 className={css.morgueTitle}>ANATOMY OF A MISPRINT</h2>
-        <p className={css.morgueNote}>
-          the scanner dragged the ink and nobody stopped the machine
-        </p>
-        <div className={css.smearRow}>
-          {(['a', 'b', 'c'] as const).map((grade) => (
-            <div key={grade} className={css.smearCol} data-smear={grade}>
-              <img
-                src='/styles/vesalius-black.webp'
-                alt=''
-                loading='lazy'
-                className={css.bones}
-              />
-              <img
-                src='/styles/vesalius-red.webp'
-                alt=''
-                loading='lazy'
-                className={css.bonesGhost}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className={css.gazette}>
-        <header className={css.masthead}>
-          <span className={css.mastheadName}>SUNDAY SUPPLEMENT</span>
-          <span className={css.mastheadSub}>
-            society pages — everything prints wrong eventually
-          </span>
-        </header>
-        <div className={css.gazetteBody}>
-          <img
-            src='/styles/posada-red.webp'
-            alt='Posada calavera etching printed in red ink'
-            loading='lazy'
-            className={css.calavera}
-          />
-          <p className={css.vertHead} aria-hidden='true'>
-            ALL PRINTS WRONG
+        <section className={css.morgue}>
+          <h2 className={css.morgueTitle}>ANATOMY OF A MISPRINT</h2>
+          <p className={css.morgueNote}>
+            the scanner dragged the ink and nobody stopped the machine
           </p>
-          <p className={css.columnText}>{GAZETTE.repeat(3)}</p>
-        </div>
-      </section>
+          <div className={css.smearRow}>
+            {(['a', 'b', 'c'] as const).map((grade) => (
+              <div key={grade} className={css.smearCol} data-smear={grade}>
+                <img
+                  src='/styles/vesalius-black.webp'
+                  alt=''
+                  loading='lazy'
+                  className={css.bones}
+                />
+                <img
+                  src='/styles/vesalius-red.webp'
+                  alt=''
+                  loading='lazy'
+                  className={css.bonesGhost}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
 
-      <footer className={css.colophon}>
-        <img
-          src='/styles/rhino-blue.webp'
-          alt='Dürer rhinoceros woodcut in blue ink'
-          loading='lazy'
-          className={css.rhino}
-        />
-        <p>
-          printed twice without permission · inks 0078BF / FF48B0 · sospedra
-          press, 2026
-        </p>
-      </footer>
+        <section className={css.gazette}>
+          <header className={css.masthead}>
+            <span className={css.mastheadName}>SUNDAY SUPPLEMENT</span>
+            <span className={css.mastheadSub}>
+              society pages — everything prints wrong eventually
+            </span>
+          </header>
+          <div className={css.gazetteBody}>
+            <img
+              src='/styles/posada-red.webp'
+              alt='Posada calavera etching printed in red ink'
+              loading='lazy'
+              className={css.calavera}
+            />
+            <p className={css.vertHead} aria-hidden='true'>
+              ALL PRINTS WRONG
+            </p>
+            <p className={css.columnText}>{GAZETTE.repeat(3)}</p>
+          </div>
+        </section>
+
+        <aside className={css.stack}>
+          <p className={css.stackHead}>ALSO IN THIS RUN</p>
+          <p className={css.stackItem}>
+            <b>Plate II</b>
+            the archive insects, held at sixty per cent and still wet
+          </p>
+          <p className={css.stackItem}>
+            <b>Anatomy</b>
+            three studies in what the scanner did to a skeleton
+          </p>
+          <p className={css.stackItem}>
+            <b>Supplement</b>
+            society pages, printed on the wrong side of the sheet
+          </p>
+          <p className={css.stackItem}>
+            <b>Colophon</b>
+            two inks, one apology, no reprints
+          </p>
+        </aside>
+
+        <footer className={css.colophon}>
+          <img
+            src='/styles/rhino-blue.webp'
+            alt='Dürer rhinoceros woodcut in blue ink'
+            loading='lazy'
+            className={css.rhino}
+          />
+          <p>
+            printed twice without permission · inks 0078BF / FF48B0 · sospedra
+            press, 2026
+          </p>
+        </footer>
+      </div>
 
       <div className={css.film} aria-hidden='true' />
     </Shell>

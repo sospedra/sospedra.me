@@ -271,28 +271,36 @@ const MishkoView = ({ fontVars }: MishkoViewProps) => {
               </button>
             ))}
           </div>
-          <dl className={css.tech}>
-            <div className={css.techRow}>
-              <dt>EDITION</dt>
-              <dd>unlimited, none identical</dd>
+          <div className={css.techWrap}>
+            <p className={css.techNote}>
+              every poster in this archive was pressed by the same shader. the
+              ramp is the only thing that changes, and it changes everything.
+            </p>
+            <div className={css.techCol}>
+              <dl className={css.tech}>
+                <div className={css.techRow}>
+                  <dt>EDITION</dt>
+                  <dd>unlimited, none identical</dd>
+                </div>
+                <div className={css.techRow}>
+                  <dt>INK</dt>
+                  <dd>one gradient-map LUT, three ramps</dd>
+                </div>
+                <div className={css.techRow}>
+                  <dt>PRESS</dt>
+                  <dd>webgl 1.0, a single fragment shader</dd>
+                </div>
+                <div className={css.techRow}>
+                  <dt>PAPER</dt>
+                  <dd>none — rub the poster and it melts again</dd>
+                </div>
+              </dl>
+              <p className={css.issueStamp}>
+                this issue is set in the {palette} ramp. the ramp paints the
+                poster and the publication both.
+              </p>
             </div>
-            <div className={css.techRow}>
-              <dt>INK</dt>
-              <dd>one gradient-map LUT, three ramps</dd>
-            </div>
-            <div className={css.techRow}>
-              <dt>PRESS</dt>
-              <dd>webgl 1.0, a single fragment shader</dd>
-            </div>
-            <div className={css.techRow}>
-              <dt>PAPER</dt>
-              <dd>none — rub the poster and it melts again</dd>
-            </div>
-          </dl>
-          <p className={css.issueStamp}>
-            this issue is set in the {palette} ramp. the ramp paints the poster
-            and the publication both.
-          </p>
+          </div>
         </section>
       </div>
     </Shell>

@@ -268,82 +268,84 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
           <div className={css.rule} />
         </header>
 
-        <section className={css.plateSection}>
-          <div className={css.cartouche}>
-            {era === '1994' ? <Astrolabe /> : <Burst />}
-            <figure className={css.arch}>
-              <img
-                src='/styles/perseus.jpg'
-                alt='Antonio Canova, Perseus with the Head of Medusa, marble, 1804'
-                className={css.statue}
-              />
-            </figure>
-            <aside className={css.annotation}>
-              <Orbit />
-              <p className={css.annotationText}>
-                Canova · MDCCCIV
-                <br />
-                marble, after the bronze of Cellini
+        <div className={css.spread}>
+          <section className={css.plateSection}>
+            <div className={css.cartouche}>
+              {era === '1994' ? <Astrolabe /> : <Burst />}
+              <figure className={css.arch}>
+                <img
+                  src='/styles/perseus.jpg'
+                  alt='Antonio Canova, Perseus with the Head of Medusa, marble, 1804'
+                  className={css.statue}
+                />
+              </figure>
+              <aside className={css.annotation}>
+                <Orbit />
+                <p className={css.annotationText}>
+                  Canova · MDCCCIV
+                  <br />
+                  marble, after the bronze of Cellini
+                </p>
+              </aside>
+            </div>
+          </section>
+
+          <div className={css.divider} aria-hidden='true'>
+            {decor.divider}
+          </div>
+
+          <article className={css.body}>
+            <aside className={css.sidenote} data-slot='a'>
+              the sandals were a loan from Hermes; the mirror, from Athena.
+              taste is mostly borrowed equipment.
+            </aside>
+            <aside className={css.sidenote} data-slot='b'>
+              see also: the espresso machine, the jazz shelf, the framed print
+              of this exact page.
+            </aside>
+            <p className={css.lede}>
+              <span className={css.dropCap}>P</span>erseus came back over the
+              sea with a thing in a satchel that could not be looked at. That is
+              the whole story, told politely: a loan of winged sandals, a mirror
+              used as a weapon, one careful swing. Everything after is packaging
+              — how to carry a catastrophe through a crowded room without
+              turning the guests to stone.
+            </p>
+            <p className={css.sectionOpen}>
+              Canova carves the second after the sword. The hero is already
+              composing himself for marble: weight settled on one hip, the
+              terrible head held out like a lamp at a dinner party. The violence
+              is over and the etiquette has begun. It is the most frasurbane
+              gesture in sculpture — sophistication as a way of holding
+              something monstrous at arm&rsquo;s length.✝
+            </p>
+            <blockquote className={css.pull}>
+              sophistication is just a monster, held correctly
+            </blockquote>
+            <p className={css.sectionOpen}>
+              The reader of 1994 hangs this print above a leather armchair,
+              between the espresso machine and the jazz shelf. The reader of
+              2024 scans it, crushes the blacks, letters it in fraktur and posts
+              it at midnight. Same statue. Same appetite for the classical. Only
+              the anxiety is new.
+            </p>
+            <p className={css.footnote}>
+              ✝ «frasurbane» — coined in the orbit of the Consumer Aesthetics
+              Research Institute: Frasier + urbane, the upscale grammar of 1990s
+              taste.
+            </p>
+            <p className={css.jump}>
+              continued on plate II, the weather section →
+            </p>
+            <aside className={css.citation}>
+              <span className={css.citationKey}>cite this plate</span>
+              <p className={css.citationBody}>
+                Sospedra, Rubén. “Perseus and the Head of Medusa.”{' '}
+                <em>A Frasurbane Reader</em>, vol. IV, August MMXXVI, plate I.
               </p>
             </aside>
-          </div>
-        </section>
-
-        <div className={css.divider} aria-hidden='true'>
-          {decor.divider}
+          </article>
         </div>
-
-        <article className={css.body}>
-          <aside className={css.sidenote} data-slot='a'>
-            the sandals were a loan from Hermes; the mirror, from Athena. taste
-            is mostly borrowed equipment.
-          </aside>
-          <aside className={css.sidenote} data-slot='b'>
-            see also: the espresso machine, the jazz shelf, the framed print of
-            this exact page.
-          </aside>
-          <p className={css.lede}>
-            <span className={css.dropCap}>P</span>erseus came back over the sea
-            with a thing in a satchel that could not be looked at. That is the
-            whole story, told politely: a loan of winged sandals, a mirror used
-            as a weapon, one careful swing. Everything after is packaging — how
-            to carry a catastrophe through a crowded room without turning the
-            guests to stone.
-          </p>
-          <p className={css.sectionOpen}>
-            Canova carves the second after the sword. The hero is already
-            composing himself for marble: weight settled on one hip, the
-            terrible head held out like a lamp at a dinner party. The violence
-            is over and the etiquette has begun. It is the most frasurbane
-            gesture in sculpture — sophistication as a way of holding something
-            monstrous at arm&rsquo;s length.✝
-          </p>
-          <blockquote className={css.pull}>
-            sophistication is just a monster, held correctly
-          </blockquote>
-          <p className={css.sectionOpen}>
-            The reader of 1994 hangs this print above a leather armchair,
-            between the espresso machine and the jazz shelf. The reader of 2024
-            scans it, crushes the blacks, letters it in fraktur and posts it at
-            midnight. Same statue. Same appetite for the classical. Only the
-            anxiety is new.
-          </p>
-          <p className={css.footnote}>
-            ✝ «frasurbane» — coined in the orbit of the Consumer Aesthetics
-            Research Institute: Frasier + urbane, the upscale grammar of 1990s
-            taste.
-          </p>
-          <p className={css.jump}>
-            continued on plate II, the weather section →
-          </p>
-          <aside className={css.citation}>
-            <span className={css.citationKey}>cite this plate</span>
-            <p className={css.citationBody}>
-              Sospedra, Rubén. “Perseus and the Head of Medusa.”{' '}
-              <em>A Frasurbane Reader</em>, vol. IV, August MMXXVI, plate I.
-            </p>
-          </aside>
-        </article>
 
         <section className={css.motifs}>
           <header className={css.motifHead}>an index of props</header>

@@ -213,101 +213,109 @@ const StickersView = ({ fontVars }: StickersViewProps) => {
         </div>
       </div>
 
-      <section className={css.zine}>
-        <article className={css.zinePoster}>
-          <p className={css.zineKicker}>
-            OPINION · PAGE 3 · THE ADHESIVE TIMES
-          </p>
-          <h2 className={css.zineHeadline}>
-            IT STICKS,
-            <br />
-            THEREFORE
-            <br />
-            IT IS.
-          </h2>
-          <p className={css.zineByline}>
-            words: the club — photos: none survived
-          </p>
-          <div className={css.zineCols}>
-            <p>
-              A sticker is a publishing platform the size of a plum. No paywall,
-              no algorithm, no schedule: surface, glue, and nerve. You do not
-              scroll a lamppost. The lamppost scrolls you, one commute at a
-              time, until the message wins by attrition.
+      <div className={css.spread}>
+        <span className={css.gutter} aria-hidden='true' />
+        <section className={css.zine}>
+          <article className={css.zinePoster}>
+            <p className={css.zineKicker}>
+              OPINION · PAGE 3 · THE ADHESIVE TIMES
             </p>
-            <p>
-              Editors reject. Curators decline. Feeds bury. The laminate
-              accepts. Slap one crooked over this very column and the page
-              objectively improves — that is the entire editorial policy, and
-              the letters section, and the archive.
+            <h2 className={css.zineHeadline}>
+              IT STICKS,
+              <br />
+              THEREFORE
+              <br />
+              IT IS.
+            </h2>
+            <p className={css.zineByline}>
+              words: the club — photos: none survived
             </p>
-          </div>
-          <span
-            className={`${css.zineTape} ${css.zineTapeA}`}
-            aria-hidden='true'
-          />
-          <span
-            className={`${css.zineTape} ${css.zineTapeB}`}
-            aria-hidden='true'
-          />
-          <span
-            className={`${css.zineSticker} ${css.zineStickA}`}
-            aria-hidden='true'
-          >
-            {STICKER_FACE.smiley}
-          </span>
-          <span
-            className={`${css.zineSticker} ${css.zineStickB}`}
-            aria-hidden='true'
-          >
-            {STICKER_FACE.bolt}
-          </span>
-          <span
-            className={`${css.zineSticker} ${css.zineStickC}`}
-            aria-hidden='true'
-          >
-            {STICKER_FACE.cherry}
-          </span>
-          <span
-            className={`${css.zineSticker} ${css.zineStickD}`}
-            aria-hidden='true'
-          >
-            {STICKER_FACE.ok}
-          </span>
-        </article>
-        <span className={css.zineNote} aria-hidden='true'>
-          real ones peel the corner first ↗
-        </span>
-      </section>
-
-      <section className={css.sheet}>
-        <header className={css.sheetHead}>
-          <h1 className={css.sheetTitle}>fresh sheet</h1>
-          <p className={css.sheetNote}>tap one to slap a copy on the board ↑</p>
-        </header>
-        <div className={css.sheetGrid}>
-          {SLAP_POOL.slice(0, 6).map((kind, index) => (
-            <button
-              key={kind}
-              type='button'
-              className={css.cell}
-              onClick={() => slap(kind)}
-              aria-label={`Peel a ${STICKER_LABEL[kind]} onto the board`}
+            <div className={css.zineCols}>
+              <p>
+                A sticker is a publishing platform the size of a plum. No
+                paywall, no algorithm, no schedule: surface, glue, and nerve.
+                You do not scroll a lamppost. The lamppost scrolls you, one
+                commute at a time, until the message wins by attrition.
+              </p>
+              <p>
+                Editors reject. Curators decline. Feeds bury. The laminate
+                accepts. Slap one crooked over this very column and the page
+                objectively improves — that is the entire editorial policy, and
+                the letters section, and the archive.
+              </p>
+            </div>
+            <span
+              className={`${css.zineTape} ${css.zineTapeA}`}
+              aria-hidden='true'
+            />
+            <span
+              className={`${css.zineTape} ${css.zineTapeB}`}
+              aria-hidden='true'
+            />
+            <span
+              className={`${css.zineSticker} ${css.zineStickA}`}
+              aria-hidden='true'
             >
-              <span className={css.cellBadge}>{SHEET_BADGE[index % 3]}</span>
-              <span className={css.cellFace}>{STICKER_FACE[kind]}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+              {STICKER_FACE.smiley}
+            </span>
+            <span
+              className={`${css.zineSticker} ${css.zineStickB}`}
+              aria-hidden='true'
+            >
+              {STICKER_FACE.bolt}
+            </span>
+            <span
+              className={`${css.zineSticker} ${css.zineStickC}`}
+              aria-hidden='true'
+            >
+              {STICKER_FACE.cherry}
+            </span>
+            <span
+              className={`${css.zineSticker} ${css.zineStickD}`}
+              aria-hidden='true'
+            >
+              {STICKER_FACE.ok}
+            </span>
+          </article>
+          <span className={css.zineNote} aria-hidden='true'>
+            real ones peel the corner first ↗
+          </span>
+        </section>
 
-      <footer className={css.colophon}>
-        <p>
-          die-cut contour, kraft board, one thumb of grain. stickers are the
-          loudest quiet medium: a brand you can hold, steal, and re-stick
-          somewhere it does not belong.
-        </p>
-      </footer>
+        <section className={css.sheet}>
+          <header className={css.sheetHead}>
+            <h1 className={css.sheetTitle}>fresh sheet</h1>
+            <p className={css.sheetNote}>
+              tap one to slap a copy on the board ↑
+            </p>
+          </header>
+          <div className={css.sheetGrid}>
+            {SLAP_POOL.slice(0, 6).map((kind, index) => (
+              <button
+                key={kind}
+                type='button'
+                className={css.cell}
+                onClick={() => slap(kind)}
+                aria-label={`Peel a ${STICKER_LABEL[kind]} onto the board`}
+              >
+                <span className={css.cellBadge}>{SHEET_BADGE[index % 3]}</span>
+                <span className={css.cellFace}>{STICKER_FACE[kind]}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        <footer className={css.colophon}>
+          <p>
+            die-cut contour, kraft board, one thumb of grain. stickers are the
+            loudest quiet medium: a brand you can hold, steal, and re-stick
+            somewhere it does not belong.
+          </p>
+        </footer>
+
+        <p className={css.folioLeft}>3 · THE ADHESIVE TIMES</p>
+        <p className={css.folioRight}>SUPPLEMENT · 4</p>
+      </div>
 
       <button type='button' className={css.slapBtn} onClick={() => slap()}>
         SLAP!

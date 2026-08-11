@@ -93,8 +93,13 @@
 }
 
 .plate {
-  width: min(1020px, calc(100% - 48px));
-  margin: 26px auto;
+  position: relative;
+  grid-column: 1 / 9;
+  margin: 0;
+}
+
+.plateRight {
+  grid-column: 5 / 13;
 }
 
 .plateImg {
@@ -125,13 +130,18 @@
 }
 
 .plateTight {
+  grid-column: auto;
   width: 100%;
   margin: 0;
 }
 
 .zone {
-  width: min(1020px, calc(100% - 48px));
-  margin: 44px auto;
+  grid-column: 2 / 12;
+  margin: 34px 0 0;
+}
+
+.zoneWide {
+  grid-column: 1 / 13;
 }
 
 .zoneHead {
@@ -191,6 +201,27 @@
   width: 100%;
   height: 190px;
   margin-bottom: 8px;
+}
+
+.sideRail {
+  grid-column: 9 / 13;
+  align-self: center;
+  padding-left: 18px;
+  border-left: 2px dashed rgb(92 58 51 / 30%);
+}
+
+.railHead {
+  font-family: var(--font-clay-display);
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--clay-brown);
+}
+
+.railBody {
+  margin-top: 8px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #7c453b;
 }
 
 .critter {
@@ -761,8 +792,8 @@
 }
 
 .ad {
-  width: min(1020px, calc(100% - 48px));
-  margin: 40px auto;
+  grid-column: 3 / 11;
+  margin: 34px 0 0;
   padding: 26px 22px 22px;
   border: 2px dashed rgb(92 58 51 / 40%);
   border-radius: 22px;
@@ -786,8 +817,8 @@
 }
 
 .colophon {
-  width: min(1020px, calc(100% - 48px));
-  margin: 0 auto;
+  grid-column: 2 / 12;
+  margin: 30px 0 0;
   padding: 14px 0 calc(70px + var(--safe-area-bottom));
   border-top: 2px solid rgb(92 58 51 / 35%);
   text-align: center;
@@ -880,8 +911,9 @@
 }
 
 .coupon {
-  width: min(680px, calc(100% - 48px));
-  margin: 0 auto 36px;
+  grid-column: 8 / 13;
+  width: auto;
+  margin: 0 0 20px;
   padding: 20px 22px;
   border: 2px dashed rgb(92 58 51 / 45%);
   border-radius: 18px;
@@ -961,5 +993,43 @@
 
   .cover {
     height: 170px;
+  }
+}
+
+.issue {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(10px, 1.4vw, 26px);
+  row-gap: 12px;
+  width: min(1340px, calc(100% - 40px));
+  margin: 0 auto;
+  align-items: start;
+}
+
+.plate .plateImg {
+  border-radius: 30px;
+}
+
+@media (max-width: 900px) {
+  .issue {
+    grid-template-columns: 1fr;
+  }
+
+  .plate,
+  .plateRight,
+  .zone,
+  .zoneWide,
+  .sideRail,
+  .ad,
+  .coupon,
+  .colophon {
+    grid-column: 1;
+  }
+
+  .sideRail {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 2px dashed rgb(92 58 51 / 30%);
+    padding-top: 14px;
   }
 }
