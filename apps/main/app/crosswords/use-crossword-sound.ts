@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { playFanfare } from 'services/audio/fanfare'
 import {
   playCarriageShift,
@@ -9,10 +9,11 @@ import {
 import { ensureRunning } from 'services/audio/kit'
 import { SOUND_GAINS, type SoundLevel } from './crossword-settings'
 
+/* consumers key callbacks and effects on these identities; keep them stable */
 export const useCrosswordSound = (soundLevel: SoundLevel) => {
   const audioContextRef = useRef<AudioContext | null>(null)
 
-  const getAudioContext = () => {
+  const getAudioContext = useCallback(() => {
     if (soundLevel === 0) return null
     try {
       if (
@@ -28,42 +29,42 @@ export const useCrosswordSound = (soundLevel: SoundLevel) => {
       // Audio is tactile polish; browser restrictions must never block play.
       return null
     }
-  }
+  }, [soundLevel])
 
-  const clickKey = () => {
+  const clickKey = useCallback(() => {
     const context = getAudioContext()
     if (context) {
       playKeyClick(context, SOUND_GAINS.keyClick[soundLevel])
     }
-  }
+  }, [getAudioContext, soundLevel])
 
-  const ringTypewriterBell = () => {
+  const ringTypewriterBell = useCallback(() => {
     const context = getAudioContext()
     if (context) {
       playTypewriterBell(context, SOUND_GAINS.typewriterBell[soundLevel])
     }
-  }
+  }, [getAudioContext, soundLevel])
 
-  const shiftCarriage = () => {
+  const shiftCarriage = useCallback(() => {
     const context = getAudioContext()
     if (context) {
       playCarriageShift(context, SOUND_GAINS.carriageShift[soundLevel])
     }
-  }
+  }, [getAudioContext, soundLevel])
 
-  const thudDeadKey = () => {
+  const thudDeadKey = useCallback(() => {
     const context = getAudioContext()
     if (context) {
       playDeadKey(context, SOUND_GAINS.deadKey[soundLevel])
     }
-  }
+  }, [getAudioContext, soundLevel])
 
-  const ringFanfare = () => {
+  const ringFanfare = useCallback(() => {
     const context = getAudioContext()
     if (context) {
       playFanfare(context, { volume: SOUND_GAINS.fanfare[soundLevel] })
     }
-  }
+  }, [getAudioContext, soundLevel])
 
   useEffect(
     () => () => {

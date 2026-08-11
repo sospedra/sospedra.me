@@ -51,7 +51,12 @@ export const useCrosswordProgress = ({
     [puzzle],
   )
 
+  /* one restore per puzzle: a re-run would stomp live play with a stale save */
+  const restoredPuzzleRef = useRef<string | null>(null)
+
   useEffect(() => {
+    if (restoredPuzzleRef.current === puzzle.id) return
+    restoredPuzzleRef.current = puzzle.id
     const loaded = readLocalJson(progressKey(puzzle))
     if (loaded.status === 'ok') {
       const restored = restoreCrosswordState(loaded.value, puzzle, Date.now())

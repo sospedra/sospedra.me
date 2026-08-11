@@ -65,6 +65,10 @@ test.describe('crosswords mobile', () => {
     health,
   }) => {
     await page.goto('/crosswords')
+    /* a human reaches Start after the first autosave has landed */
+    await page.waitForFunction(() =>
+      Object.keys(localStorage).some((key) => key.includes(':progress:')),
+    )
     await page.locator('#crossword-start-key').tap()
 
     const grid = page.getByRole('grid')
