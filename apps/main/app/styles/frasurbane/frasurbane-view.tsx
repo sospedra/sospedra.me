@@ -1,5 +1,6 @@
 'use client'
 
+import type { ReactNode } from 'react'
 import { useState } from 'react'
 import Link from 'services/link'
 import Shell from 'services/shell'
@@ -12,6 +13,10 @@ const SPARKLES = [
   { x: 92, y: 64, d: 300 },
   { x: 74, y: 88, d: 900 },
   { x: 26, y: 40, d: 1500 },
+  { x: 48, y: 6, d: 1800 },
+  { x: 6, y: 52, d: 2100 },
+  { x: 94, y: 30, d: 450 },
+  { x: 60, y: 94, d: 1350 },
 ]
 
 const Astrolabe = () => (
@@ -84,16 +89,123 @@ const Rosette = () => (
   </svg>
 )
 
+const MotifAstrolabe = (
+  <svg viewBox='0 0 48 48' aria-hidden='true'>
+    <circle cx='24' cy='24' r='19' fill='none' />
+    <circle cx='24' cy='24' r='11' fill='none' strokeDasharray='2 4' />
+    <line x1='8' y1='36' x2='40' y2='12' />
+    <circle cx='33' cy='17' r='2.4' className={css.motifFill} />
+  </svg>
+)
+
+const MotifColumn = (
+  <svg viewBox='0 0 48 48' aria-hidden='true'>
+    <path d='M14 10h20M16 14h16M14 38h20M16 34h16' />
+    <line x1='20' y1='14' x2='20' y2='34' />
+    <line x1='24' y1='14' x2='24' y2='34' />
+    <line x1='28' y1='14' x2='28' y2='34' />
+  </svg>
+)
+
+const MotifArch = (
+  <svg viewBox='0 0 48 48' aria-hidden='true'>
+    <path d='M12 40V22q12-16 24 0v18' fill='none' />
+    <path d='M8 40h32' />
+    <path d='M16 40V23.5q8-11 16 0V40' fill='none' />
+  </svg>
+)
+
+const MotifLaurel = (
+  <svg viewBox='0 0 48 48' aria-hidden='true'>
+    <path d='M24 40V12' fill='none' />
+    <path
+      d='M24 34q-9-2-11-10 9 1 11 10zM24 34q9-2 11-10-9 1-11 10zM24 24q-8-2-9-9 7 1 9 9zM24 24q8-2 9-9-7 1-9 9z'
+      className={css.motifFill}
+    />
+  </svg>
+)
+
+const MotifCoffee = (
+  <svg viewBox='0 0 48 48' aria-hidden='true'>
+    <path d='M12 20h20v8a10 10 0 0 1-20 0z' fill='none' />
+    <path d='M32 22h4a4 4 0 0 1 0 8h-4' fill='none' />
+    <path d='M10 42h26' />
+    <path d='M19 14q-2-3 0-6M26 14q-2-3 0-6' fill='none' />
+  </svg>
+)
+
+const MotifGlobe = (
+  <svg viewBox='0 0 48 48' aria-hidden='true'>
+    <circle cx='24' cy='22' r='14' fill='none' />
+    <ellipse cx='24' cy='22' rx='6' ry='14' fill='none' />
+    <line x1='10' y1='22' x2='38' y2='22' />
+    <path d='M15 34l-4 8M33 34l4 8M14 42h20' />
+  </svg>
+)
+
+type Motif = { numeral: string; name: string; art: ReactNode }
+
+const MOTIFS: Motif[] = [
+  { numeral: 'I', name: 'astrolabe', art: MotifAstrolabe },
+  { numeral: 'II', name: 'column', art: MotifColumn },
+  { numeral: 'III', name: 'arch', art: MotifArch },
+  { numeral: 'IV', name: 'laurel', art: MotifLaurel },
+  { numeral: 'V', name: 'coffee', art: MotifCoffee },
+  { numeral: 'VI', name: 'globe', art: MotifGlobe },
+]
+
+const TICKS = [
+  { year: '1989', label: 'the look is born' },
+  { year: '1993', label: 'Frasier premieres' },
+  { year: '1998', label: 'peak crate & twine' },
+  { year: '2004', label: 'retail fade-out' },
+  { year: '2024', label: 'the gothic remix' },
+]
+
 type Era = '1994' | '2024'
+
+type EraDecor = {
+  folioMark: string
+  titleMark: string
+  divider: string
+  colophonMark: string
+  marginalLeft: string
+  marginalRight: string
+  defaced: string
+}
+
+const ERA_DECOR: Record<Era, EraDecor> = {
+  '1994': {
+    folioMark: '\u2766',
+    titleMark: '\u2767',
+    divider: '\u2767 \u2766 \u2767',
+    colophonMark: '\u2766',
+    marginalLeft: 'ANTIQVITAS \u00b7 MCMXCIV',
+    marginalRight: 'VRBANITAS \u00b7 SEATTLE',
+    defaced: '',
+  },
+  '2024': {
+    folioMark: '\u2726',
+    titleMark: '\u2726',
+    divider: '\u2727 \u2726 \u2727',
+    colophonMark: '\u2727',
+    marginalLeft: 'greek mythology',
+    marginalRight: 'petrification',
+    defaced: ' \u00b7 defaced in UnifrakturMaguntia',
+  },
+}
 
 type FrasurbaneViewProps = { fontVars: string }
 
 const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
   const [era, setEra] = useState<Era>('2024')
+  const decor = ERA_DECOR[era]
 
   return (
     <Shell className={`${css.page} ${fontVars}`}>
       <div className={css.root} data-era={era}>
+        <div className={css.pageFrame} aria-hidden='true' />
+
         <div className={css.backTag}>
           <Link url='/styles'>◀ styles</Link>
         </div>
@@ -115,20 +227,42 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
         </div>
 
         <p className={`${css.marginal} ${css.marginalLeft}`} aria-hidden='true'>
-          {era === '1994' ? 'ANTIQVITAS · MCMXCIV' : 'greek mythology'}
+          {decor.marginalLeft}
         </p>
         <p
           className={`${css.marginal} ${css.marginalRight}`}
           aria-hidden='true'
         >
-          {era === '1994' ? 'VRBANITAS · SEATTLE' : 'petrification'}
+          {decor.marginalRight}
         </p>
 
+        <header className={css.folio}>
+          <span>A FRASURBANE READER · VOL. IV</span>
+          <span className={css.folioMark}>{decor.folioMark}</span>
+          <span className={css.folioRight}>AUGUST MMXXVI</span>
+        </header>
+
         <header className={css.masthead}>
-          <p className={css.eyebrow}>a frasurbane reader · volume IV</p>
+          {era === '2024' && (
+            <>
+              <span
+                className={`${css.mastSpark} ${css.mastSparkA}`}
+                aria-hidden='true'
+              >
+                ✧
+              </span>
+              <span
+                className={`${css.mastSpark} ${css.mastSparkB}`}
+                aria-hidden='true'
+              >
+                ✧
+              </span>
+            </>
+          )}
+          <p className={css.eyebrow}>the classical issue</p>
           <h1 className={css.title}>
             <em>Perseus</em>
-            <span className={css.titleMark}>{era === '1994' ? '❧' : '✦'}</span>
+            <span className={css.titleMark}>{decor.titleMark}</span>
           </h1>
           <p className={css.subtitle}>and the head of Medusa</p>
           <div className={css.rule} />
@@ -155,6 +289,10 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
           </div>
         </section>
 
+        <div className={css.divider} aria-hidden='true'>
+          {decor.divider}
+        </div>
+
         <article className={css.body}>
           <p className={css.lede}>
             <span className={css.dropCap}>P</span>erseus came back over the sea
@@ -170,7 +308,7 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
             terrible head held out like a lamp at a dinner party. The violence
             is over and the etiquette has begun. It is the most frasurbane
             gesture in sculpture — sophistication as a way of holding something
-            monstrous at arm&rsquo;s length.
+            monstrous at arm&rsquo;s length.✝
           </p>
           <blockquote className={css.pull}>
             sophistication is just a monster, held correctly
@@ -188,6 +326,32 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
             taste.
           </p>
         </article>
+
+        <section className={css.motifs}>
+          <header className={css.motifHead}>an index of props</header>
+          <ul className={css.motifGrid}>
+            {MOTIFS.map((motif) => (
+              <li key={motif.numeral} className={css.motifCell}>
+                <span className={css.motifIcon}>{motif.art}</span>
+                <span className={css.motifNum}>{motif.numeral}</span>
+                <span className={css.motifName}>{motif.name}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className={css.eraLine}>
+          <h2 className={css.eraLineTitle}>the aesthetic&rsquo;s run</h2>
+          <div className={css.timeline}>
+            {TICKS.map((tick) => (
+              <div key={tick.year} className={css.tick} data-year={tick.year}>
+                <span className={css.tickDot} aria-hidden='true' />
+                <span className={css.tickYear}>{tick.year}</span>
+                <span className={css.tickLabel}>{tick.label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section className={css.dark}>
           {era === '2024' &&
@@ -222,6 +386,7 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
             <img
               src='/styles/toledo.jpg'
               alt='El Greco, View of Toledo: a storm-green sky boiling over a hill town'
+              loading='lazy'
               className={css.painting}
             />
           </figure>
@@ -232,11 +397,13 @@ const FrasurbaneView = ({ fontVars }: FrasurbaneViewProps) => {
         </section>
 
         <footer className={css.colophon}>
-          <div className={css.colophonRule}>{era === '1994' ? '❦' : '✧'}</div>
+          <div className={css.colophonRule}>{decor.colophonMark}</div>
           <p className={css.colophonText}>
             set in Bodoni Moda, Cinzel &amp; EB Garamond
-            {era === '2024' ? ' · defaced in UnifrakturMaguntia' : ''} — cut
-            MMXXVI
+            {decor.defaced} — cut MMXXVI
+          </p>
+          <p className={css.colophonFolio}>
+            VOL. IV · PAGE I OF I · PRINTED NOWHERE
           </p>
         </footer>
 

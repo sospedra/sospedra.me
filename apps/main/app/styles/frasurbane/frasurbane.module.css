@@ -141,10 +141,11 @@
 }
 
 .masthead {
+  position: relative;
   display: grid;
   justify-items: center;
   gap: 10px;
-  padding: calc(110px + var(--safe-area-top)) 20px 20px;
+  padding: 40px 20px 20px;
   text-align: center;
 }
 
@@ -317,10 +318,13 @@
 }
 
 .body {
-  width: min(680px, calc(100% - 48px));
-  margin: 44px auto 0;
-  font-size: 1.13rem;
-  line-height: 1.68;
+  width: min(780px, calc(100% - 48px));
+  margin: 40px auto 0;
+  font-size: 1.08rem;
+  line-height: 1.66;
+  columns: 2;
+  column-gap: 44px;
+  column-rule: 1px solid var(--fr-line);
 }
 
 .body p + p {
@@ -341,7 +345,8 @@
 }
 
 .pull {
-  margin: 2em auto;
+  column-span: all;
+  margin: 1.6em auto;
   max-width: 24ch;
   font-family: var(--font-fr-display);
   font-style: italic;
@@ -360,7 +365,8 @@
 }
 
 .footnote {
-  margin-top: 2.4em;
+  column-span: all;
+  margin-top: 2.2em;
   padding-top: 12px;
   border-top: 1px solid var(--fr-line);
   font-size: 0.9rem;
@@ -523,6 +529,260 @@
   .painting,
   .sparkle,
   .behind {
+    animation: none;
+  }
+}
+
+.pageFrame {
+  position: fixed;
+  inset: 10px;
+  z-index: 45;
+  pointer-events: none;
+  border: 1px solid var(--fr-line);
+  outline: 1px solid var(--fr-line);
+  outline-offset: 4px;
+  opacity: 0.55;
+}
+
+.folio {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  width: min(780px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: calc(84px + var(--safe-area-top)) 0 8px;
+  border-bottom: 1px solid var(--fr-line);
+  font-family: var(--font-fr-caps);
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+}
+
+.folioMark {
+  font-family: var(--font-fr-text);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  color: var(--fr-accent);
+}
+
+.folioRight {
+  text-align: right;
+}
+
+.mastSpark {
+  position: absolute;
+  font-size: 1rem;
+  color: var(--fr-ink);
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+
+.mastSparkA {
+  left: 17%;
+  top: 34%;
+}
+
+.mastSparkB {
+  right: 15%;
+  bottom: 22%;
+  font-size: 0.78rem;
+  animation-delay: 1200ms;
+}
+
+.divider {
+  margin-top: 44px;
+  text-align: center;
+  font-size: 1.05rem;
+  letter-spacing: 1.1em;
+  padding-left: 1.1em;
+  color: var(--fr-accent);
+}
+
+.motifs {
+  width: min(780px, calc(100% - 48px));
+  margin: 56px auto 0;
+}
+
+.motifHead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  font-family: var(--font-fr-caps);
+  font-size: 0.68rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.motifHead::before,
+.motifHead::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--fr-line);
+}
+
+.motifGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  margin-top: 18px;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--fr-line);
+}
+
+.motifCell {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 20px 8px 16px;
+}
+
+.motifCell + .motifCell {
+  border-left: 1px solid var(--fr-line);
+}
+
+.motifIcon svg {
+  width: 46px;
+  height: 46px;
+  stroke: var(--fr-ink);
+  fill: none;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.motifFill {
+  fill: var(--fr-ink);
+  stroke: none;
+}
+
+.motifNum {
+  font-family: var(--font-fr-caps);
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  color: var(--fr-accent);
+}
+
+.motifName {
+  font-family: var(--font-fr-caps);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.eraLine {
+  width: min(780px, calc(100% - 48px));
+  margin: 52px auto 0;
+}
+
+.eraLineTitle {
+  margin-bottom: 28px;
+  text-align: center;
+  font-family: var(--font-fr-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.35rem;
+}
+
+.timeline {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  inset: 5px 4% auto;
+  height: 1px;
+  background: var(--fr-line);
+}
+
+.tick {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  width: 19%;
+  text-align: center;
+}
+
+.tickDot {
+  z-index: 1;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid var(--fr-ink);
+  background: var(--fr-paper);
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease;
+}
+
+.tickYear {
+  font-family: var(--font-fr-caps);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+}
+
+.tickLabel {
+  font-style: italic;
+  font-size: 0.76rem;
+  opacity: 0.8;
+}
+
+.root[data-era="1994"] .tick[data-year="1993"] .tickDot,
+.root[data-era="2024"] .tick[data-year="2024"] .tickDot {
+  background: var(--fr-accent);
+  border-color: var(--fr-accent);
+}
+
+.root[data-era="1994"] .tick[data-year="1993"] .tickYear,
+.root[data-era="2024"] .tick[data-year="2024"] .tickYear {
+  color: var(--fr-accent);
+}
+
+.colophonFolio {
+  font-family: var(--font-fr-caps);
+  font-size: 0.56rem;
+  letter-spacing: 0.3em;
+  opacity: 0.7;
+}
+
+@media (max-width: 900px) {
+  .motifGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .motifCell {
+    border-top: 1px solid var(--fr-line);
+  }
+
+  .motifGrid .motifCell:nth-child(-n + 3) {
+    border-top: 0;
+  }
+
+  .motifGrid .motifCell:nth-child(4) {
+    border-left: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .pageFrame {
+    display: none;
+  }
+
+  .body {
+    columns: 1;
+  }
+
+  .tickLabel {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mastSpark {
     animation: none;
   }
 }

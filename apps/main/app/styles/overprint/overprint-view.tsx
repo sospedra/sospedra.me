@@ -4,20 +4,20 @@ import type React from 'react'
 import { useState } from 'react'
 import Link from 'services/link'
 import Shell from 'services/shell'
-import InkFilters from './ink-filters'
+import SmearFilters from './ink-filters'
 import css from './overprint.module.css'
 
 const LEGEND = [
-  'FIG. 01 — polilla, plancha rayada',
-  'FIG. 02 — mariposa calcada dos veces',
-  'FIG. 03 — escarabajo, tinta cargada',
-  'FIG. 04 — el que se movió durante el escaneo',
+  'FIG. 01 — moth, scratched plate',
+  'FIG. 02 — butterfly, printed twice',
+  'FIG. 03 — beetle, ink too heavy',
+  'FIG. 04 — the one that moved mid-scan',
 ]
 
 const GAZETTE =
-  'Confirman los talleres que la plancha rosa entró torcida y nadie detuvo la tirada. ' +
-  'El regente declaró que el error era, visto de cerca, bastante mejor que el original. ' +
-  'Se imprimieron mil pliegos y se vendieron mil pliegos. '
+  'The pressroom confirms the pink plate went in crooked and nobody stopped the run. ' +
+  'The foreman declared the mistake, seen up close, considerably better than the original. ' +
+  'A thousand sheets were printed and a thousand sheets were sold. '
 
 type OverprintViewProps = { fontVars: string }
 
@@ -38,7 +38,7 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
 
   return (
     <Shell className={`${css.page} ${fontVars}`}>
-      <InkFilters />
+      <SmearFilters />
       <div className={css.backTag}>
         <Link url='/styles'>◀ STYLES</Link>
       </div>
@@ -55,10 +55,10 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
         >
           {pinkOn && (
             <div className={`${css.plate} ${css.platePink}`}>
-              <img src='/styles/eagle.jpg' alt='' className={css.eagle} />
+              <img src='/styles/eagle-pink.webp' alt='' className={css.eagle} />
               <div className={css.headlineBox}>
                 <p className={css.eyebrow}>
-                  EFECTO SOBREIMPRESIÓN · PLIEGO Nº1 · TIRADA 1000
+                  OVERPRINT EFFECT · SHEET Nº1 · RUN OF 1000
                 </p>
                 <h1 className={css.headline}>OVERPRINT</h1>
               </div>
@@ -78,15 +78,19 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
           )}
           {blueOn && (
             <div className={`${css.plate} ${css.plateBlue}`} aria-hidden='true'>
-              <img src='/styles/beetles.jpg' alt='' className={css.beetles} />
+              <img
+                src='/styles/beetles-blue.webp'
+                alt=''
+                className={css.beetles}
+              />
               <div className={css.headlineBox}>
                 <p className={css.eyebrow}>
-                  EFECTO SOBREIMPRESIÓN · PLIEGO Nº1 · TIRADA 1000
+                  OVERPRINT EFFECT · SHEET Nº1 · RUN OF 1000
                 </p>
                 <h1 className={css.headline}>OVERPRINT</h1>
               </div>
               <p className={css.plateCaption}>
-                dos tintas sin registro — risografía de navegador
+                two inks, no registration — browser risography
               </p>
               <span className={`${css.cross} ${css.crossTl}`}>✛</span>
               <span className={`${css.cross} ${css.crossBr}`}>✛</span>
@@ -94,7 +98,7 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
           )}
         </div>
         <p className={css.pressHint}>
-          mueve el puntero: las planchas pierden el registro
+          move the pointer — the plates lose register
         </p>
       </section>
 
@@ -106,7 +110,7 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
             onChange={() => setPinkOn((v) => !v)}
           />
           <span className={css.puckDot} aria-hidden='true' />
-          ROSA
+          PINK
         </label>
         <label className={css.puck} data-ink='blue'>
           <input
@@ -115,10 +119,10 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
             onChange={() => setBlueOn((v) => !v)}
           />
           <span className={css.puckDot} aria-hidden='true' />
-          AZUL
+          BLUE
         </label>
         <label className={css.spreadLabel}>
-          DESCUADRE {spread}px
+          SPREAD {spread}px
           <input
             type='range'
             min={0}
@@ -132,19 +136,20 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
           className={css.misprintBtn}
           onClick={() => setJolt((n) => n + 1)}
         >
-          ¡MISPRINT!
+          MISPRINT!
         </button>
       </div>
 
       <section className={css.sheet}>
         <header className={css.sheetHead}>
-          <h2 className={css.sheetTitle}>LÁMINA I — INSECTOS DE ARCHIVO</h2>
-          <span className={css.stamp}>APROBADO</span>
+          <h2 className={css.sheetTitle}>PLATE I — ARCHIVE INSECTS</h2>
+          <span className={css.stamp}>APPROVED</span>
         </header>
         <figure className={css.specimen}>
           <img
-            src='/styles/beetles.jpg'
+            src='/styles/beetles-teal.webp'
             alt='Wenceslaus Hollar etching: a moth, three butterflies and two beetles, printed in teal ink'
+            loading='lazy'
             className={css.specimenPlate}
           />
           <figcaption className={css.legend}>
@@ -158,17 +163,23 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
       </section>
 
       <section className={css.morgue}>
-        <h2 className={css.morgueTitle}>ANATOMÍA DEL ERROR</h2>
+        <h2 className={css.morgueTitle}>ANATOMY OF A MISPRINT</h2>
         <p className={css.morgueNote}>
-          el escáner arrastró la tinta y nadie paró la máquina
+          the scanner dragged the ink and nobody stopped the machine
         </p>
         <div className={css.smearRow}>
           {(['a', 'b', 'c'] as const).map((grade) => (
             <div key={grade} className={css.smearCol} data-smear={grade}>
-              <img src='/styles/vesalius.jpg' alt='' className={css.bones} />
               <img
-                src='/styles/vesalius.jpg'
+                src='/styles/vesalius-black.webp'
                 alt=''
+                loading='lazy'
+                className={css.bones}
+              />
+              <img
+                src='/styles/vesalius-red.webp'
+                alt=''
+                loading='lazy'
                 className={css.bonesGhost}
               />
             </div>
@@ -178,19 +189,20 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
 
       <section className={css.gazette}>
         <header className={css.masthead}>
-          <span className={css.mastheadName}>EL DUPLICADO</span>
+          <span className={css.mastheadName}>THE DUPLICATE</span>
           <span className={css.mastheadSub}>
-            prensa de dos tintas — sale cuando sale
+            a two-ink press — ships when it ships
           </span>
         </header>
         <div className={css.gazetteBody}>
           <img
-            src='/styles/posada.jpg'
+            src='/styles/posada-red.webp'
             alt='Posada calavera etching printed in red ink'
+            loading='lazy'
             className={css.calavera}
           />
           <p className={css.vertHead} aria-hidden='true'>
-            TODO SALE MAL
+            ALL PRINTS WRONG
           </p>
           <p className={css.columnText}>{GAZETTE.repeat(3)}</p>
         </div>
@@ -198,12 +210,13 @@ const OverprintView = ({ fontVars }: OverprintViewProps) => {
 
       <footer className={css.colophon}>
         <img
-          src='/styles/rhino.jpg'
+          src='/styles/rhino-blue.webp'
           alt='Dürer rhinoceros woodcut in blue ink'
+          loading='lazy'
           className={css.rhino}
         />
         <p>
-          impreso dos veces sin permiso · tintas 0078BF / FF48B0 · sospedra
+          printed twice without permission · inks 0078BF / FF48B0 · sospedra
           press, 2026
         </p>
       </footer>

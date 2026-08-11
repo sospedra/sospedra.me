@@ -76,11 +76,21 @@ const BlindBox = () => {
       <p className={css.boxNote}>
         {phase === 'open'
           ? `you pulled ${PRIZES[prize].label}`
-          : 'blind box — shake one open'}
+          : 'press the box. no refunds, no duplicates, no promises.'}
       </p>
     </div>
   )
 }
+
+type ZoneHeadProps = { index: string; title: string; note: string }
+
+const ZoneHead = ({ index, title, note }: ZoneHeadProps) => (
+  <header className={css.zoneHead}>
+    <span className={css.zoneIndex}>{index}</span>
+    <h2 className={css.zoneTitle}>{title}</h2>
+    <span className={css.zoneNote}>{note}</span>
+  </header>
+)
 
 type ClayViewProps = { fontVars: string }
 
@@ -90,45 +100,108 @@ const ClayView = ({ fontVars }: ClayViewProps) => (
       <Link url='/styles'>◀ styles</Link>
     </div>
 
-    <section className={css.hero}>
+    <header className={css.folio}>
+      <span>THE PLASTICINE REVIEW</span>
+      <span className={css.folioRight}>ISSUE Nº 01 · AUG 2026</span>
+    </header>
+
+    <section className={css.cover}>
       <p className={css.eyebrow}>plasticine social club</p>
       <h1 className={css.title}>CLAY</h1>
       <p className={css.subtitle}>
-        everything here is thumb-pressed. the eyes follow you. poke responsibly.
+        everything in this issue is thumb-pressed. the eyes follow you. poke
+        responsibly.
       </p>
+    </section>
+
+    <figure className={css.plate}>
+      <img
+        src='/styles/clay-hero.jpg'
+        alt='Three plasticine mascots on a salmon studio floor: a mint cat, a lilac ghost blob and a butter creature hugging a star'
+        className={css.plateImg}
+      />
+      <figcaption className={css.plateCap}>
+        <span>fig. 01 — the residents, fresh from the mould. do not bake.</span>
+        <span className={css.capPage}>p. 01</span>
+      </figcaption>
+    </figure>
+
+    <section className={css.zone}>
+      <ZoneHead
+        index='01'
+        title='the petting zoo'
+        note='press a resident. they forgive fast.'
+      />
       <ClayCritters />
     </section>
 
-    <section className={css.split}>
-      <BlindBox />
-      <div className={css.chipDemo}>
-        <h2 className={css.sectionTitle}>squish buttons</h2>
-        <p className={css.sectionNote}>
-          claymorphism: soft inset light, soft drop, huge radius.
-        </p>
-        <div className={css.chipRow}>
-          <button type='button' className={css.chip}>
-            press me
-          </button>
-          <button type='button' className={`${css.chip} ${css.chipMint}`}>
-            no, me
-          </button>
-          <button type='button' className={`${css.chip} ${css.chipLilac}`}>
-            gently
-          </button>
-        </div>
+    <figure className={css.plate}>
+      <img
+        src='/styles/clay-crew.jpg'
+        alt='Five clay shape characters in a lineup: pentagon, square, pebble, ball and diamond, with tiny clay props floating above'
+        loading='lazy'
+        className={css.plateImg}
+      />
+      <figcaption className={css.plateCap}>
+        <span>fig. 02 — season one cast. five shapes, zero lore.</span>
+        <span className={css.capPage}>p. 02</span>
+      </figcaption>
+    </figure>
+
+    <section className={css.zone}>
+      <ZoneHead
+        index='02'
+        title='the vending corner'
+        note='one box, four possible souls.'
+      />
+      <div className={css.split}>
+        <BlindBox />
+        <figure className={`${css.plate} ${css.plateTight}`}>
+          <img
+            src='/styles/clay-icons.jpg'
+            alt='A grid of nine clay icons on cream tiles over lavender: star, heart, bolt, flower, arrow, padlock, sun, ghost and check mark'
+            loading='lazy'
+            className={css.plateImg}
+          />
+          <figcaption className={css.plateCap}>
+            <span>fig. 03 — the icon tray, straight from the oven.</span>
+            <span className={css.capPage}>p. 03</span>
+          </figcaption>
+        </figure>
       </div>
     </section>
 
-    <section className={css.padSection}>
-      <h2 className={css.sectionTitle}>the rolling pad</h2>
+    <section className={css.zone}>
+      <ZoneHead
+        index='03'
+        title='roll your own'
+        note='every stroke is a fresh rope. smash it when done.'
+      />
       <ClayPad />
     </section>
 
+    <aside className={css.ad}>
+      <span className={css.adLabel}>advertisement</span>
+      <div className={css.chipRow}>
+        <button type='button' className={css.chip}>
+          press me
+        </button>
+        <button type='button' className={`${css.chip} ${css.chipMint}`}>
+          no, me
+        </button>
+        <button type='button' className={`${css.chip} ${css.chipLilac}`}>
+          gently
+        </button>
+      </div>
+      <p className={css.adCopy}>
+        squish buttons™ — the only buttons that apologize when pressed.
+      </p>
+    </aside>
+
     <footer className={css.colophon}>
-      <p>
-        clay style sells softness: matte pastel, fat radii, one warm light from
-        the upper left. the fingerprint is the brand.
+      <p className={css.colophonText}>
+        printed in soft focus · fingerprints are a feature, not a defect ·
+        sospedra press
       </p>
     </footer>
   </Shell>

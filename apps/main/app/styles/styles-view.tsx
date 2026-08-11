@@ -111,6 +111,11 @@ type StylesViewProps = { fontVars: string }
 
 const StylesView = ({ fontVars }: StylesViewProps) => (
   <Shell className={`${css.page} ${fontVars}`}>
+    <div className={css.folio}>
+      <span>SOSPEDRA PRESS</span>
+      <span className={css.folioIssue}>ISSUE Nº 01 · PRICE: NOTHING</span>
+      <span className={css.folioRight}>AUG 2026</span>
+    </div>
     <header className={css.head}>
       <p className={css.eyebrow}>six aesthetics, stolen for an afternoon</p>
       <h1 className={css.title}>STYLE LAB</h1>
@@ -139,6 +144,18 @@ const StylesView = ({ fontVars }: StylesViewProps) => (
         </Link>
       ))}
     </nav>
+
+    <section className={css.contents} aria-hidden='true'>
+      <p className={css.contentsHead}>in this issue</p>
+      {CARDS.map((card) => (
+        <p key={card.id} className={css.contentsRow}>
+          <span className={css.contentsIndex}>{card.index}</span>
+          <span className={css.contentsName}>{card.name}</span>
+          <span className={css.contentsLeader} />
+          <span className={css.contentsPage}>p. {card.index}</span>
+        </p>
+      ))}
+    </section>
 
     <footer className={css.foot}>
       <Link url='/' className={css.homeLink}>

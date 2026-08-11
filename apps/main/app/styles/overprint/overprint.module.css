@@ -68,12 +68,14 @@
 }
 
 .platePink {
-  filter: url("#ink-pink");
+  --plate-ink: var(--op-pink);
+  will-change: translate;
   translate: calc(var(--reg-x, 2px) * -1) calc(var(--reg-y, 1px) * -1);
 }
 
 .plateBlue {
-  filter: url("#ink-blue");
+  --plate-ink: var(--op-blue);
+  will-change: translate;
   translate: var(--reg-x, 2px) var(--reg-y, 1px);
 }
 
@@ -119,7 +121,6 @@
   right: -6%;
   width: min(62%, 780px);
   height: auto;
-  filter: brightness(1.5) contrast(2.1);
 }
 
 .beetles {
@@ -128,7 +129,6 @@
   left: -3%;
   width: min(52%, 640px);
   height: auto;
-  filter: brightness(1.35) contrast(1.75);
 }
 
 .headlineBox {
@@ -140,6 +140,7 @@
 
 .eyebrow {
   margin-bottom: 8px;
+  color: var(--plate-ink, var(--op-ink));
   font-size: clamp(0.62rem, 1.3vw, 0.85rem);
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -150,11 +151,12 @@
   font-size: clamp(3.6rem, 16.5vw, 15rem);
   line-height: 0.92;
   letter-spacing: 0.005em;
-  color: #101010;
+  color: var(--plate-ink, #101010);
 }
 
 .plateCaption {
   position: absolute;
+  color: var(--plate-ink, var(--op-ink));
   bottom: 7%;
   left: 5%;
   font-size: clamp(0.7rem, 1.4vw, 0.95rem);
@@ -163,6 +165,7 @@
 
 .cross {
   position: absolute;
+  color: var(--plate-ink, var(--op-ink));
   font-size: 20px;
   line-height: 1;
 }
@@ -276,6 +279,8 @@
 }
 
 .sheet {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
   width: min(940px, calc(100% - 40px));
   margin: 56px auto;
   padding: clamp(20px, 4vw, 44px);
@@ -321,7 +326,6 @@
 .specimenPlate {
   width: 100%;
   height: auto;
-  filter: brightness(1.35) contrast(1.75) url("#ink-teal");
   mix-blend-mode: multiply;
 }
 
@@ -338,6 +342,8 @@
 }
 
 .morgue {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
   width: min(1180px, calc(100% - 40px));
   margin: 70px auto;
 }
@@ -378,34 +384,33 @@
   inset: 0;
 }
 
-.smearCol[data-smear="a"] .bones {
-  filter: grayscale(1) contrast(1.25) url("#smear-a");
+.smearCol[data-smear="a"] {
+  filter: url("#smear-a");
 }
 
 .smearCol[data-smear="a"] .bonesGhost {
-  filter: url("#ink-red") url("#smear-b");
   translate: 7px 4px;
 }
 
-.smearCol[data-smear="b"] .bones {
-  filter: grayscale(1) contrast(1.2) url("#smear-b");
+.smearCol[data-smear="b"] {
+  filter: url("#smear-b");
 }
 
 .smearCol[data-smear="b"] .bonesGhost {
-  filter: url("#ink-red") url("#smear-c");
   translate: -9px 6px;
 }
 
-.smearCol[data-smear="c"] .bones {
-  filter: grayscale(1) contrast(1.3) url("#smear-c");
+.smearCol[data-smear="c"] {
+  filter: url("#smear-c");
 }
 
 .smearCol[data-smear="c"] .bonesGhost {
-  filter: url("#ink-red") url("#smear-a");
   translate: 5px -6px;
 }
 
 .gazette {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
   width: min(1040px, calc(100% - 40px));
   margin: 70px auto;
   border-block: 4px double var(--op-ink);
@@ -442,7 +447,6 @@
 .calavera {
   width: 100%;
   height: auto;
-  filter: brightness(1.42) contrast(1.85) url("#ink-red");
   mix-blend-mode: multiply;
 }
 
@@ -471,6 +475,8 @@
 }
 
 .colophon {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 480px;
   display: grid;
   justify-items: center;
   gap: 16px;
@@ -481,7 +487,6 @@
 .rhino {
   width: min(300px, 70%);
   height: auto;
-  filter: brightness(1.12) contrast(1.3) url("#ink-blue");
   mix-blend-mode: multiply;
 }
 

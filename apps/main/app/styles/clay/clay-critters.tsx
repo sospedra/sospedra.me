@@ -59,14 +59,50 @@ const Mushroom = () => (
 )
 
 const CRITTERS = [
-  { id: 'gato', label: 'Black clay cat. Poke to squish.', art: <Cat /> },
-  { id: 'gusano', label: 'Mint clay worm. Poke to squish.', art: <Worm /> },
   {
-    id: 'seta',
-    label: 'Lilac clay mushroom. Poke to squish.',
+    id: 'gato',
+    name: 'GATO',
+    role: 'security',
+    label: 'Gato, the black clay cat. Poke to squish.',
+    art: <Cat />,
+  },
+  {
+    id: 'noodle',
+    name: 'NOODLE',
+    role: 'morale',
+    label: 'Noodle, the mint clay worm. Poke to squish.',
+    art: <Worm />,
+  },
+  {
+    id: 'shroom',
+    name: 'SHROOM',
+    role: 'shade',
+    label: 'Shroom, the lilac clay mushroom. Poke to squish.',
     art: <Mushroom />,
   },
 ]
+
+// bumpy hand-pressed edges for the css critters, one displacement pass
+const ClayRough = () => (
+  <svg className='sr-only' aria-hidden='true' focusable='false'>
+    <defs>
+      <filter id='clay-rough' x='-4%' y='-4%' width='108%' height='108%'>
+        <feTurbulence
+          type='fractalNoise'
+          baseFrequency='0.05'
+          numOctaves='2'
+          seed='3'
+        />
+        <feDisplacementMap
+          in='SourceGraphic'
+          scale='5'
+          xChannelSelector='R'
+          yChannelSelector='G'
+        />
+      </filter>
+    </defs>
+  </svg>
+)
 
 const useGooglyEyes = (stage: React.RefObject<HTMLDivElement | null>) => {
   useEffect(() => {
@@ -106,22 +142,26 @@ const ClayCritters = () => {
 
   return (
     <div ref={stage} className={css.shelf}>
+      <ClayRough />
       {CRITTERS.map((critter) => (
-        <button
-          key={critter.id}
-          type='button'
-          aria-label={critter.label}
-          className={css.critter}
-          onClick={() => poke(critter.id)}
-        >
-          <span
-            key={pokes[critter.id] ?? 0}
-            className={pokes[critter.id] ? css.squish : undefined}
+        <div key={critter.id} className={css.critterSlot}>
+          <button
+            type='button'
+            aria-label={critter.label}
+            className={css.critter}
+            onClick={() => poke(critter.id)}
           >
-            {critter.art}
-          </span>
-          <span className={css.plinthShadow} aria-hidden='true' />
-        </button>
+            <span
+              key={pokes[critter.id] ?? 0}
+              className={pokes[critter.id] ? css.squish : undefined}
+            >
+              <span className={css.rough}>{critter.art}</span>
+            </span>
+            <span className={css.plinthShadow} aria-hidden='true' />
+          </button>
+          <span className={css.critterName}>{critter.name}</span>
+          <span className={css.critterRole}>dept. of {critter.role}</span>
+        </div>
       ))}
     </div>
   )

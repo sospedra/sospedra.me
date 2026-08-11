@@ -10,7 +10,7 @@
   display: grid;
   justify-items: center;
   gap: 10px;
-  padding: calc(70px + var(--safe-area-top)) 20px 30px;
+  padding: 34px 20px 28px;
   text-align: center;
 }
 
@@ -360,4 +360,76 @@
   .card {
     min-height: 210px;
   }
+}
+
+.folio {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  width: min(1060px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: calc(26px + var(--safe-area-top)) 0 10px;
+  border-bottom: 1px solid #33313a;
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  letter-spacing: 0.26em;
+  color: #8f8a80;
+}
+
+.folioIssue {
+  text-align: center;
+}
+
+.folioRight {
+  text-align: right;
+}
+
+.contents {
+  width: min(560px, calc(100% - 40px));
+  margin: 10px auto 36px;
+}
+
+.contentsHead {
+  margin-bottom: 12px;
+  text-align: center;
+  font-family: var(--font-code);
+  font-size: 0.66rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #8f8a80;
+}
+
+.contentsRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 0.85rem;
+  color: #a7a199;
+}
+
+.contentsIndex {
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: #6f6a63;
+}
+
+.contentsName {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #cfc9bf;
+}
+
+.contentsLeader {
+  flex: 1;
+  border-bottom: 1px dotted #45424c;
+  translate: 0 -3px;
+}
+
+.contentsPage {
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
 }
