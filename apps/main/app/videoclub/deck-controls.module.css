@@ -229,15 +229,53 @@
 
 /* the set can be height-capped narrow on a wide viewport, so the fascia
    collapses on chassis width, not viewport width */
+
+/* Stacked, tight: the transport keys take a row of their own. */
 @container talks-tv (max-width: 31rem) {
   .controls {
     grid-template:
-      "header header" auto
-      "inputs power" auto
-      "transport transport" auto
-      "volume volume" auto
-      / minmax(0, 1fr) minmax(3.25rem, 0.22fr);
+      "header header header" auto
+      "inputs volume power" auto
+      "transport transport transport" auto
+      / minmax(0, 1fr) auto auto;
     align-items: end;
+  }
+}
+
+/* Stacked, roomy: one key row fits at 44px a target, so the jack strip lies
+   down beside the silkscreen header and the controls lose a whole row.
+   The floor is 3 transport keys + the volume pair + the power dial + gaps. */
+@container talks-tv (min-width: 20.5rem) and (max-width: 31rem) {
+  .controls {
+    --jack-strip: 8.5rem;
+    grid-template:
+      "header header header" auto
+      "transport volume power" auto
+      / minmax(0, 1fr) auto auto;
+  }
+
+  .controlHeader {
+    align-self: stretch;
+    align-items: center;
+    padding-right: calc(var(--jack-strip) + 0.75rem);
+  }
+
+  /* shares the header area, so it never sizes the power track */
+  .avInputs {
+    grid-area: header;
+    align-self: center;
+    justify-self: end;
+    inline-size: var(--jack-strip);
+    min-height: 0;
+    margin-bottom: 0.3rem;
+    padding: 0.26rem 0.4rem;
+  }
+
+  /* jack over label becomes jack beside label */
+  .avInputs span {
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 0.24rem;
   }
 }
 

@@ -17,6 +17,8 @@
   --tv-metal: #474943;
   --tv-dur-press: 90ms;
   --tv-radius-shell: clamp(0.8rem, 1.8vw, 1.35rem);
+  /* the ON AIR plaque is 3:1, so its height is a third of this */
+  --on-air-plaque: clamp(8rem, 30vw, 10.5rem);
 
   display: flex;
   min-height: 100dvh;
@@ -264,6 +266,11 @@
     flex-direction: column;
     align-items: center;
   }
+
+  /* room for the ON AIR plaque straddling the top edge */
+  .tv {
+    margin-top: calc(var(--on-air-plaque) / 3 - 0.35rem);
+  }
 }
 
 @media (max-width: 44rem) {
@@ -272,11 +279,11 @@
   }
 }
 
-/* short windows: the collapsed fascia runs ~7.5rem taller than the wide one,
+/* short windows: the collapsed fascia runs ~4rem taller than the wide one,
    so the height budget grows and the wide-fascia floor no longer applies */
 @media (max-height: 52.5rem) {
   .tv {
-    width: min(48rem, 100%, max(20rem, calc((100dvh - 32rem) * 4 / 3)));
+    width: min(48rem, 100%, max(20rem, calc((100dvh - 28rem) * 4 / 3)));
   }
 }
 

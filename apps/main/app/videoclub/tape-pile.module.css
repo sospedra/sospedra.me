@@ -266,13 +266,15 @@
   display: none;
 }
 
-/* the set mount: resting on the tv's top edge, stacked layout only */
+/* the set mount: resting on the tv's top edge, stacked layout only.
+   The tv reserves this overhang as top margin, so the plaque never
+   climbs into the header. */
 .onAirSet {
   position: absolute;
   right: 0.75rem;
   bottom: calc(100% - 0.35rem);
   z-index: 1;
-  inline-size: clamp(8rem, 30vw, 10.5rem);
+  inline-size: var(--on-air-plaque);
 }
 
 @media (min-width: 64rem) {
