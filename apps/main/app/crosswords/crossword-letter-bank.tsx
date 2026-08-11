@@ -113,8 +113,9 @@ const BankKeyButton = ({
   onPress: () => void
   wide?: boolean
 }) => {
-  /* preventDefault keeps the proxy focused but also swallows :active, so the
-     pressed face rides a pointer-driven attribute instead */
+  /* focus-keeping rides mousedown: cancelling pointerdown kills the whole
+     compatibility click on iOS, and mousedown preventDefault still swallows
+     :active, so the pressed face rides a pointer-driven attribute */
   const [pressed, setPressed] = useState(false)
   const release = () => setPressed(false)
 
@@ -125,8 +126,7 @@ const BankKeyButton = ({
       aria-label={label}
       className={cn(css.bankKey, wide && css.bankKeyWide)}
       data-pressed={pressed || undefined}
-      onPointerDown={(event) => {
-        event.preventDefault()
+      onPointerDown={() => {
         setPressed(true)
         tapHaptic()
       }}
