@@ -1,0 +1,683 @@
+.page {
+  --clay-bg-hi: #f0a89e;
+  --clay-bg-lo: #e69187;
+  --clay-cream: #f6efe7;
+  --clay-coal: #3a3633;
+  --clay-mint: #9fd8c9;
+  --clay-lilac: #b9a8e3;
+  --clay-butter: #f5d789;
+  --clay-blue: #92b4e3;
+  --clay-ink: #33302c;
+  --clay-shadow: rgb(126 54 43 / 32%);
+  min-height: 100dvh;
+  background:
+    radial-gradient(110% 70% at 50% 0%, rgb(255 240 225 / 30%), transparent 60%),
+    linear-gradient(180deg, var(--clay-bg-hi), var(--clay-bg-lo));
+  color: var(--clay-ink);
+  font-family: var(--font-clay-body);
+  overflow-x: clip;
+}
+
+.backTag {
+  position: fixed;
+  top: calc(14px + var(--safe-area-top));
+  left: calc(14px + var(--safe-area-left));
+  z-index: 40;
+}
+
+.backTag a {
+  display: inline-block;
+  padding: 8px 18px;
+  background: var(--clay-cream);
+  color: var(--clay-ink);
+  border-radius: 22px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  box-shadow:
+    inset 3px 4px 6px rgb(255 255 255 / 80%),
+    inset -4px -5px 8px rgb(120 90 70 / 18%),
+    8px 10px 18px var(--clay-shadow);
+}
+
+.hero {
+  padding: calc(72px + var(--safe-area-top)) 20px 30px;
+  text-align: center;
+}
+
+.eyebrow {
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #7c453b;
+}
+
+.title {
+  margin-top: 6px;
+  font-family: var(--font-clay-display);
+  font-weight: 800;
+  font-size: clamp(4.4rem, 15vw, 10.5rem);
+  line-height: 0.95;
+  color: var(--clay-butter);
+  text-shadow:
+    0 -3px 0 rgb(255 255 255 / 40%),
+    0 8px 0 #c98f52,
+    0 20px 28px rgb(110 45 35 / 40%);
+}
+
+.subtitle {
+  max-width: 44ch;
+  margin: 14px auto 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.shelf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(24px, 6vw, 70px);
+  margin-top: 44px;
+}
+
+.critter {
+  position: relative;
+  padding: 0 0 26px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.critter > span:first-child {
+  display: block;
+  transform-origin: 50% 100%;
+}
+
+.squish {
+  animation: squish 520ms cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+@keyframes squish {
+  0% {
+    transform: scale(1, 1);
+  }
+
+  28% {
+    transform: scale(1.18, 0.74) translateY(4%);
+  }
+
+  62% {
+    transform: scale(0.9, 1.1);
+  }
+
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+.plinthShadow {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  width: 74%;
+  height: 18px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgb(100 35 28 / 38%),
+    transparent 70%
+  );
+}
+
+.eyes {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.eyesWide {
+  gap: 22px;
+}
+
+.eye {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--clay-cream);
+  box-shadow:
+    inset -3px -4px 6px rgb(90 60 40 / 25%),
+    inset 3px 4px 6px rgb(255 255 255 / 85%),
+    0 3px 6px rgb(60 20 15 / 25%);
+}
+
+.pupil {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #17130e;
+}
+
+.pupil::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 85%);
+}
+
+.cat {
+  position: relative;
+  width: 170px;
+  height: 160px;
+}
+
+.catBody {
+  position: absolute;
+  inset: 26px 6px 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 6px;
+  border-radius: 48% 52% 55% 45% / 55% 50% 46% 44%;
+  background:
+    radial-gradient(26% 20% at 30% 38%, rgb(0 0 0 / 25%), transparent 70%),
+    radial-gradient(20% 16% at 68% 60%, rgb(0 0 0 / 20%), transparent 70%),
+    var(--clay-coal);
+  box-shadow:
+    inset -12px -14px 20px rgb(0 0 0 / 38%),
+    inset 10px 12px 16px rgb(255 255 255 / 13%),
+    14px 20px 28px var(--clay-shadow);
+}
+
+.catEar {
+  position: absolute;
+  top: 6px;
+  width: 48px;
+  height: 48px;
+  background: var(--clay-coal);
+  border-radius: 62% 38% 55% 45%;
+  box-shadow:
+    inset -6px -6px 10px rgb(0 0 0 / 35%),
+    inset 5px 6px 8px rgb(255 255 255 / 12%);
+}
+
+.catEarL {
+  left: 18px;
+  rotate: -14deg;
+}
+
+.catEarR {
+  right: 18px;
+  rotate: 14deg;
+}
+
+.catTail {
+  position: absolute;
+  right: -34px;
+  bottom: 26px;
+  width: 66px;
+  height: 24px;
+  background: var(--clay-coal);
+  border-radius: 14px;
+  rotate: -28deg;
+  box-shadow:
+    inset -5px -6px 8px rgb(0 0 0 / 35%),
+    inset 4px 5px 7px rgb(255 255 255 / 12%);
+}
+
+.catMouth {
+  width: 20px;
+  height: 10px;
+  border-radius: 0 0 20px 20px;
+  border: 3px solid #b3573f;
+  border-top: 0;
+}
+
+.catTongue {
+  width: 12px;
+  height: 13px;
+  margin-top: -6px;
+  border-radius: 0 0 10px 10px;
+  background: #ef9a8f;
+}
+
+.worm {
+  display: flex;
+  align-items: flex-end;
+}
+
+.wormSeg {
+  width: 58px;
+  height: 58px;
+  margin-left: -16px;
+  border-radius: 50%;
+  background: var(--clay-mint);
+  box-shadow:
+    inset -8px -9px 12px rgb(60 110 95 / 45%),
+    inset 7px 8px 10px rgb(255 255 255 / 55%),
+    12px 16px 22px var(--clay-shadow);
+  animation: worm-bob 1.7s ease-in-out infinite alternate;
+}
+
+.wormHead {
+  z-index: 2;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  width: 74px;
+  height: 74px;
+  margin-left: 0;
+}
+
+.wormSmile {
+  width: 16px;
+  height: 8px;
+  border-radius: 0 0 16px 16px;
+  border: 3px solid #3f6b5d;
+  border-top: 0;
+}
+
+@keyframes worm-bob {
+  to {
+    translate: 0 -8px;
+  }
+}
+
+.mushroom {
+  display: grid;
+  justify-items: center;
+}
+
+.mushCap {
+  position: relative;
+  z-index: 2;
+  width: 156px;
+  height: 88px;
+  border-radius: 82px 82px 18px 18px;
+  background: var(--clay-lilac);
+  box-shadow:
+    inset -10px -12px 16px rgb(90 70 140 / 45%),
+    inset 9px 10px 14px rgb(255 255 255 / 50%),
+    14px 18px 26px var(--clay-shadow);
+  animation: cap-tilt 4.5s ease-in-out infinite alternate;
+  transform-origin: 50% 100%;
+}
+
+.mushSpot {
+  position: absolute;
+  top: 24px;
+  left: 30px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--clay-cream);
+  box-shadow: inset 2px 3px 4px rgb(120 90 70 / 30%);
+}
+
+.mushSpotB {
+  top: 34px;
+  left: auto;
+  right: 34px;
+  width: 15px;
+  height: 15px;
+}
+
+@keyframes cap-tilt {
+  from {
+    rotate: -2.5deg;
+  }
+
+  to {
+    rotate: 2.5deg;
+  }
+}
+
+.mushStem {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 5px;
+  width: 74px;
+  height: 86px;
+  margin-top: -12px;
+  border-radius: 20px 20px 26px 26px;
+  background: var(--clay-cream);
+  box-shadow:
+    inset -7px -8px 12px rgb(140 100 80 / 30%),
+    inset 6px 7px 10px rgb(255 255 255 / 80%),
+    12px 16px 22px var(--clay-shadow);
+}
+
+.mushMouth {
+  width: 14px;
+  height: 7px;
+  border-radius: 0 0 14px 14px;
+  border: 3px solid #a3766a;
+  border-top: 0;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  width: min(980px, calc(100% - 40px));
+  margin: 40px auto;
+  align-items: start;
+}
+
+.sectionTitle {
+  font-family: var(--font-clay-display);
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: #5c3a33;
+}
+
+.sectionNote {
+  margin-top: 4px;
+  font-size: 0.95rem;
+}
+
+.boxScene {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding-top: 90px;
+}
+
+.box {
+  position: relative;
+  width: 156px;
+  height: 140px;
+  border: 0;
+  border-radius: 26px;
+  background: var(--clay-blue);
+  cursor: pointer;
+  box-shadow:
+    inset -10px -12px 16px rgb(60 90 140 / 45%),
+    inset 9px 10px 14px rgb(255 255 255 / 55%),
+    16px 20px 30px var(--clay-shadow);
+}
+
+.box[data-phase="shaking"] {
+  animation: box-shake 150ms linear 5;
+}
+
+@keyframes box-shake {
+  0% {
+    rotate: 0deg;
+  }
+
+  25% {
+    rotate: -6deg;
+    translate: -3px 0;
+  }
+
+  75% {
+    rotate: 6deg;
+    translate: 3px 0;
+  }
+
+  100% {
+    rotate: 0deg;
+  }
+}
+
+.boxLid {
+  position: absolute;
+  inset: 0 -8px auto;
+  height: 34px;
+  border-radius: 18px;
+  background: #7d9fd2;
+  box-shadow:
+    inset -6px -7px 10px rgb(50 75 120 / 45%),
+    inset 6px 7px 10px rgb(255 255 255 / 45%);
+}
+
+.boxMark {
+  font-family: var(--font-clay-display);
+  font-weight: 800;
+  font-size: 4rem;
+  color: var(--clay-cream);
+  text-shadow:
+    0 -2px 0 rgb(255 255 255 / 35%),
+    0 4px 0 rgb(60 90 140 / 60%);
+}
+
+.boxNote {
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.prize {
+  position: absolute;
+  top: 0;
+  z-index: 3;
+  animation: prize-pop 600ms cubic-bezier(0.25, 1.5, 0.45, 1) backwards;
+}
+
+@keyframes prize-pop {
+  0% {
+    translate: 0 70px;
+    scale: 0.2;
+    opacity: 0;
+  }
+
+  70% {
+    translate: 0 -6px;
+    scale: 1.1;
+    opacity: 1;
+  }
+
+  100% {
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+.prizeArt {
+  width: 84px;
+  height: 84px;
+  filter: drop-shadow(6px 10px 12px var(--clay-shadow));
+}
+
+.prizeHeart {
+  position: relative;
+  display: block;
+  width: 58px;
+  height: 58px;
+  margin: 12px;
+  rotate: 45deg;
+  background: #ef9a8f;
+  box-shadow:
+    inset -6px -7px 10px rgb(150 60 50 / 40%),
+    inset 6px 7px 10px rgb(255 255 255 / 50%),
+    10px 14px 20px var(--clay-shadow);
+}
+
+.prizeHeart::before,
+.prizeHeart::after {
+  content: "";
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: inherit;
+  box-shadow: inherit;
+}
+
+.prizeHeart::before {
+  left: -29px;
+}
+
+.prizeHeart::after {
+  top: -29px;
+}
+
+.prizeGhost {
+  display: block;
+  width: 68px;
+  height: 82px;
+  border-radius: 34px 34px 0 0;
+  background:
+    radial-gradient(6px 8px at 26px 34px, #33302c 98%, transparent),
+    radial-gradient(6px 8px at 44px 34px, #33302c 98%, transparent),
+    var(--clay-cream);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 82%,
+    84% 94%,
+    67% 82%,
+    50% 94%,
+    33% 82%,
+    16% 94%,
+    0 82%
+  );
+  filter: drop-shadow(8px 12px 14px var(--clay-shadow));
+}
+
+.prizeBall {
+  display: block;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background:
+    radial-gradient(6px 8px at 26px 36px, #33302c 98%, transparent),
+    radial-gradient(6px 8px at 46px 36px, #33302c 98%, transparent),
+    radial-gradient(14px 8px at 36px 50px, #6f8fc0 98%, transparent),
+    var(--clay-blue);
+  box-shadow:
+    inset -8px -9px 12px rgb(60 90 140 / 45%),
+    inset 7px 8px 10px rgb(255 255 255 / 55%),
+    10px 14px 20px var(--clay-shadow);
+}
+
+.chipDemo {
+  padding-top: 40px;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.chip {
+  padding: 14px 26px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--clay-cream);
+  color: var(--clay-ink);
+  font-family: var(--font-clay-body);
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow:
+    inset 4px 5px 8px rgb(255 255 255 / 85%),
+    inset -5px -6px 10px rgb(120 90 70 / 20%),
+    10px 14px 22px var(--clay-shadow);
+  transition:
+    box-shadow 140ms ease,
+    translate 140ms ease;
+}
+
+.chip:active {
+  translate: 0 3px;
+  box-shadow:
+    inset -3px -4px 8px rgb(255 255 255 / 60%),
+    inset 5px 6px 10px rgb(120 90 70 / 30%),
+    4px 6px 12px var(--clay-shadow);
+}
+
+.chipMint {
+  background: var(--clay-mint);
+}
+
+.chipLilac {
+  background: var(--clay-lilac);
+}
+
+.padSection {
+  width: min(980px, calc(100% - 40px));
+  margin: 0 auto 40px;
+}
+
+.pad {
+  position: relative;
+  margin-top: 18px;
+  border-radius: 32px;
+  background: var(--clay-cream);
+  box-shadow:
+    inset 6px 8px 14px rgb(255 255 255 / 85%),
+    inset -8px -10px 16px rgb(120 90 70 / 22%),
+    18px 24px 36px var(--clay-shadow);
+}
+
+.padCanvas {
+  display: block;
+  width: 100%;
+  height: min(420px, 56svh);
+  touch-action: none;
+  cursor: crosshair;
+  border-radius: 32px;
+}
+
+.padHint {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  font-style: italic;
+  font-weight: 500;
+  color: #a08876;
+}
+
+.pad .chip {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+}
+
+.colophon {
+  width: min(640px, calc(100% - 48px));
+  margin: 0 auto;
+  padding-bottom: calc(70px + var(--safe-area-bottom));
+  text-align: center;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: #5c3a33;
+}
+
+@media (max-width: 760px) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+
+  .chipDemo {
+    padding-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wormSeg,
+  .mushCap,
+  .squish,
+  .box[data-phase="shaking"],
+  .prize {
+    animation: none;
+  }
+}
