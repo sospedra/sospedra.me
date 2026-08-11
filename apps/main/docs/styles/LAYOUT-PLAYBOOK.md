@@ -217,6 +217,30 @@ Everything below is documented in section 2 and used by nothing in this repo. Ra
 | Category-first browsing | Subsequence | Six named categories instead of a date feed |
 | Sticky scroll graphic + leftover-space rail | Parametric Press | A margin rail sized from whatever the measure leaves |
 
+## 3c. The composition lesson, learned the hard way
+
+Rounds one through four of this work added magazine COMPONENTS to pages whose COMPOSITION never changed: mastheads, folios, figure captions, spec tables, filter chips, all sitting on a centred single column of stacked sections. The owner's verdict was blunt and correct: the pages were the same as before, and the magazine layout was missing.
+
+A magazine layout is a GRID, not a set of widgets. Round five gave every page a real page-level grid and placed blocks asymmetrically on it.
+
+What actually changed the pages:
+
+- **One page-level grid, not per-section centred containers.** Each page declares `grid-template-columns: repeat(12, minmax(0, 1fr))` once (24 on frasurbane), and sections claim spans on it. Before, every section was its own `width: min(Xpx, 100% - 40px); margin: 0 auto`, which guarantees a stack.
+- **Figures beside text, not above it.** Frasurbane's statue plate holds columns 2 to 12 while the article runs 13 to 24, so the eye moves across rather than down.
+- **Blocks that do not share edges.** Overprint's plate sits at columns 2 to 9, the smear row spans all 12, the supplement starts at 3, the colophon stops at 7. Clay's hero plate ends at column 9 and the next plate starts at 5, so consecutive figures overlap in the horizontal band.
+- **Text that breaks out of its own column.** Frasurbane's pull quote carries `margin-left: -38%` so it crosses into the plate's air, which is what a real pull quote does.
+- **Marginalia positioned in grid units.** `left: calc(-1 * (100% / 11 * 2))` puts a sidenote two columns out, so it tracks the grid rather than a magic pixel value.
+- **A main well plus a rail.** Neubrutalism's schedule holds columns 1 to 9 and the ticket tiers stack in 9 to 13. Overprint gained an "ALSO IN THIS RUN" rail at 10 to 13. Clay gained an "on the cover" rail beside the hero plate.
+- **A visible gutter for spreads.** Stickers is two facing pages with a dashed centre gutter and folios at the bottom outer corners.
+- **Asymmetric internal grids.** Neubrutalism's hero is `1.45fr 1fr`, not `1fr 1fr`.
+
+Two traps this created, both of which broke a page:
+
+1. **Nested grids inherit outer spans.** A child carrying `grid-column: 1 / 13` that lands inside a two-column grid creates implicit columns and overflows the viewport. Neubrutalism's bento and ticket panels broke exactly this way. Either place cells directly in the page grid, or reset the span with `grid-column: auto` on anything that moves into a nested grid. Clay's icon plate needed the same reset.
+2. **`width: min(Xpx, calc(100% - 40px))` fights a grid span.** Every regridded block needs its old centring width and auto margins removed, or it refuses to fill the span you gave it.
+
+Verify a regrid by looking for a straight left edge running the height of the screenshot. If every block starts at the same x, it is still a stack.
+
 ## 4. How to pair a new style with a form
 
 Work in this order.
