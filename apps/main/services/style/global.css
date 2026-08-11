@@ -217,8 +217,33 @@ html[data-scroll-behavior][data-scroll-behavior] .site-main:focus {
   font-size: 0.875rem;
   line-height: 1;
   text-decoration: none;
+  /* parked controls must paint nothing: iOS composites fixed elements
+     hanging above the viewport into the status bar zone */
+  opacity: 0;
   transform: translateY(calc(-100% - var(--safe-area-top) - 1rem));
-  transition: transform var(--motion-micro) var(--ease-signal);
+  transition:
+    transform var(--motion-micro) var(--ease-signal),
+    opacity var(--motion-micro) var(--ease-signal);
+}
+
+.skip-link:focus {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Bottom overscroll shield: rubber-banding lifts the route content and
+   would expose the sky plane's purple; this band keeps the reveal on the
+   route's canvas color. Negative z: under all route content, above the
+   sky wrapper. */
+.overscroll-shield {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  height: 40vh;
+  background: var(--route-bottom, var(--color-bg-void));
+  pointer-events: none;
 }
 
 /* Opt-in helper for navigation and action targets; prose links stay compact. */

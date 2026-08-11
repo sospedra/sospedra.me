@@ -13,8 +13,8 @@
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 100svh;
-  overflow: hidden;
+  min-height: 100svh;
+  overflow-x: clip;
   background: #000;
 }
 
@@ -25,12 +25,15 @@
 
 /* flex: none is load-bearing: the editor's simulated widths exceed the
    room, and a shrinkable item would collapse back to it */
+/* inline-size container: cqh units fall back to the small viewport,
+   the same value the old 100svh size container gave them, and the
+   stage can grow so the document scrolls and bleeds under the bars */
 .stage {
   position: relative;
   flex: none;
   width: min(100%, 3840px);
-  height: 100svh;
-  container: bazaar / size;
+  min-height: 100svh;
+  container: bazaar / inline-size;
   transform-origin: top center;
 }
 
@@ -57,8 +60,7 @@
   --sm-w: calc(var(--mfloor-h) * var(--sm-ar));
   position: relative;
   width: 100%;
-  height: 100%;
-  overflow-y: auto;
+  min-height: 100svh;
   overflow-x: clip;
   background: var(--color-bg-void);
   color: #d6dbe6;

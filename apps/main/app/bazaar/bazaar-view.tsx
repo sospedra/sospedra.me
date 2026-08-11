@@ -202,23 +202,21 @@ const useForegroundParallax = (
   sceneRef: React.RefObject<HTMLDivElement | null>,
 ) => {
   useEffect(() => {
-    const scroller = sceneRef.current
-    if (!scroller) return
-    const layers = scroller.querySelectorAll<HTMLElement>('[data-bazaar-fg]')
+    const scene = sceneRef.current
+    if (!scene) return
+    const layers = scene.querySelectorAll<HTMLElement>('[data-bazaar-fg]')
     if (layers.length === 0) return
     const onScroll = () => {
-      const top = scroller.scrollTop
+      const top = window.scrollY
       const quiet = prefersQuietFx()
-      const opacity = String(
-        Math.max(0, 1 - top / (scroller.clientHeight * 0.5)),
-      )
+      const opacity = String(Math.max(0, 1 - top / (window.innerHeight * 0.5)))
       for (const fg of layers) {
         if (!quiet) fg.style.transform = `translateY(${-top * 0.35}px)`
         fg.style.opacity = opacity
       }
     }
-    scroller.addEventListener('scroll', onScroll, { passive: true })
-    return () => scroller.removeEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [sceneRef])
 }
 
@@ -360,8 +358,8 @@ export default function BazaarView() {
   const chrome = useStoreSelector(decorStore, (doc) => doc.chrome)
 
   const scrollToMarket = () => {
-    sceneRef.current?.scrollTo({
-      top: sceneRef.current.clientHeight,
+    window.scrollTo({
+      top: window.innerHeight,
       behavior: prefersQuietFx() ? 'auto' : 'smooth',
     })
   }

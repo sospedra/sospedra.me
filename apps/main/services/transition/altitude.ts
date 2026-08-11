@@ -59,11 +59,13 @@ export type RouteBars = {
 // iOS 26 samples ~40px fixed strips at each viewport edge for the bar
 // tints; `bottom` also feeds theme-color (Android toolbar), `canvas`
 // feeds the overscroll via html/body
+// document-scrolling routes get NO strips at all: a bottom strip paints
+// over the content bleeding through the glass, and the 900ms nudge
+// re-sample can flip a bleeding bar back to flat tint
 const ROUTE_BARS: Record<string, RouteBars> = {
   '/': { top: '#300f3b', bottom: '#101324', canvas: '#101324' },
-  // top = the sky at the viewport top edge; chrome colors are bottom-edge
-  '/about': { top: '#3e0f47', canvas: '#441049' },
-  '/bazaar': { top: '#0e141b', bottom: '#000000', canvas: '#0e141b' },
+  // owner canon: the bazaar bottom reads black on device
+  '/bazaar': { canvas: '#000000' },
   '/boombox': { top: '#0e141b', bottom: '#1a1024', canvas: '#0e141b' },
   '/camera': { top: '#0c141d', bottom: '#0c0711', canvas: '#070b10' },
   '/cims': { top: '#020302', bottom: '#071008', canvas: '#071008' },
@@ -72,19 +74,23 @@ const ROUTE_BARS: Record<string, RouteBars> = {
   '/game-of-life': { top: '#151610', bottom: '#151610', canvas: '#151610' },
   '/games': { top: '#020307', bottom: '#020307', canvas: '#020307' },
   '/meridian': { top: '#080907', bottom: '#080907', canvas: '#080907' },
-  // no bottom strips: the scrolled paper shows through the bar glass
-  '/papers': { top: '#241333', canvas: '#2d0e39' },
-  '/papers/:slug': { top: '#10161f', canvas: '#141925' },
   '/recycle-bin': { canvas: '#0e141b' },
   '/rubiks': { top: '#121a23', bottom: '#070c11', canvas: '#070c11' },
   '/scavenger': { top: '#180a38', bottom: '#0e141b', canvas: '#0e141b' },
-  '/snake': { top: '#131c24', bottom: '#070c11', canvas: '#070c11' },
-  // document-scrolling routes get no bottom strip: it would flat-paint
-  // over the content bleeding through the bottom glass
-  '/travel': { top: '#080a14', canvas: '#080a14' },
-  '/uses': { top: '#0d0708', canvas: '#0d0708' },
+  '/snake': { top: '#131c24', bottom: '#1c2514', canvas: '#1c2514' },
+  '/travel': { canvas: '#080a14' },
+  '/uses': { canvas: '#0d0708' },
   '/videoclub': { top: '#050608', bottom: '#050608', canvas: '#050608' },
   '/w98': { top: '#008080', bottom: '#008080', canvas: '#008080' },
+}
+
+// load-time html/body tint for strip-less routes where the sky at the
+// viewport TOP edge differs from the canvas (chrome colors are bottom-edge)
+const ROUTE_TINT: Record<string, string> = {
+  '/papers': '#241333',
+  '/papers/:slug': '#10161f',
+  '/about': '#3e0f47',
+  '/bazaar': '#0e141b',
 }
 
 export const barsFor = (href: string): RouteBars => {
@@ -94,6 +100,15 @@ export const barsFor = (href: string): RouteBars => {
   return match?.[1] ?? { canvas: sceneFor(href).chrome }
 }
 
+// the html/body color iOS samples for the status zone: the sky at the
+// viewport top edge, never the bottom-edge canvas
+export const tintFor = (href: string): string => {
+  const match = Object.entries(ROUTE_TINT).find(([pattern]) =>
+    matchRoutePattern(href, pattern),
+  )
+  return match?.[1] ?? barsFor(href).top ?? barsFor(href).canvas
+}
+
 // Safari reads theme-color once at load, so each art-directed page
 // server-renders its own; Android tints its toolbar with it
 export const routeViewport = (href: string) => ({
@@ -101,16 +116,21 @@ export const routeViewport = (href: string) => ({
 })
 
 // iOS 26 derives the load-time status-bar tint from the html and body
-// backgrounds, not from the painted pixels; both must carry the route color
-// from the first parsed byte or the bar sticks to the void
-const loadTintMap = (): Record<string, string> => {
+// backgrounds, not from the painted pixels; both must carry the top color
+// from the first parsed byte or the bar sticks to the void. The pair's
+// second color feeds the bottom overscroll shield.
+const loadTintMap = (): Record<string, readonly [string, string]> => {
   const fromScenes = Object.entries(SCENES).map(
-    ([pattern, scene]) => [pattern, scene.chrome] as const,
+    ([pattern, scene]) => [pattern, [scene.chrome, scene.chrome]] as const,
   )
   const fromBars = Object.entries(ROUTE_BARS).map(
-    ([pattern, bars]) => [pattern, bars.top ?? bars.canvas] as const,
+    ([pattern, bars]) =>
+      [pattern, [bars.top ?? bars.canvas, bars.canvas]] as const,
   )
-  return Object.fromEntries([...fromScenes, ...fromBars])
+  const fromTint = Object.entries(ROUTE_TINT).map(
+    ([pattern, tint]) => [pattern, [tint, barsFor(pattern).canvas]] as const,
+  )
+  return Object.fromEntries([...fromScenes, ...fromBars, ...fromTint])
 }
 
 export const loadTintScript = () =>
@@ -120,9 +140,10 @@ export const loadTintScript = () =>
   `if(t.length!==s.length)continue;var ok=1;` +
   `for(var i=0;i<t.length;i++){if(t[i].charAt(0)!==":"&&t[i]!==s[i]){ok=0;break}}` +
   `if(ok){c=m[k];break}}}` +
-  `c=c||"${DEFAULT_SCENE.chrome}";` +
-  `document.documentElement.style.backgroundColor=c;` +
-  `document.body.style.backgroundColor=c;})()`
+  `c=c||["${DEFAULT_SCENE.chrome}","${DEFAULT_SCENE.chrome}"];` +
+  `document.documentElement.style.backgroundColor=c[0];` +
+  `document.body.style.backgroundColor=c[0];` +
+  `document.documentElement.style.setProperty("--route-bottom",c[1]);})()`
 
 export const getAltitude = (href: string): number => sceneFor(href).altitude
 

@@ -117,7 +117,13 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     crossOrigin: 'anonymous',
   })
   return (
-    <html lang='en' data-scroll-behavior='smooth' className={fontVariables}>
+    <html
+      lang='en'
+      data-scroll-behavior='smooth'
+      className={fontVariables}
+      // the parse-time tint script writes html/body style before hydration
+      suppressHydrationWarning
+    >
       <body>
         <script
           // biome-ignore lint/security/noDangerouslySetInnerHtml: static route tint map

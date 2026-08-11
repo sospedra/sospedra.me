@@ -23,6 +23,7 @@ const Shell = ({
         Skip to content ▼
       </a>
       <SystemSettings />
+      <div aria-hidden='true' className='overscroll-shield' />
       {/* grid 1fr: main stretches to a definite viewport height, so the
           height: 100% chains in full-viewport routes keep resolving */}
       <div

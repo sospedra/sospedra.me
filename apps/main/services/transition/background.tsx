@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useTheme } from 'services/theme'
-import { barsFor, sceneFor } from './altitude'
+import { barsFor, sceneFor, tintFor } from './altitude'
 import { useRouteTransition } from './context'
 import { destinationUrl } from './reducer'
 import Stars from './stars'
@@ -26,8 +26,12 @@ const getOffsetFromHref = (href: string): OffsetT => ({
 
 const applyChrome = (href: string) => {
   const { bottom, canvas } = barsFor(href)
-  document.documentElement.style.backgroundColor = canvas
-  document.body.style.backgroundColor = canvas
+  const tint = tintFor(href)
+  // html/body feed the iOS status-zone sample: always the TOP color;
+  // the canvas colors the bottom overscroll shield instead
+  document.documentElement.style.backgroundColor = tint
+  document.body.style.backgroundColor = tint
+  document.documentElement.style.setProperty('--route-bottom', canvas)
   // load-time only on iOS; Android Chrome follows runtime writes
   document
     .querySelector('meta[name="theme-color"]')

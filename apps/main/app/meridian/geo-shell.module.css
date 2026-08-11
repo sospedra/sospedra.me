@@ -20,11 +20,15 @@
   font: 700 0.75rem / 1 var(--font-code);
   letter-spacing: 0.08em;
   text-decoration: none;
+  opacity: 0;
   transform: translateY(calc(-100% - 2rem));
-  transition: transform 160ms var(--ease-signal);
+  transition:
+    transform 160ms var(--ease-signal),
+    opacity 160ms var(--ease-signal);
 }
 
 .skipLink:focus {
+  opacity: 1;
   transform: translateY(0);
 }
 

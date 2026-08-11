@@ -13,8 +13,18 @@
   font-family: var(--font-code);
   font-size: 0.875rem;
   line-height: 1;
+  /* paint nothing while parked: iOS shows the overhang in the status zone */
+  opacity: 0;
   transform: translateY(calc(-100% - var(--safe-area-top) - 1rem));
-  transition: transform var(--motion-micro) var(--ease-signal);
+  transition:
+    transform var(--motion-micro) var(--ease-signal),
+    opacity var(--motion-micro) var(--ease-signal);
+}
+
+.reveal:focus-visible,
+.reveal:focus {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .panel {
