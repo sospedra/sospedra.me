@@ -6,15 +6,21 @@ import { useTheme } from 'services/theme'
 import styles from './cims.module.css'
 import { type CimsStore, createCimsStore } from './cims-store.ts'
 import { Compass } from './compass.tsx'
+import { assembleTerrain } from './decode.ts'
 import { type CimsEngine, createCimsEngine } from './engine.ts'
 import { StageLabels } from './stage-labels.tsx'
 import type { StageRefs } from './stage-projection.ts'
 import { TelemetryHud } from './telemetry-hud.tsx'
-import { type TerrainData, terrainSchema } from './terrain-schema.ts'
+import {
+  type TerrainData,
+  type TerrainMeta,
+  terrainMetaSchema,
+} from './terrain-schema.ts'
 import { type TourNames, titleMain } from './tour-copy.ts'
 import { TourPanel } from './tour-panel.tsx'
 
-const TERRAIN_URL = '/cims/terrain.json'
+const TERRAIN_META_URL = '/cims/terrain.json'
+const TERRAIN_BIN_URL = '/cims/terrain.bin'
 
 type LoadState =
   | { status: 'loading' }
@@ -36,10 +42,27 @@ const createStageRefs = (cityCount: number, destCount: number): StageRefs => ({
   needle: elementRef(),
 })
 
-const fetchTerrain = async (signal: AbortSignal): Promise<TerrainData> => {
-  const response = await fetch(TERRAIN_URL, { signal })
+const fetchMeta = async (signal: AbortSignal): Promise<TerrainMeta> => {
+  const response = await fetch(TERRAIN_META_URL, { signal })
   if (!response.ok) throw new Error(`terrain fetch ${response.status}`)
-  return terrainSchema.parse(await response.json())
+  return terrainMetaSchema.parse(await response.json())
+}
+
+const fetchGrids = async (signal: AbortSignal): Promise<Uint16Array> => {
+  const response = await fetch(TERRAIN_BIN_URL, { signal })
+  if (!response.ok || !response.body) {
+    throw new Error(`terrain fetch ${response.status}`)
+  }
+  const inflated = response.body.pipeThrough(new DecompressionStream('gzip'))
+  return new Uint16Array(await new Response(inflated).arrayBuffer())
+}
+
+const fetchTerrain = async (signal: AbortSignal): Promise<TerrainData> => {
+  const [meta, grids] = await Promise.all([
+    fetchMeta(signal),
+    fetchGrids(signal),
+  ])
+  return assembleTerrain(meta, grids)
 }
 
 type SceneStatus = {

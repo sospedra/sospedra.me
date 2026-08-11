@@ -1,4 +1,9 @@
 import { clamp } from 'es-toolkit'
+import type {
+  ContourLevel,
+  TerrainData,
+  TerrainMeta,
+} from './terrain-schema.ts'
 
 export type MaskedGrid = { h: Float32Array; mask: Uint8Array }
 
@@ -12,19 +17,17 @@ export type GridSpec = {
 }
 
 /*
- * Ports of the prototype heightmap codec. Zero means "no data", any other
- * quantized value maps linearly onto [hmin, hmax]. The imperative loops are
- * measured hot paths over multi-megapixel grids.
+ * Ports of the prototype heightmap codec plus the v2 container transforms.
+ * Grids ship as row-major u16 deltas mod 65536, polylines as pair deltas.
+ * Zero means "no data", any other quantized value maps linearly onto
+ * [hmin, hmax]. The imperative loops are measured hot paths over
+ * multi-megapixel grids.
  */
 export const decodeMasked = (
-  b64: string,
+  q: Uint16Array,
   hmin: number,
   hmax: number,
 ): MaskedGrid => {
-  const raw = atob(b64)
-  const bytes = new Uint8Array(raw.length)
-  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i)
-  const q = new Uint16Array(bytes.buffer)
   const h = new Float32Array(q.length)
   const mask = new Uint8Array(q.length)
   const s = (hmax - hmin) / 65534
@@ -35,6 +38,54 @@ export const decodeMasked = (
     }
   }
   return { h, mask }
+}
+
+export const undeltaGrid = (q: Uint16Array): Uint16Array => {
+  for (let i = 1; i < q.length; i++) q[i] = (q[i] + q[i - 1]) & 0xffff
+  return q
+}
+
+export const undeltaPairs = (p: number[]): number[] => {
+  const out = new Array<number>(p.length)
+  let x = 0
+  let z = 0
+  for (let i = 0; i < p.length; i += 2) {
+    x += p[i]
+    z += p[i + 1]
+    out[i] = x
+    out[i + 1] = z
+  }
+  return out
+}
+
+const undeltaContours = (levels: ContourLevel[]): ContourLevel[] =>
+  levels.map((level) => ({ ...level, p: level.p.map(undeltaPairs) }))
+
+export const assembleTerrain = (
+  meta: TerrainMeta,
+  q: Uint16Array,
+): TerrainData => {
+  const baseCells = meta.base.nx * meta.base.nz
+  const patchCells = meta.grid * meta.grid
+  if (q.length !== baseCells + meta.mountains.length * patchCells) {
+    throw new Error('terrain bin length mismatch')
+  }
+  const gridAt = (start: number, cells: number) =>
+    undeltaGrid(q.subarray(start, start + cells))
+  return {
+    ...meta,
+    base: { ...meta.base, q: gridAt(0, baseCells) },
+    mountains: meta.mountains.map((mountain, k) => ({
+      ...mountain,
+      contours: undeltaContours(mountain.contours),
+      q: gridAt(baseCells + k * patchCells, patchCells),
+    })),
+    contours: undeltaContours(meta.contours),
+    rivers: meta.rivers.map((river) => ({
+      ...river,
+      p: undeltaPairs(river.p),
+    })),
+  }
 }
 
 export const smoothGrid = (

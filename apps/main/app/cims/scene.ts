@@ -139,7 +139,7 @@ export const createCimsScene = (
     cellX: data.base.cellX,
     cellZ: data.base.cellZ,
   }
-  const baseGrid = decodeMasked(data.base.b64, data.base.hmin, data.base.hmax)
+  const baseGrid = decodeMasked(data.base.q, data.base.hmin, data.base.hmax)
   smoothGrid(baseGrid.h, baseGrid.mask, baseSpec.nx, baseSpec.nz, 1)
   const heightAtBase = (x: number, z: number): number =>
     sampleClamped(baseSpec, baseGrid.h, x, z)

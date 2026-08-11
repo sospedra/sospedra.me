@@ -132,7 +132,7 @@ export const createSlotManager = (options: SlotManagerOptions) => {
     const cached = heightCache.get(k)
     if (cached) return cached
     const mountain = data.mountains[k]
-    const grid = decodeMasked(mountain.b64, mountain.hmin, mountain.hmax)
+    const grid = decodeMasked(mountain.q, mountain.hmin, mountain.hmax)
     smoothGrid(grid.h, grid.mask, n, n, 2)
     const spec: GridSpec = {
       nx: n,
