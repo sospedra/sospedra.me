@@ -185,6 +185,47 @@ const NotFoundView: React.FC = () => {
       )}
 
       <nav aria-label='Recovery route' className={navCss.nav}>
+        <svg aria-hidden='true' className={navCss.brokenSvg}>
+          <filter id='nf-broken-text'>
+            <feTurbulence
+              baseFrequency='0.025 0.07'
+              numOctaves='2'
+              result='noise'
+              seed='2'
+              stitchTiles='stitch'
+              type='turbulence'
+            >
+              {motionAllowed && (
+                <animate
+                  attributeName='seed'
+                  calcMode='discrete'
+                  dur='3.2s'
+                  repeatCount='indefinite'
+                  values='2;7;13;5;23;3;17;29'
+                />
+              )}
+            </feTurbulence>
+            <feColorMatrix
+              in='noise'
+              result='grain'
+              type='saturate'
+              values='30'
+            />
+            <feColorMatrix
+              in='grain'
+              result='shards'
+              type='matrix'
+              values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 150 -15'
+            />
+            <feDisplacementMap
+              in='SourceGraphic'
+              in2='shards'
+              scale='1.5'
+              xChannelSelector='R'
+              yChannelSelector='A'
+            />
+          </filter>
+        </svg>
         <Link
           aria-label='Take me to a safe place'
           className={navCss.homeLink}

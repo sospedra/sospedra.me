@@ -104,9 +104,8 @@
 }
 
 .homeLinkText {
-  position: absolute;
+  position: relative;
   z-index: 3;
-  inset: 0;
   display: grid;
   min-width: 2.75rem;
   min-height: 2.75rem;
@@ -115,13 +114,15 @@
   border-radius: inherit;
   color: var(--color-bg-void, #0e141b);
   font: inherit;
+  font-size: 1rem;
   font-weight: 900;
   letter-spacing: 0.02em;
   line-height: 1.1;
   text-align: center;
-  text-shadow: 0 0 4px var(--color-text-strong, #fff);
-  -webkit-text-stroke: 0.2px currentColor;
-  mix-blend-mode: multiply;
+  text-shadow:
+    0 0 2px var(--color-text-strong, #fff),
+    0 0 8px var(--color-text-strong, #fff);
+  -webkit-text-stroke: 0.45px currentColor;
   pointer-events: none;
   transition: transform 300ms ease;
 }
@@ -131,6 +132,13 @@
   gap: 0.28em;
   align-items: center;
   white-space: nowrap;
+  filter: url("#nf-broken-text");
+}
+
+.brokenSvg {
+  position: absolute;
+  width: 0;
+  height: 0;
 }
 
 .homeLinkWord {
@@ -243,6 +251,12 @@
 
     width: 5rem;
     height: var(--home-link-height);
+  }
+
+  .homeLinkText {
+    position: absolute;
+    inset: 0;
+    font-size: inherit;
   }
 
   .homeLiquidScene {
