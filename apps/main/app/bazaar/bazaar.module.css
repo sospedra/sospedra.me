@@ -327,11 +327,12 @@
   }
 }
 
-/* the riveted h-beam band between floors, nearer than the floors;
+/* the riveted h-beam band between floors, on top of every scene layer
+   (signs, decks, stalls) and below the dialog layer;
    --baked-blur survives chrome brightness patches (chrome.ts composes it) */
 .sep {
   position: relative;
-  z-index: 5;
+  z-index: 20;
   height: calc(var(--su) * 225);
   background-image: url("/images/bazaar/arch/beam-h-tile.png");
   background-size: calc(var(--su) * 120) calc(var(--su) * 225);
@@ -347,7 +348,6 @@
 
 /* regime-B bake: per-band skins */
 .sep[data-bazaar-sep="2"] {
-  z-index: 8;
   background-image: url("/images/bazaar/arch/beam-h-catwalk.png");
 }
 
@@ -362,6 +362,19 @@
 .bottomPad {
   height: 24cqh;
   background: #000;
+}
+
+/* the dialogs mount here, one layer above the whole scroll content. It
+   shares the scroller so a bubble rides its stall natively, and it sits
+   over the seps so the bubble clears the in-between band */
+.dialogLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  z-index: 50;
+  pointer-events: none;
 }
 
 /* ---------- stall boxes carrying the scene internals ---------- */
@@ -560,6 +573,8 @@
 }
 
 .sepM {
+  position: relative;
+  z-index: 20;
   height: 8cqh;
   background-image: url("/images/bazaar/arch/beam-h-tile.png");
   background-size: auto 100%;

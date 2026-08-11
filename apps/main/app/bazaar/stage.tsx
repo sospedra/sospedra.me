@@ -43,6 +43,42 @@ export const stageBox = (): StageBox => {
   }
 }
 
+export type SceneBox = {
+  left: number
+  top: number
+  width: number
+  scale: number
+  scrollTop: number
+  scrollLeft: number
+}
+
+/** the scroll content in its own layout space: absolute children of the
+    scene ride the scroll, so a content-space anchor stays glued to its
+    stall without a scroll listener */
+export const sceneBox = (): SceneBox => {
+  const el = document.querySelector<HTMLElement>('[data-bazaar-scene]')
+  if (!el) {
+    return {
+      left: 0,
+      top: 0,
+      width: window.innerWidth,
+      scale: 1,
+      scrollTop: 0,
+      scrollLeft: 0,
+    }
+  }
+  const rect = el.getBoundingClientRect()
+  const scale = el.offsetWidth > 0 ? rect.width / el.offsetWidth : 1
+  return {
+    left: rect.left,
+    top: rect.top,
+    width: el.offsetWidth,
+    scale,
+    scrollTop: el.scrollTop,
+    scrollLeft: el.scrollLeft,
+  }
+}
+
 const subscribeResize = (listener: () => void) => {
   window.addEventListener('resize', listener)
   return () => window.removeEventListener('resize', listener)

@@ -435,6 +435,12 @@ export default function BazaarView() {
             />
             <div className={css.bottomPad} />
           </div>
+
+          <div
+            className={css.dialogLayer}
+            data-bazaar-dialog-layer
+            aria-hidden
+          />
         </div>
         {Editor && editor && <Editor />}
       </Stage>

@@ -14,7 +14,7 @@ import {
 import HostDecor from './host-decor'
 import SceneStall from './scene-stall'
 import { sfx } from './sounds'
-import { stageBox } from './stage'
+import { sceneBox } from './stage'
 import scene from './stall-box.module.css'
 import { DIMS, STALLS } from './stall-catalog'
 import {
@@ -42,19 +42,21 @@ const dialogPositionFor = (
   anchor = DEFAULT_ANCHOR,
 ): DialogPosition => {
   const rect = wrap.getBoundingClientRect()
-  const stage = stageBox()
-  const anchorX = (rect.left + rect.width * anchor.x - stage.left) / stage.scale
-  const anchorY = (rect.top + rect.height * anchor.y - stage.top) / stage.scale
-  const mobile = stage.width < MOBILE_BREAKPOINT_PX
+  const box = sceneBox()
+  const anchorX =
+    (rect.left + rect.width * anchor.x - box.left) / box.scale + box.scrollLeft
+  const anchorY =
+    (rect.top + rect.height * anchor.y - box.top) / box.scale + box.scrollTop
+  const mobile = box.width < MOBILE_BREAKPOINT_PX
   const size = mobile ? DIALOG_SIZE.mobile : DIALOG_SIZE.desktop
-  const maxWidth = Math.min(size.maxWidth, stage.width * size.viewportShare)
+  const maxWidth = Math.min(size.maxWidth, box.width * size.viewportShare)
   const half = maxWidth / 2
   const nudge = mobile ? undefined : DIALOG_NUDGE[id]
   return {
     left: clamp(
       anchorX + (nudge?.x ?? 0),
       half + VIEWPORT_GUTTER,
-      stage.width - half - VIEWPORT_GUTTER,
+      box.width - half - VIEWPORT_GUTTER,
     ),
     top: anchorY + (mobile ? (MOBILE_DIALOG_DROP[id] ?? 0) : (nudge?.y ?? 0)),
   }
@@ -96,11 +98,7 @@ export default function Stall(props: { id: BazaarStallId; eager?: boolean }) {
   useEffect(() => {
     if (!active) return
     window.addEventListener('resize', updateDialogPosition)
-    window.addEventListener('scroll', updateDialogPosition, true)
-    return () => {
-      window.removeEventListener('resize', updateDialogPosition)
-      window.removeEventListener('scroll', updateDialogPosition, true)
-    }
+    return () => window.removeEventListener('resize', updateDialogPosition)
   }, [active, updateDialogPosition])
 
   useEffect(

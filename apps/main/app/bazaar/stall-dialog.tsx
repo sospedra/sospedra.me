@@ -87,31 +87,12 @@ function DialogContent(props: { desc: string; visibleChars: number }) {
   )
 }
 
-const axisShift = (start: number, end: number, limit: number) => {
-  if (start < VIEWPORT_GUTTER) return VIEWPORT_GUTTER - start
-  if (end > limit - VIEWPORT_GUTTER) return limit - VIEWPORT_GUTTER - end
-  return 0
-}
-
-function useViewportClamp(
-  dialogRef: React.RefObject<HTMLDivElement | null>,
-  active: boolean,
-  position: DialogPosition | null,
-) {
+function useDialogLayer() {
+  const [layer, setLayer] = useState<HTMLElement | null>(null)
   useLayoutEffect(() => {
-    const dialog = dialogRef.current
-    if (!active || !position || !dialog) return
-
-    dialog.style.setProperty('--dialog-shift-x', '0px')
-    dialog.style.setProperty('--dialog-shift-y', '0px')
-
-    const rect = dialog.getBoundingClientRect()
-    const shiftX = axisShift(rect.left, rect.right, window.innerWidth)
-    const shiftY = axisShift(rect.top, rect.bottom, window.innerHeight)
-
-    dialog.style.setProperty('--dialog-shift-x', `${shiftX}px`)
-    dialog.style.setProperty('--dialog-shift-y', `${shiftY}px`)
-  }, [active, dialogRef, position])
+    setLayer(document.querySelector<HTMLElement>('[data-bazaar-dialog-layer]'))
+  }, [])
+  return layer
 }
 
 export function Dialog(props: {
@@ -122,9 +103,9 @@ export function Dialog(props: {
 }) {
   const { spec, active, position, dialogRef } = props
   const visibleChars = useTypewriter(active, countCharacters(spec.desc))
-  useViewportClamp(dialogRef, active, position)
+  const layer = useDialogLayer()
 
-  if (!active || !position) return null
+  if (!active || !position || !layer) return null
 
   return createPortal(
     <div
@@ -136,7 +117,7 @@ export function Dialog(props: {
     >
       <DialogContent desc={spec.desc} visibleChars={visibleChars} />
     </div>,
-    document.body,
+    layer,
   )
 }
 
@@ -152,9 +133,9 @@ export function GamesDialogs(props: {
   const totalCharacters =
     sum(turnLengths) + GAMES_TURN_PAUSE_CHARS * (GAMES_CONVERSATION.length - 1)
   const visibleChars = useTypewriter(active, totalCharacters)
-  useViewportClamp(dialogRef, active, position)
+  const layer = useDialogLayer()
 
-  if (!active || !position) return null
+  if (!active || !position || !layer) return null
 
   return createPortal(
     <div
@@ -192,6 +173,6 @@ export function GamesDialogs(props: {
         )
       })}
     </div>,
-    document.body,
+    layer,
   )
 }
