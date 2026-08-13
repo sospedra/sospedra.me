@@ -163,7 +163,6 @@ export const COPY = {
     gridLabel: (date: string, size: string) =>
       `English crossword, ${date}, ${size}`,
     inputLabel: 'Crossword letter input',
-    bankDismiss: 'Hide the letter keys',
     bankErase: 'Delete letter',
     toolsKey: 'Tools',
     begin: 'Start',
@@ -332,7 +331,6 @@ export const COPY = {
     gridLabel: (date: string, size: string) =>
       `Crucigrama en español, ${date}, ${size}`,
     inputLabel: 'Entrada de letras del crucigrama',
-    bankDismiss: 'Ocultar las teclas',
     bankErase: 'Borrar letra',
     toolsKey: 'Ayudas',
     begin: 'Empezar',

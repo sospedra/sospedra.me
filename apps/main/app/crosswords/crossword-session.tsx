@@ -86,7 +86,7 @@ export function CrosswordSession({
     run: number
   } | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const bank = useLetterBank(inputRef)
+  const bank = useLetterBank()
   const openerRef = useRef<HTMLElement | null>(null)
   const focusGridRef = useRef(false)
   const latestStateRef = useRef(state)
@@ -118,6 +118,7 @@ export function CrosswordSession({
   const paused = state.status === 'paused'
   const complete = state.status === 'complete'
   const boardLocked = paused || complete
+  const bankOpen = bank.enabled && state.status !== 'not-started'
 
   useEffect(() => {
     latestStateRef.current = state
@@ -154,7 +155,7 @@ export function CrosswordSession({
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null
-    bank.releaseProxy()
+    inputRef.current?.blur()
     openerRef.current = opener ?? activeElement
     setDialog(name)
   }
@@ -167,21 +168,14 @@ export function CrosswordSession({
         (index) => guesses[index] === solutions[index],
       )
       if (correct) {
-        bank.releaseProxy()
+        inputRef.current?.blur()
         dispatch({ type: 'COMPLETE', now: Date.now() })
         return
       }
       thudDeadKey()
       announce(copy.notCorrect)
     },
-    [
-      announce,
-      bank.releaseProxy,
-      copy.notCorrect,
-      solutions,
-      thudDeadKey,
-      whiteIndices,
-    ],
+    [announce, copy.notCorrect, solutions, thudDeadKey, whiteIndices],
   )
 
   const {
@@ -196,6 +190,7 @@ export function CrosswordSession({
     moveToClue,
   } = useCrosswordSelection({
     activeEntry,
+    bankEnabled: bank.enabled,
     dispatch,
     focusGridRef,
     inputRef,
@@ -244,6 +239,7 @@ export function CrosswordSession({
     startPuzzle,
   } = useCrosswordTransport({
     announce,
+    bankEnabled: bank.enabled,
     bringCellIntoView,
     copy,
     disarmReveal,
@@ -272,6 +268,7 @@ export function CrosswordSession({
   } = useCrosswordKeyboard({
     activeEntry,
     announce,
+    bankEnabled: bank.enabled,
     boardLocked,
     clickKey,
     copy,
@@ -299,6 +296,30 @@ export function CrosswordSession({
     const timeout = window.setTimeout(() => setWordSweep(null), WORD_SWEEP_MS)
     return () => window.clearTimeout(timeout)
   }, [wordSweep])
+
+  /* with the bank up nothing holds focus, so hardware keydowns land on window */
+  const playing = state.status === 'playing'
+  useEffect(() => {
+    if (!bank.enabled || !playing) return
+    const onWindowKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return
+      const onControl =
+        event.target instanceof HTMLElement &&
+        event.target.closest('button, input, select, textarea, a, dialog')
+      if (onControl) return
+      handleKeyDown({
+        altKey: event.altKey,
+        ctrlKey: event.ctrlKey,
+        key: event.key,
+        metaKey: event.metaKey,
+        nativeEvent: event,
+        preventDefault: () => event.preventDefault(),
+        shiftKey: event.shiftKey,
+      })
+    }
+    window.addEventListener('keydown', onWindowKeyDown)
+    return () => window.removeEventListener('keydown', onWindowKeyDown)
+  }, [bank.enabled, playing, handleKeyDown])
 
   const publicationDate = publicationDateLabel(puzzle.publicationDate, locale)
   const showStart = hydrated && state.status === 'not-started'
@@ -361,7 +382,7 @@ export function CrosswordSession({
       lang={locale}
       data-large-text={settings.largeText}
       data-high-contrast={settings.highContrast}
-      data-letter-bank={bank.open || undefined}
+      data-letter-bank={bankOpen || undefined}
       style={{ '--cw-grid-cols': puzzle.width } as CSSProperties}
     >
       <CrosswordToolbarHints copy={copy} />
@@ -430,13 +451,10 @@ export function CrosswordSession({
       />
 
       <CrosswordLetterBank
-        bankRef={bank.bankRef}
         copy={copy}
-        dismiss={bank.dismiss}
         eraseBackward={eraseBackward}
         locale={locale}
-        open={bank.open}
-        restoreFocus={bank.restoreFocus}
+        open={bankOpen}
         writeLetter={writeLetter}
       />
 
@@ -446,8 +464,6 @@ export function CrosswordSession({
         eraseBackward={eraseBackward}
         inputMode={bank.proxyInputMode}
         inputRef={inputRef}
-        onBlur={bank.settleFocus}
-        onFocus={bank.openBank}
         onKeyDown={handleKeyDown}
         writeLetter={writeLetter}
       />

@@ -60,7 +60,7 @@ test.describe('crosswords desktop', () => {
 test.describe('crosswords mobile', () => {
   test.skip(({ isMobile }) => !isMobile, 'mobile-only flow')
 
-  test('letter bank writes, the clue bar steps, and the sheet opens', async ({
+  test('letter bank writes, steps clues, and never hides', async ({
     page,
     health,
   }) => {
@@ -71,14 +71,16 @@ test.describe('crosswords mobile', () => {
     )
     await page.locator('#crossword-start-key').tap()
 
+    /* the bank rides game state: up right after Start, before any cell tap */
+    const bankKeyA = page.getByRole('button', { name: 'A', exact: true })
+    await expect(bankKeyA).toBeVisible()
+
     const grid = page.getByRole('grid')
     const first = grid.locator('button').first()
     await first.tap()
+    await expect(page.locator('input[inputmode="none"]')).not.toBeFocused()
 
-    const proxy = page.locator('input[inputmode="none"]')
-    await expect(proxy).toBeFocused()
-
-    await page.getByRole('button', { name: 'A', exact: true }).tap()
+    await bankKeyA.tap()
     await expect(first).toContainText('A')
 
     const activeClue = page.locator('#crossword-active-clue-text')
@@ -98,18 +100,25 @@ test.describe('crosswords mobile', () => {
       .first()
       .tap()
     await expect(page.locator('#clue-sheet-title')).toBeHidden()
+    await expect(bankKeyA).toBeVisible()
 
     await page
       .getByRole('button', { name: 'Pause' })
       .filter({ visible: true })
       .first()
       .tap()
+    await expect(bankKeyA).toBeVisible()
     await page
       .getByRole('button', { name: 'Resume' })
       .filter({ visible: true })
       .first()
       .tap()
-    await expect(proxy).toBeFocused()
+
+    /* still writes after resume, into the entry the clue step selected */
+    await bankKeyA.tap()
+    await expect(
+      grid.locator('button').filter({ hasText: 'A' }).nth(1),
+    ).toBeVisible()
 
     expectClean(health)
   })

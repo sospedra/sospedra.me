@@ -13,8 +13,6 @@ export const CrosswordInputProxy = ({
   eraseBackward,
   inputMode,
   inputRef,
-  onBlur,
-  onFocus,
   onKeyDown,
   writeLetter,
 }: {
@@ -23,8 +21,6 @@ export const CrosswordInputProxy = ({
   eraseBackward: () => void
   inputMode: 'none' | 'text'
   inputRef: RefObject<HTMLInputElement | null>
-  onBlur: () => void
-  onFocus: () => void
   onKeyDown: (event: KeyboardEvent<HTMLElement>) => void
   writeLetter: (value: string) => void
 }) => {
@@ -41,8 +37,6 @@ export const CrosswordInputProxy = ({
         autoComplete='off'
         spellCheck={false}
         tabIndex={-1}
-        onBlur={onBlur}
-        onFocus={onFocus}
         onKeyDown={onKeyDown}
         onBeforeInput={(event: FormEvent<HTMLInputElement>) => {
           const native = event.nativeEvent as InputEvent

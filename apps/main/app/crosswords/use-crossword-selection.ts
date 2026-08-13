@@ -13,6 +13,7 @@ import { MOBILE_LAYOUT_MEDIA } from './crossword-viewport'
 
 export const useCrosswordSelection = ({
   activeEntry,
+  bankEnabled,
   dispatch,
   focusGridRef,
   inputRef,
@@ -22,6 +23,7 @@ export const useCrosswordSelection = ({
   shiftCarriage,
 }: {
   activeEntry: CrosswordEntry
+  bankEnabled: boolean
   dispatch: ActionDispatch<[action: CrosswordAction]>
   focusGridRef: RefObject<boolean>
   inputRef: RefObject<HTMLInputElement | null>
@@ -121,12 +123,12 @@ export const useCrosswordSelection = ({
       direction: entry.direction,
     })
     window.requestAnimationFrame(() => {
-      if (keepNativeKeyboard) {
-        bringCellIntoView(index)
-        inputRef.current?.focus({ preventScroll: true })
-      } else {
+      if (!keepNativeKeyboard) {
         focusCellAt(index)
+        return
       }
+      bringCellIntoView(index)
+      if (!bankEnabled) inputRef.current?.focus({ preventScroll: true })
     })
   }
 

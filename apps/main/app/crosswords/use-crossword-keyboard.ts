@@ -1,10 +1,4 @@
-import {
-  type ActionDispatch,
-  type KeyboardEvent,
-  type RefObject,
-  useCallback,
-  useRef,
-} from 'react'
+import { type ActionDispatch, type RefObject, useCallback, useRef } from 'react'
 import { pulseHaptic } from 'services/haptics'
 import { type Copy, directionLabel } from './crossword-copy'
 import {
@@ -23,6 +17,18 @@ import {
 } from './crossword-entries'
 import type { GameSettings } from './crossword-settings'
 
+/* structural so the window keydown listener can feed native events in */
+export type CrosswordKeyEvent = {
+  altKey: boolean
+  ctrlKey: boolean
+  currentTarget?: HTMLElement
+  key: string
+  metaKey: boolean
+  nativeEvent: { isComposing: boolean }
+  preventDefault: () => void
+  shiftKey: boolean
+}
+
 const normalizeLetter = (value: string) => {
   const preserved = value.toUpperCase().replaceAll('Ñ', '\u0000')
   const normalized = preserved
@@ -35,6 +41,7 @@ const normalizeLetter = (value: string) => {
 export const useCrosswordKeyboard = ({
   activeEntry,
   announce,
+  bankEnabled,
   boardLocked,
   clickKey,
   copy,
@@ -58,6 +65,7 @@ export const useCrosswordKeyboard = ({
 }: {
   activeEntry: CrosswordEntry
   announce: (message: string) => void
+  bankEnabled: boolean
   boardLocked: boolean
   clickKey: () => void
   copy: Copy
@@ -116,7 +124,8 @@ export const useCrosswordKeyboard = ({
       settings.skipFilled,
       projectedGuesses,
     )
-    focusGridRef.current = document.activeElement !== inputRef.current
+    focusGridRef.current =
+      !bankEnabled && document.activeElement !== inputRef.current
     if (current.revealedCells[index]) {
       dispatch({
         type: 'SELECT',
@@ -172,7 +181,8 @@ export const useCrosswordKeyboard = ({
   const eraseBackward = () => {
     const current = latestStateRef.current
     if (boardLocked) return
-    focusGridRef.current = document.activeElement !== inputRef.current
+    focusGridRef.current =
+      !bankEnabled && document.activeElement !== inputRef.current
 
     const erasable = (index: number) =>
       Boolean(current.guesses[index]) && !current.revealedCells[index]
@@ -233,7 +243,7 @@ export const useCrosswordKeyboard = ({
     }
     focusGridRef.current = !nativeKeyboard
     dispatch({ type: 'SELECT', index, direction })
-    if (nativeKeyboard) {
+    if (nativeKeyboard && !bankEnabled) {
       inputRef.current?.focus({ preventScroll: true })
     }
   }
@@ -258,7 +268,7 @@ export const useCrosswordKeyboard = ({
     }
   }
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+  const handleKeyDown = (event: CrosswordKeyEvent) => {
     if (event.nativeEvent.isComposing || composingRef.current) return
     const current = latestStateRef.current
     const hasCommand = event.metaKey || event.ctrlKey

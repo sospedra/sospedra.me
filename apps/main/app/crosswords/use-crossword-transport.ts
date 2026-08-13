@@ -11,6 +11,7 @@ import { MOBILE_LAYOUT_MEDIA } from './crossword-viewport'
 
 export const useCrosswordTransport = ({
   announce,
+  bankEnabled,
   bringCellIntoView,
   copy,
   disarmReveal,
@@ -28,6 +29,7 @@ export const useCrosswordTransport = ({
   setWordSweep,
 }: {
   announce: (message: string) => void
+  bankEnabled: boolean
   bringCellIntoView: (index: number) => void
   copy: Copy
   disarmReveal: () => void
@@ -78,12 +80,12 @@ export const useCrosswordTransport = ({
     announce(copy.resumedAnnouncement)
     dispatch({ type: 'RESUME', now: Date.now() })
     window.requestAnimationFrame(() => {
-      if (mobile) {
-        bringCellIntoView(selectedCell)
-        inputRef.current?.focus({ preventScroll: true })
-      } else {
+      if (!mobile) {
         focusCellAt(selectedCell)
+        return
       }
+      bringCellIntoView(selectedCell)
+      if (!bankEnabled) inputRef.current?.focus({ preventScroll: true })
     })
   }
 

@@ -11,7 +11,7 @@
 }
 
 /* letters span 2 of 20 tracks, so every row shares one letter width;
-   a 9-key home row starts at track 2 and centers like the iOS keyboard */
+   inset rows start at track 2 and center like the iOS keyboard */
 .bankRow {
   display: grid;
   grid-template-columns: repeat(20, 1fr);
@@ -62,5 +62,5 @@
 }
 
 .bankKeyWide {
-  grid-column: span 3;
+  grid-column: span 4;
 }

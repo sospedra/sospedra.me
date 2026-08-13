@@ -1,12 +1,5 @@
 import cn from 'clsx'
-import {
-  type ReactNode,
-  type RefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { tapHaptic } from 'services/haptics'
 import { queryTouchScreen } from 'services/screen'
 import type { Copy } from './crossword-copy'
@@ -19,7 +12,7 @@ const LETTER_ROWS = {
   es: ['QWERTYUIOP', 'ASDFGHJKLÑ', 'ZXCVBNM'],
 } satisfies Record<CrosswordLocale, [string, string, string]>
 
-const useLetterBankEnabled = () => {
+export const useLetterBank = () => {
   const [enabled, setEnabled] = useState(false)
 
   useEffect(() => {
@@ -35,71 +28,9 @@ const useLetterBankEnabled = () => {
     }
   }, [])
 
-  return enabled
-}
-
-export const useLetterBank = (inputRef: RefObject<HTMLInputElement | null>) => {
-  const bankRef = useRef<HTMLDivElement>(null)
-  const releasedRef = useRef(false)
-  const [open, setOpen] = useState(false)
-  const enabled = useLetterBankEnabled()
-
-  useEffect(() => {
-    if (!enabled) setOpen(false)
-  }, [enabled])
-
-  const openBank = () => {
-    releasedRef.current = false
-    if (enabled) setOpen(true)
-  }
-
-  /* focus juggles through cells and keys on every tap; close only when it
-     settles outside the proxy and the bank. iOS taps can blur the proxy
-     with focus landing nowhere; reclaim it unless the blur was deliberate */
-  const settleFocus = () => {
-    window.requestAnimationFrame(() => {
-      const active = document.activeElement
-      const kept =
-        active === inputRef.current ||
-        (bankRef.current?.contains(active) ?? false)
-      if (kept) return
-      const evaporated = !active || active === document.body
-      if (evaporated && open && !releasedRef.current) {
-        inputRef.current?.focus({ preventScroll: true })
-        return
-      }
-      releasedRef.current = false
-      setOpen(false)
-    })
-  }
-
-  const releaseProxy = useCallback(() => {
-    releasedRef.current = true
-    inputRef.current?.blur()
-  }, [inputRef])
-
-  const dismiss = () => {
-    setOpen(false)
-    releaseProxy()
-  }
-
-  const restoreFocus = () => {
-    if (document.activeElement === inputRef.current) return
-    inputRef.current?.focus({ preventScroll: true })
-  }
-
   const proxyInputMode: 'none' | 'text' = enabled ? 'none' : 'text'
 
-  return {
-    bankRef,
-    dismiss,
-    open,
-    openBank,
-    proxyInputMode,
-    releaseProxy,
-    restoreFocus,
-    settleFocus,
-  }
+  return { enabled, proxyInputMode }
 }
 
 const BankKeyButton = ({
@@ -113,9 +44,9 @@ const BankKeyButton = ({
   onPress: () => void
   wide?: boolean
 }) => {
-  /* focus-keeping rides mousedown: cancelling pointerdown kills the whole
-     compatibility click on iOS, and mousedown preventDefault still swallows
-     :active, so the pressed face rides a pointer-driven attribute */
+  /* a tap must not move focus off the page body, or hardware keydowns start
+     targeting this key; mousedown preventDefault also swallows :active, so
+     the pressed face rides a pointer-driven attribute */
   const [pressed, setPressed] = useState(false)
   const release = () => setPressed(false)
 
@@ -142,54 +73,37 @@ const BankKeyButton = ({
 }
 
 export const CrosswordLetterBank = ({
-  bankRef,
   copy,
-  dismiss,
   eraseBackward,
   locale,
   open,
-  restoreFocus,
   writeLetter,
 }: {
-  bankRef: RefObject<HTMLDivElement | null>
   copy: Copy
-  dismiss: () => void
   eraseBackward: () => void
   locale: CrosswordLocale
   open: boolean
-  restoreFocus: () => void
   writeLetter: (value: string) => void
 }) => {
   if (!open) return null
 
   const [top, home, bottom] = LETTER_ROWS[locale]
-  const press = (action: () => void) => () => {
-    restoreFocus()
-    action()
-  }
   const letterKeys = (letters: string) =>
     [...letters].map((letter) => (
-      <BankKeyButton key={letter} onPress={press(() => writeLetter(letter))}>
+      <BankKeyButton key={letter} onPress={() => writeLetter(letter)}>
         {letter}
       </BankKeyButton>
     ))
 
   return (
-    <div ref={bankRef} className={css.letterBank}>
+    <div className={css.letterBank}>
       <div className={css.bankRow}>{letterKeys(top)}</div>
       <div className={css.bankRow} data-inset={home.length === 9 || undefined}>
         {letterKeys(home)}
       </div>
-      <div className={css.bankRow}>
-        <BankKeyButton wide label={copy.bankDismiss} onPress={dismiss}>
-          ⌄
-        </BankKeyButton>
+      <div className={css.bankRow} data-inset>
         {letterKeys(bottom)}
-        <BankKeyButton
-          wide
-          label={copy.bankErase}
-          onPress={press(eraseBackward)}
-        >
+        <BankKeyButton wide label={copy.bankErase} onPress={eraseBackward}>
           ⌫
         </BankKeyButton>
       </div>
