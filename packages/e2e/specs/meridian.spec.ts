@@ -56,9 +56,10 @@ test.describe('meridian', () => {
     await expect(console_.locator('button')).toHaveCount(4)
 
     await page.keyboard.press('2')
-    await expect(
-      console_.locator('button[data-state="correct"]'),
-    ).toHaveCount(1, { timeout: 5_000 })
+    await expect(console_.locator('button[data-state="correct"]')).toHaveCount(
+      1,
+      { timeout: 5_000 },
+    )
   })
 })
 
@@ -79,8 +80,8 @@ test.describe('meridian mobile', () => {
     await expect(page.locator('input, textarea')).toHaveCount(0)
 
     await keys.first().tap()
-    await expect(
-      console_.locator('button[data-state]').first(),
-    ).toBeVisible({ timeout: 5_000 })
+    await expect(console_.locator('button[data-state]').first()).toBeVisible({
+      timeout: 5_000,
+    })
   })
 })

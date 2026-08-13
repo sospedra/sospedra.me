@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["@repo/biome-config/base.json"],
   "files": {
-    "includes": ["**", "!test-results", "!playwright-report"]
+    "includes": ["**", "!test-results", "!playwright-report", "!*.mjs"]
   },
   "linter": {
     "rules": {
