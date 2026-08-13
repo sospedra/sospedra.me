@@ -246,8 +246,8 @@ export const validateGeneratedAssets = ({
     )
     check(mapBytes.length <= 150 * 1024, 'World map exceeds 150 KB')
     check(
-      manifest.map.projection === 'EqualEarth',
-      'World-map projection must be documented as EqualEarth',
+      manifest.map.projection === 'WebMercatorCropped',
+      'World-map projection must be documented as WebMercatorCropped',
     )
     const mapSource = mapBytes.toString('utf8')
     const mapTagNames = [

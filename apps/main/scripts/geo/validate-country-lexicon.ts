@@ -6,7 +6,7 @@ import type { Locale } from '../../app/meridian/model.ts'
 import {
   rankGeoAutocompleteCandidates,
   resolveExactGeoOptionId,
-} from '../../app/meridian/text-answer.ts'
+} from './lib-text-answer.ts'
 
 const EXPECTED_COUNTRY_COUNT = 194
 const locales: Locale[] = ['en', 'es']

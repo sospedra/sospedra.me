@@ -1,6 +1,6 @@
 import { groupBy, mapValues, memoize } from 'es-toolkit'
 import { filter, flatMap, length, map, pipe, take, uniq } from 'es-toolkit/fp'
-import type { Locale, LocalizedOption } from './model'
+import type { Locale, LocalizedOption } from '../../app/meridian/model.ts'
 
 export type GeoAutocompleteMatch =
   | 'exact'

@@ -1,7 +1,7 @@
 import {
-  EQUAL_EARTH_ASPECT,
-  equalEarthForward,
-} from '../../app/meridian/equal-earth.ts'
+  MERCATOR_ASPECT,
+  mercatorForward,
+} from '../../app/meridian/mercator.ts'
 import { round } from './lib-asset-files.mjs'
 import { boundsOf } from './lib-polygon-geometry.mjs'
 
@@ -85,11 +85,9 @@ export const shapeProjector = (polygons) => {
 }
 
 export const WORLD_WIDTH = 1200
-export const WORLD_HEIGHT = Number(
-  (WORLD_WIDTH / EQUAL_EARTH_ASPECT).toFixed(2),
-)
+export const WORLD_HEIGHT = Number((WORLD_WIDTH / MERCATOR_ASPECT).toFixed(2))
 
 export const worldProject = ([longitude, latitude]) => {
-  const point = equalEarthForward(longitude, latitude)
+  const point = mercatorForward(longitude, latitude)
   return [round(point.x * WORLD_WIDTH), round(point.y * WORLD_HEIGHT)]
 }

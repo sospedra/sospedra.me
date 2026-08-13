@@ -105,9 +105,8 @@ const playThrough = (): GeoGameState => {
     },
     { type: 'FEEDBACK_FINISHED', completedAt: at(6), roundElapsedMs: 2_500 },
     {
-      type: 'SUBMIT_TEXT',
-      optionId: null,
-      submittedText: 'Atlantis',
+      type: 'SUBMIT_CHOICE',
+      optionId: 'g',
       elapsedMs: 3_000,
       roundElapsedMs: 6_000,
       answeredAt: at(9),

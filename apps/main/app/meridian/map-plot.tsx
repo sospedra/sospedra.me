@@ -67,7 +67,10 @@ export function MapPlot({
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-      style={{ touchAction: 'none' }}
+      style={{
+        touchAction: 'none',
+        aspectRatio: `${MAP_WIDTH} / ${MAP_HEIGHT}`,
+      }}
     >
       <title>{labels.map}</title>
       <desc>{labels.instructions}</desc>

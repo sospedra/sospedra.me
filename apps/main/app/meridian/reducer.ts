@@ -1,10 +1,5 @@
 import { match } from 'ts-pattern'
-import {
-  skipQuestion,
-  submitChoice,
-  submitMap,
-  submitText,
-} from './answer-submission'
+import { skipQuestion, submitChoice, submitMap } from './answer-submission'
 import {
   createGeoGameState,
   currentQuestion,
@@ -57,7 +52,6 @@ export const geoGameReducer = (
       }
     })
     .with({ type: 'SUBMIT_CHOICE' }, (action) => submitChoice(state, action))
-    .with({ type: 'SUBMIT_TEXT' }, (action) => submitText(state, action))
     .with({ type: 'SUBMIT_MAP' }, (action) => submitMap(state, action))
     .with({ type: 'SKIP_QUESTION' }, (action) => skipQuestion(state, action))
     .with({ type: 'ROUND_TIME_EXPIRED' }, (action) =>

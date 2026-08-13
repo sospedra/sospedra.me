@@ -191,55 +191,6 @@ export const submitChoice = (
   return appendAnswer(state, answer)
 }
 
-export const submitText = (
-  state: GeoGameState,
-  action: Extract<GeoGameAction, { type: 'SUBMIT_TEXT' }>,
-) => {
-  const answerWindow = canAnswer(state, action)
-  if (!answerWindow) return state
-  const { question, round } = answerWindow
-  const normalizedText = action.submittedText.trim()
-  if (
-    question.type === 'map' ||
-    normalizedText.length === 0 ||
-    (action.optionId !== null &&
-      !question.options.some((option) => option.id === action.optionId))
-  ) {
-    return state
-  }
-  if (answerWindow.roundElapsedMs >= roundTimeLimitMs(round)) {
-    return expireRound(state, answerWindow.roundElapsedMs, action.answeredAt)
-  }
-
-  const correct = action.optionId === question.correctOptionId
-  const score = scoreChoiceAnswer({
-    correct,
-    elapsedMs: answerWindow.responseElapsedMs,
-    questionLimitMs: round.questionLimitMs,
-    correctStreak: state.currentStreak,
-    rules: state.challenge.rules,
-  })
-  const answer: ChoiceAnswerResult = {
-    ...answerBase({
-      answeredAt: action.answeredAt,
-      correct,
-      elapsedMs: answerWindow.responseElapsedMs,
-      expired: false,
-      question,
-      round,
-      roundElapsedMs: answerWindow.roundElapsedMs,
-      score,
-      state,
-    }),
-    kind: 'choice',
-    selectedOptionId: action.optionId,
-    correctOptionId: question.correctOptionId,
-    submittedText: normalizedText,
-  }
-
-  return appendAnswer(state, answer)
-}
-
 export const submitMap = (
   state: GeoGameState,
   action: Extract<GeoGameAction, { type: 'SUBMIT_MAP' }>,

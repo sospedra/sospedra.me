@@ -1,11 +1,8 @@
 import type { Dispatch, Ref } from 'react'
-import { useMemo } from 'react'
 import type { ExternalStore } from 'services/external-store'
-import { TextAnswerConsole } from './answer-console'
+import { ChoiceConsole } from './answer-console'
 import { FeedbackBar } from './answer-feedback'
 import frame from './artifact-frame.module.css'
-import { mergeCapitalAutocompleteOptions } from './city-options'
-import { OFFICIAL_COUNTRY_OPTIONS } from './country-lexicon'
 import type { currentQuestion, GeoGameAction, GeoGameState } from './game-state'
 import { roundName } from './geo-format'
 import GeoMap, { type GeoMapLabels } from './geo-map'
@@ -113,36 +110,6 @@ export const getGeoMapLabels = (copy: GeoMessages): GeoMapLabels => ({
   },
 })
 
-const optionsForRoundType = (
-  rounds: GeoGameState['challenge']['rounds'],
-  type: Question['type'],
-) =>
-  rounds
-    .filter((round) => round.type === type)
-    .flatMap((round) =>
-      round.questions.flatMap((candidate) =>
-        candidate.type === 'map' ? [] : candidate.options,
-      ),
-    )
-
-const autocompleteOptionsFor = (
-  question: Question | null,
-  cityOptions: GeoGameState['challenge']['cityOptions'],
-  rounds: GeoGameState['challenge']['rounds'],
-) => {
-  if (!question || question.type === 'map') return []
-  const roundOptions = optionsForRoundType(rounds, question.type)
-  if (question.type === 'capital') {
-    return mergeCapitalAutocompleteOptions(cityOptions, roundOptions)
-  }
-
-  const optionsById = new Map(
-    OFFICIAL_COUNTRY_OPTIONS.map((option) => [option.id, option]),
-  )
-  for (const option of roundOptions) optionsById.set(option.id, option)
-  return [...optionsById.values()]
-}
-
 const mapFeedbackFor = (lastAnswer: GeoGameState['lastAnswer']) => {
   const mapAnswer = lastAnswer?.kind === 'map-pin' ? lastAnswer : null
   if (mapAnswer?.distanceKm == null) return undefined
@@ -169,8 +136,8 @@ export function MissionStage({
   selectedCoordinate,
   setMarker,
   state,
+  submitChoice,
   submitMap,
-  submitTextAnswer,
 }: {
   copy: GeoMessages
   countdown: number
@@ -188,25 +155,9 @@ export function MissionStage({
   selectedCoordinate: GeoCoordinate | null
   setMarker: (marker: { attemptKey: string; coordinate: GeoCoordinate }) => void
   state: GeoGameState
+  submitChoice: (optionId: string) => void
   submitMap: (coordinate: GeoCoordinate) => void
-  submitTextAnswer: (answer: {
-    optionId: string | null
-    submittedText: string
-  }) => void
 }) {
-  const autocompleteOptions = useMemo(
-    () =>
-      autocompleteOptionsFor(
-        question,
-        state.challenge.cityOptions,
-        state.challenge.rounds,
-      ),
-    [question, state.challenge.cityOptions, state.challenge.rounds],
-  )
-
-  const answerPlaceholder =
-    question?.type === 'capital' ? copy.typeCapital : copy.typeCountry
-
   const mapLabels = getGeoMapLabels(copy)
 
   const mapFeedback = mapFeedbackFor(state.lastAnswer)
@@ -298,15 +249,13 @@ export function MissionStage({
         )}
       </section>
       {question && question.type !== 'map' && (
-        <TextAnswerConsole
+        <ChoiceConsole
           key={questionAttemptKey}
           copy={copy}
-          lexicon={autocompleteOptions}
           locale={locale}
-          onAnswer={submitTextAnswer}
+          onChoose={submitChoice}
           onKeystroke={onKeystroke}
           options={question.options}
-          placeholder={answerPlaceholder}
           state={state}
         />
       )}

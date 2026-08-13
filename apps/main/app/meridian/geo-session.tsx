@@ -158,13 +158,7 @@ export function GeoSession({
     stateRef,
   })
 
-  const submitTextAnswer = ({
-    optionId,
-    submittedText,
-  }: {
-    optionId: string | null
-    submittedText: string
-  }) => {
+  const submitChoice = (optionId: string) => {
     const current = stateRef.current
     const activeQuestion = currentQuestion(current)
     if (
@@ -175,9 +169,8 @@ export function GeoSession({
       return
     }
     dispatch({
-      type: 'SUBMIT_TEXT',
+      type: 'SUBMIT_CHOICE',
       optionId,
-      submittedText,
       elapsedMs: questionElapsedRef.current,
       roundElapsedMs: roundClock.get(),
       answeredAt: new Date().toISOString(),
@@ -255,8 +248,8 @@ export function GeoSession({
         selectedCoordinate={selectedCoordinate}
         setMarker={setMarker}
         state={state}
+        submitChoice={submitChoice}
         submitMap={submitMap}
-        submitTextAnswer={submitTextAnswer}
       />
     ),
   }

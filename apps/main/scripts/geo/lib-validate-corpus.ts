@@ -8,7 +8,7 @@ import type { CountryRecord, RoundType } from '../../app/meridian/model.ts'
 import {
   normalizeGeoAnswer,
   rankGeoAutocompleteCandidates,
-} from '../../app/meridian/text-answer.ts'
+} from './lib-text-answer.ts'
 import {
   check,
   isCoordinateWithin,

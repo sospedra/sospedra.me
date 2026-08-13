@@ -1,257 +1,104 @@
-import type { FormEvent, KeyboardEvent as ReactKeyboardEvent } from 'react'
-import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { useEffect } from 'react'
+import { tapHaptic } from 'services/haptics'
+import { isEditableTarget } from 'services/hotkeys'
 import css from './answer-console.module.css'
-import { AnswerKeys, useAnswerKeys } from './answer-keys'
+import { correctOptionFor, selectedOptionFor } from './answer-feedback'
 import type { GeoGameState } from './game-state'
 import type { GeoLocale, GeoMessages } from './geo-messages'
-import shell from './geo-shell.module.css'
 import type { LocalizedOption } from './model'
-import {
-  buildGeoAutocompleteIndex,
-  isMeaningfulGeoAnswerInput,
-  rankGeoAutocompleteIndex,
-  resolveExactGeoOptionId,
-} from './text-answer'
 
-const ANSWER_MAX_LENGTH = 64
-const AUTOCOMPLETE_MAX_RESULTS = 8
-const AUTOCOMPLETE_MIN_CHARACTERS = 1
+const CHOICE_DIGITS = ['1', '2', '3', '4'] as const
 
-export function TextAnswerConsole({
+type KeyState = 'correct' | 'missed' | undefined
+
+const keyStateFor = (
+  optionId: string,
+  correctId: string | null,
+  selectedId: string | null,
+): KeyState => {
+  if (optionId === correctId) return 'correct'
+  if (optionId === selectedId) return 'missed'
+  return undefined
+}
+
+export function ChoiceConsole({
   copy,
-  lexicon,
   locale,
-  onAnswer,
+  onChoose,
   onKeystroke,
   options,
-  placeholder,
   state,
 }: {
   copy: GeoMessages
-  lexicon: LocalizedOption[]
   locale: GeoLocale
-  onAnswer: (answer: { optionId: string | null; submittedText: string }) => void
+  onChoose: (optionId: string) => void
   onKeystroke: () => void
   options: LocalizedOption[]
-  placeholder: string
   state: GeoGameState
 }) {
-  const [value, setValue] = useState('')
-  const [focused, setFocused] = useState(false)
-  const [dismissed, setDismissed] = useState(false)
-  const [keysDismissed, setKeysDismissed] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const keys = useAnswerKeys()
-  const inputId = useId()
-  const listboxId = useId()
   const active = state.phase === 'question'
-  const lexiconIndex = useMemo(
-    () => buildGeoAutocompleteIndex(lexicon, locale),
-    [lexicon, locale],
-  )
-  const candidates = useMemo(
-    () =>
-      rankGeoAutocompleteIndex(value, lexiconIndex, {
-        maxResults: AUTOCOMPLETE_MAX_RESULTS,
-        minimumCharacters: AUTOCOMPLETE_MIN_CHARACTERS,
-      }),
-    [lexiconIndex, value],
-  )
-  /* the answer keys type without ever focusing the field, so suggestions
-     follow the value there and the caret only gates the OS keyboard path */
-  const listening = keys.enabled || focused
-  const expanded = active && listening && !dismissed && candidates.length > 0
-  const meaningful = isMeaningfulGeoAnswerInput(value, locale)
+  const feedback = state.phase === 'feedback' ? state.lastAnswer : null
+  const correctId = correctOptionFor(feedback)
+  const selectedId = selectedOptionFor(feedback)
 
   useEffect(() => {
     if (!active) return
-    window.requestAnimationFrame(() =>
-      inputRef.current?.focus({ preventScroll: true }),
-    )
-  }, [active])
-
-  const keysOpen = keys.enabled && !keysDismissed
-
-  const writeCharacter = (character: string) => {
-    setValue((current) => (current + character).slice(0, ANSWER_MAX_LENGTH))
-    setActiveIndex(0)
-    setDismissed(false)
-  }
-
-  const eraseBackward = () => {
-    setValue((current) => current.slice(0, -1))
-    setActiveIndex(0)
-  }
-
-  const dismissKeys = () => {
-    setKeysDismissed(true)
-    inputRef.current?.blur()
-  }
-
-  const transmit = (answer: string) => {
-    const submittedText = answer.trim()
-    if (!submittedText || !active) return
-    onAnswer({
-      optionId: resolveExactGeoOptionId(submittedText, options, locale),
-      submittedText,
-    })
-  }
-
-  const submitForm = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!value.trim()) return
-
-    const exactCurrentOption = resolveExactGeoOptionId(value, options, locale)
-    if (exactCurrentOption) {
-      transmit(value)
-      return
+    const transmitDigit = (event: KeyboardEvent) => {
+      const digitIndex = CHOICE_DIGITS.indexOf(
+        event.key as (typeof CHOICE_DIGITS)[number],
+      )
+      const blocked =
+        digitIndex === -1 ||
+        event.defaultPrevented ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        isEditableTarget(event.target)
+      if (blocked) return
+      const option = options[digitIndex]
+      if (!option) return
+      event.preventDefault()
+      onKeystroke()
+      onChoose(option.id)
     }
-
-    const candidate = expanded ? candidates[activeIndex] : null
-    transmit(candidate?.label ?? value)
-  }
-
-  const handleAnswerKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
-    const canCycle = candidates.length > 0 && !dismissed
-    const keyActions: Record<string, (() => void) | false> = {
-      ArrowDown:
-        canCycle &&
-        (() => setActiveIndex((index) => (index + 1) % candidates.length)),
-      ArrowUp:
-        canCycle &&
-        (() =>
-          setActiveIndex(
-            (index) => (index - 1 + candidates.length) % candidates.length,
-          )),
-      Escape: expanded && (() => setDismissed(true)),
-    }
-
-    const action = keyActions[event.key]
-    if (!action) return
-    event.preventDefault()
-    action()
-  }
+    window.addEventListener('keydown', transmitDigit)
+    return () => window.removeEventListener('keydown', transmitDigit)
+  }, [active, onChoose, onKeystroke, options])
 
   return (
     <aside
       className={css.answerConsole}
-      data-mode='text'
-      data-keys={keysOpen}
+      data-mode='choice'
       aria-label={copy.answerInput}
     >
-      <form className={css.chatForm} onSubmit={submitForm}>
-        <label
-          id={`${inputId}-label`}
-          className={shell.srOnly}
-          htmlFor={inputId}
-        >
-          {copy.answerInput}
-        </label>
-        <div className={css.commandLine}>
-          <span className={css.commandPrefix} aria-hidden='true'>
-            TX&gt;
-          </span>
-          <input
-            ref={inputRef}
-            id={inputId}
-            className={css.answerInput}
-            type='text'
-            value={value}
-            disabled={!active}
-            maxLength={ANSWER_MAX_LENGTH}
-            autoCapitalize='words'
-            autoComplete='off'
-            enterKeyHint='send'
-            inputMode={keys.inputMode}
-            spellCheck={false}
-            placeholder={placeholder}
-            role='combobox'
-            aria-autocomplete='list'
-            aria-labelledby={`${inputId}-label geo-question-title`}
-            aria-controls={expanded ? listboxId : undefined}
-            aria-expanded={expanded}
-            aria-activedescendant={
-              expanded ? `${listboxId}-option-${activeIndex}` : undefined
-            }
-            aria-describedby={`${inputId}-hint`}
-            onBlur={() => setFocused(false)}
-            onFocus={() => {
-              setFocused(true)
-              setDismissed(false)
-              setKeysDismissed(false)
-            }}
-            onChange={(event) => {
-              setValue(event.target.value)
-              setActiveIndex(0)
-              setDismissed(false)
-            }}
-            onKeyDown={handleAnswerKeyDown}
-          />
+      <fieldset className={css.choiceGrid} aria-labelledby='geo-question-title'>
+        {options.map((option, index) => (
           <button
-            type='submit'
-            className={css.sendButton}
-            disabled={!active || value.trim().length === 0}
+            key={option.id}
+            type='button'
+            className={css.choiceKey}
+            disabled={!active}
+            data-state={keyStateFor(option.id, correctId, selectedId)}
+            aria-keyshortcuts={CHOICE_DIGITS[index]}
+            onPointerDown={() => {
+              tapHaptic()
+              onKeystroke()
+            }}
+            onClick={() => onChoose(option.id)}
           >
-            <span>{copy.sendAnswer}</span>
-            <span aria-hidden='true'>↗</span>
-          </button>
-        </div>
-
-        <span id={`${inputId}-hint`} className={css.answerHint}>
-          {copy.answerHint}
-        </span>
-
-        {expanded && (
-          <div
-            id={listboxId}
-            className={css.autocompleteList}
-            role='listbox'
-            aria-label={copy.autocompleteResults}
-          >
-            {candidates.map((candidate, index) => (
-              <button
-                id={`${listboxId}-option-${index}`}
-                key={candidate.optionId}
-                type='button'
-                role='option'
-                aria-selected={index === activeIndex}
-                tabIndex={-1}
-                onPointerDown={(event) => event.preventDefault()}
-                onClick={() => transmit(candidate.label)}
-              >
-                <span>{candidate.label}</span>
-                <span className={css.autocompleteArrow} aria-hidden='true'>
-                  ↗
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {active &&
-          listening &&
-          meaningful &&
-          candidates.length === 0 &&
-          !dismissed && (
-            <span className={css.noAutocompleteResults} role='status'>
-              {copy.noAutocompleteResults}
+            <span className={css.choiceDigit} aria-hidden='true'>
+              {CHOICE_DIGITS[index]}
             </span>
-          )}
-      </form>
-      <span className={css.streakReadout}>
-        {copy.streak} <strong>×{state.currentStreak}</strong>
+            <span className={css.choiceLabel}>{option.label[locale]}</span>
+          </button>
+        ))}
+      </fieldset>
+      <span className={css.consoleRail}>
+        <span className={css.answerHint}>{copy.answerHint}</span>
+        <span className={css.streakReadout}>
+          {copy.streak} <strong>×{state.currentStreak}</strong>
+        </span>
       </span>
-      {keysOpen && (
-        <AnswerKeys
-          copy={copy}
-          disabled={!active}
-          onDismiss={dismissKeys}
-          onErase={eraseBackward}
-          onKeystroke={onKeystroke}
-          onWrite={writeCharacter}
-        />
-      )}
     </aside>
   )
 }

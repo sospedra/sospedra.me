@@ -1,7 +1,6 @@
 import type {
   CityAutocompleteOption,
   CityAutocompleteOptionId,
-  LocalizedOption,
   LocalizedText,
 } from './model'
 
@@ -28,14 +27,3 @@ export const buildCityAutocompleteOptions = (
     id: cityAutocompleteOptionId(city),
     label: { ...city.names },
   }))
-
-export const mergeCapitalAutocompleteOptions = (
-  cityOptions: readonly CityAutocompleteOption[],
-  answerOptions: readonly LocalizedOption[],
-): LocalizedOption[] => {
-  const optionsById = new Map<string, LocalizedOption>(
-    cityOptions.map((option) => [option.id, option]),
-  )
-  for (const option of answerOptions) optionsById.set(option.id, option)
-  return [...optionsById.values()]
-}

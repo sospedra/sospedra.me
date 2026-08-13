@@ -1920,8 +1920,8 @@
   },
   "map": {
     "url": "/games/geo/assets/map/world-map.svg",
-    "sha256": "e021584c3f70a4e2724f0aa764b15b4c5e65993fb2393b6c8fa1f0a10bac5c34",
-    "bytes": 143937,
-    "projection": "EqualEarth"
+    "sha256": "e4bdb4a00c342d5e30c2e40083b30e32f5252181128ed7f33f69f9a4c60a3b6e",
+    "bytes": 145538,
+    "projection": "WebMercatorCropped"
   }
 }

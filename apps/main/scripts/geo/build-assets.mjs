@@ -38,7 +38,7 @@ const EXPECTED_NATURAL_EARTH_LAND_SHA256 =
 const EXPECTED_FLAG_ICONS_VERSION = '7.5.0'
 const CORPUS_PATH = join(REPOSITORY_ROOT, 'repo/geo/generated/countries.json')
 const GENERATED_ASSET_FILENAME = /^[a-f0-9]{20}\.svg$/u
-const WORLD_PIXEL_TOLERANCE = 0.6
+const WORLD_PIXEL_TOLERANCE = 0.8
 
 const countryCorpus = JSON.parse(readFileSync(CORPUS_PATH, 'utf8'))
 if (
@@ -191,9 +191,15 @@ for (const { code } of flagCountries) {
   }
 }
 
+// The Mercator frame crops at 60°S; Antarctica would clamp into a
+// zero-area smear along the bottom edge.
+const insideWorldCrop = (polygon) =>
+  polygon[0].some(([, latitude]) => latitude > -60)
+
 const allLandPolygons = naturalEarthLand.features
   .filter((feature) => feature.properties?.featurecla !== 'Null island')
   .flatMap((feature) => polygonsOf(feature.geometry))
+  .filter(insideWorldCrop)
 const totalLandArea = allLandPolygons.reduce(
   (sum, polygon) => sum + Math.abs(signedArea(polygon[0])),
   0,
@@ -214,7 +220,7 @@ manifest.map = {
   url: '/games/geo/assets/map/world-map.svg',
   sha256: sha256(worldBytes),
   bytes: worldBytes.length,
-  projection: 'EqualEarth',
+  projection: 'WebMercatorCropped',
 }
 
 for (const country of countryCorpus.countries) {

@@ -60,14 +60,6 @@ export type GeoGameAction =
       answeredAt: string
     }
   | {
-      type: 'SUBMIT_TEXT'
-      optionId: string | null
-      submittedText: string
-      elapsedMs: number
-      roundElapsedMs?: number
-      answeredAt: string
-    }
-  | {
       type: 'SUBMIT_MAP'
       coordinate: GeoCoordinate
       elapsedMs: number

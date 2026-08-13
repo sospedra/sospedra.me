@@ -12,9 +12,11 @@
 
 .mapStage {
   position: relative;
+  display: grid;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+  place-items: center;
 }
 
 .mapPromptBanner {
@@ -53,9 +55,11 @@
 .mapCanvas {
   composes: mapCanvas from "./geo-game.module.css";
   display: block;
-  width: 100%;
-  height: 100%;
-  min-height: 15rem;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  place-self: center;
   outline: none;
   cursor: crosshair;
   touch-action: none;
