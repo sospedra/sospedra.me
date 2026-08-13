@@ -9,7 +9,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import { pulseHaptic } from 'services/haptics'
 import { ClueColumns, MobileClueBar } from './crossword-clue-rail'
 import {
   COPY,
@@ -42,17 +41,15 @@ import { CrosswordMasthead } from './crossword-masthead'
 import type { GameSettings } from './crossword-settings'
 import { CrosswordToolbar, CrosswordToolbarHints } from './crossword-toolbar'
 import css from './crosswords.module.css'
+import { useCrosswordDialogs } from './use-crossword-dialogs'
 import { useCrosswordKeyboard } from './use-crossword-keyboard'
 import { useCrosswordProgress } from './use-crossword-progress'
 import { useCrosswordProofing } from './use-crossword-proofing'
 import { useCrosswordSelection } from './use-crossword-selection'
+import { useCrosswordSettle } from './use-crossword-settle'
 import { useCrosswordSound } from './use-crossword-sound'
 import { useCrosswordTransport } from './use-crossword-transport'
-
-type DialogName = 'clues' | 'help' | null
-
-/* covers the 640ms solved-word sweep plus its per-cell stagger in crosswords.module.css */
-const WORD_SWEEP_MS = 900
+import { useHardwareKeys } from './use-hardware-keys'
 
 export function CrosswordSession({
   locale,
@@ -79,19 +76,13 @@ export function CrosswordSession({
     puzzle,
     createCrosswordState,
   )
-  const [dialog, setDialog] = useState<DialogName>(null)
   const [announcement, setAnnouncement] = useState('')
-  const [wordSweep, setWordSweep] = useState<{
-    entryId: string
-    run: number
-  } | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const bank = useLetterBank()
-  const openerRef = useRef<HTMLElement | null>(null)
+  const dialogs = useCrosswordDialogs(inputRef)
   const focusGridRef = useRef(false)
   const latestStateRef = useRef(state)
   const announcementNonceRef = useRef(false)
-  const sweepRunRef = useRef(0)
 
   const announce = useCallback((message: string) => {
     announcementNonceRef.current = !announcementNonceRef.current
@@ -110,9 +101,6 @@ export function CrosswordSession({
   )
   const activeEntry =
     entryFor(puzzle, state.selectedCell, state.direction) ?? orderedEntries[0]
-  const sweepEntry = wordSweep
-    ? puzzle.entries.find((entry) => entry.id === wordSweep.entryId)
-    : undefined
   const whiteIndices = useMemo(() => whiteCellIndices(puzzle), [puzzle])
   const solutions = useMemo(() => solutionsByCell(puzzle), [puzzle])
   const paused = state.status === 'paused'
@@ -132,51 +120,18 @@ export function CrosswordSession({
     thudDeadKey,
   } = useCrosswordSound(settings.soundLevel)
 
-  /* a puzzle restored complete must not celebrate again on mount */
-  const celebratedRef = useRef(complete)
-  useEffect(() => {
-    if (complete && !celebratedRef.current) {
-      pulseHaptic()
-      ringFanfare()
-    }
-    celebratedRef.current = complete
-  }, [complete, ringFanfare])
-
-  const closeDialog = () => {
-    setDialog(null)
-    window.requestAnimationFrame(() => openerRef.current?.focus())
-  }
-
-  const openDialog = (
-    name: Exclude<DialogName, null>,
-    opener?: HTMLElement,
-  ) => {
-    const activeElement =
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null
-    inputRef.current?.blur()
-    openerRef.current = opener ?? activeElement
-    setDialog(name)
-  }
-
-  const settleBoard = useCallback(
-    (guesses: string[]) => {
-      const filled = whiteIndices.every((index) => guesses[index])
-      if (!filled) return
-      const correct = whiteIndices.every(
-        (index) => guesses[index] === solutions[index],
-      )
-      if (correct) {
-        inputRef.current?.blur()
-        dispatch({ type: 'COMPLETE', now: Date.now() })
-        return
-      }
-      thudDeadKey()
-      announce(copy.notCorrect)
-    },
-    [announce, copy.notCorrect, solutions, thudDeadKey, whiteIndices],
-  )
+  const settle = useCrosswordSettle({
+    announce,
+    complete,
+    copy,
+    dispatch,
+    inputRef,
+    puzzle,
+    ringFanfare,
+    solutions,
+    thudDeadKey,
+    whiteIndices,
+  })
 
   const {
     acrossListRef,
@@ -204,7 +159,7 @@ export function CrosswordSession({
     dispatch,
     latestStateRef,
     puzzle,
-    settleBoard,
+    settleBoard: settle.settleBoard,
     state,
   })
 
@@ -222,7 +177,7 @@ export function CrosswordSession({
     dispatch,
     latestStateRef,
     selectedCell: state.selectedCell,
-    settleBoard,
+    settleBoard: settle.settleBoard,
     solutions,
     thudDeadKey,
     whiteIndices,
@@ -249,12 +204,12 @@ export function CrosswordSession({
     inputRef,
     latestStateRef,
     locale,
-    openerRef,
+    openerRef: dialogs.openerRef,
     puzzle,
     save,
-    setDialog,
+    setDialog: dialogs.setDialog,
     setLocale,
-    setWordSweep,
+    setWordSweep: settle.setWordSweep,
   })
 
   const {
@@ -279,51 +234,26 @@ export function CrosswordSession({
     latestStateRef,
     locale,
     moveToClue,
-    openDialog,
+    openDialog: dialogs.openDialog,
     orderedEntries,
     puzzle,
     ringTypewriterBell,
-    setWordSweep,
+    setWordSweep: settle.setWordSweep,
     settings,
-    settleBoard,
-    sweepRunRef,
+    settleBoard: settle.settleBoard,
+    sweepRunRef: settle.sweepRunRef,
     thudDeadKey,
     whiteIndices,
   })
 
-  useEffect(() => {
-    if (!wordSweep) return
-    const timeout = window.setTimeout(() => setWordSweep(null), WORD_SWEEP_MS)
-    return () => window.clearTimeout(timeout)
-  }, [wordSweep])
-
-  /* with the bank up nothing holds focus, so hardware keydowns land on window */
-  const playing = state.status === 'playing'
-  useEffect(() => {
-    if (!bank.enabled || !playing) return
-    const onWindowKeyDown = (event: KeyboardEvent) => {
-      if (event.defaultPrevented) return
-      const onControl =
-        event.target instanceof HTMLElement &&
-        event.target.closest('button, input, select, textarea, a, dialog')
-      if (onControl) return
-      handleKeyDown({
-        altKey: event.altKey,
-        ctrlKey: event.ctrlKey,
-        key: event.key,
-        metaKey: event.metaKey,
-        nativeEvent: event,
-        preventDefault: () => event.preventDefault(),
-        shiftKey: event.shiftKey,
-      })
-    }
-    window.addEventListener('keydown', onWindowKeyDown)
-    return () => window.removeEventListener('keydown', onWindowKeyDown)
-  }, [bank.enabled, playing, handleKeyDown])
+  useHardwareKeys({
+    enabled: bank.enabled,
+    handleKeyDown,
+    playing: state.status === 'playing',
+  })
 
   const publicationDate = publicationDateLabel(puzzle.publicationDate, locale)
   const showStart = hydrated && state.status === 'not-started'
-  const gridSizeLabel = `${puzzle.width}×${puzzle.height}`
 
   const toggleTimer = () => {
     const showTimer = !settings.showTimer
@@ -337,14 +267,15 @@ export function CrosswordSession({
   }
 
   const pickClue = (entry: CrosswordEntry) => {
-    setDialog(null)
+    dialogs.setDialog(null)
     chooseEntry(entry, true)
   }
 
   const toolbarProps = {
     copy,
     onCheck: () => check(toolScope),
-    onOpenHelp: (button: HTMLButtonElement) => openDialog('help', button),
+    onOpenHelp: (button: HTMLButtonElement) =>
+      dialogs.openDialog('help', button),
     onPauseFrom: pauseFrom,
     onRedo: redoMove,
     onRequestReveal: requestReveal,
@@ -398,7 +329,7 @@ export function CrosswordSession({
         hasSpanish={hasSpanish}
         hydrated={hydrated}
         locale={locale}
-        onOpenHelp={(button) => openDialog('help', button)}
+        onOpenHelp={(button) => dialogs.openDialog('help', button)}
         onPauseFrom={pauseFrom}
         onRestart={restartPuzzle}
         onResumeFrom={resumeFrom}
@@ -414,7 +345,7 @@ export function CrosswordSession({
           cellRefs={cellRefs}
           copy={copy}
           dispatch={dispatch}
-          gridSizeLabel={gridSizeLabel}
+          gridSizeLabel={`${puzzle.width}×${puzzle.height}`}
           latestStateRef={latestStateRef}
           letterFontClassName={letterFontClassName}
           locale={locale}
@@ -427,8 +358,8 @@ export function CrosswordSession({
           showStart={showStart}
           startPuzzle={startPuzzle}
           state={state}
-          sweepEntry={sweepEntry}
-          wordSweep={wordSweep}
+          sweepEntry={settle.sweepEntry}
+          wordSweep={settle.wordSweep}
         />
 
         <ClueColumns
@@ -447,7 +378,7 @@ export function CrosswordSession({
         copy={copy}
         guesses={state.guesses}
         moveToClue={moveToClue}
-        openClueSheet={(button) => openDialog('clues', button)}
+        openClueSheet={(button) => dialogs.openDialog('clues', button)}
       />
 
       <CrosswordLetterBank
@@ -469,15 +400,15 @@ export function CrosswordSession({
       />
 
       <CrosswordHelpDialog
-        close={closeDialog}
+        close={dialogs.closeDialog}
         copy={copy}
-        open={dialog === 'help'}
+        open={dialogs.dialog === 'help'}
       />
 
       <CrosswordClueSheet
         {...railProps}
-        close={closeDialog}
-        open={dialog === 'clues'}
+        close={dialogs.closeDialog}
+        open={dialogs.dialog === 'clues'}
         pick={pickClue}
       />
 
