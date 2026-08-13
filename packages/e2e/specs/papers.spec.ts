@@ -46,3 +46,25 @@ test.describe('papers', () => {
     expectClean(health)
   })
 })
+
+test.describe('papers mobile', () => {
+  test.skip(({ isMobile }) => !isMobile, 'mobile-only flow')
+
+  test('a code-heavy paper lays out at viewport width', async ({
+    page,
+    health,
+  }) => {
+    await page.goto('/papers/xz-backdoor')
+    await expect(page.locator('article').first()).toBeVisible()
+
+    const widths = await page.evaluate(() => ({
+      viewport: window.innerWidth,
+      main: document.querySelector('main')?.getBoundingClientRect().width ?? 0,
+      document: document.scrollingElement?.scrollWidth ?? 0,
+    }))
+    expect(widths.main).toBeLessThanOrEqual(widths.viewport)
+    expect(widths.document).toBe(widths.viewport)
+
+    expectClean(health)
+  })
+})

@@ -24,10 +24,15 @@ const Shell = ({
       </a>
       <SystemSettings />
       {/* grid 1fr: main stretches to a definite viewport height, so the
-          height: 100% chains in full-viewport routes keep resolving */}
+          height: 100% chains in full-viewport routes keep resolving.
+          minmax(0, 1fr): an auto column would grow to main's min-content
+          and code blocks would push papers past the phone viewport */}
       <div
         id={VBODY_ID}
-        className={cn('w-full min-h-dvh grid grid-rows-[1fr]', shellClassName)}
+        className={cn(
+          'w-full min-h-dvh grid grid-rows-[1fr] grid-cols-[minmax(0,1fr)]',
+          shellClassName,
+        )}
       >
         {stage ? (
           <StageMain className={className}>{children}</StageMain>
