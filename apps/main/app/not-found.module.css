@@ -122,6 +122,16 @@
   letter-spacing: 0.12em;
 }
 
+.setNote {
+  margin: 0.85rem 0 0;
+  padding: 0.3rem 0.45rem;
+  color: var(--color-signal-cyan, var(--cyan, #6df7ea));
+  background: rgb(14 20 27 / 82%);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+}
+
 .preload {
   position: fixed;
   width: 1px;

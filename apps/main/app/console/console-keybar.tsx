@@ -25,7 +25,10 @@ export function ConsoleKeybar(props: {
       <div className={css.fkeys}>
         {FKEYS.map(([key, label, command]) => (
           <button key={key} type='button' onClick={() => execute([command])}>
-            <b>{key}</b>={label}
+            <span className={css.fineKey}>
+              <b>{key}</b>=
+            </span>
+            {label}
           </button>
         ))}
       </div>

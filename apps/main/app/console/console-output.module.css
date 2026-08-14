@@ -105,3 +105,9 @@
     display: none;
   }
 }
+
+@media (pointer: coarse) {
+  .fineOnly {
+    display: none;
+  }
+}

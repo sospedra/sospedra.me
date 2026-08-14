@@ -185,3 +185,9 @@
     animation: none;
   }
 }
+
+@media (pointer: coarse) {
+  .fineKey {
+    display: none;
+  }
+}

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import BoomboxView from './boombox-view'
 
 export const metadata: Metadata = {

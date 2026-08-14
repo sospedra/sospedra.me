@@ -1,6 +1,8 @@
 import { usePathname, useRouter } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef } from 'react'
+import ChromeController from 'services/chrome/controller.tsx'
+import ToolbarStrip from 'services/chrome/toolbar-strip.tsx'
 import { installSiteHistoryTracker } from 'services/navigation-history'
 import { recordPathname } from './altitude'
 import Background from './background'
@@ -8,7 +10,6 @@ import { TransitionCTX } from './context'
 import Offshore from './offshore'
 import { useStateReducer } from './reducer'
 import { UNMOUNT_DELAY_MS } from './stage'
-import ToolbarStrip from './toolbar-strip'
 import css from './transition.module.css'
 import { installFirstTouchPrefetch } from './use-prefetch'
 
@@ -82,6 +83,7 @@ export const Provider: React.FunctionComponent<{
       <div className={css.provider}>{children}</div>
       <Background />
       <div aria-hidden='true' className={css.overscrollShield} />
+      <ChromeController />
       <ToolbarStrip />
       <Offshore />
     </TransitionCTX.Provider>

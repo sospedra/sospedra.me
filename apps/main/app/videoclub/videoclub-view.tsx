@@ -310,7 +310,7 @@ export default function VideoclubView() {
               Slides (PDF)
             </a>
           )}
-          <p aria-hidden='true'>
+          <p aria-hidden='true' className={css.fineOnly}>
             SPACE PLAY · ← → SEEK · ↑ ↓ VOL · 1–{TAPES.length} TAPE · T POWER
           </p>
         </footer>

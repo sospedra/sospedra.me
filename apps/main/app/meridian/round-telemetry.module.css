@@ -384,3 +384,9 @@
     box-shadow: 2px 2px 0 var(--geo-arcade-ink);
   }
 }
+
+@media (pointer: coarse) {
+  .passButton kbd {
+    display: none;
+  }
+}

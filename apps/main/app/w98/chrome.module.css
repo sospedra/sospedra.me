@@ -222,3 +222,14 @@
   border-left-color: var(--win-shadow);
   transform: translate(1px, 1px);
 }
+
+@media (pointer: coarse) {
+  .menu kbd {
+    display: none;
+  }
+
+  .menuTrigger u,
+  .menu u {
+    text-decoration: none;
+  }
+}

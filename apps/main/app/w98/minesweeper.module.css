@@ -341,3 +341,9 @@
   color: #005b00;
   font-weight: 700;
 }
+
+@media (pointer: coarse) {
+  .fineOnly {
+    display: none;
+  }
+}

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { yearsSinceCareerStart } from 'services/career'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import RamenView from './ramen-view'
 
 export const metadata: Metadata = {

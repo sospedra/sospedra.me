@@ -122,3 +122,10 @@
     min-height: 36px;
   }
 }
+
+@media (pointer: coarse) {
+  .controlLegend,
+  .controlHint {
+    display: none;
+  }
+}

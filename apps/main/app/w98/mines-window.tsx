@@ -318,7 +318,11 @@ export const HelpWindow: React.FC<{ close: () => void; drag: WindowDrag }> = (
         <ul>
           <li>Left click sweeps a cell.</li>
           <li>
-            Right click plants a flag. <kbd>f</kbd> on a focused cell works too.
+            Right click plants a flag.
+            <span className={css.fineOnly}>
+              {' '}
+              <kbd>f</kbd> on a focused cell works too.
+            </span>
           </li>
           <li>On touch screens, switch to Flag mode before tapping a cell.</li>
           <li>Click a satisfied number to sweep its neighbors at once.</li>
@@ -327,7 +331,7 @@ export const HelpWindow: React.FC<{ close: () => void; drag: WindowDrag }> = (
             The field is dealt to fit your screen. Difficulty sets density.
           </li>
           <li>Sound toggles in the Game menu.</li>
-          <li>
+          <li className={css.fineOnly}>
             <kbd>F2</kbd> deals a new board.
           </li>
         </ul>

@@ -220,6 +220,59 @@ const useForegroundParallax = (
   }, [sceneRef])
 }
 
+const markFocusedFloor = (floors: HTMLElement[], focused: EventTarget) => {
+  for (const floor of floors) {
+    if (floor === focused) delete floor.dataset.floorDim
+    else floor.dataset.floorDim = ''
+  }
+}
+
+const floorAtLine = (floors: HTMLElement[], line: number) =>
+  floors.find((floor) => {
+    const rect = floor.getBoundingClientRect()
+    return rect.height > 0 && rect.top <= line && rect.bottom > line
+  })
+
+/* depth of field: the floor under the focus line stays sharp, every other
+   floor drops out of focus; the line leads the viewport center by 12% in
+   the scroll direction so the next floor sharpens early */
+const useFloorFocus = (
+  sceneRef: React.RefObject<HTMLDivElement | null>,
+  enabled: boolean,
+) => {
+  useEffect(() => {
+    const sceneRoot = sceneRef.current
+    if (!enabled || !sceneRoot) return
+    const floors = Array.from(
+      sceneRoot.querySelectorAll<HTMLElement>('[data-floor]'),
+    )
+    let lastY = window.scrollY
+    let dir = 1
+    let raf = 0
+    const refocus = () => {
+      raf = 0
+      const line = window.innerHeight * (0.5 + dir * 0.12)
+      const hit = floorAtLine(floors, line)
+      if (hit) markFocusedFloor(floors, hit)
+    }
+    const onScroll = () => {
+      const y = window.scrollY
+      if (y !== lastY) dir = y > lastY ? 1 : -1
+      lastY = y
+      if (raf === 0) raf = requestAnimationFrame(refocus)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    refocus()
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      for (const floor of floors) delete floor.dataset.floorDim
+    }
+  }, [sceneRef, enabled])
+}
+
 function RatLane({ index }: { index: number }) {
   const laneRef = useRef<HTMLDivElement>(null)
   const [run, setRun] = useState(false)
@@ -355,6 +408,7 @@ export default function BazaarView() {
   const desktopFloors = floors?.desktop ?? DESKTOP_FLOORS
   const mobileFloors = floors?.mobile ?? MOBILE_FLOORS
   const [editor, setEditor] = useState(false)
+  useFloorFocus(sceneRef, !editor)
   const chrome = useStoreSelector(decorStore, (doc) => doc.chrome)
 
   const scrollToMarket = () => {

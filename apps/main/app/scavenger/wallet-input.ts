@@ -340,7 +340,9 @@ const controlAtPoint = (
   ]
   const hit = controls.find(([button]) => {
     const rect = button.current?.getBoundingClientRect()
-    return rect ? pointInRect(event.clientX, event.clientY, rect) : false
+    // a display:none control measures 0x0 at (0,0) and would claim it
+    if (!rect || rect.width === 0) return false
+    return pointInRect(event.clientX, event.clientY, rect)
   })
   return hit ? hit[1] : null
 }

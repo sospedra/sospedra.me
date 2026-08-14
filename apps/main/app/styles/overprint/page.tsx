@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Anton, Courier_Prime } from 'next/font/google'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import OverprintView from './overprint-view'
 
 const poster = Anton({

@@ -2,7 +2,13 @@
 
 import cn from 'clsx'
 import { clamp } from 'es-toolkit'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import ReactDOM from 'react-dom'
 import { tapHaptic } from 'services/haptics'
 import { isEditableTarget, useGameInput } from 'services/hotkeys'
@@ -65,6 +71,15 @@ export default function GamesView() {
   const chimeBlockedAt = useRef<number | null>(null)
   const lastTicked = useRef(0)
   const revealPlayed = useRef(false)
+  const chimePlayed = useRef(false)
+  const [revived, setRevived] = useState(false)
+
+  // cache revival re-runs effects while refs survive: a re-run after the
+  // reveal latch means a return visit, so pin the menu before the paint.
+  // StrictMode re-runs land before the latch and stay on the fresh path
+  useLayoutEffect(() => {
+    if (revealPlayed.current) setRevived(true)
+  }, [])
 
   const playSfx = (name: keyof MenuSfx) => {
     if (fxMode === 'quiet') return
@@ -83,11 +98,14 @@ export default function GamesView() {
   useEffect(() => {
     if (fxMode === 'quiet') return
     const chime = startup.current
-    // autoplay without a same-page gesture rejects: the first boot
-    // gesture replays it via playBlockedChime
-    chime?.play().catch(() => {
-      chimeBlockedAt.current = performance.now()
-    })
+    if (!chimePlayed.current) {
+      chimePlayed.current = true
+      // autoplay without a same-page gesture rejects: the first boot
+      // gesture replays it via playBlockedChime
+      chime?.play().catch(() => {
+        chimeBlockedAt.current = performance.now()
+      })
+    }
     return () => chime?.pause()
   }, [fxMode])
 
@@ -220,6 +238,7 @@ export default function GamesView() {
         className={css.scene}
         data-phase={phase}
         data-ready={menuVisible ? 'true' : 'false'}
+        data-revived={revived ? 'true' : 'false'}
         onPointerDownCapture={finishBoot}
         onClickCapture={playBlockedChime}
       >

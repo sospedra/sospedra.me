@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { useTheme } from 'services/theme'
-import { chromeFor, sceneFor } from './altitude'
+import { sceneFor } from './altitude'
 import { useRouteTransition } from './context'
 import { destinationUrl } from './reducer'
 import Stars from './stars'
@@ -24,18 +24,6 @@ const getOffsetFromHref = (href: string): OffsetT => ({
   transform: sceneFor(href).offset,
 })
 
-const applyChrome = (href: string) => {
-  const { statusTint, toolbarTint, overscroll } = chromeFor(href)
-  // html/body feed the iOS status-zone sample; the shield reads the var
-  document.documentElement.style.backgroundColor = statusTint
-  document.body.style.backgroundColor = statusTint
-  document.documentElement.style.setProperty('--route-overscroll', overscroll)
-  // load-time only on iOS; Android Chrome follows runtime writes
-  document
-    .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', toolbarTint ?? overscroll)
-}
-
 const Animation: React.FunctionComponent<{
   start: (offset: OffsetT, immediate: boolean, onRest: () => void) => unknown
   animation: object
@@ -49,7 +37,6 @@ const Animation: React.FunctionComponent<{
   useEffect(() => {
     const id = ++movement.current
     setIsMoving(!isQuiet)
-    applyChrome(destination)
     start(getOffsetFromHref(destination), isQuiet, () => {
       if (id === movement.current) setIsMoving(false)
     })

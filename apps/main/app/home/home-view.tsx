@@ -10,9 +10,11 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import type { MouseEvent as ReactMouseEvent } from 'react'
 import { useEffect, useReducer, useRef, useState } from 'react'
+import { useRideBlackout } from 'services/chrome/controller.tsx'
 import { cssVars } from 'services/css-vars'
 import { useHotkeys } from 'services/hotkeys'
 import Link from 'services/link'
+import { matchScreen } from 'services/screen'
 import Shell from 'services/shell'
 import { useTheme } from 'services/theme'
 import { useRouteTransition } from 'services/transition/context'
@@ -30,17 +32,24 @@ import { useNav } from './use-nav'
 const BAZAAR_SIGNATURE_DURATION = 3100
 const BAZAAR_EXPRESS_DURATION = 2500
 const BAZAAR_OFFSET = -250
+// same ride time over more road: must match --fg-world-pan and the widened
+// world/city strips in home.module.css and city-sprite.module.css
+const BAZAAR_OFFSET_MOBILE = -400
 // the pan distance is vw-anchored, so narrow viewports travel fewer pixels:
 // shrink the duration with the width to keep the ride's perceived speed
 const DRIVE_REFERENCE_WIDTH = 1440
 const DRIVE_MIN_SCALE = 0.55
 // the blackout hits full black at 86% of the ride (home.module.css)
 const ROUTE_SWAP_FRACTION = 0.86
+// the blackout ramp starts here (blackout-fade in home.module.css)
+const BLACKOUT_FRACTION = 0.78
 const BAZAAR_SESSION_KEY = 'midnight-io:bazaar-ride'
 const HOME_INTRO_DURATION = 1200
 const CAR_ARRIVAL_DURATION = 820
 const CAR_SHUTDOWN_DELAY = 320
 const CAR_EXIT_DURATION = 340
+// must match the mobile drive overrides in home.module.css
+const MOBILE_SCREEN_QUERY = '(max-width: 48rem)'
 
 const loadSpriteCar = () => import('services/car/car')
 const SpriteCar = dynamic(loadSpriteCar, { ssr: false })
@@ -83,7 +92,7 @@ type StageEvent =
   | { type: 'engine-on' }
   | { type: 'engine-off' }
   | { type: 'engine-toggle' }
-  | { type: 'depart'; duration: number }
+  | { type: 'depart'; duration: number; pan: number }
   | { type: 'leave-home' }
 
 const INITIAL_STAGE: StageState = {
@@ -112,12 +121,12 @@ function stageReducer(state: StageState, event: StageEvent): StageState {
       ...state,
       engineOn: !state.engineOn,
     }))
-    .with({ type: 'depart' }, ({ duration }) => ({
+    .with({ type: 'depart' }, ({ duration, pan }) => ({
       ...state,
       carVisible: true,
       carArriving: false,
       driveDuration: duration,
-      offset: [BAZAAR_OFFSET, 0],
+      offset: [pan, 0],
     }))
     .with({ type: 'leave-home' }, () => ({
       ...state,
@@ -205,7 +214,7 @@ function HomeStage() {
   const { fxMode } = useTheme()
   const prefersReducedMotion = useReducedMotion()
   const motionAllowed = fxMode === 'full' && !prefersReducedMotion
-  const isDeparting = offsetX === BAZAAR_OFFSET
+  const isDeparting = offsetX < 0
   const isWorldMoving = offsetX !== 0 || offsetY !== 0
   const warmBazaarEntry = useWarmBazaarEntry()
   const { transform } = useSpring({
@@ -264,6 +273,8 @@ function HomeStage() {
     return () => window.removeEventListener('keydown', skipDeparture)
   }, [isDeparting, router])
 
+  useRideBlackout(isDeparting, driveDuration * BLACKOUT_FRACTION)
+
   const departForBazaar = (event: ReactMouseEvent<HTMLAnchorElement>) => {
     if (prefersNativeNavigation(event)) return
     event.preventDefault()
@@ -288,7 +299,10 @@ function HomeStage() {
     const duration = scaledDriveDuration(
       isFirstRide ? BAZAAR_SIGNATURE_DURATION : BAZAAR_EXPRESS_DURATION,
     )
-    dispatch({ type: 'depart', duration })
+    const pan = matchScreen(MOBILE_SCREEN_QUERY)
+      ? BAZAAR_OFFSET_MOBILE
+      : BAZAAR_OFFSET
+    dispatch({ type: 'depart', duration, pan })
     transition.navigateLater(
       '/bazaar',
       Math.round(duration * ROUTE_SWAP_FRACTION),

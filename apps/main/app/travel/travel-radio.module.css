@@ -174,12 +174,21 @@
 }
 
 .radioPower {
-  color: #4b281c;
+  border-color: #33200f;
+  background:
+    var(--cockpit-grain), linear-gradient(145deg, #f3b063, #d07a38 64%, #8f4a22);
+  box-shadow:
+    inset 1px 1px rgb(255 236 200 / 32%),
+    inset -2px -2px rgb(46 20 8 / 32%),
+    0 0.18rem 0 #241105,
+    0 0.24rem 0.28rem rgb(0 0 0 / 24%);
+  color: #38180a;
   letter-spacing: 0.05em;
+  text-shadow: 0 1px rgb(255 226 178 / 32%);
 }
 
 .radioPower[aria-pressed="true"] {
-  color: #742c1e;
+  color: #4d1408;
 }
 
 .radioPower[aria-pressed="true"]::after {
@@ -204,6 +213,12 @@
     inset 2px 2px 0.22rem rgb(0 0 0 / 32%),
     0 0.05rem 0 #171916;
   transform: translateY(0.16rem);
+}
+
+.radioPower:active {
+  box-shadow:
+    inset 2px 2px 0.22rem rgb(46 20 8 / 40%),
+    0 0.05rem 0 #241105;
 }
 
 .radioPresets {

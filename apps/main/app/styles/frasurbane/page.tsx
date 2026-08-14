@@ -5,7 +5,7 @@ import {
   EB_Garamond,
   UnifrakturMaguntia,
 } from 'next/font/google'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import FrasurbaneView from './frasurbane-view'
 
 const bodoni = Bodoni_Moda({

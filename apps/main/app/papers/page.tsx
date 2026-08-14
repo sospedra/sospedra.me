@@ -175,7 +175,10 @@ export default async function PapersPage() {
         </section>
 
         <footer className={css.receiverFooter}>
-          <span>↑↓ / J K SELECT · ENTER READ</span>
+          <span>
+            <span className={css.fineOnly}>↑↓ / J K SELECT · ENTER READ</span>
+            <span className={css.coarseOnly}>TAP A PAGE TO READ</span>
+          </span>
           <span>TEXT SERVICE / CH.02</span>
         </footer>
 

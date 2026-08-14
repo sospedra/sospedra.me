@@ -21,6 +21,8 @@ export const useLog = () => {
     console.groupEnd()
     console.group("It's dangerous to go unknowing, take some pills 💊")
     console.groupEnd()
+    console.group('Handheld units: agitate before use 📳')
+    console.groupEnd()
     console.groupEnd()
     console.groupEnd()
     console.groupEnd()

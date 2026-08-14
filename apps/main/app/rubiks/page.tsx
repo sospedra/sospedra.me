@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import RubiksView from './rubiks-view'
 
 export const metadata: Metadata = {

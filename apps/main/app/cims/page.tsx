@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import CimsView from './cims-view.tsx'
 
 export const metadata: Metadata = {

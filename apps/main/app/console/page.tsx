@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import { publicRewrites } from './rewrites'
 import staticFiles from './static-files.json'
 import TerminalView from './terminal-view'

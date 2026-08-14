@@ -99,7 +99,7 @@
  * Ori-style foreground silhouettes, fixed above the car (z 150 beats the
  * departing carDock's 140): the car drives behind them. Content sits past
  * the resting frame (x > 100vw) so the home screen stays clean. During the
- * drive each track slides at its own speed against the world's -250vw pan;
+ * drive each track slides at its own speed against the world's pan;
  * the gap track moves at exactly world speed, so its tower stays glued over
  * the town/bridge joint the whole ride.
  */
@@ -113,6 +113,11 @@
 
   /* must match driveEase in home-view.tsx or the gap tower drifts */
   --drive-ease: cubic-bezier(0.4, 0, 0.6, 0.52);
+
+  /* world pan: must match BAZAAR_OFFSET(_MOBILE) in home-view.tsx */
+  --fg-world-pan: -250vw;
+  --fg-near-pan: -350vw;
+  --fg-nearest-pan: -400vw;
 
   /* mirrors Sprite/City .city custom props; keep both in sync */
   --street: clamp(20rem, 54vh, 38rem);
@@ -231,19 +236,19 @@
 
 @keyframes fg-world {
   to {
-    transform: translate3d(-250vw, 0, 0);
+    transform: translate3d(var(--fg-world-pan, -250vw), 0, 0);
   }
 }
 
 @keyframes fg-near {
   to {
-    transform: translate3d(-350vw, 0, 0);
+    transform: translate3d(var(--fg-near-pan, -350vw), 0, 0);
   }
 }
 
 @keyframes fg-nearest {
   to {
-    transform: translate3d(-400vw, 0, 0);
+    transform: translate3d(var(--fg-nearest-pan, -400vw), 0, 0);
   }
 }
 
@@ -331,8 +336,21 @@
 }
 
 @media (max-width: 48rem) {
+  /* rear rim sits at 15.5% of the sprite width (services/car/car.module.css) */
+  .carDock {
+    left: calc(clamp(9rem, 30vh, 18rem) * -0.155);
+  }
+
+  /* same ride time over 1.6x the road: the drive reads faster on a phone */
+  .world {
+    width: 500vw;
+  }
+
   .foreground {
     --street: min(53vh, 29rem);
+    --fg-world-pan: -400vw;
+    --fg-near-pan: -560vw;
+    --fg-nearest-pan: -640vw;
   }
 
   /* vh-sized slabs swallow a portrait screen; scale them to the street */

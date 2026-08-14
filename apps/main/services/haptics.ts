@@ -14,6 +14,9 @@ const ensureSwitchLabel = () => {
   control.setAttribute('switch', '')
   control.tabIndex = -1
   label.append(control)
+  /* the tick clicks at (0,0) read as user input to window-level click
+     handlers (scavenger pointer fallback); they must never escape */
+  label.addEventListener('click', (event) => event.stopPropagation())
   document.body.append(label)
   switchLabel = label
   return label

@@ -405,3 +405,10 @@
       0 6px 0 var(--geo-arcade-ink);
   }
 }
+
+/* The help dialog documents keyboard input only. */
+@media (pointer: coarse) {
+  .helpButton {
+    display: none;
+  }
+}

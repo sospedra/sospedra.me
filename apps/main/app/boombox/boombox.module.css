@@ -71,6 +71,17 @@
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* the shared sky hangs above the viewport top and iOS paints the status
+   zone from it; cover the overhang with the room's own purple */
+.room::before {
+  position: fixed;
+  inset: -30vh 0 auto;
+  height: 30vh;
+  content: "";
+  background: #1a1024;
+  pointer-events: none;
+}
+
 .loading {
   margin-top: 40vh;
   color: var(--color-text);

@@ -94,7 +94,7 @@ function HelpTable() {
           <span className={css.dim}>{description}</span>
         </div>
       ))}
-      <div className={css.helpRow}>
+      <div className={cn(css.helpRow, css.fineOnly)}>
         <span className={css.bright}>KEYS</span>
         <span className={css.dim}>
           TAB completes · ↑↓ history · F1 help · F3 exit · F6 clear · F9 links

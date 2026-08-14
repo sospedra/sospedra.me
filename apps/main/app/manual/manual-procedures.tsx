@@ -183,6 +183,17 @@ export default function ManualProcedures() {
               </tr>
               <tr>
                 <td data-label='Observed condition'>
+                  Unit idle on handheld terminals
+                </td>
+                <td data-label='Probable cause'>
+                  Contents settled during shipment
+                </td>
+                <td data-label='Corrective action'>
+                  Shake the unit firmly until the override engages.
+                </td>
+              </tr>
+              <tr>
+                <td data-label='Observed condition'>
                   Unscheduled{' '}
                   <span role='img' aria-label='redacted service information'>
                     ███

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Caveat, Titan_One } from 'next/font/google'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import StickersView from './stickers-view'
 
 const bubble = Titan_One({

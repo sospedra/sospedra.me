@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Baloo_2, Nunito } from 'next/font/google'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import ClayView from './clay-view'
 
 const chunky = Baloo_2({

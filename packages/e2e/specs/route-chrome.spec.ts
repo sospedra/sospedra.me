@@ -1,9 +1,10 @@
 import { expect, test } from '../fixtures'
 import { MAIN_ROUTES } from '../routes'
 
-// Two invariants keep the iOS bar tints off the page.
-// 1. The toolbar strip hangs fully below the viewport. A sliver inside it
-//    reads as a fixed line wherever the bar color and the art disagree.
+// Two invariants keep the iOS bar tints working without hurting the page.
+// 1. The toolbar strip keeps a sliver of at most 4px inside the viewport.
+//    iOS never samples a box with zero in-viewport pixels, and a deeper
+//    sliver reads as a fixed line wherever the tint and the art disagree.
 // 2. The overscroll shield rides the sky layer, so no route decor can sit
 //    below it. A shield inside the route stacking context buries every
 //    negative-z decor layer that escapes its own parent.
@@ -72,23 +73,26 @@ const probeChrome = () => {
 const SAMPLE_MS = 2500
 const SAMPLE_STEP_MS = 100
 
-const highestStripEdge = async ([window, step]: [number, number]) => {
+const stripEdgeRange = async ([window, step]: [number, number]) => {
   const deadline = performance.now() + window
   let highest = Number.POSITIVE_INFINITY
+  let lowest = Number.NEGATIVE_INFINITY
   while (performance.now() < deadline) {
     const strip = document.querySelector('div[class*="toolbar-strip"]')
     if (strip) {
-      highest = Math.min(highest, strip.getBoundingClientRect().top)
+      const top = strip.getBoundingClientRect().top
+      highest = Math.min(highest, top)
+      lowest = Math.max(lowest, top)
     }
     await new Promise((resolve) => setTimeout(resolve, step))
   }
-  return { highest, viewportHeight: globalThis.innerHeight }
+  return { highest, lowest, viewportHeight: globalThis.innerHeight }
 }
 
 for (const route of MAIN_ROUTES) {
   test(`${route} keeps the bar chrome off the page`, async ({ page }) => {
     await page.goto(route)
-    const strip = await page.evaluate(highestStripEdge, [
+    const strip = await page.evaluate(stripEdgeRange, [
       SAMPLE_MS,
       SAMPLE_STEP_MS,
     ] as [number, number])
@@ -108,7 +112,11 @@ for (const route of MAIN_ROUTES) {
     if (strip.highest === Number.POSITIVE_INFINITY) return
     expect(
       strip.highest,
-      'toolbar strip must hang below the viewport in every state',
-    ).toBeGreaterThanOrEqual(strip.viewportHeight)
+      'toolbar strip may reach at most 4px into the viewport',
+    ).toBeGreaterThanOrEqual(strip.viewportHeight - 4)
+    expect(
+      strip.lowest,
+      'toolbar strip must keep pixels inside the viewport; iOS ignores a fully-outside box',
+    ).toBeLessThan(strip.viewportHeight)
   })
 }

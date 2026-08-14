@@ -96,6 +96,15 @@
 
 /* ---------- desktop market floors: regime B (full bleed) by default ---------- */
 
+/* depth of field: only the floor under the viewport center stays sharp */
+.scene [data-floor] {
+  transition: filter 0.5s ease;
+}
+
+.scene [data-floor-dim] {
+  filter: blur(1px) brightness(0.75);
+}
+
 .floor {
   --wf: url("/images/bazaar/arch/wf-tile.png");
   --ml: 0px;

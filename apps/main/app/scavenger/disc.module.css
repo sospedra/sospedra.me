@@ -330,6 +330,16 @@
   .floater {
     width: min(var(--size, 300px), 44vw);
   }
+
+  .pocket {
+    transition: opacity 0.12s ease;
+  }
+
+  /* the vertical eject crosses the facing page, and WebKit paints that
+     pocket above the disc whatever the z order; dodge it while out */
+  [data-out="true"] [inert] .pocket {
+    opacity: 0;
+  }
 }
 
 /* the flight mirrors fly-back: a slow start picks up where the

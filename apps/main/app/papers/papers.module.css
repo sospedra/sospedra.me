@@ -337,3 +337,17 @@ softened: a row-color wash instead of the full invert */
     opacity: 1;
   }
 }
+
+.coarseOnly {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .fineOnly {
+    display: none;
+  }
+
+  .coarseOnly {
+    display: inline;
+  }
+}

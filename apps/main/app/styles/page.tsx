@@ -6,7 +6,7 @@ import {
   Bodoni_Moda,
   Titan_One,
 } from 'next/font/google'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import StylesView from './styles-view'
 
 const bubble = Titan_One({

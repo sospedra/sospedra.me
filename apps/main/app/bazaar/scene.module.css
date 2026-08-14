@@ -189,11 +189,12 @@
 }
 
 /* lit lamp + its glow in one animated wrapper, same law as .sNeonOn;
-   negative delay so the two signs never blink in lockstep */
+   negative delay so the two lamps never sputter in lockstep */
 .sBusPostOn {
   position: absolute;
   inset: 0;
-  animation: neonBlink 8s steps(1, end) -3.7s infinite;
+  opacity: 0;
+  animation: lampSputter 8s steps(1, end) -3.7s infinite;
 }
 
 /* ambient halo around the tube: lamp is x47-206 y31-66 of the 254x1334 art */
@@ -357,40 +358,65 @@
   }
 }
 
-/* hover: the shelter bulb flickers irregularly, then stays lit */
+/* idle: the shelter bulb sits dark and sputters off-phase from the
+   post; reduced motion kills the sputter and leaves it dark */
 .sBus img[data-on] {
   opacity: 0;
+  animation: lampSputter 8s steps(1, end) -6.1s infinite;
+}
+
+/* hover or press pins both bus-stop lamps steadily lit */
+.sBus:active img[data-on],
+.sBus:active .sBusPostOn {
+  animation: none;
+  opacity: 1;
 }
 
 @media (hover: hover) {
-  .sBus:hover img[data-on] {
-    animation: bulbFlicker 1.2s steps(1, end) forwards;
+  .sBus:hover img[data-on],
+  .sBus:hover .sBusPostOn {
+    animation: none;
+    opacity: 1;
   }
 }
 
-/* the animated frames are the only focus cue and die under reduced motion */
-@keyframes bulbFlicker {
-  0% {
-    opacity: 1;
-  }
-  9% {
+/* a dying tube: dark baseline, three strike attempts per cycle */
+@keyframes lampSputter {
+  0%,
+  33% {
     opacity: 0;
   }
-  16% {
+  34%,
+  36% {
     opacity: 1;
   }
-  24% {
+  37%,
+  40% {
     opacity: 0;
   }
-  31% {
+  41%,
+  42.5% {
     opacity: 1;
   }
-  37% {
+  43%,
+  45% {
     opacity: 0;
+  }
+  46%,
+  51% {
+    opacity: 1;
   }
   52%,
-  100% {
+  74% {
+    opacity: 0;
+  }
+  75%,
+  77% {
     opacity: 1;
+  }
+  78%,
+  100% {
+    opacity: 0;
   }
 }
 

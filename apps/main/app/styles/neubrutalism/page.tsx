@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Archivo_Black, Space_Grotesk } from 'next/font/google'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import NeubrutalismView from './neubrutalism-view'
 
 const shout = Archivo_Black({

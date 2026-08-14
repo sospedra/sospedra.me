@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Courier_Prime } from 'next/font/google'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import {
   loadRecentChallenges,
   loadSpanishDaily,

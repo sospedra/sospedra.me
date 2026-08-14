@@ -1,0 +1,10 @@
+RS-91 HANDHELD MOTION DRIVER
+DEVICE=ACCELEROMETER.SYS /VERBOSE
+
+REM Contents may settle during shipment.
+REM Corrective action: hold the unit firmly
+REM and agitate until the override engages.
+REM Desk terminals: consult the classics.
+
+STATUS ..... ARMED
+CHANNEL .... GREEN-LINE

@@ -29,7 +29,7 @@ const scrollOneFloor = (button: HTMLElement, dir: 'up' | 'down') => {
   const target = anchors[dir === 'up' ? index - 1 : index + 1]
   target?.scrollIntoView({
     behavior: prefersQuietFx() ? 'auto' : 'smooth',
-    block: 'start',
+    block: 'center',
   })
 }
 

@@ -138,7 +138,7 @@ export function AppHeader({
         <button
           ref={helpButtonRef}
           type='button'
-          className={css.headerButton}
+          className={`${css.headerButton} ${css.helpButton}`}
           disabled={timedState}
           aria-label={copy.help}
           aria-haspopup='dialog'

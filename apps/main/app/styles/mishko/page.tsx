@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Archivo_Black, Space_Grotesk, UnifrakturCook } from 'next/font/google'
-import { routeViewport } from 'services/transition/altitude'
+import { routeViewport } from 'services/chrome'
 import MishkoView from './mishko-view'
 
 const heavy = Archivo_Black({

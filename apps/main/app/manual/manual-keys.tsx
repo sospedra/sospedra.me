@@ -132,7 +132,10 @@ export default function ManualKeys() {
     <nav className={css.sectionIndex} aria-label='Manual section index'>
       <div className={css.indexLegend}>
         <strong>Document index</strong>
-        <span>Select section / [ ] flip sheets</span>
+        <span>
+          Select section
+          <span className={css.fineOnly}> / [ ] flip sheets</span>
+        </span>
       </div>
       <ol>
         {SECTIONS.map(([number, label], index) => (

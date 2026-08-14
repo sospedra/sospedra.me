@@ -169,6 +169,7 @@ const NotFoundView: React.FC = () => {
             {locked ? 'HOME VECTOR LOCKED' : 'TUNE ▼'}
           </span>
         </button>
+        <p className={css.setNote}>NO SIGNAL? WHACK THE SET</p>
       </div>
 
       {warmChannel && (

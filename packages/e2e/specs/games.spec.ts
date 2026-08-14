@@ -44,6 +44,34 @@ test.describe('games menu arming', () => {
   })
 })
 
+test.describe('games menu revival', () => {
+  test.skip(({ isMobile }) => Boolean(isMobile), 'desktop flow')
+
+  test('back from a game keeps the menu settled and silent', async ({
+    page,
+    health,
+  }) => {
+    await page.goto('/games')
+    await skipGamesBoot(page)
+    const tile = page.locator(MERIDIAN_TILE)
+    await expect(tile).toHaveCSS('pointer-events', 'auto')
+    await tile.click()
+    await page.waitForURL('**/meridian', { timeout: 30_000 })
+
+    await page.goBack()
+    await expect(page).toHaveURL(/\/games$/)
+
+    const stage = tile.locator('span').first()
+    await expect(stage).toHaveCSS('animation-name', 'none')
+    await expect(stage).toHaveCSS('opacity', '1')
+    await expect(tile).toHaveCSS('pointer-events', 'auto')
+
+    const chime = page.locator('audio[src="/sounds/startup.webm"]')
+    expect(await chime.evaluate((el: HTMLAudioElement) => el.paused)).toBe(true)
+    expectClean(health)
+  })
+})
+
 test.describe('startup chime prefetch', () => {
   test('the games page preloads the chime in its head', async ({ page }) => {
     await page.goto('/games')

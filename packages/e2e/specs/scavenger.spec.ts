@@ -77,4 +77,34 @@ test.describe('scavenger mobile', () => {
 
     expectClean(health)
   })
+
+  test('disc taps survive the synthetic haptic click (iOS vibrate gap)', async ({
+    page,
+    health,
+  }) => {
+    // iOS Safari has no navigator.vibrate; haptics click a hidden switch label
+    await page.addInitScript(() => {
+      Object.defineProperty(Navigator.prototype, 'vibrate', {
+        value: undefined,
+      })
+    })
+    await page.goto('/scavenger')
+    await waitForBrowse(page)
+
+    await touchSwipe(page, { x: 195, y: 480 }, { x: 195, y: 220 })
+    await expect.poll(async () => (await activeDiscs(page)).length).toBe(2)
+
+    const [top, bottom] = await activeDiscs(page)
+    await page.getByRole('button', { name: top ?? '', exact: true }).tap()
+    await expect(page.locator('#scavenger-liner h2')).toHaveText(top ?? '')
+
+    await page.touchscreen.tap(20, 100)
+    await expect(page.locator('#scavenger-liner')).toHaveCount(0)
+    await expect.poll(async () => (await activeDiscs(page)).length).toBe(2)
+
+    await page.getByRole('button', { name: bottom ?? '', exact: true }).tap()
+    await expect(page.locator('#scavenger-liner h2')).toHaveText(bottom ?? '')
+
+    expectClean(health)
+  })
 })

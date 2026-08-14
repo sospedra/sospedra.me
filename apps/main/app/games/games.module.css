@@ -154,6 +154,19 @@
   }
 }
 
+/* a revived route restarts keyframes from zero: pin the settled menu
+   so a return visit never replays the reveal */
+.scene[data-revived="true"][data-ready="true"] .iconStage {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+
+.scene[data-revived="true"][data-ready="true"] .gameLink {
+  animation: none;
+  pointer-events: auto;
+}
+
 .iconGraphic {
   display: block;
   width: 100%;
