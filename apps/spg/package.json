@@ -21,6 +21,6 @@
     "@repo/typescript-config": "workspace:*",
     "@types/node": "catalog:",
     "typescript": "catalog:",
-    "vite": "8.2.0"
+    "vite": "8.2.4"
   }
 }
