@@ -23,6 +23,6 @@
     "@types/node": "catalog:",
     "tailwindcss": "4.3.3",
     "typescript": "catalog:",
-    "vite": "8.2.0"
+    "vite": "8.2.4"
   }
 }
